@@ -1,0 +1,4 @@
+overblog_graph_endpoint:
+    path: /graphql
+    defaults:
+        _controller: OverblogGraphBundle:Graph:endpoint

@@ -1,0 +1,35 @@
+services:
+  graph.request_executor:
+    class: Overblog\GraphBundle\RequestExecutor
+    arguments:
+      - "@graph.schema"
+
+  graph.request_parser:
+    class: Overblog\GraphBundle\RequestParser
+
+  graph.schema.builder:
+    class: Overblog\GraphBundle\Definition\Builder\SchemaBuilder
+    public: false
+    arguments:
+      - "@service_container"
+      - "@graph.type_resolver"
+
+  graph.schema.abstract:
+    class: GraphQL\Schema
+    public: false
+    abstract: true
+    factory: ["@graph.schema.builder", createSchema]
+    arguments:
+      - [] # Queries
+      - [] # Mutations
+
+  graph.type_builder:
+    class: Overblog\GraphBundle\Definition\Builder\TypeBuilder
+    arguments:
+      - "@service_container"
+
+  graph.type_registry:
+    alias: graph.type_builder
+
+  graph.type_resolver:
+    alias: graph.type_builder
