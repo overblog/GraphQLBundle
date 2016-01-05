@@ -1,0 +1,31 @@
+services:
+    #Internal Scalar types
+    overblog_graph.definition.string_type:
+        class: GraphQL\Type\Definition\StringType
+        factory: ["GraphQL\\Type\\Definition\\Type", string]
+        tags:
+            - { name: overblog_graph.type, alias: String }
+
+    overblog_graph.definition.int_type:
+        class: GraphQL\Type\Definition\IntType
+        factory: ["GraphQL\\Type\\Definition\\Type", int]
+        tags:
+            - { name: overblog_graph.type, alias: Int }
+
+    overblog_graph.definition.float_type:
+        class: GraphQL\Type\Definition\FloatType
+        factory: ["GraphQL\\Type\\Definition\\Type", Float]
+        tags:
+            - { name: overblog_graph.type, alias: Float }
+
+    overblog_graph.definition.boolean_type:
+        class: GraphQL\Type\Definition\BooleanType
+        factory: ["GraphQL\\Type\\Definition\\Type", boolean]
+        tags:
+            - { name: overblog_graph.type, alias: Boolean }
+
+    overblog_graph.definition.id_type:
+        class: GraphQL\Type\Definition\IDType
+        factory: ["GraphQL\\Type\\Definition\\Type", id]
+        tags:
+            - { name: overblog_graph.type, alias: ID }

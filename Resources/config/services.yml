@@ -1,35 +1,41 @@
 services:
-  graph.request_executor:
-    class: Overblog\GraphBundle\RequestExecutor
-    arguments:
-      - "@graph.schema"
+    overblog_graph.request_executor:
+        class: Overblog\GraphBundle\Request\Executor
+        arguments:
+            - "@overblog_graph.schema"
 
-  graph.request_parser:
-    class: Overblog\GraphBundle\RequestParser
+    overblog_graph.request_parser:
+        class: Overblog\GraphBundle\Request\Parser
 
-  graph.schema.builder:
-    class: Overblog\GraphBundle\Definition\Builder\SchemaBuilder
-    public: false
-    arguments:
-      - "@service_container"
-      - "@graph.type_resolver"
+    overblog_graph.schema:
+        class: GraphQL\Schema
+        public: false
+        factory: ["@overblog_graph.schema_builder", create]
+        arguments:
+            - ~
+            - ~
 
-  graph.schema.abstract:
-    class: GraphQL\Schema
-    public: false
-    abstract: true
-    factory: ["@graph.schema.builder", createSchema]
-    arguments:
-      - [] # Queries
-      - [] # Mutations
+    overblog_graph.schema_builder:
+        class: Overblog\GraphBundle\Definition\Builder\SchemaBuilder
+        arguments:
+            - "@overblog_graph.type_resolver"
 
-  graph.type_builder:
-    class: Overblog\GraphBundle\Definition\Builder\TypeBuilder
-    arguments:
-      - "@service_container"
+    overblog_graph.type_builder:
+        class: Overblog\GraphBundle\Definition\Builder\TypeBuilder
+        arguments:
+            - "@overblog_graph.config_resolver"
 
-  graph.type_registry:
-    alias: graph.type_builder
+    overblog_graph.config_resolver:
+        class: Overblog\GraphBundle\Resolver\ConfigResolver
+        arguments:
+            - "@overblog_graph.type_resolver"
+            - "@overblog_graph.expression_language"
+            - "@service_container"
 
-  graph.type_resolver:
-    alias: graph.type_builder
+    overblog_graph.type_resolver:
+        class: Overblog\GraphBundle\Resolver\TypeResolver
+        arguments:
+            - "@service_container"
+
+    overblog_graph.expression_language:
+        class: Overblog\GraphBundle\ExpressionLanguage\ExpressionLanguage

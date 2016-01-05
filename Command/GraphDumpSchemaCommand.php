@@ -36,7 +36,7 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
 
         $container = $this->getContainer();
         $result = $container
-            ->get('graph.request_executor')
+            ->get('overblog_graph.request_executor')
             ->execute($request)
             ->toArray();
 

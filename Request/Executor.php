@@ -1,13 +1,13 @@
 <?php
 
-namespace Overblog\GraphBundle;
+namespace Overblog\GraphBundle\Request;
 
-use GraphQL\Executor\Executor;
+use GraphQL\Executor\Executor as GraphQLExecutor;
 use GraphQL\Language\Parser;
 use GraphQL\Language\Source;
 use GraphQL\Schema;
 
-class RequestExecutor
+class Executor
 {
     private $schema;
 
@@ -21,7 +21,7 @@ class RequestExecutor
         $source = new Source($data['query']);
         $ast = Parser::parse($source);
 
-        return Executor::execute(
+        return GraphQLExecutor::execute(
             $this->schema,
             $ast,
             $context,

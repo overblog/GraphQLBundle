@@ -1,11 +1,11 @@
 <?php
 
-namespace Overblog\GraphBundle;
+namespace Overblog\GraphBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class RequestParser
+class Parser
 {
     /**
      * Parses the HTTP request and extracts the GraphQL request parameters.

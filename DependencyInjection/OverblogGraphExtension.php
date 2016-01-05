@@ -4,8 +4,9 @@ namespace Overblog\GraphBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphExtension extends Extension
@@ -14,19 +15,39 @@ class OverblogGraphExtension extends Extension
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('graphql_types.yml');
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $def = $container->getDefinition('graph.type_builder');
+        if (isset($config['definitions']['types'])) {
+            $typeBuilder = $container->get('overblog_graph.type_builder');
 
-        foreach ($config['types'] as $type => $class) {
-            $def->addMethodCall('setDefinitionClass', [$type, $class]);
+            foreach($config['definitions']['types'] as $name => $typeDefinition)
+            {
+                $customTypeId = sprintf('overblog_graph.definition.custom_%s_type', $container->underscore($name));
+
+                $typeDefinition['config']['name'] = $name;
+
+                $class = $typeBuilder->getClassBaseType($typeDefinition['type']);
+
+                $container
+                    ->setDefinition($customTypeId, new Definition($class))
+                    ->setFactory([ new Reference('overblog_graph.type_builder'), 'create' ])
+                    ->setArguments([$typeDefinition])
+                    ->addTag('overblog_graph.type', ['alias' => $name])
+                    ->setPublic(true)
+                ;
+            }
         }
 
-        $container
-            ->setDefinition('graph.schema', new DefinitionDecorator('graph.schema.abstract'))
-            ->replaceArgument(0, $config['schema']['queries'])
-            ->replaceArgument(1, $config['schema']['mutations']);
+        if (isset($config['definitions']['schema'])) {
+            $container
+                ->getDefinition('overblog_graph.schema')
+                ->replaceArgument(0, $config['definitions']['schema']['query'])
+                ->replaceArgument(1, $config['definitions']['schema']['mutation'])
+                ->setPublic(true)
+            ;
+        }
     }
 }
