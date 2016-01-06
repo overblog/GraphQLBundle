@@ -73,10 +73,10 @@ class RequestParser
     {
         // Add default request parameters
         $data = (array)$data + [
-                'query' => null,
-                'variables' => null,
-                'operationName' => null,
-            ];
+            'query' => null,
+            'variables' => null,
+            'operationName' => null,
+        ];
 
         // Keep a reference to the query-string
         $qs = $request->query;
