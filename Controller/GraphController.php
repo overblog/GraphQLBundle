@@ -21,7 +21,7 @@ class GraphController extends Controller
                 $code = $this->getStatusCode($e);
                 $err = $this->formatError($e);
 
-                return new JsonResponse(['errors' => [$err]], $e->getStatusCode());
+                return new JsonResponse(['errors' => [$err]], $code);
             }
 
             // Don't swallow all exceptions.
