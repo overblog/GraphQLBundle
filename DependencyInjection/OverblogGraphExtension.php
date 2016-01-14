@@ -34,7 +34,7 @@ class OverblogGraphExtension extends Extension
                 $container
                     ->setDefinition($customTypeId, new Definition($class))
                     ->setFactory([ new Reference('overblog_graph.type_builder'), 'create' ])
-                    ->setArguments([$typeDefinition])
+                    ->setArguments([$typeDefinition['type'], $typeDefinition['config']])
                     ->addTag('overblog_graph.type', ['alias' => $name])
                     ->setPublic(true)
                 ;

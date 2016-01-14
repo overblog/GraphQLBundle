@@ -26,6 +26,21 @@ class ConfigResolver implements ResolverInterface
      */
     private $typeResolver;
 
+    // [name => method]
+    private $resolverMap = [
+        'fields' => 'resolveFields',
+        'isTypeOf' => 'resolveIsTypeOfCallback',
+        'interfaces' => 'resolveInterfaces',
+        'types' => 'resolveType',
+        'values' => 'resolveValues',
+        'resolveType' => 'resolveResolveTypeCallback',
+        'resolveCursor' => 'resolveResolveCallback',
+        'resolveNode' => 'resolveResolveCallback',
+        'nodeType' => 'resolveTypeCallback',
+        'connectionFields' => 'resolveFields',
+        'edgeFields' => 'resolveFields',
+    ];
+
 
     public function __construct(
         ResolverInterface $typeResolver,
@@ -44,45 +59,36 @@ class ConfigResolver implements ResolverInterface
             $config = [$config];
         }
 
-        if (isset($config['fields'])) {
-            foreach ($config['fields'] as $field => &$options) {
-                if (isset($options['type']) && is_string($options['type'])) {
-                    $options['type'] = $this->resolveTypeCallback($options['type']);
-                }
-
-                if (isset($options['args'])) {
-                    foreach($options['args'] as &$argsOptions) {
-                        $argsOptions['type'] = $this->resolveTypeCallback($argsOptions['type']);
-                    }
-                }
-
-                if (isset($options['resolve']) && is_string($options['resolve'])) {
-                    $options['resolve'] = $this->resolveResolveCallback($options['resolve']);
-                }
+        foreach($config as $name => &$values) {
+            if (!isset($this->resolverMap[$name]) || empty($values)) {
+                continue;
             }
-        }
-
-        if (isset($config['isTypeOf']) && is_string($config['isTypeOf'])) {
-            $config['isTypeOf'] = $this->resolveIsTypeOfCallback($config['isTypeOf']);
-        }
-
-        if (!empty($config['interfaces'])) {
-            $config['interfaces'] = $this->resolveInterfaces($config['interfaces']);
-        }
-
-        if (!empty($config['types'])) {
-            $config['types'] = $this->resolveTypes($config['types']);
-        }
-
-        if (!empty($config['values'])) {
-            $config['values'] = $this->resolveValues($config['values']);
-        }
-
-        if (isset($config['resolveType']) && is_string($config['resolveType'])) {
-            $config['resolveType'] = $this->resolveResolveTypeCallback($config['resolveType']);
+            $resolverMethod = $this->resolverMap[$name];
+            $values = $this->$resolverMethod($values);
         }
 
         return $config;
+    }
+
+    private function resolveFields(array $fields)
+    {
+        foreach ($fields as $field => &$options) {
+            if (isset($options['type']) && is_string($options['type'])) {
+                $options['type'] = $this->resolveTypeCallback($options['type']);
+            }
+
+            if (isset($options['args'])) {
+                foreach($options['args'] as &$argsOptions) {
+                    $argsOptions['type'] = $this->resolveTypeCallback($argsOptions['type']);
+                }
+            }
+
+            if (isset($options['resolve']) && is_string($options['resolve'])) {
+                $options['resolve'] = $this->resolveResolveCallback($options['resolve']);
+            }
+        }
+
+        return $fields;
     }
 
     private function resolveTypeCallback($expr)

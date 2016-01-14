@@ -15,13 +15,12 @@ class TypeBuilder
     }
 
     /**
-     * @param $definition
+     * @param $type
+     * @param array $config
      * @return Type
      */
-    public function create($definition)
+    public function create($type, array $config)
     {
-        $type = $definition['type'];
-        $config = $definition['config'];
         $class = $this->getClassBaseType($type);
 
         return new $class($this->configResolver->resolve($config));
@@ -29,7 +28,20 @@ class TypeBuilder
 
     public function getClassBaseType($type)
     {
-        $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
+        switch($type) {
+            case 'connection':
+                $class = 'Overblog\\GraphBundle\\Definition\\Relay\\ConnectionType';
+                break;
+
+            case 'object':
+            case 'enum':
+            case 'interface':
+            case 'union':
+            case 'inputObject':
+            default:
+                $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
+                break;
+        }
 
         return $class;
     }
