@@ -132,7 +132,7 @@ class ConnectionBuilder
      */
     public static function getOffsetWithDefault($cursor, $defaultOffset)
     {
-        if ($cursor === null) {
+        if (empty($cursor) {
             return $defaultOffset;
         }
         $offset = static::cursorToOffset($cursor);
