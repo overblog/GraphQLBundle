@@ -82,10 +82,10 @@ class ConnectionBuilder
         $startOffset = max($sliceStart - 1, $afterOffset, -1) + 1;
         $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
 
-        if ($first != null) {
+        if ($first !== null) {
             $endOffset = min($endOffset, $startOffset + $first);
         }
-        if ($last != null) {
+        if ($last !== null) {
             $startOffset = max($startOffset, $endOffset - $last);
         }
 
@@ -115,8 +115,8 @@ class ConnectionBuilder
             new PageInfo (
                 $firstEdge instanceof Edge ? $firstEdge->cursor : null,
                 $lastEdge instanceof Edge  ? $lastEdge->cursor : null,
-                $last != null ? $startOffset > $lowerBound : false,
-                $first != null ? $endOffset < $upperBound : false
+                $last !== null ? $startOffset > $lowerBound : false,
+                $first !== null ? $endOffset < $upperBound : false
             )
         );
     }
@@ -132,7 +132,7 @@ class ConnectionBuilder
      */
     public static function getOffsetWithDefault($cursor, $defaultOffset)
     {
-        if ($cursor == null) {
+        if ($cursor === null) {
             return $defaultOffset;
         }
         $offset = static::cursorToOffset($cursor);

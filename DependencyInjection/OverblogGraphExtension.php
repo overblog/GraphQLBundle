@@ -23,8 +23,7 @@ class OverblogGraphExtension extends Extension
         if (isset($config['definitions']['types'])) {
             $typeBuilder = $container->get('overblog_graph.type_builder');
 
-            foreach($config['definitions']['types'] as $name => $typeDefinition)
-            {
+            foreach($config['definitions']['types'] as $name => $typeDefinition) {
                 $customTypeId = sprintf('overblog_graph.definition.custom_%s_type', $container->underscore($name));
 
                 $typeDefinition['config']['name'] = $name;

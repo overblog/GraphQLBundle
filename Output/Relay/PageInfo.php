@@ -23,6 +23,4 @@ final class PageInfo
         $this->hasPreviousPage = $hasPreviousPage;
         $this->hasNextPage = $hasNextPage;
     }
-
-
 }

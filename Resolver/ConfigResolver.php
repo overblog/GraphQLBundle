@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphBundle\Resolver;
 
-
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -41,12 +40,7 @@ class ConfigResolver implements ResolverInterface
         'edgeFields' => 'resolveFields',
     ];
 
-
-    public function __construct(
-        ResolverInterface $typeResolver,
-        ExpressionLanguage $expressionLanguage,
-        ContainerInterface $container
-    )
+    public function __construct(ResolverInterface $typeResolver, ExpressionLanguage $expressionLanguage, ContainerInterface $container)
     {
         $this->typeResolver = $typeResolver;
         $this->expressionLanguage = $expressionLanguage;
@@ -161,7 +155,6 @@ class ConfigResolver implements ResolverInterface
         $container = $this->container;
 
         return function ($value, array $args, ResolveInfo $info) use ($container, $expression) {
-
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
@@ -183,7 +176,6 @@ class ConfigResolver implements ResolverInterface
         $container = $this->container;
 
         return function ($value) use ($container, $expression) {
-
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
@@ -203,7 +195,6 @@ class ConfigResolver implements ResolverInterface
         $container = $this->container;
 
         return function ($value, ResolveInfo $info) use ($container, $expression) {
-
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [

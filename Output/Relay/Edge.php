@@ -15,6 +15,4 @@ final class Edge
         $this->cursor = $cursor;
         $this->node = $node;
     }
-
-
 }

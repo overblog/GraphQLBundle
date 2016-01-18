@@ -11,7 +11,7 @@ use GraphQL\Utils;
 class ConnectionType extends ObjectType
 {
     /** @var  PageInfoType */
-    static private $pageInfoType;
+    private static $pageInfoType;
 
     public function __construct(array $config)
     {
@@ -36,11 +36,10 @@ class ConnectionType extends ObjectType
             static::$pageInfoType = new PageInfoType();
         }
 
-
         /** @var ObjectType $nodeType */
         $nodeType = $config['nodeType'];
         $name = str_replace('Connection', '', $config['name']);
-        if(empty($name)) {
+        if (empty($name)) {
             $name = $config['name'];
         }
         $edgeFields = empty($config['edgeFields'])? [] : $config['edgeFields'];
