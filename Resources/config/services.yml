@@ -3,6 +3,7 @@ services:
         class: Overblog\GraphBundle\Request\Executor
         arguments:
             - "@overblog_graph.schema"
+            - "@event_dispatcher"
 
     overblog_graph.request_parser:
         class: Overblog\GraphBundle\Request\Parser
