@@ -22,7 +22,7 @@ class ConnectionBuilder
      * @param array $args
      * @return Connection
      */
-    public static function connectionFromArray(array $data, array $args)
+    public static function connectionFromArray(array $data, array $args = [])
     {
         return static::connectionFromArraySlice(
             $data,
