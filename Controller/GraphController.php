@@ -13,9 +13,6 @@ class GraphController extends Controller
         $req = $this->get('overblog_graph.request_parser')->parse($request);
         $res = $this->get('overblog_graph.request_executor')->execute($req, []);
 
-        $response = new JsonResponse($res->toArray(), 200);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
+        return new JsonResponse($res->toArray(), 200);
     }
 }
