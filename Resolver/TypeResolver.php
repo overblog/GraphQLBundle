@@ -19,7 +19,7 @@ class TypeResolver implements ResolverInterface
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @return \GraphQL\Type\Definition\Type
      */
     public function resolve($type)

@@ -175,11 +175,12 @@ class ConfigResolver implements ResolverInterface
 
         $container = $this->container;
 
-        return function ($value) use ($container, $expression) {
+        return function ($value, ResolveInfo $info) use ($container, $expression) {
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
                     'value' => $value,
+                    'info' => $info,
                     'container' => $container
                 ]
             );
