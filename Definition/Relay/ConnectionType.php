@@ -10,6 +10,8 @@ use GraphQL\Utils;
 
 class ConnectionType extends ObjectType
 {
+    use MergeFieldTrait;
+
     /** @var  PageInfoType */
     private static $pageInfoType;
 
@@ -50,7 +52,8 @@ class ConnectionType extends ObjectType
         $edgeType = new EdgeType([
             'name' => $name . 'Edge',
             'description' => 'An edge in a connection.',
-            'fields' => array_merge(
+            'fields' => $this->getFieldsWithDefaults(
+                $edgeFields,
                 [
                     'node' => [
                         'type' => $nodeType,
@@ -62,15 +65,15 @@ class ConnectionType extends ObjectType
                         'resolve' => $resolveCursor,
                         'description' => 'A cursor for use in pagination.'
                     ]
-                ],
-                $edgeFields
+                ]
             )
         ]);
 
         parent::__construct([
             'name' => $name . 'Connection',
             'description' => 'A connection to a list of items.',
-            'fields' => array_merge(
+            'fields' => $this->getFieldsWithDefaults(
+                $connectionFields,
                 [
                     'pageInfo' => [
                         'type' => Type::nonNull(static::$pageInfoType),
@@ -80,8 +83,7 @@ class ConnectionType extends ObjectType
                         'type' => Type::listOf($edgeType),
                         'description' => 'Information to aid in pagination.'
                     ]
-                ],
-                $connectionFields
+                ]
             )
         ]);
     }

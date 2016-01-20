@@ -5,7 +5,7 @@ namespace Overblog\GraphBundle\Definition\Builder;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphBundle\Resolver\ResolverInterface;
 
-class TypeBuilder
+class FieldBuilder
 {
     private $configResolver;
 
@@ -29,16 +29,8 @@ class TypeBuilder
     public function getClassBaseType($type)
     {
         switch($type) {
-            case 'connection':
-                $class = 'Overblog\\GraphBundle\\Definition\\Relay\\ConnectionType';
-                break;
-
-            case 'object':
-            case 'enum':
-            case 'interface':
-            case 'union':
-            case 'inputObject':
-                $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
+            case 'mutation':
+                $class = sprintf('Overblog\\GraphBundle\\Definition\\Relay\\%sField', ucfirst($type));
                 break;
 
             default:

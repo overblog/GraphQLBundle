@@ -13,8 +13,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('overblog_graph');
 
-        $baseTypes = ['object', 'enum', 'interface', 'union', 'inputObject', 'connection'];
-
         $rootNode
             ->children()
                 ->variableNode('references')
@@ -28,46 +26,40 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('mutation')->end()
                             ->end()
                         ->end()
+                        ->arrayNode('fields')
+                            ->useAttributeAsKey('name')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('type')
+                                        ->isRequired()
+                                        ->validate()
+                                            ->always()
+                                            ->then(function($v) {
+                                                if ($v !== 'mutation') {
+                                                    throw new InvalidConfigurationException("definitions.fields.*.type must be equal to mutation");
+                                                }
+                                                return $v;
+                                            })
+                                        ->end()
+                                    ->end()
+                                    ->append($this->addConfigNode('fields'))
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('types')
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
-                                    ->enumNode('type')->values($baseTypes)
+                                    ->enumNode('type')->values(['object', 'enum', 'interface', 'union', 'inputObject', 'connection'])
                                         ->isRequired()
                                     ->end()
-                                    ->append($this->addConfigNode())
+                                    ->append($this->addConfigNode('types'))
                                 ->end()
                             ->end()
                         ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->validate()
-                ->always()
-                ->then(function($v) {
-                    $definitions = $v['definitions'];
-                    $types = array_keys($definitions['types']);
-                    $typesString = implode('", "', $types);
-
-                    foreach(['query', 'mutation'] as $key) {
-                        if (!empty($definitions['schema'][$key]) && !in_array($definitions['schema'][$key], $types)) {
-                            $exception = new InvalidConfigurationException(
-                                sprintf(
-                                    'Invalid value for path definitions.schema.%s values "%s" (must be one of type: "%s")',
-                                    $key,
-                                    $definitions['schema']['query'],
-                                    $typesString
-                                )
-                            );
-
-                            throw $exception;
-                        }
-                    }
-
-                    return $v;
-                })
-            ->end()
-    ;
+            ->end();
 
         return $treeBuilder;
     }
@@ -75,77 +67,125 @@ class Configuration implements ConfigurationInterface
     /**
      * @todo add deprecationReasons
      *
+     * @param string $type
      * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
-    private function addConfigNode()
+    private function addConfigNode($type)
     {
         $builder = new TreeBuilder();
         $node = $builder->root('config');
 
-        $node->children()
-            ->scalarNode('description')->end()
-            ->scalarNode('isTypeOf')->end()
-            ->arrayNode('types')
-                ->prototype('scalar')->end()
-            ->end()
-            ->arrayNode('fields')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('type')->end()
-                        ->arrayNode('args')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('type')->isRequired()->end()
-                                    ->scalarNode('defaultValue')->end()
+        switch($type) {
+            case 'types':
+                $node->children()
+                    ->scalarNode('description')->end()
+                    ->scalarNode('isTypeOf')->end()
+                    ->arrayNode('types')
+                        ->prototype('scalar')->end()
+                    ->end()
+                    ->arrayNode('fields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) { return array('builder' => $v); })
+                            ->end()
+                            ->children()
+                                ->scalarNode('builder')->end()
+                                ->scalarNode('type')->end()
+                                ->arrayNode('args')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('type')->isRequired()->end()
+                                            ->scalarNode('defaultValue')->end()
+                                        ->end()
+                                    ->end()
                                 ->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                                ->scalarNode('deprecationReason')->end()
                             ->end()
                         ->end()
-                        ->scalarNode('resolve')->end()
-                        ->scalarNode('description')->end()
-                        ->scalarNode('deprecationReason')->end()
                     ->end()
-                ->end()
-            ->end()
-            ->scalarNode('resolveType')->end()
-            ->arrayNode('values')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->isRequired()
-                    ->children()
-                        ->scalarNode('value')->end()
-                        ->scalarNode('description')->end()
+                    ->scalarNode('resolveType')->end()
+                    ->arrayNode('values')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->isRequired()
+                            ->children()
+                                ->scalarNode('value')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
                     ->end()
-                ->end()
-            ->end()
-            ->arrayNode('interfaces')
-                ->prototype('scalar')->end()
-            ->end()
-            ->scalarNode('nodeType')->end()
-            ->arrayNode('edgeFields')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('type')->end()
-                        ->scalarNode('resolve')->end()
-                        ->scalarNode('description')->end()
+                    ->arrayNode('interfaces')
+                        ->prototype('scalar')->end()
                     ->end()
-                ->end()
-            ->end()
-            ->arrayNode('connectionFields')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('type')->end()
-                        ->scalarNode('resolve')->end()
-                        ->scalarNode('description')->end()
+                    ->scalarNode('nodeType')->end()
+                    ->arrayNode('edgeFields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
                     ->end()
-                ->end()
-            ->end()
-            ->scalarNode('resolveCursor')->end()
-            ->scalarNode('resolveNode')->end()
-        ->end();
+                    ->arrayNode('connectionFields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->scalarNode('resolveCursor')->end()
+                    ->scalarNode('resolveNode')->end()
+                ->end();
+                break;
+
+            case 'fields':
+                $node->children()
+                    ->arrayNode('inputFields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                     ->arrayNode('inputFields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                     ->arrayNode('outputFields')
+                        ->useAttributeAsKey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('type')->end()
+                                ->scalarNode('resolve')->end()
+                                ->scalarNode('description')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->scalarNode('mutateAndGetPayload')->end()
+                ->end();
+                break;
+
+        }
+
 
         return $node;
     }

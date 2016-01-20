@@ -5,20 +5,20 @@ namespace Overblog\GraphBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
-class TypePass implements CompilerPassInterface
+class FieldPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $graphTypesMapping = [];
+        $graphFieldsMapping = [];
 
-        $taggedServices = $container->findTaggedServiceIds('overblog_graph.type');
+        $taggedServices = $container->findTaggedServiceIds('overblog_graph.field');
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $tag) {
-                $graphTypesMapping[$tag['alias']] = $id;
+                $graphFieldsMapping[$tag['alias']] = $id;
             }
         }
 
-        $container->setParameter('overblog_graph.types_mapping', $graphTypesMapping);
+        $container->setParameter('overblog_graph.fields_mapping', $graphFieldsMapping);
     }
 }

@@ -26,17 +26,29 @@ services:
         arguments:
             - "@overblog_graph.config_resolver"
 
+    overblog_graph.field_builder:
+        class: Overblog\GraphBundle\Definition\Builder\FieldBuilder
+        arguments:
+            - "@overblog_graph.config_resolver"
+
     overblog_graph.config_resolver:
         class: Overblog\GraphBundle\Resolver\ConfigResolver
         arguments:
             - "@overblog_graph.type_resolver"
+            - "@overblog_graph.field_resolver"
             - "@overblog_graph.expression_language"
-            - "@service_container"
 
     overblog_graph.type_resolver:
         class: Overblog\GraphBundle\Resolver\TypeResolver
         arguments:
             - "@service_container"
 
+    overblog_graph.field_resolver:
+        class: Overblog\GraphBundle\Resolver\FieldResolver
+        arguments:
+            - "@service_container"
+
     overblog_graph.expression_language:
         class: Overblog\GraphBundle\ExpressionLanguage\ExpressionLanguage
+        calls:
+            - ["setContainer", ["@service_container"]]

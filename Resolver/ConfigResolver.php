@@ -5,25 +5,25 @@ namespace Overblog\GraphBundle\Resolver;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphBundle\Definition\FieldInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ConfigResolver implements ResolverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     /**
      * @var ExpressionLanguage
      */
     private $expressionLanguage;
 
     /**
-     * @var ResolverInterface
+     * @var TypeResolver
      */
     private $typeResolver;
+
+    /**
+     * @var FieldResolver
+     */
+    private $fieldResolver;
 
     // [name => method]
     private $resolverMap = [
@@ -38,13 +38,16 @@ class ConfigResolver implements ResolverInterface
         'nodeType' => 'resolveTypeCallback',
         'connectionFields' => 'resolveFields',
         'edgeFields' => 'resolveFields',
+        'outputFields' => 'resolveFields',
+        'inputFields' => 'resolveFields',
+        'mutateAndGetPayload' => 'resolveResolveCallback',
     ];
 
-    public function __construct(ResolverInterface $typeResolver, ExpressionLanguage $expressionLanguage, ContainerInterface $container)
+    public function __construct(TypeResolver $typeResolver, FieldResolver $fieldResolver, ExpressionLanguage $expressionLanguage)
     {
         $this->typeResolver = $typeResolver;
+        $this->fieldResolver = $fieldResolver;
         $this->expressionLanguage = $expressionLanguage;
-        $this->container = $container;
     }
 
     public function resolve($config)
@@ -67,6 +70,24 @@ class ConfigResolver implements ResolverInterface
     private function resolveFields(array $fields)
     {
         foreach ($fields as $field => &$options) {
+            if (isset($options['builder']) && is_string($options['builder'])) {
+                $alias = $options['builder'];
+
+                $fieldsBuilder = $this->fieldResolver->resolve($alias);
+
+                if ($fieldsBuilder instanceof FieldInterface) {
+                    $options = $fieldsBuilder->toFieldsDefinition();
+                }
+                elseif($fieldsBuilder instanceof \Closure) {
+                    $options = $fieldsBuilder();
+                }
+                else {
+                    $options = get_object_vars($fieldsBuilder);
+                }
+
+                continue;
+            }
+
             if (isset($options['type']) && is_string($options['type'])) {
                 $options['type'] = $this->resolveTypeCallback($options['type']);
             }
@@ -152,16 +173,13 @@ class ConfigResolver implements ResolverInterface
             return null;
         }
 
-        $container = $this->container;
-
-        return function ($value, array $args, ResolveInfo $info) use ($container, $expression) {
+        return function ($value, array $args, ResolveInfo $info) use ($expression) {
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
                     'value' => $value,
                     'args' => $args,
                     'info' => $info,
-                    'container' => $container
                 ]
             );
         };
@@ -173,15 +191,12 @@ class ConfigResolver implements ResolverInterface
             return null;
         }
 
-        $container = $this->container;
-
-        return function ($value, ResolveInfo $info) use ($container, $expression) {
+        return function ($value, ResolveInfo $info) use ($expression) {
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
                     'value' => $value,
                     'info' => $info,
-                    'container' => $container
                 ]
             );
         };
@@ -193,15 +208,12 @@ class ConfigResolver implements ResolverInterface
             return null;
         }
 
-        $container = $this->container;
-
-        return function ($value, ResolveInfo $info) use ($container, $expression) {
+        return function ($value, ResolveInfo $info) use ($expression) {
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
                     'value' => $value,
                     'info' => $info,
-                    'container' => $container
                 ]
             );
         };
@@ -213,12 +225,7 @@ class ConfigResolver implements ResolverInterface
 
         foreach ($values as $name => &$options) {
             if (isset($options['value'])) {
-                $options['value'] = $this->expressionLanguage->evaluate(
-                    $options['value'],
-                    [
-                        'container' => $this->container
-                    ]
-                );
+                $options['value'] = $this->expressionLanguage->evaluate($options['value']);
             }
         }
 

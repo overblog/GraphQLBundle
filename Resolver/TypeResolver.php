@@ -57,7 +57,7 @@ class TypeResolver implements ResolverInterface
         return $typesMapping[$alias];
     }
 
-    private function getTypeFromAlias($alias)
+    public function getTypeFromAlias($alias)
     {
         $serviceId = $this->getTypeServiceIdFromAlias($alias);
 

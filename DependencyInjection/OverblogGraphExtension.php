@@ -20,6 +20,27 @@ class OverblogGraphExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
+
+        if (isset($config['definitions']['fields'])) {
+            $typeBuilder = $container->get('overblog_graph.field_builder');
+
+            foreach($config['definitions']['fields'] as $name => $typeDefinition) {
+                $customTypeId = sprintf('overblog_graph.definition.custom_%s_field', $container->underscore($name));
+
+                $typeDefinition['config']['name'] = $name;
+
+                $class = $typeBuilder->getClassBaseType($typeDefinition['type']);
+
+                $container
+                    ->setDefinition($customTypeId, new Definition($class))
+                    ->setFactory([ new Reference('overblog_graph.field_builder'), 'create' ])
+                    ->setArguments([$typeDefinition['type'], $typeDefinition['config']])
+                    ->addTag('overblog_graph.field', ['alias' => $name])
+                    ->setPublic(true)
+                ;
+            }
+        }
+
         if (isset($config['definitions']['types'])) {
             $typeBuilder = $container->get('overblog_graph.type_builder');
 
