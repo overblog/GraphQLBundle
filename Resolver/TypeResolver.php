@@ -34,7 +34,7 @@ class TypeResolver implements ResolverInterface
         // List
         if ('[' === $type[0]) {
             if (']' !== $type[strlen($type) - 1]) {
-                throw new \RuntimeException(sprintf('Invalid type "%s"', $type));
+                throw new UnresolvableException(sprintf('Invalid type "%s"', $type));
             }
             return Type::listOf($this->resolve(substr($type, 1, -1)));
         }
@@ -49,7 +49,7 @@ class TypeResolver implements ResolverInterface
         $typesMapping = $this->container->getParameter('overblog_graph.types_mapping');
 
         if (!isset($typesMapping[$alias])) {
-            throw new \RuntimeException(
+            throw new UnresolvableException(
                 sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
             );
         }

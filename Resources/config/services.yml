@@ -48,6 +48,11 @@ services:
         arguments:
             - "@service_container"
 
+    overblog_graph.relsover_resolver:
+        class: Overblog\GraphBundle\Resolver\ResolverResolver
+        arguments:
+            - "@service_container"
+
     overblog_graph.expression_language:
         class: Overblog\GraphBundle\ExpressionLanguage\ExpressionLanguage
         calls:

@@ -29,7 +29,7 @@ class OverblogGraphExtension extends Extension
 
                 $typeDefinition['config']['name'] = $name;
 
-                $class = $typeBuilder->getClassBaseType($typeDefinition['type']);
+                $class = $typeBuilder->getClassBaseField($typeDefinition['type']);
 
                 $container
                     ->setDefinition($customTypeId, new Definition($class))

@@ -2,15 +2,15 @@
 
 namespace Overblog\GraphBundle\DependencyInjection\Compiler;
 
-class FieldPass extends TaggedServiceMappingPass
+class ResolverPass extends TaggedServiceMappingPass
 {
     protected function getTagName()
     {
-        return 'overblog_graph.field';
+        return 'overblog_graph.resolver';
     }
 
     protected function getParameterName()
     {
-        return 'overblog_graph.fields_mapping';
+        return 'overblog_graph.resolvers_mapping';
     }
 }

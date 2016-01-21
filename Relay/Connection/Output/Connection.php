@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Output\Relay;
+namespace Overblog\GraphBundle\Relay\Connection\Output;
 
 final class Connection
 {

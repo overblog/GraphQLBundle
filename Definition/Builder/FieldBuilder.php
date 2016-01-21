@@ -21,20 +21,20 @@ class FieldBuilder
      */
     public function create($type, array $config)
     {
-        $class = $this->getClassBaseType($type);
+        $class = $this->getClassBaseField($type);
 
         return new $class($this->configResolver->resolve($config));
     }
 
-    public function getClassBaseType($type)
+    public function getClassBaseField($field)
     {
-        switch($type) {
+        switch($field) {
             case 'mutation':
-                $class = sprintf('Overblog\\GraphBundle\\Definition\\Relay\\%sField', ucfirst($type));
+                $class = 'Overblog\\GraphBundle\\Relay\\Connection\\Mutation\\MutationField';
                 break;
 
             default:
-                throw new \RuntimeException(sprintf('Type "%s" is not managed.'), $type);
+                throw new \RuntimeException(sprintf('Field "%s" is not managed.'), $field);
         }
 
         return $class;

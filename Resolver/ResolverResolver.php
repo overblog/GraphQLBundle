@@ -2,11 +2,10 @@
 
 namespace Overblog\GraphBundle\Resolver;
 
-
-use Overblog\GraphBundle\Definition\FieldInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class FieldResolver implements ResolverInterface
+class ResolverResolver implements ResolverInterface
 {
     /**
      * @var ContainerInterface
@@ -20,19 +19,26 @@ class FieldResolver implements ResolverInterface
 
     /**
      * @param $type
-     * @return FieldInterface
+     * @return mixed
      */
     public function resolve($type)
     {
-        return $this->getTypeFromAlias($type);
+        $resolver = $this->getTypeFromAlias($type);
+        if ($resolver instanceof ContainerAwareInterface) {
+            $resolver->setContainer($this->container);
+        }
+
+        return $resolver;
     }
 
     private function getTypeServiceIdFromAlias($alias)
     {
-        $typesMapping = $this->container->getParameter('overblog_graph.fields_mapping');
+        $typesMapping = $this->container->getParameter('overblog_graph.resolvers_mapping');
 
         if (!isset($typesMapping[$alias])) {
-            throw new UnresolvableException(sprintf('Unknown field with alias "%s" (verified service tag)', $alias));
+            throw new UnresolvableException(
+                sprintf('Unknown resolver with alias "%s" (verified service tag)', $alias)
+            );
         }
 
         return $typesMapping[$alias];

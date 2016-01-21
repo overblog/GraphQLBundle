@@ -30,7 +30,7 @@ class TypeBuilder
     {
         switch($type) {
             case 'connection':
-                $class = 'Overblog\\GraphBundle\\Definition\\Relay\\ConnectionType';
+                $class = 'Overblog\\GraphBundle\\Relay\\Connection\\ConnectionType';
                 break;
 
             case 'object':

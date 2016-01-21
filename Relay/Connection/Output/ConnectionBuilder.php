@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Output\Relay;
+namespace Overblog\GraphBundle\Relay\Connection\Output;
 
 
 use Symfony\Component\OptionsResolver\OptionsResolver;

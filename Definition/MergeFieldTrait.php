@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition\Relay;
+namespace Overblog\GraphBundle\Definition;
 
 trait MergeFieldTrait
 {
@@ -11,7 +11,7 @@ trait MergeFieldTrait
                 return $defaultFields;
             }
 
-            if ($fields instanceof \Closure) {
+            if (is_callable($fields)) {
                 $fields = $fields();
             }
 

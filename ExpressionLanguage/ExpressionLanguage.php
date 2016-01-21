@@ -2,9 +2,8 @@
 
 namespace Overblog\GraphBundle\ExpressionLanguage;
 
-
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ExpressionLanguage as BaseExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface;
 
 class ExpressionLanguage extends BaseExpressionLanguage

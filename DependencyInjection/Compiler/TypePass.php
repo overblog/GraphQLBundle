@@ -2,23 +2,15 @@
 
 namespace Overblog\GraphBundle\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-
-class TypePass implements CompilerPassInterface
+class TypePass extends TaggedServiceMappingPass
 {
-    public function process(ContainerBuilder $container)
+    protected function getTagName()
     {
-        $graphTypesMapping = [];
+        return 'overblog_graph.type';
+    }
 
-        $taggedServices = $container->findTaggedServiceIds('overblog_graph.type');
-
-        foreach ($taggedServices as $id => $tags) {
-            foreach ($tags as $tag) {
-                $graphTypesMapping[$tag['alias']] = $id;
-            }
-        }
-
-        $container->setParameter('overblog_graph.types_mapping', $graphTypesMapping);
+    protected function getParameterName()
+    {
+        return 'overblog_graph.types_mapping';
     }
 }

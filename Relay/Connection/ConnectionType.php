@@ -1,12 +1,13 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition\Relay;
+namespace Overblog\GraphBundle\Relay\Connection;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Utils;
+use Overblog\GraphBundle\Definition\MergeFieldTrait;
 
 class ConnectionType extends ObjectType
 {

@@ -7,6 +7,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphBundle\Definition\FieldInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConfigResolver implements ResolverInterface
 {
@@ -28,11 +29,11 @@ class ConfigResolver implements ResolverInterface
     // [name => method]
     private $resolverMap = [
         'fields' => 'resolveFields',
-        'isTypeOf' => 'resolveIsTypeOfCallback',
+        'isTypeOf' => 'resolveResolveCallback',
         'interfaces' => 'resolveInterfaces',
         'types' => 'resolveType',
         'values' => 'resolveValues',
-        'resolveType' => 'resolveResolveTypeCallback',
+        'resolveType' => 'resolveResolveCallback',
         'resolveCursor' => 'resolveResolveCallback',
         'resolveNode' => 'resolveResolveCallback',
         'nodeType' => 'resolveTypeCallback',
@@ -43,7 +44,7 @@ class ConfigResolver implements ResolverInterface
         'mutateAndGetPayload' => 'resolveResolveCallback',
     ];
 
-    public function __construct(TypeResolver $typeResolver, FieldResolver $fieldResolver, ExpressionLanguage $expressionLanguage)
+    public function __construct(ResolverInterface $typeResolver, ResolverInterface $fieldResolver, ExpressionLanguage $expressionLanguage)
     {
         $this->typeResolver = $typeResolver;
         $this->fieldResolver = $fieldResolver;
@@ -78,7 +79,7 @@ class ConfigResolver implements ResolverInterface
                 if ($fieldsBuilder instanceof FieldInterface) {
                     $options = $fieldsBuilder->toFieldsDefinition();
                 }
-                elseif($fieldsBuilder instanceof \Closure) {
+                elseif(is_callable($fieldsBuilder)) {
                     $options = $fieldsBuilder();
                 }
                 else {
@@ -129,7 +130,7 @@ class ConfigResolver implements ResolverInterface
             $interface = $this->typeResolver->resolve($alias);
 
             if (!$interface instanceof InterfaceType) {
-                throw new \InvalidArgumentException(
+                throw new UnresolvableException(
                     sprintf(
                         'Invalid interface with alias "%s", must extend "%s".',
                         $alias,
@@ -152,9 +153,9 @@ class ConfigResolver implements ResolverInterface
             $type = $this->typeResolver->resolve($alias);
 
             if (!$type instanceof Type) {
-                throw new \InvalidArgumentException(
+                throw new UnresolvableException(
                     sprintf(
-                        'Invalid union type with alias "%s", must extend "%s".',
+                        'Invalid type with alias "%s", must extend "%s".',
                         $alias,
                         'GraphQL\\Type\\Definition\\Type'
                     )
@@ -172,48 +173,20 @@ class ConfigResolver implements ResolverInterface
         if (empty($expression)) {
             return null;
         }
+        $optionResolver = new OptionsResolver();
+        $optionResolver->setDefaults([null, null, null]);
 
-        return function ($value, array $args, ResolveInfo $info) use ($expression) {
+        return function (...$args) use ($expression, $optionResolver) {
+            $args = $optionResolver->resolve($args);
+
+            $arg1IsResolveInfo = $args[1] instanceof ResolveInfo;
+
             return $this->expressionLanguage->evaluate(
                 $expression,
                 [
-                    'value' => $value,
-                    'args' => $args,
-                    'info' => $info,
-                ]
-            );
-        };
-    }
-
-    private function resolveResolveTypeCallback($expression)
-    {
-        if (empty($expression)) {
-            return null;
-        }
-
-        return function ($value, ResolveInfo $info) use ($expression) {
-            return $this->expressionLanguage->evaluate(
-                $expression,
-                [
-                    'value' => $value,
-                    'info' => $info,
-                ]
-            );
-        };
-    }
-
-    private function resolveIsTypeOfCallback($expression)
-    {
-        if (empty($expression)) {
-            return null;
-        }
-
-        return function ($value, ResolveInfo $info) use ($expression) {
-            return $this->expressionLanguage->evaluate(
-                $expression,
-                [
-                    'value' => $value,
-                    'info' => $info,
+                    'value' => $args[0],
+                    'args' => !$arg1IsResolveInfo ? $args[1] : [],
+                    'info' => $arg1IsResolveInfo ? $args[1] : $args[2],
                 ]
             );
         };
