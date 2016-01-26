@@ -152,16 +152,6 @@ class ConfigResolver implements ResolverInterface
         foreach($rawTypes as $alias) {
             $type = $this->typeResolver->resolve($alias);
 
-            if (!$type instanceof Type) {
-                throw new UnresolvableException(
-                    sprintf(
-                        'Invalid type with alias "%s", must extend "%s".',
-                        $alias,
-                        'GraphQL\\Type\\Definition\\Type'
-                    )
-                );
-            }
-
             $types[] = $type;
         }
 
@@ -181,7 +171,7 @@ class ConfigResolver implements ResolverInterface
 
             $arg1IsResolveInfo = $args[1] instanceof ResolveInfo;
 
-            return $this->expressionLanguage->evaluate(
+            return $this->resolveUsingExpressionLanguageIfNeeded(
                 $expression,
                 [
                     'value' => $args[0],
@@ -198,10 +188,19 @@ class ConfigResolver implements ResolverInterface
 
         foreach ($values as $name => &$options) {
             if (isset($options['value'])) {
-                $options['value'] = $this->expressionLanguage->evaluate($options['value']);
+                $options['value'] = $this->resolveUsingExpressionLanguageIfNeeded($options['value']);
             }
         }
 
         return $values;
+    }
+
+    private function resolveUsingExpressionLanguageIfNeeded($expression, array $values = [])
+    {
+        if (is_string($expression) &&  0 === strpos($expression, '@=')) {
+            return $this->expressionLanguage->evaluate(substr($expression, 2), $values);
+        }
+
+        return $expression;
     }
 }

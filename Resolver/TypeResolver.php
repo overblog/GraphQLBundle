@@ -61,6 +61,22 @@ class TypeResolver implements ResolverInterface
     {
         $serviceId = $this->getTypeServiceIdFromAlias($alias);
 
-        return $serviceId !== null ? $this->container->get($serviceId) : null;
+        if (null === $serviceId) {
+            return null;
+        }
+
+        $type  = $this->container->get($serviceId);
+
+        if (!$type instanceof Type) {
+            throw new UnresolvableException(
+                sprintf(
+                    'Invalid type with alias "%s", must extend "%s".',
+                    $alias,
+                    'GraphQL\\Type\\Definition\\Type'
+                )
+            );
+        }
+
+        return $type;
     }
 }
