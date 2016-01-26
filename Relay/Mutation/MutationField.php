@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Relay\Connection\Mutation;
+namespace Overblog\GraphBundle\Relay\Mutation;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\InputObjectType;
@@ -15,17 +15,7 @@ class MutationField implements FieldInterface
 {
     use MergeFieldTrait;
 
-    private $name;
-
-    private $description;
-
-    private $type;
-
-    private $args;
-
-    private $resolve;
-
-    public function __construct(array $config)
+    public function toFieldsDefinition(array $config)
     {
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
@@ -77,36 +67,29 @@ class MutationField implements FieldInterface
             'fields' => $augmentedInputFields(), // TODO(mcg-web) work on a PR to accept array fields or closure that return array fields
         ]);
 
-        $this->name = $name;
-        $this->description = $description;
+        return [
+            'name' => $name,
+            'description' => $description,
+            'type' => $outputType,
+            'args' => [
+                'input' => ['type' =>  Type::nonNull($inputType)]
+            ],
+            'resolve' => function($_, $input, $info) use ($mutateAndGetPayload, $name) {
+                if (empty($input['input'])) {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            "Field \"%s\" argument \"input\" of type \"%sInput!\" is required but not provided.",
+                            $name,
+                            $name
+                        )
+                    );
+                }
 
-        $this->type = $outputType;
-        $this->args = [
-            'input' => ['type' =>  Type::nonNull($inputType)]
-        ];
-        $this->resolve = function($_, $input, $info) use ($mutateAndGetPayload) {
-            if (empty($input['input'])) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        "Field \"%s\" argument \"input\" of type \"%sInput!\" is required but not provided.",
-                        $this->name,
-                        $this->name
-                    )
-                );
+                $payload = $mutateAndGetPayload($input['input'], $info);
+                $payload['clientMutationId'] = $input['input']['clientMutationId'];
+
+                return $payload;
             }
-
-            $payload = $mutateAndGetPayload($_, $input, $info);
-            $payload['clientMutationId'] = $input['input']['clientMutationId'];
-
-            return $payload;
-        };
-    }
-
-    /**
-     * @return array
-     */
-    public function toFieldsDefinition()
-    {
-        return get_object_vars($this);
+        ];
     }
 }

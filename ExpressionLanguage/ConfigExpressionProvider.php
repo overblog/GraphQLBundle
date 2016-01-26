@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphBundle\ExpressionLanguage;
 
+use Overblog\GraphBundle\Relay\Node\GlobalId;
 use Overblog\GraphBundle\Resolver\ResolverInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
@@ -23,6 +24,12 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 return $variables['container']->getParameter($value);
             }),
 
+            new ExpressionFunction('isTypeOf', function ($className) {
+                return sprintf('$value instanceof %s', $className);
+            }, function (array $variables, $className) {
+                return $variables['value'] instanceof $className;
+            }),
+
             new ExpressionFunction('resolver', function ($name, array $args = []) {
                 return sprintf('$this->container->get("overblog_graph.relsover_resolver")->resolve(%s)->resolve($args)', $name);
             }, function (array $variables, $name, array $args = []) {
@@ -42,18 +49,23 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 }
             }),
 
-            new ExpressionFunction('globalId', function ($idValue)   {
-                return sprintf('base64_encode($info->parentType->name. ":" . %s)', $idValue);
-            }, function (array $variables, $idValue) {
-                $name = $variables['info']->parentType->name;
+            new ExpressionFunction('globalId', function ($id, $typeName = null)   {
+                return sprintf(
+                    '\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %d)',
+                    $typeName,
+                    $typeName,
+                    $id
+                );
+            }, function (array $variables, $id, $typeName = null) {
+                $type = !empty($typeName)? $typeName : $variables['info']->parentType->name;
 
-                return base64_encode(sprintf('%s:%s', $name, $idValue));
+                return GlobalId::toGlobalId($type, $id);
             }),
 
             new ExpressionFunction('fromGlobalId', function ($globalId) {
-                return sprintf('explode(":", base64_decode(%s), 2)', $globalId);
+                return sprintf('\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)', $globalId);
             }, function (array $variables, $globalId) {
-                return explode(':', base64_decode($globalId), 2);
+                return GlobalId::fromGlobalId($globalId);
             }),
         ];
     }

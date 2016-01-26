@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphBundle\DependencyInjection;
 
+use GraphQL\Type\Definition\Config;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -16,45 +17,28 @@ class OverblogGraphExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
+        $loader->load('graphql_fields.yml');
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-
-        if (isset($config['definitions']['fields'])) {
-            $typeBuilder = $container->get('overblog_graph.field_builder');
-
-            foreach($config['definitions']['fields'] as $name => $typeDefinition) {
-                $customTypeId = sprintf('overblog_graph.definition.custom_%s_field', $container->underscore($name));
-
-                $typeDefinition['config']['name'] = $name;
-
-                $class = $typeBuilder->getClassBaseField($typeDefinition['type']);
-
-                $container
-                    ->setDefinition($customTypeId, new Definition($class))
-                    ->setFactory([ new Reference('overblog_graph.field_builder'), 'create' ])
-                    ->setArguments([$typeDefinition['type'], $typeDefinition['config']])
-                    ->addTag('overblog_graph.field', ['alias' => $name])
-                    ->setPublic(true)
-                ;
-            }
-        }
+        $config['definitions']['config_validation'] ? Config::enableValidation() : Config::disableValidation();
 
         if (isset($config['definitions']['types'])) {
-            $typeBuilder = $container->get('overblog_graph.type_builder');
+            $builderId = 'overblog_graph.type_builder';
+            $builder = $container->get($builderId);
 
-            foreach($config['definitions']['types'] as $name => $typeDefinition) {
+            foreach($config['definitions']['types'] as $name => $options) {
                 $customTypeId = sprintf('overblog_graph.definition.custom_%s_type', $container->underscore($name));
 
-                $typeDefinition['config']['name'] = $name;
+                $options['config']['name'] = $name;
 
-                $class = $typeBuilder->getClassBaseType($typeDefinition['type']);
+                $class = $builder->getBaseClassName($options['type']);
 
                 $container
                     ->setDefinition($customTypeId, new Definition($class))
-                    ->setFactory([ new Reference('overblog_graph.type_builder'), 'create' ])
-                    ->setArguments([$typeDefinition['type'], $typeDefinition['config']])
+                    ->setFactory([ new Reference($builderId), 'create' ])
+                    ->setArguments([$options['type'], $options['config']])
                     ->addTag('overblog_graph.type', ['alias' => $name])
                     ->setPublic(true)
                 ;

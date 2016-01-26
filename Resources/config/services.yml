@@ -26,11 +26,6 @@ services:
         arguments:
             - "@overblog_graph.config_resolver"
 
-    overblog_graph.field_builder:
-        class: Overblog\GraphBundle\Definition\Builder\FieldBuilder
-        arguments:
-            - "@overblog_graph.config_resolver"
-
     overblog_graph.config_resolver:
         class: Overblog\GraphBundle\Resolver\ConfigResolver
         arguments:

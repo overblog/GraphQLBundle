@@ -5,7 +5,7 @@ namespace Overblog\GraphBundle\Definition\Builder;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphBundle\Resolver\ResolverInterface;
 
-class TypeBuilder
+class TypeBuilder implements ConfigBuilderInterface
 {
     private $configResolver;
 
@@ -21,12 +21,12 @@ class TypeBuilder
      */
     public function create($type, array $config)
     {
-        $class = $this->getClassBaseType($type);
+        $class = $this->getBaseClassName($type);
 
         return new $class($this->configResolver->resolve($config));
     }
 
-    public function getClassBaseType($type)
+    public function getBaseClassName($type)
     {
         switch($type) {
             case 'connection':

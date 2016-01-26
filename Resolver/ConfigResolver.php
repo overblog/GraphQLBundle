@@ -31,7 +31,7 @@ class ConfigResolver implements ResolverInterface
         'fields' => 'resolveFields',
         'isTypeOf' => 'resolveResolveCallback',
         'interfaces' => 'resolveInterfaces',
-        'types' => 'resolveType',
+        'types' => 'resolveTypes',
         'values' => 'resolveValues',
         'resolveType' => 'resolveResolveCallback',
         'resolveCursor' => 'resolveResolveCallback',
@@ -42,6 +42,8 @@ class ConfigResolver implements ResolverInterface
         'outputFields' => 'resolveFields',
         'inputFields' => 'resolveFields',
         'mutateAndGetPayload' => 'resolveResolveCallback',
+        'idFetcher' => 'resolveResolveCallback',
+        'nodeInterfaceType' => 'resolveTypeCallback',
     ];
 
     public function __construct(ResolverInterface $typeResolver, ResolverInterface $fieldResolver, ExpressionLanguage $expressionLanguage)
@@ -75,14 +77,15 @@ class ConfigResolver implements ResolverInterface
                 $alias = $options['builder'];
 
                 $fieldsBuilder = $this->fieldResolver->resolve($alias);
+                $builderConfig = isset($options['builderConfig']) ? $this->resolve($options['builderConfig']) : [];
+                $builderConfig['name'] = $field;
 
                 if ($fieldsBuilder instanceof FieldInterface) {
-                    $options = $fieldsBuilder->toFieldsDefinition();
-                }
-                elseif(is_callable($fieldsBuilder)) {
-                    $options = $fieldsBuilder();
-                }
-                else {
+                    $options = $fieldsBuilder->toFieldsDefinition($builderConfig);
+                } elseif(is_callable($fieldsBuilder)) {
+                    $options = call_user_func_array($fieldsBuilder, [$builderConfig]);
+                } else {
+                    // TODO (mcg-web) throw exception?
                     $options = get_object_vars($fieldsBuilder);
                 }
 

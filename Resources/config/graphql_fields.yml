@@ -1,0 +1,16 @@
+services:
+    #relay
+    overblog_graph.definition.relay_mutation_mutation_field:
+        class:  Overblog\GraphBundle\Relay\Mutation\MutationField
+        tags:
+            - { name: overblog_graph.field, alias: Mutation }
+
+    overblog_graph.definition.relay_node_global_id_field:
+        class:  Overblog\GraphBundle\Relay\Node\GlobalIdField
+        tags:
+            - { name: overblog_graph.field, alias: GlobalId }
+
+    overblog_graph.definition.relay_node_node_field:
+        class:  Overblog\GraphBundle\Relay\Node\NodeField
+        tags:
+            - { name: overblog_graph.field, alias: Node }
