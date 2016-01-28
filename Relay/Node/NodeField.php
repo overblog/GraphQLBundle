@@ -12,15 +12,17 @@ class NodeField implements FieldInterface
     public function toFieldsDefinition(array $config)
     {
         Config::validate($config, [
+            'name' => Config::STRING | Config::REQUIRED,
             'idFetcher' => Config::CALLBACK | Config::REQUIRED,
             'nodeInterfaceType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED
         ]);
 
+        $name = $config['name'];
         $idFetcher = $config['idFetcher'];
         $nodeInterfaceType = $config['nodeInterfaceType'];
 
         return [
-            'name' => 'node',
+            'name' => $name,
             'description' => 'Fetches an object given its ID',
             'type' => $nodeInterfaceType,
             'args' => [

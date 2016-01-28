@@ -105,6 +105,10 @@ class ConfigResolver implements ResolverInterface
             if (isset($options['resolve']) && is_string($options['resolve'])) {
                 $options['resolve'] = $this->resolveResolveCallback($options['resolve']);
             }
+
+            if (isset($options['deprecationReason'])) {
+                $options['deprecationReason'] = $this->resolveUsingExpressionLanguageIfNeeded($options['deprecationReason']);
+            }
         }
 
         return $fields;

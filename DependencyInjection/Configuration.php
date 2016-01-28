@@ -121,7 +121,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('resolve')->end()
                         ->scalarNode('description')->end()
-                        ->scalarNode('deprecationReason')->end()
+                        ->variableNode('deprecationReason')->end()
                     ->end()
                 ->end()
             ->end()

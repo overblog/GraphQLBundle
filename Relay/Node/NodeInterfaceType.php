@@ -17,9 +17,9 @@ class NodeInterfaceType extends InterfaceType
         $resolveType = isset($config['resolveType']) ? $config['resolveType'] : null;
 
         parent::__construct([
-            'name' => 'Node',
+            'name' => 'NodeInterface',
             'description' => 'Fetches an object given its ID',
-            'args' => [
+            'fields' => [
                 'id' => [
                     'type' =>  Type::nonNull(Type::id()),
                     'description' => 'The ID of an object'
