@@ -34,7 +34,7 @@ class NodeField implements FieldInterface
                         "Argument \"id\" is required but not provided."
                     );
                 }
-                return $idFetcher($args['id'], $info);
+                return call_user_func_array($idFetcher, [$args['id'], $info]);
             }
         ];
     }

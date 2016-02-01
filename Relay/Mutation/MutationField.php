@@ -64,7 +64,7 @@ class MutationField implements FieldInterface
 
         $inputType = new InputObjectType([
             'name' => $name . 'Input',
-            'fields' => $augmentedInputFields(), // TODO(mcg-web) work on a PR to accept array fields or closure that return array fields
+            'fields' => $augmentedInputFields,
         ]);
 
         return [

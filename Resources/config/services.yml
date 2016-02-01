@@ -32,6 +32,7 @@ services:
             - "@overblog_graph.type_resolver"
             - "@overblog_graph.field_resolver"
             - "@overblog_graph.expression_language"
+            - %kernel.debug%
 
     overblog_graph.type_resolver:
         class: Overblog\GraphBundle\Resolver\TypeResolver
@@ -48,7 +49,14 @@ services:
         arguments:
             - "@service_container"
 
-    overblog_graph.expression_language:
+    overblog_graph.cache_expression_language_parser.default:
+        class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache
+        public: false
+
+    overblog_graph.expression_language.default:
         class: Overblog\GraphBundle\ExpressionLanguage\ExpressionLanguage
+        public: false
+        arguments:
+            - "@overblog_graph.cache_expression_language_parser"
         calls:
             - ["setContainer", ["@service_container"]]

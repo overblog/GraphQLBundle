@@ -4,9 +4,9 @@ namespace Overblog\GraphBundle\Definition;
 
 trait MergeFieldTrait
 {
-    protected function getFieldsWithDefaults($fields, array $defaultFields)
+    protected function getFieldsWithDefaults($fields, array $defaultFields, $forceArray = true)
     {
-        return function() use ($fields, $defaultFields) {
+        $callback = function() use ($fields, $defaultFields) {
             if (empty($fields)) {
                 return $defaultFields;
             }
@@ -21,5 +21,11 @@ trait MergeFieldTrait
 
             return array_merge($fields, $defaultFields);
         };
+
+        if ($forceArray) {
+            return $callback();
+        } else {
+            return $callback;
+        }
     }
 }

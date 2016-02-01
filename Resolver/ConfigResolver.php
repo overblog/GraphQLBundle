@@ -2,10 +2,10 @@
 
 namespace Overblog\GraphBundle\Resolver;
 
-use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphBundle\Definition\FieldInterface;
+use Overblog\GraphBundle\Relay\Connection\Output\Connection;
+use Overblog\GraphBundle\Relay\Connection\Output\Edge;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,6 +25,9 @@ class ConfigResolver implements ResolverInterface
      * @var FieldResolver
      */
     private $fieldResolver;
+
+    /** @var boolean */
+    private $enabledDebug;
 
     // [name => method]
     private $resolverMap = [
@@ -46,11 +49,17 @@ class ConfigResolver implements ResolverInterface
         'nodeInterfaceType' => 'resolveTypeCallback',
     ];
 
-    public function __construct(ResolverInterface $typeResolver, ResolverInterface $fieldResolver, ExpressionLanguage $expressionLanguage)
+    public function __construct(
+        ResolverInterface $typeResolver,
+        ResolverInterface $fieldResolver,
+        ExpressionLanguage $expressionLanguage,
+        $enabledDebug = false
+    )
     {
         $this->typeResolver = $typeResolver;
         $this->fieldResolver = $fieldResolver;
         $this->expressionLanguage = $expressionLanguage;
+        $this->enabledDebug = $enabledDebug;
     }
 
     public function resolve($config)
@@ -84,10 +93,13 @@ class ConfigResolver implements ResolverInterface
                     $options = $fieldsBuilder->toFieldsDefinition($builderConfig);
                 } elseif(is_callable($fieldsBuilder)) {
                     $options = call_user_func_array($fieldsBuilder, [$builderConfig]);
-                } else {
-                    // TODO (mcg-web) throw exception?
+                } elseif(is_object($fieldsBuilder)) {
                     $options = get_object_vars($fieldsBuilder);
+                } else {
+                    throw new \RuntimeException(sprintf('Could not build field "%s".', $alias));
                 }
+
+                unset($options['builderConfig'], $options['builder']);
 
                 continue;
             }
@@ -106,6 +118,18 @@ class ConfigResolver implements ResolverInterface
                 $options['resolve'] = $this->resolveResolveCallback($options['resolve']);
             }
 
+            if (isset($options['access']) && is_string($options['access'])) {
+                $resolveCallback = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
+
+                if (isset($options['resolve']) && is_callable($options['resolve'])) {
+                    $resolveCallback = $options['resolve'];
+                }
+
+                $options['resolve'] = $this->resolveAccessAndWrapResolveCallback($options['access'], $resolveCallback);
+
+                unset($options['access']);
+            }
+
             if (isset($options['deprecationReason'])) {
                 $options['deprecationReason'] = $this->resolveUsingExpressionLanguageIfNeeded($options['deprecationReason']);
             }
@@ -117,52 +141,93 @@ class ConfigResolver implements ResolverInterface
     private function resolveTypeCallback($expr)
     {
         return function () use ($expr) {
-            $type = $this->typeResolver->resolve($expr);
-
-            if (!$type instanceof Type) {
-                throw new \InvalidArgumentException(
-                    sprintf('Invalid type! Must be instance of "%s"', 'GraphQL\\Type\\Definition\\Type')
-                );
-            }
-
-            return $type;
+            return $this->resolveType($expr);
         };
     }
 
     private function resolveInterfaces(array $rawInterfaces)
     {
-        $interfaces = [];
-
-        foreach($rawInterfaces as $alias) {
-            $interface = $this->typeResolver->resolve($alias);
-
-            if (!$interface instanceof InterfaceType) {
-                throw new UnresolvableException(
-                    sprintf(
-                        'Invalid interface with alias "%s", must extend "%s".',
-                        $alias,
-                        'GraphQL\\Type\\Definition\\InterfaceType'
-                    )
-                );
-            }
-
-            $interfaces[] = $interface;
-        }
-
-        return $interfaces;
+        return $this->resolveTypes($rawInterfaces, 'GraphQL\\Type\\Definition\\InterfaceType');
     }
 
-    private function resolveTypes(array $rawTypes)
+    private function resolveTypes(array $rawTypes, $parentClass = 'GraphQL\\Type\\Definition\\Type')
     {
         $types = [];
 
         foreach($rawTypes as $alias) {
-            $type = $this->typeResolver->resolve($alias);
-
-            $types[] = $type;
+            $types[] = $this->resolveType($alias, $parentClass);
         }
 
         return $types;
+    }
+
+    private function resolveType($expr, $parentClass = 'GraphQL\\Type\\Definition\\Type')
+    {
+        try {
+            $type = $this->typeResolver->resolve($expr);
+
+            if (class_exists($parentClass) && !$type instanceof $parentClass) {
+                throw new \InvalidArgumentException(
+                    sprintf('Invalid type! Must be instance of "%s"', $parentClass)
+                );
+            }
+        } catch (\Exception $e) {
+            if ($this->enabledDebug) {
+                throw $e;
+            }
+            throw new \RuntimeException(sprintf('An error occurred while resolving type "%s".', $expr), 0, $e);
+        }
+
+        return $type;
+    }
+
+    private function resolveAccessAndWrapResolveCallback($expression, callable $resolveCallback = null)
+    {
+        return function (...$args) use ($expression, $resolveCallback) {
+            $result = null !== $resolveCallback  ? call_user_func_array($resolveCallback, $args) : null;
+
+            $values = $this->resolveResolveCallbackArgs(...$args);
+
+            $checkAccess = function($object) use ($expression, $values) {
+                try {
+                    $access = $this->resolveUsingExpressionLanguageIfNeeded(
+                        $expression,
+                        array_merge($values, ['object' => $object])
+                    );
+                } catch(\Exception $e) {
+                    if ($this->enabledDebug) {
+                        throw $e;
+                    }
+                    $access = false;
+                }
+
+                return $access;
+            };
+
+            if (is_array($result) || $result instanceof \ArrayAccess) {
+                $result = array_filter(
+                    array_map(
+                        function($object) use ($checkAccess) {
+                            return $checkAccess($object) ? $object : null;
+                        },
+                        $result
+                    )
+                );
+            } elseif ($result instanceof Connection) {
+                $result->edges = array_map(
+                    function(Edge $edge) use ($checkAccess) {
+                        $edge->node = $checkAccess($edge->node) ? $edge->node : null;
+
+                        return $edge;
+                    },
+                    $result->edges
+                );
+            } elseif (!empty($result) && !$checkAccess($result)) {
+                $result = null;
+            }
+
+            return $result;
+        };
     }
 
     private function resolveResolveCallback($expression)
@@ -170,23 +235,39 @@ class ConfigResolver implements ResolverInterface
         if (empty($expression)) {
             return null;
         }
+
+        return function (...$args) use ($expression) {
+            try {
+                $result = $this->resolveUsingExpressionLanguageIfNeeded(
+                    $expression,
+                    $this->resolveResolveCallbackArgs(...$args)
+                );
+            } catch(\Exception $e) {
+                if ($this->enabledDebug) {
+                    throw $e;
+                }
+                throw new \RuntimeException('An error occurred while executing resolver.', 0, $e);
+            }
+
+            return $result;
+        };
+    }
+
+    private function resolveResolveCallbackArgs(...$args)
+    {
         $optionResolver = new OptionsResolver();
         $optionResolver->setDefaults([null, null, null]);
 
-        return function (...$args) use ($expression, $optionResolver) {
-            $args = $optionResolver->resolve($args);
+        $args = $optionResolver->resolve($args);
 
-            $arg1IsResolveInfo = $args[1] instanceof ResolveInfo;
+        $arg1IsResolveInfo = $args[1] instanceof ResolveInfo;
 
-            return $this->resolveUsingExpressionLanguageIfNeeded(
-                $expression,
-                [
-                    'value' => $args[0],
-                    'args' => !$arg1IsResolveInfo ? $args[1] : [],
-                    'info' => $arg1IsResolveInfo ? $args[1] : $args[2],
-                ]
-            );
-        };
+        return [
+            'value' => $args[0],
+            'args' => !$arg1IsResolveInfo ? $args[1] : [],
+            'info' => $arg1IsResolveInfo ? $args[1] : $args[2],
+        ];
+
     }
 
     private function resolveValues(array $rawValues)

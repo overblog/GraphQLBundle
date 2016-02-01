@@ -2,32 +2,24 @@
 
 namespace Overblog\GraphBundle\Resolver;
 
-
-use Overblog\GraphBundle\Definition\FieldInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-class FieldResolver implements ResolverInterface
+class FieldResolver extends AbstractResolver
 {
     /**
-     * @var ContainerInterface
+     * @param $alias
+     * @return mixed
      */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function resolve($alias)
     {
-        $this->container = $container;
+        if (null !== $field = $this->cache->fetch($alias)) {
+            return $field;
+        }
+        $field = $this->getFieldFromAlias($alias);
+        $this->cache->save($alias, $field);
+
+        return $field;
     }
 
-    /**
-     * @param $type
-     * @return FieldInterface
-     */
-    public function resolve($type)
-    {
-        return $this->getTypeFromAlias($type);
-    }
-
-    private function getTypeServiceIdFromAlias($alias)
+    private function getFieldServiceIdFromAlias($alias)
     {
         $typesMapping = $this->container->getParameter('overblog_graph.fields_mapping');
 
@@ -38,9 +30,9 @@ class FieldResolver implements ResolverInterface
         return $typesMapping[$alias];
     }
 
-    public function getTypeFromAlias($alias)
+    private function getFieldFromAlias($alias)
     {
-        $serviceId = $this->getTypeServiceIdFromAlias($alias);
+        $serviceId = $this->getFieldServiceIdFromAlias($alias);
 
         return $serviceId !== null ? $this->container->get($serviceId) : null;
     }

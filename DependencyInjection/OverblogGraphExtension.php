@@ -24,30 +24,33 @@ class OverblogGraphExtension extends Extension
 
         $config['definitions']['config_validation'] ? Config::enableValidation() : Config::disableValidation();
 
+        if (isset($config['services'])) {
+            foreach ($config['services'] as $name => $id) {
+                $alias = sprintf('%s.%s', $this->getAlias(), $name);
+                $container->setAlias($alias, $id);
+            }
+        }
+
         if (isset($config['definitions']['types'])) {
-            $builderId = 'overblog_graph.type_builder';
-            $builder = $container->get($builderId);
+            $builderId = $this->getAlias() . '.type_builder';
 
             foreach($config['definitions']['types'] as $name => $options) {
-                $customTypeId = sprintf('overblog_graph.definition.custom_%s_type', $container->underscore($name));
+                $customTypeId = sprintf('%s.definition.custom_%s_type', $this->getAlias(), $container->underscore($name));
 
                 $options['config']['name'] = $name;
 
-                $class = $builder->getBaseClassName($options['type']);
-
                 $container
-                    ->setDefinition($customTypeId, new Definition($class))
+                    ->setDefinition($customTypeId, new Definition('GraphQL\\Type\\Definition\\Type'))
                     ->setFactory([ new Reference($builderId), 'create' ])
                     ->setArguments([$options['type'], $options['config']])
-                    ->addTag('overblog_graph.type', ['alias' => $name])
-                    ->setPublic(true)
+                    ->addTag($this->getAlias() . '.type', ['alias' => $name])
                 ;
             }
         }
 
         if (isset($config['definitions']['schema'])) {
             $container
-                ->getDefinition('overblog_graph.schema')
+                ->getDefinition($this->getAlias(). '.schema')
                 ->replaceArgument(0, $config['definitions']['schema']['query'])
                 ->replaceArgument(1, $config['definitions']['schema']['mutation'])
                 ->setPublic(true)

@@ -6,40 +6,37 @@ namespace Overblog\GraphBundle\Resolver;
 use GraphQL\Type\Definition\Type;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class TypeResolver implements ResolverInterface
+class TypeResolver extends AbstractResolver
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @param string $type
+     * @param string $alias
      * @return \GraphQL\Type\Definition\Type
      */
-    public function resolve($type)
+    public function resolve($alias)
     {
-        if (!is_string($type)) {
+        if (null !== $type = $this->cache->fetch($alias)) {
             return $type;
         }
+
+        if (!is_string($alias)) {
+            return $alias;
+        }
         // Non-Null
-        if ('!' === $type[strlen($type) - 1]) {
-            return Type::nonNull($this->resolve(substr($type, 0, -1)));
+        if ('!' === $alias[strlen($alias) - 1]) {
+            return Type::nonNull($this->resolve(substr($alias, 0, -1)));
         }
         // List
-        if ('[' === $type[0]) {
-            if (']' !== $type[strlen($type) - 1]) {
-                throw new UnresolvableException(sprintf('Invalid type "%s"', $type));
+        if ('[' === $alias[0]) {
+            if (']' !== $alias[strlen($alias) - 1]) {
+                throw new UnresolvableException(sprintf('Invalid type "%s"', $alias));
             }
-            return Type::listOf($this->resolve(substr($type, 1, -1)));
+            return Type::listOf($this->resolve(substr($alias, 1, -1)));
         }
-        // Named
-        return $this->getTypeFromAlias($type);
+
+        $type = $this->getTypeFromAlias($alias);
+        $this->cache->save($alias, $type);
+
+        return $type;
     }
 
     private function getTypeServiceIdFromAlias($alias)

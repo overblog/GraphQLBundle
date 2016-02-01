@@ -13,13 +13,13 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
     {
         return [
             new ExpressionFunction('service', function ($arg) {
-                return sprintf('$this->container->get(%s)', $arg);
+                return sprintf('$container->get(%s)', $arg);
             }, function (array $variables, $value) {
                 return $variables['container']->get($value);
             }),
 
             new ExpressionFunction('parameter', function ($arg) {
-                return sprintf('$this->container->getParameter(%s)', $arg);
+                return sprintf('$container->getParameter(%s)', $arg);
             }, function (array $variables, $value) {
                 return $variables['container']->getParameter($value);
             }),
@@ -31,7 +31,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             }),
 
             new ExpressionFunction('resolver', function ($name, array $args = []) {
-                return sprintf('$this->container->get("overblog_graph.relsover_resolver")->resolve(%s)->resolve($args)', $name);
+                return sprintf('$container->get("overblog_graph.relsover_resolver")->resolve(%s)->resolve($args)', $name);
             }, function (array $variables, $name, array $args = []) {
                 $resolver =  $variables['container']->get('overblog_graph.relsover_resolver')->resolve($name);
 

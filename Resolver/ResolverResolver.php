@@ -5,33 +5,28 @@ namespace Overblog\GraphBundle\Resolver;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ResolverResolver implements ResolverInterface
+class ResolverResolver extends AbstractResolver
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @param $type
+     * @param $alias
      * @return mixed
      */
-    public function resolve($type)
+    public function resolve($alias)
     {
-        $resolver = $this->getTypeFromAlias($type);
+        if (null !== $resolver = $this->cache->fetch($alias)) {
+            return $resolver;
+        }
+        $resolver = $this->getResolverFromAlias($alias);
         if ($resolver instanceof ContainerAwareInterface) {
             $resolver->setContainer($this->container);
         }
 
+        $this->cache->save($alias, $resolver);
+
         return $resolver;
     }
 
-    private function getTypeServiceIdFromAlias($alias)
+    private function getResolverServiceIdFromAlias($alias)
     {
         $typesMapping = $this->container->getParameter('overblog_graph.resolvers_mapping');
 
@@ -44,9 +39,9 @@ class ResolverResolver implements ResolverInterface
         return $typesMapping[$alias];
     }
 
-    public function getTypeFromAlias($alias)
+    private function getResolverFromAlias($alias)
     {
-        $serviceId = $this->getTypeServiceIdFromAlias($alias);
+        $serviceId = $this->getResolverServiceIdFromAlias($alias);
 
         return $serviceId !== null ? $this->container->get($serviceId) : null;
     }
