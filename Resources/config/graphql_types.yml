@@ -1,5 +1,5 @@
 services:
-    #Internal Scalar types
+    # GraphQL ccalar types
     overblog_graph.definition.string_type:
         class: GraphQL\Type\Definition\StringType
         factory: ["GraphQL\\Type\\Definition\\Type", string]
@@ -30,8 +30,8 @@ services:
         tags:
             - { name: overblog_graph.type, alias: ID }
 
-    #relay
+    # Relay types
     overblog_graph.definition.relay_node_interface_type:
         class:  Overblog\GraphBundle\Relay\Node\NodeInterfaceType
         tags:
-            - { name: overblog_graph.type, alias: NodeInterface }
+            - { name: overblog_graph.type, alias: Node }
