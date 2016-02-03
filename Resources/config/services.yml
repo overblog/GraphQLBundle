@@ -18,8 +18,11 @@ services:
 
     overblog_graph.schema_builder:
         class: Overblog\GraphBundle\Definition\Builder\SchemaBuilder
+        public: false
         arguments:
             - "@overblog_graph.type_resolver"
+            - []
+            - false
 
     overblog_graph.type_builder:
         class: Overblog\GraphBundle\Definition\Builder\TypeBuilder

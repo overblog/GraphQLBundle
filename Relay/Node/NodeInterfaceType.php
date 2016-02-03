@@ -11,13 +11,14 @@ class NodeInterfaceType extends InterfaceType
     public function __construct(array $config = [])
     {
         Config::validate($config, [
+            'name' => Config::STRING | Config::REQUIRED,
             'resolveType' => Config::CALLBACK
         ]);
 
         $resolveType = isset($config['resolveType']) ? $config['resolveType'] : null;
 
         parent::__construct([
-            'name' => 'NodeInterface',
+            'name' => $config['name'],
             'description' => 'Fetches an object given its ID',
             'fields' => [
                 'id' => [

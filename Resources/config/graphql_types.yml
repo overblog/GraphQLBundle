@@ -29,9 +29,3 @@ services:
         factory: ["GraphQL\\Type\\Definition\\Type", id]
         tags:
             - { name: overblog_graph.type, alias: ID }
-
-    # Relay types
-    overblog_graph.definition.relay_node_interface_type:
-        class:  Overblog\GraphBundle\Relay\Node\NodeInterfaceType
-        tags:
-            - { name: overblog_graph.type, alias: Node }

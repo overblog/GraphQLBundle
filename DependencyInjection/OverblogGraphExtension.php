@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphBundle\DependencyInjection;
 
-use GraphQL\Type\Definition\Config;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -21,8 +20,6 @@ class OverblogGraphExtension extends Extension
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
-
-        $config['definitions']['config_validation'] ? Config::enableValidation() : Config::disableValidation();
 
         if (isset($config['services'])) {
             foreach ($config['services'] as $name => $id) {
@@ -47,6 +44,9 @@ class OverblogGraphExtension extends Extension
                 ;
             }
         }
+
+        $container->getDefinition($this->getAlias() . '.schema_builder')
+            ->replaceArgument(2, $config['definitions']['config_validation']);
 
         if (isset($config['definitions']['schema'])) {
             $container

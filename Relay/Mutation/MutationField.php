@@ -33,13 +33,9 @@ class MutationField implements FieldInterface
             'description' => Config::STRING
         ]);
 
-        $name = str_replace('Mutation', '', $config['name']);
-        if (empty($name)) {
-            $name = $config['name'];
-        }
-        $name = $name . 'Mutation';
-        $inputFields = $config['inputFields'];
-        $outputFields = $config['outputFields'];
+        $name = $config['name'];
+        $inputFields = isset($config['inputFields']) ? $config['inputFields'] : [];
+        $outputFields = isset($config['outputFields']) ? $config['outputFields'] : [];
         $mutateAndGetPayload = $config['mutateAndGetPayload'];
         $description = isset($config['description']) ? $config['description'] : null;
 

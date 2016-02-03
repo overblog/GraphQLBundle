@@ -33,6 +33,10 @@ class TypeBuilder
                 $class = 'Overblog\\GraphBundle\\Relay\\Connection\\ConnectionType';
                 break;
 
+            case 'node':
+                $class = 'Overblog\\GraphBundle\\Relay\\Node\\NodeInterfaceType';
+                break;
+
             case 'object':
             case 'enum':
             case 'interface':

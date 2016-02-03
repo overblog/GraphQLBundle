@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
                     ->info('This path designed to ease yaml reference implementation')
                 ->end()
                 ->arrayNode('definitions')
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('config_validation')->isRequired()->defaultValue(false)->end()
                         ->arrayNode('schema')
@@ -30,7 +31,7 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
-                                    ->enumNode('type')->values(['object', 'enum', 'interface', 'union', 'inputObject', 'connection'])
+                                    ->enumNode('type')->values(['object', 'enum', 'interface', 'union', 'inputObject', 'connection', 'node'])
                                         ->isRequired()
                                     ->end()
                                     ->append($this->addConfigNode())
@@ -167,7 +168,7 @@ class Configuration implements ConfigurationInterface
         $prototype
                 ->end()
             ->end();
-        
+
         $node->validate()
             ->ifTrue(function($fields) use($enabledBuilder) {
                 foreach($fields as $v) {

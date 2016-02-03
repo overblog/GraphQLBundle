@@ -29,7 +29,7 @@ class GlobalIdField implements FieldInterface
             'resolve' => function($obj, $args, ResolveInfo $info) use ($idFetcher, $typeName) {
                 return GlobalId::toGlobalId(
                     !empty($typeName) ? $typeName : $info->parentType->name,
-                    is_callable($idFetcher) ? call_user_func_array($idFetcher, [$obj, $info]) : $obj->id
+                    is_callable($idFetcher) ? call_user_func_array($idFetcher, [$obj, $info]) : (is_object($obj) ? $obj->id : $obj['id'])
                 );
             }
         ];
