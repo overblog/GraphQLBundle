@@ -10,6 +10,11 @@ services:
         tags:
             - { name: overblog_graph.field, alias: GlobalId }
 
+    overblog_graph.definition.relay_node_raw_id_field:
+        class:  Overblog\GraphBundle\Relay\Node\RawIdField
+        tags:
+            - { name: overblog_graph.field, alias: RawId }
+
     overblog_graph.definition.relay_node_node_field:
         class:  Overblog\GraphBundle\Relay\Node\NodeField
         tags:
