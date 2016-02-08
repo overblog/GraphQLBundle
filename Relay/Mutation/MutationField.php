@@ -21,52 +21,23 @@ class MutationField implements FieldInterface
 
         Config::validate($config, [
             'name' => Config::STRING | Config::REQUIRED,
-            'inputFields' => Config::arrayOf(
-                FieldDefinition::getDefinition(),
-                Config::KEY_AS_NAME
-            ),
-            'outputFields' => Config::arrayOf(
-                FieldDefinition::getDefinition(),
-                Config::KEY_AS_NAME
-            ),
             'mutateAndGetPayload' => Config::CALLBACK | Config::REQUIRED,
+            'payloadType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'inputType' => Config::INPUT_TYPE | Config::CALLBACK | Config::REQUIRED,
             'description' => Config::STRING
         ]);
 
         $name = $config['name'];
-        $inputFields = isset($config['inputFields']) ? $config['inputFields'] : [];
-        $outputFields = isset($config['outputFields']) ? $config['outputFields'] : [];
+
         $mutateAndGetPayload = $config['mutateAndGetPayload'];
         $description = isset($config['description']) ? $config['description'] : null;
-
-        $augmentedInputFields = $this->getFieldsWithDefaults(
-            $inputFields,
-            [
-                'clientMutationId' => ['type' => Type::nonNull(Type::string())]
-            ]
-        );
-
-        $augmentedOutputFields = $this->getFieldsWithDefaults(
-            $outputFields,
-            [
-                'clientMutationId' => ['type' => Type::nonNull(Type::string())]
-            ]
-        );
-
-        $outputType = new ObjectType([
-            'name' => $name . 'Payload',
-            'fields' => $augmentedOutputFields,
-        ]);
-
-        $inputType = new InputObjectType([
-            'name' => $name . 'Input',
-            'fields' => $augmentedInputFields,
-        ]);
+        $payloadType = $config['payloadType'];
+        $inputType = $config['inputType'];
 
         return [
             'name' => $name,
             'description' => $description,
-            'type' => $outputType,
+            'type' => $payloadType,
             'args' => [
                 'input' => ['type' =>  Type::nonNull($inputType)]
             ],

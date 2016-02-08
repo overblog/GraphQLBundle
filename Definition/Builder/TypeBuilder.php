@@ -37,11 +37,18 @@ class TypeBuilder
                 $class = 'Overblog\\GraphBundle\\Relay\\Node\\NodeInterfaceType';
                 break;
 
+            case 'input':
+                $class = 'Overblog\\GraphBundle\\Relay\\Mutation\\InputType';
+                break;
+
+            case 'payload':
+                $class = 'Overblog\\GraphBundle\\Relay\\Mutation\\PayloadType';
+                break;
+
             case 'object':
             case 'enum':
             case 'interface':
             case 'union':
-            case 'inputObject':
                 $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
                 break;
 
