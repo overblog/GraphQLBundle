@@ -19,3 +19,8 @@ services:
         class:  Overblog\GraphBundle\Relay\Node\NodeField
         tags:
             - { name: overblog_graph.field, alias: Node }
+
+    overblog_graph.definition.relay_node_plurial_identifying_root_field:
+        class:  Overblog\GraphBundle\Relay\Node\PluralIdentifyingRootField
+        tags:
+            - { name: overblog_graph.field, alias: PluralIdentifyingRoot }

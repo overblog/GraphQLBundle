@@ -29,25 +29,9 @@ class ConfigResolver implements ResolverInterface
     /** @var boolean */
     private $enabledDebug;
 
-    // [name => method]
-    private $resolverMap = [
-        'fields' => 'resolveFields',
-        'isTypeOf' => 'resolveResolveCallback',
-        'interfaces' => 'resolveInterfaces',
-        'types' => 'resolveTypes',
-        'values' => 'resolveValues',
-        'resolveType' => 'resolveResolveCallback',
-        'resolveCursor' => 'resolveResolveCallback',
-        'resolveNode' => 'resolveResolveCallback',
-        'nodeType' => 'resolveTypeCallback',
-        'connectionFields' => 'resolveFields',
-        'edgeFields' => 'resolveFields',
-        'outputFields' => 'resolveFields',
-        'inputFields' => 'resolveFields',
-        'mutateAndGetPayload' => 'resolveResolveCallback',
-        'idFetcher' => 'resolveResolveCallback',
-        'nodeInterfaceType' => 'resolveTypeCallback',
-    ];
+    /** @var array */
+    // [name => callable]
+    private $resolverMap = [];
 
     public function __construct(
         ResolverInterface $typeResolver,
@@ -60,6 +44,32 @@ class ConfigResolver implements ResolverInterface
         $this->fieldResolver = $fieldResolver;
         $this->expressionLanguage = $expressionLanguage;
         $this->enabledDebug = $enabledDebug;
+        $this->resolverMap = [
+            'fields' => [$this, 'resolveFields'],
+            'isTypeOf' => [$this, 'resolveResolveCallback'],
+            'interfaces' => [$this, 'resolveInterfaces'],
+            'types' => [$this, 'resolveTypes'],
+            'values' => [$this, 'resolveValues'],
+            'resolveType' => [$this, 'resolveResolveCallback'],
+            'resolveCursor' => [$this, 'resolveResolveCallback'],
+            'resolveNode' => [$this, 'resolveResolveCallback'],
+            'nodeType' => [$this, 'resolveTypeCallback'],
+            'connectionFields' => [$this, 'resolveFields'],
+            'edgeFields' => [$this, 'resolveFields'],
+            'outputFields' => [$this, 'resolveFields'],
+            'inputFields' => [$this, 'resolveFields'],
+            'mutateAndGetPayload' => [$this, 'resolveResolveCallback'],
+            'idFetcher' => [$this, 'resolveResolveCallback'],
+            'nodeInterfaceType' => [$this, 'resolveTypeCallback'],
+            'inputType' => [$this, 'resolveTypeCallback'],
+            'outputType' => [$this, 'resolveTypeCallback'],
+            'resolveSingleInput' => [$this, 'resolveResolveCallback'],
+        ];
+    }
+
+    public function addResolverMap($name, callable $resolver)
+    {
+        $this->resolverMap[$name] = $resolver;
     }
 
     public function resolve($config)
@@ -72,8 +82,7 @@ class ConfigResolver implements ResolverInterface
             if (!isset($this->resolverMap[$name]) || empty($values)) {
                 continue;
             }
-            $resolverMethod = $this->resolverMap[$name];
-            $values = $this->$resolverMethod($values);
+            $values = call_user_func_array($this->resolverMap[$name], [$values]);
         }
 
         return $config;

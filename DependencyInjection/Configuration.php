@@ -161,6 +161,11 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('typeName')->end()
                             ->scalarNode('idFetcher')->end()
                             ->scalarNode('typeResolver')->end()
+                            ->scalarNode('argName')->end()
+                            ->scalarNode('inputType')->end()
+                            ->scalarNode('outputType')->end()
+                            ->scalarNode('resolveSingleInput')->end()
+                            ->scalarNode('description')->end()
                         ->end()
                     ->end();
         }
