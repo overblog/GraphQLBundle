@@ -101,12 +101,12 @@ class ConnectionBuilder
 
         $edges = [];
 
-        var_dump(compact(
-            'countArraySlice', 'slice', 'end', 'length',
-            'offset', 'first', 'after', 'before',
-            'beforeOffset', 'afterOffset',
-            'startOffset', 'endOffset', 'sliceStart'
-        ));
+//        var_dump(compact(
+//            'countArraySlice', 'slice', 'end', 'length',
+//            'offset', 'first', 'after', 'before',
+//            'beforeOffset', 'afterOffset',
+//            'startOffset', 'endOffset', 'sliceStart'
+//        ));
 
         foreach($slice as $index => $value) {
             $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);

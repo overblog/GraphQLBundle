@@ -4,6 +4,7 @@ services:
         arguments:
             - "@overblog_graph.schema"
             - "@event_dispatcher"
+            - %kernel.debug%
 
     overblog_graph.request_parser:
         class: Overblog\GraphBundle\Request\Parser

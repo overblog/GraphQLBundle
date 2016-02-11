@@ -19,10 +19,13 @@ class Executor
      */
     private $dispatcher;
 
-    public function __construct(Schema $schema, EventDispatcherInterface $dispatcher)
+    private $enabledDebug;
+
+    public function __construct(Schema $schema, EventDispatcherInterface $dispatcher, $enabledDebug)
     {
         $this->schema = $schema;
         $this->dispatcher = $dispatcher;
+        $this->enabledDebug = $enabledDebug;
     }
 
     public function execute(array $data, array $context = [])
@@ -33,12 +36,23 @@ class Executor
         $event = new ExecutorContextEvent($context);
         $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, $event);
 
-        return GraphQLExecutor::execute(
+        $executionResult = GraphQLExecutor::execute(
             $this->schema,
             $ast,
             $event->getExecutorContext(),
             $data['variables'],
             $data['operationName']
         );
+
+        if ($this->enabledDebug && !empty($executionResult->errors)) {
+            foreach($executionResult->errors as $error) {
+                // if is a try catch exception wrapped in Error
+                if ($error->getPrevious() instanceof \Exception) {
+                    throw $executionResult->errors[0]->getPrevious();
+                }
+            }
+        }
+
+        return $executionResult;
     }
 }
