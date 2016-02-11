@@ -22,7 +22,7 @@ class ConnectionBuilder
      * @param array $args
      * @return Connection
      */
-    public static function connectionFromArray(array $data, array $args = [])
+    public static function connectionFromArray($data, array $args = [])
     {
         return static::connectionFromArraySlice(
             $data,
@@ -49,7 +49,7 @@ class ConnectionBuilder
      *
      * @return Connection
      */
-    public static function connectionFromArraySlice(array $arraySlice, array $args, array $meta)
+    public static function connectionFromArraySlice($arraySlice, array $args, array $meta)
     {
         $connectionArguments = static::getOptionsWithDefaults(
             $args,
@@ -68,30 +68,30 @@ class ConnectionBuilder
             ]
         );
 
-        $countArraySlice = count($arraySlice);
+        $arraySliceLength = count($arraySlice);
         $after = $connectionArguments['after'];
         $before = $connectionArguments['before'];
         $first = $connectionArguments['first'];
         $last = $connectionArguments['last'];
         $sliceStart = $arraySliceMetaInfo['sliceStart'];
         $arrayLength = $arraySliceMetaInfo['arrayLength'];
-        $sliceEnd = $sliceStart + $countArraySlice;
+        $sliceEnd = $sliceStart + $arraySliceLength;
         $beforeOffset = static::getOffsetWithDefault($before, $arrayLength);
         $afterOffset = static::getOffsetWithDefault($after, -1);
 
         $startOffset = max($sliceStart - 1, $afterOffset, -1) + 1;
         $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
 
-        if ($first !== null) {
+        if (is_numeric($first)) {
             $endOffset = min($endOffset, $startOffset + $first);
         }
-        if ($last !== null) {
+        if (is_numeric($last)) {
             $startOffset = max($startOffset, $endOffset - $last);
         }
 
         // If supplied slice is too large, trim it down before mapping over it.
         $offset = max($startOffset - $sliceStart, 0);
-        $length = ($countArraySlice - ($sliceEnd - $endOffset)) - $offset;
+        $length = ($arraySliceLength - ($sliceEnd - $endOffset)) - $offset;
 
         $slice = array_slice(
             $arraySlice,
@@ -100,6 +100,13 @@ class ConnectionBuilder
         );
 
         $edges = [];
+
+        var_dump(compact(
+            'countArraySlice', 'slice', 'end', 'length',
+            'offset', 'first', 'after', 'before',
+            'beforeOffset', 'afterOffset',
+            'startOffset', 'endOffset', 'sliceStart'
+        ));
 
         foreach($slice as $index => $value) {
             $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);
@@ -122,6 +129,30 @@ class ConnectionBuilder
     }
 
     /**
+     * Return the cursor associated with an object in an array.
+     * @param array $data
+     * @param mixed $object
+     * @return null|string
+     */
+    public static function cursorForObjectInConnection($data, $object)
+    {
+        $offset = null;
+
+        foreach($data as $i => $entry) {
+            if ($entry == $object) {
+                $offset = $i;
+                break;
+            }
+        }
+
+        if (null === $offset) {
+            return null;
+        }
+
+        return static::offsetToCursor($offset);
+    }
+
+    /**
      * Given an optional cursor and a default offset, returns the offset
      * to use; if the cursor contains a valid offset, that will be used,
      * otherwise it will be the default.
@@ -137,7 +168,7 @@ class ConnectionBuilder
         }
         $offset = static::cursorToOffset($cursor);
 
-        return is_nan($offset) ?  $defaultOffset : $offset;
+        return !is_numeric($offset) ?  $defaultOffset : (int)$offset;
     }
 
     /**
@@ -157,7 +188,7 @@ class ConnectionBuilder
      */
     public static function cursorToOffset($cursor)
     {
-        return intval(str_replace(static::PREFIX, '', base64_decode($cursor)));
+        return str_replace(static::PREFIX, '', base64_decode($cursor, true));
     }
 
     private static function getOptionsWithDefaults(array $options, array $defaults)
