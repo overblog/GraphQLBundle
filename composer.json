@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.6",
         "symfony/framework-bundle": "~3.0",
         "symfony/expression-language": "~3.0",
         "symfony/options-resolver": "~3.0",

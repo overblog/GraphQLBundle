@@ -23,11 +23,11 @@ class FieldResolver extends AbstractResolver
     {
         $typesMapping = $this->container->getParameter('overblog_graph.fields_mapping');
 
-        if (!isset($typesMapping[$alias])) {
+        if (!isset($typesMapping[$alias]['id'])) {
             throw new UnresolvableException(sprintf('Unknown field with alias "%s" (verified service tag)', $alias));
         }
 
-        return $typesMapping[$alias];
+        return $typesMapping[$alias]['id'];
     }
 
     private function getFieldFromAlias($alias)

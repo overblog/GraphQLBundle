@@ -3,6 +3,7 @@
 namespace Overblog\GraphBundle;
 
 use Overblog\GraphBundle\DependencyInjection\Compiler\FieldPass;
+use Overblog\GraphBundle\DependencyInjection\Compiler\MutationPass;
 use Overblog\GraphBundle\DependencyInjection\Compiler\ResolverPass;
 use Overblog\GraphBundle\DependencyInjection\Compiler\TypePass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -20,5 +21,6 @@ class OverblogGraphBundle extends Bundle
         $container->addCompilerPass(new TypePass());
         $container->addCompilerPass(new FieldPass());
         $container->addCompilerPass(new ResolverPass());
+        $container->addCompilerPass(new MutationPass());
     }
 }

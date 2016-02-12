@@ -48,8 +48,13 @@ services:
         arguments:
             - "@service_container"
 
-    overblog_graph.relsover_resolver:
+    overblog_graph.resolver_resolver:
         class: Overblog\GraphBundle\Resolver\ResolverResolver
+        arguments:
+            - "@service_container"
+
+    overblog_graph.mutation_resolver:
+        class: Overblog\GraphBundle\Resolver\MutationResolver
         arguments:
             - "@service_container"
 

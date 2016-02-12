@@ -6,6 +6,9 @@ services:
         class: Overblog\GraphBundle\Tests\Functional\app\Resolver\NodeResolver
         arguments:
             - "@overblog_graph.type_resolver"
+        tags:
+            - { name: "overblog_graph.resolver", alias: "node_type", method: "typeResolver" }
+            - { name: "overblog_graph.resolver", alias: "node_id_fetcher", method: "idFetcher" }
 
 overblog_graph:
     definitions:
@@ -16,7 +19,7 @@ overblog_graph:
             Node:
                 type: node
                 config:
-                    resolveType: '@=service("overblog_graph.test.resolver.node").typeResolver(value)'
+                    resolveType: '@=resolver("node_type", [value])'
 
             Query:
                 type: object
@@ -26,7 +29,7 @@ overblog_graph:
                             builder: Node
                             builderConfig:
                                 nodeInterfaceType: Node
-                                idFetcher: '@=service("overblog_graph.test.resolver.node").idFetcher(value)'
+                                idFetcher: '@=resolver("node_id_fetcher", [value])'
 
             User:
                 type: object

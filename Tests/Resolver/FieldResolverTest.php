@@ -19,14 +19,14 @@ class FieldResolverTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
 
         $mapping = [
-            'Toto' => 'overblog_graph.definition.custom_toto_field',
-            'Tata' => 'overblog_graph.definition.custom_tata_field',
+            'Toto' => ['id' => 'overblog_graph.definition.custom_toto_field', 'alias' => 'Toto'],
+            'Tata' => ['id' => 'overblog_graph.definition.custom_tata_field', 'alias' => 'Tata'],
         ];
 
         $container->setParameter('overblog_graph.fields_mapping', $mapping);
 
-        foreach($mapping as $alias => $id) {
-            $container->setDefinition($id, new Definition('stdClass'))
+        foreach($mapping as $alias => $options) {
+            $container->setDefinition($options['id'], new Definition('stdClass'))
                 ->setProperty('name', $alias);
         }
 

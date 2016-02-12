@@ -30,28 +30,21 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 return $variables['value'] instanceof $className;
             }),
 
-            new ExpressionFunction('resolver', function ($name, array $args = []) {
-                return sprintf('$container->get("overblog_graph.relsover_resolver")->resolve(%s)->resolve($args)', $name);
-            }, function (array $variables, $name, array $args = []) {
-                $resolver =  $variables['container']->get('overblog_graph.relsover_resolver')->resolve($name);
+            new ExpressionFunction('resolver', function ($alias, array $args = []) {
+                return sprintf('$container->get("overblog_graph.resolver_resolver")->resolve([%s, $args])', $alias);
+            }, function (array $variables, $alias, array $args = []) {
+                return $variables['container']->get('overblog_graph.resolver_resolver')->resolve([$alias, $args]);;
+            }),
 
-                if ($resolver instanceof ResolverInterface || is_callable([$resolver, 'resolve'])) {
-                    return $resolver->resolve($args);
-                } elseif (is_callable($resolver)) {
-                    return call_user_func_array($resolver, [$args]);
-                } else {
-                    throw new \RuntimeException(
-                        sprintf(
-                            'Resolver must be callable or instance of "%s"',
-                            'Overblog\\GraphBundle\\Resolver\\ResolverInterface'
-                        )
-                    );
-                }
+            new ExpressionFunction('mutation', function ($alias, array $args = []) {
+                return sprintf('$container->get("overblog_graph.mutation_resolver")->resolve([%s, $args])', $alias);
+            }, function (array $variables, $alias, array $args = []) {
+                return $variables['container']->get('overblog_graph.mutation_resolver')->resolve([$alias, $args]);;
             }),
 
             new ExpressionFunction('globalId', function ($id, $typeName = null)   {
                 return sprintf(
-                    '\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %d)',
+                    '\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %s)',
                     $typeName,
                     $typeName,
                     $id

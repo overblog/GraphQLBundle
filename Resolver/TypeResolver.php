@@ -45,13 +45,13 @@ class TypeResolver extends AbstractResolver
 
         $typesMapping = $this->container->getParameter('overblog_graph.types_mapping');
 
-        if (!isset($typesMapping[$alias])) {
+        if (!isset($typesMapping[$alias]['id'])) {
             throw new UnresolvableException(
                 sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
             );
         }
 
-        return $typesMapping[$alias];
+        return $typesMapping[$alias]['id'];
     }
 
     public function getTypeFromAlias($alias)

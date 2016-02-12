@@ -15,12 +15,8 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $tag) {
-                if (!isset($tag['alias']) && is_string($tag['alias'])) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Service tagged "%s" must have valid "alias" argument.', $tag)
-                    );
-                }
-                $serviceMapping[$tag['alias']] = $id;
+                $this->checkRequirements($id, $tag);
+                $serviceMapping[$tag['alias']] =  array_merge($tag, ['id' => $id]);
             }
         }
         return $serviceMapping;
@@ -34,6 +30,15 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $this->taggedServiceToParameterMapping($container, $this->getTagName(), $this->getParameterName());
+    }
+
+    protected function checkRequirements($id, array $tag)
+    {
+        if (empty($tag['alias']) || !is_string($tag['alias'])) {
+            throw new \InvalidArgumentException(
+                sprintf('Service tagged "%s" must have valid "alias" argument.', $id)
+            );
+        }
     }
 
     abstract protected function getTagName();

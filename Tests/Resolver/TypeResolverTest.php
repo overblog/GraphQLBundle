@@ -20,14 +20,14 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
 
         $mapping = [
-            'Toto' => 'overblog_graph.definition.custom_toto_type',
-            'Tata' => 'overblog_graph.definition.custom_tata_type',
+            'Toto' => ['id' => 'overblog_graph.definition.custom_toto_type', 'alias' => 'Toto'],
+            'Tata' => ['id' => 'overblog_graph.definition.custom_tata_type', 'alias' => 'Tata'],
         ];
 
         $container->setParameter('overblog_graph.types_mapping', $mapping);
 
-        foreach($mapping as $alias => $id) {
-            $container->setDefinition($id, new Definition('GraphQL\Type\Definition\ObjectType'))
+        foreach($mapping as $alias => $options) {
+            $container->setDefinition($options['id'], new Definition('GraphQL\Type\Definition\ObjectType'))
                 ->setArguments([
                     ['name' => $alias]
                 ]);
