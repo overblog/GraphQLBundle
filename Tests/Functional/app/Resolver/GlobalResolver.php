@@ -1,0 +1,83 @@
+<?php
+
+namespace Overblog\GraphBundle\Tests\Functional\app\Resolver;
+
+use Overblog\GraphBundle\Relay\Node\GlobalId;
+use Overblog\GraphBundle\Resolver\TypeResolver;
+
+class GlobalResolver
+{
+    /** @var TypeResolver  */
+    private $typeResolver;
+
+    private $userData = [
+        1 => [
+            'id' => 1,
+            'name' => 'John Doe'
+        ],
+        2 => [
+            'id' => 2,
+            'name' => 'Jane Smith'
+        ],
+    ];
+
+    private $photoData = [
+        1 => [
+            'photoId' => 1,
+            'width' => 300
+        ],
+        2 => [
+            'photoId' => 2,
+            'width' => 400
+        ],
+    ];
+
+    private $postData = [
+        1 => [
+            'id' => 1,
+            'text' => 'lorem'
+        ],
+        2 => [
+            'id' => 2,
+            'text' => 'ipsum'
+        ],
+    ];
+
+    public function __construct(TypeResolver $typeResolver)
+    {
+        $this->typeResolver = $typeResolver;
+    }
+
+    public function idFetcher($globalId)
+    {
+        list($type, $id) = array_values(GlobalId::fromGlobalId($globalId));
+
+        if ($type === 'User') {
+            return $this->userData[$id];
+        } else if ($type === 'Photo') {
+            return $this->photoData[$id];
+        } else {
+            return $this->postData[$id];
+        }
+    }
+
+    public function typeResolver($value)
+    {
+        if (isset($value['name'])) {
+            return $this->typeResolver->resolve('User');
+        } elseif (isset($value['photoId'])) {
+            return $this->typeResolver->resolve('Photo');
+        } else {
+            return $this->typeResolver->resolve('Post');
+        }
+    }
+
+    public function resolveAllObjects()
+    {
+        return [
+            $this->userData[1], $this->userData[2],
+            $this->photoData[1], $this->photoData[2],
+            $this->postData[1], $this->postData[2],
+        ];
+    }
+}

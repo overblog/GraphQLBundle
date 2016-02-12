@@ -1,0 +1,48 @@
+imports:
+    - { resource: config.yml }
+
+overblog_graph:
+    definitions:
+        schema:
+            query: RootMutation
+            mutation: RootMutation
+        types:
+            simpleMutationPayload:
+                type: payload
+                config:
+                    fields:
+                        result: { type: "Int" }
+
+            simpleMutationInput:
+                type: input
+                config:
+                    fields: []
+
+            simpleMutationWithThunkFieldsPayload:
+                type: payload
+                config:
+                    fields:
+                        result: { type: "Int" }
+
+            simpleMutationWithThunkFieldsInput:
+                type: input
+                config:
+                    fields:
+                        inputData : { type: "Int" }
+
+            RootMutation:
+                type: object
+                config:
+                    fields:
+                        simpleMutation:
+                            builder: Mutation
+                            builderConfig:
+                                inputType: simpleMutationInput
+                                payloadType: simpleMutationPayload
+                                mutateAndGetPayload: "@={'result': 1}"
+                        simpleMutationWithThunkFields:
+                            builder: Mutation
+                            builderConfig:
+                                inputType: simpleMutationWithThunkFieldsInput
+                                payloadType: simpleMutationWithThunkFieldsPayload
+                                mutateAndGetPayload: "@={'result': value['inputData'] }"

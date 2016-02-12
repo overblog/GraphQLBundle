@@ -1,0 +1,35 @@
+imports:
+    - { resource: config.yml }
+
+services:
+    overblog_graph.test.resolver.plural:
+        class: Overblog\GraphBundle\Tests\Functional\app\Resolver\PluralResolver
+
+overblog_graph:
+    definitions:
+        schema:
+            query: Query
+            mutation: ~
+        types:
+            Query:
+                type: object
+                config:
+                    fields:
+                        usernames:
+                            builder: PluralIdentifyingRoot
+                            builderConfig:
+                                argName: 'usernames'
+                                description: 'Map from a username to the user'
+                                inputType: String
+                                outputType: User
+                                resolveSingleInput: '@=service("overblog_graph.test.resolver.plural").resolveSingleInput(value, info)'
+
+
+            User:
+                type: object
+                config:
+                    fields:
+                        username:
+                            type: String
+                        url:
+                            type: String

@@ -1,0 +1,8 @@
+framework:
+    secret: test
+    router:
+        resource: %kernel.root_dir%/config/routing.yml
+
+overblog_graph:
+    definitions:
+        config_validation: true

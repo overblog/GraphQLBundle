@@ -1,0 +1,28 @@
+{
+    "name": "overblog/graph-bundle",
+    "type": "symfony-bundle",
+    "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
+    "keywords": ["GraphQL", "Relay"],
+    "autoload": {
+        "psr-4": {
+            "Overblog\\GraphBundle\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "OverBlog",
+            "homepage": "http://www.over-blog.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "symfony/framework-bundle": "~3.0",
+        "symfony/expression-language": "~3.0",
+        "symfony/options-resolver": "~3.0",
+        "doctrine/doctrine-cache-bundle": "^1.2",
+        "webonyx/graphql-php": "~0.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.1.*"
+    }
+}

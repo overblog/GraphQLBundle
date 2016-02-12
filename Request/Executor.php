@@ -19,6 +19,7 @@ class Executor
      */
     private $dispatcher;
 
+    /** @var boolean */
     private $enabledDebug;
 
     public function __construct(Schema $schema, EventDispatcherInterface $dispatcher, $enabledDebug)
@@ -26,6 +27,25 @@ class Executor
         $this->schema = $schema;
         $this->dispatcher = $dispatcher;
         $this->enabledDebug = $enabledDebug;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getEnabledDebug()
+    {
+        return $this->enabledDebug;
+    }
+
+    /**
+     * @param boolean $enabledDebug
+     * @return $this
+     */
+    public function setEnabledDebug($enabledDebug)
+    {
+        $this->enabledDebug = $enabledDebug;
+
+        return $this;
     }
 
     public function execute(array $data, array $context = [])

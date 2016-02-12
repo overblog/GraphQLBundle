@@ -1,0 +1,2 @@
+overblog_graph:
+    resource: "@OverblogGraphBundle/Resources/config/routing.yml"

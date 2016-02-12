@@ -1,0 +1,49 @@
+imports:
+    - { resource: config.yml }
+
+services:
+    overblog_graph.test.resolver.node:
+        class: Overblog\GraphBundle\Tests\Functional\app\Resolver\NodeResolver
+        arguments:
+            - "@overblog_graph.type_resolver"
+
+overblog_graph:
+    definitions:
+        schema:
+            query: Query
+            mutation: ~
+        types:
+            Node:
+                type: node
+                config:
+                    resolveType: '@=service("overblog_graph.test.resolver.node").typeResolver(value)'
+
+            Query:
+                type: object
+                config:
+                    fields:
+                        node:
+                            builder: Node
+                            builderConfig:
+                                nodeInterfaceType: Node
+                                idFetcher: '@=service("overblog_graph.test.resolver.node").idFetcher(value)'
+
+            User:
+                type: object
+                config:
+                    fields:
+                        id:
+                            type: ID!
+                        name:
+                            type: String
+                    interfaces: [Node]
+
+            Photo:
+                type: object
+                config:
+                    fields:
+                        id:
+                            type: ID!
+                        width:
+                            type: Int
+                    interfaces: [Node]
