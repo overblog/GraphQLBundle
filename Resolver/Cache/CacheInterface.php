@@ -29,4 +29,9 @@ interface CacheInterface
      * @return mixed|null
      */
     public function delete($key);
+
+    /**
+     * reset cache
+     */
+    public function clear();
 }

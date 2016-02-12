@@ -98,7 +98,7 @@ class ConfigResolver implements ResolverInterface
                 $builderConfig['name'] = $field;
 
                 if ($fieldsBuilder instanceof FieldInterface) {
-                    $options = $fieldsBuilder->toFieldsDefinition($builderConfig);
+                    $options = $fieldsBuilder->toFieldDefinition($builderConfig);
                 } elseif(is_callable($fieldsBuilder)) {
                     $options = call_user_func_array($fieldsBuilder, [$builderConfig]);
                 } elseif(is_object($fieldsBuilder)) {

@@ -1,0 +1,52 @@
+imports:
+    - { resource: config.yml }
+
+services:
+    overblog_graphql.test.resolver.node:
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\NodeResolver
+        arguments:
+            - "@overblog_graphql.type_resolver"
+        tags:
+            - { name: "overblog_graphql.resolver", alias: "node_type", method: "typeResolver" }
+            - { name: "overblog_graphql.resolver", alias: "node_id_fetcher", method: "idFetcher" }
+
+overblog_graphql:
+    definitions:
+        schema:
+            query: Query
+            mutation: ~
+        types:
+            Node:
+                type: node
+                config:
+                    resolveType: '@=resolver("node_type", [value])'
+
+            Query:
+                type: object
+                config:
+                    fields:
+                        node:
+                            builder: Node
+                            builderConfig:
+                                nodeInterfaceType: Node
+                                idFetcher: '@=resolver("node_id_fetcher", [value])'
+
+            User:
+                type: object
+                config:
+                    fields:
+                        id:
+                            type: ID!
+                        name:
+                            type: String
+                    interfaces: [Node]
+
+            Photo:
+                type: object
+                config:
+                    fields:
+                        id:
+                            type: ID!
+                        width:
+                            type: Int
+                    interfaces: [Node]

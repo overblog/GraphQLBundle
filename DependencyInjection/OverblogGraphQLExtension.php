@@ -17,6 +17,7 @@ class OverblogGraphQLExtension extends Extension
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
         $loader->load('graphql_fields.yml');
+        $loader->load('graphql_args.yml');
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);

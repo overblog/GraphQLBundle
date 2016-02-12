@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Definition\FieldInterface;
 
 class GlobalIdField implements FieldInterface
 {
-    public function toFieldsDefinition(array $config)
+    public function toFieldDefinition(array $config)
     {
         Config::validate($config, [
             'name' => Config::STRING | Config::REQUIRED,

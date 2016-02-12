@@ -7,7 +7,7 @@ class ArrayCache implements CacheInterface
     /**
      * @var array
      */
-    private $cache = array();
+    private $cache = [];
 
     /**
      * {@inheritdoc}
@@ -31,5 +31,13 @@ class ArrayCache implements CacheInterface
     public function delete($key)
     {
         unset($this->cache[$key]);
+    }
+
+    /**
+     * reset cache
+     */
+    public function clear()
+    {
+        $this->cache = [];
     }
 }

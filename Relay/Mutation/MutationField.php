@@ -15,7 +15,7 @@ class MutationField implements FieldInterface
 {
     use MergeFieldTrait;
 
-    public function toFieldsDefinition(array $config)
+    public function toFieldDefinition(array $config)
     {
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
