@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\app\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
-use Overblog\GraphBundle\Relay\Node\GlobalId;
-use Overblog\GraphBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 class NodeResolver
 {

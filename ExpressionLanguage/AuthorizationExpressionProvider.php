@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\ExpressionLanguage;
+namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Overblog\GraphBundle\Relay\Node\GlobalId;
-use Overblog\GraphBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;

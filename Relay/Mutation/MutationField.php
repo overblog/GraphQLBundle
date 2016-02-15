@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Relay\Mutation;
+namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\InputObjectType;
@@ -8,8 +8,8 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Utils;
-use Overblog\GraphBundle\Definition\FieldInterface;
-use Overblog\GraphBundle\Definition\MergeFieldTrait;
+use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\MergeFieldTrait;
 
 class MutationField implements FieldInterface
 {

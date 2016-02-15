@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 class FieldResolver extends AbstractResolver
 {
@@ -21,7 +21,7 @@ class FieldResolver extends AbstractResolver
 
     private function getFieldServiceIdFromAlias($alias)
     {
-        $typesMapping = $this->container->getParameter('overblog_graph.fields_mapping');
+        $typesMapping = $this->container->getParameter('overblog_graphql.fields_mapping');
 
         if (!isset($typesMapping[$alias]['id'])) {
             throw new UnresolvableException(sprintf('Unknown field with alias "%s" (verified service tag)', $alias));

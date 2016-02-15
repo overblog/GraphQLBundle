@@ -1,14 +1,14 @@
 <?php
 
-namespace Overblog\GraphBundle\Request;
+namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\Executor as GraphQLExecutor;
 use GraphQL\Language\Parser as  GraphQLParser;
 use GraphQL\Language\Source;
 use GraphQL\Schema;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Overblog\GraphBundle\Event\Events;
-use Overblog\GraphBundle\Event\ExecutorContextEvent;
+use Overblog\GraphQLBundle\Event\Events;
+use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 
 class Executor
 {

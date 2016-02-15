@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 
 interface ResolverInterface

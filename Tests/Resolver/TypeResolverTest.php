@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Overblog\GraphBundle\Resolver;
+namespace Tests\Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use GraphQL\Type\Definition\ObjectType;
@@ -20,11 +20,11 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
 
         $mapping = [
-            'Toto' => ['id' => 'overblog_graph.definition.custom_toto_type', 'alias' => 'Toto'],
-            'Tata' => ['id' => 'overblog_graph.definition.custom_tata_type', 'alias' => 'Tata'],
+            'Toto' => ['id' => 'overblog_graphql.definition.custom_toto_type', 'alias' => 'Toto'],
+            'Tata' => ['id' => 'overblog_graphql.definition.custom_tata_type', 'alias' => 'Tata'],
         ];
 
-        $container->setParameter('overblog_graph.types_mapping', $mapping);
+        $container->setParameter('overblog_graphql.types_mapping', $mapping);
 
         foreach($mapping as $alias => $options) {
             $container->setDefinition($options['id'], new Definition('GraphQL\Type\Definition\ObjectType'))
@@ -46,7 +46,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Overblog\GraphBundle\Resolver\UnresolvableException
+     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      */
     public function testResolveUnknownType()
     {

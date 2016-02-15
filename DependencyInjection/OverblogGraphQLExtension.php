@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection;
+namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OverblogGraphExtension extends Extension
+class OverblogGraphQLExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -56,5 +56,10 @@ class OverblogGraphExtension extends Extension
                 ->setPublic(true)
             ;
         }
+    }
+
+    public function getAlias()
+    {
+        return 'overblog_graphql';
     }
 }

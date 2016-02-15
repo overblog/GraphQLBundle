@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 
-use Overblog\GraphBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
  * Class NodeTest
@@ -35,7 +35,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testGetsTheCorrectIdForPhotos()
@@ -54,7 +54,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testGetsTheCorrectWidthForPhotos()
@@ -77,7 +77,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testGetsTheCorrectTypeNameForUsers()
@@ -98,7 +98,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testGetsTheCorrectTypeNameForPhotos()
@@ -119,7 +119,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testIgnoresPhotoFragmentsOnUser()
@@ -141,7 +141,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testReturnsNullForBadIds()
@@ -158,7 +158,7 @@ EOF;
             'node' => null,
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testHasCorrectNodeInterface()
@@ -201,7 +201,7 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testHasCorrectNodeRootField()
@@ -260,6 +260,6 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 }

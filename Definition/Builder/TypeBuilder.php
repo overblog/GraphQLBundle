@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition\Builder;
+namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class TypeBuilder
 {
@@ -30,19 +30,19 @@ class TypeBuilder
     {
         switch($type) {
             case 'connection':
-                $class = 'Overblog\\GraphBundle\\Relay\\Connection\\ConnectionType';
+                $class = 'Overblog\\GraphQLBundle\\Relay\\Connection\\ConnectionType';
                 break;
 
             case 'node':
-                $class = 'Overblog\\GraphBundle\\Relay\\Node\\NodeInterfaceType';
+                $class = 'Overblog\\GraphQLBundle\\Relay\\Node\\NodeInterfaceType';
                 break;
 
             case 'input':
-                $class = 'Overblog\\GraphBundle\\Relay\\Mutation\\InputType';
+                $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\InputType';
                 break;
 
             case 'payload':
-                $class = 'Overblog\\GraphBundle\\Relay\\Mutation\\PayloadType';
+                $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\PayloadType';
                 break;
 
             case 'object':

@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Command;
+namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -36,7 +36,7 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
 
         $container = $this->getContainer();
         $result = $container
-            ->get('overblog_graph.request_executor')
+            ->get('overblog_graphql.request_executor')
             ->execute($request)
             ->toArray();
 

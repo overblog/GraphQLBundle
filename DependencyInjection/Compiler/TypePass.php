@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection\Compiler;
+namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -8,12 +8,12 @@ class TypePass extends TaggedServiceMappingPass
 {
     protected function getTagName()
     {
-        return 'overblog_graph.type';
+        return 'overblog_graphql.type';
     }
 
     protected function getParameterName()
     {
-        return 'overblog_graph.types_mapping';
+        return 'overblog_graphql.types_mapping';
     }
 
     public function process(ContainerBuilder $container)
@@ -22,7 +22,7 @@ class TypePass extends TaggedServiceMappingPass
 
         $mapping = $container->getParameter($this->getParameterName());
 
-        $container->getDefinition('overblog_graph.schema_builder')
+        $container->getDefinition('overblog_graphql.schema_builder')
             ->replaceArgument(1, $mapping);
     }
 }

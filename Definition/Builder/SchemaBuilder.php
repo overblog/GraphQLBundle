@@ -1,10 +1,10 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition\Builder;
+namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Schema;
 use GraphQL\Type\Definition\Config;
-use Overblog\GraphBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class SchemaBuilder
 {

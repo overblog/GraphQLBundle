@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Event;
+namespace Overblog\GraphQLBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 

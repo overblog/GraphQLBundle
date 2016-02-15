@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -57,7 +57,7 @@ class ResolverResolver extends AbstractResolver
 
     protected function getMapping()
     {
-        return $this->container->getParameter('overblog_graph.resolvers_mapping');
+        return $this->container->getParameter('overblog_graphql.resolvers_mapping');
     }
 
     protected function unresolvableMessage($alias)

@@ -2,12 +2,12 @@ imports:
     - { resource: config.yml }
 
 services:
-    overblog_graph.test.resolver.global:
-        class: Overblog\GraphBundle\Tests\Functional\app\Resolver\GlobalResolver
+    overblog_graphql.test.resolver.global:
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\GlobalResolver
         arguments:
-            - "@overblog_graph.type_resolver"
+            - "@overblog_graphql.type_resolver"
 
-overblog_graph:
+overblog_graphql:
     definitions:
         schema:
             query: Query
@@ -16,7 +16,7 @@ overblog_graph:
             NodeInterface:
                 type: node
                 config:
-                    resolveType: '@=service("overblog_graph.test.resolver.global").typeResolver(value)'
+                    resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
 
             Query:
                 type: object
@@ -26,10 +26,10 @@ overblog_graph:
                             builder: Node
                             builderConfig:
                                 nodeInterfaceType: NodeInterface
-                                idFetcher: '@=service("overblog_graph.test.resolver.global").idFetcher(value)'
+                                idFetcher: '@=service("overblog_graphql.test.resolver.global").idFetcher(value)'
                         allObjects:
                             type: '[NodeInterface]'
-                            resolve: '@=service("overblog_graph.test.resolver.global").resolveAllObjects()'
+                            resolve: '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()'
 
             User:
                 type: object

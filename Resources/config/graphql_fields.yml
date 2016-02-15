@@ -1,26 +1,26 @@
 services:
     #relay
-    overblog_graph.definition.relay_mutation_mutation_field:
-        class:  Overblog\GraphBundle\Relay\Mutation\MutationField
+    overblog_graphql.definition.relay_mutation_mutation_field:
+        class:  Overblog\GraphQLBundle\Relay\Mutation\MutationField
         tags:
-            - { name: overblog_graph.field, alias: Mutation }
+            - { name: overblog_graphql.field, alias: Mutation }
 
-    overblog_graph.definition.relay_node_global_id_field:
-        class:  Overblog\GraphBundle\Relay\Node\GlobalIdField
+    overblog_graphql.definition.relay_node_global_id_field:
+        class:  Overblog\GraphQLBundle\Relay\Node\GlobalIdField
         tags:
-            - { name: overblog_graph.field, alias: GlobalId }
+            - { name: overblog_graphql.field, alias: GlobalId }
 
-    overblog_graph.definition.relay_node_raw_id_field:
-        class:  Overblog\GraphBundle\Relay\Node\RawIdField
+    overblog_graphql.definition.relay_node_raw_id_field:
+        class:  Overblog\GraphQLBundle\Relay\Node\RawIdField
         tags:
-            - { name: overblog_graph.field, alias: RawId }
+            - { name: overblog_graphql.field, alias: RawId }
 
-    overblog_graph.definition.relay_node_node_field:
-        class:  Overblog\GraphBundle\Relay\Node\NodeField
+    overblog_graphql.definition.relay_node_node_field:
+        class:  Overblog\GraphQLBundle\Relay\Node\NodeField
         tags:
-            - { name: overblog_graph.field, alias: Node }
+            - { name: overblog_graphql.field, alias: Node }
 
-    overblog_graph.definition.relay_node_plurial_identifying_root_field:
-        class:  Overblog\GraphBundle\Relay\Node\PluralIdentifyingRootField
+    overblog_graphql.definition.relay_node_plurial_identifying_root_field:
+        class:  Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootField
         tags:
-            - { name: overblog_graph.field, alias: PluralIdentifyingRoot }
+            - { name: overblog_graphql.field, alias: PluralIdentifyingRoot }

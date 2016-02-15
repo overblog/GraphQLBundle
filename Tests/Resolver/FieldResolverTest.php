@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Overblog\GraphBundle\Resolver;
+namespace Tests\Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphBundle\Resolver\FieldResolver;
+use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -19,11 +19,11 @@ class FieldResolverTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
 
         $mapping = [
-            'Toto' => ['id' => 'overblog_graph.definition.custom_toto_field', 'alias' => 'Toto'],
-            'Tata' => ['id' => 'overblog_graph.definition.custom_tata_field', 'alias' => 'Tata'],
+            'Toto' => ['id' => 'overblog_graphql.definition.custom_toto_field', 'alias' => 'Toto'],
+            'Tata' => ['id' => 'overblog_graphql.definition.custom_tata_field', 'alias' => 'Tata'],
         ];
 
-        $container->setParameter('overblog_graph.fields_mapping', $mapping);
+        $container->setParameter('overblog_graphql.fields_mapping', $mapping);
 
         foreach($mapping as $alias => $options) {
             $container->setDefinition($options['id'], new Definition('stdClass'))
@@ -43,7 +43,7 @@ class FieldResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Overblog\GraphBundle\Resolver\UnresolvableException
+     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      */
     public function testResolveUnknownField()
     {

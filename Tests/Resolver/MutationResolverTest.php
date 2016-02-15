@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Overblog\GraphBundle\Resolver;
+namespace Tests\Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphBundle\Resolver\MutationResolver;
+use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -19,11 +19,11 @@ class MutationResolverTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
 
         $mapping = [
-            'Toto' => ['id' => 'overblog_graph.definition.custom_toto_mutation', 'alias' => 'Toto', 'method' => 'resolveToto'],
-            'Tata' => ['id' => 'overblog_graph.definition.custom_tata_mutation', 'alias' => 'Tata', 'method' => 'resolveTata'],
+            'Toto' => ['id' => 'overblog_graphql.definition.custom_toto_mutation', 'alias' => 'Toto', 'method' => 'resolveToto'],
+            'Tata' => ['id' => 'overblog_graphql.definition.custom_tata_mutation', 'alias' => 'Tata', 'method' => 'resolveTata'],
         ];
 
-        $container->setParameter('overblog_graph.mutations_mapping', $mapping);
+        $container->setParameter('overblog_graphql.mutations_mapping', $mapping);
 
         foreach($mapping as $alias => $options) {
             $container->setDefinition($options['id'], new Definition(sprintf('%s\\%sMutation', __NAMESPACE__, $alias)));
@@ -41,7 +41,7 @@ class MutationResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Overblog\GraphBundle\Resolver\UnresolvableException
+     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      */
     public function testResolveUnknownMutation()
     {

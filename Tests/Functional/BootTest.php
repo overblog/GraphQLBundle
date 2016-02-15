@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional;
+namespace Overblog\GraphQLBundle\Tests\Functional;
 
 
 class BootTest extends TestCase

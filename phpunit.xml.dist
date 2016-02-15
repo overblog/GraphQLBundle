@@ -12,7 +12,7 @@
          bootstrap="vendor/autoload.php"
         >
     <testsuites>
-        <testsuite name="OverblogGraphBundle Test Suite">
+        <testsuite name="OverblogGraphQLBundle Test Suite">
             <directory>./Tests/</directory>
         </testsuite>
     </testsuites>

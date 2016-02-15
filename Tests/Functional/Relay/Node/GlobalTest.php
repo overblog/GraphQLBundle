@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 
-use Overblog\GraphBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
  * Class GlobalTest
@@ -52,7 +52,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testReFetchesTheIds()
@@ -94,6 +94,6 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 }

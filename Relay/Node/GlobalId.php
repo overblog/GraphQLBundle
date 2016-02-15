@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Relay\Node;
+namespace Overblog\GraphQLBundle\Relay\Node;
 
 class GlobalId
 {

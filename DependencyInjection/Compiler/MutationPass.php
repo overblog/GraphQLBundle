@@ -1,16 +1,16 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection\Compiler;
+namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 class MutationPass extends ResolverPass
 {
     protected function getTagName()
     {
-        return 'overblog_graph.mutation';
+        return 'overblog_graphql.mutation';
     }
 
     protected function getParameterName()
     {
-        return 'overblog_graph.mutations_mapping';
+        return 'overblog_graphql.mutations_mapping';
     }
 }

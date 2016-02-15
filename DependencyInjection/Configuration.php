@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection;
+namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -10,7 +10,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('overblog_graph');
+        $rootNode = $treeBuilder->root('overblog_graphql');
 
         $rootNode
             ->children()
@@ -44,10 +44,10 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('expression_language')
-                            ->defaultValue('overblog_graph.expression_language.default')
+                            ->defaultValue('overblog_graphql.expression_language.default')
                         ->end()
                         ->scalarNode('cache_expression_language_parser')
-                            ->defaultValue('overblog_graph.cache_expression_language_parser.default')
+                            ->defaultValue('overblog_graphql.cache_expression_language_parser.default')
                         ->end()
                     ->end()
                 ->end()
@@ -150,7 +150,7 @@ class Configuration implements ConfigurationInterface
         if ($enabledBuilder) {
             $prototype
                     ->scalarNode('builder')
-                        ->info('Service alias tagged with "overblog_graph.field"')
+                        ->info('Service alias tagged with "overblog_graphql.field"')
                     ->end()
                     ->arrayNode('builderConfig')
                         ->children()

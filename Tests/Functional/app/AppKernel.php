@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\app;
+namespace Overblog\GraphQLBundle\Tests\Functional\app;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -19,7 +19,7 @@ class AppKernel extends Kernel
     {
         return array(
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Overblog\GraphBundle\OverblogGraphBundle(),
+            new \Overblog\GraphQLBundle\OverblogGraphQLBundle(),
         );
     }
 
@@ -31,12 +31,12 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/OverblogGraphBundle/'.Kernel::VERSION.'/'.$this->testCase.'/cache/'.$this->environment;
+        return sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.$this->testCase.'/cache/'.$this->environment;
     }
 
     public function getLogDir()
     {
-        return sys_get_temp_dir().'/OverblogGraphBundle/'.Kernel::VERSION.'/'.$this->testCase.'/logs';
+        return sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.$this->testCase.'/logs';
     }
 
     public function getRootDir()

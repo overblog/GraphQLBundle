@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\ExpressionLanguage;
+namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;

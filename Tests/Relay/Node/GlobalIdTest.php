@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Overblog\GraphBundle\Relay\Node;
+namespace Tests\Overblog\GraphQLBundle\Relay\Node;
 
-use Overblog\GraphBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 
 class GlobalIdTest extends \PHPUnit_Framework_TestCase
 {

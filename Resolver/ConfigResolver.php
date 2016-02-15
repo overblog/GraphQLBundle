@@ -1,11 +1,11 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphBundle\Definition\FieldInterface;
-use Overblog\GraphBundle\Relay\Connection\Output\Connection;
-use Overblog\GraphBundle\Relay\Connection\Output\Edge;
+use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

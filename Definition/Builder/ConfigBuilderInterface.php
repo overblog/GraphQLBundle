@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition\Builder;
+namespace Overblog\GraphQLBundle\Definition\Builder;
 
 interface ConfigBuilderInterface
 {

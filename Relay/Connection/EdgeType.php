@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Relay\Connection;
+namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use GraphQL\Type\Definition\ObjectType;
 

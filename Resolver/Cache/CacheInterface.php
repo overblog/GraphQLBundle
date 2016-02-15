@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver\Cache;
+namespace Overblog\GraphQLBundle\Resolver\Cache;
 
 interface CacheInterface
 {

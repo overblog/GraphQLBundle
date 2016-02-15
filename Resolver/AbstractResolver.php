@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphBundle\Resolver\Cache\CacheInterface;
-use Overblog\GraphBundle\Resolver\Cache\ArrayCache;
+use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
+use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractResolver implements ResolverInterface

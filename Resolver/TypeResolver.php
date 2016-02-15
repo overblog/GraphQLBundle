@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 
 use GraphQL\Type\Definition\Type;
@@ -43,7 +43,7 @@ class TypeResolver extends AbstractResolver
     {
         $alias = str_replace(['[', ']', '!'], '', $alias);
 
-        $typesMapping = $this->container->getParameter('overblog_graph.types_mapping');
+        $typesMapping = $this->container->getParameter('overblog_graphql.types_mapping');
 
         if (!isset($typesMapping[$alias]['id'])) {
             throw new UnresolvableException(

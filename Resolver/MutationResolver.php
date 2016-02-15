@@ -1,12 +1,12 @@
 <?php
 
-namespace Overblog\GraphBundle\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
 class MutationResolver extends ResolverResolver
 {
     protected function getMapping()
     {
-        return $this->container->getParameter('overblog_graph.mutations_mapping');
+        return $this->container->getParameter('overblog_graphql.mutations_mapping');
     }
 
     protected function unresolvableMessage($alias)

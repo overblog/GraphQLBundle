@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection\Compiler;
+namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

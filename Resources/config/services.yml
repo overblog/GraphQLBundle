@@ -1,71 +1,71 @@
 services:
-    overblog_graph.request_executor:
-        class: Overblog\GraphBundle\Request\Executor
+    overblog_graphql.request_executor:
+        class: Overblog\GraphQLBundle\Request\Executor
         arguments:
-            - "@overblog_graph.schema"
+            - "@overblog_graphql.schema"
             - "@event_dispatcher"
             - %kernel.debug%
 
-    overblog_graph.request_parser:
-        class: Overblog\GraphBundle\Request\Parser
+    overblog_graphql.request_parser:
+        class: Overblog\GraphQLBundle\Request\Parser
 
-    overblog_graph.schema:
+    overblog_graphql.schema:
         class: GraphQL\Schema
         public: false
-        factory: ["@overblog_graph.schema_builder", create]
+        factory: ["@overblog_graphql.schema_builder", create]
         arguments:
             - ~
             - ~
 
-    overblog_graph.schema_builder:
-        class: Overblog\GraphBundle\Definition\Builder\SchemaBuilder
+    overblog_graphql.schema_builder:
+        class: Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder
         public: false
         arguments:
-            - "@overblog_graph.type_resolver"
+            - "@overblog_graphql.type_resolver"
             - []
             - false
 
-    overblog_graph.type_builder:
-        class: Overblog\GraphBundle\Definition\Builder\TypeBuilder
+    overblog_graphql.type_builder:
+        class: Overblog\GraphQLBundle\Definition\Builder\TypeBuilder
         arguments:
-            - "@overblog_graph.config_resolver"
+            - "@overblog_graphql.config_resolver"
 
-    overblog_graph.config_resolver:
-        class: Overblog\GraphBundle\Resolver\ConfigResolver
+    overblog_graphql.config_resolver:
+        class: Overblog\GraphQLBundle\Resolver\ConfigResolver
         arguments:
-            - "@overblog_graph.type_resolver"
-            - "@overblog_graph.field_resolver"
-            - "@overblog_graph.expression_language"
+            - "@overblog_graphql.type_resolver"
+            - "@overblog_graphql.field_resolver"
+            - "@overblog_graphql.expression_language"
             - %kernel.debug%
 
-    overblog_graph.type_resolver:
-        class: Overblog\GraphBundle\Resolver\TypeResolver
+    overblog_graphql.type_resolver:
+        class: Overblog\GraphQLBundle\Resolver\TypeResolver
         arguments:
             - "@service_container"
 
-    overblog_graph.field_resolver:
-        class: Overblog\GraphBundle\Resolver\FieldResolver
+    overblog_graphql.field_resolver:
+        class: Overblog\GraphQLBundle\Resolver\FieldResolver
         arguments:
             - "@service_container"
 
-    overblog_graph.resolver_resolver:
-        class: Overblog\GraphBundle\Resolver\ResolverResolver
+    overblog_graphql.resolver_resolver:
+        class: Overblog\GraphQLBundle\Resolver\ResolverResolver
         arguments:
             - "@service_container"
 
-    overblog_graph.mutation_resolver:
-        class: Overblog\GraphBundle\Resolver\MutationResolver
+    overblog_graphql.mutation_resolver:
+        class: Overblog\GraphQLBundle\Resolver\MutationResolver
         arguments:
             - "@service_container"
 
-    overblog_graph.cache_expression_language_parser.default:
+    overblog_graphql.cache_expression_language_parser.default:
         class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache
         public: false
 
-    overblog_graph.expression_language.default:
-        class: Overblog\GraphBundle\ExpressionLanguage\ExpressionLanguage
+    overblog_graphql.expression_language.default:
+        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
         public: false
         arguments:
-            - "@overblog_graph.cache_expression_language_parser"
+            - "@overblog_graphql.cache_expression_language_parser"
         calls:
             - ["setContainer", ["@service_container"]]

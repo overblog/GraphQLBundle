@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\Relay\Mutation;
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Mutation;
 
 
-use Overblog\GraphBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
  * Class MutationTest
@@ -28,7 +28,7 @@ mutation M {
   }
 }
 EOF;
-        $result = $this->executeGraphQlRequest($query);
+        $result = $this->executeGraphQLRequest($query);
 
         $this->assertCount(1, $result['errors']);
         $this->assertEquals(
@@ -55,7 +55,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
 
@@ -76,7 +76,7 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
 
@@ -121,7 +121,7 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 
     public function testContainsCorrectPayload()
@@ -175,7 +175,7 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
 
     }
 
@@ -257,6 +257,6 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 }

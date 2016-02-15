@@ -1,7 +1,7 @@
 imports:
     - { resource: config.yml }
 
-overblog_graph:
+overblog_graphql:
     definitions:
         schema:
             query: RootMutation

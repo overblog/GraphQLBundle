@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Definition;
+namespace Overblog\GraphQLBundle\Definition;
 
 trait MergeFieldTrait
 {

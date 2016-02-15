@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\ExpressionLanguage;
+namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Overblog\GraphBundle\Relay\Node\GlobalId;
-use Overblog\GraphBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
@@ -31,20 +31,20 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             }),
 
             new ExpressionFunction('resolver', function ($alias, array $args = []) {
-                return sprintf('$container->get("overblog_graph.resolver_resolver")->resolve([%s, $args])', $alias);
+                return sprintf('$container->get("overblog_graphql.resolver_resolver")->resolve([%s, $args])', $alias);
             }, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graph.resolver_resolver')->resolve([$alias, $args]);;
+                return $variables['container']->get('overblog_graphql.resolver_resolver')->resolve([$alias, $args]);;
             }),
 
             new ExpressionFunction('mutation', function ($alias, array $args = []) {
-                return sprintf('$container->get("overblog_graph.mutation_resolver")->resolve([%s, $args])', $alias);
+                return sprintf('$container->get("overblog_graphql.mutation_resolver")->resolve([%s, $args])', $alias);
             }, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graph.mutation_resolver')->resolve([$alias, $args]);;
+                return $variables['container']->get('overblog_graphql.mutation_resolver')->resolve([$alias, $args]);;
             }),
 
             new ExpressionFunction('globalId', function ($id, $typeName = null)   {
                 return sprintf(
-                    '\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %s)',
+                    '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %s)',
                     $typeName,
                     $typeName,
                     $id
@@ -56,7 +56,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             }),
 
             new ExpressionFunction('fromGlobalId', function ($globalId) {
-                return sprintf('\\Overblog\\GraphBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)', $globalId);
+                return sprintf('\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)', $globalId);
             }, function (array $variables, $globalId) {
                 return GlobalId::fromGlobalId($globalId);
             }),

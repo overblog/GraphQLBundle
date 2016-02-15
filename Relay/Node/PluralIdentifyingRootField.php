@@ -1,11 +1,11 @@
 <?php
 
-namespace Overblog\GraphBundle\Relay\Node;
+namespace Overblog\GraphQLBundle\Relay\Node;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Utils;
-use Overblog\GraphBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\FieldInterface;
 
 class PluralIdentifyingRootField implements FieldInterface
 {

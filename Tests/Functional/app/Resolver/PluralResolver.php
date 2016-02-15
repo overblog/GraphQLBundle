@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\app\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 

@@ -1,17 +1,17 @@
 <?php
 
-namespace Overblog\GraphBundle\DependencyInjection\Compiler;
+namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 class ResolverPass extends TaggedServiceMappingPass
 {
     protected function getTagName()
     {
-        return 'overblog_graph.resolver';
+        return 'overblog_graphql.resolver';
     }
 
     protected function getParameterName()
     {
-        return 'overblog_graph.resolvers_mapping';
+        return 'overblog_graphql.resolvers_mapping';
     }
 
     protected function checkRequirements($id, array $tag)

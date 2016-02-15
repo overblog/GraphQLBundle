@@ -3,6 +3,6 @@ framework:
     router:
         resource: %kernel.root_dir%/config/routing.yml
 
-overblog_graph:
+overblog_graphql:
     definitions:
         config_validation: true

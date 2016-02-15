@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Overblog\GraphBundle\Relay\Connection\Output;
+namespace Tests\Overblog\GraphQLBundle\Relay\Connection\Output;
 
-use Overblog\GraphBundle\Relay\Connection\Output\Connection;
-use Overblog\GraphBundle\Relay\Connection\Output\ConnectionBuilder;
-use Overblog\GraphBundle\Relay\Connection\Output\Edge;
-use Overblog\GraphBundle\Relay\Connection\Output\PageInfo;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
+use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
 /**
  * Class ConnectionBuilderTest

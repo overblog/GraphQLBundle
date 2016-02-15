@@ -2,15 +2,15 @@ imports:
     - { resource: config.yml }
 
 services:
-    overblog_graph.test.resolver.node:
-        class: Overblog\GraphBundle\Tests\Functional\app\Resolver\NodeResolver
+    overblog_graphql.test.resolver.node:
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\NodeResolver
         arguments:
-            - "@overblog_graph.type_resolver"
+            - "@overblog_graphql.type_resolver"
         tags:
-            - { name: "overblog_graph.resolver", alias: "node_type", method: "typeResolver" }
-            - { name: "overblog_graph.resolver", alias: "node_id_fetcher", method: "idFetcher" }
+            - { name: "overblog_graphql.resolver", alias: "node_type", method: "typeResolver" }
+            - { name: "overblog_graphql.resolver", alias: "node_id_fetcher", method: "idFetcher" }
 
-overblog_graph:
+overblog_graphql:
     definitions:
         schema:
             query: Query

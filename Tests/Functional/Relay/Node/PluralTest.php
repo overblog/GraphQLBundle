@@ -1,9 +1,9 @@
 <?php
 
-namespace Overblog\GraphBundle\Tests\Functional\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 
-use Overblog\GraphBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
  * Class PluralTest
@@ -47,7 +47,7 @@ EOF;
             ]
         ];
 
-        $this->assertGraphQl($query, $expectedData, null, ['lang' => 'en']);
+        $this->assertGraphQL($query, $expectedData, null, ['lang' => 'en']);
     }
 
     public function testCorrectlyIntrospects()
@@ -125,6 +125,6 @@ EOF;
 
         ];
 
-        $this->assertGraphQl($query, $expectedData);
+        $this->assertGraphQL($query, $expectedData);
     }
 }
