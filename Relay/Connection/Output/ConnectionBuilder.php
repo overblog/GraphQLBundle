@@ -132,6 +132,9 @@ class ConnectionBuilder
         $offset = null;
 
         foreach($data as $i => $entry) {
+            // When using the comparison operator (==), object variables are compared in a simple manner,
+            // namely: Two object instances are equal if they have the same attributes and values,
+            // and are instances of the same class.
             if ($entry == $object) {
                 $offset = $i;
                 break;
