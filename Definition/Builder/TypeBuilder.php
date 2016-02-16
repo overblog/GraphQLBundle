@@ -29,19 +29,19 @@ class TypeBuilder
     private function getBaseClassName($type)
     {
         switch($type) {
-            case 'connection':
+            case 'relay-connection':
                 $class = 'Overblog\\GraphQLBundle\\Relay\\Connection\\ConnectionType';
                 break;
 
-            case 'node':
+            case 'relay-node':
                 $class = 'Overblog\\GraphQLBundle\\Relay\\Node\\NodeInterfaceType';
                 break;
 
-            case 'input':
+            case 'relay-mutation-input':
                 $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\InputType';
                 break;
 
-            case 'payload':
+            case 'relay-mutation-payload':
                 $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\PayloadType';
                 break;
 
@@ -50,6 +50,10 @@ class TypeBuilder
             case 'interface':
             case 'union':
                 $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
+                break;
+
+            case 'input-object':
+                $class = 'GraphQL\\Type\\Definition\\InputObjectType';
                 break;
 
             default:

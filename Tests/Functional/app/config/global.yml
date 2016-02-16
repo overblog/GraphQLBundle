@@ -14,7 +14,7 @@ overblog_graphql:
             mutation: ~
         types:
             NodeInterface:
-                type: node
+                type: relay-node
                 config:
                     resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
 

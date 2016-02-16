@@ -8,24 +8,24 @@ overblog_graphql:
             mutation: RootMutation
         types:
             simpleMutationPayload:
-                type: payload
+                type: relay-mutation-payload
                 config:
                     fields:
                         result: { type: "Int" }
 
             simpleMutationInput:
-                type: input
+                type: relay-mutation-input
                 config:
                     fields: []
 
             simpleMutationWithThunkFieldsPayload:
-                type: payload
+                type: relay-mutation-payload
                 config:
                     fields:
                         result: { type: "Int" }
 
             simpleMutationWithThunkFieldsInput:
-                type: input
+                type: relay-mutation-input
                 config:
                     fields:
                         inputData : { type: "Int" }

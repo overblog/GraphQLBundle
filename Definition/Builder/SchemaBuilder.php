@@ -29,7 +29,7 @@ class SchemaBuilder
     /**
      * @param null|string $queryAlias
      * @param null|string $mutationAlias
-     * @param null $subscriptionAlias
+     * @param null|string $subscriptionAlias
      * @return Schema
      */
     public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null)

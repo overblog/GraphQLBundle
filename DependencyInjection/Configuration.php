@@ -33,7 +33,17 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('name')
                             ->prototype('array')
                                 ->children()
-                                    ->enumNode('type')->values(['object', 'enum', 'interface', 'union', 'input', 'payload','connection', 'node'])
+                                    ->enumNode('type')->values([
+                                            'object',
+                                            'enum',
+                                            'interface',
+                                            'union',
+                                            'input-object',
+                                            'relay-mutation-input',
+                                            'relay-mutation-payload',
+                                            'relay-connection',
+                                            'relay-node'
+                                        ])
                                         ->isRequired()
                                     ->end()
                                     ->append($this->addConfigNode())

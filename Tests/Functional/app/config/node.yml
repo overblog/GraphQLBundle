@@ -17,7 +17,7 @@ overblog_graphql:
             mutation: ~
         types:
             Node:
-                type: node
+                type: relay-node
                 config:
                     resolveType: '@=resolver("node_type", [value])'
 
