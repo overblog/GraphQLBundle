@@ -53,6 +53,7 @@ class OverblogGraphQLExtension extends Extension
                 ->getDefinition($this->getAlias(). '.schema')
                 ->replaceArgument(0, $config['definitions']['schema']['query'])
                 ->replaceArgument(1, $config['definitions']['schema']['mutation'])
+                ->replaceArgument(2, $config['definitions']['schema']['subscription'])
                 ->setPublic(true)
             ;
         }

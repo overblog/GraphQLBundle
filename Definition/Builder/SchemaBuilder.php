@@ -29,18 +29,19 @@ class SchemaBuilder
     /**
      * @param null|string $queryAlias
      * @param null|string $mutationAlias
+     * @param null $subscriptionAlias
      * @return Schema
-     *
      */
-    public function create($queryAlias = null, $mutationAlias = null)
+    public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null)
     {
         $this->enableValidation ? Config::enableValidation() : Config::disableValidation();
         $this->warmUpTypes();
 
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
+        $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        return new Schema($query, $mutation);
+        return new Schema($query, $mutation, $subscription);
     }
 
     private function warmUpTypes()

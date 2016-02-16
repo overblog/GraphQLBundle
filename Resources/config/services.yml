@@ -16,6 +16,7 @@ services:
         arguments:
             - ~
             - ~
+            - ~
 
     overblog_graphql.schema_builder:
         class: Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder
