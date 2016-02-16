@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle;
 
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ArgPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\FieldPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverPass;
@@ -24,6 +25,7 @@ class OverblogGraphQLBundle extends Bundle
         $container->addCompilerPass(new FieldPass());
         $container->addCompilerPass(new ResolverPass());
         $container->addCompilerPass(new MutationPass());
+        $container->addCompilerPass(new ArgPass());
     }
 
     public function getContainerExtension()
