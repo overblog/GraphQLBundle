@@ -50,14 +50,14 @@ abstract class TestCase extends WebTestCase
         static::$kernel = null;
     }
 
-    protected static function executeGraphQLRequest($query, $rootValue = [], $enableDebug = false)
+    protected static function executeGraphQLRequest($query, $rootValue = [], $throwException = false)
     {
         $request = new Request();
         $request->query->set('query', $query);
 
         $req = static::$kernel->getContainer()->get('overblog_graphql.request_parser')->parse($request);
         $executor = static::$kernel->getContainer()->get('overblog_graphql.request_executor');
-        $executor->setEnabledDebug($enableDebug);
+        $executor->setThrowException($throwException);
         $res = $executor->execute($req, $rootValue);
 
         return $res->toArray();

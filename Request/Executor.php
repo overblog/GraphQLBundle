@@ -2,10 +2,12 @@
 
 namespace Overblog\GraphQLBundle\Request;
 
-use GraphQL\Executor\Executor as GraphQLExecutor;
-use GraphQL\Language\Parser as  GraphQLParser;
-use GraphQL\Language\Source;
+use GraphQL\Error;
+use GraphQL\Executor\ExecutionResult;
+use GraphQL\GraphQL;
 use GraphQL\Schema;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -20,57 +22,67 @@ class Executor
     private $dispatcher;
 
     /** @var boolean */
-    private $enabledDebug;
+    private $throwException;
 
-    public function __construct(Schema $schema, EventDispatcherInterface $dispatcher, $enabledDebug)
+    public function __construct(Schema $schema, EventDispatcherInterface $dispatcher, $throwException, LoggerInterface $logger = null)
     {
         $this->schema = $schema;
         $this->dispatcher = $dispatcher;
-        $this->enabledDebug = $enabledDebug;
+        $this->throwException = (bool)$throwException;
+        $this->logger = null === $logger ? new NullLogger(): $logger;
     }
 
     /**
      * @return boolean
      */
-    public function getEnabledDebug()
+    public function getThrowException()
     {
-        return $this->enabledDebug;
+        return $this->throwException;
     }
 
     /**
-     * @param boolean $enabledDebug
+     * @param boolean $throwException
      * @return $this
      */
-    public function setEnabledDebug($enabledDebug)
+    public function setThrowException($throwException)
     {
-        $this->enabledDebug = $enabledDebug;
+        $this->throwException = (bool)$throwException;
 
         return $this;
     }
 
     public function execute(array $data, array $context = [])
     {
-        $source = new Source($data['query']);
-        $ast = GraphQLParser::parse($source);
-
         $event = new ExecutorContextEvent($context);
         $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, $event);
 
-        $executionResult = GraphQLExecutor::execute(
-            $this->schema,
-            $ast,
-            $event->getExecutorContext(),
-            $data['variables'],
-            $data['operationName']
-        );
-
-        if ($this->enabledDebug && !empty($executionResult->errors)) {
-            foreach($executionResult->errors as $error) {
-                // if is a try catch exception wrapped in Error
-                if ($error->getPrevious() instanceof \Exception) {
-                    throw $executionResult->errors[0]->getPrevious();
+        try {
+            $executionResult = GraphQL::executeAndReturnResult(
+                $this->schema,
+                isset($data['query']) ? $data['query'] : null,
+                $event->getExecutorContext(),
+                $data['variables'],
+                $data['operationName']
+            );
+            if ($this->throwException && !empty($executionResult->errors)) {
+                foreach ($executionResult->errors as $error) {
+                    // if is a try catch exception wrapped in Error
+                    if ($error->getPrevious() instanceof \Exception) {
+                        throw $executionResult->errors[0]->getPrevious();
+                    }
                 }
             }
+
+        } catch (\Exception $exception) {
+            if ($this->throwException) {
+                throw $exception;
+            }
+            $this->logger->error($exception->getMessage());
+
+            $executionResult = new ExecutionResult(
+                null,
+                [new Error('An errors occurred while processing query.')]
+            );
         }
 
         return $executionResult;

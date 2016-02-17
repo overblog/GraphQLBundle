@@ -5,6 +5,7 @@ services:
             - "@overblog_graphql.schema"
             - "@event_dispatcher"
             - %kernel.debug%
+            - "@?logger"
 
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser

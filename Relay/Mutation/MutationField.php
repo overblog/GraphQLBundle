@@ -39,19 +39,9 @@ class MutationField implements FieldInterface
             'description' => $description,
             'type' => $payloadType,
             'args' => [
-                'input' => ['type' =>  Type::nonNull($inputType)]
+                'input' => ['type' => Type::nonNull($inputType)]
             ],
             'resolve' => function($_, $input, $info) use ($mutateAndGetPayload, $name) {
-                if (empty($input['input'])) {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            "Field \"%s\" argument \"input\" of type \"%sInput!\" is required but not provided.",
-                            $name,
-                            $name
-                        )
-                    );
-                }
-
                 $payload = $mutateAndGetPayload($input['input'], $info);
                 $payload['clientMutationId'] = $input['input']['clientMutationId'];
 
