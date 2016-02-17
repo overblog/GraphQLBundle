@@ -33,13 +33,13 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             new ExpressionFunction('resolver', function ($alias, array $args = []) {
                 return sprintf('$container->get("overblog_graphql.resolver_resolver")->resolve([%s, $args])', $alias);
             }, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graphql.resolver_resolver')->resolve([$alias, $args]);;
+                return $variables['container']->get('overblog_graphql.resolver_resolver')->resolve([$alias, $args]);
             }),
 
             new ExpressionFunction('mutation', function ($alias, array $args = []) {
                 return sprintf('$container->get("overblog_graphql.mutation_resolver")->resolve([%s, $args])', $alias);
             }, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graphql.mutation_resolver')->resolve([$alias, $args]);;
+                return $variables['container']->get('overblog_graphql.mutation_resolver')->resolve([$alias, $args]);
             }),
 
             new ExpressionFunction('globalId', function ($id, $typeName = null)   {
