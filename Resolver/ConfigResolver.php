@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\ArgsInterface;
 use Overblog\GraphQLBundle\Definition\FieldInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -299,12 +300,17 @@ class ConfigResolver implements ResolverInterface
 
         $arg1IsResolveInfo = $args[1] instanceof ResolveInfo;
 
-        return [
-            'value' => $args[0],
-            'args' => !$arg1IsResolveInfo ? $args[1] : [],
-            'info' => $arg1IsResolveInfo ? $args[1] : $args[2],
-        ];
+        $value = $args[0];
+        /** @var ResolveInfo $info */
+        $info = $arg1IsResolveInfo ? $args[1] : $args[2];
+        /** @var Argument $resolverArgs */
+        $resolverArgs = new Argument(!$arg1IsResolveInfo ? $args[1] : []);
 
+        return [
+            'value' => $value,
+            'args' => $resolverArgs,
+            'info' => $info,
+        ];
     }
 
     private function resolveValues(array $rawValues)

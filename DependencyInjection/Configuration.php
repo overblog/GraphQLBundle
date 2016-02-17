@@ -109,13 +109,21 @@ class Configuration implements ConfigurationInterface
             ->always(function($v) {
                 // remove all empty value
                 $array_filter_recursive = function ($input) use (&$array_filter_recursive){
-                    foreach ($input as &$value) {
+                    foreach ($input as $key => &$value) {
+                        if ('defaultValue' === $key) {
+                            continue;
+                        }
+
                         if (is_array($value)) {
-                            $value = $array_filter_recursive($value);
+                            if (empty($value)) {
+                                unset($input[$key]);
+                            } else {
+                                $value = $array_filter_recursive($value);
+                            }
                         }
                     }
 
-                    return array_filter($input);
+                    return array_filter($input, function ($key, $val) { return 'defaultValue' === $key || !is_null($val); }, ARRAY_FILTER_USE_BOTH);
                 };
 
                 return $array_filter_recursive($v);

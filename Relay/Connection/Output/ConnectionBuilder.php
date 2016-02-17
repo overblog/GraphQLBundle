@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 
+use Overblog\GraphQLBundle\Definition\Argument;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -19,10 +20,10 @@ class ConnectionBuilder
      * so pagination will only work if the array is static.
      *
      * @param array $data
-     * @param array $args
+     * @param array|Argument $args
      * @return Connection
      */
-    public static function connectionFromArray($data, array $args = [])
+    public static function connectionFromArray($data, $args = [])
     {
         return static::connectionFromArraySlice(
             $data,
@@ -44,15 +45,15 @@ class ConnectionBuilder
      * total result large enough to cover the range specified in `args`.
      *
      * @param array $arraySlice
-     * @param array $args
+     * @param array|Argument $args
      * @param array $meta
      *
      * @return Connection
      */
-    public static function connectionFromArraySlice($arraySlice, array $args, array $meta)
+    public static function connectionFromArraySlice($arraySlice, $args, array $meta)
     {
         $connectionArguments = static::getOptionsWithDefaults(
-            $args,
+            $args instanceof Argument ? $args->getRawArguments() : $args,
             [
                 'after' => '',
                 'before' => '',
