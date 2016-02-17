@@ -30,6 +30,11 @@ class ExpressionLanguage extends BaseExpressionLanguage
     private function addValues(&$values)
     {
         $values['container'] = $this->container;
+
+        if ($this->container->has('request_stack')) {
+            $values['request'] = $this->container->get('request_stack')->getMasterRequest();
+        }
+
         if ($this->container->has('security.token_storage')) {
             $values['token'] = $this->container->get('security.token_storage')->getToken();
             if ($values['token'] instanceof TokenInterface) {
