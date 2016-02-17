@@ -2,16 +2,16 @@
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use GraphQLQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\ArgInterface;
+use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\ArgsInterface;
 
-class ForwardConnectionArgs implements ArgInterface
+class ForwardConnectionArgs implements ArgsInterface
 {
     /**
      * @param array $config
      * @return array
      */
-    public function toArgDefinition(array $config)
+    public function toArgsDefinition(array $config)
     {
         return [
             'after' => [

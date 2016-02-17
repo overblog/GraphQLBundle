@@ -3,12 +3,12 @@ imports:
 
 services:
     overblog_graphql.test.resolver.node:
-        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\NodeResolver
-        arguments:
-            - "@overblog_graphql.type_resolver"
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\ConnectionResolver
         tags:
-            - { name: "overblog_graphql.resolver", alias: "node_type", method: "typeResolver" }
-            - { name: "overblog_graphql.resolver", alias: "node_id_fetcher", method: "idFetcher" }
+            - { name: "overblog_graphql.resolver", alias: "friends", method: "friendsResolver" }
+            - { name: "overblog_graphql.resolver", alias: "node", method: "resolveNode" }
+            - { name: "overblog_graphql.resolver", alias: "query", method: "resolveQuery" }
+            - { name: "overblog_graphql.resolver", alias: "connection", method: "resolveConnection" }
 
 overblog_graphql:
     definitions:
@@ -16,37 +16,49 @@ overblog_graphql:
             query: Query
             mutation: ~
         types:
-            Node:
-                type: node
-                config:
-                    resolveType: '@=resolver("node_type", [value])'
-
             Query:
                 type: object
                 config:
                     fields:
-                        node:
-                            builder: Node
-                            builderConfig:
-                                nodeInterfaceType: Node
-                                idFetcher: '@=resolver("node_id_fetcher", [value])'
+                        user:
+                            type: User
+                            resolve: '@=resolver("query")'
 
             User:
                 type: object
                 config:
                     fields:
-                        id:
-                            type: ID!
                         name:
                             type: String
-                    interfaces: [Node]
+                        friends:
+                            type: friendConnection
+                            argsBuilder: ConnectionArgs
+                            resolve: '@=resolver("friends", [value, args])'
+                        friendsForward:
+                            type: userConnection
+                            argsBuilder: ForwardConnectionArgs
+                            resolve: '@=resolver("friends", [value, args])'
+                        friendsBackward:
+                            type: userConnection
+                            argsBuilder: BackwardConnectionArgs
+                            resolve: '@=resolver("friends", [value, args])'
 
-            Photo:
-                type: object
+            friendConnection:
+                type: relay-connection
                 config:
-                    fields:
-                        id:
-                            type: ID!
-                        width:
+                    nodeType: User
+                    resolveNode: '@=resolver("node", [value])'
+                    edgeFields:
+                        friendshipTime:
+                            type: String
+                            resolve: "Yesterday"
+                    connectionFields:
+                        totalCount:
                             type: Int
-                    interfaces: [Node]
+                            resolve: '@=resolver("connection")'
+
+            userConnection:
+                type: relay-connection
+                config:
+                    nodeType: User
+                    resolveNode: '@=resolver("node", [value])'

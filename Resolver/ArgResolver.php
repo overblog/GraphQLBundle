@@ -21,13 +21,13 @@ class ArgResolver extends AbstractResolver
 
     private function getArgServiceIdFromAlias($alias)
     {
-        $typesMapping = $this->container->getParameter('overblog_graphql.args_mapping');
+        $argsMapping = $this->container->getParameter('overblog_graphql.args_mapping');
 
-        if (!isset($typesMapping[$alias]['id'])) {
+        if (!isset($argsMapping[$alias]['id'])) {
             throw new UnresolvableException(sprintf('Unknown arg with alias "%s" (verified service tag)', $alias));
         }
 
-        return $typesMapping[$alias]['id'];
+        return $argsMapping[$alias]['id'];
     }
 
     private function getArgFromAlias($alias)

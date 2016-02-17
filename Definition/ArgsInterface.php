@@ -2,11 +2,11 @@
 
 namespace Overblog\GraphQLBundle\Definition;
 
-interface ArgInterface
+interface ArgsInterface
 {
     /**
      * @param array $config
      * @return array
      */
-    public function toArgDefinition(array $config);
+    public function toArgsDefinition(array $config);
 }

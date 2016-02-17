@@ -37,6 +37,7 @@ services:
         arguments:
             - "@overblog_graphql.type_resolver"
             - "@overblog_graphql.field_resolver"
+            - "@overblog_graphql.arg_resolver"
             - "@overblog_graphql.expression_language"
             - %kernel.debug%
 

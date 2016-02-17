@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\ArgsInterface;
 use Overblog\GraphQLBundle\Definition\FieldInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
@@ -26,6 +27,11 @@ class ConfigResolver implements ResolverInterface
      */
     private $fieldResolver;
 
+    /**
+     * @var ArgResolver
+     */
+    private $argResolver;
+
     /** @var boolean */
     private $enabledDebug;
 
@@ -36,12 +42,14 @@ class ConfigResolver implements ResolverInterface
     public function __construct(
         ResolverInterface $typeResolver,
         ResolverInterface $fieldResolver,
+        ResolverInterface $argResolver,
         ExpressionLanguage $expressionLanguage,
         $enabledDebug = false
     )
     {
         $this->typeResolver = $typeResolver;
         $this->fieldResolver = $fieldResolver;
+        $this->argResolver = $argResolver;
         $this->expressionLanguage = $expressionLanguage;
         $this->enabledDebug = $enabledDebug;
         $this->resolverMap = [
@@ -93,16 +101,16 @@ class ConfigResolver implements ResolverInterface
             if (isset($options['builder']) && is_string($options['builder'])) {
                 $alias = $options['builder'];
 
-                $fieldsBuilder = $this->fieldResolver->resolve($alias);
+                $fieldBuilder = $this->fieldResolver->resolve($alias);
                 $builderConfig = isset($options['builderConfig']) ? $this->resolve($options['builderConfig']) : [];
                 $builderConfig['name'] = $field;
 
-                if ($fieldsBuilder instanceof FieldInterface) {
-                    $options = $fieldsBuilder->toFieldDefinition($builderConfig);
-                } elseif(is_callable($fieldsBuilder)) {
-                    $options = call_user_func_array($fieldsBuilder, [$builderConfig]);
-                } elseif(is_object($fieldsBuilder)) {
-                    $options = get_object_vars($fieldsBuilder);
+                if ($fieldBuilder instanceof FieldInterface) {
+                    $options = $fieldBuilder->toFieldDefinition($builderConfig);
+                } elseif(is_callable($fieldBuilder)) {
+                    $options = call_user_func_array($fieldBuilder, [$builderConfig]);
+                } elseif(is_object($fieldBuilder)) {
+                    $options = get_object_vars($fieldBuilder);
                 } else {
                     throw new \RuntimeException(sprintf('Could not build field "%s".', $alias));
                 }
@@ -120,6 +128,27 @@ class ConfigResolver implements ResolverInterface
                 foreach($options['args'] as &$argsOptions) {
                     $argsOptions['type'] = $this->resolveTypeCallback($argsOptions['type']);
                 }
+            }
+
+            if (isset($options['argsBuilder'])) {
+                $alias = $options['argsBuilder']['name'];
+
+                $argsBuilder = $this->argResolver->resolve($alias);
+                $builderConfig = isset($options['args']['builderConfig']) ? $this->resolve($options['args']['builderConfig']) : [];
+
+                $options['args'] = isset($options['args']) ? $options['args'] : [];
+
+                if ($argsBuilder instanceof ArgsInterface) {
+                    $options['args'] = array_merge($argsBuilder->toArgsDefinition($builderConfig), $options['args']);
+                } elseif(is_callable($argsBuilder)) {
+                    $options['args'] = array_merge(call_user_func_array($argsBuilder, [$builderConfig]), $options['args']);
+                } elseif(is_object($argsBuilder)) {
+                    $options['args'] = array_merge(get_object_vars($argsBuilder), $options['args']);
+                } else {
+                    throw new \RuntimeException(sprintf('Could not build args "%s".', $alias));
+                }
+
+                unset($options['argsBuilder']);
             }
 
             if (isset($options['resolve']) && is_string($options['resolve'])) {

@@ -4,7 +4,7 @@ OverblogGraphQLBundle
 Installation
 ------------
 
-a) Download the bundle
+**a)** Download the bundle
 
 In the project directory:
 
@@ -12,7 +12,7 @@ In the project directory:
 composer require overblog/graphql-bundle
 ```
 
-b) Enabled the bundle
+**b)** Enabled the bundle
 
 ```php
 // in app/AppKernel.php
@@ -30,7 +30,7 @@ class AppKernel extends Kernel
 }
 ```
 
-c) Enable graphQl endpoint
+**c)** Enable graphQL endpoint
 
 ```yaml
 # in app/config/routing.yml
