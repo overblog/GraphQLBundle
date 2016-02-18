@@ -1,6 +1,12 @@
 OverblogGraphQLBundle
 =======================
 
+Description
+-----------
+
+This Bundle provide integration [GraphQL](https://facebook.github.io/graphql/) using [webonyx/graphql-php](https://github.com/webonyx/graphql-php) 
+and [GraphQL Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html).
+
 Installation
 ------------
 
