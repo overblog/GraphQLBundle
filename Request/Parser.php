@@ -17,8 +17,8 @@ class Parser
     public function parse(Request $request)
     {
         // Extracts the GraphQL request parameters
-        $body = $this->getBody($request);
-        $data = $this->getParams($request, $body);
+        $parsedBody = $this->getParsedBody($request);
+        $data = $this->getParams($request, $parsedBody);
 
         return $data;
     }
@@ -30,35 +30,41 @@ class Parser
      *
      * @return array
      */
-    private function getBody(Request $request)
+    private function getParsedBody(Request $request)
     {
         $body = $request->getContent();
-        $type = $request->headers->get('content-type');
+        $type = explode(';', $request->headers->get('content-type'))[0];
 
-        // Plain string
-        if ('application/graphql' === $type) {
-            return ['query' => $body];
+        switch($type) {
+            // Plain string
+            case 'application/graphql':
+                $parsedBody = ['query' => $body];
+                break;
+
+            // JSON object
+            case 'application/json':
+                $json = json_decode($body, true);
+
+                if (JSON_ERROR_NONE !== json_last_error()) {
+                    throw new BadRequestHttpException(
+                        sprintf('POST body sent invalid JSON [%s]', json_last_error_msg())
+                    );
+                }
+                $parsedBody = $json;
+                break;
+
+            // URL-encoded query-string
+            case 'application/x-www-form-urlencoded':
+            case 'multipart/form-data':
+                $parsedBody = $request->request->all();
+                break;
+
+            default:
+                $parsedBody = [];
+                break;
         }
 
-        // JSON object
-        if ('application/json' === $type) {
-            $json = json_decode($body, true);
-
-            if (JSON_ERROR_NONE !== json_last_error()) {
-                throw new BadRequestHttpException('POST body sent invalid JSON');
-            }
-
-            return $json;
-        }
-
-        // URL-encoded query-string
-        if ('application/x-www-form-urlencoded' === $type) {
-            parse_str($body, $data);
-
-            return $data;
-        }
-
-        return [];
+        return $parsedBody;
     }
 
     /**
@@ -72,7 +78,7 @@ class Parser
     private function getParams(Request $request, array $data = [])
     {
         // Add default request parameters
-        $data = (array)$data + [
+        $data = $data + [
             'query' => null,
             'variables' => null,
             'operationName' => null,

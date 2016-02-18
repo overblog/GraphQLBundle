@@ -77,3 +77,10 @@ services:
             - "@overblog_graphql.cache_expression_language_parser"
         calls:
             - ["setContainer", ["@service_container"]]
+
+    overblog_graphql.event_listener.request_file_listener:
+        class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
+        arguments:
+            - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
