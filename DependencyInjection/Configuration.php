@@ -20,6 +20,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('definitions')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->scalarNode('internal_error_message')->defaultNull()->end()
                         ->booleanNode('config_validation')->defaultFalse()->end()
                         ->arrayNode('schema')
                             ->addDefaultsIfNotSet()

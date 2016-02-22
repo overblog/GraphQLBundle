@@ -33,9 +33,6 @@ class ConfigResolver implements ResolverInterface
      */
     private $argResolver;
 
-    /** @var boolean */
-    private $enabledDebug;
-
     /** @var array */
     // [name => callable]
     private $resolverMap = [];
@@ -52,7 +49,6 @@ class ConfigResolver implements ResolverInterface
         $this->fieldResolver = $fieldResolver;
         $this->argResolver = $argResolver;
         $this->expressionLanguage = $expressionLanguage;
-        $this->enabledDebug = $enabledDebug;
         $this->resolverMap = [
             'fields' => [$this, 'resolveFields'],
             'isTypeOf' => [$this, 'resolveResolveCallback'],
@@ -201,19 +197,12 @@ class ConfigResolver implements ResolverInterface
 
     private function resolveType($expr, $parentClass = 'GraphQL\\Type\\Definition\\Type')
     {
-        try {
-            $type = $this->typeResolver->resolve($expr);
+        $type = $this->typeResolver->resolve($expr);
 
-            if (class_exists($parentClass) && !$type instanceof $parentClass) {
-                throw new \InvalidArgumentException(
-                    sprintf('Invalid type! Must be instance of "%s"', $parentClass)
-                );
-            }
-        } catch (\Exception $e) {
-            if ($this->enabledDebug) {
-                throw $e;
-            }
-            throw new \RuntimeException(sprintf('An error occurred while resolving type "%s".', $expr), 0, $e);
+        if (class_exists($parentClass) && !$type instanceof $parentClass) {
+            throw new \InvalidArgumentException(
+                sprintf('Invalid type! Must be instance of "%s"', $parentClass)
+            );
         }
 
         return $type;
@@ -233,9 +222,6 @@ class ConfigResolver implements ResolverInterface
                         array_merge($values, ['object' => $object])
                     );
                 } catch(\Exception $e) {
-                    if ($this->enabledDebug) {
-                        throw $e;
-                    }
                     $access = false;
                 }
 
@@ -270,22 +256,11 @@ class ConfigResolver implements ResolverInterface
 
     private function resolveResolveCallback($expression)
     {
-        if (empty($expression)) {
-            return null;
-        }
-
         return function (...$args) use ($expression) {
-            try {
-                $result = $this->resolveUsingExpressionLanguageIfNeeded(
-                    $expression,
-                    $this->resolveResolveCallbackArgs(...$args)
-                );
-            } catch(\Exception $e) {
-                if ($this->enabledDebug) {
-                    throw $e;
-                }
-                throw new \RuntimeException('An error occurred while executing resolver.', 0, $e);
-            }
+            $result = $this->resolveUsingExpressionLanguageIfNeeded(
+                $expression,
+                $this->resolveResolveCallbackArgs(...$args)
+            );
 
             return $result;
         };

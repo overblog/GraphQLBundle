@@ -1,11 +1,18 @@
 services:
+    overblog_graphql.error_handler:
+        class: Overblog\GraphQLBundle\Error\ErrorHandler
+        public: false
+        arguments:
+            - ~
+            - "@?logger"
+
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
         arguments:
             - "@overblog_graphql.schema"
             - "@event_dispatcher"
             - %kernel.debug%
-            - "@?logger"
+            - "@overblog_graphql.error_handler"
 
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser
@@ -39,7 +46,6 @@ services:
             - "@overblog_graphql.field_resolver"
             - "@overblog_graphql.arg_resolver"
             - "@overblog_graphql.expression_language"
-            - %kernel.debug%
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver

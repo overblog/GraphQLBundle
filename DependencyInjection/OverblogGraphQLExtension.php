@@ -58,6 +58,14 @@ class OverblogGraphQLExtension extends Extension
                 ->setPublic(true)
             ;
         }
+
+        if (isset($config['definitions']['internal_error_message'])) {
+            $container
+                ->getDefinition($this->getAlias(). '.error_handler')
+                ->replaceArgument(0, $config['definitions']['internal_error_message'])
+                ->setPublic(true)
+            ;
+        }
     }
 
     public function getAlias()
