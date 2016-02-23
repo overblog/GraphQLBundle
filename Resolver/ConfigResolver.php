@@ -124,6 +124,9 @@ class ConfigResolver implements ResolverInterface
             if (isset($options['args'])) {
                 foreach($options['args'] as &$argsOptions) {
                     $argsOptions['type'] = $this->resolveTypeCallback($argsOptions['type']);
+                    if (isset($argsOptions['defaultValue'])) {
+                        $argsOptions['defaultValue'] = $this->resolveUsingExpressionLanguageIfNeeded($argsOptions['defaultValue']);
+                    }
                 }
             }
 
