@@ -78,8 +78,8 @@ class ConfigResolver implements ResolverInterface
 
     public function resolve($config)
     {
-        if (!is_array($config)) {
-            $config = [$config];
+        if (!is_array($config) || $config instanceof \ArrayAccess) {
+            throw new \RuntimeException('Config must be an array or implement \ArrayAccess interface');
         }
 
         foreach($config as $name => &$values) {
