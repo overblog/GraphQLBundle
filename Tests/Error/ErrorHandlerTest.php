@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error;
@@ -31,18 +40,18 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult);
 
         $expected = [
-            'data' => null,
+            'data'   => null,
             'errors' => [
                 [
-                    'message' => 'Error without wrapped exception'
+                    'message' => 'Error without wrapped exception',
                 ],
                 [
-                    'message' => ErrorHandler::DEFAULT_ERROR_MESSAGE
+                    'message' => ErrorHandler::DEFAULT_ERROR_MESSAGE,
                 ],
                 [
-                    'message' => 'Error with wrapped user error'
+                    'message' => 'Error with wrapped user error',
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $executionResult->toArray());
@@ -76,12 +85,12 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data' => null,
+            'data'   => null,
             'errors' => [
                 [
-                    'message' => 'Error with wrapped user error'
+                    'message' => 'Error with wrapped user error',
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $executionResult->toArray());
@@ -99,12 +108,12 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data' => null,
+            'data'   => null,
             'errors' => [
                 [
-                    'message' => 'Error without wrapped exception'
+                    'message' => 'Error without wrapped exception',
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $executionResult->toArray());
@@ -119,19 +128,19 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->errorHandler->setErrorHandler(function() {
+        $this->errorHandler->setErrorHandler(function () {
             return new Error('Override Error');
         });
 
         $this->errorHandler->handleErrors($executionResult);
 
         $expected = [
-            'data' => null,
+            'data'   => null,
             'errors' => [
                 [
-                    'message' => 'Override Error'
+                    'message' => 'Override Error',
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $executionResult->toArray());

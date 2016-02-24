@@ -1,12 +1,21 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
- * Class GlobalTest
+ * Class GlobalTest.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/global.js
  */
 class GlobalTest extends TestCase
@@ -32,22 +41,22 @@ EOF;
         $expectedData = [
             'allObjects' => [
                 [
-                    'id' => 'VXNlcjox'
+                    'id' => 'VXNlcjox',
                 ],
                 [
-                    'id' => 'VXNlcjoy'
+                    'id' => 'VXNlcjoy',
                 ],
                 [
-                    'id' => 'UGhvdG86MQ=='
+                    'id' => 'UGhvdG86MQ==',
                 ],
                 [
-                    'id' => 'UGhvdG86Mg=='
+                    'id' => 'UGhvdG86Mg==',
                 ],
                 [
-                    'id' => 'UG9zdDox'
+                    'id' => 'UG9zdDox',
                 ],
                 [
-                    'id' => 'UG9zdDoy'
+                    'id' => 'UG9zdDoy',
                 ],
             ],
         ];
@@ -81,17 +90,17 @@ EOF;
 EOF;
         $expectedData = [
             'user' => [
-                'id' => 'VXNlcjox',
-                'name' => 'John Doe'
+                'id'   => 'VXNlcjox',
+                'name' => 'John Doe',
             ],
             'photo' => [
-                'id' => 'UGhvdG86MQ==',
-                'width' => 300
+                'id'    => 'UGhvdG86MQ==',
+                'width' => 300,
             ],
             'post' => [
-                'id' => 'UG9zdDox',
-                'text' => 'lorem'
-            ]
+                'id'   => 'UG9zdDox',
+                'text' => 'lorem',
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);

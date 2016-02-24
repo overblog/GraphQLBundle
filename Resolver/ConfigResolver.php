@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
@@ -33,8 +42,10 @@ class ConfigResolver implements ResolverInterface
      */
     private $argResolver;
 
-    /** @var array */
-    // [name => callable]
+    /**
+     * @var array
+     *            [name => callable]
+     */
     private $resolverMap = [];
 
     public function __construct(
@@ -43,31 +54,30 @@ class ConfigResolver implements ResolverInterface
         ResolverInterface $argResolver,
         ExpressionLanguage $expressionLanguage,
         $enabledDebug = false
-    )
-    {
+    ) {
         $this->typeResolver = $typeResolver;
         $this->fieldResolver = $fieldResolver;
         $this->argResolver = $argResolver;
         $this->expressionLanguage = $expressionLanguage;
         $this->resolverMap = [
-            'fields' => [$this, 'resolveFields'],
-            'isTypeOf' => [$this, 'resolveResolveCallback'],
-            'interfaces' => [$this, 'resolveInterfaces'],
-            'types' => [$this, 'resolveTypes'],
-            'values' => [$this, 'resolveValues'],
-            'resolveType' => [$this, 'resolveResolveCallback'],
-            'resolveCursor' => [$this, 'resolveResolveCallback'],
-            'resolveNode' => [$this, 'resolveResolveCallback'],
-            'nodeType' => [$this, 'resolveTypeCallback'],
-            'connectionFields' => [$this, 'resolveFields'],
-            'edgeFields' => [$this, 'resolveFields'],
+            'fields'              => [$this, 'resolveFields'],
+            'isTypeOf'            => [$this, 'resolveResolveCallback'],
+            'interfaces'          => [$this, 'resolveInterfaces'],
+            'types'               => [$this, 'resolveTypes'],
+            'values'              => [$this, 'resolveValues'],
+            'resolveType'         => [$this, 'resolveResolveCallback'],
+            'resolveCursor'       => [$this, 'resolveResolveCallback'],
+            'resolveNode'         => [$this, 'resolveResolveCallback'],
+            'nodeType'            => [$this, 'resolveTypeCallback'],
+            'connectionFields'    => [$this, 'resolveFields'],
+            'edgeFields'          => [$this, 'resolveFields'],
             'mutateAndGetPayload' => [$this, 'resolveResolveCallback'],
-            'idFetcher' => [$this, 'resolveResolveCallback'],
-            'nodeInterfaceType' => [$this, 'resolveTypeCallback'],
-            'inputType' => [$this, 'resolveTypeCallback'],
-            'outputType' => [$this, 'resolveTypeCallback'],
-            'payloadType' => [$this, 'resolveTypeCallback'],
-            'resolveSingleInput' => [$this, 'resolveResolveCallback'],
+            'idFetcher'           => [$this, 'resolveResolveCallback'],
+            'nodeInterfaceType'   => [$this, 'resolveTypeCallback'],
+            'inputType'           => [$this, 'resolveTypeCallback'],
+            'outputType'          => [$this, 'resolveTypeCallback'],
+            'payloadType'         => [$this, 'resolveTypeCallback'],
+            'resolveSingleInput'  => [$this, 'resolveResolveCallback'],
         ];
     }
 
@@ -82,7 +92,7 @@ class ConfigResolver implements ResolverInterface
             throw new \RuntimeException('Config must be an array or implement \ArrayAccess interface');
         }
 
-        foreach($config as $name => &$values) {
+        foreach ($config as $name => &$values) {
             if (!isset($this->resolverMap[$name]) || empty($values)) {
                 continue;
             }
@@ -104,9 +114,9 @@ class ConfigResolver implements ResolverInterface
 
                 if ($fieldBuilder instanceof FieldInterface) {
                     $options = $fieldBuilder->toFieldDefinition($builderConfig);
-                } elseif(is_callable($fieldBuilder)) {
+                } elseif (is_callable($fieldBuilder)) {
                     $options = call_user_func_array($fieldBuilder, [$builderConfig]);
-                } elseif(is_object($fieldBuilder)) {
+                } elseif (is_object($fieldBuilder)) {
                     $options = get_object_vars($fieldBuilder);
                 } else {
                     throw new \RuntimeException(sprintf('Could not build field "%s".', $alias));
@@ -122,7 +132,7 @@ class ConfigResolver implements ResolverInterface
             }
 
             if (isset($options['args'])) {
-                foreach($options['args'] as &$argsOptions) {
+                foreach ($options['args'] as &$argsOptions) {
                     $argsOptions['type'] = $this->resolveTypeCallback($argsOptions['type']);
                     if (isset($argsOptions['defaultValue'])) {
                         $argsOptions['defaultValue'] = $this->resolveUsingExpressionLanguageIfNeeded($argsOptions['defaultValue']);
@@ -140,9 +150,9 @@ class ConfigResolver implements ResolverInterface
 
                 if ($argsBuilder instanceof ArgsInterface) {
                     $options['args'] = array_merge($argsBuilder->toArgsDefinition($builderConfig), $options['args']);
-                } elseif(is_callable($argsBuilder)) {
+                } elseif (is_callable($argsBuilder)) {
                     $options['args'] = array_merge(call_user_func_array($argsBuilder, [$builderConfig]), $options['args']);
-                } elseif(is_object($argsBuilder)) {
+                } elseif (is_object($argsBuilder)) {
                     $options['args'] = array_merge(get_object_vars($argsBuilder), $options['args']);
                 } else {
                     throw new \RuntimeException(sprintf('Could not build args "%s".', $alias));
@@ -191,7 +201,7 @@ class ConfigResolver implements ResolverInterface
     {
         $types = [];
 
-        foreach($rawTypes as $alias) {
+        foreach ($rawTypes as $alias) {
             $types[] = $this->resolveType($alias, $parentClass);
         }
 
@@ -220,13 +230,13 @@ class ConfigResolver implements ResolverInterface
 
             $values =  call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
 
-            $checkAccess = function($object) use ($expression, $values) {
+            $checkAccess = function ($object) use ($expression, $values) {
                 try {
                     $access = $this->resolveUsingExpressionLanguageIfNeeded(
                         $expression,
                         array_merge($values, ['object' => $object])
                     );
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     $access = false;
                 }
 
@@ -236,7 +246,7 @@ class ConfigResolver implements ResolverInterface
             if (is_array($result) || $result instanceof \ArrayAccess) {
                 $result = array_filter(
                     array_map(
-                        function($object) use ($checkAccess) {
+                        function ($object) use ($checkAccess) {
                             return $checkAccess($object) ? $object : null;
                         },
                         $result
@@ -244,7 +254,7 @@ class ConfigResolver implements ResolverInterface
                 );
             } elseif ($result instanceof Connection) {
                 $result->edges = array_map(
-                    function(Edge $edge) use ($checkAccess) {
+                    function (Edge $edge) use ($checkAccess) {
                         $edge->node = $checkAccess($edge->node) ? $edge->node : null;
 
                         return $edge;
@@ -290,8 +300,8 @@ class ConfigResolver implements ResolverInterface
 
         return [
             'value' => $value,
-            'args' => $resolverArgs,
-            'info' => $info,
+            'args'  => $resolverArgs,
+            'info'  => $info,
         ];
     }
 

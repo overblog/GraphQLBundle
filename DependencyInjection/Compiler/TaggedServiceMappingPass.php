@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -16,9 +25,10 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $tag) {
                 $this->checkRequirements($id, $tag);
-                $serviceMapping[$tag['alias']] =  array_merge($tag, ['id' => $id]);
+                $serviceMapping[$tag['alias']] = array_merge($tag, ['id' => $id]);
             }
         }
+
         return $serviceMapping;
     }
 

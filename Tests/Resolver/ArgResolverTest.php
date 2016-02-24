@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ArgResolver;
@@ -25,7 +34,7 @@ class ArgResolverTest extends \PHPUnit_Framework_TestCase
 
         $container->setParameter('overblog_graphql.args_mapping', $mapping);
 
-        foreach($mapping as $alias => $options) {
+        foreach ($mapping as $alias => $options) {
             $container->setDefinition($options['id'], new Definition('stdClass'))
                 ->setProperty('name', $alias);
         }

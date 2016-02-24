@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -43,7 +52,7 @@ class Configuration implements ConfigurationInterface
                                             'relay-mutation-input',
                                             'relay-mutation-payload',
                                             'relay-connection',
-                                            'relay-node'
+                                            'relay-node',
                                         ])
                                         ->isRequired()
                                     ->end()
@@ -115,9 +124,9 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('resolveNode')->end()
         ->end()
         ->validate()
-            ->always(function($v) {
+            ->always(function ($v) {
                 // remove all empty value
-                $array_filter_recursive = function ($input) use (&$array_filter_recursive){
+                $array_filter_recursive = function ($input) use (&$array_filter_recursive) {
                     foreach ($input as $key => &$value) {
                         if ('defaultValue' === $key) {
                             continue;
@@ -217,9 +226,9 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         $node->validate()
-            ->ifTrue(function($fields) use($enabledBuilder) {
-                foreach($fields as $v) {
-                    if(empty($v['type']) && $enabledBuilder && empty($v['builder'])) {
+            ->ifTrue(function ($fields) use ($enabledBuilder) {
+                foreach ($fields as $v) {
+                    if (empty($v['type']) && $enabledBuilder && empty($v['builder'])) {
                         return true;
                     }
                 }

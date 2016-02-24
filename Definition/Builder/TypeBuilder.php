@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Type\Definition\Type;
@@ -17,6 +26,7 @@ class TypeBuilder
     /**
      * @param $type
      * @param array $config
+     *
      * @return Type
      */
     public function create($type, array $config)
@@ -28,7 +38,7 @@ class TypeBuilder
 
     private function getBaseClassName($type)
     {
-        switch($type) {
+        switch ($type) {
             case 'relay-connection':
                 $class = 'Overblog\\GraphQLBundle\\Relay\\Connection\\ConnectionType';
                 break;

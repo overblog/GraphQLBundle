@@ -60,3 +60,13 @@ Usage
 -----
 
 TODO
+
+Contribute
+----------
+
+Fix PHP CS:
+~~~~~~~~~~~
+
+```
+vendor/bin/php-cs-fixer fix ./ --level=symfony --fixers=header_comment,align_double_arrow
+```

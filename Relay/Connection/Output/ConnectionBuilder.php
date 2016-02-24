@@ -1,13 +1,22 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Relay\Connection\Output;
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Definition\Argument;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class ConnectionBuilder
+ * Class ConnectionBuilder.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/arrayconnection.js
  */
 class ConnectionBuilder
@@ -19,8 +28,9 @@ class ConnectionBuilder
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
      *
-     * @param array $data
+     * @param array          $data
      * @param array|Argument $args
+     *
      * @return Connection
      */
     public static function connectionFromArray($data, $args = [])
@@ -29,7 +39,7 @@ class ConnectionBuilder
             $data,
             $args,
             [
-                'sliceStart' => 0,
+                'sliceStart'  => 0,
                 'arrayLength' => count($data),
             ]
         );
@@ -44,9 +54,9 @@ class ConnectionBuilder
      * to materialize the entire array, and instead wish pass in a slice of the
      * total result large enough to cover the range specified in `args`.
      *
-     * @param array $arraySlice
+     * @param array          $arraySlice
      * @param array|Argument $args
-     * @param array $meta
+     * @param array          $meta
      *
      * @return Connection
      */
@@ -55,16 +65,16 @@ class ConnectionBuilder
         $connectionArguments = static::getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
             [
-                'after' => '',
+                'after'  => '',
                 'before' => '',
-                'first' => null,
-                'last' => null,
+                'first'  => null,
+                'last'   => null,
             ]
         );
         $arraySliceMetaInfo = static::getOptionsWithDefaults(
             $meta,
             [
-                'sliceStart' => 0,
+                'sliceStart'  => 0,
                 'arrayLength' => 0,
             ]
         );
@@ -102,7 +112,7 @@ class ConnectionBuilder
 
         $edges = [];
 
-        foreach($slice as $index => $value) {
+        foreach ($slice as $index => $value) {
             $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);
         }
 
@@ -113,7 +123,7 @@ class ConnectionBuilder
 
         return new Connection(
             $edges,
-            new PageInfo (
+            new PageInfo(
                 $firstEdge instanceof Edge ? $firstEdge->cursor : null,
                 $lastEdge instanceof Edge  ? $lastEdge->cursor : null,
                 $last !== null ? $startOffset > $lowerBound : false,
@@ -124,15 +134,17 @@ class ConnectionBuilder
 
     /**
      * Return the cursor associated with an object in an array.
+     *
      * @param array $data
      * @param mixed $object
+     *
      * @return null|string
      */
     public static function cursorForObjectInConnection($data, $object)
     {
         $offset = null;
 
-        foreach($data as $i => $entry) {
+        foreach ($data as $i => $entry) {
             // When using the comparison operator (==), object variables are compared in a simple manner,
             // namely: Two object instances are equal if they have the same attributes and values,
             // and are instances of the same class.
@@ -143,7 +155,7 @@ class ConnectionBuilder
         }
 
         if (null === $offset) {
-            return null;
+            return;
         }
 
         return static::offsetToCursor($offset);
@@ -156,6 +168,7 @@ class ConnectionBuilder
      *
      * @param string $cursor
      * @param int    $defaultOffset
+     *
      * @return int
      */
     public static function getOffsetWithDefault($cursor, $defaultOffset)
@@ -165,22 +178,26 @@ class ConnectionBuilder
         }
         $offset = static::cursorToOffset($cursor);
 
-        return !is_numeric($offset) ?  $defaultOffset : (int)$offset;
+        return !is_numeric($offset) ?  $defaultOffset : (int) $offset;
     }
 
     /**
      * Creates the cursor string from an offset.
+     *
      * @param $offset
+     *
      * @return string
      */
     public static function offsetToCursor($offset)
     {
-        return base64_encode(static::PREFIX . $offset);
+        return base64_encode(static::PREFIX.$offset);
     }
 
     /**
      * Redefines the offset from the cursor string.
+     *
      * @param $cursor
+     *
      * @return int
      */
     public static function cursorToOffset($cursor)
@@ -195,5 +212,4 @@ class ConnectionBuilder
 
         return $arraySliceResolver->resolve($options);
     }
-
 }

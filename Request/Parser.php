@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +44,7 @@ class Parser
         $body = $request->getContent();
         $type = explode(';', $request->headers->get('content-type'))[0];
 
-        switch($type) {
+        switch ($type) {
             // Plain string
             case 'application/graphql':
                 $parsedBody = ['query' => $body];
@@ -71,7 +80,7 @@ class Parser
      * Gets the GraphQL parameters from the request.
      *
      * @param Request $request
-     * @param array $data
+     * @param array   $data
      *
      * @return array
      */
@@ -79,8 +88,8 @@ class Parser
     {
         // Add default request parameters
         $data = $data + [
-            'query' => null,
-            'variables' => null,
+            'query'         => null,
+            'variables'     => null,
             'operationName' => null,
         ];
 
@@ -108,8 +117,8 @@ class Parser
         }
 
         return [
-            'query' => $query,
-            'variables' => $variables,
+            'query'         => $query,
+            'variables'     => $variables,
             'operationName' => $operationName,
         ];
     }

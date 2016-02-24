@@ -1,8 +1,16 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
-use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 class NodeResolver
@@ -12,23 +20,23 @@ class NodeResolver
 
     private $userData = [
         '1' => [
-            'id' => 1,
-            'name' => 'John Doe'
+            'id'   => 1,
+            'name' => 'John Doe',
         ],
         '2' => [
-            'id' => 2,
-            'name' => 'Jane Smith'
+            'id'   => 2,
+            'name' => 'Jane Smith',
         ],
     ];
 
     private $photoData = [
         '3' => [
-            'id' => 3,
-            'width' => 300
+            'id'    => 3,
+            'width' => 300,
         ],
         '4' => [
-            'id' => 4,
-            'width' => 400
+            'id'    => 4,
+            'width' => 400,
         ],
     ];
 
@@ -45,7 +53,7 @@ class NodeResolver
             return $this->photoData[$id];
         }
 
-        return null;
+        return;
     }
 
     public function typeResolver($value)

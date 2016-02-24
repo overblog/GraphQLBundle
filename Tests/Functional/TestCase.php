@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -7,13 +16,14 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * TestCase
+ * TestCase.
  */
 abstract class TestCase extends WebTestCase
 {
     protected static function getKernelClass()
     {
         require_once __DIR__.'/app/AppKernel.php';
+
         return 'Overblog\GraphQLBundle\Tests\Functional\app\AppKernel';
     }
 
@@ -27,7 +37,7 @@ abstract class TestCase extends WebTestCase
         $options['test_case'] = isset($options['test_case']) ? $options['test_case'] : null;
 
         return new $class(
-            isset($options['environment']) ? $options['environment'] : 'overbloggraphbundletest' . strtolower($options['test_case']),
+            isset($options['environment']) ? $options['environment'] : 'overbloggraphbundletest'.strtolower($options['test_case']),
             isset($options['debug']) ? $options['debug'] : true,
             $options['test_case']
         );

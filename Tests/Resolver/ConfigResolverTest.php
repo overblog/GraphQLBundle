@@ -1,11 +1,18 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Resolver;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\ConfigResolver;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\Definition;
 
 class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,19 +74,19 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $config = self::$configResolver->resolve(
             [
                 'values' => [
-                    'test' => ['value' => 'my test value'],
-                    'toto' => ['value' => 'my toto value'],
-                    'expression-language-test' => ['value' => '@=["my", "test"]']
-                ]
+                    'test'                     => ['value' => 'my test value'],
+                    'toto'                     => ['value' => 'my toto value'],
+                    'expression-language-test' => ['value' => '@=["my", "test"]'],
+                ],
             ]
         );
 
         $expected = [
             'values' => [
-                'test' => ['value' => 'my test value'],
-                'toto' => ['value' => 'my toto value'],
-                'expression-language-test' => ['value' => ["my", "test"]]
-            ]
+                'test'                     => ['value' => 'my test value'],
+                'toto'                     => ['value' => 'my toto value'],
+                'expression-language-test' => ['value' => ['my', 'test']],
+            ],
         ];
 
         $this->assertEquals($expected, $config);

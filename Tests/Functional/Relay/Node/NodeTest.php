@@ -1,12 +1,21 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
- * Class NodeTest
+ * Class NodeTest.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/node.js
  */
 class NodeTest extends TestCase
@@ -31,7 +40,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id' => '1'
+                'id' => '1',
             ],
         ];
 
@@ -50,7 +59,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id' => '4'
+                'id' => '4',
             ],
         ];
 
@@ -72,7 +81,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id' => '4',
+                'id'    => '4',
                 'width' => 400,
             ],
         ];
@@ -93,7 +102,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id' => '1',
+                'id'         => '1',
                 '__typename' => 'User',
             ],
         ];
@@ -114,7 +123,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id' => '4',
+                'id'         => '4',
                 '__typename' => 'Photo',
             ],
         ];
@@ -184,21 +193,21 @@ EOF;
 
         $expectedData = [
             '__type' => [
-                'name' => 'Node',
-                'kind' => 'INTERFACE',
+                'name'   => 'Node',
+                'kind'   => 'INTERFACE',
                 'fields' => [
                     [
                         'name' => 'id',
                         'type' => [
-                            'kind' => 'NON_NULL',
+                            'kind'   => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'ID',
-                                'kind' => 'SCALAR'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'kind' => 'SCALAR',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);
@@ -240,24 +249,24 @@ EOF;
                             'name' => 'node',
                             'type' => [
                                 'name' => 'Node',
-                                'kind' => 'INTERFACE'
+                                'kind' => 'INTERFACE',
                             ],
                             'args' => [
                                 [
                                     'name' => 'id',
                                     'type' => [
-                                        'kind' => 'NON_NULL',
+                                        'kind'   => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'ID',
-                                            'kind' => 'SCALAR'
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                            'kind' => 'SCALAR',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);

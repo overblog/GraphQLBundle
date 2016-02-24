@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
@@ -12,34 +21,34 @@ class GlobalResolver
 
     private $userData = [
         1 => [
-            'id' => 1,
-            'name' => 'John Doe'
+            'id'   => 1,
+            'name' => 'John Doe',
         ],
         2 => [
-            'id' => 2,
-            'name' => 'Jane Smith'
+            'id'   => 2,
+            'name' => 'Jane Smith',
         ],
     ];
 
     private $photoData = [
         1 => [
             'photoId' => 1,
-            'width' => 300
+            'width'   => 300,
         ],
         2 => [
             'photoId' => 2,
-            'width' => 400
+            'width'   => 400,
         ],
     ];
 
     private $postData = [
         1 => [
-            'id' => 1,
-            'text' => 'lorem'
+            'id'   => 1,
+            'text' => 'lorem',
         ],
         2 => [
-            'id' => 2,
-            'text' => 'ipsum'
+            'id'   => 2,
+            'text' => 'ipsum',
         ],
     ];
 
@@ -54,7 +63,7 @@ class GlobalResolver
 
         if ($type === 'User') {
             return $this->userData[$id];
-        } else if ($type === 'Photo') {
+        } elseif ($type === 'Photo') {
             return $this->photoData[$id];
         } else {
             return $this->postData[$id];

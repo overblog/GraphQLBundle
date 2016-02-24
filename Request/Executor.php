@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Error;
@@ -7,7 +16,6 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\GraphQL;
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -21,7 +29,7 @@ class Executor
      */
     private $dispatcher;
 
-    /** @var boolean */
+    /** @var bool */
     private $throwException;
 
     /** @var ErrorHandler */
@@ -31,12 +39,12 @@ class Executor
     {
         $this->schema = $schema;
         $this->dispatcher = $dispatcher;
-        $this->throwException = (bool)$throwException;
+        $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getThrowException()
     {
@@ -44,12 +52,13 @@ class Executor
     }
 
     /**
-     * @param boolean $throwException
+     * @param bool $throwException
+     *
      * @return $this
      */
     public function setThrowException($throwException)
     {
-        $this->throwException = (bool)$throwException;
+        $this->throwException = (bool) $throwException;
 
         return $this;
     }

@@ -1,11 +1,19 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use GraphQL\Type\Definition\ObjectType;
 
 class TypeResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,10 +34,10 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
 
         $container->setParameter('overblog_graphql.types_mapping', $mapping);
 
-        foreach($mapping as $alias => $options) {
+        foreach ($mapping as $alias => $options) {
             $container->setDefinition($options['id'], new Definition('GraphQL\Type\Definition\ObjectType'))
                 ->setArguments([
-                    ['name' => $alias]
+                    ['name' => $alias],
                 ]);
         }
 

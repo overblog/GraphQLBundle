@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error;
@@ -77,9 +86,10 @@ class ErrorHandler
     }
 
     /**
-     * Changes the default error handler function
+     * Changes the default error handler function.
      *
      * @param callable $errorHandler
+     *
      * @return $this
      */
     public function setErrorHandler(callable $errorHandler)

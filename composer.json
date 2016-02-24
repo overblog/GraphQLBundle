@@ -1,6 +1,7 @@
 {
     "name": "overblog/graphql-bundle",
     "type": "symfony-bundle",
+    "license": "MIT",
     "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
     "keywords": ["GraphQL", "Relay"],
     "autoload": {
@@ -22,10 +23,11 @@
         "doctrine/doctrine-cache-bundle": "^1.2",
         "webonyx/graphql-php": "^0.5"
     },
-    "require-dev": {
-        "phpunit/phpunit": "5.1.*"
-    },
     "suggest": {
-        "twig/twig": "If you want to use graphiQL."
+    "twig/twig": "If you want to use graphiQL."
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.1.*",
+        "fabpot/php-cs-fixer": "@stable"
     }
 }

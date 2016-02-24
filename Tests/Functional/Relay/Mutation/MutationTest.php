@@ -1,12 +1,21 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Mutation;
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
- * Class MutationTest
+ * Class MutationTest.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/mutation/__tests__/mutation.js
  */
 class MutationTest extends TestCase
@@ -50,14 +59,13 @@ EOF;
 
         $expectedData = [
             'simpleMutation' => [
-                'result' => 1,
-                'clientMutationId' => 'abc'
+                'result'           => 1,
+                'clientMutationId' => 'abc',
             ],
         ];
 
         $this->assertGraphQL($query, $expectedData);
     }
-
 
     public function testSupportsThunksAsInputAndOutputFields()
     {
@@ -71,14 +79,13 @@ mutation M {
 EOF;
         $expectedData = [
             'simpleMutationWithThunkFields' => [
-                'result' => 1234,
-                'clientMutationId' => 'abc'
+                'result'           => 1234,
+                'clientMutationId' => 'abc',
             ],
         ];
 
         $this->assertGraphQL($query, $expectedData);
     }
-
 
     public function testContainsCorrectInput()
     {
@@ -102,23 +109,23 @@ EOF;
 }
 EOF;
         $expectedData = [
-            '__type' =>  [
-                'name' => 'simpleMutationInput',
-                'kind' => 'INPUT_OBJECT',
+            '__type' => [
+                'name'        => 'simpleMutationInput',
+                'kind'        => 'INPUT_OBJECT',
                 'inputFields' => [
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name' => null,
-                            'kind' => 'NON_NULL',
+                            'name'   => null,
+                            'kind'   => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'String',
-                                'kind' => 'SCALAR'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'kind' => 'SCALAR',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);
@@ -147,36 +154,35 @@ EOF;
 EOF;
 
         $expectedData = [
-            '__type' =>  [
-                'name' => 'simpleMutationPayload',
-                'kind' => 'OBJECT',
+            '__type' => [
+                'name'   => 'simpleMutationPayload',
+                'kind'   => 'OBJECT',
                 'fields' => [
                     [
                         'name' => 'result',
                         'type' => [
-                            'name' => 'Int',
-                            'kind' => 'SCALAR',
-                            'ofType' => null
-                        ]
+                            'name'   => 'Int',
+                            'kind'   => 'SCALAR',
+                            'ofType' => null,
+                        ],
                     ],
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name' => null,
-                            'kind' => 'NON_NULL',
+                            'name'   => null,
+                            'kind'   => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'String',
-                                'kind' => 'SCALAR'
-                            ]
-                        ]
-                    ]
+                                'kind' => 'SCALAR',
+                            ],
+                        ],
+                    ],
 
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);
-
     }
 
     public function testContainsCorrectField()
@@ -209,7 +215,7 @@ EOF;
 EOF;
 
         $expectedData = [
-            '__schema' =>  [
+            '__schema' => [
                 'mutationType' => [
                     'fields' => [
                         [
@@ -218,19 +224,19 @@ EOF;
                                 [
                                     'name' => 'input',
                                     'type' => [
-                                        'name' => null,
-                                        'kind' => 'NON_NULL',
+                                        'name'   => null,
+                                        'kind'   => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'simpleMutationInput',
-                                            'kind' => 'INPUT_OBJECT'
-                                        ]
-                                    ]
-                                ]
+                                            'kind' => 'INPUT_OBJECT',
+                                        ],
+                                    ],
+                                ],
                             ],
                             'type' => [
                                 'name' => 'simpleMutationPayload',
-                                'kind' => 'OBJECT'
-                            ]
+                                'kind' => 'OBJECT',
+                            ],
                         ],
                         [
                             'name' => 'simpleMutationWithThunkFields',
@@ -238,23 +244,23 @@ EOF;
                                 [
                                     'name' => 'input',
                                     'type' => [
-                                        'name' => null,
-                                        'kind' => 'NON_NULL',
+                                        'name'   => null,
+                                        'kind'   => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'simpleMutationWithThunkFieldsInput',
-                                            'kind' => 'INPUT_OBJECT'
-                                        ]
-                                    ]
-                                ]
+                                            'kind' => 'INPUT_OBJECT',
+                                        ],
+                                    ],
+                                ],
                             ],
                             'type' => [
                                 'name' => 'simpleMutationWithThunkFieldsPayload',
-                                'kind' => 'OBJECT'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'kind' => 'OBJECT',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->assertGraphQL($query, $expectedData);

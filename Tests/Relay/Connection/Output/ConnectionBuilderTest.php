@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -8,7 +17,8 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
 /**
- * Class ConnectionBuilderTest
+ * Class ConnectionBuilderTest.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/__tests__/arrayconnection.js
  */
 class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase

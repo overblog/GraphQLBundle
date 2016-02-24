@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ArgPass;
@@ -31,7 +40,7 @@ class OverblogGraphQLBundle extends Bundle
     public function getContainerExtension()
     {
         if (!$this->extension instanceof ExtensionInterface) {
-            $this->extension =  new OverblogGraphQLExtension();
+            $this->extension = new OverblogGraphQLExtension();
         }
 
         return $this->extension;

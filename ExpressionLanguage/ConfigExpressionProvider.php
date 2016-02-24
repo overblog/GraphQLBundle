@@ -1,9 +1,17 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
-use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
@@ -42,7 +50,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 return $variables['container']->get('overblog_graphql.mutation_resolver')->resolve([$alias, $args]);
             }),
 
-            new ExpressionFunction('globalId', function ($id, $typeName = null)   {
+            new ExpressionFunction('globalId', function ($id, $typeName = null) {
                 return sprintf(
                     '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::toGlobalId(!empty(%s) ? %s : $info->parentType->name, %s)',
                     $typeName,
@@ -50,7 +58,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                     $id
                 );
             }, function (array $variables, $id, $typeName = null) {
-                $type = !empty($typeName)? $typeName : $variables['info']->parentType->name;
+                $type = !empty($typeName) ? $typeName : $variables['info']->parentType->name;
 
                 return GlobalId::toGlobalId($type, $id);
             }),

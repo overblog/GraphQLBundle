@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
@@ -29,8 +38,8 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
         $output = new SymfonyStyle($input, $output);
 
         $request = [
-            'query' => Introspection::getIntrospectionQuery(false),
-            'variables' => [],
+            'query'         => Introspection::getIntrospectionQuery(false),
+            'variables'     => [],
             'operationName' => null,
         ];
 
@@ -50,7 +59,7 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
 
         $file = $input->getOption('file');
         if (empty($file)) {
-            $file = $container->getParameter('kernel.root_dir') . '/../var/schema.json';
+            $file = $container->getParameter('kernel.root_dir').'/../var/schema.json';
         }
 
         $schema = json_encode($result['data']);

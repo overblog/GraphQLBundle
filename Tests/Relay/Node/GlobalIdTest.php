@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
@@ -36,28 +45,28 @@ class GlobalIdTest extends \PHPUnit_Framework_TestCase
 
     public function testFromGlobalId()
     {
-        $params =  GlobalId::fromGlobalId('VXNlcjoxNQ==');
+        $params = GlobalId::fromGlobalId('VXNlcjoxNQ==');
 
         $this->assertEquals(['type' => 'User', 'id' => 15], $params);
     }
 
     public function testFromGlobalIdWithTypeEmpty()
     {
-        $params =  GlobalId::fromGlobalId('OjE1=');
+        $params = GlobalId::fromGlobalId('OjE1=');
 
         $this->assertEquals(['type' => null, 'id' => 15], $params);
     }
 
     public function testFromGlobalIdWithIdEmpty()
     {
-        $params =  GlobalId::fromGlobalId('VXNlcjo=');
+        $params = GlobalId::fromGlobalId('VXNlcjo=');
 
         $this->assertEquals(['type' => 'User', 'id' => null], $params);
     }
 
     public function testFromGlobalIdWithTypeAndIdEmpty()
     {
-        $params =  GlobalId::fromGlobalId('Og==');
+        $params = GlobalId::fromGlobalId('Og==');
 
         $this->assertEquals(['type' => null, 'id' => null], $params);
     }

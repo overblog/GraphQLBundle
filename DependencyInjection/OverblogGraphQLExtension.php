@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -13,7 +22,7 @@ class OverblogGraphQLExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
         $loader->load('graphql_fields.yml');
@@ -30,28 +39,28 @@ class OverblogGraphQLExtension extends Extension
         }
 
         if (isset($config['definitions']['types'])) {
-            $builderId = $this->getAlias() . '.type_builder';
+            $builderId = $this->getAlias().'.type_builder';
 
-            foreach($config['definitions']['types'] as $name => $options) {
+            foreach ($config['definitions']['types'] as $name => $options) {
                 $customTypeId = sprintf('%s.definition.custom_%s_type', $this->getAlias(), $container->underscore($name));
 
                 $options['config']['name'] = $name;
 
                 $container
                     ->setDefinition($customTypeId, new Definition('GraphQL\\Type\\Definition\\Type'))
-                    ->setFactory([ new Reference($builderId), 'create' ])
+                    ->setFactory([new Reference($builderId), 'create'])
                     ->setArguments([$options['type'], $options['config']])
-                    ->addTag($this->getAlias() . '.type', ['alias' => $name])
+                    ->addTag($this->getAlias().'.type', ['alias' => $name])
                 ;
             }
         }
 
-        $container->getDefinition($this->getAlias() . '.schema_builder')
+        $container->getDefinition($this->getAlias().'.schema_builder')
             ->replaceArgument(2, $config['definitions']['config_validation']);
 
         if (isset($config['definitions']['schema'])) {
             $container
-                ->getDefinition($this->getAlias(). '.schema')
+                ->getDefinition($this->getAlias().'.schema')
                 ->replaceArgument(0, $config['definitions']['schema']['query'])
                 ->replaceArgument(1, $config['definitions']['schema']['mutation'])
                 ->replaceArgument(2, $config['definitions']['schema']['subscription'])
@@ -61,7 +70,7 @@ class OverblogGraphQLExtension extends Extension
 
         if (isset($config['definitions']['internal_error_message'])) {
             $container
-                ->getDefinition($this->getAlias(). '.error_handler')
+                ->getDefinition($this->getAlias().'.error_handler')
                 ->replaceArgument(0, $config['definitions']['internal_error_message'])
                 ->setPublic(true)
             ;

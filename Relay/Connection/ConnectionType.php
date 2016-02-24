@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use GraphQL\Type\Definition\ObjectType;
@@ -21,8 +30,8 @@ class ConnectionType extends ObjectType
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
         Config::validate($config, [
-            'name' => Config::STRING | Config::REQUIRED,
-            'nodeType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'name'       => Config::STRING | Config::REQUIRED,
+            'nodeType'   => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
             'edgeFields' => Config::arrayOf(
                 FieldDefinition::getDefinition(),
                 Config::KEY_AS_NAME
@@ -32,7 +41,7 @@ class ConnectionType extends ObjectType
                 Config::KEY_AS_NAME
             ),
             'resolveCursor' => Config::CALLBACK,
-            'resolveNode' => Config::CALLBACK
+            'resolveNode'   => Config::CALLBACK,
         ]);
 
         if (!static::$pageInfoType instanceof PageInfoType) {
@@ -45,47 +54,47 @@ class ConnectionType extends ObjectType
         if (empty($name)) {
             $name = $config['name'];
         }
-        $edgeFields = empty($config['edgeFields'])? [] : $config['edgeFields'];
-        $connectionFields = empty($config['connectionFields'])? [] : $config['connectionFields'];
-        $resolveNode = empty($config['resolveNode'])? null : $config['resolveNode'];
-        $resolveCursor = empty($config['resolveCursor'])? null : $config['resolveCursor'];
+        $edgeFields = empty($config['edgeFields']) ? [] : $config['edgeFields'];
+        $connectionFields = empty($config['connectionFields']) ? [] : $config['connectionFields'];
+        $resolveNode = empty($config['resolveNode']) ? null : $config['resolveNode'];
+        $resolveCursor = empty($config['resolveCursor']) ? null : $config['resolveCursor'];
 
         $edgeType = new EdgeType([
-            'name' => $name . 'Edge',
+            'name'        => $name.'Edge',
             'description' => 'An edge in a connection.',
-            'fields' => $this->getFieldsWithDefaults(
+            'fields'      => $this->getFieldsWithDefaults(
                 $edgeFields,
                 [
                     'node' => [
-                        'type' => $nodeType,
-                        'resolve' => $resolveNode,
-                        'description' => 'The item at the end of the edge.'
+                        'type'        => $nodeType,
+                        'resolve'     => $resolveNode,
+                        'description' => 'The item at the end of the edge.',
                     ],
                     'cursor' => [
-                        'type' => Type::nonNull(Type::string()),
-                        'resolve' => $resolveCursor,
-                        'description' => 'A cursor for use in pagination.'
-                    ]
+                        'type'        => Type::nonNull(Type::string()),
+                        'resolve'     => $resolveCursor,
+                        'description' => 'A cursor for use in pagination.',
+                    ],
                 ]
-            )
+            ),
         ]);
 
         parent::__construct([
-            'name' => $name . 'Connection',
+            'name'        => $name.'Connection',
             'description' => 'A connection to a list of items.',
-            'fields' => $this->getFieldsWithDefaults(
+            'fields'      => $this->getFieldsWithDefaults(
                 $connectionFields,
                 [
                     'pageInfo' => [
-                        'type' => Type::nonNull(static::$pageInfoType),
-                        'description' => 'Information to aid in pagination.'
+                        'type'        => Type::nonNull(static::$pageInfoType),
+                        'description' => 'Information to aid in pagination.',
                     ],
                     'edges' => [
-                        'type' => Type::listOf($edgeType),
-                        'description' => 'Information to aid in pagination.'
-                    ]
+                        'type'        => Type::listOf($edgeType),
+                        'description' => 'Information to aid in pagination.',
+                    ],
                 ]
-            )
+            ),
         ]);
     }
 }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use GraphQL\Type\Definition\ObjectType;
@@ -18,12 +27,12 @@ class PayloadType extends ObjectType
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
         Config::validate($config, [
-            'name' => Config::STRING | Config::REQUIRED,
+            'name'   => Config::STRING | Config::REQUIRED,
             'fields' => Config::arrayOf(
                 FieldDefinition::getDefinition(),
                 Config::KEY_AS_NAME
             ),
-            'description' => Config::STRING
+            'description' => Config::STRING,
         ]);
 
         $description = isset($config['description']) ? $config['description'] : null;
@@ -32,7 +41,7 @@ class PayloadType extends ObjectType
         $augmentedOutputFields = $this->getFieldsWithDefaults(
             $outputFields,
             [
-                'clientMutationId' => ['type' => Type::nonNull(Type::string())]
+                'clientMutationId' => ['type' => Type::nonNull(Type::string())],
             ]
         );
 
@@ -42,9 +51,9 @@ class PayloadType extends ObjectType
         }
 
         parent::__construct([
-            'name' => $name . 'Payload',
-            'fields' => $augmentedOutputFields,
-            'description' => $description
+            'name'        => $name.'Payload',
+            'fields'      => $augmentedOutputFields,
+            'description' => $description,
         ]);
     }
 }

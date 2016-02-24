@@ -1,11 +1,21 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Connection;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
- * Class ConnectionTest
+ * Class ConnectionTest.
+ *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/__tests__/connection.js
  */
 class ConnectionTest extends TestCase
@@ -40,21 +50,21 @@ EOF;
             'user' => [
                 'friends' => [
                    'totalCount' => 4,
-                    'edges' => [
+                    'edges'     => [
                         [
                             'friendshipTime' => 'Yesterday',
-                            'node' => [
-                                'name' => 'Nick'
-                            ]
+                            'node'           => [
+                                'name' => 'Nick',
+                            ],
                         ],
                         [
                             'friendshipTime' => 'Yesterday',
-                            'node' => [
-                                'name' => 'Lee'
-                            ]
+                            'node'           => [
+                                'name' => 'Lee',
+                            ],
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -83,16 +93,16 @@ EOF;
                     'edges' => [
                         [
                             'node' => [
-                                'name' => 'Nick'
-                            ]
+                                'name' => 'Nick',
+                            ],
                         ],
                         [
                             'node' => [
-                                'name' => 'Lee'
-                            ]
+                                'name' => 'Lee',
+                            ],
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -121,16 +131,16 @@ EOF;
                     'edges' => [
                         [
                             'node' => [
-                                'name' => 'Joe'
-                            ]
+                                'name' => 'Joe',
+                            ],
                         ],
                         [
                             'node' => [
-                                'name' => 'Tim'
-                            ]
+                                'name' => 'Tim',
+                            ],
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 

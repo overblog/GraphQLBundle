@@ -1,13 +1,18 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Overblog\GraphQLBundle\Relay\Node\GlobalId;
-use Overblog\GraphQLBundle\Resolver\ResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 class AuthorizationExpressionProvider implements ExpressionFunctionProviderInterface
 {
@@ -26,6 +31,7 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                     $compiler .= ' || ';
                     $compiler .= sprintf('$authChecker->isGranted(%s)', $role);
                 }
+
                 return $compiler;
             }, function (array $variables, array $roles) {
                 foreach ($roles as $role) {
@@ -33,6 +39,7 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                         return true;
                     }
                 }
+
                 return false;
             }),
 

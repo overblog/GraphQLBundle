@@ -1,15 +1,23 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Resolver;
 
-
 use GraphQL\Type\Definition\Type;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TypeResolver extends AbstractResolver
 {
     /**
      * @param string $alias
+     *
      * @return \GraphQL\Type\Definition\Type
      */
     public function resolve($alias)
@@ -30,6 +38,7 @@ class TypeResolver extends AbstractResolver
             if (']' !== $alias[strlen($alias) - 1]) {
                 throw new UnresolvableException(sprintf('Invalid type "%s"', $alias));
             }
+
             return Type::listOf($this->resolve(substr($alias, 1, -1)));
         }
 
@@ -59,10 +68,10 @@ class TypeResolver extends AbstractResolver
         $serviceId = $this->getTypeServiceIdFromAlias($alias);
 
         if (null === $serviceId) {
-            return null;
+            return;
         }
 
-        $type  = $this->container->get($serviceId);
+        $type = $this->container->get($serviceId);
 
         if (!$type instanceof Type) {
             throw new UnresolvableException(
