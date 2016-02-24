@@ -66,6 +66,10 @@ class OverblogGraphQLExtension extends Extension
                 ->setPublic(true)
             ;
         }
+
+        if (isset($config['templates']['graphiql'])) {
+            $container->setParameter('overblog_graphql.graphiql_template', $config['templates']['graphiql']);
+        }
     }
 
     public function getAlias()

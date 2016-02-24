@@ -1,0 +1,4 @@
+overblog_graphql_graphiql:
+    path: /graphiql
+    defaults:
+        _controller: OverblogGraphQLBundle:GraphiQL:index
