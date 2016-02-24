@@ -51,16 +51,16 @@ class ResolverResolverTest extends \PHPUnit_Framework_TestCase
 
 class TotoResolver
 {
-    public function resolveToto(...$args)
+    public function resolveToto()
     {
-        return $args;
+        return func_get_args();
     }
 }
 
 class TataResolver
 {
-    public function resolveTata(...$args)
+    public function resolveTata()
     {
-        return $args;
+        return func_get_args();
     }
 }

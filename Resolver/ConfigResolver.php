@@ -213,10 +213,12 @@ class ConfigResolver implements ResolverInterface
 
     private function resolveAccessAndWrapResolveCallback($expression, callable $resolveCallback = null)
     {
-        return function (...$args) use ($expression, $resolveCallback) {
+        return function () use ($expression, $resolveCallback) {
+            $args = func_get_args();
+
             $result = null !== $resolveCallback  ? call_user_func_array($resolveCallback, $args) : null;
 
-            $values = $this->resolveResolveCallbackArgs(...$args);
+            $values =  call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
 
             $checkAccess = function($object) use ($expression, $values) {
                 try {
@@ -259,18 +261,20 @@ class ConfigResolver implements ResolverInterface
 
     private function resolveResolveCallback($expression)
     {
-        return function (...$args) use ($expression) {
+        return function () use ($expression) {
+            $args = func_get_args();
             $result = $this->resolveUsingExpressionLanguageIfNeeded(
                 $expression,
-                $this->resolveResolveCallbackArgs(...$args)
+                call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args)
             );
 
             return $result;
         };
     }
 
-    private function resolveResolveCallbackArgs(...$args)
+    private function resolveResolveCallbackArgs()
     {
+        $args = func_get_args();
         $optionResolver = new OptionsResolver();
         $optionResolver->setDefaults([null, null, null]);
 

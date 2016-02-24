@@ -51,16 +51,16 @@ class MutationResolverTest extends \PHPUnit_Framework_TestCase
 
 class TotoMutation
 {
-    public function resolveToto(...$args)
+    public function resolveToto()
     {
-        return $args;
+        return func_get_args();
     }
 }
 
 class TataMutation
 {
-    public function resolveTata(...$args)
+    public function resolveTata()
     {
-        return $args;
+        return func_get_args();
     }
 }
