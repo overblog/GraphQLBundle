@@ -32,7 +32,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
         $values['container'] = $this->container;
 
         if ($this->container->has('request_stack')) {
-            $values['request'] = $this->container->get('request_stack')->getMasterRequest();
+            $values['request'] = $this->container->get('request_stack')->getCurrentRequest();
         }
 
         if ($this->container->has('security.token_storage')) {
