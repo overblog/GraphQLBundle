@@ -141,7 +141,15 @@ class Configuration implements ConfigurationInterface
                         }
                     }
 
-                    return array_filter($input, function ($key, $val) { return 'defaultValue' === $key || !is_null($val); }, ARRAY_FILTER_USE_BOTH);
+                    $cleanInput = [];
+
+                    foreach ($input as $key => $val) {
+                        if ('defaultValue' === $key || !is_null($val)) {
+                            $cleanInput[$key] = $val;
+                        }
+                    }
+
+                    return $cleanInput;
                 };
 
                 return $array_filter_recursive($v);
