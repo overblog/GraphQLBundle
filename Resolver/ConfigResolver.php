@@ -228,7 +228,7 @@ class ConfigResolver implements ResolverInterface
 
             $result = null !== $resolveCallback  ? call_user_func_array($resolveCallback, $args) : null;
 
-            $values =  call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
+            $values = call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
 
             $checkAccess = function ($object) use ($expression, $values) {
                 try {

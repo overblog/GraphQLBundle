@@ -1,6 +1,8 @@
 OverblogGraphQLBundle
 =======================
 
+[![Build Status](https://travis-ci.com/overblog/GraphQLBundle.svg?token=PdnF6Q2whDtzNCCrCqfi&branch=master)](https://travis-ci.com/overblog/GraphQLBundle)
+
 Description
 -----------
 
@@ -65,7 +67,6 @@ Contribute
 ----------
 
 Fix PHP CS:
-~~~~~~~~~~~
 
 ```
 vendor/bin/php-cs-fixer fix ./ --level=symfony --fixers=header_comment,align_double_arrow
