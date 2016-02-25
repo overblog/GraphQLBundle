@@ -11,7 +11,7 @@ and [GraphQL Relay](https://facebook.github.io/relay/docs/graphql-relay-specific
 
 Requirements
 ------------
-PHP >= 5.6
+PHP >= 5.4
 
 Installation
 ------------
