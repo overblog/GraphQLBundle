@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {% block head %}
+  {% block style %}
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+  <link href="https://cdn.jsdelivr.net/graphiql/0.5.0/graphiql.css" rel="stylesheet">
+  {% endblock style %}
+  <script src="https://cdn.jsdelivr.net/react/0.14.7/react.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/react/0.14.7/react-dom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/graphiql/0.5.0/graphiql.min.js"></script>
+  <title>{% block title %}GraphiQL{% endblock title %}</title>
+  {% endblock head %}
+</head>
+<body>
+  {% block body %}
+  {% block body_loading %}Loading...{% endblock body_loading %}
+  {% block body_script %}
+  <script>
+    const endpoint = {{ endpoint | json_encode | raw }}
+
+    function graphQLFetcher(params) {
+      {% block graphql_fetcher_headers %}
+      var headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      }
+      {% endblock graphql_fetcher_headers %}
+
+      return fetch(endpoint, {
+        method: "post",
+        headers: headers,
+        body: JSON.stringify(params),
+      }).then((res) => {
+        return res.text()
+      }).then((body) => {
+        try {
+          return JSON.parse(body)
+        } catch (err) {
+          return body
+        }
+      })
+    }
+
+    ReactDOM.render(
+      React.createElement(GraphiQL, {
+        fetcher: graphQLFetcher
+      }),
+      document.body
+    )
+  </script>
+  {% endblock body_script %}
+  {% endblock body %}
+</body>
+</html>

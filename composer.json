@@ -24,5 +24,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*"
+    },
+    "suggest": {
+        "twig/twig": "If you want to use graphiQL."
     }
 }
