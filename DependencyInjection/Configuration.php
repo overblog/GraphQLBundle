@@ -14,8 +14,23 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * @todo fix xml
+ */
 class Configuration implements ConfigurationInterface
 {
+    private $debug;
+
+    /**
+     * Constructor.
+     *
+     * @param bool $debug Whether to use the debug mode
+     */
+    public function __construct($debug)
+    {
+        $this->debug = (Boolean) $debug;
+    }
+
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
@@ -23,14 +38,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-//                ->variableNode('references')
-//                    ->info('This path designed to ease yaml reference implementation')
-//                ->end()
                 ->arrayNode('definitions')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('internal_error_message')->defaultNull()->end()
-                        ->booleanNode('config_validation')->defaultFalse()->end()
+                        ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                         ->arrayNode('schema')
                             ->addDefaultsIfNotSet()
                             ->children()

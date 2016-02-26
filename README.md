@@ -61,6 +61,8 @@ overblog_graphql_graphiql:
 Usage
 -----
 
+Schema Types can be defined in bundle Resources/config/graphql using this file extension **.types.yml** or **.types.xml**. 
+
 TODO
 
 Contribute
