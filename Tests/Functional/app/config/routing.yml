@@ -1,2 +1,0 @@
-overblog_graphql:
-    resource: "@OverblogGraphQLBundle/Resources/config/routing.yml"

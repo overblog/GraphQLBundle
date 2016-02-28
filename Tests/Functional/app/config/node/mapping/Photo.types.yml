@@ -1,0 +1,9 @@
+Photo:
+    type: object
+    config:
+        fields:
+            id:
+                type: ID!
+            width:
+                type: Int
+        interfaces: [Node]

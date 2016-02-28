@@ -1,0 +1,54 @@
+NodeInterface:
+    type: relay-node
+    config:
+        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
+
+Query:
+    type: object
+    config:
+        fields:
+            node:
+                builder: Node
+                builderConfig:
+                    nodeInterfaceType: NodeInterface
+                    idFetcher: '@=service("overblog_graphql.test.resolver.global").idFetcher(value)'
+            allObjects:
+                type: '[NodeInterface]'
+                resolve: '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()'
+
+User:
+    type: object
+    config:
+        fields:
+            id:
+                builder: GlobalId
+                builderConfig:
+                    typeName: User
+            name:
+                type: String
+        interfaces: [NodeInterface]
+
+Photo:
+    type: object
+    config:
+        fields:
+            id:
+                builder: GlobalId
+                builderConfig:
+                    typeName: Photo
+                    idFetcher: '@=value["photoId"]'
+            width:
+                type: Int
+        interfaces: [NodeInterface]
+
+Post:
+    type: object
+    config:
+        fields:
+            id:
+                builder: GlobalId
+                builderConfig:
+                    typeName: Post
+            text:
+                type: String
+        interfaces: [NodeInterface]

@@ -1,0 +1,19 @@
+imports:
+    - { resource: ../config.yml }
+
+services:
+    overblog_graphql.test.resolver.plural:
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\PluralResolver
+        tags:
+            - { name: "overblog_graphql.resolver", alias: "plural_single_input", method: "resolveSingleInput" }
+
+overblog_graphql:
+    definitions:
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yml
+                    dir: %kernel.root_dir%/config/plural/mapping

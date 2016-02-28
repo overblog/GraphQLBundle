@@ -1,0 +1,22 @@
+imports:
+    - { resource: ../config.yml }
+
+services:
+    overblog_graphql.test.resolver.node:
+        class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\ConnectionResolver
+        tags:
+            - { name: "overblog_graphql.resolver", alias: "friends", method: "friendsResolver" }
+            - { name: "overblog_graphql.resolver", alias: "node", method: "resolveNode" }
+            - { name: "overblog_graphql.resolver", alias: "query", method: "resolveQuery" }
+            - { name: "overblog_graphql.resolver", alias: "connection", method: "resolveConnection" }
+
+overblog_graphql:
+    definitions:
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yml
+                    dir: %kernel.root_dir%/config/connection/mapping

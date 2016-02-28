@@ -1,0 +1,10 @@
+simpleMutationInput:
+    type: relay-mutation-input
+    config:
+        fields: []
+
+simpleMutationWithThunkFieldsInput:
+    type: relay-mutation-input
+    config:
+        fields:
+            inputData : { type: "Int" }

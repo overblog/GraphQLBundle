@@ -1,5 +1,5 @@
-OverblogGraphQLBundle
-=======================
+OverblogGraphQLBundle [WIP]
+===========================
 
 [![Build Status](https://travis-ci.com/overblog/GraphQLBundle.svg?token=PdnF6Q2whDtzNCCrCqfi&branch=master)](https://travis-ci.com/overblog/GraphQLBundle)
 

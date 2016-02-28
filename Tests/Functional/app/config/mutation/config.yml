@@ -1,0 +1,13 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        schema:
+            query: RootMutation
+            mutation: RootMutation
+        mappings:
+            types:
+                -
+                    type: yml
+                    dir: %kernel.root_dir%/config/mutation/mapping

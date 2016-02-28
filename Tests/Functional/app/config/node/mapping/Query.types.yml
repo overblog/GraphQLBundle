@@ -1,0 +1,9 @@
+Query:
+    type: object
+    config:
+        fields:
+            node:
+                builder: Node
+                builderConfig:
+                    nodeInterfaceType: Node
+                    idFetcher: '@=resolver("node_id_fetcher", [value])'

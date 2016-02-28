@@ -109,7 +109,13 @@ class ConfigResolver implements ResolverInterface
                 $alias = $options['builder'];
 
                 $fieldBuilder = $this->fieldResolver->resolve($alias);
-                $builderConfig = isset($options['builderConfig']) ? $this->resolve($options['builderConfig']) : [];
+                $builderConfig = [];
+                if (isset($options['builderConfig'])) {
+                    if (!is_array($options['builderConfig'])) {
+                        $options['builderConfig'] = [$options['builderConfig']];
+                    }
+                    $builderConfig = $this->resolve($options['builderConfig']);
+                }
                 $builderConfig['name'] = $field;
 
                 if ($fieldBuilder instanceof FieldInterface) {
@@ -144,14 +150,20 @@ class ConfigResolver implements ResolverInterface
                 $alias = $options['argsBuilder']['name'];
 
                 $argsBuilder = $this->argResolver->resolve($alias);
-                $builderConfig = isset($options['args']['builderConfig']) ? $this->resolve($options['args']['builderConfig']) : [];
+                $argsBuilderConfig = [];
+                if (isset($options['argsBuilder']['config'])) {
+                    if (!is_array($options['argsBuilder']['config'])) {
+                        $options['argsBuilder']['config'] = [$options['argsBuilder']['config']];
+                    }
+                    $argsBuilderConfig = $this->resolve($options['argsBuilder']['config']);
+                }
 
                 $options['args'] = isset($options['args']) ? $options['args'] : [];
 
                 if ($argsBuilder instanceof ArgsInterface) {
-                    $options['args'] = array_merge($argsBuilder->toArgsDefinition($builderConfig), $options['args']);
+                    $options['args'] = array_merge($argsBuilder->toArgsDefinition($argsBuilderConfig), $options['args']);
                 } elseif (is_callable($argsBuilder)) {
-                    $options['args'] = array_merge(call_user_func_array($argsBuilder, [$builderConfig]), $options['args']);
+                    $options['args'] = array_merge(call_user_func_array($argsBuilder, [$argsBuilderConfig]), $options['args']);
                 } elseif (is_object($argsBuilder)) {
                     $options['args'] = array_merge(get_object_vars($argsBuilder), $options['args']);
                 } else {

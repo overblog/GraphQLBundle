@@ -34,7 +34,7 @@ class AppKernel extends Kernel
 
     public function __construct($environment, $debug, $testCase = null)
     {
-        $this->testCase = null !== $testCase ? $testCase : 'config';
+        $this->testCase = null !== $testCase ? $testCase : false;
         parent::__construct($environment, $debug);
     }
 
@@ -58,6 +58,10 @@ class AppKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(sprintf(__DIR__.'/config/%s.yml', $this->testCase));
+        if ($this->testCase) {
+            $loader->load(sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
+        } else {
+            $loader->load(__DIR__.'/config/config.yml');
+        }
     }
 }

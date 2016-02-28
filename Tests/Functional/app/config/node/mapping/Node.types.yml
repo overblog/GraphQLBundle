@@ -1,0 +1,4 @@
+Node:
+    type: relay-node
+    config:
+        resolveType: '@=resolver("node_type", [value])'

@@ -1,0 +1,11 @@
+simpleMutationPayload:
+    type: relay-mutation-payload
+    config:
+        fields:
+            result: { type: "Int" }
+
+simpleMutationWithThunkFieldsPayload:
+    type: relay-mutation-payload
+    config:
+        fields:
+            result: { type: "Int" }

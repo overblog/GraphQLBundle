@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Config\Util\XmlUtils;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -34,8 +35,6 @@ class OverblogGraphQLExtension extends Extension
         $loader->load('graphql_fields.yml');
         $loader->load('graphql_args.yml');
 
-        $configs = $this->addTypesDefinitionFromBundles($configs, $container->getParameter('kernel.bundles'));
-
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
@@ -43,23 +42,6 @@ class OverblogGraphQLExtension extends Extension
             foreach ($config['services'] as $name => $id) {
                 $alias = sprintf('%s.%s', $this->getAlias(), $name);
                 $container->setAlias($alias, $id);
-            }
-        }
-
-        if (isset($config['definitions']['types'])) {
-            $builderId = $this->getAlias().'.type_builder';
-
-            foreach ($config['definitions']['types'] as $name => $options) {
-                $customTypeId = sprintf('%s.definition.custom_%s_type', $this->getAlias(), $container->underscore($name));
-
-                $options['config']['name'] = $name;
-
-                $container
-                    ->setDefinition($customTypeId, new Definition('GraphQL\\Type\\Definition\\Type'))
-                    ->setFactory([new Reference($builderId), 'create'])
-                    ->setArguments([$options['type'], $options['config']])
-                    ->addTag($this->getAlias().'.type', ['alias' => $name])
-                ;
             }
         }
 
@@ -87,22 +69,67 @@ class OverblogGraphQLExtension extends Extension
         if (isset($config['templates']['graphiql'])) {
             $container->setParameter('overblog_graphql.graphiql_template', $config['templates']['graphiql']);
         }
+
+        // Types
+        $typesConfigs = $this->getTypesConfigs($config, $container);
+        $typesConfig = $this->processConfiguration(new TypesConfiguration(), $typesConfigs);
+
+        if (!empty($typesConfig)) {
+            $builderId = $this->getAlias().'.type_builder';
+
+            foreach ($typesConfig as $name => $options) {
+                $customTypeId = sprintf('%s.definition.custom_%s_type', $this->getAlias(), $container->underscore($name));
+
+                $options['config']['name'] = $name;
+
+                $container
+                    ->setDefinition($customTypeId, new Definition('GraphQL\\Type\\Definition\\Type'))
+                    ->setFactory([new Reference($builderId), 'create'])
+                    ->setArguments([$options['type'], $options['config']])
+                    ->addTag($this->getAlias().'.type', ['alias' => $name])
+                ;
+            }
+        }
     }
 
-    private function addTypesDefinitionFromBundles(array $configs, array $bundles)
+    private function getTypesConfigs(array $config, ContainerBuilder $container)
     {
-        $types = [];
         $yamlParser = null;
+        $bundles = $container->getParameter('kernel.bundles');
+
+        $typesMappings = [];
+        $typesConfig = [];
+
+        // from config
+        if (!empty($config['definitions']['mappings']['types'])) {
+            $typesMappings = array_filter(array_map(
+                function (array $typeMapping) use ($container) {
+
+                    $params = $this->detectConfigFiles($container, $typeMapping['dir'],  $typeMapping['type']);
+
+                    return $params;
+                },
+                $config['definitions']['mappings']['types']
+            ));
+        }
+
+        // auto detect from bundle
         foreach ($bundles as $name => $class) {
             $bundle = new \ReflectionClass($class);
             $bundleDir = dirname($bundle->getFileName());
 
-            $params = $this->detectConfigFiles($bundleDir);
+            $configPath = $bundleDir.'/'.$this->getMappingResourceConfigDirectory();
+            $params = $this->detectConfigFiles($container, $configPath);
 
             if (null === $params) {
                 continue;
             }
-            $extension = $this->getMappingResourceExtension();
+
+            $typesMappings[] = $params;
+        }
+
+        // treats mappings
+        foreach ($typesMappings as $params) {
             /** @var SplFileInfo $file */
             foreach ($params['files'] as $file) {
                 switch ($params['type']) {
@@ -111,7 +138,8 @@ class OverblogGraphQLExtension extends Extension
                             $yamlParser = new YamlParser();
                         }
                         try {
-                            $types = array_merge($types, $yamlParser->parse($file->getContents()));
+                            $typesConfig = array_merge($typesConfig, $yamlParser->parse($file->getContents()));
+                            $container->addResource(new FileResource($file->getRealPath()));
                         } catch (ParseException $e) {
                             throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
                         }
@@ -129,8 +157,9 @@ class OverblogGraphQLExtension extends Extension
                                 if (!is_array($values)) {
                                     continue;
                                 }
-                                $types = array_merge($types, $values);
+                                $typesConfig = array_merge($typesConfig, $values);
                             }
+                            $container->addResource(new FileResource($file->getRealPath()));
                         } catch (\InvalidArgumentException $e) {
                             throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
                         }
@@ -139,24 +168,33 @@ class OverblogGraphQLExtension extends Extension
             }
         }
 
-        if (empty($configs[0]['definitions']['types'])) {
-            $configs[0]['definitions']['types'] = $types;
-        } else {
-            $configs[0]['definitions']['types'] = array_merge($configs[0]['definitions']['types'], $types);
+        $typesConfigs = [$typesConfig];
+
+        // TODO remove when types mapping 100% functional
+        if (isset($config['definitions']['types'])) {
+            $typesConfigs[] = $config['definitions']['types'];
         }
 
-        return $configs;
+        return $typesConfigs;
     }
 
-    private function detectConfigFiles($dir)
+    private function detectConfigFiles(ContainerBuilder $container, $configPath, $type = null)
     {
-        $configPath = $dir.'/'.$this->getMappingResourceConfigDirectory();
+        // add the closest existing directory as a resource
+        $resource = $configPath;
+        while (!is_dir($resource)) {
+            $resource = dirname($resource);
+        }
+        $container->addResource(new FileResource($resource));
+
         $extension = $this->getMappingResourceExtension();
         $finder = new Finder();
 
-        foreach (['xml', 'yml'] as $type) {
+        $types = null === $type ? ['yml', 'xml'] : [$type];
+
+        foreach ($types as $type) {
             try {
-                $finder->files()->in($configPath)->name('*'.$extension.'.'.$type);
+                $finder->files()->in($configPath)->name('*.'.$extension.'.'.$type);
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
