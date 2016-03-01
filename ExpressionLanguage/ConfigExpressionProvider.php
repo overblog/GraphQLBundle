@@ -68,6 +68,12 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             }, function (array $variables, $globalId) {
                 return GlobalId::fromGlobalId($globalId);
             }),
+
+            new ExpressionFunction('newObject', function ($className, array $args = []) {
+                return sprintf('(new \ReflectionClass("%s"))->newInstanceArgs($args)', $className);
+            }, function (array $variables, $className, array $args = []) {
+                return (new \ReflectionClass($className))->newInstanceArgs($args);
+            }),
         ];
     }
 }
