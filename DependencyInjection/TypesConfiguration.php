@@ -154,6 +154,7 @@ class TypesConfiguration implements ConfigurationInterface
                         ->prototype('array')
                             ->children()
                                 ->append($this->addTypeSelection(true))
+                                ->scalarNode('description')->end()
                                 ->variableNode('defaultValue')->end()
                             ->end()
                         ->end()
