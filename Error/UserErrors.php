@@ -21,7 +21,7 @@ class UserErrors extends \Exception
      */
     private $errors = [];
 
-    public function __construct(array $errors, $message = "", $code = 0, \Exception $previous = null)
+    public function __construct(array $errors, $message = '', $code = 0, \Exception $previous = null)
     {
         $this->setErrors($errors);
         parent::__construct($message, $code, $previous);
@@ -39,13 +39,14 @@ class UserErrors extends \Exception
 
     /**
      * @param string|UserError $error
-     * @return                 $this
+     *
+     * @return $this
      */
     public function addError($error)
     {
         if (is_string($error)) {
             $error = new UserError($error);
-        } elseif(!is_object($error) || !$error instanceof UserError) {
+        } elseif (!is_object($error) || !$error instanceof UserError) {
             throw new \InvalidArgumentException('Error must be string or instance of Overblog\\GraphQLBundle\\Error\\UserError.');
         }
 

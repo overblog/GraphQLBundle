@@ -48,7 +48,7 @@ class ErrorHandler
             $clean = [];
 
             /** @var Error $error */
-            foreach($errors as $error) {
+            foreach ($errors as $error) {
                 $rawException = $error->getPrevious();
 
                 // Parse error or user error
@@ -60,7 +60,7 @@ class ErrorHandler
                 // multiple errors
                 if ($rawException instanceof UserErrors) {
                     $rawExceptions = $rawException;
-                    foreach($rawExceptions->getErrors() as $rawException) {
+                    foreach ($rawExceptions->getErrors() as $rawException) {
                         $clean[] = Error::createLocatedError($rawException, $error->nodes);
                     }
                     continue;
