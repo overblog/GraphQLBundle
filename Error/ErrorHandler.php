@@ -44,30 +44,45 @@ class ErrorHandler
      */
     private function getDefaultErrorHandler()
     {
-        return function (Error $error, $throwRawException) {
-            $rawException = $error->getPrevious();
+        return function (array $errors, $throwRawException) {
+            $clean = [];
 
-            if (null === $rawException) {
-                return $error;
+            /** @var Error $error */
+            foreach($errors as $error) {
+                $rawException = $error->getPrevious();
+
+                // Parse error or user error
+                if (null === $rawException || $rawException instanceof UserError) {
+                    $clean[] = $error;
+                    continue;
+                }
+
+                // multiple errors
+                if ($rawException instanceof UserErrors) {
+                    $rawExceptions = $rawException;
+                    foreach($rawExceptions->getErrors() as $rawException) {
+                        $clean[] = Error::createLocatedError($rawException, $error->nodes);
+                    }
+                    continue;
+                }
+
+                // if is a try catch exception wrapped in Error
+                if ($throwRawException) {
+                    throw $rawException;
+                }
+
+                $this->logException($rawException);
+
+                $clean[] = new Error(
+                    $this->internalErrorMessage,
+                    $error->nodes,
+                    $rawException,
+                    $error->getSource(),
+                    $error->getPositions()
+                );
             }
-            if ($rawException instanceof UserError) {
-                return $error;
-            }
 
-            // if is a try catch exception wrapped in Error
-            if ($throwRawException) {
-                throw $rawException;
-            }
-
-            $this->logException($rawException);
-
-            return new Error(
-                $this->internalErrorMessage,
-                $error->nodes,
-                $rawException,
-                $error->getSource(),
-                $error->getPositions()
-            );
+            return $clean;
         };
     }
 
@@ -101,8 +116,6 @@ class ErrorHandler
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
     {
-        foreach ($executionResult->errors as $i => $error) {
-            $executionResult->errors[$i] = call_user_func_array($this->errorHandler, [$error, $throwRawException]);
-        }
+        $executionResult->errors = call_user_func_array($this->errorHandler, [$executionResult->errors, $throwRawException]);
     }
 }

@@ -15,6 +15,7 @@ use GraphQL\Error;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserErrors;
 
 class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,6 +35,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 new Error('Error without wrapped exception'),
                 new Error('Error with wrapped exception', null, new \Exception('My Exception message')),
                 new Error('Error with wrapped user error', null, new UserError('My User Error')),
+                new Error('', null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
             ]
         );
 
@@ -50,6 +52,15 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'message' => 'Error with wrapped user error',
+                ],
+                [
+                    'message' => 'My User Error 1',
+                ],
+                [
+                    'message' => 'My User Error 2',
+                ],
+                [
+                    'message' => 'My User Error 3',
                 ],
             ],
         ];
@@ -129,7 +140,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->errorHandler->setErrorHandler(function () {
-            return new Error('Override Error');
+            return [new Error('Override Error')];
         });
 
         $this->errorHandler->handleErrors($executionResult);
