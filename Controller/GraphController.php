@@ -22,6 +22,6 @@ class GraphController extends Controller
         $req = $this->get('overblog_graphql.request_parser')->parse($request);
         $res = $this->get('overblog_graphql.request_executor')->execute($req, []);
 
-        return new JsonResponse($res->toArray(), empty($res->errors) ? 200 : 400);
+        return new JsonResponse($res->toArray(), 200);
     }
 }
