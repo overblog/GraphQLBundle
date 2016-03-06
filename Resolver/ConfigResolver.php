@@ -118,6 +118,8 @@ class ConfigResolver implements ResolverInterface
                 }
                 $builderConfig['name'] = $field;
 
+                $access = isset($options['access']) ? $options['access'] : null;
+
                 if ($fieldBuilder instanceof FieldInterface) {
                     $options = $fieldBuilder->toFieldDefinition($builderConfig);
                 } elseif (is_callable($fieldBuilder)) {
@@ -128,12 +130,15 @@ class ConfigResolver implements ResolverInterface
                     throw new \RuntimeException(sprintf('Could not build field "%s".', $alias));
                 }
 
+                $options['access'] = $access;
+                $options = $this->resolveResolveAndAccessIfNeeded($options);
+
                 unset($options['builderConfig'], $options['builder']);
 
                 continue;
             }
 
-            if (isset($options['type']) && is_string($options['type'])) {
+            if (isset($options['type'])) {
                 $options['type'] = $this->resolveTypeCallback($options['type']);
             }
 
@@ -173,21 +178,7 @@ class ConfigResolver implements ResolverInterface
                 unset($options['argsBuilder']);
             }
 
-            if (isset($options['resolve']) && is_string($options['resolve'])) {
-                $options['resolve'] = $this->resolveResolveCallback($options['resolve']);
-            }
-
-            if (isset($options['access']) && is_string($options['access'])) {
-                $resolveCallback = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
-
-                if (isset($options['resolve']) && is_callable($options['resolve'])) {
-                    $resolveCallback = $options['resolve'];
-                }
-
-                $options['resolve'] = $this->resolveAccessAndWrapResolveCallback($options['access'], $resolveCallback);
-
-                unset($options['access']);
-            }
+            $options = $this->resolveResolveAndAccessIfNeeded($options);
 
             if (isset($options['deprecationReason'])) {
                 $options['deprecationReason'] = $this->resolveUsingExpressionLanguageIfNeeded($options['deprecationReason']);
@@ -195,6 +186,28 @@ class ConfigResolver implements ResolverInterface
         }
 
         return $fields;
+    }
+
+    private function resolveResolveAndAccessIfNeeded(array $options)
+    {
+        $treatedOptions = $options;
+
+        if (isset($treatedOptions['resolve'])) {
+            $treatedOptions['resolve'] = $this->resolveResolveCallback($treatedOptions['resolve']);
+        }
+
+        if (isset($treatedOptions['access'])) {
+            $resolveCallback = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
+
+            if (isset($treatedOptions['resolve'])) {
+                $resolveCallback = $treatedOptions['resolve'];
+            }
+
+            $treatedOptions['resolve'] = $this->resolveAccessAndWrapResolveCallback($treatedOptions['access'], $resolveCallback);
+        }
+        unset($treatedOptions['access']);
+
+        return $treatedOptions;
     }
 
     private function resolveTypeCallback($expr)
@@ -252,7 +265,7 @@ class ConfigResolver implements ResolverInterface
                     $access = false;
                 }
 
-                return $access;
+                return (bool) $access;
             };
 
             if (is_array($result) || $result instanceof \ArrayAccess) {
@@ -281,12 +294,16 @@ class ConfigResolver implements ResolverInterface
         };
     }
 
-    private function resolveResolveCallback($expression)
+    private function resolveResolveCallback($value)
     {
-        return function () use ($expression) {
+        if (is_callable($value)) {
+            return $value;
+        }
+
+        return function () use ($value) {
             $args = func_get_args();
             $result = $this->resolveUsingExpressionLanguageIfNeeded(
-                $expression,
+                $value,
                 call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args)
             );
 

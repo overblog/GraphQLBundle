@@ -7,7 +7,7 @@ RootMutation:
                 builderConfig:
                     inputType: simpleMutationInput
                     payloadType: simpleMutationPayload
-                    mutateAndGetPayload: "@={'result': 1}"
+                    mutateAndGetPayload: {result: 1}
             simpleMutationWithThunkFields:
                 builder: Mutation
                 builderConfig:
