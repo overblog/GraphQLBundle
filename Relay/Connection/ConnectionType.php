@@ -44,8 +44,8 @@ class ConnectionType extends ObjectType
             'resolveNode'   => Config::CALLBACK,
         ]);
 
-        if (!static::$pageInfoType instanceof PageInfoType) {
-            static::$pageInfoType = new PageInfoType();
+        if (!self::$pageInfoType instanceof PageInfoType) {
+            self::$pageInfoType = new PageInfoType();
         }
 
         /** @var ObjectType $nodeType */
@@ -86,7 +86,7 @@ class ConnectionType extends ObjectType
                 $connectionFields,
                 [
                     'pageInfo' => [
-                        'type'        => Type::nonNull(static::$pageInfoType),
+                        'type'        => Type::nonNull(self::$pageInfoType),
                         'description' => 'Information to aid in pagination.',
                     ],
                     'edges' => [

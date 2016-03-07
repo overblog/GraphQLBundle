@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Error;
+namespace Overblog\GraphQLBundle\Tests\Error;
 
 use GraphQL\Error;
 use GraphQL\Executor\ExecutionResult;

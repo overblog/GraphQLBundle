@@ -28,12 +28,14 @@ class PluralIdentifyingRootField implements FieldInterface
             'description'        => Config::STRING,
         ]);
 
-        $inputArgs[$config['argName']] = [
-            'type' => Type::nonNull(
-                        Type::listOf(
-                            Type::nonNull($config['inputType'])
-                        )
-                     ),
+        $inputArgs = [
+            $config['argName'] => [
+                'type' => Type::nonNull(
+                    Type::listOf(
+                        Type::nonNull($config['inputType'])
+                    )
+                ),
+            ],
         ];
 
         return [

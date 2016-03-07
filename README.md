@@ -1,13 +1,12 @@
 OverblogGraphQLBundle [WIP]
 ===========================
 
-[![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=master)](https://travis-ci.org/overblog/GraphQLBundle)
-
-Description
------------
-
 This Bundle provide integration [GraphQL](https://facebook.github.io/graphql/) using [webonyx/graphql-php](https://github.com/webonyx/graphql-php) 
 and [GraphQL Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html).
+
+[![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=master)](https://travis-ci.org/overblog/GraphQLBundle) 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master) 
+[![Code Coverage](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master)
 
 Requirements
 ------------

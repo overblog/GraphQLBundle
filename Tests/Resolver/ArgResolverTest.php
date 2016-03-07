@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ArgResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

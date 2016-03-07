@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\ConfigResolver;

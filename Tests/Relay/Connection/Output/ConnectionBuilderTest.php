@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Relay\Connection\Output;
+namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
@@ -29,16 +29,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection($this->letters, false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -47,13 +38,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 2]);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjE=', false, true)
-        );
+        $expected = $this->getExpectedConnection(['A', 'B'], false, true);
 
         $this->assertEquals($expected, $actual);
     }
@@ -62,16 +47,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 10]);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection($this->letters, false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -80,13 +56,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 2]);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjM=', 'YXJyYXljb25uZWN0aW9uOjQ=', true, false)
-        );
+        $expected = $this->getExpectedConnection(['D', 'E'], true, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -95,16 +65,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 10]);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection($this->letters, false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -113,13 +74,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjI=', 'YXJyYXljb25uZWN0aW9uOjM=', false, true)
-        );
+        $expected = $this->getExpectedConnection(['C', 'D'], false, true);
 
         $this->assertEquals($expected, $actual);
     }
@@ -128,14 +83,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 10, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjI=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['C', 'D', 'E'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -144,13 +92,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 2, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjI=', true, false)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C'], true, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -159,14 +101,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 10, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']);
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjI=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['A', 'B', 'C'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -178,13 +113,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjI=', false, true)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
         $this->assertEquals($expected, $actual);
     }
@@ -196,14 +125,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['first' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjM=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -215,14 +137,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjM=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -234,13 +149,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['last' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjI=', 'YXJyYXljb25uZWN0aW9uOjM=', true, false)
-        );
+        $expected = $this->getExpectedConnection(['C', 'D'], true, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -252,14 +161,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['last' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjM=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -271,14 +173,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['last' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjE=', 'YXJyYXljb25uZWN0aW9uOjM=', false, false)
-        );
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -306,16 +201,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['before' => 'invalid', 'after' => 'invalid']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection($this->letters, false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -327,16 +213,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['before' => 'YXJyYXljb25uZWN0aW9uOjYK', 'after' => 'YXJyYXljb25uZWN0aW9uOi0xCg==']
         );
 
-        $expected = new Connection(
-            [
-                new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-                new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-            ],
-            new PageInfo('YXJyYXljb25uZWN0aW9uOjA=', 'YXJyYXljb25uZWN0aW9uOjQ=', false, false)
-        );
+        $expected = $this->getExpectedConnection($this->letters, false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -348,11 +225,7 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
             ['before' => 'YXJyYXljb25uZWN0aW9uOjI=', 'after' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = new Connection(
-            [
-            ],
-            new PageInfo(null, null, false, false)
-        );
+        $expected = $this->getExpectedConnection([], false, false);
 
         $this->assertEquals($expected, $actual);
     }
@@ -369,5 +242,28 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
         $letterCursor = ConnectionBuilder::cursorForObjectInConnection($this->letters, 'F');
 
         $this->assertNull($letterCursor);
+    }
+
+    private function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage)
+    {
+        $edges = [
+            'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
+            'B' => new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
+            'C' => new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
+            'D' => new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
+            'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
+        ];
+
+        $expectedEdges = array_values(array_intersect_key($edges, array_flip($wantedEdges)));
+
+        return new Connection(
+            $expectedEdges,
+            new PageInfo(
+                isset($expectedEdges[0]) ? $expectedEdges[0]->cursor : null,
+                end($expectedEdges) ? end($expectedEdges)->cursor : null,
+                $hasPreviousPage,
+                $hasNextPage
+            )
+        );
     }
 }

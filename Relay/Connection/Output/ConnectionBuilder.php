@@ -62,7 +62,7 @@ class ConnectionBuilder
      */
     public static function connectionFromArraySlice($arraySlice, $args, array $meta)
     {
-        $connectionArguments = static::getOptionsWithDefaults(
+        $connectionArguments = self::getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
             [
                 'after'  => '',
@@ -71,7 +71,7 @@ class ConnectionBuilder
                 'last'   => null,
             ]
         );
-        $arraySliceMetaInfo = static::getOptionsWithDefaults(
+        $arraySliceMetaInfo = self::getOptionsWithDefaults(
             $meta,
             [
                 'sliceStart'  => 0,

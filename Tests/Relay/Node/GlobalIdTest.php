@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 

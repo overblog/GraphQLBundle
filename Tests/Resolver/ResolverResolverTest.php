@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Tests\Overblog\GraphQLBundle\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -55,21 +55,5 @@ class ResolverResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveUnknownResolver()
     {
         self::$resolverResolver->resolve('Fake');
-    }
-}
-
-class TotoResolver
-{
-    public function resolveToto()
-    {
-        return func_get_args();
-    }
-}
-
-class TataResolver
-{
-    public function resolveTata()
-    {
-        return func_get_args();
     }
 }
