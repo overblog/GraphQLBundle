@@ -39,7 +39,7 @@ class ConnectionBuilder
             $data,
             $args,
             [
-                'sliceStart'  => 0,
+                'sliceStart' => 0,
                 'arrayLength' => count($data),
             ]
         );
@@ -65,16 +65,16 @@ class ConnectionBuilder
         $connectionArguments = self::getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
             [
-                'after'  => '',
+                'after' => '',
                 'before' => '',
-                'first'  => null,
-                'last'   => null,
+                'first' => null,
+                'last' => null,
             ]
         );
         $arraySliceMetaInfo = self::getOptionsWithDefaults(
             $meta,
             [
-                'sliceStart'  => 0,
+                'sliceStart' => 0,
                 'arrayLength' => 0,
             ]
         );

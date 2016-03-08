@@ -26,11 +26,11 @@ class MutationField implements FieldInterface
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
         Config::validate($config, [
-            'name'                => Config::STRING | Config::REQUIRED,
+            'name' => Config::STRING | Config::REQUIRED,
             'mutateAndGetPayload' => Config::CALLBACK | Config::REQUIRED,
-            'payloadType'         => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
-            'inputType'           => Config::INPUT_TYPE | Config::CALLBACK | Config::REQUIRED,
-            'description'         => Config::STRING,
+            'payloadType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'inputType' => Config::INPUT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'description' => Config::STRING,
         ]);
 
         $name = $config['name'];
@@ -41,10 +41,10 @@ class MutationField implements FieldInterface
         $inputType = $config['inputType'];
 
         return [
-            'name'        => $name,
+            'name' => $name,
             'description' => $description,
-            'type'        => $payloadType,
-            'args'        => [
+            'type' => $payloadType,
+            'args' => [
                 'input' => ['type' => Type::nonNull($inputType)],
             ],
             'resolve' => function ($_, $input, $info) use ($mutateAndGetPayload, $name) {

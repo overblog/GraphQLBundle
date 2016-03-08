@@ -60,24 +60,24 @@ class ConfigResolver implements ResolverInterface
         $this->argResolver = $argResolver;
         $this->expressionLanguage = $expressionLanguage;
         $this->resolverMap = [
-            'fields'              => [$this, 'resolveFields'],
-            'isTypeOf'            => [$this, 'resolveResolveCallback'],
-            'interfaces'          => [$this, 'resolveInterfaces'],
-            'types'               => [$this, 'resolveTypes'],
-            'values'              => [$this, 'resolveValues'],
-            'resolveType'         => [$this, 'resolveResolveCallback'],
-            'resolveCursor'       => [$this, 'resolveResolveCallback'],
-            'resolveNode'         => [$this, 'resolveResolveCallback'],
-            'nodeType'            => [$this, 'resolveTypeCallback'],
-            'connectionFields'    => [$this, 'resolveFields'],
-            'edgeFields'          => [$this, 'resolveFields'],
+            'fields' => [$this, 'resolveFields'],
+            'isTypeOf' => [$this, 'resolveResolveCallback'],
+            'interfaces' => [$this, 'resolveInterfaces'],
+            'types' => [$this, 'resolveTypes'],
+            'values' => [$this, 'resolveValues'],
+            'resolveType' => [$this, 'resolveResolveCallback'],
+            'resolveCursor' => [$this, 'resolveResolveCallback'],
+            'resolveNode' => [$this, 'resolveResolveCallback'],
+            'nodeType' => [$this, 'resolveTypeCallback'],
+            'connectionFields' => [$this, 'resolveFields'],
+            'edgeFields' => [$this, 'resolveFields'],
             'mutateAndGetPayload' => [$this, 'resolveResolveCallback'],
-            'idFetcher'           => [$this, 'resolveResolveCallback'],
-            'nodeInterfaceType'   => [$this, 'resolveTypeCallback'],
-            'inputType'           => [$this, 'resolveTypeCallback'],
-            'outputType'          => [$this, 'resolveTypeCallback'],
-            'payloadType'         => [$this, 'resolveTypeCallback'],
-            'resolveSingleInput'  => [$this, 'resolveResolveCallback'],
+            'idFetcher' => [$this, 'resolveResolveCallback'],
+            'nodeInterfaceType' => [$this, 'resolveTypeCallback'],
+            'inputType' => [$this, 'resolveTypeCallback'],
+            'outputType' => [$this, 'resolveTypeCallback'],
+            'payloadType' => [$this, 'resolveTypeCallback'],
+            'resolveSingleInput' => [$this, 'resolveResolveCallback'],
         ];
     }
 
@@ -329,8 +329,8 @@ class ConfigResolver implements ResolverInterface
 
         return [
             'value' => $value,
-            'args'  => $resolverArgs,
-            'info'  => $info,
+            'args' => $resolverArgs,
+            'info' => $info,
         ];
     }
 

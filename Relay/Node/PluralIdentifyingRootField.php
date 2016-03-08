@@ -20,12 +20,12 @@ class PluralIdentifyingRootField implements FieldInterface
     public function toFieldDefinition(array $config)
     {
         Config::validate($config, [
-            'name'               => Config::STRING,
-            'argName'            => Config::STRING | Config::REQUIRED,
-            'inputType'          => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
-            'outputType'         => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'name' => Config::STRING,
+            'argName' => Config::STRING | Config::REQUIRED,
+            'inputType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
+            'outputType' => Config::OBJECT_TYPE | Config::CALLBACK | Config::REQUIRED,
             'resolveSingleInput' => Config::CALLBACK | Config::REQUIRED,
-            'description'        => Config::STRING,
+            'description' => Config::STRING,
         ]);
 
         $inputArgs = [
@@ -39,11 +39,11 @@ class PluralIdentifyingRootField implements FieldInterface
         ];
 
         return [
-            'name'        => $config['name'],
+            'name' => $config['name'],
             'description' => isset($config['description']) ? $config['description'] : null,
-            'type'        => Type::listOf($config['outputType']),
-            'args'        => $inputArgs,
-            'resolve'     => function ($obj, $args, $info) use ($config) {
+            'type' => Type::listOf($config['outputType']),
+            'args' => $inputArgs,
+            'resolve' => function ($obj, $args, $info) use ($config) {
                 $inputs = $args[$config['argName']];
 
                 $data = [];

@@ -43,15 +43,15 @@ EOF;
             'usernames' => [
                 [
                     'username' => 'dschafer',
-                    'url'      => 'www.facebook.com/dschafer?lang=en',
+                    'url' => 'www.facebook.com/dschafer?lang=en',
                 ],
                 [
                     'username' => 'leebyron',
-                    'url'      => 'www.facebook.com/leebyron?lang=en',
+                    'url' => 'www.facebook.com/leebyron?lang=en',
                 ],
                 [
                     'username' => 'schrockn',
-                    'url'      => 'www.facebook.com/schrockn?lang=en',
+                    'url' => 'www.facebook.com/schrockn?lang=en',
                 ],
             ],
         ];
@@ -106,11 +106,11 @@ EOF;
                                 [
                                     'name' => 'usernames',
                                     'type' => [
-                                        'kind'   => 'NON_NULL',
+                                        'kind' => 'NON_NULL',
                                         'ofType' => [
-                                            'kind'   => 'LIST',
+                                            'kind' => 'LIST',
                                             'ofType' => [
-                                                'kind'   => 'NON_NULL',
+                                                'kind' => 'NON_NULL',
                                                 'ofType' => [
                                                     'name' => 'String',
                                                     'kind' => 'SCALAR',
@@ -121,7 +121,7 @@ EOF;
                                 ],
                             ],
                             'type' => [
-                                'kind'   => 'LIST',
+                                'kind' => 'LIST',
                                 'ofType' => [
                                     'name' => 'User',
                                     'kind' => 'OBJECT',

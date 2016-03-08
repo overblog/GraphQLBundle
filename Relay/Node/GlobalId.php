@@ -28,7 +28,7 @@ class GlobalId
 
         return [
             'type' => $type,
-            'id'   => $id,
+            'id' => $id,
         ];
     }
 }

@@ -203,7 +203,7 @@ class OverblogGraphQLExtension extends Extension
             }
 
             return [
-                'type'  => $type,
+                'type' => $type,
                 'files' => $finder,
             ];
         }

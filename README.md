@@ -729,5 +729,5 @@ vendor/phpunit/phpunit/phpunit
 Fix PHP CS:
 
 ```bash
-vendor/bin/php-cs-fixer fix ./ --level=symfony --fixers=header_comment,align_double_arrow
+vendor/bin/php-cs-fixer fix ./
 ```

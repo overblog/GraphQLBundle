@@ -18,23 +18,23 @@ class ConnectionResolver
 {
     private $allUsers = [
         [
-            'name'    => 'Dan',
+            'name' => 'Dan',
             'friends' => [1, 2, 3, 4],
         ],
         [
-            'name'    => 'Nick',
+            'name' => 'Nick',
             'friends' => [0, 2, 3, 4],
         ],
         [
-            'name'    => 'Lee',
+            'name' => 'Lee',
             'friends' => [0, 1, 3, 4],
         ],
         [
-            'name'    => 'Joe',
+            'name' => 'Joe',
             'friends' => [0, 1, 2, 4],
         ],
         [
-            'name'    => 'Tim',
+            'name' => 'Tim',
             'friends' => [0, 1, 2, 3],
         ],
     ];

@@ -42,7 +42,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult);
 
         $expected = [
-            'data'   => null,
+            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
@@ -96,7 +96,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data'   => null,
+            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error with wrapped user error',
@@ -119,7 +119,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data'   => null,
+            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
@@ -146,7 +146,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $this->errorHandler->handleErrors($executionResult);
 
         $expected = [
-            'data'   => null,
+            'data' => null,
             'errors' => [
                 [
                     'message' => 'Override Error',

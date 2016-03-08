@@ -88,8 +88,8 @@ class Parser
     {
         // Add default request parameters
         $data = $data + [
-            'query'         => null,
-            'variables'     => null,
+            'query' => null,
+            'variables' => null,
             'operationName' => null,
         ];
 
@@ -117,8 +117,8 @@ class Parser
         }
 
         return [
-            'query'         => $query,
-            'variables'     => $variables,
+            'query' => $query,
+            'variables' => $variables,
             'operationName' => $operationName,
         ];
     }

@@ -21,7 +21,7 @@ class PluralResolver
 
         return [
             'username' => $username,
-            'url'      => sprintf('www.facebook.com/%s?lang=%s', $username, $lang),
+            'url' => sprintf('www.facebook.com/%s?lang=%s', $username, $lang),
         ];
     }
 }

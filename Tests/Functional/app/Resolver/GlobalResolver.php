@@ -21,11 +21,11 @@ class GlobalResolver
 
     private $userData = [
         1 => [
-            'id'   => 1,
+            'id' => 1,
             'name' => 'John Doe',
         ],
         2 => [
-            'id'   => 2,
+            'id' => 2,
             'name' => 'Jane Smith',
         ],
     ];
@@ -33,21 +33,21 @@ class GlobalResolver
     private $photoData = [
         1 => [
             'photoId' => 1,
-            'width'   => 300,
+            'width' => 300,
         ],
         2 => [
             'photoId' => 2,
-            'width'   => 400,
+            'width' => 400,
         ],
     ];
 
     private $postData = [
         1 => [
-            'id'   => 1,
+            'id' => 1,
             'text' => 'lorem',
         ],
         2 => [
-            'id'   => 2,
+            'id' => 2,
             'text' => 'ipsum',
         ],
     ];

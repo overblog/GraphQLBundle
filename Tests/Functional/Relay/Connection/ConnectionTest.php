@@ -50,16 +50,16 @@ EOF;
             'user' => [
                 'friends' => [
                    'totalCount' => 4,
-                    'edges'     => [
+                    'edges' => [
                         [
                             'friendshipTime' => 'Yesterday',
-                            'node'           => [
+                            'node' => [
                                 'name' => 'Nick',
                             ],
                         ],
                         [
                             'friendshipTime' => 'Yesterday',
-                            'node'           => [
+                            'node' => [
                                 'name' => 'Lee',
                             ],
                         ],

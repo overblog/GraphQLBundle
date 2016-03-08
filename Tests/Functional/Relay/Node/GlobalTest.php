@@ -90,15 +90,15 @@ EOF;
 EOF;
         $expectedData = [
             'user' => [
-                'id'   => 'VXNlcjox',
+                'id' => 'VXNlcjox',
                 'name' => 'John Doe',
             ],
             'photo' => [
-                'id'    => 'UGhvdG86MQ==',
+                'id' => 'UGhvdG86MQ==',
                 'width' => 300,
             ],
             'post' => [
-                'id'   => 'UG9zdDox',
+                'id' => 'UG9zdDox',
                 'text' => 'lorem',
             ],
         ];

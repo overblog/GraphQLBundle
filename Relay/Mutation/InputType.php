@@ -27,7 +27,7 @@ class InputType extends InputObjectType
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
         Config::validate($config, [
-            'name'   => Config::STRING | Config::REQUIRED,
+            'name' => Config::STRING | Config::REQUIRED,
             'fields' => Config::arrayOf(
                 FieldDefinition::getDefinition(),
                 Config::KEY_AS_NAME
@@ -51,8 +51,8 @@ class InputType extends InputObjectType
         }
 
         parent::__construct([
-            'name'        => $name.'Input',
-            'fields'      => $augmentedInputFields,
+            'name' => $name.'Input',
+            'fields' => $augmentedInputFields,
             'description' => $description,
         ]);
     }

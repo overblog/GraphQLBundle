@@ -38,8 +38,8 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
         $output = new SymfonyStyle($input, $output);
 
         $request = [
-            'query'         => Introspection::getIntrospectionQuery(false),
-            'variables'     => [],
+            'query' => Introspection::getIntrospectionQuery(false),
+            'variables' => [],
             'operationName' => null,
         ];
 
