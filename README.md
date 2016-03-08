@@ -697,6 +697,7 @@ boolean **isRememberMe**() | Checks whether the token is remember me. | @=isReme
 boolean **isFullyAuthenticated**() | Checks whether the token is fully authenticated. | @=isFullyAuthenticated()
 boolean **isAuthenticated**() | Checks whether the token is not anonymous. | @=isAuthenticated()
 boolean **hasPermission**(mixed $var, string $permission) | Checks whether the token has the given permission for the given object (requires the ACL system). |@=hasPermission(object, 'OWNER')
+boolean **hasAnyPermission**(mixed $var, array $permissions) | Checks whether the token has any of the given permissions for the given object | @=hasAnyPermission(object, ['OWNER', 'ADMIN'])
 
 **c)** Variables description
 
