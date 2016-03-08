@@ -74,8 +74,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $config = self::$configResolver->resolve(
             [
                 'values' => [
-                    'test'                     => ['value' => 'my test value'],
-                    'toto'                     => ['value' => 'my toto value'],
+                    'test' => ['value' => 'my test value'],
+                    'toto' => ['value' => 'my toto value'],
                     'expression-language-test' => ['value' => '@=["my", "test"]'],
                 ],
             ]
@@ -83,8 +83,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'values' => [
-                'test'                     => ['value' => 'my test value'],
-                'toto'                     => ['value' => 'my toto value'],
+                'test' => ['value' => 'my test value'],
+                'toto' => ['value' => 'my toto value'],
                 'expression-language-test' => ['value' => ['my', 'test']],
             ],
         ];

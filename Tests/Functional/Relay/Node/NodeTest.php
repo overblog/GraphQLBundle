@@ -81,7 +81,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id'    => '4',
+                'id' => '4',
                 'width' => 400,
             ],
         ];
@@ -102,7 +102,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id'         => '1',
+                'id' => '1',
                 '__typename' => 'User',
             ],
         ];
@@ -123,7 +123,7 @@ EOF;
 
         $expectedData = [
             'node' => [
-                'id'         => '4',
+                'id' => '4',
                 '__typename' => 'Photo',
             ],
         ];
@@ -193,13 +193,13 @@ EOF;
 
         $expectedData = [
             '__type' => [
-                'name'   => 'Node',
-                'kind'   => 'INTERFACE',
+                'name' => 'Node',
+                'kind' => 'INTERFACE',
                 'fields' => [
                     [
                         'name' => 'id',
                         'type' => [
-                            'kind'   => 'NON_NULL',
+                            'kind' => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'ID',
                                 'kind' => 'SCALAR',
@@ -255,7 +255,7 @@ EOF;
                                 [
                                     'name' => 'id',
                                     'type' => [
-                                        'kind'   => 'NON_NULL',
+                                        'kind' => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'ID',
                                             'kind' => 'SCALAR',

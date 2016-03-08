@@ -59,7 +59,7 @@ EOF;
 
         $expectedData = [
             'simpleMutation' => [
-                'result'           => 1,
+                'result' => 1,
                 'clientMutationId' => 'abc',
             ],
         ];
@@ -79,7 +79,7 @@ mutation M {
 EOF;
         $expectedData = [
             'simpleMutationWithThunkFields' => [
-                'result'           => 1234,
+                'result' => 1234,
                 'clientMutationId' => 'abc',
             ],
         ];
@@ -110,14 +110,14 @@ EOF;
 EOF;
         $expectedData = [
             '__type' => [
-                'name'        => 'simpleMutationInput',
-                'kind'        => 'INPUT_OBJECT',
+                'name' => 'simpleMutationInput',
+                'kind' => 'INPUT_OBJECT',
                 'inputFields' => [
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name'   => null,
-                            'kind'   => 'NON_NULL',
+                            'name' => null,
+                            'kind' => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'String',
                                 'kind' => 'SCALAR',
@@ -155,22 +155,22 @@ EOF;
 
         $expectedData = [
             '__type' => [
-                'name'   => 'simpleMutationPayload',
-                'kind'   => 'OBJECT',
+                'name' => 'simpleMutationPayload',
+                'kind' => 'OBJECT',
                 'fields' => [
                     [
                         'name' => 'result',
                         'type' => [
-                            'name'   => 'Int',
-                            'kind'   => 'SCALAR',
+                            'name' => 'Int',
+                            'kind' => 'SCALAR',
                             'ofType' => null,
                         ],
                     ],
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name'   => null,
-                            'kind'   => 'NON_NULL',
+                            'name' => null,
+                            'kind' => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'String',
                                 'kind' => 'SCALAR',
@@ -224,8 +224,8 @@ EOF;
                                 [
                                     'name' => 'input',
                                     'type' => [
-                                        'name'   => null,
-                                        'kind'   => 'NON_NULL',
+                                        'name' => null,
+                                        'kind' => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'simpleMutationInput',
                                             'kind' => 'INPUT_OBJECT',
@@ -244,8 +244,8 @@ EOF;
                                 [
                                     'name' => 'input',
                                     'type' => [
-                                        'name'   => null,
-                                        'kind'   => 'NON_NULL',
+                                        'name' => null,
+                                        'kind' => 'NON_NULL',
                                         'ofType' => [
                                             'name' => 'simpleMutationWithThunkFieldsInput',
                                             'kind' => 'INPUT_OBJECT',

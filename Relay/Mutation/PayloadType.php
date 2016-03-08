@@ -27,7 +27,7 @@ class PayloadType extends ObjectType
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 
         Config::validate($config, [
-            'name'   => Config::STRING | Config::REQUIRED,
+            'name' => Config::STRING | Config::REQUIRED,
             'fields' => Config::arrayOf(
                 FieldDefinition::getDefinition(),
                 Config::KEY_AS_NAME
@@ -51,8 +51,8 @@ class PayloadType extends ObjectType
         }
 
         parent::__construct([
-            'name'        => $name.'Payload',
-            'fields'      => $augmentedOutputFields,
+            'name' => $name.'Payload',
+            'fields' => $augmentedOutputFields,
             'description' => $description,
         ]);
     }

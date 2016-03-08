@@ -20,22 +20,22 @@ class NodeResolver
 
     private $userData = [
         '1' => [
-            'id'   => 1,
+            'id' => 1,
             'name' => 'John Doe',
         ],
         '2' => [
-            'id'   => 2,
+            'id' => 2,
             'name' => 'Jane Smith',
         ],
     ];
 
     private $photoData = [
         '3' => [
-            'id'    => 3,
+            'id' => 3,
             'width' => 300,
         ],
         '4' => [
-            'id'    => 4,
+            'id' => 4,
             'width' => 400,
         ],
     ];

@@ -28,6 +28,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^4.1|^5.1",
-        "fabpot/php-cs-fixer": "@stable"
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5",
+        "fabpot/php-cs-fixer": "^1.11"
     }
 }

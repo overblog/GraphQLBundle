@@ -21,7 +21,7 @@ class RawIdField implements FieldInterface
     public function toFieldDefinition(array $config)
     {
         Config::validate($config, [
-            'name'      => Config::STRING | Config::REQUIRED,
+            'name' => Config::STRING | Config::REQUIRED,
             'idFetcher' => Config::CALLBACK,
         ]);
 
@@ -29,10 +29,10 @@ class RawIdField implements FieldInterface
         $idFetcher = isset($config['idFetcher']) ? $config['idFetcher'] : null;
 
         return [
-            'name'        => $name,
+            'name' => $name,
             'description' => 'The raw ID of an object',
-            'type'        => Type::nonNull(Type::int()),
-            'resolve'     => function ($obj, $args, ResolveInfo $info) use ($idFetcher) {
+            'type' => Type::nonNull(Type::int()),
+            'resolve' => function ($obj, $args, ResolveInfo $info) use ($idFetcher) {
                 return is_callable($idFetcher) ? $idFetcher($obj, $info) : $obj->id;
             },
         ];
