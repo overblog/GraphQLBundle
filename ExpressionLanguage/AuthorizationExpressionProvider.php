@@ -74,6 +74,24 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
             }, function (array $variables, $object, $permission) {
                 return $variables['container']->get('security.authorization_checker')->isGranted($permission, $object);
             }),
+
+            new ExpressionFunction('hasAnyPermission', function ($object, array $permissions) {
+                $compiler = 'false';
+                foreach ($permissions as $permission) {
+                    $compiler .= ' || ';
+                    $compiler .= sprintf('$authChecker->isGranted("%s", $object)', $permission);
+                }
+
+                return $compiler;
+            }, function (array $variables, $object, array $permissions) {
+                foreach ($permissions as $permission) {
+                    if ($variables['container']->get('security.authorization_checker')->isGranted($permission, $object)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }),
         ];
     }
 }
