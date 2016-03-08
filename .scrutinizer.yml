@@ -1,0 +1,3 @@
+tools:
+    timeout: 600
+    external_code_coverage: true
