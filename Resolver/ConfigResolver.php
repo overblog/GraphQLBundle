@@ -15,6 +15,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\ArgsInterface;
 use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -265,7 +266,11 @@ class ConfigResolver implements ResolverInterface
                     $access = false;
                 }
 
-                return (bool) $access;
+                if (!$access) {
+                    throw new UserError('Access denied to this field.');
+                }
+
+                return true;
             };
 
             if (is_array($result) || $result instanceof \ArrayAccess) {
