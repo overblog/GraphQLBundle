@@ -55,9 +55,7 @@ class Parser
                 $json = json_decode($body, true);
 
                 if (JSON_ERROR_NONE !== json_last_error()) {
-                    throw new BadRequestHttpException(
-                        sprintf('POST body sent invalid JSON [%s]', json_last_error_msg())
-                    );
+                    throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 $parsedBody = $json;
                 break;

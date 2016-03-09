@@ -74,7 +74,7 @@ EOF;
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage POST body sent invalid JSON [Syntax error]
+     * @expectedExceptionMessage POST body sent invalid JSON
      */
     public function testEndpointWithInvalidBodyQuery()
     {
