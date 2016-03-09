@@ -1,6 +1,16 @@
 framework:
+    test: ~
     secret: test
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+    templating:
+        engines: ['twig']
 
 overblog_graphql:
     definitions:
         config_validation: true
+
+services:
+    #disable twig error pages
+    twig.exception_listener:
+        class: stdClass

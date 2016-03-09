@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
@@ -27,6 +36,15 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
     public function testHasAnyRole()
     {
         $this->assertExpressionEvaluate('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])', 'ROLE_ADMIN');
+
+        $this->assertExpressionEvaluate(
+            'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',
+            $this->matchesRegularExpression('/^ROLE_(USER|ADMIN)$/'),
+            [],
+            $this->exactly(2),
+            false,
+            'assertFalse'
+        );
     }
 
     public function testIsAnonymous()
@@ -46,7 +64,7 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAuthenticated()
     {
-        $this->assertExpressionEvaluate('isAuthenticated()', $this->matchesRegularExpression('/IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'));
+        $this->assertExpressionEvaluate('isAuthenticated()', $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'));
     }
 
     public function testHasPermission()
@@ -72,16 +90,30 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertExpressionEvaluate(
             'hasAnyPermission(object,["OWNER", "WRITER"])',
             [
-                $this->matchesRegularExpression('/(OWNER|WRITER)$/'),
+                $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
                 $this->identicalTo($object),
             ],
             [
                 'object' => $object,
             ]
         );
+
+        $this->assertExpressionEvaluate(
+            'hasAnyPermission(object,["OWNER", "WRITER"])',
+            [
+                $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
+                $this->identicalTo($object),
+            ],
+            [
+                'object' => $object,
+            ],
+            $this->exactly(2),
+            false,
+            'assertFalse'
+        );
     }
 
-    private function assertExpressionEvaluate($expression, $with, array $expressionValues = [],$expects = null, $return = true, $assertMethod = 'assertTrue')
+    private function assertExpressionEvaluate($expression, $with, array $expressionValues = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
     {
         $authChecker = $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return);
 

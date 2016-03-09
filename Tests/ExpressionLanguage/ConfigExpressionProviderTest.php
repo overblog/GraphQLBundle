@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
@@ -41,4 +50,18 @@ class ConfigExpressionProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->expressionLanguage->evaluate(sprintf('isTypeOf("%s")', 'stdClass'), ['value' => new \stdClass()]));
     }
 
+    public function testNewObject()
+    {
+        $this->assertInstanceOf('stdClass', $this->expressionLanguage->evaluate(sprintf('newObject("%s")', 'stdClass')));
+    }
+
+    public function testFromGlobalId()
+    {
+        $this->assertEquals(['type' => 'User', 'id' => 15], $this->expressionLanguage->evaluate('fromGlobalId("VXNlcjoxNQ==")'));
+    }
+
+    public function testGlobalId()
+    {
+        $this->assertEquals('VXNlcjoxNQ==', $this->expressionLanguage->evaluate('globalId(15, "User")'));
+    }
 }

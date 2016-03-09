@@ -13,4 +13,4 @@ RootMutation:
                 builderConfig:
                     inputType: simpleMutationWithThunkFieldsInput
                     payloadType: simpleMutationWithThunkFieldsPayload
-                    mutateAndGetPayload: "@={'result': value['inputData'] }"
+                    mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', [value])"
