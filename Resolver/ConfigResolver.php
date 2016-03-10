@@ -256,7 +256,7 @@ class ConfigResolver implements ResolverInterface
 
             $values = call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
 
-            $checkAccess = function ($object) use ($expression, $values) {
+            $checkAccess = function ($object, $throwException = false) use ($expression, $values) {
                 try {
                     $access = $this->resolveUsingExpressionLanguageIfNeeded(
                         $expression,
@@ -266,33 +266,39 @@ class ConfigResolver implements ResolverInterface
                     $access = false;
                 }
 
-                if (!$access) {
+                if ($throwException && !$access) {
                     throw new UserError('Access denied to this field.');
                 }
 
-                return true;
+                return $access;
             };
 
-            if (is_array($result) || $result instanceof \ArrayAccess) {
-                $result = array_filter(
-                    array_map(
-                        function ($object) use ($checkAccess) {
-                            return $checkAccess($object) ? $object : null;
-                        },
-                        $result
-                    )
-                );
-            } elseif ($result instanceof Connection) {
-                $result->edges = array_map(
-                    function (Edge $edge) use ($checkAccess) {
-                        $edge->node = $checkAccess($edge->node) ? $edge->node : null;
+            switch (true) {
+                case is_array($result) || $result instanceof \ArrayAccess:
+                    $result = array_filter(
+                        array_map(
+                            function ($object) use ($checkAccess) {
+                                return $checkAccess($object) ? $object : null;
+                            },
+                            $result
+                        )
+                    );
+                    break;
 
-                        return $edge;
-                    },
-                    $result->edges
-                );
-            } elseif (!empty($result) && !$checkAccess($result)) {
-                $result = null;
+                case $result instanceof Connection:
+                    $result->edges = array_map(
+                        function (Edge $edge) use ($checkAccess) {
+                            $edge->node = $checkAccess($edge->node) ? $edge->node : null;
+
+                            return $edge;
+                        },
+                        $result->edges
+                    );
+                    break;
+
+                default:
+                    $checkAccess($result, true);
+                    break;
             }
 
             return $result;
