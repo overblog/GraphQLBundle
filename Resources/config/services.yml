@@ -46,6 +46,8 @@ services:
             - "@overblog_graphql.field_resolver"
             - "@overblog_graphql.arg_resolver"
             - "@overblog_graphql.expression_language"
+        calls:
+            - ["setDefaultResolveFn", [[Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]]]
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver

@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Executor\Executor;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\ArgsInterface;
@@ -44,6 +45,11 @@ class ConfigResolver implements ResolverInterface
     private $argResolver;
 
     /**
+     * @var callable
+     */
+    private $defaultResolveFn = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
+
+    /**
      * @var array
      *            [name => callable]
      */
@@ -53,8 +59,7 @@ class ConfigResolver implements ResolverInterface
         ResolverInterface $typeResolver,
         ResolverInterface $fieldResolver,
         ResolverInterface $argResolver,
-        ExpressionLanguage $expressionLanguage,
-        $enabledDebug = false
+        ExpressionLanguage $expressionLanguage
     ) {
         $this->typeResolver = $typeResolver;
         $this->fieldResolver = $fieldResolver;
@@ -80,6 +85,13 @@ class ConfigResolver implements ResolverInterface
             'payloadType' => [$this, 'resolveTypeCallback'],
             'resolveSingleInput' => [$this, 'resolveResolveCallback'],
         ];
+    }
+
+    public function setDefaultResolveFn(callable $defaultResolveFn)
+    {
+        Executor::setDefaultResolveFn($defaultResolveFn);
+
+        $this->defaultResolveFn = $defaultResolveFn;
     }
 
     public function addResolverMap($name, callable $resolver)
@@ -198,7 +210,7 @@ class ConfigResolver implements ResolverInterface
         }
 
         if (isset($treatedOptions['access'])) {
-            $resolveCallback = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
+            $resolveCallback = $this->defaultResolveFn;
 
             if (isset($treatedOptions['resolve'])) {
                 $resolveCallback = $treatedOptions['resolve'];
