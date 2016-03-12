@@ -21,7 +21,7 @@
         "symfony/expression-language": "^2.7|^3.0",
         "symfony/options-resolver": "^2.7|^3.0",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "webonyx/graphql-php": "^0.5",
+        "webonyx/graphql-php": "^0.5.8",
         "symfony/property-access": "^2.7|^3.0"
     },
     "suggest": {
