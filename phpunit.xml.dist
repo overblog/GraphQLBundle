@@ -27,4 +27,9 @@
             </exclude>
         </whitelist>
     </filter>
+
+    <php>
+        <ini name="error_reporting" value="E_ALL"/>
+    </php>
+
 </phpunit>
