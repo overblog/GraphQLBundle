@@ -129,31 +129,4 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $executionResult->toArray());
     }
-
-    public function testMaskErrorOverrideErrorHandle()
-    {
-        $executionResult = new ExecutionResult(
-            null,
-            [
-                new Error('Error without wrapped exception'),
-            ]
-        );
-
-        $this->errorHandler->setErrorHandler(function () {
-            return [new Error('Override Error')];
-        });
-
-        $this->errorHandler->handleErrors($executionResult);
-
-        $expected = [
-            'data' => null,
-            'errors' => [
-                [
-                    'message' => 'Override Error',
-                ],
-            ],
-        ];
-
-        $this->assertEquals($expected, $executionResult->toArray());
-    }
 }

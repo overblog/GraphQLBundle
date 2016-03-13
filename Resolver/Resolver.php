@@ -13,28 +13,32 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Resolver
 {
+    /**
+     * @var PropertyAccessor
+     */
+    private static $accessor;
+
     public static function defaultResolveFn($source, $args, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
         $property = null;
 
-        $accessor = PropertyAccess::createPropertyAccessor();
-
-        if (is_array($source) || $source instanceof \ArrayAccess) {
-            $index = sprintf('[%s]', $fieldName);
-
-            if ($accessor->isReadable($source, $index)) {
-                $property = $accessor->getValue($source, $index);
-            }
-        } elseif (is_object($source)) {
-            if ($accessor->isReadable($source, $fieldName)) {
-                $property = $accessor->getValue($source, $fieldName);
-            }
+        if (null === self::$accessor) {
+            self::$accessor = PropertyAccess::createPropertyAccessor();
         }
 
-        return $property instanceof \Closure ? $property($source) : $property;
+        $index = sprintf('[%s]', $fieldName);
+
+        if (self::$accessor->isReadable($source, $index)) {
+            $property = self::$accessor->getValue($source, $index);
+        } elseif (self::$accessor->isReadable($source, $fieldName)) {
+            $property = self::$accessor->getValue($source, $fieldName);
+        }
+
+        return $property instanceof \Closure ? $property($source, $args, $info) : $property;
     }
 }

@@ -22,16 +22,12 @@ class SchemaBuilder
      */
     private $typeResolver;
 
-    /** @var array */
-    private $typesMapping;
-
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(ResolverInterface $typeResolver, array $typesMapping, $enableValidation = false)
+    public function __construct(ResolverInterface $typeResolver, $enableValidation = false)
     {
         $this->typeResolver = $typeResolver;
-        $this->typesMapping = $typesMapping;
         $this->enableValidation = $enableValidation;
     }
 
@@ -45,19 +41,11 @@ class SchemaBuilder
     public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null)
     {
         $this->enableValidation ? Config::enableValidation() : Config::disableValidation();
-        $this->warmUpTypes();
 
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
         return new Schema($query, $mutation, $subscription);
-    }
-
-    private function warmUpTypes()
-    {
-        foreach ($this->typesMapping as $alias => $serviceId) {
-            $this->typeResolver->resolve($alias);
-        }
     }
 }

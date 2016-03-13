@@ -20,9 +20,6 @@ class ErrorHandler
 {
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
 
-    /** @var callable */
-    private $errorHandler;
-
     /** @var LoggerInterface */
     private $logger;
 
@@ -32,7 +29,6 @@ class ErrorHandler
     public function __construct($internalErrorMessage = null, LoggerInterface $logger = null)
     {
         $this->logger = (null === $logger) ? new NullLogger() : $logger;
-        $this->errorHandler = $this->getDefaultErrorHandler();
         if (empty($internalErrorMessage)) {
             $internalErrorMessage = self::DEFAULT_ERROR_MESSAGE;
         }
@@ -40,50 +36,53 @@ class ErrorHandler
     }
 
     /**
-     * @return \Closure
+     * @param Error[] $errors
+     * @param $throwRawException
+     *
+     * @return Error[]
+     *
+     * @throws \Exception
      */
-    private function getDefaultErrorHandler()
+    protected function treatErrors(array $errors, $throwRawException)
     {
-        return function (array $errors, $throwRawException) {
-            $clean = [];
+        $treatedErrors = [];
 
-            /** @var Error $error */
-            foreach ($errors as $error) {
-                $rawException = $error->getPrevious();
+        /** @var Error $error */
+        foreach ($errors as $error) {
+            $rawException = $error->getPrevious();
 
-                // Parse error or user error
-                if (null === $rawException || $rawException instanceof UserError) {
-                    $clean[] = $error;
-                    continue;
-                }
-
-                // multiple errors
-                if ($rawException instanceof UserErrors) {
-                    $rawExceptions = $rawException;
-                    foreach ($rawExceptions->getErrors() as $rawException) {
-                        $clean[] = Error::createLocatedError($rawException, $error->nodes);
-                    }
-                    continue;
-                }
-
-                // if is a try catch exception wrapped in Error
-                if ($throwRawException) {
-                    throw $rawException;
-                }
-
-                $this->logException($rawException);
-
-                $clean[] = new Error(
-                    $this->internalErrorMessage,
-                    $error->nodes,
-                    $rawException,
-                    $error->getSource(),
-                    $error->getPositions()
-                );
+            // Parse error or user error
+            if (null === $rawException || $rawException instanceof UserError) {
+                $treatedErrors[] = $error;
+                continue;
             }
 
-            return $clean;
-        };
+            // multiple errors
+            if ($rawException instanceof UserErrors) {
+                $rawExceptions = $rawException;
+                foreach ($rawExceptions->getErrors() as $rawException) {
+                    $treatedErrors[] = Error::createLocatedError($rawException, $error->nodes);
+                }
+                continue;
+            }
+
+            // if is a try catch exception wrapped in Error
+            if ($throwRawException) {
+                throw $rawException;
+            }
+
+            $this->logException($rawException);
+
+            $treatedErrors[] = new Error(
+                $this->internalErrorMessage,
+                $error->nodes,
+                $rawException,
+                $error->getSource(),
+                $error->getPositions()
+            );
+        }
+
+        return $treatedErrors;
     }
 
     public function logException(\Exception $exception)
@@ -100,22 +99,8 @@ class ErrorHandler
         $this->logger->error($message, ['exception' => $exception]);
     }
 
-    /**
-     * Changes the default error handler function.
-     *
-     * @param callable $errorHandler
-     *
-     * @return $this
-     */
-    public function setErrorHandler(callable $errorHandler)
-    {
-        $this->errorHandler = $errorHandler;
-
-        return $this;
-    }
-
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
     {
-        $executionResult->errors = call_user_func_array($this->errorHandler, [$executionResult->errors, $throwRawException]);
+        $executionResult->errors = $this->treatErrors($executionResult->errors, $throwRawException);
     }
 }

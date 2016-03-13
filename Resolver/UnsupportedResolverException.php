@@ -9,12 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Tests\Resolver;
+namespace Overblog\GraphQLBundle\Resolver;
 
-class TataResolver
+class UnsupportedResolverException extends \InvalidArgumentException
 {
-    public function resolveTata()
-    {
-        return func_get_args();
-    }
 }
