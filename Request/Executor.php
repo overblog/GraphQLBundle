@@ -16,9 +16,9 @@ use GraphQL\Executor\ExecutionResult;
 use GraphQL\GraphQL;
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Executor
 {

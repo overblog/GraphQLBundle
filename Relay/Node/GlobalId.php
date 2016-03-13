@@ -24,7 +24,7 @@ class GlobalId
     {
         $unBasedGlobalId = base64_decode($globalId);
 
-        list($type, $id) = array_merge(explode(static::SEPARATOR, $unBasedGlobalId), array(true));
+        list($type, $id) = array_merge(explode(static::SEPARATOR, $unBasedGlobalId), [true]);
 
         return [
             'type' => $type,

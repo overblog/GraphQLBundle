@@ -8,9 +8,9 @@ php:
     - hhvm
 
 branches:
-  only:
-    - master
-    - /^\d+\.\d+$/
+    only:
+        - master
+        - /^\d+\.\d+$/
 
 matrix:
     fast_finish: true

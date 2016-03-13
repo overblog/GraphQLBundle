@@ -11,8 +11,8 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
+use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
 
 abstract class AbstractResolver implements ResolverInterface
 {

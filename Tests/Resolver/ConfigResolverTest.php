@@ -15,7 +15,6 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use Overblog\GraphQLBundle\Resolver\ConfigResolver;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
-use Symfony\Component\ExpressionLanguage\Expression;
 
 class ConfigResolverTest extends \PHPUnit_Framework_TestCase
 {
