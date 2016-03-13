@@ -13,6 +13,9 @@ namespace Overblog\GraphQLBundle\Definition;
 
 class Argument implements \ArrayAccess, \Countable
 {
+    /**
+     * @var array|\ArrayAccess
+     */
     private $arguments = [];
 
     public function __construct($arguments)
