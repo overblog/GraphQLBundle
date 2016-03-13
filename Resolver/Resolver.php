@@ -13,11 +13,12 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Resolver
 {
     /**
-     * @var  PropertyAccess
+     * @var PropertyAccessor
      */
     private static $accessor;
 

@@ -11,43 +11,27 @@
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 
-class TypeResolverTest extends \PHPUnit_Framework_TestCase
+class TypeResolverTest extends AbstractResolverTest
 {
-    /** @var  ContainerBuilder */
-    private static $container;
-
-    /** @var  TypeResolver */
-    private static $typeResolver;
-
-    public static function setUpBeforeClass()
+    protected function createResolver()
     {
-        $container = new ContainerBuilder();
+        return new TypeResolver();
+    }
 
-        $mapping = [
-            'Toto' => ['id' => 'overblog_graphql.definition.custom_toto_type', 'alias' => 'Toto'],
-            'Tata' => ['id' => 'overblog_graphql.definition.custom_tata_type', 'alias' => 'Tata'],
+    protected function getResolverSolutionsMapping()
+    {
+        return [
+            'Toto' => ['solution' => new ObjectType(['name' => 'Toto'])],
+            'Tata' => ['solution' => new ObjectType(['name' => 'Tata'])],
         ];
-
-        $container->setParameter('overblog_graphql.types_mapping', $mapping);
-
-        foreach ($mapping as $alias => $options) {
-            $container->setDefinition($options['id'], new Definition('GraphQL\Type\Definition\ObjectType'))
-                ->setArguments([
-                    ['name' => $alias],
-                ]);
-        }
-
-        self::$container = $container;
-        self::$typeResolver = new TypeResolver(self::$container);
     }
 
     public function testResolveKnownType()
     {
-        $type = self::$typeResolver->resolve('Toto');
+        $type = $this->resolver->resolve('Toto');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\ObjectType', $type);
         $this->assertEquals('Toto', $type->name);
@@ -58,13 +42,13 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveUnknownType()
     {
-        self::$typeResolver->resolve('Fake');
+        $this->resolver->resolve('Fake');
     }
 
     public function testResolveWithListOfWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('[Tata]');
+        $type = $this->resolver->resolve('[Tata]');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
         $this->assertEquals('Tata', $type->getWrappedType());
@@ -73,7 +57,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWithNonNullWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('Toto!');
+        $type = $this->resolver->resolve('Toto!');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
         $this->assertEquals('Toto', $type->getWrappedType());
@@ -82,7 +66,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWithNonNullListOfWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('[Toto]!');
+        $type = $this->resolver->resolve('[Toto]!');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
@@ -92,7 +76,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWitListOfNonNullWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('[Toto!]');
+        $type = $this->resolver->resolve('[Toto!]');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
         $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type->getWrappedType());
@@ -102,7 +86,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWitNonNullListOfNonNullWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('[Toto!]!');
+        $type = $this->resolver->resolve('[Toto!]!');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
@@ -113,7 +97,7 @@ class TypeResolverTest extends \PHPUnit_Framework_TestCase
     public function testResolveWitListOfListOfWrapper()
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
-        $type = self::$typeResolver->resolve('[[Toto]]');
+        $type = $this->resolver->resolve('[[Toto]]');
 
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());

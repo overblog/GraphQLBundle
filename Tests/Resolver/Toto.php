@@ -11,9 +11,9 @@
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
-class TotoResolver
+class Toto
 {
-    public function resolveToto()
+    public function resolve()
     {
         return func_get_args();
     }

@@ -26,12 +26,21 @@ class TypeResolver extends AbstractResolver
             return $type;
         }
 
+        $type = $this->getType($alias);
+
+        $this->cache->save($alias, $type);
+
+        return $type;
+    }
+
+    private function getType($alias)
+    {
         if (!is_string($alias)) {
             return $alias;
         }
         // Non-Null
         if ('!' === $alias[strlen($alias) - 1]) {
-            return Type::nonNull($this->resolve(substr($alias, 0, -1)));
+            return Type::nonNull($this->getType(substr($alias, 0, -1)));
         }
         // List
         if ('[' === $alias[0]) {
@@ -39,50 +48,21 @@ class TypeResolver extends AbstractResolver
                 throw new UnresolvableException(sprintf('Invalid type "%s"', $alias));
             }
 
-            return Type::listOf($this->resolve(substr($alias, 1, -1)));
+            return Type::listOf($this->getType(substr($alias, 1, -1)));
         }
 
-        $type = $this->getTypeFromAlias($alias);
-        $this->cache->save($alias, $type);
-
-        return $type;
-    }
-
-    private function getTypeServiceIdFromAlias($alias)
-    {
-        $alias = str_replace(['[', ']', '!'], '', $alias);
-
-        $typesMapping = $this->container->getParameter('overblog_graphql.types_mapping');
-
-        if (!isset($typesMapping[$alias]['id'])) {
+        $type = $this->getSolution($alias);
+        if (null === $type) {
             throw new UnresolvableException(
                 sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
             );
         }
 
-        return $typesMapping[$alias]['id'];
+        return $type;
     }
 
-    public function getTypeFromAlias($alias)
+    protected function supportedSolutionClass()
     {
-        $serviceId = $this->getTypeServiceIdFromAlias($alias);
-
-        if (null === $serviceId) {
-            return;
-        }
-
-        $type = $this->container->get($serviceId);
-
-        if (!$type instanceof Type) {
-            throw new UnresolvableException(
-                sprintf(
-                    'Invalid type with alias "%s", must extend "%s".',
-                    $alias,
-                    'GraphQL\\Type\\Definition\\Type'
-                )
-            );
-        }
-
-        return $type;
+        return 'GraphQL\\Type\\Definition\\Type';
     }
 }

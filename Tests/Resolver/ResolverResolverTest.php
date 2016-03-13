@@ -12,48 +12,11 @@
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 
-class ResolverResolverTest extends \PHPUnit_Framework_TestCase
+class ResolverResolverTest extends AbstractProxyResolverTest
 {
-    /** @var  ContainerBuilder */
-    private static $container;
-
-    /** @var  ResolverResolver */
-    private static $resolverResolver;
-
-    public static function setUpBeforeClass()
+    protected function createResolver()
     {
-        $container = new ContainerBuilder();
-
-        $mapping = [
-            'Toto' => ['id' => 'overblog_graphql.definition.custom_toto_resolver', 'alias' => 'Toto', 'method' => 'resolveToto'],
-            'Tata' => ['id' => 'overblog_graphql.definition.custom_tata_resolver', 'alias' => 'Tata', 'method' => 'resolveTata'],
-        ];
-
-        $container->setParameter('overblog_graphql.resolvers_mapping', $mapping);
-
-        foreach ($mapping as $alias => $options) {
-            $container->setDefinition($options['id'], new Definition(sprintf('%s\\%sResolver', __NAMESPACE__, $alias)));
-        }
-
-        self::$container = $container;
-        self::$resolverResolver = new ResolverResolver(self::$container);
-    }
-
-    public function testResolveKnownResolver()
-    {
-        $result = self::$resolverResolver->resolve(['Toto', ['my', 'resolve', 'test']]);
-
-        $this->assertEquals(['my', 'resolve', 'test'], $result);
-    }
-
-    /**
-     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
-     */
-    public function testResolveUnknownResolver()
-    {
-        self::$resolverResolver->resolve('Fake');
+        return new ResolverResolver();
     }
 }

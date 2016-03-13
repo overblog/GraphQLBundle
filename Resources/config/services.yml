@@ -31,7 +31,6 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.type_resolver"
-            - []
             - false
 
     overblog_graphql.type_builder:
@@ -51,28 +50,33 @@ services:
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
-        arguments:
-            - "@service_container"
+        configurator: ["@overblog_graphql.resolver_configurator", "configureType"]
 
     overblog_graphql.field_resolver:
         class: Overblog\GraphQLBundle\Resolver\FieldResolver
-        arguments:
-            - "@service_container"
+        configurator: ["@overblog_graphql.resolver_configurator", "configureField"]
 
     overblog_graphql.arg_resolver:
         class: Overblog\GraphQLBundle\Resolver\ArgResolver
-        arguments:
-            - "@service_container"
+        configurator: ["@overblog_graphql.resolver_configurator", "configureArg"]
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
-        arguments:
-            - "@service_container"
+        configurator: ["@overblog_graphql.resolver_configurator", "configureResolver"]
 
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
-        arguments:
-            - "@service_container"
+        configurator: ["@overblog_graphql.resolver_configurator", "configureMutation"]
+
+    overblog_graphql.resolver_configurator:
+        class: Overblog\GraphQLBundle\DependencyInjection\Configurator\ResolverConfigurator
+        calls:
+            - ["setContainer", ["@service_container"]]
+            - ["addMapping", ["type", %overblog_graphql.types_mapping%]]
+            - ["addMapping", ["field", %overblog_graphql.fields_mapping%]]
+            - ["addMapping", ["arg", %overblog_graphql.args_mapping%]]
+            - ["addMapping", ["resolver", %overblog_graphql.resolvers_mapping%]]
+            - ["addMapping", ["mutation", %overblog_graphql.mutations_mapping%]]
 
     overblog_graphql.cache_expression_language_parser.default:
         class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache

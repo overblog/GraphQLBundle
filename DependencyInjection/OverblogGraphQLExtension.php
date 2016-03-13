@@ -46,7 +46,7 @@ class OverblogGraphQLExtension extends Extension
         }
 
         $container->getDefinition($this->getAlias().'.schema_builder')
-            ->replaceArgument(2, $config['definitions']['config_validation']);
+            ->replaceArgument(1, $config['definitions']['config_validation']);
 
         if (isset($config['definitions']['schema'])) {
             $container
