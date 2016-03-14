@@ -79,13 +79,6 @@ abstract class AbstractResolver implements ResolverInterface
     }
 
     /**
-     * @param $input
-     *
-     * @return mixed
-     */
-    abstract public function resolve($input);
-
-    /**
      * @param mixed $solution
      *
      * @return bool

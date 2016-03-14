@@ -14,4 +14,12 @@ namespace Overblog\GraphQLBundle\Resolver;
 interface ResolverInterface
 {
     public function resolve($input);
+
+    public function addSolution($name, $solution, $extraOptions = []);
+
+    public function getSolutions();
+
+    public function getSolution($name);
+
+    public function getSolutionOptions($name);
 }

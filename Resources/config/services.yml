@@ -43,7 +43,7 @@ services:
         arguments:
             - "@overblog_graphql.type_resolver"
             - "@overblog_graphql.field_resolver"
-            - "@overblog_graphql.arg_resolver"
+            -
             - "@overblog_graphql.expression_language"
         calls:
             - ["setDefaultResolveFn", [[Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]]]
@@ -96,3 +96,13 @@ services:
             - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
+
+    #ConfigSolution
+    overblog_graphql.abstract_config_solution:
+        class: Overblog\GraphQLBundle\Resolver\Config\AbstractConfigSolution
+        abstract: true
+        calls:
+            - ["setArgResolver", ["@overblog_graphql.arg_resolver"]]
+            - ["setTypeResolver", ["@overblog_graphql.type_resolver"]]
+            - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
+            - ["setFieldResolver", ["@overblog_graphql.field_resolver"]]
