@@ -35,19 +35,14 @@ abstract class AbstractProxyResolver extends AbstractResolver
         $alias = $input[0];
         $funcArgs = $input[1];
 
-        if (null === $func = $this->cache->fetch($alias)) {
-            $solution = $this->getSolution($alias);
+        $solution = $this->getSolution($alias);
 
-            if (null === $solution) {
-                throw new UnresolvableException($this->unresolvableMessage($alias));
-            }
-
-            $options = $this->getSolutionOptions($alias);
-
-            $func = [$solution, $options['method']];
-
-            $this->cache->save($alias, $func);
+        if (null === $solution) {
+            throw new UnresolvableException($this->unresolvableMessage($alias));
         }
+
+        $options = $this->getSolutionOptions($alias);
+        $func = [$solution, $options['method']];
 
         return call_user_func_array($func, $funcArgs);
     }

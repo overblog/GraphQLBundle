@@ -13,11 +13,11 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class PluralIdentifyingRootField implements FieldInterface
+class PluralIdentifyingRootField implements MappingInterface
 {
-    public function toFieldDefinition(array $config)
+    public function toMappingDefinition(array $config)
     {
         Config::validate($config, [
             'name' => Config::STRING,

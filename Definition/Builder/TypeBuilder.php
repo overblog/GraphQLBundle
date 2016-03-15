@@ -67,7 +67,7 @@ class TypeBuilder
                 break;
 
             default:
-                throw new \RuntimeException(sprintf('Type "%s" is not managed.'), $type);
+                throw new \RuntimeException(sprintf('Type "%s" is not managed.', $type));
         }
 
         return $class;

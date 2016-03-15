@@ -20,17 +20,17 @@ abstract class AbstractSimpleResolver extends AbstractResolver
      */
     public function resolve($alias)
     {
-        if (null !== $solution = $this->cache->fetch($alias)) {
-            return $solution;
-        }
         $solution = $this->getSolution($alias);
         if (null === $solution) {
             throw new UnresolvableException($this->unresolvableMessage($alias));
         }
 
-        $this->cache->save($alias, $solution);
-
         return $solution;
+    }
+
+    protected function supportedSolutionClass()
+    {
+        return 'Overblog\\GraphQLBundle\\Definition\\Builder\\MappingInterface';
     }
 
     abstract protected function unresolvableMessage($alias);

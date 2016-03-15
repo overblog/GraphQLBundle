@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Definition;
+namespace Overblog\GraphQLBundle\Definition\Builder;
 
-interface FieldInterface
+interface MappingInterface
 {
     /**
      * @param array $config
      *
      * @return array
      */
-    public function toFieldDefinition(array $config);
+    public function toMappingDefinition(array $config);
 }

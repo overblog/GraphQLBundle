@@ -13,10 +13,4 @@ namespace Overblog\GraphQLBundle\Resolver\Config;
 
 interface UniqueConfigSolutionInterface extends ConfigSolutionInterface
 {
-    /**
-     * @param  mixed              $values
-     * @param  null|array|\ArrayAccess $config
-     * @return mixed              $value
-     */
-    public function solve($values, $config = null);
 }

@@ -14,6 +14,7 @@ namespace Overblog\GraphQLBundle\Resolver\Config;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Resolver\ArgResolver;
+use Overblog\GraphQLBundle\Resolver\ConfigResolver;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -24,60 +25,84 @@ abstract class AbstractConfigSolution implements ConfigSolutionInterface
     /**
      * @var ExpressionLanguage
      */
-    private $expressionLanguage;
+    protected $expressionLanguage;
 
     /**
      * @var TypeResolver
      */
-    private $typeResolver;
+    protected $typeResolver;
 
     /**
      * @var FieldResolver
      */
-    private $fieldResolver;
+    protected $fieldResolver;
 
     /**
      * @var ArgResolver
      */
-    private $argResolver;
+    protected $argResolver;
 
     /**
+     * @var ConfigResolver
+     */
+    protected $configResolver;
+    /**
      * @param ExpressionLanguage $expressionLanguage
+     *
      * @return AbstractConfigSolution
      */
     public function setExpressionLanguage($expressionLanguage)
     {
         $this->expressionLanguage = $expressionLanguage;
+
         return $this;
     }
 
     /**
      * @param TypeResolver $typeResolver
+     *
      * @return AbstractConfigSolution
      */
     public function setTypeResolver($typeResolver)
     {
         $this->typeResolver = $typeResolver;
+
         return $this;
     }
 
     /**
      * @param FieldResolver $fieldResolver
+     *
      * @return AbstractConfigSolution
      */
     public function setFieldResolver($fieldResolver)
     {
         $this->fieldResolver = $fieldResolver;
+
         return $this;
     }
 
     /**
      * @param ArgResolver $argResolver
+     *
      * @return AbstractConfigSolution
      */
     public function setArgResolver($argResolver)
     {
         $this->argResolver = $argResolver;
+
+        return $this;
+    }
+
+    /**
+     * @param ConfigResolver $configResolver
+     *
+     * @return AbstractConfigSolution
+     */
+    public function setConfigResolver($configResolver)
+    {
+        $this->configResolver = $configResolver;
+
         return $this;
     }
 

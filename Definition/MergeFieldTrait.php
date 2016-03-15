@@ -25,7 +25,7 @@ trait MergeFieldTrait
             }
 
             if (!is_array($fields)) {
-                $fields = [$fields];
+                $fields = (array) $fields;
             }
 
             return array_merge($fields, $defaultFields);

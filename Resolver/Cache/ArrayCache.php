@@ -33,20 +33,4 @@ class ArrayCache implements CacheInterface
     {
         $this->cache[$key] = $result;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($key)
-    {
-        unset($this->cache[$key]);
-    }
-
-    /**
-     * reset cache.
-     */
-    public function clear()
-    {
-        $this->cache = [];
-    }
 }

@@ -14,16 +14,13 @@ namespace Overblog\GraphQLBundle\Definition;
 class Argument implements \ArrayAccess, \Countable
 {
     /**
-     * @var array|\ArrayAccess
+     * @var array
      */
-    private $arguments = [];
+    private $arguments;
 
-    public function __construct($arguments)
+    public function __construct(array $arguments = null)
     {
-        if (!is_array($arguments) && !$arguments instanceof \ArrayAccess) {
-            $arguments = [$arguments];
-        }
-        $this->arguments = $arguments;
+        $this->arguments = null === $arguments ? [] : $arguments;
     }
 
     public function offsetExists($offset)
@@ -44,16 +41,6 @@ class Argument implements \ArrayAccess, \Countable
     public function offsetUnset($offset)
     {
         unset($this->arguments[$offset]);
-    }
-
-    public function __get($key)
-    {
-        return $this->offsetGet($key);
-    }
-
-    public function __set($key, $value)
-    {
-        $this->offsetSet($key, $value);
     }
 
     public function getRawArguments()

@@ -20,40 +20,16 @@ class ConfigResolver extends AbstractResolver
      */
     private $defaultResolveFn = ['GraphQL\Executor\Executor', 'defaultResolveFn'];
 
-    public function __construct() {
-        $solutionsMapping = [
-            'fields' => [$this, 'resolveFields'],
-            'isTypeOf' => [$this, 'resolveResolveCallback'],
-            'interfaces' => [$this, 'resolveInterfaces'],
-            'types' => [$this, 'resolveTypes'],
-            'values' => [$this, 'resolveValues'],
-            'resolveType' => [$this, 'resolveResolveCallback'],
-            'resolveCursor' => [$this, 'resolveResolveCallback'],
-            'resolveNode' => [$this, 'resolveResolveCallback'],
-            'nodeType' => [$this, 'resolveTypeCallback'],
-            'connectionFields' => [$this, 'resolveFields'],
-            'edgeFields' => [$this, 'resolveFields'],
-            'mutateAndGetPayload' => [$this, 'resolveResolveCallback'],
-            'idFetcher' => [$this, 'resolveResolveCallback'],
-            'nodeInterfaceType' => [$this, 'resolveTypeCallback'],
-            'inputType' => [$this, 'resolveTypeCallback'],
-            'outputType' => [$this, 'resolveTypeCallback'],
-            'payloadType' => [$this, 'resolveTypeCallback'],
-            'resolveSingleInput' => [$this, 'resolveResolveCallback'],
-        ];
-
-        foreach ($solutionsMapping as $name => $solution) {
-            $this->addSolution($name, $solution);
-        }
-
-        parent::__construct();
-    }
-
     public function setDefaultResolveFn(callable $defaultResolveFn)
     {
         Executor::setDefaultResolveFn($defaultResolveFn);
 
         $this->defaultResolveFn = $defaultResolveFn;
+    }
+
+    public function getDefaultResolveFn()
+    {
+        return $this->defaultResolveFn;
     }
 
     public function resolve($config)
@@ -66,7 +42,9 @@ class ConfigResolver extends AbstractResolver
             if ((!$solution = $this->getSolution($name)) || empty($values)) {
                 continue;
             }
-            $values = call_user_func_array($solution, [$values]);
+            $options = $this->getSolutionOptions($name);
+
+            $values = call_user_func_array([$solution, $options['method']], [$values]);
         }
 
         return $config;
@@ -76,5 +54,4 @@ class ConfigResolver extends AbstractResolver
     {
         return 'Overblog\\GraphQLBundle\\Resolver\\Config\\ConfigSolutionInterface';
     }
-
 }

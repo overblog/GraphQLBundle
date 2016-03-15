@@ -13,11 +13,11 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class NodeField implements FieldInterface
+class NodeField implements MappingInterface
 {
-    public function toFieldDefinition(array $config)
+    public function toMappingDefinition(array $config)
     {
         Config::validate($config, [
             'name' => Config::STRING | Config::REQUIRED,
@@ -37,12 +37,6 @@ class NodeField implements FieldInterface
                 'id' => ['type' => Type::nonNull(Type::id()), 'description' => 'The ID of an object'],
             ],
             'resolve' => function ($obj, $args, $info) use ($idFetcher) {
-                if (empty($args['id'])) {
-                    throw new \InvalidArgumentException(
-                        'Argument "id" is required but not provided.'
-                    );
-                }
-
                 return call_user_func_array($idFetcher, [$args['id'], $info]);
             },
         ];

@@ -11,11 +11,11 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
-use Overblog\GraphQLBundle\Definition\ArgsInterface;
-use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
+use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class FieldsConfigSolution extends AbstractConfigSolution implements UniqueConfigSolutionInterface
 {
@@ -29,96 +29,102 @@ class FieldsConfigSolution extends AbstractConfigSolution implements UniqueConfi
      */
     private $resolveCallbackConfigSolution;
 
-    public function __construct(TypeConfigSolution $typeConfigSolution, ResolveCallbackConfigSolution $resolveCallbackConfigSolution)
-    {
+    public function __construct(
+        TypeConfigSolution $typeConfigSolution,
+        ResolveCallbackConfigSolution $resolveCallbackConfigSolution
+    ) {
         $this->typeConfigSolution = $typeConfigSolution;
         $this->resolveCallbackConfigSolution = $resolveCallbackConfigSolution;
     }
 
-    public function solve($values, $config)
+    public function solve($values, $config = null)
     {
+        // builder must be last
+        $fieldsTreated = ['type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
+
         foreach ($values as $field => &$options) {
-            if (isset($options['builder']) && is_string($options['builder'])) {
-                $alias = $options['builder'];
-
-                $fieldBuilder = $this->configResolver->getFieldResolver()->resolve($alias);
-                $builderConfig = [];
-                if (isset($options['builderConfig'])) {
-                    if (!is_array($options['builderConfig'])) {
-                        $options['builderConfig'] = [$options['builderConfig']];
-                    }
-                    $builderConfig = $this->configResolver->resolve($options['builderConfig']);
+            foreach ($fieldsTreated as $fieldTreated) {
+                if (isset($options[$fieldTreated])) {
+                    $method = 'solve'.ucfirst($fieldTreated);
+                    $options = $this->$method($options, $field);
                 }
-                $builderConfig['name'] = $field;
-
-                $access = isset($options['access']) ? $options['access'] : null;
-
-                if ($fieldBuilder instanceof FieldInterface) {
-                    $options = $fieldBuilder->toFieldDefinition($builderConfig);
-                } elseif (is_callable($fieldBuilder)) {
-                    $options = call_user_func_array($fieldBuilder, [$builderConfig]);
-                } elseif (is_object($fieldBuilder)) {
-                    $options = get_object_vars($fieldBuilder);
-                } else {
-                    throw new \RuntimeException(sprintf('Could not build field "%s".', $alias));
-                }
-
-                $options['access'] = $access;
-                $options = $this->resolveResolveAndAccessIfNeeded($options);
-
-                unset($options['builderConfig'], $options['builder']);
-
-                continue;
-            }
-
-            if (isset($options['type'])) {
-                $options['type'] = $this->typeConfigSolution->solveTypeCallback($options['type']);
-            }
-
-            if (isset($options['args'])) {
-                foreach ($options['args'] as &$argsOptions) {
-                    $argsOptions['type'] = $this->typeConfigSolution->solveTypeCallback($argsOptions['type']);
-                    if (isset($argsOptions['defaultValue'])) {
-                        $argsOptions['defaultValue'] = $this->solveUsingExpressionLanguageIfNeeded($argsOptions['defaultValue']);
-                    }
-                }
-            }
-
-            if (isset($options['argsBuilder'])) {
-                $alias = $options['argsBuilder']['name'];
-
-                $argsBuilder = $this->configResolver->getArgResolver()->resolve($alias);
-                $argsBuilderConfig = [];
-                if (isset($options['argsBuilder']['config'])) {
-                    if (!is_array($options['argsBuilder']['config'])) {
-                        $options['argsBuilder']['config'] = [$options['argsBuilder']['config']];
-                    }
-                    $argsBuilderConfig = $this->configResolver->resolve($options['argsBuilder']['config']);
-                }
-
-                $options['args'] = isset($options['args']) ? $options['args'] : [];
-
-                if ($argsBuilder instanceof ArgsInterface) {
-                    $options['args'] = array_merge($argsBuilder->toArgsDefinition($argsBuilderConfig), $options['args']);
-                } elseif (is_callable($argsBuilder)) {
-                    $options['args'] = array_merge(call_user_func_array($argsBuilder, [$argsBuilderConfig]), $options['args']);
-                } elseif (is_object($argsBuilder)) {
-                    $options['args'] = array_merge(get_object_vars($argsBuilder), $options['args']);
-                } else {
-                    throw new \RuntimeException(sprintf('Could not build args "%s".', $alias));
-                }
-
-                unset($options['argsBuilder']);
             }
 
             $options = $this->resolveResolveAndAccessIfNeeded($options);
-
-            if (isset($options['deprecationReason'])) {
-                $options['deprecationReason'] = $this->solveUsingExpressionLanguageIfNeeded($options['deprecationReason']);
-            }
         }
 
         return $values;
+    }
+
+    private function solveBuilder($options, $field)
+    {
+        $builderConfig = isset($options['builderConfig']) ? $options['builderConfig'] : [];
+
+        $access = isset($options['access']) ? $options['access'] : null;
+        $options = $this->builderToMappingDefinition($options['builder'], $builderConfig, $this->fieldResolver, $field);
+        $options['access'] = $access;
+        $options = $this->resolveResolveAndAccessIfNeeded($options);
+
+        unset($options['builderConfig'], $options['builder']);
+
+        return $options;
+    }
+
+    private function solveType($options)
+    {
+        $options['type'] = $this->typeConfigSolution->solveTypeCallback($options['type']);
+
+        return $options;
+    }
+
+    private function solveArgs($options)
+    {
+        foreach ($options['args'] as &$argsOptions) {
+            $argsOptions['type'] = $this->typeConfigSolution->solveTypeCallback($argsOptions['type']);
+            if (isset($argsOptions['defaultValue'])) {
+                $argsOptions['defaultValue'] = $this->solveUsingExpressionLanguageIfNeeded($argsOptions['defaultValue']);
+            }
+        }
+
+        return $options;
+    }
+
+    private function solveArgsBuilder($options)
+    {
+        $argsBuilderConfig = isset($options['argsBuilder']['config']) ? $options['argsBuilder']['config'] : [];
+
+        $options['args'] = array_merge(
+            $this->builderToMappingDefinition($options['argsBuilder']['builder'], $argsBuilderConfig, $this->argResolver),
+            isset($options['args']) ? $options['args'] : []
+        );
+
+        unset($options['argsBuilder']);
+
+        return $options;
+    }
+
+    private function solveDeprecationReason($options)
+    {
+        $options['deprecationReason'] = $this->solveUsingExpressionLanguageIfNeeded($options['deprecationReason']);
+
+        return $options;
+    }
+
+    private function builderToMappingDefinition($rawBuilder, array $rawBuilderConfig, ResolverInterface $builderResolver, $name = null)
+    {
+        /** @var MappingInterface $builder */
+        $builder = $builderResolver->resolve($rawBuilder);
+        $builderConfig = [];
+        if (!empty($rawBuilderConfig)) {
+            $builderConfig = $rawBuilderConfig;
+            $builderConfig = $this->configResolver->resolve($builderConfig);
+        }
+
+        if (null !== $name) {
+            $builderConfig['name'] = $name;
+        }
+
+        return $builder->toMappingDefinition($builderConfig);
     }
 
     private function resolveResolveAndAccessIfNeeded(array $options)
@@ -150,54 +156,64 @@ class FieldsConfigSolution extends AbstractConfigSolution implements UniqueConfi
 
             $result = null !== $resolveCallback  ? call_user_func_array($resolveCallback, $args) : null;
 
-            $values = call_user_func_array([$this, 'resolveResolveCallbackArgs'], $args);
+            $values = call_user_func_array([$this, 'solveResolveCallbackArgs'], $args);
 
-            $checkAccess = function ($object, $throwException = false) use ($expression, $values) {
-                try {
-                    $access = $this->solveUsingExpressionLanguageIfNeeded(
-                        $expression,
-                        array_merge($values, ['object' => $object])
-                    );
-                } catch (\Exception $e) {
-                    $access = false;
-                }
+            return $this->filterResultUsingAccess($result, $expression, $values);
+        };
+    }
 
-                if ($throwException && !$access) {
-                    throw new UserError('Access denied to this field.');
-                }
+    private function filterResultUsingAccess($result, $expression, $values)
+    {
+        $checkAccess = $this->checkAccessCallback($expression, $values);
 
-                return $access;
-            };
-
-            switch (true) {
-                case is_array($result) || $result instanceof \ArrayAccess:
-                    $result = array_filter(
-                        array_map(
-                            function ($object) use ($checkAccess) {
-                                return $checkAccess($object) ? $object : null;
-                            },
-                            $result
-                        )
-                    );
-                    break;
-
-                case $result instanceof Connection:
-                    $result->edges = array_map(
-                        function (Edge $edge) use ($checkAccess) {
-                            $edge->node = $checkAccess($edge->node) ? $edge->node : null;
-
-                            return $edge;
+        switch (true) {
+            case is_array($result) || $result instanceof \ArrayAccess:
+                $result = array_filter(
+                    array_map(
+                        function ($object) use ($checkAccess) {
+                            return $checkAccess($object) ? $object : null;
                         },
-                        $result->edges
-                    );
-                    break;
+                        $result
+                    )
+                );
+                break;
 
-                default:
-                    $checkAccess($result, true);
-                    break;
+            case $result instanceof Connection:
+                $result->edges = array_map(
+                    function (Edge $edge) use ($checkAccess) {
+                        $edge->node = $checkAccess($edge->node) ? $edge->node : null;
+
+                        return $edge;
+                    },
+                    $result->edges
+                );
+                break;
+
+            default:
+                $checkAccess($result, true);
+                break;
+        }
+
+        return $result;
+    }
+
+    private function checkAccessCallback($expression, $values)
+    {
+        return function ($object, $throwException = false) use ($expression, $values) {
+            try {
+                $access = $this->solveUsingExpressionLanguageIfNeeded(
+                    $expression,
+                    array_merge($values, ['object' => $object])
+                );
+            } catch (\Exception $e) {
+                $access = false;
             }
 
-            return $result;
+            if ($throwException && !$access) {
+                throw new UserError('Access denied to this field.');
+            }
+
+            return $access;
         };
     }
 }
