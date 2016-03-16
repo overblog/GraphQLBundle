@@ -37,7 +37,7 @@ class ErrorHandler
 
     /**
      * @param Error[] $errors
-     * @param $throwRawException
+     * @param bool    $throwRawException
      *
      * @return Error[]
      *

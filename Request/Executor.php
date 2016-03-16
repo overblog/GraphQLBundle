@@ -11,14 +11,12 @@
 
 namespace Overblog\GraphQLBundle\Request;
 
-use GraphQL\Error;
-use GraphQL\Executor\ExecutionResult;
 use GraphQL\GraphQL;
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Executor
 {
@@ -44,14 +42,6 @@ class Executor
     }
 
     /**
-     * @return bool
-     */
-    public function getThrowException()
-    {
-        return $this->throwException;
-    }
-
-    /**
      * @param bool $throwException
      *
      * @return $this
@@ -68,20 +58,13 @@ class Executor
         $event = new ExecutorContextEvent($context);
         $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, $event);
 
-        try {
-            $executionResult = GraphQL::executeAndReturnResult(
-                $this->schema,
-                isset($data['query']) ? $data['query'] : null,
-                $event->getExecutorContext(),
-                $data['variables'],
-                $data['operationName']
-            );
-        } catch (\Exception $exception) {
-            $executionResult = new ExecutionResult(
-                null,
-                [new Error('An errors occurred while processing query.', null, $exception)]
-            );
-        }
+        $executionResult = GraphQL::executeAndReturnResult(
+            $this->schema,
+            isset($data['query']) ? $data['query'] : null,
+            $event->getExecutorContext(),
+            $data['variables'],
+            $data['operationName']
+        );
 
         $this->errorHandler->handleErrors($executionResult, $this->throwException);
 

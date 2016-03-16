@@ -11,9 +11,6 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
-use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
-
 abstract class AbstractResolver implements ResolverInterface
 {
     /**
@@ -25,16 +22,6 @@ abstract class AbstractResolver implements ResolverInterface
      * @var array
      */
     private $solutionOptions = [];
-
-    /**
-     * @var CacheInterface
-     */
-    protected $cache;
-
-    public function __construct(CacheInterface $cache = null)
-    {
-        $this->cache = null !== $cache ? $cache : new ArrayCache();
-    }
 
     public function addSolution($name, $solution, $options = [])
     {
@@ -48,14 +35,6 @@ abstract class AbstractResolver implements ResolverInterface
         $this->solutionOptions[$name] = $options;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSolutions()
-    {
-        return $this->solutions;
     }
 
     /**
@@ -77,13 +56,6 @@ abstract class AbstractResolver implements ResolverInterface
     {
         return isset($this->solutionOptions[$name]) ? $this->solutionOptions[$name] : [];
     }
-
-    /**
-     * @param $input
-     *
-     * @return mixed
-     */
-    abstract public function resolve($input);
 
     /**
      * @param mixed $solution

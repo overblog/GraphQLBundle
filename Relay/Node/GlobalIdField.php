@@ -14,11 +14,11 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class GlobalIdField implements FieldInterface
+class GlobalIdField implements MappingInterface
 {
-    public function toFieldDefinition(array $config)
+    public function toMappingDefinition(array $config)
     {
         Config::validate($config, [
             'name' => Config::STRING | Config::REQUIRED,

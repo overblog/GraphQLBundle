@@ -14,14 +14,14 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Utils;
-use Overblog\GraphQLBundle\Definition\FieldInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Definition\MergeFieldTrait;
 
-class MutationField implements FieldInterface
+class MutationField implements MappingInterface
 {
     use MergeFieldTrait;
 
-    public function toFieldDefinition(array $config)
+    public function toMappingDefinition(array $config)
     {
         Utils::invariant(!empty($config['name']), 'Every type is expected to have name');
 

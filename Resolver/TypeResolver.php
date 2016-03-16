@@ -12,9 +12,21 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
+use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
 
 class TypeResolver extends AbstractResolver
 {
+    /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    public function __construct(CacheInterface $cache = null)
+    {
+        $this->cache = null !== $cache ? $cache : new ArrayCache();
+    }
+
     /**
      * @param string $alias
      *

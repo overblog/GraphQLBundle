@@ -29,18 +29,4 @@ interface CacheInterface
      * @return mixed|null
      */
     public function fetch($key);
-
-    /**
-     * Delete an result from the cache.
-     *
-     * @param string $key The cache key
-     *
-     * @return mixed|null
-     */
-    public function delete($key);
-
-    /**
-     * reset cache.
-     */
-    public function clear();
 }

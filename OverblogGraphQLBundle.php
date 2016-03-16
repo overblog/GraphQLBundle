@@ -17,9 +17,9 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypePass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OverblogGraphQLBundle extends Bundle
 {

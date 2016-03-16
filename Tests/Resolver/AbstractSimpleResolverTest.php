@@ -15,7 +15,7 @@ abstract class AbstractSimpleResolverTest extends AbstractResolverTest
 {
     protected function getResolverSolutionsMapping()
     {
-        $totoSolution = new \stdClass();
+        $totoSolution = $this->getMock('Overblog\GraphQLBundle\Definition\Builder\MappingInterface');
         $totoSolution->name = 'Toto';
 
         return [
@@ -27,7 +27,7 @@ abstract class AbstractSimpleResolverTest extends AbstractResolverTest
     {
         $arg = $this->resolver->resolve('Toto');
 
-        $this->assertInstanceOf('stdClass', $arg);
+        $this->assertInstanceOf('Overblog\GraphQLBundle\Definition\Builder\MappingInterface', $arg);
         $this->assertEquals('Toto', $arg->name);
     }
 

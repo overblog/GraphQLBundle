@@ -12,16 +12,16 @@
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\ArgsInterface;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class ConnectionArgs implements ArgsInterface
+class ConnectionArgs implements MappingInterface
 {
     /**
      * @param array $config
      *
      * @return array
      */
-    public function toArgsDefinition(array $config)
+    public function toMappingDefinition(array $config)
     {
         return [
             'after' => [

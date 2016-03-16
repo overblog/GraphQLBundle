@@ -29,6 +29,15 @@ class TypeResolverTest extends AbstractResolverTest
         ];
     }
 
+    /**
+     * @expectedException \Overblog\GraphQLBundle\Resolver\UnsupportedResolverException
+     * @expectedExceptionMessage Resolver "not-supported" must be "GraphQL\Type\Definition\Type" "stdClass" given.
+     */
+    public function testAddNotSupportedSolution()
+    {
+        $this->resolver->addSolution('not-supported', new \stdClass());
+    }
+
     public function testResolveKnownType()
     {
         $type = $this->resolver->resolve('Toto');
@@ -43,6 +52,14 @@ class TypeResolverTest extends AbstractResolverTest
     public function testResolveUnknownType()
     {
         $this->resolver->resolve('Fake');
+    }
+
+    /**
+     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
+     */
+    public function testWrongListOfWrappingType()
+    {
+        $this->resolver->resolve('[Tata');
     }
 
     public function testResolveWithListOfWrapper()

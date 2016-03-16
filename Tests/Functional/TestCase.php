@@ -30,7 +30,7 @@ abstract class TestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function createKernel(array $options = array())
+    protected static function createKernel(array $options = [])
     {
         $class = self::getKernelClass();
 

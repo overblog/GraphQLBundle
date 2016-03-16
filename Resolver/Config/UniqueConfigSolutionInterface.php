@@ -9,14 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Definition;
+namespace Overblog\GraphQLBundle\Resolver\Config;
 
-interface ArgsInterface
+interface UniqueConfigSolutionInterface extends ConfigSolutionInterface
 {
-    /**
-     * @param array $config
-     *
-     * @return array
-     */
-    public function toArgsDefinition(array $config);
 }
