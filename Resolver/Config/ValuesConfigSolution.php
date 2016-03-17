@@ -15,8 +15,8 @@ class ValuesConfigSolution extends AbstractConfigSolution implements UniqueConfi
 {
     public function solve($values, $config = null)
     {
-        if (!empty($values['values'])) {
-            foreach ($values['values'] as $name => &$options) {
+        if (!empty($values)) {
+            foreach ($values as $name => &$options) {
                 if (isset($options['value'])) {
                     $options['value'] = $this->solveUsingExpressionLanguageIfNeeded($options['value']);
                 }

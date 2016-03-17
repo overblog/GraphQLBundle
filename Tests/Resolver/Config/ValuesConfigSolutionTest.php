@@ -27,20 +27,16 @@ class ValuesConfigSolutionTest extends AbstractConfigSolutionTest
     {
         $config = $this->configSolution->solve(
             [
-                'values' => [
-                    'test' => ['value' => 'my test value'],
-                    'toto' => ['value' => 'my toto value'],
-                    'expression-language-test' => ['value' => '@=["my", "test"]'],
-                ],
+                'test' => ['value' => 'my test value'],
+                'toto' => ['value' => 'my toto value'],
+                'expression-language-test' => ['value' => '@=["my", "test"]'],
             ]
         );
 
         $expected = [
-            'values' => [
-                'test' => ['value' => 'my test value'],
-                'toto' => ['value' => 'my toto value'],
-                'expression-language-test' => ['value' => ['my', 'test']],
-            ],
+            'test' => ['value' => 'my test value'],
+            'toto' => ['value' => 'my toto value'],
+            'expression-language-test' => ['value' => ['my', 'test']],
         ];
 
         $this->assertEquals($expected, $config);
