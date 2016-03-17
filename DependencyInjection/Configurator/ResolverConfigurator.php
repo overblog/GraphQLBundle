@@ -30,8 +30,6 @@ class ResolverConfigurator implements ContainerAwareInterface
     {
         foreach ($mapping as $name => $options) {
             $cleanOptions = $options;
-            unset($cleanOptions['alias'], $cleanOptions['id']);
-
             $solution = $this->container->get($options['id']);
 
             if ($solution instanceof ContainerAwareInterface) {

@@ -70,6 +70,11 @@ services:
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         configurator: ["@overblog_graphql.resolver_configurator", "configureType"]
+        arguments:
+            -
+        calls:
+            - ["setContainer", ["@service_container"]]
+            - ["setMapping", [%overblog_graphql.types_mapping%]]
 
     overblog_graphql.field_resolver:
         class: Overblog\GraphQLBundle\Resolver\FieldResolver
