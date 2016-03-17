@@ -27,18 +27,39 @@ class Resolver
         $fieldName = $info->fieldName;
         $property = null;
 
+        $index = sprintf('[%s]', $fieldName);
+
+        if (self::getAccessor()->isReadable($source, $index)) {
+            $property = self::getAccessor()->getValue($source, $index);
+        } elseif (is_object($source)) {
+            $property = self::propertyValueFromObject($source, $fieldName);
+        }
+
+        return $property instanceof \Closure ? $property($source, $args, $info) : $property;
+    }
+
+    private static function propertyValueFromObject($object, $fieldName)
+    {
+        $property = null;
+
+        // accessor try to access the value using methods
+        // first before using public property directly
+        // not what we wont here!
+        if (isset($object->{$fieldName})) {
+            $property = $object->{$fieldName};
+        } elseif (self::getAccessor()->isReadable($object, $fieldName)) {
+            $property = self::getAccessor()->getValue($object, $fieldName);
+        }
+
+        return $property;
+    }
+
+    private static function getAccessor()
+    {
         if (null === self::$accessor) {
             self::$accessor = PropertyAccess::createPropertyAccessor();
         }
 
-        $index = sprintf('[%s]', $fieldName);
-
-        if (self::$accessor->isReadable($source, $index)) {
-            $property = self::$accessor->getValue($source, $index);
-        } elseif (self::$accessor->isReadable($source, $fieldName)) {
-            $property = self::$accessor->getValue($source, $fieldName);
-        }
-
-        return $property instanceof \Closure ? $property($source, $args, $info) : $property;
+        return self::$accessor;
     }
 }

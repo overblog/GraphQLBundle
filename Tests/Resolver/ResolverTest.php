@@ -22,7 +22,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     private $private_property_with_getter2 = 'IfYouWantMeUseMyGetter2';
 
-    public $public = 'public';
+    public $name = 'public';
 
     public $closureProperty;
 
@@ -56,7 +56,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
             ['privatePropertyWithGetter', $this, $this->privatePropertyWithGetter],
             ['private_property_with_getter2', $this, $this->private_property_with_getter2],
             ['not_object_or_array', 'String', null],
-            ['public', $this, $this->public],
+            ['name', $this, $this->name],
         ];
     }
 
