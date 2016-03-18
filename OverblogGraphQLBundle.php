@@ -17,6 +17,7 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypePass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
+use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -35,6 +36,7 @@ class OverblogGraphQLBundle extends Bundle
         $container->addCompilerPass(new ResolverPass());
         $container->addCompilerPass(new MutationPass());
         $container->addCompilerPass(new ArgPass());
+        $container->registerExtension(new OverblogGraphQLTypesExtension());
     }
 
     public function getContainerExtension()
