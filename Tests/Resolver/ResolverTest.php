@@ -16,23 +16,6 @@ use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class ResolverTest extends \PHPUnit_Framework_TestCase
 {
-    private $privatePropertyWithoutGetter = 'ImNotAccessibleFromOutside:D';
-
-    private $privatePropertyWithGetter = 'IfYouWantMeUseMyGetter';
-
-    private $private_property_with_getter2 = 'IfYouWantMeUseMyGetter2';
-
-    public $name = 'public';
-
-    public $closureProperty;
-
-    public function setUp()
-    {
-        $this->closureProperty = function () {
-            return $this->privatePropertyWithoutGetter;
-        };
-    }
-
     /**
      * @param $fieldName
      * @param $source
@@ -49,30 +32,17 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
 
     public function resolverProvider()
     {
+        $object = new Toto();
+
         return [
             ['key', ['key' => 'toto'], 'toto'],
             ['fake', ['coco'], null],
-            ['privatePropertyWithoutGetter', $this, null],
-            ['privatePropertyWithGetter', $this, $this->privatePropertyWithGetter],
-            ['private_property_with_getter2', $this, $this->private_property_with_getter2],
+            ['privatePropertyWithoutGetter', $object, null],
+            ['privatePropertyWithGetter', $object, Toto::PRIVATE_PROPERTY_WITH_GETTER_VALUE],
+            ['private_property_with_getter2', $object, Toto::PRIVATE_PROPERTY_WITH_GETTER2_VALUE],
             ['not_object_or_array', 'String', null],
-            ['name', $this, $this->name],
+            ['name', $object, $object->name],
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getPrivatePropertyWithGetter()
-    {
-        return $this->privatePropertyWithGetter;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrivatePropertyWithGetter2()
-    {
-        return $this->private_property_with_getter2;
-    }
 }

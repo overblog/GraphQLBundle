@@ -53,35 +53,32 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
      */
     public function resolve($alias)
     {
+        if (null === $alias) {
+            return;
+        }
+
         if (null !== $type = $this->cache->fetch($alias)) {
             return $type;
         }
 
-        $type = $this->getType($alias);
+        $type = $this->string2Type($alias);
 
         $this->cache->save($alias, $type);
 
         return $type;
     }
 
-    private function getType($alias)
+    private function string2Type($alias)
     {
-        if (!is_string($alias)) {
-            return $alias;
-        }
-        // Non-Null
-        if ('!' === $alias[strlen($alias) - 1]) {
-            return Type::nonNull($this->getType(substr($alias, 0, -1)));
-        }
-        // List
-        if ('[' === $alias[0]) {
-            if (']' !== $alias[strlen($alias) - 1]) {
-                throw new UnresolvableException(sprintf('Invalid type "%s"', $alias));
-            }
-
-            return Type::listOf($this->getType(substr($alias, 1, -1)));
+        if (false !== ($type = $this->wrapTypeIfNeeded($alias))) {
+            return $type;
         }
 
+        return $this->baseType($alias);
+    }
+
+    private function baseType($alias)
+    {
         $type = $this->getSolution($alias);
         if (null !== $type) {
             return $type;
@@ -96,6 +93,36 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
         throw new UnresolvableException(
             sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
         );
+    }
+
+    private function wrapTypeIfNeeded($alias)
+    {
+        // Non-Null
+        if ('!' === $alias[strlen($alias) - 1]) {
+            return Type::nonNull($this->string2Type(substr($alias, 0, -1)));
+        }
+        // List
+        if ($this->hasNeedListOfWrapper($alias)) {
+            return Type::listOf($this->string2Type(substr($alias, 1, -1)));
+        }
+
+        return false;
+    }
+
+    private function hasNeedListOfWrapper($alias)
+    {
+        if ('[' === $alias[0]) {
+            $got = $alias[strlen($alias) - 1];
+            if (']' !== $got) {
+                throw new UnresolvableException(
+                    sprintf('Malformed ListOf wrapper type "%s" expected "]" but got .', $alias, json_encode($got))
+                );
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     protected function supportedSolutionClass()

@@ -25,33 +25,28 @@ class Resolver
     public static function defaultResolveFn($source, $args, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        $property = null;
+        $value = null;
 
         $index = sprintf('[%s]', $fieldName);
 
         if (self::getAccessor()->isReadable($source, $index)) {
-            $property = self::getAccessor()->getValue($source, $index);
+            $value = self::getAccessor()->getValue($source, $index);
         } elseif (is_object($source)) {
-            $property = self::propertyValueFromObject($source, $fieldName);
+            $value = self::propertyValueFromObject($source, $fieldName);
         }
 
-        return $property instanceof \Closure ? $property($source, $args, $info) : $property;
+        return $value instanceof \Closure ? $value($source, $args, $info) : $value;
     }
 
     private static function propertyValueFromObject($object, $fieldName)
     {
-        $property = null;
+        $value = null;
 
-        // accessor try to access the value using methods
-        // first before using public property directly
-        // not what we wont here!
-        if (isset($object->{$fieldName})) {
-            $property = $object->{$fieldName};
-        } elseif (self::getAccessor()->isReadable($object, $fieldName)) {
-            $property = self::getAccessor()->getValue($object, $fieldName);
+        if (self::getAccessor()->isReadable($object, $fieldName)) {
+            $value = self::getAccessor()->getValue($object, $fieldName);
         }
 
-        return $property;
+        return $value;
     }
 
     private static function getAccessor()
