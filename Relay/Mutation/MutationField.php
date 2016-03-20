@@ -14,8 +14,10 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Utils;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Definition\MergeFieldTrait;
+use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class MutationField implements MappingInterface
 {
@@ -48,8 +50,8 @@ class MutationField implements MappingInterface
                 'input' => ['type' => Type::nonNull($inputType)],
             ],
             'resolve' => function ($_, $input, $info) use ($mutateAndGetPayload, $name) {
-                $payload = $mutateAndGetPayload($input['input'], $info);
-                $payload['clientMutationId'] = $input['input']['clientMutationId'];
+                $payload = $mutateAndGetPayload(new Argument($input['input']), $info);
+                Resolver::setObjectOrArrayValue($payload, 'clientMutationId', $input['input']['clientMutationId']);
 
                 return $payload;
             },

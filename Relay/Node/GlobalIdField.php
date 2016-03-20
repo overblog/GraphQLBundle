@@ -15,6 +15,7 @@ use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class GlobalIdField implements MappingInterface
 {
@@ -37,7 +38,7 @@ class GlobalIdField implements MappingInterface
             'resolve' => function ($obj, $args, ResolveInfo $info) use ($idFetcher, $typeName) {
                 return GlobalId::toGlobalId(
                     !empty($typeName) ? $typeName : $info->parentType->name,
-                    is_callable($idFetcher) ? call_user_func_array($idFetcher, [$obj, $info]) : (is_object($obj) ? $obj->id : $obj['id'])
+                    is_callable($idFetcher) ? call_user_func_array($idFetcher, [$obj, $info]) : Resolver::valueFromObjectOrArray($obj, 'id')
                 );
             },
         ];

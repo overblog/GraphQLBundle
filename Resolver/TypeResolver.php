@@ -38,11 +38,13 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
 
     /**
      * @param array $mapping
+     *
      * @return TypeResolver
      */
     public function setMapping($mapping)
     {
         $this->mapping = $mapping;
+
         return $this;
     }
 
@@ -87,6 +89,7 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
         //fallback load directly from container if exists
         if (null !== $this->container && isset($this->mapping[$alias])) {
             $options = $this->mapping[$alias];
+
             return $this->container->get($options['id']);
         }
 

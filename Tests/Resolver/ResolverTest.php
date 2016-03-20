@@ -44,5 +44,4 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
             ['name', $object, $object->name],
         ];
     }
-
 }

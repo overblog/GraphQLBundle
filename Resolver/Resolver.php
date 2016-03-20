@@ -22,20 +22,37 @@ class Resolver
      */
     private static $accessor;
 
-    public static function defaultResolveFn($source, $args, ResolveInfo $info)
+    public static function defaultResolveFn($objectOrArray, $args, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        $value = null;
+        $value = static::valueFromObjectOrArray($objectOrArray, $fieldName);
 
+        return $value instanceof \Closure ? $value($objectOrArray, $args, $info) : $value;
+    }
+
+    public static function valueFromObjectOrArray($objectOrArray, $fieldName)
+    {
+        $value = null;
         $index = sprintf('[%s]', $fieldName);
 
-        if (self::getAccessor()->isReadable($source, $index)) {
-            $value = self::getAccessor()->getValue($source, $index);
-        } elseif (is_object($source)) {
-            $value = self::propertyValueFromObject($source, $fieldName);
+        if (self::getAccessor()->isReadable($objectOrArray, $index)) {
+            $value = self::getAccessor()->getValue($objectOrArray, $index);
+        } elseif (is_object($objectOrArray)) {
+            $value = self::propertyValueFromObject($objectOrArray, $fieldName);
         }
 
-        return $value instanceof \Closure ? $value($source, $args, $info) : $value;
+        return $value;
+    }
+
+    public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value)
+    {
+        $index = sprintf('[%s]', $fieldName);
+
+        if (self::getAccessor()->isWritable($objectOrArray, $index)) {
+            self::getAccessor()->setValue($objectOrArray, $index, $value);
+        } elseif (is_object($objectOrArray)) {
+            self::getAccessor()->setValue($objectOrArray, $fieldName, $value);
+        }
     }
 
     private static function propertyValueFromObject($object, $fieldName)
