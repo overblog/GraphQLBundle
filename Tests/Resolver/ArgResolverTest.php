@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ArgResolver;
 
-class ArgResolverTestAbstract extends AbstractSimpleResolverTest
+class ArgResolverTest extends AbstractSimpleResolverTest
 {
     protected function createResolver()
     {

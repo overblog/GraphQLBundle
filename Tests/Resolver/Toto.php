@@ -16,7 +16,7 @@ class Toto
     const PRIVATE_PROPERTY_WITH_GETTER_VALUE = 'IfYouWantMeUseMyGetter';
     const PRIVATE_PROPERTY_WITH_GETTER2_VALUE = 'IfYouWantMeUseMyGetter2';
 
-    private $privatePropertyWithoutGetter =  'ImNotAccessibleFromOutside:D';
+    private $privatePropertyWithoutGetter = 'ImNotAccessibleFromOutside:D';
     private $privatePropertyWithGetter = self::PRIVATE_PROPERTY_WITH_GETTER_VALUE;
     private $private_property_with_getter2 = self::PRIVATE_PROPERTY_WITH_GETTER2_VALUE;
     public $name = 'public';
