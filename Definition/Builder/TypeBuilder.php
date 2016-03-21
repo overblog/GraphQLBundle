@@ -18,6 +18,18 @@ class TypeBuilder
 {
     private $configResolver;
 
+    private $mapping = [
+        'relay-connection' => 'Overblog\\GraphQLBundle\\Relay\\Connection\\ConnectionType',
+        'relay-node' => 'Overblog\\GraphQLBundle\\Relay\\Node\\NodeInterfaceType',
+        'relay-mutation-input' => 'Overblog\\GraphQLBundle\\Relay\\Mutation\\InputType',
+        'relay-mutation-payload' => 'Overblog\\GraphQLBundle\\Relay\\Mutation\\PayloadType',
+        'object' => 'GraphQL\\Type\\Definition\\ObjectType',
+        'enum' => 'GraphQL\\Type\\Definition\\EnumType',
+        'interface' => 'GraphQL\\Type\\Definition\\InterfaceType',
+        'union' => 'GraphQL\\Type\\Definition\\UnionType',
+        'input-object' => 'GraphQL\\Type\\Definition\\InputObjectType',
+    ];
+
     public function __construct(ResolverInterface $configResolver)
     {
         $this->configResolver = $configResolver;
@@ -38,38 +50,10 @@ class TypeBuilder
 
     private function getBaseClassName($type)
     {
-        switch ($type) {
-            case 'relay-connection':
-                $class = 'Overblog\\GraphQLBundle\\Relay\\Connection\\ConnectionType';
-                break;
-
-            case 'relay-node':
-                $class = 'Overblog\\GraphQLBundle\\Relay\\Node\\NodeInterfaceType';
-                break;
-
-            case 'relay-mutation-input':
-                $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\InputType';
-                break;
-
-            case 'relay-mutation-payload':
-                $class = 'Overblog\\GraphQLBundle\\Relay\\Mutation\\PayloadType';
-                break;
-
-            case 'object':
-            case 'enum':
-            case 'interface':
-            case 'union':
-                $class = sprintf('GraphQL\\Type\\Definition\\%sType', ucfirst($type));
-                break;
-
-            case 'input-object':
-                $class = 'GraphQL\\Type\\Definition\\InputObjectType';
-                break;
-
-            default:
-                throw new \RuntimeException(sprintf('Type "%s" is not managed.', $type));
+        if (!isset($this->mapping[$type])) {
+            throw new \RuntimeException(sprintf('Type "%s" is not managed.', $type));
         }
 
-        return $class;
+        return $this->mapping[$type];
     }
 }
