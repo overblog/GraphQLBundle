@@ -11,9 +11,9 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
-class ValuesConfigSolution extends AbstractConfigSolution implements UniqueConfigSolutionInterface
+class ValuesConfigSolution extends AbstractConfigSolution
 {
-    public function solve($values, $config = null)
+    public function solve($values)
     {
         if (!empty($values)) {
             foreach ($values as $name => &$options) {

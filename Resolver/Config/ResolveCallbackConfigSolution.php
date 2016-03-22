@@ -11,9 +11,9 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
-class ResolveCallbackConfigSolution extends AbstractConfigSolution implements UniqueConfigSolutionInterface
+class ResolveCallbackConfigSolution extends AbstractConfigSolution
 {
-    public function solve($value, $config = null)
+    public function solve($value)
     {
         if (is_callable($value)) {
             return $value;
