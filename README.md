@@ -617,9 +617,9 @@ class CharacterResolver
 Access Control
 --------------
 
-An access control can be add on each field using `config.fields.*.access`.
+An access control can be add on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
-Default value is true.
+Act like access is`true` if not set.
 
 In the example below the Human name is available only for authenticated users.
 

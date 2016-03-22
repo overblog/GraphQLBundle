@@ -17,7 +17,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
-class FieldsConfigSolution extends AbstractConfigSolution implements UniqueConfigSolutionInterface
+class FieldsConfigSolution extends AbstractConfigSolution
 {
     /**
      * @var TypeConfigSolution
@@ -37,19 +37,24 @@ class FieldsConfigSolution extends AbstractConfigSolution implements UniqueConfi
         $this->resolveCallbackConfigSolution = $resolveCallbackConfigSolution;
     }
 
-    public function solve($values, $config = null)
+    public function solve($values, array &$config = null)
     {
         // builder must be last
         $fieldsTreated = ['type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
 
+        $fieldsDefaultAccess = isset($config['fieldsDefaultAccess']) ? $config['fieldsDefaultAccess'] : null;
+        unset($config['fieldsDefaultAccess']);
+
         foreach ($values as $field => &$options) {
+            //init access with fields default access if needed
+            $options['access'] = isset($options['access']) ? $options['access'] : $fieldsDefaultAccess;
+
             foreach ($fieldsTreated as $fieldTreated) {
                 if (isset($options[$fieldTreated])) {
                     $method = 'solve'.ucfirst($fieldTreated);
                     $options = $this->$method($options, $field);
                 }
             }
-
             $options = $this->resolveResolveAndAccessIfNeeded($options);
         }
 

@@ -44,7 +44,7 @@ class ConfigResolver extends AbstractResolver
             }
             $options = $this->getSolutionOptions($name);
 
-            $values = call_user_func_array([$solution, $options['method']], [$values]);
+            $values = call_user_func_array([$solution, $options['method']], [$values, &$config]);
         }
 
         return $config;
