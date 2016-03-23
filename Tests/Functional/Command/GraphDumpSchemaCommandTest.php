@@ -27,7 +27,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         $application->add(new GraphDumpSchemaCommand());
 
         $command = $application->find('graph:dump-schema');
-        $file = $kernel->getCacheDir().'/schema.yml';
+        $file = $kernel->getCacheDir().'/schema.json';
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -38,6 +38,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
 
         $this->assertEquals(0, $commandTester->getStatusCode());
-        $this->assertEquals(file_get_contents(__DIR__.'/schema.yml'), file_get_contents($file));
+        $this->assertEquals(file_get_contents(__DIR__.'/schema.json'), file_get_contents($file));
     }
 }

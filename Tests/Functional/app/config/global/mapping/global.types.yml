@@ -51,4 +51,13 @@ Post:
                     typeName: Post
             text:
                 type: String
+            status:
+                type: Status
         interfaces: [NodeInterface]
+
+Status:
+    type: enum
+    config:
+        values:
+            PUBLISHED: 1
+            DRAFT: 2
