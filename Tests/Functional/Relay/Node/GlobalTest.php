@@ -84,6 +84,7 @@ EOF;
         id
         ... on Post {
           text
+          status
         }
       }
     }
@@ -100,6 +101,7 @@ EOF;
             'post' => [
                 'id' => 'UG9zdDox',
                 'text' => 'lorem',
+                'status' => 'DRAFT',
             ],
         ];
 

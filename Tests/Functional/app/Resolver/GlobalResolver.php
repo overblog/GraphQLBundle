@@ -45,10 +45,12 @@ class GlobalResolver
         1 => [
             'id' => 1,
             'text' => 'lorem',
+            'status' => 2,
         ],
         2 => [
             'id' => 2,
             'text' => 'ipsum',
+            'status' => 1,
         ],
     ];
 
