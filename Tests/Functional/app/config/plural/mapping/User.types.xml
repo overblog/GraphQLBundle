@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:acme-social="http://example.org/dic/schema/acme_social"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <app:config>
+    <User>
+      <type>object</type>
+      <config>
+        <fields>
+          <username>
+            <type>String</type>
+          </username>
+          <url>
+            <type>String</type>
+          </url>
+        </fields>
+      </config>
+    </User>
+  </app:config>
+</container>

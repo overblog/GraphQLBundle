@@ -1,8 +1,0 @@
-User:
-    type: object
-    config:
-        fields:
-            username:
-                type: String
-            url:
-                type: String

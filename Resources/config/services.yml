@@ -40,6 +40,9 @@ services:
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser
 
+    overblog_graphql.request_batch_parser:
+        class: Overblog\GraphQLBundle\Request\BatchParser
+
     overblog_graphql.schema:
         class: GraphQL\Schema
         public: false
@@ -112,6 +115,7 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.cache_expression_language_parser"
+            - []
         calls:
             - ["setContainer", ["@service_container"]]
 

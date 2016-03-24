@@ -46,9 +46,6 @@ class InputType extends InputObjectType
         );
 
         $name = str_replace('Input', '', $config['name']);
-        if (empty($name)) {
-            $name = $config['name'];
-        }
 
         parent::__construct([
             'name' => $name.'Input',
