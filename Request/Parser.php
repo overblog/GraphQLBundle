@@ -14,13 +14,10 @@ namespace Overblog\GraphQLBundle\Request;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class Parser
+class Parser implements ParserInterface
 {
     /**
-     * Parses the HTTP request and extracts the GraphQL request parameters.
-     *
      * @param Request $request
-     *
      * @return array
      */
     public function parse(Request $request)
@@ -46,23 +43,22 @@ class Parser
 
         switch ($type) {
             // Plain string
-            case 'application/graphql':
-                $parsedBody = ['query' => $body];
+            case static::CONTENT_TYPE_GRAPHQL:
+                $parsedBody = [static::PARAM_QUERY => $body];
                 break;
 
             // JSON object
-            case 'application/json':
-                $json = json_decode($body, true);
+            case static::CONTENT_TYPE_JSON:
+                $parsedBody = json_decode($body, true);
 
                 if (JSON_ERROR_NONE !== json_last_error()) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
-                $parsedBody = $json;
                 break;
 
             // URL-encoded query-string
-            case 'application/x-www-form-urlencoded':
-            case 'multipart/form-data':
+            case static::CONTENT_TYPE_FORM:
+            case static::CONTENT_TYPE_FORM_DATA:
                 $parsedBody = $request->request->all();
                 break;
 
@@ -86,18 +82,18 @@ class Parser
     {
         // Add default request parameters
         $data = $data + [
-            'query' => null,
-            'variables' => null,
-            'operationName' => null,
+            static::PARAM_QUERY => null,
+            static::PARAM_VARIABLES => null,
+            static::PARAM_OPERATION_NAME => null,
         ];
 
         // Keep a reference to the query-string
         $qs = $request->query;
 
         // Override request using query-string parameters
-        $query = $qs->has('query') ? $qs->get('query') : $data['query'];
-        $variables = $qs->has('variables') ? $qs->get('variables') : $data['variables'];
-        $operationName = $qs->has('operationName') ? $qs->get('operationName') : $data['operationName'];
+        $query = $qs->has(static::PARAM_QUERY) ? $qs->get(static::PARAM_QUERY) : $data[static::PARAM_QUERY];
+        $variables = $qs->has(static::PARAM_VARIABLES) ? $qs->get(static::PARAM_VARIABLES) : $data[static::PARAM_VARIABLES];
+        $operationName = $qs->has(static::PARAM_OPERATION_NAME) ? $qs->get(static::PARAM_OPERATION_NAME) : $data[static::PARAM_OPERATION_NAME];
 
         // `query` parameter is mandatory.
         if (empty($query)) {
@@ -115,9 +111,9 @@ class Parser
         }
 
         return [
-            'query' => $query,
-            'variables' => $variables,
-            'operationName' => $operationName,
+            static::PARAM_QUERY => $query,
+            static::PARAM_VARIABLES => $variables,
+            static::PARAM_OPERATION_NAME => $operationName,
         ];
     }
 }

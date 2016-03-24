@@ -46,9 +46,6 @@ class PayloadType extends ObjectType
         );
 
         $name = str_replace('Payload', '', $config['name']);
-        if (empty($name)) {
-            $name = $config['name'];
-        }
 
         parent::__construct([
             'name' => $name.'Payload',

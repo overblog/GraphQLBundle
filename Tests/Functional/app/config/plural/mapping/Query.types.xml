@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:acme-social="http://example.org/dic/schema/acme_social"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+  <app:config>
+    <Query>
+      <type>object</type>
+      <config>
+        <fields>
+          <usernames>
+            <builder>PluralIdentifyingRoot</builder>
+            <builderConfig>
+              <argName>usernames</argName>
+              <description>Map from a username to the user</description>
+              <inputType>String</inputType>
+              <outputType>User</outputType>
+              <resolveSingleInput>@=resolver("plural_single_input", [value, info])</resolveSingleInput>
+            </builderConfig>
+          </usernames>
+        </fields>
+      </config>
+    </Query>
+  </app:config>
+</container>

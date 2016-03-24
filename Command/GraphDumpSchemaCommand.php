@@ -49,18 +49,7 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
             ->execute($request)
             ->toArray();
 
-        if (isset($result['errors'])) {
-            foreach ($result['errors'] as $error) {
-                $output->error($error['message']);
-            }
-
-            return 1;
-        }
-
-        $file = $input->getOption('file');
-        if (empty($file)) {
-            $file = $container->getParameter('kernel.root_dir').'/../var/schema.json';
-        }
+        $file = $input->hasOption('file') ? $input->getOption('file') : $container->getParameter('kernel.root_dir').'/../var/schema.json';
 
         $schema = json_encode($result['data']);
 
