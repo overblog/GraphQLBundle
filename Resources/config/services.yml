@@ -36,6 +36,11 @@ services:
             - "@event_dispatcher"
             - %kernel.debug%
             - "@overblog_graphql.error_handler"
+        calls:
+            - ["addValidatorRule", ["@overblog_graphql.request_validator_rule_max_query_depth"]]
+
+    overblog_graphql.request_validator_rule_max_query_depth:
+        class: Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth
 
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser

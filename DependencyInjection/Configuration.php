@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -86,6 +87,14 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('cache_expression_language_parser')
                             ->defaultValue('overblog_graphql.cache_expression_language_parser.default')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('security')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('query_max_depth')
+                            ->defaultValue(MaxQueryDepth::DEFAULT_QUERY_MAX_DEPTH)
                         ->end()
                     ->end()
                 ->end()
