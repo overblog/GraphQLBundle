@@ -56,35 +56,44 @@ class MaxQueryDepth
             }
         }
 
-        return [
-            Node::FIELD => function (Field $astField) {
-                $depth = $astField->selectionSet ? $this->countQueryDepth($astField->selectionSet, $this->maxQueryDepth + 1) : 0;
+        $rootTypes = [$context->getSchema()->getQueryType(), $context->getSchema()->getMutationType()];
 
-                if ($depth > $this->maxQueryDepth) {
-                    return new Error(static::maxQueryDepthErrorMessage($this->maxQueryDepth), [$astField]);
+        return [
+            Node::FIELD => function (Field $node) use ($context, $rootTypes) {
+                $type = $context->getParentType();
+
+                // check depth only on first rootTypes children
+                if ($type && in_array($type, $rootTypes)) {
+                    $depth = $node->selectionSet ? $this->countQueryDepth($node->selectionSet, $this->maxQueryDepth + 1) : 0;
+
+                    if ($depth > $this->maxQueryDepth) {
+                        return new Error(static::maxQueryDepthErrorMessage($this->maxQueryDepth), [$node]);
+                    }
                 }
             },
         ];
     }
 
-    private function countQueryDepth(SelectionSet $selectionSet, $stopCountingAt, $depth = 1)
+    private function countQueryDepth(SelectionSet $selectionSet, $stopCountingAt, $depth = 0)
     {
         foreach ($selectionSet->selections as $selectionAST) {
             if ($depth >= $stopCountingAt) {
                 break;
             }
 
-            if ($selectionAST instanceof Field || $selectionAST instanceof InlineFragment) {
+            if ($selectionAST instanceof Field) {
                 $depth = $this->countFieldDepth($selectionAST->selectionSet, $stopCountingAt, $depth);
             } elseif ($selectionAST instanceof FragmentSpread) {
                 $depth = $this->countFragmentDepth($selectionAST, $stopCountingAt, $depth);
+            } elseif ($selectionAST instanceof InlineFragment) {
+                $depth = $this->countInlineFragmentDepth($selectionAST->selectionSet, $stopCountingAt, $depth);
             }
         }
 
         return $depth;
     }
 
-    private function countFieldDepth(SelectionSet $selectionSet = null, $stopCountingAt, $depth = 1)
+    private function countFieldDepth(SelectionSet $selectionSet = null, $stopCountingAt, $depth)
     {
         if (null !== $selectionSet) {
             return $this->countQueryDepth($selectionSet, $stopCountingAt, ++$depth);
@@ -93,7 +102,16 @@ class MaxQueryDepth
         return $depth;
     }
 
-    private function countFragmentDepth(FragmentSpread $selectionAST, $stopCountingAt, $depth = 1)
+    private function countInlineFragmentDepth(SelectionSet $selectionSet = null, $stopCountingAt, $depth)
+    {
+        if (null !== $selectionSet) {
+            return $this->countQueryDepth($selectionSet, $stopCountingAt, $depth);
+        }
+
+        return $depth;
+    }
+
+    private function countFragmentDepth(FragmentSpread $selectionAST, $stopCountingAt, $depth)
     {
         $spreadName = $selectionAST->name->value;
         if (isset($this->fragments[$spreadName])) {
