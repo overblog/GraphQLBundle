@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
-use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -93,8 +92,18 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('query_max_depth')
-                            ->defaultValue(MaxQueryDepth::DEFAULT_QUERY_MAX_DEPTH)
+                            ->integerNode('query_max_depth')
+                                ->info('Limit query depth. Disabled if equal to false or 0.')
+                                ->beforeNormalization()
+                                    ->ifTrue(function ($v) { return false === $v; })
+                                    ->then(function () { return 0; })
+                                ->end()
+                                ->defaultFalse()
+                                ->validate()
+                                    ->ifTrue(function ($v) { return $v < 0; })
+                                    ->thenInvalid('"overblog_graphql.security.query_max_depth" must be greater or equal to 0.')
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

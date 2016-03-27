@@ -58,6 +58,15 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
         $this->assertDocumentValidator(Introspection::getIntrospectionQuery(true), 1);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage $maxQueryDepth argument must be greater or equal to 0.
+     */
+    public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
+    {
+        new MaxQueryDepth(-1);
+    }
+
     public function queryDataProvider()
     {
         return [
@@ -69,6 +78,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
             [6],
             [7],
             [8, 9], // Valid because depth under new limit (9)
+            [10, 0], // Valid because 0 depth disable limit
             [
                 10,
                 8,

@@ -35,8 +35,17 @@ class MaxQueryDepth
         $this->setMaxQueryDepth($maxQueryDepth);
     }
 
+    /**
+     * Set max query depth. If equal to 0 no check is done. Must be greater or equal to 0.
+     *
+     * @param $maxQueryDepth
+     */
     public static function setMaxQueryDepth($maxQueryDepth)
     {
+        if ($maxQueryDepth < 0) {
+            throw new \InvalidArgumentException('$maxQueryDepth argument must be greater or equal to 0. ');
+        }
+
         self::$maxQueryDepth = (int) $maxQueryDepth;
     }
 
@@ -58,9 +67,7 @@ class MaxQueryDepth
         $schema = $context->getSchema();
         $rootTypes = [$schema->getQueryType(), $schema->getMutationType(), $schema->getSubscriptionType()];
 
-        return [
-            Node::FIELD => $this->getFieldClosure($context, $rootTypes),
-        ];
+        return 0 !== self::$maxQueryDepth ? [Node::FIELD => $this->getFieldClosure($context, $rootTypes)] : [];
     }
 
     private function getFieldClosure(ValidationContext $context, array $rootTypes)
