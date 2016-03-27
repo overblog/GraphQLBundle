@@ -35,6 +35,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setSchemaArguments($config, $container);
         $this->setErrorHandlerArguments($config, $container);
         $this->setGraphiQLTemplate($config, $container);
+        $this->setSecurity($config, $container);
     }
 
     public function prepend(ContainerBuilder $container)
@@ -47,6 +48,17 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setSecurity(array $config, ContainerBuilder $container)
+    {
+        if (isset($config['security']['query_max_depth'])) {
+            $container
+                ->getDefinition($this->getAlias().'.request_validator_rule_max_query_depth')
+                ->addMethodCall('setMaxQueryDepth', [$config['security']['query_max_depth']])
+                ->setPublic(true)
+            ;
+        }
     }
 
     private function setGraphiQLTemplate(array $config, ContainerBuilder $container)

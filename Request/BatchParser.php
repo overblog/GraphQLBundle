@@ -18,6 +18,7 @@ class BatchParser implements ParserInterface
 {
     /**
      * @param Request $request
+     *
      * @return array
      */
     public function parse(Request $request)
@@ -29,7 +30,7 @@ class BatchParser implements ParserInterface
             throw new BadRequestHttpException('Must provide at least one valid query.');
         }
 
-        foreach($data as $i => &$entry) {
+        foreach ($data as $i => &$entry) {
             if (empty($entry[static::PARAM_QUERY]) || !is_string($entry[static::PARAM_QUERY])) {
                 throw new BadRequestHttpException(sprintf('No valid query found in node "%s"', $i));
             }

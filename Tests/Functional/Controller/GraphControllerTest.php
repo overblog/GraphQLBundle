@@ -142,7 +142,7 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
 
-        $query = $this->friendsQuery . "\n" .$this->friendsTotalCountQuery;
+        $query = $this->friendsQuery."\n".$this->friendsTotalCountQuery;
 
         $client->request('POST', '/', ['query' => $query, 'operationName' => 'FriendsQuery'], [], ['CONTENT_TYPE' => 'application/x-www-form-urlencoded']);
         $result = $client->getResponse()->getContent();
