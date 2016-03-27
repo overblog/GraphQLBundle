@@ -18,6 +18,7 @@ class Parser implements ParserInterface
 {
     /**
      * @param Request $request
+     *
      * @return array
      */
     public function parse(Request $request)

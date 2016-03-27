@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 interface ParserInterface
 {
-    const CONTENT_TYPE_GRAPHQL ='application/graphql';
+    const CONTENT_TYPE_GRAPHQL = 'application/graphql';
     const CONTENT_TYPE_JSON = 'application/json';
     const CONTENT_TYPE_FORM = 'application/x-www-form-urlencoded';
     const CONTENT_TYPE_FORM_DATA = 'multipart/form-data';
