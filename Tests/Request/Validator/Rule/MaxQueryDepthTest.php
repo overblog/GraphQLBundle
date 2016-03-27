@@ -14,6 +14,7 @@ namespace Overblog\GraphQLBundle\Tests\Request\Validator\Rule;
 use GraphQL\FormattedError;
 use GraphQL\Language\Parser;
 use GraphQL\Language\SourceLocation;
+use GraphQL\Type\Introspection;
 use GraphQL\Validator\DocumentValidator;
 use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth;
 
@@ -23,7 +24,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
      * @param $queryDepth
      * @param int   $maxQueryDepth
      * @param array $expectedErrors
-     * @dataProvider queryProvider
+     * @dataProvider queryDataProvider
      */
     public function testSimpleQueries($queryDepth, $maxQueryDepth = 7, $expectedErrors = [])
     {
@@ -34,7 +35,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
      * @param $queryDepth
      * @param int   $maxQueryDepth
      * @param array $expectedErrors
-     * @dataProvider queryProvider
+     * @dataProvider queryDataProvider
      */
     public function testFragmentQueries($queryDepth, $maxQueryDepth = 7, $expectedErrors = [])
     {
@@ -45,11 +46,16 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
      * @param $queryDepth
      * @param int   $maxQueryDepth
      * @param array $expectedErrors
-     * @dataProvider queryProvider
+     * @dataProvider queryDataProvider
      */
     public function testInlineFragmentQueries($queryDepth, $maxQueryDepth = 7, $expectedErrors = [])
     {
         $this->assertDocumentValidator($this->buildRecursiveUsingInlineFragmentQuery($queryDepth), $maxQueryDepth, $expectedErrors);
+    }
+
+    public function testIgnoreIntrospectionQuery()
+    {
+        $this->assertDocumentValidator(Introspection::getIntrospectionQuery(true), 1);
     }
 
     public function queryDataProvider()
@@ -66,9 +72,19 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
             [
                 10,
                 8,
-                [FormattedError::create(MaxQueryDepth::maxQueryDepthErrorMessage(8), [new SourceLocation(1, 17)])],
-            ], // failed because depth over limit (7)
+                [$this->createFormattedError(8, 10)],
+            ], // failed because depth over limit (8)
+            [
+                60,
+                8,
+                [$this->createFormattedError(8, 58)],
+            ], // failed because depth over limit (8) and stop count at 58
         ];
+    }
+
+    private function createFormattedError($max, $count)
+    {
+        return FormattedError::create(MaxQueryDepth::maxQueryDepthErrorMessage($max, $count), [new SourceLocation(1, 17)]);
     }
 
     private function buildRecursiveQuery($depth)

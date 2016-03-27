@@ -18,31 +18,31 @@ use GraphQL\Language\AST\FragmentSpread;
 use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\SelectionSet;
+use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Validator\ValidationContext;
 
 class MaxQueryDepth
 {
-    const DEFAULT_QUERY_MAX_DEPTH = 7;
+    const DEFAULT_QUERY_MAX_DEPTH = 100;
+    const DEFAULT_MAX_COUNT_AFTER_DEPTH_LIMIT = 50;
 
-    private $maxQueryDepth;
+    private static $maxQueryDepth;
 
     private $fragments = [];
 
     public function __construct($maxQueryDepth = self::DEFAULT_QUERY_MAX_DEPTH)
     {
-        $this->maxQueryDepth = $maxQueryDepth;
+        $this->setMaxQueryDepth($maxQueryDepth);
     }
 
-    public function setMaxQueryDepth($maxQueryDepth)
+    public static function setMaxQueryDepth($maxQueryDepth)
     {
-        $this->maxQueryDepth = (int) $maxQueryDepth;
-
-        return $this;
+        self::$maxQueryDepth = (int) $maxQueryDepth;
     }
 
-    public static function maxQueryDepthErrorMessage($max)
+    public static function maxQueryDepthErrorMessage($max, $count)
     {
-        return sprintf('Max query depth %d is reached.', $max);
+        return sprintf('Max query depth should be %d but is greater or equal to %d.', $max, $count);
     }
 
     public function __invoke(ValidationContext $context)
@@ -55,31 +55,60 @@ class MaxQueryDepth
                 $this->fragments[$node->name->value] = $node;
             }
         }
-
-        $rootTypes = [$context->getSchema()->getQueryType(), $context->getSchema()->getMutationType()];
+        $schema = $context->getSchema();
+        $rootTypes = [$schema->getQueryType(), $schema->getMutationType(), $schema->getSubscriptionType()];
 
         return [
-            Node::FIELD => function (Field $node) use ($context, $rootTypes) {
-                $type = $context->getParentType();
-
-                // check depth only on first rootTypes children
-                if ($type && in_array($type, $rootTypes)) {
-                    $depth = $node->selectionSet ? $this->countQueryDepth($node->selectionSet, $this->maxQueryDepth + 1) : 0;
-
-                    if ($depth > $this->maxQueryDepth) {
-                        return new Error(static::maxQueryDepthErrorMessage($this->maxQueryDepth), [$node]);
-                    }
-                }
-            },
+            Node::FIELD => $this->getFieldClosure($context, $rootTypes),
         ];
     }
 
-    private function countQueryDepth(SelectionSet $selectionSet, $stopCountingAt, $depth = 0)
+    private function getFieldClosure(ValidationContext $context, array $rootTypes)
+    {
+        return function (Field $node) use ($context, $rootTypes) {
+            $parentType = $context->getParentType();
+            $type = $this->retrieveCurrentTypeFromValidationContext($context);
+            $isIntrospectionType = $type && $type->name === '__Schema';
+            $isParentRootType = $parentType && in_array($parentType, $rootTypes);
+
+            // check depth only on first rootTypes children and ignore check on introspection query
+            if ($isParentRootType && !$isIntrospectionType) {
+                $depth = $node->selectionSet ?
+                    $this->countSelectionDepth(
+                        $node->selectionSet,
+                        self::$maxQueryDepth + static::DEFAULT_MAX_COUNT_AFTER_DEPTH_LIMIT,
+                        0,
+                        true
+                    ) :
+                    0
+                ;
+
+                if ($depth > self::$maxQueryDepth) {
+                    return new Error(static::maxQueryDepthErrorMessage(self::$maxQueryDepth, $depth), [$node]);
+                }
+            }
+        };
+    }
+
+    private function retrieveCurrentTypeFromValidationContext(ValidationContext $context)
+    {
+        $type = $context->getType();
+
+        if ($type instanceof WrappingType) {
+            $type = $type->getWrappedType(true);
+        }
+
+        return $type;
+    }
+
+    private function countSelectionDepth(SelectionSet $selectionSet, $stopCountingAt, $depth = 0, $resetDepthForEachSelection = false)
     {
         foreach ($selectionSet->selections as $selectionAST) {
             if ($depth >= $stopCountingAt) {
                 break;
             }
+
+            $depth = $resetDepthForEachSelection ? 0 : $depth;
 
             if ($selectionAST instanceof Field) {
                 $depth = $this->countFieldDepth($selectionAST->selectionSet, $stopCountingAt, $depth);
@@ -95,20 +124,12 @@ class MaxQueryDepth
 
     private function countFieldDepth(SelectionSet $selectionSet = null, $stopCountingAt, $depth)
     {
-        if (null !== $selectionSet) {
-            return $this->countQueryDepth($selectionSet, $stopCountingAt, ++$depth);
-        }
-
-        return $depth;
+        return null === $selectionSet ? $depth : $this->countSelectionDepth($selectionSet, $stopCountingAt, ++$depth);
     }
 
     private function countInlineFragmentDepth(SelectionSet $selectionSet = null, $stopCountingAt, $depth)
     {
-        if (null !== $selectionSet) {
-            return $this->countQueryDepth($selectionSet, $stopCountingAt, $depth);
-        }
-
-        return $depth;
+        return null === $selectionSet ? $depth : $this->countSelectionDepth($selectionSet, $stopCountingAt, $depth);
     }
 
     private function countFragmentDepth(FragmentSpread $selectionAST, $stopCountingAt, $depth)
@@ -117,7 +138,7 @@ class MaxQueryDepth
         if (isset($this->fragments[$spreadName])) {
             /** @var FragmentDefinition $fragment */
             $fragment = $this->fragments[$spreadName];
-            $depth = $this->countQueryDepth($fragment->selectionSet, $stopCountingAt, $depth);
+            $depth = $this->countSelectionDepth($fragment->selectionSet, $stopCountingAt, $depth);
         }
 
         return $depth;
