@@ -86,9 +86,9 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
             ], // failed because depth over limit (8)
             [
                 60,
-                8,
-                [$this->createFormattedError(8, 58)],
-            ], // failed because depth over limit (8) and stop count at 58
+                20,
+                [$this->createFormattedError(20, 60)],
+            ], // failed because depth over limit (20)
         ];
     }
 
