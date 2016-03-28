@@ -12,18 +12,20 @@
 namespace Overblog\GraphQLBundle\Request\Validator\Rule;
 
 use GraphQL\Language\AST\FragmentDefinition;
-use GraphQL\Language\AST\Node;
+use GraphQL\Language\AST\FragmentSpread;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Validator\ValidationContext;
 
-class AbstractQuerySecurity
+abstract class AbstractQuerySecurity
 {
     /** @var FragmentDefinition[] */
     private $fragments = [];
 
     /** @var Type[]  */
     private $rootTypes = [];
+
+    private $initialValue;
 
     /**
      * @return \GraphQL\Language\AST\FragmentDefinition[]
@@ -53,7 +55,7 @@ class AbstractQuerySecurity
         }
     }
 
-    protected function isRootType(ValidationContext $context)
+    protected function isParentRootType(ValidationContext $context)
     {
         $parentType = $context->getParentType();
         $isParentRootType = $parentType && in_array($parentType, $this->getRootTypes());
@@ -98,8 +100,26 @@ class AbstractQuerySecurity
         return $type;
     }
 
-    protected function getNodeType($node)
+    protected function getFragment(FragmentSpread $fragmentSpread)
     {
-        return $node instanceof Node ? $node->kind : null;
+        $spreadName = $fragmentSpread->name->value;
+        $fragments = $this->getFragments();
+
+        return isset($fragments[$spreadName]) ? $fragments[$spreadName] : null;
     }
+
+    protected function invokeIfNeeded(ValidationContext $context, array $validators)
+    {
+        $this->gatherFragmentDefinition($context);
+        $this->gatherRootTypes($context);
+
+        // is disabled?
+        if (!$this->isEnabled()) {
+            return [];
+        }
+
+        return $validators;
+    }
+
+    abstract protected function isEnabled();
 }

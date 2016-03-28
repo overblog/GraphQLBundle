@@ -13,8 +13,6 @@ namespace Overblog\GraphQLBundle\Request\Validator\Rule;
 
 use GraphQL\Error;
 use GraphQL\Language\AST\Field;
-use GraphQL\Language\AST\FragmentSpread;
-use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\SelectionSet;
 use GraphQL\Validator\ValidationContext;
@@ -57,74 +55,64 @@ class MaxQueryDepth extends AbstractQuerySecurity
 
     public function __invoke(ValidationContext $context)
     {
-        $this->gatherFragmentDefinition($context);
-        $this->gatherRootTypes($context);
+        return $this->invokeIfNeeded(
+            $context,
+            [
+                Node::FIELD => function (Field $node) use ($context) {
+                    // check depth only on first rootTypes children and ignore check on introspection query
+                    if ($this->isParentRootType($context) && !$this->isIntrospectionType($context)) {
+                        $maxDepth = $this->nodeMaxDepth($node);
 
-        // is disabled?
-        if (0 === $this->getMaxQueryDepth()) {
-            return [];
-        }
-
-        return [
-            Node::FIELD => function (Field $node) use ($context) {
-                // check depth only on first rootTypes children and ignore check on introspection query
-                if ($this->isRootType($context) && !$this->isIntrospectionType($context)) {
-                    $depth = $node->selectionSet ? $this->countNodeDepth($node, 0, true) : 0;
-
-                    if ($depth > $this->getMaxQueryDepth()) {
-                        return new Error($this->maxQueryDepthErrorMessage($this->getMaxQueryDepth(), $depth), [$node]);
+                        if ($maxDepth > $this->getMaxQueryDepth()) {
+                            return new Error($this->maxQueryDepthErrorMessage($this->getMaxQueryDepth(), $maxDepth), [$node]);
+                        }
                     }
-                }
-            },
-        ];
+                },
+            ]
+        );
     }
 
-    protected function countNodeDepth(Node $parentNode, $depth = 0, $resetDepthForEachSelection = false)
+    protected function isEnabled()
     {
-        if (!isset($parentNode->selectionSet)) {
-            return $depth;
+        return $this->getMaxQueryDepth() > 0;
+    }
+
+    private function nodeMaxDepth(Node $node, $depth = 1, $maxDepth = 1)
+    {
+        if (!isset($node->selectionSet)) {
+            return $maxDepth;
         }
 
-        foreach ($parentNode->selectionSet->selections as $node) {
-            $depth = $resetDepthForEachSelection ? 0 : $depth;
+        foreach ($node->selectionSet->selections as $childNode) {
+            switch ($childNode->kind) {
+                case Node::FIELD:
+                    // node has children?
+                    if (null !== $childNode->selectionSet) {
+                        // update maxDepth if needed
+                        if ($depth > $maxDepth) {
+                            $maxDepth = $depth;
+                        }
+                        $maxDepth = $this->nodeMaxDepth($childNode, $depth + 1, $maxDepth);
+                    }
+                    break;
 
-            $type = $this->getNodeType($node);
-            if (null === $type) {
-                continue;
+                case Node::INLINE_FRAGMENT:
+                    // node has children?
+                    if (null !== $childNode->selectionSet) {
+                        $maxDepth = $this->nodeMaxDepth($childNode, $depth, $maxDepth);
+                    }
+                    break;
+
+                case Node::FRAGMENT_SPREAD:
+                    $fragment = $this->getFragment($childNode);
+
+                    if (null !== $fragment) {
+                        $maxDepth = $this->nodeMaxDepth($fragment, $depth, $maxDepth);
+                    }
+                    break;
             }
-
-            $method = 'count'.$type.'Depth';
-
-            $depth = $this->$method($node, $depth);
         }
 
-        return $depth;
-    }
-
-    private function countFieldDepth(Field $field, $depth)
-    {
-        $selectionSet = $field->selectionSet;
-
-        return null === $selectionSet ? $depth : $this->countNodeDepth($field, ++$depth);
-    }
-
-    private function countInlineFragmentDepth(InlineFragment $inlineFragment, $depth)
-    {
-        $selectionSet = $inlineFragment->selectionSet;
-
-        return null === $selectionSet ? $depth : $this->countNodeDepth($inlineFragment, $depth);
-    }
-
-    private function countFragmentSpreadDepth(FragmentSpread $fragmentSpread, $depth)
-    {
-        $spreadName = $fragmentSpread->name->value;
-        $fragments = $this->getFragments();
-
-        if (isset($fragments[$spreadName])) {
-            $fragment = $fragments[$spreadName];
-            $depth = $this->countNodeDepth($fragment, $depth);
-        }
-
-        return $depth;
+        return $maxDepth;
     }
 }
