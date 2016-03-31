@@ -22,7 +22,7 @@ use GraphQL\Validator\DocumentValidator;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
-use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryComplexity;
+use Overblog\GraphQLBundle\Request\Validator\Rule\QueryComplexity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Executor
@@ -98,7 +98,7 @@ class Executor
             $source = new Source($requestString ?: '', 'GraphQL request');
             $documentAST = GraphQLParser::parse($source);
             //todo set using service
-            MaxQueryComplexity::setRawVariableValues($variableValues);
+            QueryComplexity::setRawVariableValues($variableValues);
 
             $validationErrors = DocumentValidator::validate($schema, $documentAST, $this->validationRules);
 

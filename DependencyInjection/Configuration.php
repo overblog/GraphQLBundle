@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Request\Validator\Rule\QueryDepth;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -92,23 +93,34 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                         ->children()
-                            ->integerNode('query_max_depth')
-                                ->info('Limit query depth. Disabled if equal to false or 0.')
-                                ->beforeNormalization()
-                                    ->ifTrue(function ($v) { return false === $v; })
-                                    ->then(function () { return 0; })
-                                ->end()
-                                ->defaultFalse()
-                                ->validate()
-                                    ->ifTrue(function ($v) { return $v < 0; })
-                                    ->thenInvalid('"overblog_graphql.security.query_max_depth" must be greater or equal to 0.')
-                                ->end()
-                            ->end()
+                            ->append($this->addSecurityQuerySection('query_max_depth', QueryDepth::DISABLED))
+                            ->append($this->addSecurityQuerySection('query_max_complexity', QueryDepth::DISABLED))
                         ->end()
                     ->end()
                 ->end()
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function addSecurityQuerySection($name, $disabledValue)
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root($name, 'integer');
+
+        $node
+            ->info('Disabled if equal to false.')
+            ->beforeNormalization()
+                ->ifTrue(function ($v) { return false === $v; })
+                ->then(function () use ($disabledValue) { return $disabledValue; })
+            ->end()
+            ->defaultFalse()
+            ->validate()
+                ->ifTrue(function ($v) { return $v < 0; })
+                ->thenInvalid('"overblog_graphql.security.'.$name.'" must be greater or equal to 0.')
+            ->end()
+        ;
+
+        return $node;
     }
 }

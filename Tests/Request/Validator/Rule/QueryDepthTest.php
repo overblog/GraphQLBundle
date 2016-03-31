@@ -16,9 +16,9 @@ use GraphQL\Language\Parser;
 use GraphQL\Language\SourceLocation;
 use GraphQL\Type\Introspection;
 use GraphQL\Validator\DocumentValidator;
-use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth;
+use Overblog\GraphQLBundle\Request\Validator\Rule\QueryDepth;
 
-class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
+class QueryDepthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param $queryDepth
@@ -64,7 +64,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
      */
     public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
     {
-        new MaxQueryDepth(-1);
+        new QueryDepth(-1);
     }
 
     public function queryDataProvider()
@@ -94,7 +94,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
 
     private function createFormattedError($max, $count)
     {
-        return FormattedError::create(MaxQueryDepth::maxQueryDepthErrorMessage($max, $count), [new SourceLocation(1, 17)]);
+        return FormattedError::create(QueryDepth::maxQueryDepthErrorMessage($max, $count), [new SourceLocation(1, 17)]);
     }
 
     private function buildRecursiveQuery($depth)
@@ -148,7 +148,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
         $errors = DocumentValidator::validate(
             Schema::buildSchema(),
             Parser::parse($queryString),
-            [new MaxQueryDepth($depth)]
+            [new QueryDepth($depth)]
         );
 
         $this->assertEquals($expectedErrors, array_map(['GraphQL\Error', 'formatError'], $errors), $queryString);

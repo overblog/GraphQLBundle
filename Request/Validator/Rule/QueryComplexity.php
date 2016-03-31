@@ -15,24 +15,22 @@ use GraphQL\Error;
 use GraphQL\Executor\Values;
 use GraphQL\Language\AST\Field;
 use GraphQL\Language\AST\FragmentSpread;
-use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\SelectionSet;
-use GraphQL\Language\AST\Type;
 use GraphQL\Language\Visitor;
 use GraphQL\Type\Definition\FieldDefinition;
-use GraphQL\Utils\TypeInfo;
 use GraphQL\Validator\ValidationContext;
 
-class MaxQueryComplexity extends AbstractQuerySecurity
+class QueryComplexity extends AbstractQuerySecurity
 {
-    const DEFAULT_QUERY_MAX_COMPLEXITY = 1000;
+    const DEFAULT_QUERY_MAX_COMPLEXITY = self::DISABLED;
 
     private static $maxQueryComplexity;
 
     private static $rawVariableValues = [];
 
-    private static $complexityMap = [];
+    /** @var callable[] */
+    private static $complexityCalculators = [];
 
     private $variableDefs;
 
@@ -46,15 +44,31 @@ class MaxQueryComplexity extends AbstractQuerySecurity
     public function __construct($maxQueryDepth = self::DEFAULT_QUERY_MAX_COMPLEXITY)
     {
         $this->setMaxQueryComplexity($maxQueryDepth);
-        //todo delete after test
-//        self::$complexityMap['User'] = function (ValidationContext $context, $args, $childrenComplexity) {
-//            return 25 + $args['id'] * $childrenComplexity;
-//        };
     }
 
     public static function maxQueryComplexityErrorMessage($max, $count)
     {
         return sprintf('Max query complexity should be %d but got %d.', $max, $count);
+    }
+
+    public static function addComplexityCalculator($name, callable $complexityCalculator)
+    {
+        self::$complexityCalculators[$name] = $complexityCalculator;
+    }
+
+    public static function hasComplexityCalculator($name)
+    {
+        return isset(self::$complexityCalculators[$name]);
+    }
+
+    public static function getComplexityCalculator($name)
+    {
+        return static::hasComplexityCalculator($name) ? self::$complexityCalculators[$name] : null;
+    }
+
+    public static function removeComplexityCalculator($name)
+    {
+        unset(self::$complexityCalculators[$name]);
     }
 
     /**
@@ -157,11 +171,9 @@ class MaxQueryComplexity extends AbstractQuerySecurity
                 $complexityCalculator = null;
 
                 // custom complexity is set ?
-                if ($fieldDef && isset(self::$complexityMap[$fieldDef->getType()->name])) {
+                if (null !== $fieldDef && (null !== $complexityCalculator = static::getComplexityCalculator($fieldDef->getType()->name))) {
                     $args = $this->buildFieldArguments($node);
-                    $typeName = $fieldDef->getType()->name;
-
-                    $complexity = call_user_func_array(self::$complexityMap[$typeName], [$this->context, $args, $childrenComplexity]);
+                    $complexity = call_user_func_array($complexityCalculator, [$this->context, $args, $childrenComplexity]);
                 } else {
                     // default complexity calculator
                     $complexity = $complexity + $childrenComplexity + 1;
@@ -185,14 +197,6 @@ class MaxQueryComplexity extends AbstractQuerySecurity
         }
 
         return $complexity;
-    }
-
-    private function getFieldName(Field $node)
-    {
-        $fieldName = $node->name->value;
-        $responseName = $node->alias ? $node->alias->value : $fieldName;
-
-        return $responseName;
     }
 
     private function astFieldToFieldDef(Field $field)
@@ -232,81 +236,6 @@ class MaxQueryComplexity extends AbstractQuerySecurity
 
     protected function isEnabled()
     {
-        return $this->getMaxQueryComplexity() > 0;
-    }
-
-    /**
-     * Given a selectionSet, adds all of the fields in that selection to
-     * the passed in map of fields, and returns it at the end.
-     *
-     * Note: This is not the same as execution's collectFields because at static
-     * time we do not know what object type will be used, so we unconditionally
-     * spread in all fragments.
-     *
-     * @see GraphQL\Validator\Rules\OverlappingFieldsCanBeMerged
-     *
-     * @param ValidationContext $context
-     * @param Type|null         $parentType
-     * @param SelectionSet      $selectionSet
-     * @param \ArrayObject      $visitedFragmentNames
-     * @param \ArrayObject      $astAndDefs
-     *
-     * @return \ArrayObject
-     */
-    private function collectFieldASTsAndDefs(ValidationContext $context, $parentType, SelectionSet $selectionSet, \ArrayObject $visitedFragmentNames = null, \ArrayObject $astAndDefs = null)
-    {
-        $_visitedFragmentNames = $visitedFragmentNames ?: new \ArrayObject();
-        $_astAndDefs = $astAndDefs ?: new \ArrayObject();
-
-        foreach ($selectionSet->selections as $selection) {
-            switch ($selection->kind) {
-                case Node::FIELD:
-                    $fieldName = $selection->name->value;
-                    $fieldDef = null;
-                    if ($parentType && method_exists($parentType, 'getFields')) {
-                        $tmp = $parentType->getFields();
-                        if (isset($tmp[$fieldName])) {
-                            $fieldDef = $tmp[$fieldName];
-                        }
-                    }
-                    $responseName = $this->getFieldName($selection);
-                    if (!isset($_astAndDefs[$responseName])) {
-                        $_astAndDefs[$responseName] = new \ArrayObject();
-                    }
-                    $_astAndDefs[$responseName][] = [$selection, $fieldDef];
-                    break;
-                case Node::INLINE_FRAGMENT:
-                    /* @var InlineFragment $inlineFragment */
-                    $_astAndDefs = $this->collectFieldASTsAndDefs(
-                        $context,
-                        TypeInfo::typeFromAST($context->getSchema(), $selection->typeCondition),
-                        $selection->selectionSet,
-                        $_visitedFragmentNames,
-                        $_astAndDefs
-                    );
-                    break;
-                case Node::FRAGMENT_SPREAD:
-                    /* @var FragmentSpread $selection */
-                    $fragName = $selection->name->value;
-                    if (!empty($_visitedFragmentNames[$fragName])) {
-                        continue;
-                    }
-                    $_visitedFragmentNames[$fragName] = true;
-                    $fragment = $context->getFragment($fragName);
-                    if (!$fragment) {
-                        continue;
-                    }
-                    $_astAndDefs = $this->collectFieldASTsAndDefs(
-                        $context,
-                        TypeInfo::typeFromAST($context->getSchema(), $fragment->typeCondition),
-                        $fragment->selectionSet,
-                        $_visitedFragmentNames,
-                        $_astAndDefs
-                    );
-                    break;
-            }
-        }
-
-        return $_astAndDefs;
+        return $this->getMaxQueryComplexity() !== static::DISABLED;
     }
 }

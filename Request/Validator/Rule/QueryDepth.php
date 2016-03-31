@@ -17,9 +17,9 @@ use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\SelectionSet;
 use GraphQL\Validator\ValidationContext;
 
-class MaxQueryDepth extends AbstractQuerySecurity
+class QueryDepth extends AbstractQuerySecurity
 {
-    const DEFAULT_QUERY_MAX_DEPTH = 100;
+    const DEFAULT_QUERY_MAX_DEPTH = self::DISABLED;
 
     /**
      * @var int
@@ -74,7 +74,7 @@ class MaxQueryDepth extends AbstractQuerySecurity
 
     protected function isEnabled()
     {
-        return $this->getMaxQueryDepth() > 0;
+        return $this->getMaxQueryDepth() !== static::DISABLED;
     }
 
     private function nodeMaxDepth(Node $node, $depth = 1, $maxDepth = 1)
