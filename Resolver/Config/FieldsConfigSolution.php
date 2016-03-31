@@ -11,10 +11,12 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
+use Overblog\GraphQLBundle\Request\Validator\Rule\QueryComplexity;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class FieldsConfigSolution extends AbstractConfigSolution
@@ -40,7 +42,7 @@ class FieldsConfigSolution extends AbstractConfigSolution
     public function solve($values, array &$config = null)
     {
         // builder must be last
-        $fieldsTreated = ['type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
+        $fieldsTreated = ['complexity', 'type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
 
         $fieldsDefaultAccess = isset($config['fieldsDefaultAccess']) ? $config['fieldsDefaultAccess'] : null;
         unset($config['fieldsDefaultAccess']);
@@ -52,13 +54,45 @@ class FieldsConfigSolution extends AbstractConfigSolution
             foreach ($fieldsTreated as $fieldTreated) {
                 if (isset($options[$fieldTreated])) {
                     $method = 'solve'.ucfirst($fieldTreated);
-                    $options = $this->$method($options, $field);
+                    $options = $this->$method($options, $field, $config);
                 }
             }
             $options = $this->resolveResolveAndAccessIfNeeded($options);
         }
 
         return $values;
+    }
+
+    private function solveComplexity($options, $field, array $config)
+    {
+        if (!isset($options['complexity'])) {
+            return $options;
+        }
+        $treatedOptions = $options;
+
+        $name = $config['name'].'.'.$field;
+        $value = $treatedOptions['complexity'];
+
+        QueryComplexity::addComplexityCalculator(
+            $name,
+            function () use ($value) {
+                $args = func_get_args();
+                $complexity = $this->solveUsingExpressionLanguageIfNeeded(
+                    $value,
+                    [
+                        'validationContext' => $args[0],
+                        'args' => new Argument($args[1]),
+                        'childrenComplexity' => $args[2],
+                    ]
+                );
+
+                return (int) $complexity;
+            }
+        );
+
+        unset($treatedOptions['complexity']);
+
+        return $treatedOptions;
     }
 
     private function solveBuilder($options, $field)

@@ -186,6 +186,9 @@ class TypesConfiguration implements ConfigurationInterface
         }
 
         $prototype
+                    ->scalarNode('complexity')
+                        ->info('Custom complexity calculator.')
+                    ->end()
                 ->end()
             ->end();
 

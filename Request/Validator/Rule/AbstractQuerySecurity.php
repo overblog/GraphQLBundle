@@ -164,7 +164,7 @@ abstract class AbstractQuerySecurity
                     if (!isset($_astAndDefs[$responseName])) {
                         $_astAndDefs[$responseName] = new \ArrayObject();
                     }
-                    $_astAndDefs[$responseName][] = [$selection, $fieldDef];
+                    $_astAndDefs[$responseName][] = [$selection, $fieldDef, $context];
                     break;
                 case Node::INLINE_FRAGMENT:
                     /* @var InlineFragment $inlineFragment */
@@ -201,7 +201,7 @@ abstract class AbstractQuerySecurity
         return $_astAndDefs;
     }
 
-    protected function getFieldName(Field $node)
+    protected function getFieldName(Node $node)
     {
         $fieldName = $node->name->value;
         $responseName = $node->alias ? $node->alias->value : $fieldName;

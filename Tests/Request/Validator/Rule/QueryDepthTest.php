@@ -11,15 +11,31 @@
 
 namespace Overblog\GraphQLBundle\Tests\Request\Validator\Rule;
 
-use GraphQL\FormattedError;
-use GraphQL\Language\Parser;
-use GraphQL\Language\SourceLocation;
-use GraphQL\Type\Introspection;
-use GraphQL\Validator\DocumentValidator;
 use Overblog\GraphQLBundle\Request\Validator\Rule\QueryDepth;
 
-class QueryDepthTest extends \PHPUnit_Framework_TestCase
+class QueryDepthTest extends AbstractQuerySecurityTest
 {
+    /**
+     * @param $max
+     * @param $count
+     *
+     * @return string
+     */
+    protected function getErrorMessage($max, $count)
+    {
+        return QueryDepth::maxQueryDepthErrorMessage($max, $count);
+    }
+
+    /**
+     * @param $maxDepth
+     *
+     * @return QueryDepth
+     */
+    protected function createRule($maxDepth)
+    {
+        return new QueryDepth($maxDepth);
+    }
+
     /**
      * @param $queryDepth
      * @param int   $maxQueryDepth
@@ -53,18 +69,13 @@ class QueryDepthTest extends \PHPUnit_Framework_TestCase
         $this->assertDocumentValidator($this->buildRecursiveUsingInlineFragmentQuery($queryDepth), $maxQueryDepth, $expectedErrors);
     }
 
-    public function testIgnoreIntrospectionQuery()
-    {
-        $this->assertDocumentValidator(Introspection::getIntrospectionQuery(true), 1);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage $maxQueryDepth argument must be greater or equal to 0.
      */
     public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
     {
-        new QueryDepth(-1);
+        $this->createRule(-1);
     }
 
     public function queryDataProvider()
@@ -90,69 +101,5 @@ class QueryDepthTest extends \PHPUnit_Framework_TestCase
                 [$this->createFormattedError(20, 60)],
             ], // failed because depth over limit (20)
         ];
-    }
-
-    private function createFormattedError($max, $count)
-    {
-        return FormattedError::create(QueryDepth::maxQueryDepthErrorMessage($max, $count), [new SourceLocation(1, 17)]);
-    }
-
-    private function buildRecursiveQuery($depth)
-    {
-        $query = sprintf('query MyQuery { human%s }', $this->buildRecursiveQueryPart($depth));
-
-        return $query;
-    }
-
-    private function buildRecursiveUsingFragmentQuery($depth)
-    {
-        $query = sprintf(
-            'query MyQuery { human { ...F1 } } fragment F1 on Human %s',
-            $this->buildRecursiveQueryPart($depth)
-        );
-
-        return $query;
-    }
-    private function buildRecursiveUsingInlineFragmentQuery($depth)
-    {
-        $query = sprintf(
-            'query MyQuery { human { ...on Human %s } }',
-            $this->buildRecursiveQueryPart($depth)
-        );
-
-        return $query;
-    }
-
-    private function buildRecursiveQueryPart($depth)
-    {
-        $templates = [
-            'human' => ' { firstName%s } ',
-            'dog' => ' dog { name%s } ',
-        ];
-
-        $part = $templates['human'];
-
-        for ($i = 1; $i <= $depth; ++$i) {
-            $key = ($i % 2 == 1) ? 'human' : 'dog';
-            $template = $templates[$key];
-
-            $part = sprintf($part, ('human' == $key ? ' owner ' : '').$template);
-        }
-        $part = str_replace('%s', '', $part);
-
-        return $part;
-    }
-
-    private function assertDocumentValidator($queryString, $depth, array $expectedErrors = [])
-    {
-        $errors = DocumentValidator::validate(
-            Schema::buildSchema(),
-            Parser::parse($queryString),
-            [new QueryDepth($depth)]
-        );
-
-        $this->assertEquals($expectedErrors, array_map(['GraphQL\Error', 'formatError'], $errors), $queryString);
-
-        return $errors;
     }
 }

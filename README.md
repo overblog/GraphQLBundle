@@ -613,9 +613,11 @@ class CharacterResolver
 }
 ```
 
+Security
+--------
 
-Access Control
---------------
+### Access Control
+
 
 An access control can be add on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
@@ -648,6 +650,57 @@ Human:
                 description: "The home planet of the human, or null if unknown."
         interfaces: [Character]
 ```
+
+### Query Complexity Analysis 
+
+This is a PHP port of [Query Complexity Analysis](http://sangria-graphql.org/learn/#query-complexity-analysis) in Sangria implementation.
+The Introspection Query is bypass.
+
+Define your max accepted complexity:
+
+```yaml
+#app/config/config.yml
+overblog_graphql:
+    security:
+        query_max_complexity: 1000
+```
+
+Default value `false` disabled validation.
+
+Customize your field complexity using `config.fields.*.complexity`
+
+```yaml
+# src/MyBundle/Resources/config/graphql/Query.types.yml
+
+Query:
+    type: object
+    config:
+        fields:
+            droid:
+                type: "Droid"
+                complexity: '@=1000 + childrenComplexity'
+                args:
+                    id:
+                        description: "id of the droid"
+                        type: "String!"
+                resolve: "@=resolver('character_droid', [args])"
+```
+
+In the example we add `1000` on the complexity every time using `Query` `droid` field in query.
+
+### Limiting Query Depth
+
+This is a PHP port of [Limiting Query Depth](http://sangria-graphql.org/learn/#limiting-query-depth) in Sangria implementation.
+The Introspection Query is bypass.
+
+```yaml
+#app/config/config.yml
+overblog_graphql:
+    security:
+        query_max_depth: 10
+```
+
+Default value `false` disabled validation.
 
 Field builder
 -------------

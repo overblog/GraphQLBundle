@@ -1,6 +1,7 @@
 parameters:
     overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
 
+    #todo use tagged services
     overblog_graphql.configs_mapping:
         fields: {id: "overblog_graphql.fields_config_solution", method: "solve"}
         isTypeOf: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
