@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
-use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class TypeBuilder
@@ -23,11 +23,11 @@ class TypeBuilder
         'relay-node' => 'Overblog\\GraphQLBundle\\Relay\\Node\\NodeInterfaceType',
         'relay-mutation-input' => 'Overblog\\GraphQLBundle\\Relay\\Mutation\\InputType',
         'relay-mutation-payload' => 'Overblog\\GraphQLBundle\\Relay\\Mutation\\PayloadType',
-        'object' => 'GraphQL\\Type\\Definition\\ObjectType',
-        'enum' => 'GraphQL\\Type\\Definition\\EnumType',
-        'interface' => 'GraphQL\\Type\\Definition\\InterfaceType',
-        'union' => 'GraphQL\\Type\\Definition\\UnionType',
-        'input-object' => 'GraphQL\\Type\\Definition\\InputObjectType',
+        'object' => 'Overblog\\GraphQLBundle\\Definition\\ObjectType',
+        'enum' => 'Overblog\\GraphQLBundle\\Definition\\EnumType',
+        'interface' => 'Overblog\\GraphQLBundle\\Definition\\InterfaceType',
+        'union' => 'Overblog\\GraphQLBundle\\Definition\\UnionType',
+        'input-object' => 'Overblog\\GraphQLBundle\\Definition\\InputObjectType',
     ];
 
     public function __construct(ResolverInterface $configResolver)

@@ -16,7 +16,6 @@ use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
-use Overblog\GraphQLBundle\Request\Validator\Rule\QueryComplexity;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class FieldsConfigSolution extends AbstractConfigSolution
@@ -63,34 +62,27 @@ class FieldsConfigSolution extends AbstractConfigSolution
         return $values;
     }
 
-    private function solveComplexity($options, $field, array $config)
+    private function solveComplexity($options, $field)
     {
         if (!isset($options['complexity'])) {
             return $options;
         }
         $treatedOptions = $options;
 
-        $name = $config['name'].'.'.$field;
         $value = $treatedOptions['complexity'];
 
-        QueryComplexity::addComplexityCalculator(
-            $name,
-            function () use ($value) {
-                $args = func_get_args();
-                $complexity = $this->solveUsingExpressionLanguageIfNeeded(
-                    $value,
-                    [
-                        'validationContext' => $args[0],
-                        'args' => new Argument($args[1]),
-                        'childrenComplexity' => $args[2],
-                    ]
-                );
+        $treatedOptions['complexity'] = function () use ($value) {
+            $args = func_get_args();
+            $complexity = $this->solveUsingExpressionLanguageIfNeeded(
+                $value,
+                [
+                    'childrenComplexity' => $args[0],
+                    'args' => new Argument($args[1]),
+                ]
+            );
 
-                return (int) $complexity;
-            }
-        );
-
-        unset($treatedOptions['complexity']);
+            return (int) $complexity;
+        };
 
         return $treatedOptions;
     }

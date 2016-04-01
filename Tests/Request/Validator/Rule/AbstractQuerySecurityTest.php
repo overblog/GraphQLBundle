@@ -13,7 +13,6 @@ namespace Overblog\GraphQLBundle\Tests\Request\Validator\Rule;
 
 use GraphQL\FormattedError;
 use GraphQL\Language\Parser;
-use GraphQL\Language\SourceLocation;
 use GraphQL\Type\Introspection;
 use GraphQL\Validator\DocumentValidator;
 use Overblog\GraphQLBundle\Request\Validator\Rule\AbstractQuerySecurity;
@@ -35,61 +34,18 @@ abstract class AbstractQuerySecurityTest extends \PHPUnit_Framework_TestCase
      */
     abstract protected function getErrorMessage($max, $count);
 
-    public function testIgnoreIntrospectionQuery()
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage argument must be greater or equal to 0.
+     */
+    public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
     {
-        $this->assertDocumentValidator(Introspection::getIntrospectionQuery(true), 1);
+        $this->createRule(-1);
     }
 
-    protected function createFormattedError($max, $count)
+    protected function createFormattedError($max, $count, $locations = [])
     {
-        return FormattedError::create($this->getErrorMessage($max, $count), [new SourceLocation(1, 17)]);
-    }
-
-    protected function buildRecursiveQuery($depth)
-    {
-        $query = sprintf('query MyQuery { human%s }', $this->buildRecursiveQueryPart($depth));
-
-        return $query;
-    }
-
-    protected function buildRecursiveUsingFragmentQuery($depth)
-    {
-        $query = sprintf(
-            'query MyQuery { human { ...F1 } } fragment F1 on Human %s',
-            $this->buildRecursiveQueryPart($depth)
-        );
-
-        return $query;
-    }
-
-    protected function buildRecursiveUsingInlineFragmentQuery($depth)
-    {
-        $query = sprintf(
-            'query MyQuery { human { ...on Human %s } }',
-            $this->buildRecursiveQueryPart($depth)
-        );
-
-        return $query;
-    }
-
-    protected function buildRecursiveQueryPart($depth)
-    {
-        $templates = [
-            'human' => ' { firstName%s } ',
-            'dog' => ' dog { name%s } ',
-        ];
-
-        $part = $templates['human'];
-
-        for ($i = 1; $i <= $depth; ++$i) {
-            $key = ($i % 2 == 1) ? 'human' : 'dog';
-            $template = $templates[$key];
-
-            $part = sprintf($part, ('human' == $key ? ' owner ' : '').$template);
-        }
-        $part = str_replace('%s', '', $part);
-
-        return $part;
+        return FormattedError::create($this->getErrorMessage($max, $count), $locations);
     }
 
     protected function assertDocumentValidator($queryString, $max, array $expectedErrors = [])
@@ -103,5 +59,47 @@ abstract class AbstractQuerySecurityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedErrors, array_map(['GraphQL\Error', 'formatError'], $errors), $queryString);
 
         return $errors;
+    }
+
+    protected function assertIntrospectionQuery($maxExpected)
+    {
+        $query = Introspection::getIntrospectionQuery(true);
+
+        $this->assertMaxValue($query, $maxExpected);
+    }
+
+    protected function assertIntrospectionTypeMetaFieldQuery($maxExpected)
+    {
+        $query = '
+          {
+            __type(name: "Human") {
+              name
+            }
+          }
+        ';
+
+        $this->assertMaxValue($query, $maxExpected);
+    }
+
+    protected function assertTypeNameMetaFieldQuery($maxExpected)
+    {
+        $query = '
+          {
+            human {
+              __typename
+              firstName
+            }
+          }
+        ';
+        $this->assertMaxValue($query, $maxExpected);
+    }
+
+    protected function assertMaxValue($query, $maxExpected)
+    {
+        $this->assertDocumentValidator($query, $maxExpected);
+        $newMax = $maxExpected - 1;
+        if ($newMax !== AbstractQuerySecurity::DISABLED) {
+            $this->assertDocumentValidator($query, $newMax, [$this->createFormattedError($newMax, $maxExpected)]);
+        }
     }
 }

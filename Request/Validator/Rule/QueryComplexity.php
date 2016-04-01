@@ -30,9 +30,6 @@ class QueryComplexity extends AbstractQuerySecurity
 
     private static $rawVariableValues = [];
 
-    /** @var callable[] */
-    private static $complexityCalculators = [];
-
     private $variableDefs;
 
     private $fieldAstAndDefs;
@@ -52,26 +49,6 @@ class QueryComplexity extends AbstractQuerySecurity
         return sprintf('Max query complexity should be %d but got %d.', $max, $count);
     }
 
-    public static function addComplexityCalculator($name, callable $complexityCalculator)
-    {
-        self::$complexityCalculators[$name] = $complexityCalculator;
-    }
-
-    public static function hasComplexityCalculator($name)
-    {
-        return isset(self::$complexityCalculators[$name]);
-    }
-
-    public static function getComplexityCalculator($name)
-    {
-        return static::hasComplexityCalculator($name) ? self::$complexityCalculators[$name] : null;
-    }
-
-    public static function removeComplexityCalculator($name)
-    {
-        unset(self::$complexityCalculators[$name]);
-    }
-
     /**
      * Set max query complexity. If equal to 0 no check is done. Must be greater or equal to 0.
      *
@@ -81,7 +58,7 @@ class QueryComplexity extends AbstractQuerySecurity
     {
         self::checkIfGreaterOrEqualToZero('maxQueryComplexity', $maxQueryComplexity);
 
-        self::$maxQueryComplexity = (int)$maxQueryComplexity;
+        self::$maxQueryComplexity = (int) $maxQueryComplexity;
     }
 
     public static function getMaxQueryComplexity()
@@ -127,70 +104,63 @@ class QueryComplexity extends AbstractQuerySecurity
                     return Visitor::skipNode();
                 },
                 Node::OPERATION_DEFINITION => [
-                    'leave' => function (OperationDefinition $operationDefinition) use ($context, $complexity) {
-                        // check complexity only on first rootTypes children and ignore check on introspection query
-                        //if (!$this->isIntrospectionType($context)) {
-                            $type = $context->getType();
-                            $complexity = $this->fieldComplexity($operationDefinition, $type->name, $complexity);
+                    'leave' => function (OperationDefinition $operationDefinition) use ($context, &$complexity) {
+                        $complexity = $this->fieldComplexity($operationDefinition, $complexity);
 
-                            if ($complexity > $this->getMaxQueryComplexity()) {
-                                return new Error($this->maxQueryComplexityErrorMessage($this->getMaxQueryComplexity(), $complexity));
-                            }
-                        //}
+                        if ($complexity > $this->getMaxQueryComplexity()) {
+                            return new Error($this->maxQueryComplexityErrorMessage($this->getMaxQueryComplexity(), $complexity));
+                        }
                     },
                 ],
             ]
         );
     }
 
-    private function fieldComplexity(Node $node, $typeName, $complexity = 0)
+    private function fieldComplexity(Node $node, $complexity = 0)
     {
-        if (!isset($node->selectionSet)) {
-            return $complexity;
-        }
-
-        foreach ($node->selectionSet->selections as $childNode) {
-            $complexity = $this->nodeComplexity($childNode, $typeName, $complexity);
+        if (isset($node->selectionSet)) {
+            foreach ($node->selectionSet->selections as $childNode) {
+                $complexity = $this->nodeComplexity($childNode, $complexity);
+            }
         }
 
         return $complexity;
     }
 
-    private function nodeComplexity(Node $node, $typeName, $complexity = 0)
+    private function nodeComplexity(Node $node, $complexity = 0)
     {
         switch ($node->kind) {
             case Node::FIELD:
+                // default values
+                $args = [];
+                $complexityFn = 'Overblog\GraphQLBundle\Definition\FieldDefinition::defaultComplexity';
+
                 // calculate children complexity if needed
                 $childrenComplexity = 0;
 
-                $astFieldInfo = $this->astFieldInfo($node);
-                /** @var ValidationContext|null $fieldValidationContext */
-                $fieldValidationContext = $astFieldInfo[2];
-                /** @var FieldDefinition|null $fieldDef */
-                $fieldDef = $astFieldInfo[1];
-
                 // node has children?
                 if (isset($node->selectionSet)) {
-                    $type = $fieldDef->getType();
-                    $childrenComplexity = $this->fieldComplexity($node, $type->name);
+                    $childrenComplexity = $this->fieldComplexity($node);
                 }
 
-                // default complexity calculator
-                $complexity = $complexity + $childrenComplexity + 1;
+                $astFieldInfo = $this->astFieldInfo($node);
+                $fieldDef = $astFieldInfo[1];
 
-                $complexityCalculatorName = $typeName . '.' . $this->getFieldName($node);
-                // custom complexity is set ?
-                if (null !== $complexityCalculator = static::getComplexityCalculator($complexityCalculatorName)) {
+                if ($fieldDef instanceof FieldDefinition) {
                     $args = $this->buildFieldArguments($node);
-                    //get field complexity using custom complexityCalculator
-                    $complexity = call_user_func_array($complexityCalculator, [$fieldValidationContext, $args, $childrenComplexity]);
+                    //get complexity fn using fieldDef complexity
+                    if (method_exists($fieldDef, 'getComplexityFn')) {
+                        $complexityFn = $fieldDef->getComplexityFn();
+                    }
                 }
+
+                $complexity += call_user_func_array($complexityFn, [$childrenComplexity, $args]);
                 break;
 
             case Node::INLINE_FRAGMENT:
                 // node has children?
                 if (isset($node->selectionSet)) {
-                    $complexity = $this->fieldComplexity($node, $typeName, $complexity);
+                    $complexity = $this->fieldComplexity($node, $complexity);
                 }
                 break;
 
@@ -198,7 +168,7 @@ class QueryComplexity extends AbstractQuerySecurity
                 $fragment = $this->getFragment($node);
 
                 if (null !== $fragment) {
-                    $complexity = $this->fieldComplexity($fragment, $typeName, $complexity);
+                    $complexity = $this->fieldComplexity($fragment, $complexity);
                 }
                 break;
         }
@@ -209,7 +179,7 @@ class QueryComplexity extends AbstractQuerySecurity
     private function astFieldInfo(Field $field)
     {
         $fieldName = $this->getFieldName($field);
-        $astFieldInfo = [null, null, null];
+        $astFieldInfo = [null, null];
         if (isset($this->fieldAstAndDefs[$fieldName])) {
             foreach ($this->fieldAstAndDefs[$fieldName] as $astAndDef) {
                 if ($astAndDef[0] == $field) {
@@ -228,16 +198,16 @@ class QueryComplexity extends AbstractQuerySecurity
         $astFieldInfo = $this->astFieldInfo($node);
         $fieldDef = $astFieldInfo[1];
 
-        if (!$fieldDef instanceof FieldDefinition) {
-            return;
-        }
+        $args = [];
 
-        $variableValues = Values::getVariableValues(
-            $this->context->getSchema(),
-            $this->variableDefs,
-            $rawVariableValues
-        );
-        $args = Values::getArgumentValues($fieldDef->args, $node->arguments, $variableValues);
+        if ($fieldDef instanceof FieldDefinition) {
+            $variableValues = Values::getVariableValues(
+                $this->context->getSchema(),
+                $this->variableDefs,
+                $rawVariableValues
+            );
+            $args = Values::getArgumentValues($fieldDef->args, $node->arguments, $variableValues);
+        }
 
         return $args;
     }

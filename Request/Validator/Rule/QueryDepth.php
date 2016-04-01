@@ -14,6 +14,7 @@ namespace Overblog\GraphQLBundle\Request\Validator\Rule;
 use GraphQL\Error;
 use GraphQL\Language\AST\Field;
 use GraphQL\Language\AST\Node;
+use GraphQL\Language\AST\OperationDefinition;
 use GraphQL\Language\AST\SelectionSet;
 use GraphQL\Validator\ValidationContext;
 
@@ -58,16 +59,15 @@ class QueryDepth extends AbstractQuerySecurity
         return $this->invokeIfNeeded(
             $context,
             [
-                Node::FIELD => function (Field $node) use ($context) {
-                    // check depth only on first rootTypes children and ignore check on introspection query
-                    if ($this->isParentRootType($context) && !$this->isIntrospectionType($context)) {
-                        $maxDepth = $this->nodeMaxDepth($node);
+                Node::OPERATION_DEFINITION => [
+                    'leave' => function (OperationDefinition $operationDefinition) use ($context) {
+                        $maxDepth = $this->fieldDepth($operationDefinition);
 
                         if ($maxDepth > $this->getMaxQueryDepth()) {
-                            return new Error($this->maxQueryDepthErrorMessage($this->getMaxQueryDepth(), $maxDepth), [$node]);
+                            return new Error($this->maxQueryDepthErrorMessage($this->getMaxQueryDepth(), $maxDepth));
                         }
-                    }
-                },
+                    },
+                ],
             ]
         );
     }
@@ -77,40 +77,45 @@ class QueryDepth extends AbstractQuerySecurity
         return $this->getMaxQueryDepth() !== static::DISABLED;
     }
 
-    private function nodeMaxDepth(Node $node, $depth = 1, $maxDepth = 1)
+    private function fieldDepth(Node $node, $depth = 0, $maxDepth = 0)
     {
-        if (!isset($node->selectionSet)) {
-            return $maxDepth;
+        if (isset($node->selectionSet)) {
+            foreach ($node->selectionSet->selections as $childNode) {
+                $maxDepth = $this->nodeDepth($childNode, $depth, $maxDepth);
+            }
         }
 
-        foreach ($node->selectionSet->selections as $childNode) {
-            switch ($childNode->kind) {
-                case Node::FIELD:
-                    // node has children?
-                    if (null !== $childNode->selectionSet) {
-                        // update maxDepth if needed
-                        if ($depth > $maxDepth) {
-                            $maxDepth = $depth;
-                        }
-                        $maxDepth = $this->nodeMaxDepth($childNode, $depth + 1, $maxDepth);
-                    }
-                    break;
+        return $maxDepth;
+    }
 
-                case Node::INLINE_FRAGMENT:
-                    // node has children?
-                    if (null !== $childNode->selectionSet) {
-                        $maxDepth = $this->nodeMaxDepth($childNode, $depth, $maxDepth);
+    private function nodeDepth(Node $node, $depth = 0, $maxDepth = 0)
+    {
+        switch ($node->kind) {
+            case Node::FIELD:
+                // node has children?
+                if (null !== $node->selectionSet) {
+                    // update maxDepth if needed
+                    if ($depth > $maxDepth) {
+                        $maxDepth = $depth;
                     }
-                    break;
+                    $maxDepth = $this->fieldDepth($node, $depth + 1, $maxDepth);
+                }
+                break;
 
-                case Node::FRAGMENT_SPREAD:
-                    $fragment = $this->getFragment($childNode);
+            case Node::INLINE_FRAGMENT:
+                // node has children?
+                if (null !== $node->selectionSet) {
+                    $maxDepth = $this->fieldDepth($node, $depth, $maxDepth);
+                }
+                break;
 
-                    if (null !== $fragment) {
-                        $maxDepth = $this->nodeMaxDepth($fragment, $depth, $maxDepth);
-                    }
-                    break;
-            }
+            case Node::FRAGMENT_SPREAD:
+                $fragment = $this->getFragment($node);
+
+                if (null !== $fragment) {
+                    $maxDepth = $this->fieldDepth($fragment, $depth, $maxDepth);
+                }
+                break;
         }
 
         return $maxDepth;

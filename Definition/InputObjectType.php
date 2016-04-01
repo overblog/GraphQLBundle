@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Relay\Connection;
+namespace Overblog\GraphQLBundle\Definition;
 
-use Overblog\GraphQLBundle\Definition\ObjectType;
+use GraphQL\Type\Definition\InputObjectType as BaseInputObjectType;
 
-class EdgeType extends ObjectType
+class InputObjectType extends BaseInputObjectType
 {
 }

@@ -654,7 +654,7 @@ Human:
 ### Query Complexity Analysis 
 
 This is a PHP port of [Query Complexity Analysis](http://sangria-graphql.org/learn/#query-complexity-analysis) in Sangria implementation.
-The Introspection Query is bypass.
+Introspection query with description max complexity is **109**.
 
 Define your max accepted complexity:
 
@@ -686,12 +686,13 @@ Query:
                 resolve: "@=resolver('character_droid', [args])"
 ```
 
-In the example we add `1000` on the complexity every time using `Query` `droid` field in query.
+In the example we add `1000` on the complexity every time using `Query.droid` field in query.
+Complexity function signature: `function (int $childrenComplexity = 0, array $args = [])`.
 
 ### Limiting Query Depth
 
 This is a PHP port of [Limiting Query Depth](http://sangria-graphql.org/learn/#limiting-query-depth) in Sangria implementation.
-The Introspection Query is bypass.
+Introspection query with description max depth is **7**.
 
 ```yaml
 #app/config/config.yml
@@ -764,6 +765,7 @@ Expression | Description | Scope
 **value** | Resolver value | only available in resolve context 
 **args** | Resolver args array | only available in resolve context 
 **info** | Resolver GraphQL\Type\Definition\ResolveInfo Object | only available in resolve context
+**childrenComplexity** | Selection field children complexity | only available in complexity context
 
 [For more details on expression syntax](http://symfony.com/doc/current/components/expression_language/syntax.html)
 

@@ -12,8 +12,8 @@
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use GraphQL\Type\Definition\Config;
-use GraphQL\Type\Definition\InterfaceType;
-use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\InterfaceType;
+use Overblog\GraphQLBundle\Definition\Type;
 
 class NodeInterfaceType extends InterfaceType
 {

@@ -18,7 +18,7 @@ use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\SelectionSet;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\WrappingType;
+use GraphQL\Type\Introspection;
 use GraphQL\Utils\TypeInfo;
 use GraphQL\Validator\ValidationContext;
 
@@ -29,23 +29,12 @@ abstract class AbstractQuerySecurity
     /** @var FragmentDefinition[] */
     private $fragments = [];
 
-    /** @var Type[]  */
-    private $rootTypes = [];
-
     /**
      * @return \GraphQL\Language\AST\FragmentDefinition[]
      */
     protected function getFragments()
     {
         return $this->fragments;
-    }
-
-    /**
-     * @return \GraphQL\Type\Definition\Type[]
-     */
-    protected function getRootTypes()
-    {
-        return $this->rootTypes;
     }
 
     /**
@@ -60,28 +49,6 @@ abstract class AbstractQuerySecurity
         }
     }
 
-    protected function isParentRootType(ValidationContext $context)
-    {
-        $parentType = $context->getParentType();
-        $isParentRootType = $parentType && in_array($parentType, $this->getRootTypes());
-
-        return $isParentRootType;
-    }
-
-    protected function isIntrospectionType(ValidationContext $context)
-    {
-        $type = $this->retrieveCurrentType($context);
-        $isIntrospectionType = $type && $type->name === '__Schema';
-
-        return $isIntrospectionType;
-    }
-
-    protected function gatherRootTypes(ValidationContext $context)
-    {
-        $schema = $context->getSchema();
-        $this->rootTypes = [$schema->getQueryType(), $schema->getMutationType(), $schema->getSubscriptionType()];
-    }
-
     protected function gatherFragmentDefinition(ValidationContext $context)
     {
         // Gather all the fragment definition.
@@ -92,17 +59,6 @@ abstract class AbstractQuerySecurity
                 $this->fragments[$node->name->value] = $node;
             }
         }
-    }
-
-    protected function retrieveCurrentType(ValidationContext $context)
-    {
-        $type = $context->getType();
-
-        if ($type instanceof WrappingType) {
-            $type = $type->getWrappedType(true);
-        }
-
-        return $type;
     }
 
     protected function getFragment(FragmentSpread $fragmentSpread)
@@ -116,7 +72,6 @@ abstract class AbstractQuerySecurity
     protected function invokeIfNeeded(ValidationContext $context, array $validators)
     {
         $this->gatherFragmentDefinition($context);
-        $this->gatherRootTypes($context);
 
         // is disabled?
         if (!$this->isEnabled()) {
@@ -156,7 +111,17 @@ abstract class AbstractQuerySecurity
                     $fieldDef = null;
                     if ($parentType && method_exists($parentType, 'getFields')) {
                         $tmp = $parentType->getFields();
-                        if (isset($tmp[$fieldName])) {
+                        $schemaMetaFieldDef = Introspection::schemaMetaFieldDef();
+                        $typeMetaFieldDef = Introspection::typeMetaFieldDef();
+                        $typeNameMetaFieldDef = Introspection::typeNameMetaFieldDef();
+
+                        if ($fieldName === $schemaMetaFieldDef->name && $context->getSchema()->getQueryType() === $parentType) {
+                            $fieldDef = $schemaMetaFieldDef;
+                        } elseif ($fieldName === $typeMetaFieldDef->name && $context->getSchema()->getQueryType() === $parentType) {
+                            $fieldDef = $typeMetaFieldDef;
+                        } elseif ($fieldName === $typeNameMetaFieldDef->name) {
+                            $fieldDef = $typeNameMetaFieldDef;
+                        } elseif (isset($tmp[$fieldName])) {
                             $fieldDef = $tmp[$fieldName];
                         }
                     }
@@ -164,7 +129,8 @@ abstract class AbstractQuerySecurity
                     if (!isset($_astAndDefs[$responseName])) {
                         $_astAndDefs[$responseName] = new \ArrayObject();
                     }
-                    $_astAndDefs[$responseName][] = [$selection, $fieldDef, $context];
+                    // create field context
+                    $_astAndDefs[$responseName][] = [$selection, $fieldDef];
                     break;
                 case Node::INLINE_FRAGMENT:
                     /* @var InlineFragment $inlineFragment */
@@ -179,21 +145,21 @@ abstract class AbstractQuerySecurity
                 case Node::FRAGMENT_SPREAD:
                     /* @var FragmentSpread $selection */
                     $fragName = $selection->name->value;
-                    if (!empty($_visitedFragmentNames[$fragName])) {
-                        continue;
+
+                    if (empty($_visitedFragmentNames[$fragName])) {
+                        $_visitedFragmentNames[$fragName] = true;
+                        $fragment = $context->getFragment($fragName);
+
+                        if ($fragment) {
+                            $_astAndDefs = $this->collectFieldASTsAndDefs(
+                                $context,
+                                TypeInfo::typeFromAST($context->getSchema(), $fragment->typeCondition),
+                                $fragment->selectionSet,
+                                $_visitedFragmentNames,
+                                $_astAndDefs
+                            );
+                        }
                     }
-                    $_visitedFragmentNames[$fragName] = true;
-                    $fragment = $context->getFragment($fragName);
-                    if (!$fragment) {
-                        continue;
-                    }
-                    $_astAndDefs = $this->collectFieldASTsAndDefs(
-                        $context,
-                        TypeInfo::typeFromAST($context->getSchema(), $fragment->typeCondition),
-                        $fragment->selectionSet,
-                        $_visitedFragmentNames,
-                        $_astAndDefs
-                    );
                     break;
             }
         }
@@ -201,7 +167,7 @@ abstract class AbstractQuerySecurity
         return $_astAndDefs;
     }
 
-    protected function getFieldName(Node $node)
+    protected function getFieldName(Field $node)
     {
         $fieldName = $node->name->value;
         $responseName = $node->alias ? $node->alias->value : $fieldName;

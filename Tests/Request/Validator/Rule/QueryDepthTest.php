@@ -69,13 +69,19 @@ class QueryDepthTest extends AbstractQuerySecurityTest
         $this->assertDocumentValidator($this->buildRecursiveUsingInlineFragmentQuery($queryDepth), $maxQueryDepth, $expectedErrors);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $maxQueryDepth argument must be greater or equal to 0.
-     */
-    public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
+    public function testComplexityIntrospectionQuery()
     {
-        $this->createRule(-1);
+        $this->assertIntrospectionQuery(7);
+    }
+
+    public function testIntrospectionTypeMetaFieldQuery()
+    {
+        $this->assertIntrospectionTypeMetaFieldQuery(1);
+    }
+
+    public function testTypeNameMetaFieldQuery()
+    {
+        $this->assertTypeNameMetaFieldQuery(1);
     }
 
     public function queryDataProvider()
@@ -101,5 +107,52 @@ class QueryDepthTest extends AbstractQuerySecurityTest
                 [$this->createFormattedError(20, 60)],
             ], // failed because depth over limit (20)
         ];
+    }
+
+    private function buildRecursiveQuery($depth)
+    {
+        $query = sprintf('query MyQuery { human%s }', $this->buildRecursiveQueryPart($depth));
+
+        return $query;
+    }
+
+    private function buildRecursiveUsingFragmentQuery($depth)
+    {
+        $query = sprintf(
+            'query MyQuery { human { ...F1 } } fragment F1 on Human %s',
+            $this->buildRecursiveQueryPart($depth)
+        );
+
+        return $query;
+    }
+
+    private function buildRecursiveUsingInlineFragmentQuery($depth)
+    {
+        $query = sprintf(
+            'query MyQuery { human { ...on Human %s } }',
+            $this->buildRecursiveQueryPart($depth)
+        );
+
+        return $query;
+    }
+
+    private function buildRecursiveQueryPart($depth)
+    {
+        $templates = [
+            'human' => ' { firstName%s } ',
+            'dog' => ' dogs { name%s } ',
+        ];
+
+        $part = $templates['human'];
+
+        for ($i = 1; $i <= $depth; ++$i) {
+            $key = ($i % 2 == 1) ? 'human' : 'dog';
+            $template = $templates[$key];
+
+            $part = sprintf($part, ('human' == $key ? ' owner ' : '').$template);
+        }
+        $part = str_replace('%s', '', $part);
+
+        return $part;
     }
 }
