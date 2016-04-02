@@ -16,6 +16,8 @@ use GraphQL\Type\Definition\FieldDefinition as BaseFieldDefinition;
 
 class FieldDefinition extends BaseFieldDefinition
 {
+    const DEFAULT_COMPLEXITY_FN = '\Overblog\GraphQLBundle\Definition\FieldDefinition::defaultComplexity';
+
     /**
      * @var callable
      */
@@ -60,7 +62,7 @@ class FieldDefinition extends BaseFieldDefinition
     {
         parent::__construct($config);
 
-        $this->complexityFn = isset($config['complexity']) ? $config['complexity'] : [$this, 'defaultComplexity'];
+        $this->complexityFn = isset($config['complexity']) ? $config['complexity'] : static::DEFAULT_COMPLEXITY_FN;
     }
 
     /**

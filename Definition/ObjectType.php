@@ -60,9 +60,6 @@ class ObjectType extends BaseObjectType
         }
     }
 
-    /**
-     * @return FieldDefinition[]
-     */
     public function getFields()
     {
         if (null === $this->fields) {
@@ -74,13 +71,6 @@ class ObjectType extends BaseObjectType
         return $this->fields;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return FieldDefinition
-     *
-     * @throws \Exception
-     */
     public function getField($name)
     {
         if (null === $this->fields) {
@@ -91,10 +81,6 @@ class ObjectType extends BaseObjectType
         return $this->fields[$name];
     }
 
-    /**
-     * @param $value
-     * @return bool|null
-     */
     public function isTypeOf($value, ResolveInfo $info)
     {
         return isset($this->isTypeOf) ? call_user_func($this->isTypeOf, $value, $info) : null;

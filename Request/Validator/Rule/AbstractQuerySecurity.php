@@ -71,12 +71,12 @@ abstract class AbstractQuerySecurity
 
     protected function invokeIfNeeded(ValidationContext $context, array $validators)
     {
-        $this->gatherFragmentDefinition($context);
-
         // is disabled?
         if (!$this->isEnabled()) {
             return [];
         }
+
+        $this->gatherFragmentDefinition($context);
 
         return $validators;
     }
@@ -107,6 +107,7 @@ abstract class AbstractQuerySecurity
         foreach ($selectionSet->selections as $selection) {
             switch ($selection->kind) {
                 case Node::FIELD:
+                    /* @var Field $selection */
                     $fieldName = $selection->name->value;
                     $fieldDef = null;
                     if ($parentType && method_exists($parentType, 'getFields')) {
@@ -133,7 +134,7 @@ abstract class AbstractQuerySecurity
                     $_astAndDefs[$responseName][] = [$selection, $fieldDef];
                     break;
                 case Node::INLINE_FRAGMENT:
-                    /* @var InlineFragment $inlineFragment */
+                    /* @var InlineFragment $selection */
                     $_astAndDefs = $this->collectFieldASTsAndDefs(
                         $context,
                         TypeInfo::typeFromAST($context->getSchema(), $selection->typeCondition),

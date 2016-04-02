@@ -13,6 +13,8 @@ namespace Overblog\GraphQLBundle\Request\Validator\Rule;
 
 use GraphQL\Error;
 use GraphQL\Language\AST\Field;
+use GraphQL\Language\AST\FragmentSpread;
+use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\OperationDefinition;
 use GraphQL\Language\AST\SelectionSet;
@@ -77,9 +79,9 @@ class QueryDepth extends AbstractQuerySecurity
         return $this->getMaxQueryDepth() !== static::DISABLED;
     }
 
-    private function fieldDepth(Node $node, $depth = 0, $maxDepth = 0)
+    private function fieldDepth($node, $depth = 0, $maxDepth = 0)
     {
-        if (isset($node->selectionSet)) {
+        if (isset($node->selectionSet) && $node->selectionSet instanceof SelectionSet) {
             foreach ($node->selectionSet->selections as $childNode) {
                 $maxDepth = $this->nodeDepth($childNode, $depth, $maxDepth);
             }
@@ -92,6 +94,7 @@ class QueryDepth extends AbstractQuerySecurity
     {
         switch ($node->kind) {
             case Node::FIELD:
+                /* @var Field $node */
                 // node has children?
                 if (null !== $node->selectionSet) {
                     // update maxDepth if needed
@@ -103,6 +106,7 @@ class QueryDepth extends AbstractQuerySecurity
                 break;
 
             case Node::INLINE_FRAGMENT:
+                /* @var InlineFragment $node */
                 // node has children?
                 if (null !== $node->selectionSet) {
                     $maxDepth = $this->fieldDepth($node, $depth, $maxDepth);
@@ -110,6 +114,7 @@ class QueryDepth extends AbstractQuerySecurity
                 break;
 
             case Node::FRAGMENT_SPREAD:
+                /* @var FragmentSpread $node */
                 $fragment = $this->getFragment($node);
 
                 if (null !== $fragment) {

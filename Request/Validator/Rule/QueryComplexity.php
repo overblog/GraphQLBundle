@@ -15,6 +15,7 @@ use GraphQL\Error;
 use GraphQL\Executor\Values;
 use GraphQL\Language\AST\Field;
 use GraphQL\Language\AST\FragmentSpread;
+use GraphQL\Language\AST\InlineFragment;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\OperationDefinition;
 use GraphQL\Language\AST\SelectionSet;
@@ -116,9 +117,9 @@ class QueryComplexity extends AbstractQuerySecurity
         );
     }
 
-    private function fieldComplexity(Node $node, $complexity = 0)
+    private function fieldComplexity($node, $complexity = 0)
     {
-        if (isset($node->selectionSet)) {
+        if (isset($node->selectionSet) && $node->selectionSet instanceof SelectionSet) {
             foreach ($node->selectionSet->selections as $childNode) {
                 $complexity = $this->nodeComplexity($childNode, $complexity);
             }
@@ -131,9 +132,10 @@ class QueryComplexity extends AbstractQuerySecurity
     {
         switch ($node->kind) {
             case Node::FIELD:
+                /* @var Field $node */
                 // default values
                 $args = [];
-                $complexityFn = 'Overblog\GraphQLBundle\Definition\FieldDefinition::defaultComplexity';
+                $complexityFn = \Overblog\GraphQLBundle\Definition\FieldDefinition::DEFAULT_COMPLEXITY_FN;
 
                 // calculate children complexity if needed
                 $childrenComplexity = 0;
@@ -158,6 +160,7 @@ class QueryComplexity extends AbstractQuerySecurity
                 break;
 
             case Node::INLINE_FRAGMENT:
+                /* @var InlineFragment $node */
                 // node has children?
                 if (isset($node->selectionSet)) {
                     $complexity = $this->fieldComplexity($node, $complexity);
@@ -165,6 +168,7 @@ class QueryComplexity extends AbstractQuerySecurity
                 break;
 
             case Node::FRAGMENT_SPREAD:
+                /* @var FragmentSpread $node */
                 $fragment = $this->getFragment($node);
 
                 if (null !== $fragment) {
