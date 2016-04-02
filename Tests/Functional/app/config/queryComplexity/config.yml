@@ -1,8 +1,10 @@
 imports:
     - { resource: ../config.yml }
-    - { resource: services.yml }
+    - { resource: ../connection/services.yml }
 
 overblog_graphql:
+    security:
+        query_max_complexity: 10
     definitions:
         schema:
             query: Query
@@ -12,3 +14,6 @@ overblog_graphql:
                 -
                     type: yml
                     dir: %kernel.root_dir%/config/connection/mapping
+                -
+                    type: yml
+                    dir: %kernel.root_dir%/config/queryComplexity/mapping

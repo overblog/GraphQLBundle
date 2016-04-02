@@ -64,9 +64,6 @@ class FieldsConfigSolution extends AbstractConfigSolution
 
     private function solveComplexity($options, $field)
     {
-        if (!isset($options['complexity'])) {
-            return $options;
-        }
         $treatedOptions = $options;
 
         $value = $treatedOptions['complexity'];

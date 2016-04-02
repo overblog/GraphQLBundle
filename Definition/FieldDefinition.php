@@ -45,7 +45,7 @@ class FieldDefinition extends BaseFieldDefinition
     }
 
     /**
-     * @param array|Config $field
+     * @param array $field
      *
      * @return FieldDefinition
      */

@@ -13,13 +13,17 @@ namespace Overblog\GraphQLBundle\Definition;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\ObjectType as BaseObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils;
 
 class ObjectType extends BaseObjectType
 {
-    use FieldsTrait;
+    private $isTypeOf;
 
-    private $_isTypeOf;
+    /**
+     * @var FieldDefinition[]
+     */
+    private $fields;
 
     /**
      * @param array $config
@@ -48,11 +52,51 @@ class ObjectType extends BaseObjectType
         $this->name = $config['name'];
         $this->description = isset($config['description']) ? $config['description'] : null;
         $this->resolveFieldFn = isset($config['resolveField']) ? $config['resolveField'] : null;
-        $this->_isTypeOf = isset($config['isTypeOf']) ? $config['isTypeOf'] : null;
+        $this->isTypeOf = isset($config['isTypeOf']) ? $config['isTypeOf'] : null;
         $this->config = $config;
 
         if (isset($config['interfaces'])) {
             InterfaceType::addImplementationToInterfaces($this);
         }
+    }
+
+    /**
+     * @return FieldDefinition[]
+     */
+    public function getFields()
+    {
+        if (null === $this->fields) {
+            $fields = isset($this->config['fields']) ? $this->config['fields'] : [];
+            $fields = is_callable($fields) ? call_user_func($fields) : $fields;
+            $this->fields = FieldDefinition::createMap($fields);
+        }
+
+        return $this->fields;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return FieldDefinition
+     *
+     * @throws \Exception
+     */
+    public function getField($name)
+    {
+        if (null === $this->fields) {
+            $this->getFields();
+        }
+        Utils::invariant(isset($this->fields[$name]), "Field '%s' is not defined for type '%s'", $name, $this->name);
+
+        return $this->fields[$name];
+    }
+
+    /**
+     * @param $value
+     * @return bool|null
+     */
+    public function isTypeOf($value, ResolveInfo $info)
+    {
+        return isset($this->isTypeOf) ? call_user_func($this->isTypeOf, $value, $info) : null;
     }
 }

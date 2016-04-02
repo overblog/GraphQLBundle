@@ -102,10 +102,10 @@ class QueryDepthTest extends AbstractQuerySecurityTest
                 [$this->createFormattedError(8, 10)],
             ], // failed because depth over limit (8)
             [
-                60,
                 20,
-                [$this->createFormattedError(20, 60)],
-            ], // failed because depth over limit (20)
+                15,
+                [$this->createFormattedError(15, 20)],
+            ], // failed because depth over limit (15)
         ];
     }
 
