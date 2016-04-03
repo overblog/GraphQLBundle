@@ -11,8 +11,8 @@
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\ObjectType;
+use Overblog\GraphQLBundle\Definition\Type;
 
 class PageInfoType extends ObjectType
 {

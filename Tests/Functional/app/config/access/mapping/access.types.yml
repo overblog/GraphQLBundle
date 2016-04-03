@@ -1,0 +1,15 @@
+User:
+    config:
+        fields:
+            name:
+                access: "@=isFullyAuthenticated()"
+            roles:
+                type: '[String]'
+                access: "@=hasRole('ROLE_ADMIN')"
+                resolve: ['ROLE_USER']
+            isEnabled:
+                type: Boolean
+                access: "@=wrong expression function"
+                resolve: true
+            friends:
+                access: "@=object === 1"

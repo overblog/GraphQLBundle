@@ -46,7 +46,7 @@ class ConnectionResolver
 
     public function resolveNode(Edge $edge)
     {
-        return $this->allUsers[$edge->node];
+        return isset($this->allUsers[$edge->node]) ? $this->allUsers[$edge->node] : null;
     }
 
     public function resolveConnection()

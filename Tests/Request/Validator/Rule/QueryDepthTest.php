@@ -11,15 +11,31 @@
 
 namespace Overblog\GraphQLBundle\Tests\Request\Validator\Rule;
 
-use GraphQL\FormattedError;
-use GraphQL\Language\Parser;
-use GraphQL\Language\SourceLocation;
-use GraphQL\Type\Introspection;
-use GraphQL\Validator\DocumentValidator;
-use Overblog\GraphQLBundle\Request\Validator\Rule\MaxQueryDepth;
+use Overblog\GraphQLBundle\Request\Validator\Rule\QueryDepth;
 
-class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
+class QueryDepthTest extends AbstractQuerySecurityTest
 {
+    /**
+     * @param $max
+     * @param $count
+     *
+     * @return string
+     */
+    protected function getErrorMessage($max, $count)
+    {
+        return QueryDepth::maxQueryDepthErrorMessage($max, $count);
+    }
+
+    /**
+     * @param $maxDepth
+     *
+     * @return QueryDepth
+     */
+    protected function createRule($maxDepth)
+    {
+        return new QueryDepth($maxDepth);
+    }
+
     /**
      * @param $queryDepth
      * @param int   $maxQueryDepth
@@ -53,18 +69,19 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
         $this->assertDocumentValidator($this->buildRecursiveUsingInlineFragmentQuery($queryDepth), $maxQueryDepth, $expectedErrors);
     }
 
-    public function testIgnoreIntrospectionQuery()
+    public function testComplexityIntrospectionQuery()
     {
-        $this->assertDocumentValidator(Introspection::getIntrospectionQuery(true), 1);
+        $this->assertIntrospectionQuery(7);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage $maxQueryDepth argument must be greater or equal to 0.
-     */
-    public function testMaxQueryDepthMustBeGreaterOrEqualTo0()
+    public function testIntrospectionTypeMetaFieldQuery()
     {
-        new MaxQueryDepth(-1);
+        $this->assertIntrospectionTypeMetaFieldQuery(1);
+    }
+
+    public function testTypeNameMetaFieldQuery()
+    {
+        $this->assertTypeNameMetaFieldQuery(1);
     }
 
     public function queryDataProvider()
@@ -85,16 +102,11 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
                 [$this->createFormattedError(8, 10)],
             ], // failed because depth over limit (8)
             [
-                60,
-                8,
-                [$this->createFormattedError(8, 58)],
-            ], // failed because depth over limit (8) and stop count at 58
+                20,
+                15,
+                [$this->createFormattedError(15, 20)],
+            ], // failed because depth over limit (15)
         ];
-    }
-
-    private function createFormattedError($max, $count)
-    {
-        return FormattedError::create(MaxQueryDepth::maxQueryDepthErrorMessage($max, $count), [new SourceLocation(1, 17)]);
     }
 
     private function buildRecursiveQuery($depth)
@@ -113,6 +125,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
 
         return $query;
     }
+
     private function buildRecursiveUsingInlineFragmentQuery($depth)
     {
         $query = sprintf(
@@ -127,7 +140,7 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
     {
         $templates = [
             'human' => ' { firstName%s } ',
-            'dog' => ' dog { name%s } ',
+            'dog' => ' dogs { name%s } ',
         ];
 
         $part = $templates['human'];
@@ -141,18 +154,5 @@ class MaxQueryDepthTest extends \PHPUnit_Framework_TestCase
         $part = str_replace('%s', '', $part);
 
         return $part;
-    }
-
-    private function assertDocumentValidator($queryString, $depth, array $expectedErrors = [])
-    {
-        $errors = DocumentValidator::validate(
-            Schema::buildSchema(),
-            Parser::parse($queryString),
-            [new MaxQueryDepth($depth)]
-        );
-
-        $this->assertEquals($expectedErrors, array_map(['GraphQL\Error', 'formatError'], $errors), $queryString);
-
-        return $errors;
     }
 }

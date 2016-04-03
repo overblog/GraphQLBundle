@@ -1,0 +1,10 @@
+User:
+    type: object
+    config:
+        fields:
+            name:
+                type: String
+            friends:
+                type: friendConnection
+                argsBuilder: ConnectionArgs
+                complexity: "@=(!args['first'] ? 50 : 1) + childrenComplexity"

@@ -13,8 +13,8 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 
 use GraphQL\Type\Definition\Config;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class GlobalIdField implements MappingInterface

@@ -12,11 +12,11 @@
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use GraphQL\Type\Definition\Config;
-use GraphQL\Type\Definition\Type;
 use GraphQL\Utils;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Definition\MergeFieldTrait;
+use Overblog\GraphQLBundle\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class MutationField implements MappingInterface

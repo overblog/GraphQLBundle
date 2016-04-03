@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -40,7 +41,7 @@ class FieldsConfigSolution extends AbstractConfigSolution
     public function solve($values, array &$config = null)
     {
         // builder must be last
-        $fieldsTreated = ['type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
+        $fieldsTreated = ['complexity', 'type', 'args', 'argsBuilder', 'deprecationReason', 'builder'];
 
         $fieldsDefaultAccess = isset($config['fieldsDefaultAccess']) ? $config['fieldsDefaultAccess'] : null;
         unset($config['fieldsDefaultAccess']);
@@ -52,13 +53,35 @@ class FieldsConfigSolution extends AbstractConfigSolution
             foreach ($fieldsTreated as $fieldTreated) {
                 if (isset($options[$fieldTreated])) {
                     $method = 'solve'.ucfirst($fieldTreated);
-                    $options = $this->$method($options, $field);
+                    $options = $this->$method($options, $field, $config);
                 }
             }
             $options = $this->resolveResolveAndAccessIfNeeded($options);
         }
 
         return $values;
+    }
+
+    private function solveComplexity($options, $field)
+    {
+        $treatedOptions = $options;
+
+        $value = $treatedOptions['complexity'];
+
+        $treatedOptions['complexity'] = function () use ($value) {
+            $args = func_get_args();
+            $complexity = $this->solveUsingExpressionLanguageIfNeeded(
+                $value,
+                [
+                    'childrenComplexity' => $args[0],
+                    'args' => new Argument($args[1]),
+                ]
+            );
+
+            return (int) $complexity;
+        };
+
+        return $treatedOptions;
     }
 
     private function solveBuilder($options, $field)

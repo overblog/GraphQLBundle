@@ -12,11 +12,11 @@
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use GraphQL\Type\Definition\Config;
-use GraphQL\Type\Definition\FieldDefinition;
-use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\Type;
 use GraphQL\Utils;
+use Overblog\GraphQLBundle\Definition\FieldDefinition;
+use Overblog\GraphQLBundle\Definition\InputObjectType;
 use Overblog\GraphQLBundle\Definition\MergeFieldTrait;
+use Overblog\GraphQLBundle\Definition\Type;
 
 class InputType extends InputObjectType
 {

@@ -12,8 +12,8 @@
 namespace Overblog\GraphQLBundle\Tests\Request\Validator\Rule;
 
 use GraphQL\Schema as GraphQLSchema;
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\ObjectType;
+use Overblog\GraphQLBundle\Definition\Type;
 
 class Schema
 {
@@ -34,9 +34,6 @@ class Schema
             return self::$schema;
         }
 
-        static::buildHumanType();
-        static::buildDogType();
-
         self::$schema = new GraphQLSchema(static::buildQueryRootType());
 
         return self::$schema;
@@ -53,6 +50,7 @@ class Schema
             'fields' => [
                 'human' => [
                     'type' => self::buildHumanType(),
+                    'args' => ['name' => ['type' => Type::string()]],
                 ],
             ],
         ]);
@@ -71,7 +69,7 @@ class Schema
                 'name' => 'Human',
                 'fields' => [
                     'firstName' => ['type' => Type::nonNull(Type::string())],
-                    'Dog' => [
+                    'dogs' => [
                         'type' => function () {
                             return Type::nonNull(
                                 Type::listOf(
@@ -79,6 +77,12 @@ class Schema
                                 )
                             );
                         },
+                        'complexity' => function ($childrenComplexity, $args) {
+                            $complexity = isset($args['name']) ? 1 : 10;
+
+                            return $childrenComplexity + $complexity;
+                        },
+                        'args' => ['name' => ['type' => Type::string()]],
                     ],
                 ],
             ]

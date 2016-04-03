@@ -9,11 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Definition\Builder;
+namespace Overblog\GraphQLBundle\Definition;
 
-interface ConfigBuilderInterface
+use GraphQL\Type\Definition\InputObjectType as BaseInputObjectType;
+
+class InputObjectType extends BaseInputObjectType
 {
-    public function create($type, array $config);
-
-    public function getBaseClassName($type);
 }

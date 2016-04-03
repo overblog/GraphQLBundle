@@ -54,8 +54,16 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     {
         if (isset($config['security']['query_max_depth'])) {
             $container
-                ->getDefinition($this->getAlias().'.request_validator_rule_max_query_depth')
+                ->getDefinition($this->getAlias().'.request_validator_rule_query_depth')
                 ->addMethodCall('setMaxQueryDepth', [$config['security']['query_max_depth']])
+                ->setPublic(true)
+            ;
+        }
+
+        if (isset($config['security']['query_max_complexity'])) {
+            $container
+                ->getDefinition($this->getAlias().'.request_validator_rule_query_complexity')
+                ->addMethodCall('setMaxQueryComplexity', [$config['security']['query_max_complexity']])
                 ->setPublic(true)
             ;
         }
