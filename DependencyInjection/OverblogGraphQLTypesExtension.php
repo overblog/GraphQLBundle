@@ -73,16 +73,11 @@ class OverblogGraphQLTypesExtension extends Extension
      */
     private function prependExtensionConfigFromFiles($type, $files, ContainerBuilder $container)
     {
-        $typesConfig = [];
         /** @var SplFileInfo $file */
         foreach ($files as $file) {
-            $typesConfig =  array_merge(
-                $typesConfig,
-                'yml' === $type ? $this->typesConfigFromYml($file, $container) : $this->typesConfigFromXml($file, $container)
-            );
+            $typeConfig = 'yml' === $type ? $this->typesConfigFromYml($file, $container) : $this->typesConfigFromXml($file, $container);
+            $container->prependExtensionConfig($this->getAlias(), $typeConfig);
         }
-
-        $container->prependExtensionConfig($this->getAlias(), $typesConfig);
     }
 
     private function typesConfigFromXml(SplFileInfo $file, ContainerBuilder $container)
@@ -158,11 +153,9 @@ class OverblogGraphQLTypesExtension extends Extension
             $configPath = $bundleDir.'/'.$this->getMappingResourceConfigDirectory();
             $params = $this->detectConfigFiles($container, $configPath);
 
-            if (null === $params) {
-                continue;
+            if (null !== $params) {
+                $typesMappings[] = $params;
             }
-
-            $typesMappings[] = $params;
         }
 
         return $typesMappings;
@@ -188,14 +181,12 @@ class OverblogGraphQLTypesExtension extends Extension
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
-            if (0 === $finder->count()) {
-                continue;
+            if ($finder->count() > 0) {
+                return [
+                    'type' => $type,
+                    'files' => $finder,
+                ];
             }
-
-            return [
-                'type' => $type,
-                'files' => $finder,
-            ];
         }
 
         return;
