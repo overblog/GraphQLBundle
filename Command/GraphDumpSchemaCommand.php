@@ -49,7 +49,7 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
             ->execute($request)
             ->toArray();
 
-        $file = $input->hasOption('file') ? $input->getOption('file') : $container->getParameter('kernel.root_dir').'/../var/schema.json';
+        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').'/../var/schema.json';
 
         $schema = json_encode($result['data']);
 
