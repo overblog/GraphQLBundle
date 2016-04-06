@@ -11,11 +11,11 @@
       overflow: hidden;
     }
   </style>
-  <link href="https://cdn.jsdelivr.net/graphiql/0.5.0/graphiql.css" rel="stylesheet">
+  <link href="https://npmcdn.com/graphiql@latest/graphiql.css" rel="stylesheet">
   {% endblock style %}
-  <script src="https://cdn.jsdelivr.net/react/0.14.7/react.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/react/0.14.7/react-dom.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/graphiql/0.5.0/graphiql.min.js"></script>
+  <script src="https://npmcdn.com/react@latest/dist/react.min.js"></script>
+  <script src="https://npmcdn.com/react-dom@latest/dist/react-dom.min.js"></script>
+  <script src="https://npmcdn.com/graphiql@latest/graphiql.min.js"></script>
   <title>{% block title %}GraphiQL{% endblock title %}</title>
   {% endblock head %}
 </head>
@@ -38,6 +38,7 @@
         method: "post",
         headers: headers,
         body: JSON.stringify(params),
+        credentials: 'include',
       }).then((res) => {
         return res.text()
       }).then((body) => {
