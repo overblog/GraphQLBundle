@@ -38,6 +38,7 @@
         method: "post",
         headers: headers,
         body: JSON.stringify(params),
+        credentials: 'include',
       }).then((res) => {
         return res.text()
       }).then((body) => {
