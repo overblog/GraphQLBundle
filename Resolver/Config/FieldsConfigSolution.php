@@ -195,14 +195,12 @@ class FieldsConfigSolution extends AbstractConfigSolution
         $checkAccess = $this->checkAccessCallback($expression, $values);
 
         switch (true) {
-            case is_array($result) || $result instanceof \ArrayAccess:
-                $result = array_filter(
-                    array_map(
-                        function ($object) use ($checkAccess) {
-                            return $checkAccess($object) ? $object : null;
-                        },
-                        $result
-                    )
+            case is_array($result):
+                $result = array_map(
+                    function ($object) use ($checkAccess) {
+                        return $checkAccess($object) ? $object : null;
+                    },
+                    $result
                 );
                 break;
 

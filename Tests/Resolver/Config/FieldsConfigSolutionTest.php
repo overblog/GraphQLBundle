@@ -61,6 +61,8 @@ class FieldsConfigSolutionTest extends AbstractConfigSolutionTest
                 'tata',
                 'titi',
                 'tata',
+                null,
+                null,
             ],
             $callback(
                 [

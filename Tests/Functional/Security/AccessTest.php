@@ -136,7 +136,7 @@ EOF;
         return [
             'data' => [
                 'user' => [
-                    'roles' => [],
+                    'roles' => [0 => null],
                 ],
             ],
         ];
