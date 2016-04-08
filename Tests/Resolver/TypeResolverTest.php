@@ -13,6 +13,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Tests\Request\Validator\Rule\Schema;
 
 class TypeResolverTest extends AbstractResolverTest
 {
@@ -119,5 +120,14 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
         $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
+    }
+
+    public function testResolveUsingSchema()
+    {
+        $schema = Schema::buildSchema();
+
+        $this->resolver->setSchema($schema);
+
+        $this->assertEquals($schema->getType('Human'), $this->resolver->resolve('Human'));
     }
 }

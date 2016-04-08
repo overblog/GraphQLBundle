@@ -110,11 +110,7 @@ class ConnectionBuilder
             $length
         );
 
-        $edges = [];
-
-        foreach ($slice as $index => $value) {
-            $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);
-        }
+        $edges = EdgeBuilder::createCollection($slice, $startOffset);
 
         $firstEdge = isset($edges[0]) ? $edges[0] : null;
         $lastEdge = end($edges);

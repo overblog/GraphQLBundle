@@ -11,13 +11,14 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Schema;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class TypeResolver extends AbstractResolver implements ContainerAwareInterface
+class TypeResolver extends AbstractResolver implements ContainerAwareInterface, TypeResolverInterface
 {
     use ContainerAwareTrait;
 
@@ -31,6 +32,11 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
      */
     private $mapping;
 
+    /**
+     * @var Schema
+     */
+    private $schema;
+
     public function __construct(CacheInterface $cache = null)
     {
         $this->cache = null !== $cache ? $cache : new ArrayCache();
@@ -41,11 +47,21 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
      *
      * @return TypeResolver
      */
-    public function setMapping($mapping)
+    public function setMapping(array $mapping)
     {
         $this->mapping = $mapping;
 
         return $this;
+    }
+
+    /**
+     * @param Schema $schema
+     *
+     * @return TypeResolver
+     */
+    public function setSchema(Schema $schema)
+    {
+        $this->schema = $schema;
     }
 
     /**
@@ -81,21 +97,38 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
 
     private function baseType($alias)
     {
-        $type = $this->getSolution($alias);
-        if (null !== $type) {
-            return $type;
-        }
+        $baseTypeResolvers = [
+            'baseTypeUsingSchema', // first search in schema if type exists
+            'getSolution', // then in register solutions
+            'baseTypeUsingContainer', // fallback using mapped services
+        ];
 
-        //fallback load directly from container if exists
-        if (null !== $this->container && isset($this->mapping[$alias])) {
-            $options = $this->mapping[$alias];
-
-            return $this->container->get($options['id']);
+        foreach ($baseTypeResolvers as $method) {
+            $type = $this->$method($alias);
+            if (null !== $type) {
+                return $type;
+            }
         }
 
         throw new UnresolvableException(
             sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
         );
+    }
+
+    private function baseTypeUsingSchema($alias)
+    {
+        if (null !== $this->schema) {
+            return  $this->schema->getType($alias);
+        }
+    }
+
+    private function baseTypeUsingContainer($alias)
+    {
+        if (null !== $this->container && isset($this->mapping[$alias])) {
+            $options = $this->mapping[$alias];
+
+            return $this->container->get($options['id']);
+        }
     }
 
     private function wrapTypeIfNeeded($alias)

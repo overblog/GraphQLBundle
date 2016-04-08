@@ -13,19 +13,19 @@ namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Schema;
 use GraphQL\Type\Definition\Config;
-use Overblog\GraphQLBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Resolver\TypeResolverInterface;
 
 class SchemaBuilder
 {
     /**
-     * @var ResolverInterface
+     * @var TypeResolverInterface
      */
     private $typeResolver;
 
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(ResolverInterface $typeResolver, $enableValidation = false)
+    public function __construct(TypeResolverInterface $typeResolver, $enableValidation = false)
     {
         $this->typeResolver = $typeResolver;
         $this->enableValidation = $enableValidation;
@@ -46,6 +46,10 @@ class SchemaBuilder
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        return new Schema($query, $mutation, $subscription);
+        $schema = new Schema($query, $mutation, $subscription);
+
+        $this->typeResolver->setSchema($schema);
+
+        return $schema;
     }
 }
