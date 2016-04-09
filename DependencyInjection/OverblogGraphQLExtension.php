@@ -52,28 +52,13 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setSecurity(array $config, ContainerBuilder $container)
     {
-        if (isset($config['security']['query_max_depth'])) {
-            $container
-                ->getDefinition($this->getAlias().'.request_validator_rule_query_depth')
-                ->addMethodCall('setMaxQueryDepth', [$config['security']['query_max_depth']])
-                ->setPublic(true)
-            ;
-        }
-
-        if (isset($config['security']['query_max_complexity'])) {
-            $container
-                ->getDefinition($this->getAlias().'.request_validator_rule_query_complexity')
-                ->addMethodCall('setMaxQueryComplexity', [$config['security']['query_max_complexity']])
-                ->setPublic(true)
-            ;
-        }
+        $container->setParameter($this->getAlias().'.query_max_depth', $config['security']['query_max_depth']);
+        $container->setParameter($this->getAlias().'.query_max_complexity', $config['security']['query_max_complexity']);
     }
 
     private function setGraphiQLTemplate(array $config, ContainerBuilder $container)
     {
-        if (isset($config['templates']['graphiql'])) {
-            $container->setParameter('overblog_graphql.graphiql_template', $config['templates']['graphiql']);
-        }
+        $container->setParameter($this->getAlias().'.graphiql_template', $config['templates']['graphiql']);
     }
 
     private function setErrorHandlerArguments(array $config, ContainerBuilder $container)

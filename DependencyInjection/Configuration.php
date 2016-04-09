@@ -11,7 +11,8 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
-use Overblog\GraphQLBundle\Request\Validator\Rule\QueryDepth;
+use GraphQL\Validator\Rules\QueryComplexity;
+use GraphQL\Validator\Rules\QueryDepth;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -90,7 +91,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->append($this->addSecurityQuerySection('query_max_depth', QueryDepth::DISABLED))
-                            ->append($this->addSecurityQuerySection('query_max_complexity', QueryDepth::DISABLED))
+                            ->append($this->addSecurityQuerySection('query_max_complexity', QueryComplexity::DISABLED))
                         ->end()
                     ->end()
                 ->end()
