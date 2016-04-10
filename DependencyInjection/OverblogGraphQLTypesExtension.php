@@ -59,11 +59,6 @@ class OverblogGraphQLTypesExtension extends Extension
         foreach ($typesMappings as $params) {
             $this->prependExtensionConfigFromFiles($params['type'], $params['files'], $container);
         }
-
-        // TODO remove when types mapping 100% functional
-        if (isset($config['definitions']['types'])) {
-            $container->prependExtensionConfig($this->getAlias(), $config['definitions']['types']);
-        }
     }
 
     /**
