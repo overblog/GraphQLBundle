@@ -1,8 +1,18 @@
+Query:
+    type: object
+    config:
+        fields:
+            user:
+                type: User
+                resolve: '@=resolver("query")'
+
 User:
+    type: object
     config:
         fields:
             name:
                 access: "@=isFullyAuthenticated()"
+                type: String
             roles:
                 type: '[String]'
                 access: "@=hasRole('ROLE_ADMIN')"
@@ -13,3 +23,20 @@ User:
                 resolve: true
             friends:
                 access: "@=object === 1"
+                type: friendConnection
+                argsBuilder: ConnectionArgs
+                resolve: '@=resolver("friends", [value, args])'
+
+friendConnection:
+    type: relay-connection
+    config:
+        nodeType: User
+        resolveNode: '@=resolver("node", [value])'
+        edgeFields:
+            friendshipTime:
+                type: String
+                resolve: "Yesterday"
+        connectionFields:
+            totalCount:
+                type: Int
+                resolve: '@=resolver("connection")'

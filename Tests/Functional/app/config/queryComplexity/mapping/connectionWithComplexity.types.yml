@@ -1,3 +1,11 @@
+Query:
+    type: object
+    config:
+        fields:
+            user:
+                type: User
+                resolve: '@=resolver("query")'
+
 User:
     type: object
     config:
@@ -5,6 +13,21 @@ User:
             name:
                 type: String
             friends:
+                complexity: "@=(!args['first'] ? 50 : 1) + childrenComplexity"
                 type: friendConnection
                 argsBuilder: ConnectionArgs
-                complexity: "@=(!args['first'] ? 50 : 1) + childrenComplexity"
+                resolve: '@=resolver("friends", [value, args])'
+
+friendConnection:
+    type: relay-connection
+    config:
+        nodeType: User
+        resolveNode: '@=resolver("node", [value])'
+        edgeFields:
+            friendshipTime:
+                type: String
+                resolve: "Yesterday"
+        connectionFields:
+            totalCount:
+                type: Int
+                resolve: '@=resolver("connection")'
