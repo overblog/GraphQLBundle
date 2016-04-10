@@ -27,6 +27,7 @@ class TypesConfiguration implements ConfigurationInterface
         $rootNode
             ->useAttributeAsKey('name')
             ->prototype('array')
+                ->cannotBeOverwritten()
                 ->children()
                     ->enumNode('type')->values([
                             'object',

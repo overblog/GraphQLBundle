@@ -11,10 +11,7 @@ overblog_graphql:
             types:
                 -
                     type: yml
-                    dir: %kernel.root_dir%/config/connection/mapping
-                -
-                    type: yml
-                    dir: %kernel.root_dir%/config/access/mapping
+                    dir: "%kernel.root_dir%/config/access/mapping"
 
 security:
     providers:
