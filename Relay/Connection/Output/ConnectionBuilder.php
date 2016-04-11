@@ -118,7 +118,7 @@ class ConnectionBuilder
 
         $firstEdge = isset($edges[0]) ? $edges[0] : null;
         $lastEdge = end($edges);
-        $lowerBound = $after ? ($afterOffset + 1) : 0;
+        $lowerBound = $after ? $afterOffset : 0;
         $upperBound = $before ? $beforeOffset : $arrayLength;
 
         return new Connection(
@@ -126,8 +126,8 @@ class ConnectionBuilder
             new PageInfo(
                 $firstEdge instanceof Edge ? $firstEdge->cursor : null,
                 $lastEdge instanceof Edge  ? $lastEdge->cursor : null,
-                $last !== null ? $startOffset > $lowerBound : false,
-                $first !== null ? $endOffset < $upperBound : false
+                ($last === null) ? ($startOffset > $lowerBound) : false,
+                ($first !== null) ? ($endOffset < $upperBound) : false
             )
         );
     }
