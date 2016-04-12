@@ -22,13 +22,19 @@ class GlobalId
 
     public static function fromGlobalId($globalId)
     {
-        $unBasedGlobalId = base64_decode($globalId);
+        $unBasedGlobalId = base64_decode($globalId, true);
 
-        list($type, $id) = array_merge(explode(static::SEPARATOR, $unBasedGlobalId), [true]);
-
-        return [
-            'type' => $type,
-            'id' => $id,
+        $decodeGlobalId = [
+            'type' => null,
+            'id' => null,
         ];
+
+        if (!$unBasedGlobalId) {
+            return $decodeGlobalId;
+        }
+
+        list($decodeGlobalId['type'], $decodeGlobalId['id']) = array_pad(explode(static::SEPARATOR, $unBasedGlobalId), 2, null);
+
+        return $decodeGlobalId;
     }
 }

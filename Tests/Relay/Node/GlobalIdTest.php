@@ -70,4 +70,11 @@ class GlobalIdTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(['type' => null, 'id' => null], $params);
     }
+
+    public function testFromGlobalIdWithNotBase64Entry()
+    {
+        $params = GlobalId::fromGlobalId(1);
+
+        $this->assertEquals(['type' => null, 'id' => null], $params);
+    }
 }
