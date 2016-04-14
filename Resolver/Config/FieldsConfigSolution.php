@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Resolver\Config;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Error\UserError;
@@ -177,16 +178,23 @@ class FieldsConfigSolution extends AbstractConfigSolution
         return $treatedOptions;
     }
 
-    private function resolveAccessAndWrapResolveCallback($expression, callable $resolveCallback = null)
+    private function resolveAccessAndWrapResolveCallback($expression, callable $resolveCallback)
     {
         return function () use ($expression, $resolveCallback) {
             $args = func_get_args();
 
-            $result = null !== $resolveCallback  ? call_user_func_array($resolveCallback, $args) : null;
-
             $values = call_user_func_array([$this, 'solveResolveCallbackArgs'], $args);
 
-            return $this->filterResultUsingAccess($result, $expression, $values);
+            $info = $values['info'];
+
+            if ($info instanceof ResolveInfo && $info->operation->operation === 'mutation') {
+                $checkAccess = $this->checkAccessCallback($expression, $values);
+                $result = $checkAccess(null, $values) ? call_user_func_array($resolveCallback, $args) : null;
+            } else {
+                $result = $this->filterResultUsingAccess(call_user_func_array($resolveCallback, $args), $expression, $values);
+            }
+
+            return $result;
         };
     }
 

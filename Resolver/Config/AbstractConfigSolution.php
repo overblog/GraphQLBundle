@@ -108,11 +108,16 @@ abstract class AbstractConfigSolution implements ConfigSolutionInterface
 
     protected function solveUsingExpressionLanguageIfNeeded($expression, array $values = [])
     {
-        if (is_string($expression) &&  0 === strpos($expression, '@=')) {
+        if ($this->isExpression($expression)) {
             return $this->expressionLanguage->evaluate(substr($expression, 2), $values);
         }
 
         return $expression;
+    }
+
+    protected function isExpression($expression)
+    {
+        return is_string($expression) &&  0 === strpos($expression, '@=');
     }
 
     protected function solveResolveCallbackArgs()
