@@ -11,18 +11,15 @@
 
 namespace Overblog\GraphQLBundle\Request;
 
-use GraphQL\Error;
-use GraphQL\Executor\ExecutionResult;
-use GraphQL\Executor\Executor as GraphQLExecutor;
 use GraphQL\GraphQL;
-use GraphQL\Language\Parser as GraphQLParser;
 use GraphQL\Language\Source;
 use GraphQL\Schema;
 use GraphQL\Validator\DocumentValidator;
+use GraphQL\Validator\Rules\QueryComplexity;
+use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
-use Overblog\GraphQLBundle\Request\Validator\Rule\QueryComplexity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Executor
@@ -40,21 +37,26 @@ class Executor
     /** @var ErrorHandler|null */
     private $errorHandler;
 
-    /** @var callable[] */
-    private $validationRules;
-
     public function __construct(Schema $schema, EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null)
     {
         $this->schema = $schema;
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
-        $this->validationRules = DocumentValidator::allRules();
     }
 
-    public function addValidatorRule(callable $validatorRule)
+    public function setMaxQueryDepth($maxQueryDepth)
     {
-        $this->validationRules[] = $validatorRule;
+        /** @var QueryDepth $queryDepth */
+        $queryDepth = DocumentValidator::getRule('QueryDepth');
+        $queryDepth->setMaxQueryDepth($maxQueryDepth);
+    }
+
+    public function setMaxQueryComplexity($maxQueryComplexity)
+    {
+        /** @var QueryComplexity $queryComplexity */
+        $queryComplexity = DocumentValidator::getRule('QueryComplexity');
+        $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
     }
 
     /**
@@ -77,7 +79,7 @@ class Executor
             $context = $event->getExecutorContext();
         }
 
-        $executionResult = $this->executeAndReturnResult(
+        $executionResult = GraphQL::executeAndReturnResult(
             $this->schema,
             isset($data['query']) ? $data['query'] : null,
             $context,
@@ -90,25 +92,5 @@ class Executor
         }
 
         return $executionResult;
-    }
-
-    private function executeAndReturnResult(Schema $schema, $requestString, $rootValue = null, $variableValues = null, $operationName = null)
-    {
-        try {
-            $source = new Source($requestString ?: '', 'GraphQL request');
-            $documentAST = GraphQLParser::parse($source);
-            //todo set using service
-            QueryComplexity::setRawVariableValues($variableValues);
-
-            $validationErrors = DocumentValidator::validate($schema, $documentAST, $this->validationRules);
-
-            if (!empty($validationErrors)) {
-                return new ExecutionResult(null, $validationErrors);
-            }
-
-            return GraphQLExecutor::execute($schema, $documentAST, $rootValue, $variableValues, $operationName);
-        } catch (Error $e) {
-            return new ExecutionResult(null, [$e]);
-        }
     }
 }

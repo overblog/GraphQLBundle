@@ -16,23 +16,6 @@ use GraphQL\Type\Definition\FieldDefinition as BaseFieldDefinition;
 
 class FieldDefinition extends BaseFieldDefinition
 {
-    const DEFAULT_COMPLEXITY_FN = '\Overblog\GraphQLBundle\Definition\FieldDefinition::defaultComplexity';
-
-    /**
-     * @var callable
-     */
-    private $complexityFn;
-
-    public static function getDefinition()
-    {
-        return array_merge(
-            parent::getDefinition(),
-            [
-                'complexity' => Config::CALLBACK,
-            ]
-        );
-    }
-
     public static function createMap(array $fields)
     {
         $map = [];
@@ -56,25 +39,5 @@ class FieldDefinition extends BaseFieldDefinition
         Config::validate($field, static::getDefinition());
 
         return new static($field);
-    }
-
-    protected function __construct(array $config)
-    {
-        parent::__construct($config);
-
-        $this->complexityFn = isset($config['complexity']) ? $config['complexity'] : static::DEFAULT_COMPLEXITY_FN;
-    }
-
-    /**
-     * @return callable|\Closure
-     */
-    public function getComplexityFn()
-    {
-        return $this->complexityFn;
-    }
-
-    public static function defaultComplexity($childrenComplexity)
-    {
-        return $childrenComplexity + 1;
     }
 }
