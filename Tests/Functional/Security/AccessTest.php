@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
+use Overblog\GraphQLBundle\Tests\Functional\app\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class AccessTest extends TestCase
@@ -35,6 +36,15 @@ query MyQuery {
         }
       }
     }
+  }
+}
+EOF;
+
+    private $simpleMutationWithThunkQuery = <<<EOF
+mutation M {
+  simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
+    result
+    clientMutationId
   }
 }
 EOF;
@@ -129,6 +139,72 @@ EOF;
         ];
 
         $this->assertResponse($this->userIsEnabledQuery, $expected, static::USER_ADMIN);
+    }
+
+    public function testMutationAllowedUser()
+    {
+        $result = 123;
+
+        $expected = [
+            'data' => [
+                'simpleMutationWithThunkFields' => [
+                    'result' => $result,
+                    'clientMutationId' => 'bac',
+                ],
+            ],
+        ];
+
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, $result), $expected, static::USER_ADMIN);
+        $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
+    }
+
+    public function testMutationAllowedButNoRightsToDisplayPayload()
+    {
+        $expected = [
+            'data' => [
+                'simpleMutationWithThunkFields' => [
+                    'result' => null,
+                    'clientMutationId' => 'bac',
+                ],
+            ],
+            'errors' => [
+                [
+                    'message' => 'Access denied to this field.',
+                    'locations' => [
+                        [
+                            'line' => 3,
+                            'column' => 5,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 321), $expected, static::USER_ADMIN);
+        $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
+    }
+
+    public function testMutationNotAllowedUser()
+    {
+        $expected = [
+            'data' => [
+                'simpleMutationWithThunkFields' => null,
+            ],
+            'errors' => [
+                [
+                    'message' => 'Access denied to this field.',
+                    'locations' => [
+                        [
+                            'line' => 2,
+                            'column' => 3,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 123), $expected, static::USER_RYAN);
+        $this->assertFalse(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
     private function expectedFailedUserRoles()

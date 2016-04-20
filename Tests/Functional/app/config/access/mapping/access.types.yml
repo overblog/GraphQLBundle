@@ -1,4 +1,12 @@
-Query:
+RootQuery:
+    type: object
+    config:
+        fields:
+            user:
+                type: User
+                resolve: '@=resolver("query")'
+
+Mutation:
     type: object
     config:
         fields:
@@ -40,3 +48,28 @@ friendConnection:
             totalCount:
                 type: Int
                 resolve: '@=resolver("connection")'
+
+#Mutation
+RootMutation:
+    type: object
+    config:
+        fields:
+            simpleMutationWithThunkFields:
+                builder: Mutation
+                access: "@=hasRole('ROLE_ADMIN')"
+                builderConfig:
+                    inputType: simpleMutationWithThunkFieldsInput
+                    payloadType: simpleMutationWithThunkFieldsPayload
+                    mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', [value])"
+
+simpleMutationWithThunkFieldsInput:
+    type: relay-mutation-input
+    config:
+        fields:
+            inputData : { type: "Int" }
+
+simpleMutationWithThunkFieldsPayload:
+    type: relay-mutation-payload
+    config:
+        fields:
+            result: { type: "Int", access: "@=object === 123" }

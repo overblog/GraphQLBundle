@@ -761,7 +761,7 @@ Expression | Description | Scope
 **request** | Refers to the current request. | Request
 **token** | Refers to the token which is currently in the security token storage. | Token 
 **user** | Refers to the user which is currently in the security token storage. | Valid Token
-**object** | Refers to the value of the field for which access is being requested. For array `object` will be each item of the array. For Relay connection `object` will be the node of each connection edges. | only available for `config.fields.*.access` with query operation type.
+**object** | Refers to the value of the field for which access is being requested. For array `object` will be each item of the array. For Relay connection `object` will be the node of each connection edges. | only available for `config.fields.*.access` with query operation or mutation payload type.
 **value** | Resolver value | only available in resolve context 
 **args** | Resolver args array | only available in resolve context 
 **info** | Resolver GraphQL\Type\Definition\ResolveInfo Object | only available in resolve context
