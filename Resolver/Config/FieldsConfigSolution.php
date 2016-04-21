@@ -187,7 +187,8 @@ class FieldsConfigSolution extends AbstractConfigSolution
 
             $info = $values['info'];
 
-            if ($info instanceof ResolveInfo && $info->operation->operation === 'mutation') {
+            // operation is mutation and is mutation field
+            if ($info instanceof ResolveInfo && $info->operation->operation === 'mutation' && $info->parentType === $info->schema->getMutationType()) {
                 $checkAccess = $this->checkAccessCallback($expression, $values);
                 $result = $checkAccess(null, $values) ? call_user_func_array($resolveCallback, $args) : null;
             } else {

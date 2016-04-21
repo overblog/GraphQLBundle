@@ -1,12 +1,13 @@
 imports:
     - { resource: ../config.yml }
     - { resource: ../connection/services.yml }
+    - { resource: ../mutation/services.yml }
 
 overblog_graphql:
     definitions:
         schema:
-            query: Query
-            mutation: ~
+            query: RootQuery
+            mutation: RootMutation
         mappings:
             types:
                 -
