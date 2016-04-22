@@ -16,35 +16,11 @@ use Symfony\Component\Process\ProcessBuilder;
 class StarWarsQueryTest extends AbstractStarWarsTest
 {
     /**
-     * @group linter
+     * @group cs
      */
-    public function testPSR2()
+    public function testSchemaCodeStandard()
     {
-        // Run linter in dry-run mode so it changes nothing.
-        $builder = new ProcessBuilder([
-            'php-cs-fixer',
-            'fix',
-            '--fixers=short_array_syntax',
-            '--level=psr2',
-            '--dry-run',
-            '--diff',
-            $this->tmpDir,
-        ]);
-
-        $process = $builder->getProcess();
-        $process->setWorkingDirectory(__DIR__ . '/../bin');
-        $process->setTimeout(30);
-        $process->run();
-
-        $this->assertTrue(
-            $process->isSuccessful(),
-            sprintf(
-                'cli "%s" linter reported errors in "%s/": %s',
-                $process->getCommandLine(),
-                $this->tmpDir,
-                $process->getOutput()
-            )
-        );
+        $this->assertCodeStandard($this->tmpDir, 'psr2', 'short_array_syntax');
     }
 
     // Star Wars Query Tests

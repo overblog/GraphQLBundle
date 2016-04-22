@@ -4,3 +4,4 @@
 /composer.phar
 /phpunit.xml
 /.php_cs.cache
+!/bin/travis_phpunit

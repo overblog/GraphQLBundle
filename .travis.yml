@@ -22,4 +22,6 @@ before_install:
 
 install: composer update --prefer-dist --no-interaction
 
-script: ./bin/phpunit --debug
+script: ./bin/travis_phpunit
+after_script:
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

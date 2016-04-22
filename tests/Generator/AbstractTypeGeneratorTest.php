@@ -13,11 +13,13 @@ namespace Overblog\GraphQLGenerator\Tests\Generator;
 
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator;
+use Overblog\GraphQLGenerator\Tests\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\ProcessBuilder;
 
-abstract class AbstractTypeGeneratorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTypeGeneratorTest extends TestCase
 {
     /** @var Filesystem */
     protected $filesystem;
@@ -39,10 +41,10 @@ abstract class AbstractTypeGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
     }
 
-//    public function tearDown()
-//    {
-//        $this->filesystem->remove($this->tmpDir);
-//    }
+    public function tearDown()
+    {
+        $this->filesystem->remove($this->tmpDir);
+    }
 
     protected function generateSchema(array $typeConfigs = null, $tmpDir = null, $regenerateIfExists = true)
     {
