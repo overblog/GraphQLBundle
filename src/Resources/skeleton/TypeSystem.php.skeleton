@@ -1,0 +1,24 @@
+<?php
+<namespace>
+<useStatement>
+<classDocBlock>
+<classType>class <className> extends <parentClassName><implements>
+{<traits>
+<spaces>/**
+<spaces> * @var static
+<spaces> */
+<spaces>private static $instance;
+
+<spaces>/**
+<spaces> * @return static
+<spaces> */
+<spaces>public static function getInstance()
+<spaces>{
+<spaces><spaces>return null !== self::$instance ? self::$instance : self::$instance = new static();
+<spaces>}
+
+<spaces>public function __construct()
+<spaces>{
+<spaces><spaces>parent::__construct(<config>);
+<spaces>}
+}
