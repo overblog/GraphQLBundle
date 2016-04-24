@@ -11,11 +11,11 @@
       overflow: hidden;
     }
   </style>
-  <link href="https://npmcdn.com/graphiql@latest/graphiql.css" rel="stylesheet">
+  <link href="https://npmcdn.com/graphiql@~0.7/graphiql.css" rel="stylesheet">
   {% endblock style %}
-  <script src="https://npmcdn.com/react@latest/dist/react.min.js"></script>
-  <script src="https://npmcdn.com/react-dom@latest/dist/react-dom.min.js"></script>
-  <script src="https://npmcdn.com/graphiql@latest/graphiql.min.js"></script>
+  <script src="https://npmcdn.com/react@^15.0/dist/react.min.js"></script>
+  <script src="https://npmcdn.com/react-dom@^15.0/dist/react-dom.min.js"></script>
+  <script src="https://npmcdn.com/graphiql@~0.7/graphiql.min.js"></script>
   <title>{% block title %}GraphiQL{% endblock title %}</title>
   {% endblock head %}
 </head>
@@ -24,11 +24,13 @@
   {% block body_loading %}Loading...{% endblock body_loading %}
   {% block body_script %}
   <script>
-    const endpoint = {{ endpoint | json_encode | raw }}
+    var endpoint = {{ endpoint | json_encode | raw }}
 
     function graphQLFetcher(params) {
+      var headers
+
       {% block graphql_fetcher_headers %}
-      var headers = {
+      headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
       }
