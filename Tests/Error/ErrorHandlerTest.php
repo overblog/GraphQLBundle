@@ -16,6 +16,7 @@ use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
+use Overblog\GraphQLBundle\Error\UserWarning;
 
 class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,6 +37,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 new Error('Error with wrapped exception', null, new \Exception('My Exception message')),
                 new Error('Error with wrapped user error', null, new UserError('My User Error')),
                 new Error('', null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
+                new Error('Error with wrapped user warning', null, new UserWarning('My User Warning')),
             ]
         );
 
@@ -61,6 +63,13 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'message' => 'My User Error 3',
+                ],
+            ],
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Error with wrapped user warning',
+                    ],
                 ],
             ],
         ];

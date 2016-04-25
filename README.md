@@ -551,7 +551,7 @@ Error Handling
 
 In no debug mode all errors will be logged and replace by a generic error message.
 Only query parsed error will not be replace.
-If you what to send explicit error messages to your users you can use exceptions:
+If you want to send explicit error or warnings messages to your users you can use exceptions:
 
 1- **Overblog\\GraphQLBundle\\Error\\UserError** to send unique error
 
@@ -564,18 +564,42 @@ class CharacterResolver
     public function resolveHuman($args)
     {
         $humans = StarWarsData::humans();
-        
+
         if (!isset($humans[$args['id']])) {
-            throw new UserErrors(sprintf('Could not find Human#%d', $args['id']));
+            throw new UserError(sprintf('Could not find Human#%d', $args['id']));
         }
-        
+
         return $humans[$args['id']];
     }
     //...
 }
 ```
 
-2- **Overblog\\GraphQLBundle\\Error\\UserErrors** to send multiple errors
+2- **Overblog\\GraphQLBundle\\Error\\UserWarning** to send unique warning
+
+```php
+use Overblog\GraphQLBundle\Error\UserWarning
+
+class CharacterResolver
+{
+    //...
+    public function resolveHuman($args)
+    {
+        $humans = StarWarsData::humans();
+
+        if (!isset($humans[$args['id']])) {
+            throw new UserWarning(sprintf('Could not find Human#%d', $args['id']));
+        }
+
+        return $humans[$args['id']];
+    }
+    //...
+}
+```
+
+Warnings can be found in the response under `extensions.warnings` map.
+
+3- **Overblog\\GraphQLBundle\\Error\\UserErrors** to send multiple errors
 
 ```php
 use Overblog\GraphQLBundle\Error\UserError
@@ -589,17 +613,17 @@ class CharacterResolver
         $humans = StarWarsData::humans();
         
         $errors = [];
-        
+
         if (!isset($humans[$args['human_id']])) {
             $errors[] = new UserError(sprintf('Could not find Human#%d', $args['human_id']));
         }
-        
+
         $droids = StarWarsData::droids();
-        
+
         if (!isset($droids[$args['droid_id']])) {
             $errors[] = sprintf('Could not find Droid#%d', $args['droid_id']);
         }
-        
+
         if (!empty($errors)) {
             throw new UserErrors($errors);
         }

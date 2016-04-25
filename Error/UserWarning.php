@@ -12,8 +12,8 @@
 namespace Overblog\GraphQLBundle\Error;
 
 /**
- * Class UserError.
+ * Class UserWarning.
  */
-class UserError extends UserFacingError
+class UserWarning extends UserFacingError
 {
 }

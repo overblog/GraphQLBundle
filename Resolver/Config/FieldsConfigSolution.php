@@ -14,7 +14,7 @@ namespace Overblog\GraphQLBundle\Resolver\Config;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
-use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
@@ -245,7 +245,7 @@ class FieldsConfigSolution extends AbstractConfigSolution
             }
 
             if ($throwException && !$access) {
-                throw new UserError('Access denied to this field.');
+                throw new UserWarning('Access denied to this field.');
             }
 
             return $access;
