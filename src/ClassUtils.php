@@ -13,6 +13,9 @@ namespace Overblog\GraphQLGenerator;
 
 abstract class ClassUtils
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }
@@ -28,12 +31,17 @@ abstract class ClassUtils
     {
         if (null === $callback) {
             $callback = function ($matches) {
-                return static::shortenClassName($matches[2]);
+                return static::shortenClassName($matches[1]);
             };
         }
 
-        $codeParsed = preg_replace_callback('@((?:\\{1,2}\w+|\w+\\{1,2})(?:\w+\\{0,2})+)@', $callback, $code);
+        $codeParsed = preg_replace_callback('@((?:\\\\{1,2}\w+|\w+\\\\{1,2})(?:\w+\\\\{0,2})+)@', $callback, $code);
 
         return $codeParsed;
+    }
+
+    public static function cleanUseStatement($use)
+    {
+        return ltrim($use, '\\');
     }
 }

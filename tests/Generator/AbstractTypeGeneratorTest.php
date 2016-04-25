@@ -17,7 +17,6 @@ use Overblog\GraphQLGenerator\Tests\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\ProcessBuilder;
 
 abstract class AbstractTypeGeneratorTest extends TestCase
 {
@@ -46,7 +45,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
-    protected function generateSchema(array $typeConfigs = null, $tmpDir = null, $regenerateIfExists = true)
+    protected function generateClasses(array $typeConfigs = null, $tmpDir = null, $regenerateIfExists = true)
     {
         if (null === $typeConfigs) {
             $typeConfigs = $this->typeConfigs;
@@ -88,5 +87,10 @@ abstract class AbstractTypeGeneratorTest extends TestCase
             },
             $configs
         );
+    }
+
+    protected function getType($type)
+    {
+        return call_user_func(["\\".$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
     }
 }

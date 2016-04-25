@@ -11,8 +11,6 @@
 
 namespace Overblog\GraphQLGenerator\Generator;
 
-use Overblog\GraphQLGenerator\TypeUtils;
-
 class TypeGenerator extends AbstractTypeGenerator
 {
     protected function generateOutputFields(array $config)

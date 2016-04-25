@@ -1,0 +1,3 @@
+function (%s) {
+<spaces><spaces>return %s;
+<spaces>}

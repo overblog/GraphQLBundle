@@ -22,6 +22,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             'php-cs-fixer',
             'fix',
             '--dry-run',
+            '--diff',
             $pathToCode,
         ]);
 

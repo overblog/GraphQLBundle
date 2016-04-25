@@ -30,7 +30,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
 
         $this->classLoader->setPsr4('GraphQL\\Tests\\', __DIR__ . '/../vendor/webonyx/graphql-php/tests');
 
-        $this->generateSchema();
+        $this->generateClasses();
 
         Config::enableValidation();
 
@@ -38,11 +38,6 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         Resolver::setDroidType($this->getType('Droid'));
 
         $this->schema = new Schema($this->getType('Query'));
-    }
-
-    protected function getType($type)
-    {
-        return call_user_func(["\\".$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
     }
 
     /**

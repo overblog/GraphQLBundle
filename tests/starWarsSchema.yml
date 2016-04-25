@@ -11,7 +11,7 @@
 Character:
     type: interface
     config:
-        description: "A character in the Star Wars Trilogy"
+        description: "@='A character' ~ ' in the Star Wars Trilogy'"
         fields:
             id:
                 type: "String!"
@@ -153,15 +153,15 @@ Query:
                         type: "String!"
                 resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getDroid"]
 
-#HumanAndDroid:
-#    type: union
-#    config:
-#        types: [Human, Droid]
-#        description: Human and Droid
-#
-#HeroInput:
-#    type: input-object
-#    config:
-#        fields:
-#            name:
-#                type: "Episode!"
+HumanAndDroid:
+    type: union
+    config:
+        types: [Human, Droid]
+        description: Human and Droid
+
+HeroInput:
+    type: input-object
+    config:
+        fields:
+            name:
+                type: "Episode!"

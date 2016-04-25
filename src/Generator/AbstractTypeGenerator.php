@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLGenerator\Generator;
 
+use GraphQL\Type\Definition\Type;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -28,11 +29,11 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 
 
     private static $internalTypes = [
-        'String' => '\\GraphQL\\Type\\Definition\\Type::string()',
-        'Int' => '\\GraphQL\\Type\\Definition\\Type::int()',
-        'Float' => '\\GraphQL\\Type\\Definition\\Type::float()',
-        'Boolean' => '\\GraphQL\\Type\\Definition\\Type::boolean()',
-        'Id' => '\\GraphQL\\Type\\Definition\\Type::id()',
+        Type::STRING => '\\GraphQL\\Type\\Definition\\Type::string()',
+        Type::INT => '\\GraphQL\\Type\\Definition\\Type::int()',
+        Type::FLOAT => '\\GraphQL\\Type\\Definition\\Type::float()',
+        Type::BOOLEAN => '\\GraphQL\\Type\\Definition\\Type::boolean()',
+        Type::ID => '\\GraphQL\\Type\\Definition\\Type::id()',
     ];
 
     private static $wrappedTypes = [
@@ -76,16 +77,12 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 
     public static function getInternalTypes($name)
     {
-        if (isset(self::$internalTypes[$name])) {
-            return self::$internalTypes[$name];
-        }
+        return isset(self::$internalTypes[$name]) ? self::$internalTypes[$name] : null;
     }
 
     public static function getWrappedType($name)
     {
-        if (isset(self::$wrappedTypes[$name])) {
-            return self::$wrappedTypes[$name];
-        }
+        return isset(self::$wrappedTypes[$name]) ? self::$wrappedTypes[$name] : null;
     }
     
     protected function generateParentClassName(array $config)
@@ -118,24 +115,32 @@ EOF;
             return $default;
         }
 
-        $value = $values[$key];
-
-        if (is_callable($value)) {
-            $func = $values[$key];
-            $value = call_user_func($func);
-        }
-
-        $code = $default;
-
-        if (is_array($value)) {
-            $code = str_replace('","', '", "', json_encode($value));
-        } elseif ($this->isExpression($value)) {
-            $code = $this->getExpressionLanguage()->compile($value[$key]);
-        } elseif (!is_object($value)) {
-            $code = var_export($value, true);
-        }
+        $code = $this->varExport($values[$key], $default);
 
         return $code;
+    }
+
+    protected function varExport($var, $default = null)
+    {
+        switch (true) {
+            case is_array($var):
+                $indexed = array_keys($var) === range(0, count($var) - 1);
+                $r = [];
+                foreach ($var as $key => $value) {
+                    $r[] = ($indexed ? '' : $this->varExport($key, $default) . ' => ')
+                        . $this->varExport($value, $default);
+                }
+                return "[" . implode(", ", $r)  . "]";
+
+            case $this->isExpression($var):
+                return $code = $this->getExpressionLanguage()->compile($var);
+
+            case is_object($var):
+                return $default;
+
+            default:
+                return var_export($var, true);
+        }
     }
 
     protected function processFromArray(array $values, $templatePrefix)
@@ -144,7 +149,7 @@ EOF;
 
         foreach ($values as $name => $value) {
             $value['name'] = isset($value['name']) ? $value['name'] : $name;
-            $code .= "\n" . $this->processTemplatePlaceHoldersReplacements($templatePrefix . 'Config.php.skeleton', $value);
+            $code .= "\n" . $this->processTemplatePlaceHoldersReplacements($templatePrefix . 'Config', $value);
         }
 
         return '[' . $this->prefixCodeWithSpaces($code, 2) . "\n<spaces>]";
@@ -156,14 +161,14 @@ EOF;
             return $default;
         }
 
-        $code = 'function (%s) { return %s; }';
+        $code = $this->getSkeletonContent('ResolverClosure');
 
         if (is_callable($value[$key])) {
             $func = $value[$key];
             $code = sprintf($code, null, 'call_user_func_array(%s, func_get_args())');
 
             if (is_array($func) && isset($func[0]) && is_string($func[0])) {
-                $code = sprintf($code, str_replace('","', '", "', json_encode($func)));
+                $code = sprintf($code, $this->varExport($func));
 
                 return $code;
             } elseif (is_string($func)) {
@@ -183,7 +188,7 @@ EOF;
 
             return $code;
         } elseif (!is_object($value[$key])) {
-            $code = sprintf($code, null, $this->varExportFromArrayValue($value, $key));
+            $code = sprintf($code, null, $this->varExportFromArrayValue($value, $key, $default));
 
             return $code;
         }
@@ -193,14 +198,14 @@ EOF;
 
     protected function generateConfig(array $config)
     {
-        $template = str_replace(' ', '', ucwords(str_replace('-', ' ', $config['type']))) . 'Config.php.skeleton';
+        $template = str_replace(' ', '', ucwords(str_replace('-', ' ', $config['type']))) . 'Config';
         $code = $this->processTemplatePlaceHoldersReplacements($template, $config['config']);
         $code = ltrim($this->prefixCodeWithSpaces($code, 2));
 
-        return $this->shortenClassFromCode($code);
+        return $code;
     }
 
-    public function typeAlias2String($alias)
+    protected function typeAlias2String($alias)
     {
         // Non-Null
         if ('!' === $alias[strlen($alias) - 1]) {
@@ -211,7 +216,7 @@ EOF;
             $got = $alias[strlen($alias) - 1];
             if (']' !== $got) {
                 throw new \RuntimeException(
-                    sprintf('Malformed ListOf wrapper type %s expected "]" but got %.', json_encode($alias), json_encode($got))
+                    sprintf('Malformed ListOf wrapper type %s expected "]" but got %s.', json_encode($alias), json_encode($got))
                 );
             }
 
@@ -222,15 +227,16 @@ EOF;
             return $this->shortenClassName($systemType);
         }
 
+        return $this->resolveTypeCode($alias);
+    }
+
+    protected function resolveTypeCode($alias)
+    {
         return $alias . 'Type::getInstance()';
     }
 
-    public function types2String(array $types)
+    protected function types2String(array $types)
     {
-        if (empty($types)) {
-            return '[]';
-        }
-
         $types = array_map(__CLASS__ . '::typeAlias2String', $types);
 
         return '[' . implode(', ', $types) . ']';
@@ -274,7 +280,8 @@ EOF;
     public function generateClass(array $config, $outputDirectory, $regenerateIfExists = false)
     {
         static $treatLater = ['useStatement', 'spaces'];
-        $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem.php.skeleton', $config, $treatLater);
+        $this->clearInternalUseStatements();
+        $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, $treatLater);
         $code = $this->processPlaceHoldersReplacements($treatLater, $code, $config) . "\n";
 
         $className = $this->generateClassName($config);
