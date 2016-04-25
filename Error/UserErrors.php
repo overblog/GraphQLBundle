@@ -14,7 +14,7 @@ namespace Overblog\GraphQLBundle\Error;
 /**
  * Class UserErrors.
  */
-class UserErrors extends \Exception
+class UserErrors extends UserFacingError
 {
     /**
      * @var UserError[]

@@ -57,10 +57,12 @@ EOF;
                     'name' => null,
                 ],
             ],
-            'errors' => [
-                [
-                    'message' => 'Access denied to this field.',
-                    'locations' => [['line' => 1, 'column' => 24]],
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [['line' => 1, 'column' => 24]],
+                    ],
                 ],
             ],
         ];
@@ -130,10 +132,12 @@ EOF;
                     'isEnabled' => null,
                 ],
             ],
-            'errors' => [
-                [
-                    'message' => 'Access denied to this field.',
-                    'locations' => [['line' => 1, 'column' => 24]],
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [['line' => 1, 'column' => 24]],
+                    ],
                 ],
             ],
         ];
@@ -167,13 +171,15 @@ EOF;
                     'clientMutationId' => 'bac',
                 ],
             ],
-            'errors' => [
-                [
-                    'message' => 'Access denied to this field.',
-                    'locations' => [
-                        [
-                            'line' => 3,
-                            'column' => 5,
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [
+                            [
+                                'line' => 3,
+                                'column' => 5,
+                            ],
                         ],
                     ],
                 ],
@@ -190,13 +196,15 @@ EOF;
             'data' => [
                 'simpleMutationWithThunkFields' => null,
             ],
-            'errors' => [
-                [
-                    'message' => 'Access denied to this field.',
-                    'locations' => [
-                        [
-                            'line' => 2,
-                            'column' => 3,
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [
+                            [
+                                'line' => 2,
+                                'column' => 3,
+                            ],
                         ],
                     ],
                 ],

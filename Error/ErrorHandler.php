@@ -39,21 +39,43 @@ class ErrorHandler
      * @param Error[] $errors
      * @param bool    $throwRawException
      *
-     * @return Error[]
+     * @return array
      *
      * @throws \Exception
      */
-    protected function treatErrors(array $errors, $throwRawException)
+    protected function treatExceptions(array $errors, $throwRawException)
     {
-        $treatedErrors = [];
+        $treatedExceptions = [
+            'errors' => [],
+            'extensions' => [
+                'warnings' => [],
+            ],
+        ];
 
         /** @var Error $error */
         foreach ($errors as $error) {
             $rawException = $error->getPrevious();
 
             // Parse error or user error
-            if (null === $rawException || $rawException instanceof UserError) {
-                $treatedErrors[] = $error;
+            if (null === $rawException) {
+                $treatedExceptions['errors'][] = $error;
+                continue;
+            }
+
+            if ($rawException instanceof UserError) {
+                $treatedExceptions['errors'][] = $error;
+                if ($rawException->getPrevious()) {
+                    $this->logException($rawException->getPrevious());
+                }
+                continue;
+            }
+
+            // user warnings
+            if ($rawException instanceof UserWarning) {
+                $treatedExceptions['extensions']['warnings'][] = $error;
+                if ($rawException->getPrevious()) {
+                    $this->logException($rawException->getPrevious());
+                }
                 continue;
             }
 
@@ -61,7 +83,7 @@ class ErrorHandler
             if ($rawException instanceof UserErrors) {
                 $rawExceptions = $rawException;
                 foreach ($rawExceptions->getErrors() as $rawException) {
-                    $treatedErrors[] = Error::createLocatedError($rawException, $error->nodes);
+                    $treatedExceptions['errors'][] = Error::createLocatedError($rawException, $error->nodes);
                 }
                 continue;
             }
@@ -73,7 +95,7 @@ class ErrorHandler
 
             $this->logException($rawException);
 
-            $treatedErrors[] = new Error(
+            $treatedExceptions['errors'][] = new Error(
                 $this->internalErrorMessage,
                 $error->nodes,
                 $rawException,
@@ -82,13 +104,13 @@ class ErrorHandler
             );
         }
 
-        return $treatedErrors;
+        return $treatedExceptions;
     }
 
     public function logException(\Exception $exception)
     {
         $message = sprintf(
-            '%s: %s[%d] (uncaught exception) at %s line %s.',
+            '%s: %s[%d] (caught exception) at %s line %s.',
             get_class($exception),
             $exception->getMessage(),
             $exception->getCode(),
@@ -101,6 +123,10 @@ class ErrorHandler
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
     {
-        $executionResult->errors = $this->treatErrors($executionResult->errors, $throwRawException);
+        $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
+        $executionResult->errors = $exceptions['errors'];
+        if (!empty($exceptions['extensions']['warnings'])) {
+            $executionResult->extensions['warnings'] = array_map(['GraphQL\Error', 'formatError'], $exceptions['extensions']['warnings']);
+        }
     }
 }

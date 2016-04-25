@@ -28,7 +28,7 @@ class FieldsConfigSolutionTest extends AbstractConfigSolutionTest
     }
 
     /**
-     * @expectedException \Overblog\GraphQLBundle\Error\UserError
+     * @expectedException \Overblog\GraphQLBundle\Error\UserWarning
      * @expectedExceptionMessage Access denied to this field
      */
     public function testResolveAccessAndWrapResolveCallbackWithScalarValueAndAccessDenied()
@@ -38,7 +38,7 @@ class FieldsConfigSolutionTest extends AbstractConfigSolutionTest
     }
 
     /**
-     * @expectedException \Overblog\GraphQLBundle\Error\UserError
+     * @expectedException \Overblog\GraphQLBundle\Error\UserWarning
      * @expectedExceptionMessage Access denied to this field
      */
     public function testResolveAccessAndWrapResolveCallbackWithScalarValueAndExpressionEvalThrowingException()
