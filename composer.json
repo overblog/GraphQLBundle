@@ -15,17 +15,17 @@
         "bin-dir": "bin"
     },
     "require": {
-        "php": "^5.4|~7.0",
-        "sllh/php-cs-fixer-styleci-bridge": "^1.5",
-        "webonyx/graphql-php": "^0.6.1"
+        "php": "^5.4|~7.0"
     },
     "require-dev": {
         "fabpot/php-cs-fixer": "^1.11",
         "phpunit/phpunit": "^4.1|^5.1",
-        "symfony/expression-language": "^3.0",
-        "symfony/filesystem": "^3.0",
-        "symfony/process": "^3.0",
-        "symfony/yaml": "^3.0"
+        "sllh/php-cs-fixer-styleci-bridge": "^1.5",
+        "symfony/expression-language": "^2.7|^3.0",
+        "symfony/filesystem": "^2.7|^3.0",
+        "symfony/process": "^2.7|^3.0",
+        "symfony/yaml": "^2.7|^3.0",
+        "webonyx/graphql-php": "0.6.2"
     },
     "autoload": {
         "psr-4": {

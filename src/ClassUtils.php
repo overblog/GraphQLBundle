@@ -40,7 +40,7 @@ abstract class ClassUtils
         return $codeParsed;
     }
 
-    public static function cleanUseStatement($use)
+    public static function cleanClasseName($use)
     {
         return ltrim($use, '\\');
     }
