@@ -1,6 +1,9 @@
 imports:
     - { resource: ../config.yml }
 
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\RelayGlobal\\__DEFINITIONS__"
+
 services:
     overblog_graphql.test.resolver.global:
         class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\GlobalResolver
@@ -16,4 +19,4 @@ overblog_graphql:
             types:
                 -
                     type: yml
-                    dir: %kernel.root_dir%/config/global/mapping
+                    dir: "%kernel.root_dir%/config/global/mapping"

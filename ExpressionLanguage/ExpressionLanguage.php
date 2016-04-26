@@ -14,7 +14,6 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
@@ -29,26 +28,14 @@ class ExpressionLanguage extends BaseExpressionLanguage
         parent::__construct($parser, $providers);
     }
 
-    public function evaluate($expression, $values = [])
+    public function compile($expression, $names = [])
     {
-        $this->addValues($values);
+        $names[] = 'container';
+        $names[] = 'request';
+        $names[] = 'security.token_storage';
+        $names[] = 'token';
+        $names[] = 'user';
 
-        return parent::evaluate($expression, $values);
-    }
-
-    private function addValues(&$values)
-    {
-        $values['container'] = $this->container;
-
-        if ($this->container->has('request_stack')) {
-            $values['request'] = $this->container->get('request_stack')->getCurrentRequest();
-        }
-
-        if ($this->container->has('security.token_storage')) {
-            $values['token'] = $this->container->get('security.token_storage')->getToken();
-            if ($values['token'] instanceof TokenInterface) {
-                $values['user'] = $values['token']->getUser();
-            }
-        }
+        return parent::compile($expression, $names);
     }
 }

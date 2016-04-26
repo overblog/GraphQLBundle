@@ -1,0 +1,20 @@
+services:
+    overblog_graphql.resolver.relay_mutation_field:
+        class: Overblog\GraphQLBundle\Relay\Mutation\MutationFieldResolver
+        tags:
+            - { name: overblog_graphql.resolver, alias: "relay_mutation_field", method: "resolve" }
+
+    overblog_graphql.resolver.relay_globalid_field:
+        class: Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldResolver
+        tags:
+            - { name: overblog_graphql.resolver, alias: "relay_globalid_field", method: "resolve" }
+
+    overblog_graphql.resolver.relay_node_field:
+        class: Overblog\GraphQLBundle\Relay\Node\NodeFieldResolver
+        tags:
+            - { name: overblog_graphql.resolver, alias: "relay_node_field", method: "resolve" }
+
+    overblog_graphql.resolver.relay_plural_identifying_field:
+        class: Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldResolver
+        tags:
+            - { name: overblog_graphql.resolver, alias: "relay_plural_identifying_field", method: "resolve" }

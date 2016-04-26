@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -24,11 +25,9 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
-        $loader->load('graphql_fields.yml');
-        $loader->load('graphql_args.yml');
+        $loader->load('graphql_resolvers.yml');
 
-        $configuration = $this->getConfiguration($configs, $container);
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->treatConfigs($configs, $container);
 
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
@@ -36,18 +35,45 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setErrorHandlerArguments($config, $container);
         $this->setGraphiQLTemplate($config, $container);
         $this->setSecurity($config, $container);
+        $this->setConfigBuilders($config);
+
+        $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 
     public function prepend(ContainerBuilder $container)
     {
         $configs = $container->getExtensionConfig($this->getAlias());
         $configs = $container->getParameterBag()->resolveValue($configs);
-        $configuration = $this->getConfiguration($configs, $container);
-        $config = $this->processConfiguration($configuration, $configs);
+        $config = $this->treatConfigs($configs, $container, true);
 
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setConfigBuilders(array $config)
+    {
+        foreach (['args', 'field'] as $category) {
+            if (!empty($config['definitions']['builders'][$category])) {
+                $method = 'add'.ucfirst($category).'BuilderClass';
+
+                foreach ($config['definitions']['builders'][$category] as $params) {
+                    TypeWithOutputFieldsDefinition::$method($params['alias'], $params['class']);
+                }
+            }
+        }
+    }
+
+    private function treatConfigs(array $configs, ContainerBuilder $container, $forceReload = false)
+    {
+        static $config = null;
+
+        if ($forceReload || null === $config) {
+            $configuration = $this->getConfiguration($configs, $container);
+            $config = $this->processConfiguration($configuration, $configs);
+        }
+
+        return $config;
     }
 
     private function setSecurity(array $config, ContainerBuilder $container)
@@ -67,7 +93,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             $container
                 ->getDefinition($this->getAlias().'.error_handler')
                 ->replaceArgument(0, $config['definitions']['internal_error_message'])
-                ->setPublic(true)
             ;
         }
     }

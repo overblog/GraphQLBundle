@@ -24,11 +24,10 @@ class ConnectionTest extends TestCase
     {
         parent::setUp();
 
-        static::$kernel = static::createKernel(['test_case' => 'connection']);
-        static::$kernel->boot();
+        static::createAndBootKernel(['test_case' => 'connection']);
     }
 
-    public function testIncludsesConnectionAndEdgeFields()
+    public function testIncludesConnectionAndEdgeFields()
     {
         $query = <<<EOF
 query FriendsQuery {

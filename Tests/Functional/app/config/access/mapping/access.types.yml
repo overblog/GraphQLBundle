@@ -1,6 +1,7 @@
 RootQuery:
     type: object
     config:
+        fieldsDefaultAccess: true
         fields:
             user:
                 type: User
@@ -11,15 +12,22 @@ Mutation:
     config:
         fields:
             user:
-                type: User
+                type: Human
                 resolve: '@=resolver("query")'
+
+Human:
+    type: interface
+    config:
+        fields:
+            name:
+                type: String
 
 User:
     type: object
     config:
+        fieldsDefaultAccess: "@=isFullyAuthenticated()"
         fields:
             name:
-                access: "@=isFullyAuthenticated()"
                 type: String
             roles:
                 type: '[String]'
@@ -27,13 +35,18 @@ User:
                 resolve: ['ROLE_USER']
             isEnabled:
                 type: Boolean
-                access: "@=wrong expression function"
+                access: "@=service('fake').fake()"
                 resolve: true
             friends:
                 access: "@=object === 1"
                 type: friendConnection
                 argsBuilder: ConnectionArgs
                 resolve: '@=resolver("friends", [value, args])'
+            forbidden:
+                access: false
+                type: String!
+        interfaces: [Human]
+        isTypeOf: true
 
 friendConnection:
     type: relay-connection

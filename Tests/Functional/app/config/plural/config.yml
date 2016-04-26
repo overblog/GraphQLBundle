@@ -1,6 +1,9 @@
 imports:
     - { resource: ../config.yml }
 
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Plural\\__DEFINITIONS__"
+
 services:
     overblog_graphql.test.resolver.plural:
         class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\PluralResolver
@@ -16,4 +19,4 @@ overblog_graphql:
             types:
                 -
                     type: xml
-                    dir: %kernel.root_dir%/config/plural/mapping
+                    dir: "%kernel.root_dir%/config/plural/mapping"

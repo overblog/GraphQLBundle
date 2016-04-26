@@ -106,6 +106,38 @@ EOF;
         $this->assertResponse($this->userRolesQuery, $expected, static::USER_ADMIN);
     }
 
+    public function testUserForbiddenField()
+    {
+        $expected = [
+            'data' => [
+                'user' => null,
+            ],
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [
+                            [
+                                'line' => 3,
+                                'column' => 5,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $query = <<<EOF
+query MyQuery {
+  user {
+    forbidden
+  }
+}
+EOF;
+
+        $this->assertResponse($query, $expected, static::USER_ADMIN);
+    }
+
     public function testUserAccessToUserFriends()
     {
         $expected = [

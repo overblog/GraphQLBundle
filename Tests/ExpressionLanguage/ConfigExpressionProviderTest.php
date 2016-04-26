@@ -35,33 +35,33 @@ class ConfigExpressionProviderTest extends \PHPUnit_Framework_TestCase
         $object = new \stdClass();
         $container = $this->getDIContainerMock(['toto' => $object]);
         $this->expressionLanguage->setContainer($container);
-        $this->assertEquals($object, $this->expressionLanguage->evaluate('service("toto")'));
+        $this->assertEquals($object, eval('return '.$this->expressionLanguage->compile('service("toto")').';'));
     }
 
     public function testParameter()
     {
         $container = $this->getDIContainerMock([], ['test' => 5]);
         $this->expressionLanguage->setContainer($container);
-        $this->assertEquals(5, $this->expressionLanguage->evaluate('parameter("test")'));
+        $this->assertEquals(5, eval('return '.$this->expressionLanguage->compile('parameter("test")').';'));
     }
 
     public function testIsTypeOf()
     {
-        $this->assertTrue($this->expressionLanguage->evaluate(sprintf('isTypeOf("%s")', 'stdClass'), ['value' => new \stdClass()]));
+        $this->assertTrue(eval('$value = new \stdClass(); return '.$this->expressionLanguage->compile(sprintf('isTypeOf("%s")', 'stdClass'), ['value']).';'));
     }
 
     public function testNewObject()
     {
-        $this->assertInstanceOf('stdClass', $this->expressionLanguage->evaluate(sprintf('newObject("%s")', 'stdClass')));
+        $this->assertInstanceOf('stdClass', eval('return '.$this->expressionLanguage->compile(sprintf('newObject("%s")', 'stdClass')).';'));
     }
 
     public function testFromGlobalId()
     {
-        $this->assertEquals(['type' => 'User', 'id' => 15], $this->expressionLanguage->evaluate('fromGlobalId("VXNlcjoxNQ==")'));
+        $this->assertEquals(['type' => 'User', 'id' => 15], eval('return '.$this->expressionLanguage->compile('fromGlobalId("VXNlcjoxNQ==")').';'));
     }
 
     public function testGlobalId()
     {
-        $this->assertEquals('VXNlcjoxNQ==', $this->expressionLanguage->evaluate('globalId(15, "User")'));
+        $this->assertEquals('VXNlcjoxNQ==', eval('return '.$this->expressionLanguage->compile('globalId(15, "User")').';'));
     }
 }

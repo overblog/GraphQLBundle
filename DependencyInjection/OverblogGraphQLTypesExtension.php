@@ -14,9 +14,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Config\Util\XmlUtils;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -32,20 +30,7 @@ class OverblogGraphQLTypesExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $builderId = $this->getAliasPrefix().'.type_builder';
-
-        foreach ($config as $name => $options) {
-            $customTypeId = sprintf('%s.definition.custom_%s_type', $this->getAliasPrefix(), $container->underscore($name));
-
-            $options['config']['name'] = $name;
-
-            $container
-                ->setDefinition($customTypeId, new Definition('GraphQL\\Type\\Definition\\Type'))
-                ->setFactory([new Reference($builderId), 'create'])
-                ->setArguments([$options['type'], $options['config']])
-                ->addTag($this->getAliasPrefix().'.type', ['alias' => $name])
-            ;
-        }
+        $container->setParameter('overblog_graphql_types.config', $config);
     }
 
     public function containerPrependExtensionConfig(array $config, ContainerBuilder $container)
@@ -87,9 +72,6 @@ class OverblogGraphQLTypesExtension extends Extension
                     continue;
                 }
                 $values = XmlUtils::convertDomElementToArray($node);
-                if (!is_array($values)) {
-                    continue;
-                }
                 $typesConfig = array_merge($typesConfig, $values);
             }
             $container->addResource(new FileResource($file->getRealPath()));

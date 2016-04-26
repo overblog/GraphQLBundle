@@ -2,6 +2,9 @@ imports:
     - { resource: ../config.yml }
     - { resource: ../connection/services.yml }
 
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
+
 overblog_graphql:
     security:
         query_max_complexity: 10
@@ -13,4 +16,4 @@ overblog_graphql:
             types:
                 -
                     type: yml
-                    dir: %kernel.root_dir%/config/queryComplexity/mapping
+                    dir: "%kernel.root_dir%/config/queryComplexity/mapping"

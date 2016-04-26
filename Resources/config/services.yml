@@ -1,26 +1,6 @@
 parameters:
     overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
-
-    #todo use tagged services
-    overblog_graphql.configs_mapping:
-        fields: {id: "overblog_graphql.fields_config_solution", method: "solve"}
-        isTypeOf: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        interfaces: {id: "overblog_graphql.type_config_solution", method: "solveInterfaces"}
-        types: {id: "overblog_graphql.type_config_solution", method: "solveTypes"}
-        values: {id: "overblog_graphql.values_config_solution", method: "solve"}
-        resolveType: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        resolveCursor: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        resolveNode: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        nodeType: {id: "overblog_graphql.type_config_solution", method: "solveTypeCallback"}
-        connectionFields: {id: "overblog_graphql.fields_config_solution", method: "solve"}
-        edgeFields: {id: "overblog_graphql.fields_config_solution", method: "solve"}
-        mutateAndGetPayload: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        idFetcher: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
-        nodeInterfaceType: {id: "overblog_graphql.type_config_solution", method: "solveTypeCallback"}
-        inputType: {id: "overblog_graphql.type_config_solution", method: "solveTypeCallback"}
-        outputType: {id: "overblog_graphql.type_config_solution", method: "solveTypeCallback"}
-        payloadType: {id: "overblog_graphql.type_config_solution", method: "solveTypeCallback"}
-        resolveSingleInput: {id: "overblog_graphql.resolve_callback_config_solution", method: "solve"}
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
 
 services:
     overblog_graphql.error_handler:
@@ -35,11 +15,11 @@ services:
         arguments:
             - "@overblog_graphql.schema"
             - "@event_dispatcher"
-            - %kernel.debug%
+            - "%kernel.debug%"
             - "@overblog_graphql.error_handler"
         calls:
-            - ["setMaxQueryComplexity", [%overblog_graphql.query_max_complexity%]]
-            - ["setMaxQueryDepth", [%overblog_graphql.query_max_depth%]]
+            - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
+            - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
 
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser
@@ -63,33 +43,11 @@ services:
             - "@overblog_graphql.type_resolver"
             - false
 
-    overblog_graphql.type_builder:
-        class: Overblog\GraphQLBundle\Definition\Builder\TypeBuilder
-        arguments:
-            - "@overblog_graphql.config_resolver"
-
-    overblog_graphql.config_resolver:
-        class: Overblog\GraphQLBundle\Resolver\ConfigResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureConfig"]
-        calls:
-            - ["setDefaultResolveFn", [%overblog_graphql.default_resolver%]]
-
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         configurator: ["@overblog_graphql.resolver_configurator", "configureType"]
         arguments:
             -
-        calls:
-            - ["setContainer", ["@service_container"]]
-            - ["setMapping", [%overblog_graphql.types_mapping%]]
-
-    overblog_graphql.field_resolver:
-        class: Overblog\GraphQLBundle\Resolver\FieldResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureField"]
-
-    overblog_graphql.arg_resolver:
-        class: Overblog\GraphQLBundle\Resolver\ArgResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureArg"]
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
@@ -99,16 +57,16 @@ services:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
         configurator: ["@overblog_graphql.resolver_configurator", "configureMutation"]
 
+    overblog_graphql.access_resolver:
+        class: Overblog\GraphQLBundle\Resolver\AccessResolver
+
     overblog_graphql.resolver_configurator:
         class: Overblog\GraphQLBundle\DependencyInjection\Configurator\ResolverConfigurator
         calls:
             - ["setContainer", ["@service_container"]]
-            - ["addMapping", ["type", %overblog_graphql.types_mapping%]]
-            - ["addMapping", ["field", %overblog_graphql.fields_mapping%]]
-            - ["addMapping", ["arg", %overblog_graphql.args_mapping%]]
-            - ["addMapping", ["resolver", %overblog_graphql.resolvers_mapping%]]
-            - ["addMapping", ["mutation", %overblog_graphql.mutations_mapping%]]
-            - ["addMapping", ["config", %overblog_graphql.configs_mapping%]]
+            - ["addMapping", ["type", "%overblog_graphql.types_mapping%"]]
+            - ["addMapping", ["resolver", "%overblog_graphql.resolvers_mapping%"]]
+            - ["addMapping", ["mutation", "%overblog_graphql.mutations_mapping%"]]
 
     overblog_graphql.cache_expression_language_parser.default:
         class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache
@@ -123,39 +81,29 @@ services:
         calls:
             - ["setContainer", ["@service_container"]]
 
+    overblog_graphql.cache_compiler:
+        class: Overblog\GraphQLBundle\Generator\TypeGenerator
+        arguments:
+            - "%overblog_graphql.type_class_namespace%"
+            - ["%overblog_graphql.resources_dir%/skeleton"]
+            - "%kernel.cache_dir%/overblog/graph-bundle/__definitions__"
+            - "%overblog_graphql.default_resolver%"
+        calls:
+            - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
+            - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
+            - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
+
+    overblog_graphql.event_listener.classloader_listener:
+        arguments:
+            - "@overblog_graphql.cache_compiler"
+        class: Overblog\GraphQLBundle\EventListener\ClassLoaderListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: load, priority: 255 }
+            - { name: kernel.event_listener, event: console.command, method: load, priority: 255 }
+
     overblog_graphql.event_listener.request_file_listener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
         arguments:
             - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
-
-    #ConfigSolution
-    overblog_graphql.abstract_config_solution:
-        class: Overblog\GraphQLBundle\Resolver\Config\AbstractConfigSolution
-        abstract: true
-        calls:
-            - ["setArgResolver", ["@overblog_graphql.arg_resolver"]]
-            - ["setTypeResolver", ["@overblog_graphql.type_resolver"]]
-            - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
-            - ["setFieldResolver", ["@overblog_graphql.field_resolver"]]
-            - ["setConfigResolver", ["@overblog_graphql.config_resolver"]]
-
-    overblog_graphql.fields_config_solution:
-        class: Overblog\GraphQLBundle\Resolver\Config\FieldsConfigSolution
-        parent: overblog_graphql.abstract_config_solution
-        arguments:
-            - "@overblog_graphql.type_config_solution"
-            - "@overblog_graphql.resolve_callback_config_solution"
-
-    overblog_graphql.type_config_solution:
-        class: Overblog\GraphQLBundle\Resolver\Config\TypeConfigSolution
-        parent: overblog_graphql.abstract_config_solution
-
-    overblog_graphql.resolve_callback_config_solution:
-        class: Overblog\GraphQLBundle\Resolver\Config\ResolveCallbackConfigSolution
-        parent: overblog_graphql.abstract_config_solution
-
-    overblog_graphql.values_config_solution:
-        class: Overblog\GraphQLBundle\Resolver\Config\ValuesConfigSolution
-        parent: overblog_graphql.abstract_config_solution

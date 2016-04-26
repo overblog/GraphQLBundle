@@ -5,6 +5,8 @@ framework:
         resource: "%kernel.root_dir%/config/routing.yml"
     templating:
         engines: ['twig']
+    profiler:
+        enabled: false
 
 overblog_graphql:
     definitions:

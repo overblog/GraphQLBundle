@@ -12,6 +12,7 @@ User:
         fields:
             name:
                 type: String
+                description: "the user name"
             friends:
                 type: friendConnection
                 argsBuilder: ConnectionArgs
