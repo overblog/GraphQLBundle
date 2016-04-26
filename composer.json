@@ -3,7 +3,7 @@
     "type": "library",
     "description": "GraphQL types generator",
     "keywords": ["GraphQL", "type", "generator"],
-    "licence": "MIT",
+    "license": "MIT",
     "authors": [
         {
             "name": "Overblog",
