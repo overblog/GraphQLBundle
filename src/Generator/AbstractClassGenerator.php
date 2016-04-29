@@ -34,7 +34,7 @@ abstract class AbstractClassGenerator
 
     private $implements = [];
 
-    private $skeletonDirs = null;
+    private $skeletonDirs = [];
 
     /**
      * Number of spaces to use for indention in generated code.
@@ -52,9 +52,9 @@ abstract class AbstractClassGenerator
 
     /**
      * @param string $classNamespace The namespace to use for the classes.
-     * @param string|null $skeletonDirs
+     * @param string[]|string $skeletonDirs
      */
-    public function __construct($classNamespace = null, $skeletonDirs = null)
+    public function __construct($classNamespace = null, $skeletonDirs = [])
     {
         $this->setClassNamespace($classNamespace);
         $this->setSkeletonDirs($skeletonDirs);
@@ -73,19 +73,60 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function setSkeletonDirs($skeletonDirs = null)
+    /**
+     * @param string[]|string $skeletonDirs
+     * @return $this
+     */
+    public function setSkeletonDirs($skeletonDirs)
     {
-        if (null === $skeletonDirs) {
-            $skeletonDirs = __DIR__ . '/../Resources/skeleton';
+        $this->skeletonDirs = [];
+
+        if (is_string($skeletonDirs)) {
+            $this->addSkeletonDir($skeletonDirs);
         } else {
-            if (!is_dir($skeletonDirs)) {
-                throw new \InvalidArgumentException(sprintf('Skeleton dir "%s" not found.', $skeletonDirs));
+            if (!is_array($skeletonDirs) && !$skeletonDirs instanceof \Traversable) {
+                throw new \InvalidArgumentException(
+                    sprintf('Skeleton dirs must be array or object implementing \Traversable interface, "%s" given.', gettype($skeletonDirs))
+                );
+            }
+
+            foreach ($skeletonDirs as $skeletonDir) {
+                $this->addSkeletonDir($skeletonDir);
             }
         }
-        $this->skeletonDirs = realpath($skeletonDirs);
 
         return $this;
     }
+
+    public function getSkeletonDirs($withDefault = true)
+    {
+        $skeletonDirs = $this->skeletonDirs ;
+
+        if ($withDefault) {
+            $skeletonDirs[] =  __DIR__ . '/../Resources/skeleton';
+        }
+
+        return $skeletonDirs;
+    }
+
+    public function addSkeletonDir($skeletonDir)
+    {
+        if (!is_string($skeletonDir) && !is_object($skeletonDir) && !is_callable($skeletonDir, '__toString')) {
+            throw new \InvalidArgumentException(
+                sprintf('Skeleton dir must be string or object implementing __toString, "%s" given.', gettype($skeletonDir))
+            );
+        }
+
+        $skeletonDir = (string) $skeletonDir;
+
+        if (!is_dir($skeletonDir)) {
+            throw new \InvalidArgumentException(sprintf('Skeleton dir "%s" not found.', $skeletonDir));
+        }
+        $this->skeletonDirs[] = realpath($skeletonDir);
+
+        return $this;
+    }
+
 
     /**
      * Sets the number of spaces the exported class should have.
@@ -153,21 +194,33 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function getSkeletonContent($skeleton)
+    public function getSkeletonContent($skeleton, $withDefault = true)
     {
-        $path = $this->skeletonDirs . '/' . $skeleton . static::SKELETON_FILE_PREFIX;
+        $skeletonDirs = $this->getSkeletonDirs($withDefault);
 
-        if (!isset(self::$templates[$path])) {
+        foreach ($skeletonDirs as $skeletonDir) {
+            $path = $skeletonDir . '/' . $skeleton . static::SKELETON_FILE_PREFIX;
+
             if (!file_exists($path)) {
-                throw new \InvalidArgumentException(sprintf('Template "%s" not found.', $path));
+                continue;
             }
 
-            $content = trim(file_get_contents($path));
+            if (!isset(self::$templates[$path])) {
+                $content = trim(file_get_contents($path));
 
-            self::$templates[$path] = $content;
+                self::$templates[$path] = $content;
+            }
+
+            return self::$templates[$path];
         }
 
-        return self::$templates[$path];
+        throw new \InvalidArgumentException(
+            sprintf(
+                'Skeleton "%s" could not be found in %s.',
+                $skeleton,
+                implode(', ', $skeletonDirs)
+            )
+        );
     }
 
     protected function addInternalUseStatement($use)

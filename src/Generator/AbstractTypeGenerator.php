@@ -49,10 +49,10 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
     private $expressionLanguage;
 
     /**
-     * @param string $classNamespace The namespace to use for the classes.
-     * @param string|null $skeletonDirs
+     * @param string           $classNamespace The namespace to use for the classes.
+     * @param string[]|string  $skeletonDirs
      */
-    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = null)
+    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [])
     {
         parent::__construct($classNamespace, $skeletonDirs);
     }

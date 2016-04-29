@@ -22,21 +22,31 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      */
     public function testWrongSetSkeletonDirs()
     {
-        $this->typeGenerator->setSkeletonDirs('fake');
+        $this->typeGenerator->setSkeletonDirs(['fake']);
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Skeleton dir "fake" not found.
+     * @expectedExceptionMessage Skeleton dir must be string or object implementing __toString, "array" given.
      */
-    public function testGoodSetSkeletonDirs()
+    public function testWrongAddSkeletonDir()
     {
-        $this->typeGenerator->setSkeletonDirs('fake');
+        $this->typeGenerator->addSkeletonDir([]);
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp  /Template ".*fake.php.skeleton" not found./
+     * @expectedExceptionMessage Skeleton dirs must be array or object implementing \Traversable interface, "object" given.
+     */
+    public function testWrongObjectSetSkeletonDir()
+    {
+        $this->typeGenerator->setSkeletonDirs(new \stdClass());
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp  /Skeleton "fake" could not be found in .*\/skeleton./
      */
     public function testWrongGetSkeletonDirs()
     {
