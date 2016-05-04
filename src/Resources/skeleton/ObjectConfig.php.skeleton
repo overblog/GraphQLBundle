@@ -2,7 +2,7 @@
 <spaces>'name' => <name>,
 <spaces>'description' => <description>,
 <spaces>'fields' => <outputFields>,
-<spaces>'interfaces' => function () { return <interfaces>; },
+<spaces>'interfaces' => <interfaces>,
 <spaces>'isTypeOf' => <isTypeOf>,
 <spaces>'resolveField' => <resolveField>,
 ]

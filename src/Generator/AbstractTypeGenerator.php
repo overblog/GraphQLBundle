@@ -161,7 +161,7 @@ EOF;
             return $default;
         }
 
-        $code = $this->getSkeletonContent('ResolverClosure');
+        $code = 'function (%s) <closureUseStatements>{ return %s; }';
 
         if (is_callable($value[$key])) {
             $func = $value[$key];
@@ -205,6 +205,11 @@ EOF;
         return $code;
     }
 
+    protected function generateClosureUseStatements(array $config)
+    {
+        return null;
+    }
+
     protected function typeAlias2String($alias)
     {
         // Non-Null
@@ -233,6 +238,17 @@ EOF;
     protected function resolveTypeCode($alias)
     {
         return $alias . 'Type::getInstance()';
+    }
+
+    protected function resolveTypesCode(array $values, $key)
+    {
+        if (isset($values[$key])) {
+            $types = sprintf('function () <closureUseStatements>{ return %s; }', $this->types2String($values[$key]));
+        } else {
+            $types = '[]';
+        }
+
+        return $types;
     }
 
     protected function types2String(array $types)
@@ -279,7 +295,7 @@ EOF;
 
     public function generateClass(array $config, $outputDirectory, $regenerateIfExists = false)
     {
-        static $treatLater = ['useStatement', 'spaces'];
+        static $treatLater = ['useStatement', 'spaces', 'closureUseStatements'];
         $this->clearInternalUseStatements();
         $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, $treatLater);
         $code = $this->processPlaceHoldersReplacements($treatLater, $code, $config) . "\n";

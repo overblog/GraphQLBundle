@@ -1,8 +1,6 @@
 [
 <spaces>'name' => <name>,
-<spaces>'type' => function () {
-<spaces><spaces>return <type>;
-<spaces>},
+<spaces>'type' => <type>,
 <spaces>'description' => <description>,
 <spaces>'defaultValue' => <defaultValue>,
 ],

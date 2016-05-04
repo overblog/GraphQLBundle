@@ -1,5 +1,5 @@
 <name> => [
-<spaces>'type' => function () { return <type>; },
+<spaces>'type' => <type>,
 <spaces>'defaultValue' => <defaultValue>,
 <spaces>'description' => <description>,
 ],

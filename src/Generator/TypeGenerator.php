@@ -60,17 +60,23 @@ class TypeGenerator extends AbstractTypeGenerator
 
     protected function generateType(array $value)
     {
-        return $this->typeAlias2String($value['type']);
+        if (isset($value['type'])) {
+            $type = sprintf('function () <closureUseStatements>{ return %s; }', $this->typeAlias2String($value['type']));
+        } else {
+            $type = 'null';
+        }
+
+        return $type;
     }
 
     protected function generateInterfaces(array $value)
     {
-        return isset($value['interfaces']) ? $this->types2String($value['interfaces']) : '[]';
+        return $this->resolveTypesCode($value, 'interfaces');
     }
 
     protected function generateTypes(array $value)
     {
-        return isset($value['types']) ? $this->types2String($value['types']) : '[]';
+        return $this->resolveTypesCode($value, 'types');
     }
 
     /**
