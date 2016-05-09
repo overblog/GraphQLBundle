@@ -84,7 +84,7 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
     {
         return isset(self::$wrappedTypes[$name]) ? self::$wrappedTypes[$name] : null;
     }
-    
+
     protected function generateParentClassName(array $config)
     {
         return $this->shortenClassName(self::$typeSystems[$config['type']]);
@@ -109,18 +109,18 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 EOF;
     }
 
-    protected function varExportFromArrayValue(array $values, $key, $default = 'null')
+    protected function varExportFromArrayValue(array $values, $key, $default = 'null', array $compilerNames = [])
     {
         if (!isset($values[$key])) {
             return $default;
         }
 
-        $code = $this->varExport($values[$key], $default);
+        $code = $this->varExport($values[$key], $default, $compilerNames);
 
         return $code;
     }
 
-    protected function varExport($var, $default = null)
+    protected function varExport($var, $default = null, array $compilerNames = [])
     {
         switch (true) {
             case is_array($var):
@@ -133,7 +133,7 @@ EOF;
                 return "[" . implode(", ", $r)  . "]";
 
             case $this->isExpression($var):
-                return $code = $this->getExpressionLanguage()->compile($var);
+                return $code = $this->getExpressionLanguage()->compile($var, $compilerNames);
 
             case is_object($var):
                 return $default;
@@ -155,7 +155,7 @@ EOF;
         return '[' . $this->prefixCodeWithSpaces($code, 2) . "\n<spaces>]";
     }
 
-    protected function callableCallbackFromArrayValue(array $value, $key, $argDefinitions = null, $default = 'null')
+    protected function callableCallbackFromArrayValue(array $value, $key, $argDefinitions = null, $default = 'null', array $compilerNames = null)
     {
         if (!isset($value[$key])) {
             return $default;
@@ -177,13 +177,14 @@ EOF;
                 return $code;
             }
         } elseif ($this->isExpression($value[$key])) {
-            preg_match_all('@\$([a-z_][a-z0-9_]+)@i', $argDefinitions, $matches);
-
-            $argNames = isset($matches[1]) ? $matches[1] : [];
+            if (null === $compilerNames) {
+                preg_match_all('@\$([a-z_][a-z0-9_]+)@i', $argDefinitions, $matches);
+                $compilerNames = isset($matches[1]) ? $matches[1] : [];
+            }
             $code = sprintf(
                 $code,
                 $this->shortenClassFromCode($argDefinitions),
-                $this->getExpressionLanguage()->compile($value[$key], $argNames)
+                $this->getExpressionLanguage()->compile($value[$key], $compilerNames)
             );
 
             return $code;

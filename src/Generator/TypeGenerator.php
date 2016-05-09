@@ -60,10 +60,10 @@ class TypeGenerator extends AbstractTypeGenerator
 
     protected function generateType(array $value)
     {
+        $type = 'null';
+
         if (isset($value['type'])) {
             $type = sprintf('function () <closureUseStatements>{ return %s; }', $this->typeAlias2String($value['type']));
-        } else {
-            $type = 'null';
         }
 
         return $type;
