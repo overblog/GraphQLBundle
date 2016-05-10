@@ -157,7 +157,7 @@ EOF;
 
     protected function callableCallbackFromArrayValue(array $value, $key, $argDefinitions = null, $default = 'null', array $compilerNames = null)
     {
-        if (!isset($value[$key])) {
+        if (!$this->arrayKeyExistsAndIsNotNull($value, $key)) {
             return $default;
         }
 
@@ -257,6 +257,11 @@ EOF;
         $types = array_map(__CLASS__ . '::typeAlias2String', $types);
 
         return '[' . implode(', ', $types) . ']';
+    }
+
+    protected function arrayKeyExistsAndIsNotNull(array $value, $key)
+    {
+        return array_key_exists($key, $value) && null !== $value[$key];
     }
 
     /**
