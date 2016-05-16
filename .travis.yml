@@ -1,10 +1,7 @@
 language: php
 
 php:
-    - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
+    - nightly
     - hhvm
 
 branches:
@@ -19,10 +16,16 @@ matrix:
           env: SYMFONY_VERSION=2.7.*
         - php: 5.5
           env: SYMFONY_VERSION=2.8.*
-        - php: 7.0
-          env: SYMFONY_VERSION=2.8.*
+        - php: 5.6
+          env: SYMFONY_VERSION=3.0.*
         - php: 7.0
           env: SYMFONY_VERSION=3.0.*
+        - php: 7.0
+          env: SYMFONY_VERSION='3.1.*@dev'
+
+allow_failures:
+    - php: nightly
+    - env: SYMFONY_VERSION='3.1.*@dev'
 
 cache:
     directories:
@@ -35,7 +38,7 @@ before_install:
 
 install: composer update --prefer-dist --no-interaction
 
-script: if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php -d xdebug.max_nesting_level=1000 vendor/bin/phpunit --debug --coverage-clover=coverage.clover; else vendor/bin/phpunit --debug; fi
+script: if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then phpunit -d xdebug.max_nesting_level=1000 --debug --coverage-clover=coverage.clover; else phpunit --debug; fi
 
 after_script:
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

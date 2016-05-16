@@ -855,10 +855,12 @@ Contribute
 
 Tests:
 
+Install [phpunit](https://phpunit.de/manual/current/en/installation.html).
+
 In the bundle directory:
 
 ```bash
-vendor/phpunit/phpunit/phpunit
+phpunit
 ```
 
 Fix PHP CS:
