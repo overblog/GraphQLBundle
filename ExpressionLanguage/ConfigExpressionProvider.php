@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
@@ -20,39 +20,122 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
     public function getFunctions()
     {
         return [
-            new ExpressionFunction('service', function () {}, function (array $variables, $value) {
-                return $variables['container']->get($value);
-            }),
+            new ExpressionFunction(
+                'service',
+                function ($value) {
+                    return sprintf('$container->get(%s)', $value);
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('parameter', function () {}, function (array $variables, $value) {
-                return $variables['container']->getParameter($value);
-            }),
+            new ExpressionFunction(
+                'parameter',
+                function ($value) {
+                    return sprintf('$container->getParameter(%s)', $value);
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('isTypeOf', function () {}, function (array $variables, $className) {
-                return $variables['value'] instanceof $className;
-            }),
+            new ExpressionFunction(
+                'isTypeOf',
+                function ($className) {
+                    return sprintf('($className = %s) && $value instanceof $className', $className);
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('resolver', function () {}, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graphql.resolver_resolver')->resolve([$alias, $args]);
-            }),
+            new ExpressionFunction(
+                'resolver',
+                function ($alias, $args = '[]') {
+                    return sprintf('$container->get(\'overblog_graphql.resolver_resolver\')->resolve([%s, %s])', $alias, $args);
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('mutation', function () {}, function (array $variables, $alias, array $args = []) {
-                return $variables['container']->get('overblog_graphql.mutation_resolver')->resolve([$alias, $args]);
-            }),
+            new ExpressionFunction(
+                'mutateAndGetPayloadCallback',
+                function ($mutateAndGetPayload) {
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code .= 'return '.$mutateAndGetPayload.'; }';
 
-            new ExpressionFunction('globalId', function () {}, function (array $variables, $id, $typeName = null) {
-                $type = !empty($typeName) ? $typeName : $variables['info']->parentType->name;
+                    return $code;
+                },
+                function () {}
+            ),
 
-                return GlobalId::toGlobalId($type, $id);
-            }),
+            new ExpressionFunction(
+                'mutateAndGetPayloadCallback',
+                function ($mutateAndGetPayload) {
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code .= 'return '.$mutateAndGetPayload.'; }';
 
-            new ExpressionFunction('fromGlobalId', function () {}, function (array $variables, $globalId) {
-                return GlobalId::fromGlobalId($globalId);
-            }),
+                    return $code;
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('newObject', function () {}, function (array $variables, $className, array $args = []) {
-                return (new \ReflectionClass($className))->newInstanceArgs($args);
-            }),
+            new ExpressionFunction(
+                'idFetcherCallback',
+                function ($idFetcher) {
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code .= 'return '.$idFetcher.'; }';
+
+                    return $code;
+                },
+                function () {}
+            ),
+
+            new ExpressionFunction(
+                'resolveSingleInputCallback',
+                function ($resolveSingleInput) {
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code .= 'return '.$resolveSingleInput.'; }';
+
+                    return $code;
+                },
+                function () {}
+            ),
+
+            new ExpressionFunction(
+                'mutation',
+                function ($alias, $args = '[]') {
+                    return sprintf('$container->get(\'overblog_graphql.mutation_resolver\')->resolve([%s, %s])', $alias, $args);
+                },
+                function () {}
+            ),
+
+            new ExpressionFunction(
+                'globalId',
+                function ($id, $typeName = null) {
+                    $typeNameEmpty = null === $typeName || '""' === $typeName || 'null' === $typeName || 'false' === $typeName;
+
+                    return sprintf(
+                        '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::toGlobalId(%s, %s)',
+                        sprintf($typeNameEmpty ? '$info->parentType->name' : '%s', $typeName),
+                        $id
+                    );
+                },
+                function () {}
+            ),
+
+            new ExpressionFunction(
+                'fromGlobalId',
+                function ($globalId) {
+                    return sprintf(
+                        '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)',
+                        $globalId
+                    );
+                },
+                function () {}
+            ),
+
+            new ExpressionFunction(
+                'newObject',
+                function ($className, $args = '[]') {
+                    return sprintf('(new \ReflectionClass(%s))->newInstanceArgs(%s)', $className, $args);
+                },
+                function () {}
+            ),
         ];
     }
 }

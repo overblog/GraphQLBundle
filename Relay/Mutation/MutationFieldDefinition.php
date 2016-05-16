@@ -1,0 +1,49 @@
+<?php
+
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Overblog\GraphQLBundle\Relay\Mutation;
+
+use GraphQL\Type\Definition\Config;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Definition\Type;
+
+class MutationFieldDefinition implements MappingInterface
+{
+    public function toMappingDefinition(array $config)
+    {
+        if (!array_key_exists('mutateAndGetPayload', $config)) {
+            throw new \InvalidArgumentException('Mutation "mutateAndGetPayload" config is required.');
+        }
+
+        $mutateAndGetPayload = $this->cleanMutateAndGetPayload($config['mutateAndGetPayload']);
+        $payloadType = isset($config['payloadType']) && is_string($config['payloadType']) ? $config['payloadType'] : null;
+        $inputType = isset($config['inputType']) && is_string($config['inputType']) ? $config['inputType'].'!' : null;
+
+        return [
+            'type' => $payloadType,
+            'args' => [
+                'input' => ['type' => $inputType],
+            ],
+            'resolve' => "@=resolver('relay_mutation_field', [args, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
+        ];
+    }
+
+    private function cleanMutateAndGetPayload($mutateAndGetPayload)
+    {
+        if (is_string($mutateAndGetPayload) &&  0 === strpos($mutateAndGetPayload, '@=')) {
+            $cleanMutateAndGetPayload = substr($mutateAndGetPayload, 2);
+        } else {
+            $cleanMutateAndGetPayload = json_encode($mutateAndGetPayload);
+        }
+
+        return $cleanMutateAndGetPayload;
+    }
+}

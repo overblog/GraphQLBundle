@@ -19,51 +19,75 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
     public function getFunctions()
     {
         return [
-            new ExpressionFunction('hasRole', function () {}, function (array $variables, $role) {
-                return $variables['container']->get('security.authorization_checker')->isGranted($role);
-            }),
+            new ExpressionFunction(
+                'hasRole',
+                function ($role) {
+                    return sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s)', $role);
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('hasAnyRole', function () {}, function (array $variables, array $roles) {
-                foreach ($roles as $role) {
-                    if ($variables['container']->get('security.authorization_checker')->isGranted($role)) {
-                        return true;
-                    }
-                }
+            new ExpressionFunction(
+                'hasAnyRole',
+                function ($roles) {
+                    $code = sprintf('array_reduce(%s, function ($isGranted, $role) use ($container) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles);
 
-                return false;
-            }),
+                    return $code;
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('isAnonymous', function () {}, function (array $variables) {
-                return $variables['container']->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_ANONYMOUSLY');
-            }),
+            new ExpressionFunction(
+                'isAnonymous',
+                function () {
+                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('isRememberMe', function () {}, function (array $variables) {
-                return $variables['container']->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED');
-            }),
+            new ExpressionFunction(
+                'isRememberMe',
+                function () {
+                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('isFullyAuthenticated', function () {}, function (array $variables) {
-                return $variables['container']->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY');
-            }),
+            new ExpressionFunction(
+                'isFullyAuthenticated',
+                function () {
+                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('isAuthenticated', function () {}, function (array $variables) {
-                return
-                    $variables['container']->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')
-                    || $variables['container']->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY');
-            }),
+            new ExpressionFunction(
+                'isAuthenticated',
+                function () {
+                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
+                },
+                function () {}
+            ),
 
-            new ExpressionFunction('hasPermission', function () {}, function (array $variables, $object, $permission) {
-                return $variables['container']->get('security.authorization_checker')->isGranted($permission, $object);
-            }),
+            new ExpressionFunction(
+                'hasPermission',
+                function ($object, $permission) {
+                    $code = sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
 
-            new ExpressionFunction('hasAnyPermission', function () {}, function (array $variables, $object, array $permissions) {
-                foreach ($permissions as $permission) {
-                    if ($variables['container']->get('security.authorization_checker')->isGranted($permission, $object)) {
-                        return true;
-                    }
-                }
+                    return $code;
+                },
+                function () {}
+            ),
 
-                return false;
-            }),
+            new ExpressionFunction(
+                'hasAnyPermission',
+                function ($object, $permissions) {
+                    $code = sprintf('array_reduce(%s, function ($isGranted, $permission) use ($container, $object) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, $object);
+
+                    return $code;
+                },
+                function () {}
+            ),
         ];
     }
 }

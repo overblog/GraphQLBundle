@@ -14,38 +14,17 @@ namespace Overblog\GraphQLBundle\Resolver;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class TypeResolver extends AbstractResolver implements ContainerAwareInterface
+class TypeResolver extends AbstractResolver
 {
-    use ContainerAwareTrait;
-
     /**
      * @var CacheInterface
      */
     private $cache;
 
-    /**
-     * @var array
-     */
-    private $mapping;
-
     public function __construct(CacheInterface $cache = null)
     {
         $this->cache = null !== $cache ? $cache : new ArrayCache();
-    }
-
-    /**
-     * @param array $mapping
-     *
-     * @return TypeResolver
-     */
-    public function setMapping($mapping)
-    {
-        $this->mapping = $mapping;
-
-        return $this;
     }
 
     /**
@@ -84,13 +63,6 @@ class TypeResolver extends AbstractResolver implements ContainerAwareInterface
         $type = $this->getSolution($alias);
         if (null !== $type) {
             return $type;
-        }
-
-        //fallback load directly from container if exists
-        if (null !== $this->container && isset($this->mapping[$alias])) {
-            $options = $this->mapping[$alias];
-
-            return $this->container->get($options['id']);
         }
 
         throw new UnresolvableException(

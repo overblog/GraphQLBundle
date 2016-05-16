@@ -1,0 +1,4 @@
+broken:
+    type: object
+   config:
+        fields: []

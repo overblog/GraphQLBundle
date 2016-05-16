@@ -11,6 +11,9 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Config;
+use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -19,217 +22,159 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class TypesConfiguration implements ConfigurationInterface
 {
+    private static $types = [
+        'object',
+        'enum',
+        'interface',
+        'union',
+        'input-object',
+    ];
+
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('overblog_graphql_types');
 
+        $configTypeKeys = array_map(
+            function ($type) {
+                return $this->normalizedConfigTypeKey($type);
+            },
+            self::$types
+        );
+
+        $this->addBeforeNormalization($rootNode);
+
         $rootNode
             ->useAttributeAsKey('name')
             ->prototype('array')
+                // config is the unique config entry allowed
+                ->beforeNormalization()
+                    ->ifTrue(function ($v) use ($configTypeKeys) {
+                        if (!empty($v) && is_array($v)) {
+                            $keys = array_keys($v);
+                            foreach ($configTypeKeys as $configTypeKey) {
+                                if (in_array($configTypeKey, $keys)) {
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return  false;
+                    })
+                        ->thenInvalid(
+                            sprintf(
+                                'Don\'t use internal config keys %s, replace it by "config" instead.',
+                                implode(', ',  $configTypeKeys)
+                            )
+                        )
+                ->end()
+                // config is renamed _{TYPE}_config
+                ->beforeNormalization()
+                    ->ifTrue(function ($v) {
+                        return isset($v['type']) && is_string($v['type']);
+                    })
+                    ->then(function ($v) {
+                        $key = $this->normalizedConfigTypeKey($v['type']);
+
+                        if (empty($v[$key])) {
+                            $v[$key] = isset($v['config']) ? $v['config'] : [];
+                        }
+                        unset($v['config']);
+
+                        return $v;
+                    })
+                ->end()
                 ->cannotBeOverwritten()
                 ->children()
-                    ->enumNode('type')->values([
-                            'object',
-                            'enum',
-                            'interface',
-                            'union',
-                            'input-object',
-                            'relay-mutation-input',
-                            'relay-mutation-payload',
-                            'relay-connection',
-                            'relay-node',
-                        ])
-                        ->isRequired()
-                    ->end()
-                    ->append($this->addConfigSelection())
+                    ->enumNode('type')->values(self::$types)->isRequired()->end()
+                    ->append(Config\ObjectTypeDefinition::create()->getDefinition())
+                    ->append(Config\EnumTypeDefinition::create()->getDefinition())
+                    ->append(Config\InterfaceTypeDefinition::create()->getDefinition())
+                    ->append(Config\UnionTypeDefinition::create()->getDefinition())
+                    ->append(Config\InputObjectTypeDefinition::create()->getDefinition())
+                    ->variableNode('config')->end()
                 ->end()
+                // _{TYPE}_config is renamed config
+                ->validate()
+                    ->ifTrue(function ($v) {
+                        return isset($v[$this->normalizedConfigTypeKey($v['type'])]);
+                    })
+                    ->then(function ($v) {
+                        $key = $this->normalizedConfigTypeKey($v['type']);
+                        $v['config'] = $v[$key];
+                        unset($v[$key]);
+
+                        return $v;
+                    })
+                ->end()
+
             ->end();
 
         return $treeBuilder;
     }
 
-    private function addConfigSelection()
+    private function addBeforeNormalization(ArrayNodeDefinition $node)
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('config');
+        $typeKeyExists = function ($types) { return !empty($types) && is_array($types); };
 
-        $node->children()
-            ->scalarNode('description')->end()
-            ->scalarNode('isTypeOf')->end()
-            ->arrayNode('types')
-                ->prototype('scalar')
-                    ->info('One of internal or custom types.')
-                ->end()
-            ->end()
-            ->variableNode('fieldsDefaultAccess')
-                ->info('Default access control to fields (expression language can be use here)')
-            ->end()
-            ->append($this->addFieldsSelection('fields'))
-            ->variableNode('resolveType')->end()
-            ->arrayNode('values')
-                ->useAttributeAsKey('name')
-                ->prototype('array')
-                    ->beforeNormalization()
-                        ->ifTrue(function ($v) { return !is_null($v) && !is_array($v); })
-                        ->then(function ($v) { return ['value' => $v]; })
-                    ->end()
-                    ->isRequired()
-                    ->children()
-                        ->scalarNode('value')->end()
-                        ->scalarNode('description')->end()
-                        ->append($this->addDeprecationReasonSelection())
-                    ->end()
-                ->end()
-            ->end()
-            ->arrayNode('interfaces')
-                ->prototype('scalar')
-                    ->info('One of internal or custom interface types.')
-                ->end()
-            ->end()
-            ->scalarNode('nodeType')->end()
-            ->append($this->addFieldsSelection('edgeFields'))
-            ->append($this->addFieldsSelection('connectionFields'))
-            ->variableNode('resolveCursor')->end()
-            ->variableNode('resolveNode')->end()
-        ->end()
-        ->validate()
-            ->always(function ($v) {
-                // remove all empty value
-                $array_filter_recursive = function ($input) use (&$array_filter_recursive) {
-                    foreach ($input as $key => &$value) {
-                        if ('defaultValue' === $key) {
-                            continue;
-                        }
-
-                        if (is_array($value)) {
-                            if (empty($value)) {
-                                unset($input[$key]);
-                            } else {
-                                $value = $array_filter_recursive($value);
-                            }
-                        }
+        $node
+            // set type config.name
+            ->beforeNormalization()
+                ->ifTrue($typeKeyExists)
+                ->then(function ($types) {
+                    foreach ($types as $name => &$type) {
+                        $type['config'] = isset($type['config']) && is_array($type['config']) ? $type['config'] : [];
+                        $type['config']['name'] = $name;
                     }
 
-                    $cleanInput = [];
-
-                    foreach ($input as $key => $val) {
-                        if ('defaultValue' === $key || !is_null($val)) {
-                            $cleanInput[$key] = $val;
-                        }
-                    }
-
-                    return $cleanInput;
-                };
-
-                return $array_filter_recursive($v);
-            })
-        ->end();
-
-        return $node;
-    }
-
-    private function addFieldsSelection($name, $enabledBuilder = true)
-    {
-        $builder = new TreeBuilder();
-        $node = $builder->root($name);
-
-        $prototype = $node->useAttributeAsKey('name')
-            ->prototype('array')
-                ->beforeNormalization()
-                    ->ifString()
-                    ->then(function ($v) { return ['builder' => $v]; })
-                ->end()
-                ->children()
-                    ->append($this->addTypeSelection())
-                    ->arrayNode('argsBuilder')
-                        ->info('Use to build dynamic args. Can be combine with args.')
-                        ->beforeNormalization()
-                            ->ifString()
-                            ->then(function ($v) { return ['builder' => $v]; })
-                        ->end()
-                        ->children()
-                            ->scalarNode('builder')
-                                ->info('Service alias tagged with "overblog_graphql.arg"')
-                                ->isRequired()
-                                ->end()
-                            ->variableNode('config')->end()
-                        ->end()
-                    ->end()
-                    ->arrayNode('args')
-                        ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
-                        ->useAttributeAsKey('name')
-                        ->prototype('array')
-                            ->children()
-                                ->append($this->addTypeSelection(true))
-                                ->scalarNode('description')->end()
-                                ->variableNode('defaultValue')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                    ->variableNode('resolve')
-                        ->info('Value resolver (expression language can be use here)')
-                    ->end()
-                    ->scalarNode('description')
-                        ->info('Field description for clients')
-                    ->end()
-                    ->append($this->addDeprecationReasonSelection())
-                    ->variableNode('access')
-                        ->info('Access control to field (expression language can be use here)')
-                    ->end();
-
-        if ($enabledBuilder) {
-            $prototype
-                    ->scalarNode('builder')
-                        ->info('Service alias tagged with "overblog_graphql.field"')
-                    ->end()
-                    ->variableNode('builderConfig')->end();
-        }
-
-        $prototype
-                    ->scalarNode('complexity')
-                        ->info('Custom complexity calculator.')
-                    ->end()
-                ->end()
+                    return $types;
+                })
+            ->end()
+            // normalized relay-connection
+            ->beforeNormalization()
+                ->ifTrue($typeKeyExists)
+                ->then($this->relayNormalizer('relay-connection', 'Overblog\GraphQLBundle\Relay\Connection\ConnectionDefinition'))
+            ->end()
+            // normalized relay-node
+            ->beforeNormalization()
+                ->ifTrue($typeKeyExists)
+                ->then($this->relayNormalizer('relay-node', 'Overblog\GraphQLBundle\Relay\Node\NodeDefinition'))
+            ->end()
+            // normalized relay-mutation-input
+            ->beforeNormalization()
+                ->ifTrue($typeKeyExists)
+                ->then($this->relayNormalizer('relay-mutation-input', 'Overblog\GraphQLBundle\Relay\Mutation\InputDefinition'))
+            ->end()
+            // normalized relay-mutation-payload
+            ->beforeNormalization()
+                ->ifTrue(function ($types) { return !empty($types) && is_array($types); })
+                ->then($this->relayNormalizer('relay-mutation-payload', 'Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition'))
             ->end();
+    }
 
-        $node->validate()
-            ->ifTrue(function ($fields) use ($enabledBuilder) {
-                foreach ($fields as $v) {
-                    if (empty($v['type']) && $enabledBuilder && empty($v['builder'])) {
-                        return true;
-                    }
+    private function relayNormalizer($typeToTreat, $definitionBuilderClass)
+    {
+        return function ($types) use ($typeToTreat, $definitionBuilderClass) {
+            foreach ($types as $name => $type) {
+                if (isset($type['type']) && is_string($type['type']) && $typeToTreat === $type['type']) {
+                    $config = isset($type['config']) && is_array($type['config']) ? $type['config'] : [];
+                    $config['name'] = $name;
+
+                    /** @var MappingInterface $builder */
+                    $builder = new $definitionBuilderClass();
+
+                    $connectionDefinition = $builder->toMappingDefinition($config);
+
+                    $types = array_replace($types, $connectionDefinition);
                 }
+            }
 
-                return false;
-            })
-            ->thenInvalid('Type or builder is required')
-        ->end();
-
-        return $node;
+            return $types;
+        };
     }
 
-    private function addDeprecationReasonSelection()
+    private function normalizedConfigTypeKey($type)
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('deprecationReason', 'scalar');
-
-        $node->info('Text describing why this field is deprecated. When not empty - field will not be returned by introspection queries (unless forced)');
-
-        return $node;
-    }
-
-    private function addTypeSelection($isRequired = false)
-    {
-        $builder = new TreeBuilder();
-        $node = $builder->root('type', 'scalar');
-
-        $node->info('One of internal or custom types.');
-
-        if ($isRequired) {
-            $node->isRequired();
-        }
-
-        return $node;
+        return '_'.str_replace('-', '_', $type).'_config';
     }
 }

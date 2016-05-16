@@ -11,11 +11,10 @@
 
 namespace Overblog\GraphQLBundle;
 
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\ArgPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\FieldPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypePass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationTaggedServiceMappingTaggedPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypesPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypeTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -31,11 +30,11 @@ class OverblogGraphQLBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new TypePass());
-        $container->addCompilerPass(new FieldPass());
-        $container->addCompilerPass(new ResolverPass());
-        $container->addCompilerPass(new MutationPass());
-        $container->addCompilerPass(new ArgPass());
+        //TypesPass most be before TypeTaggedServiceMappingPass
+        $container->addCompilerPass(new TypesPass());
+        $container->addCompilerPass(new TypeTaggedServiceMappingPass());
+        $container->addCompilerPass(new ResolverTaggedServiceMappingPass());
+        $container->addCompilerPass(new MutationTaggedServiceMappingTaggedPass());
         $container->registerExtension(new OverblogGraphQLTypesExtension());
     }
 

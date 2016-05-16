@@ -1,0 +1,17 @@
+PageInfo:
+    type: "object"
+    config:
+        description: "Information about pagination in a connection."
+        fields:
+            hasNextPage:
+                type: "Boolean!"
+                description: "When paginating forwards, are there more items?"
+            hasPreviousPage:
+                type: "Boolean!"
+                description: "When paginating backwards, are there more items?"
+            startCursor:
+                type: "String"
+                description: "When paginating backwards, the cursor to continue."
+            endCursor:
+                type: "String"
+                description: "When paginating forwards, the cursor to continue."

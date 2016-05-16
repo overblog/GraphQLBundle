@@ -55,9 +55,23 @@ Post:
                 type: Status
         interfaces: [NodeInterface]
 
+PhotoAndPost:
+    type: union
+    config:
+        types: [Photo, Post]
+
+PhotoInput:
+    type: input-object
+    config:
+        fields:
+            width: { type: Int, defaultValue: 100 }
+
 Status:
     type: enum
     config:
         values:
             PUBLISHED: 1
             DRAFT: 2
+            STANDBY:
+                value: 3
+                description: Waiting for validation

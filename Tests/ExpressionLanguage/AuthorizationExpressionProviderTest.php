@@ -30,14 +30,14 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testHasRole()
     {
-        $this->assertExpressionEvaluate('hasRole("ROLE_USER")', 'ROLE_USER');
+        $this->assertExpressionCompile('hasRole("ROLE_USER")', 'ROLE_USER');
     }
 
     public function testHasAnyRole()
     {
-        $this->assertExpressionEvaluate('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])', 'ROLE_ADMIN');
+        $this->assertExpressionCompile('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])', 'ROLE_ADMIN');
 
-        $this->assertExpressionEvaluate(
+        $this->assertExpressionCompile(
             'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',
             $this->matchesRegularExpression('/^ROLE_(USER|ADMIN)$/'),
             [],
@@ -49,29 +49,29 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAnonymous()
     {
-        $this->assertExpressionEvaluate('isAnonymous()', 'IS_AUTHENTICATED_ANONYMOUSLY');
+        $this->assertExpressionCompile('isAnonymous()', 'IS_AUTHENTICATED_ANONYMOUSLY');
     }
 
     public function testIsRememberMe()
     {
-        $this->assertExpressionEvaluate('isRememberMe()', 'IS_AUTHENTICATED_REMEMBERED');
+        $this->assertExpressionCompile('isRememberMe()', 'IS_AUTHENTICATED_REMEMBERED');
     }
 
     public function testIsFullyAuthenticated()
     {
-        $this->assertExpressionEvaluate('isFullyAuthenticated()', 'IS_AUTHENTICATED_FULLY');
+        $this->assertExpressionCompile('isFullyAuthenticated()', 'IS_AUTHENTICATED_FULLY');
     }
 
     public function testIsAuthenticated()
     {
-        $this->assertExpressionEvaluate('isAuthenticated()', $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'));
+        $this->assertExpressionCompile('isAuthenticated()', $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'));
     }
 
     public function testHasPermission()
     {
         $object = new \stdClass();
 
-        $this->assertExpressionEvaluate(
+        $this->assertExpressionCompile(
             'hasPermission(object,"OWNER")',
             [
                 'OWNER',
@@ -87,7 +87,7 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $object = new \stdClass();
 
-        $this->assertExpressionEvaluate(
+        $this->assertExpressionCompile(
             'hasAnyPermission(object,["OWNER", "WRITER"])',
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
@@ -98,7 +98,7 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertExpressionEvaluate(
+        $this->assertExpressionCompile(
             'hasAnyPermission(object,["OWNER", "WRITER"])',
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
@@ -113,13 +113,18 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function assertExpressionEvaluate($expression, $with, array $expressionValues = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
+    private function assertExpressionCompile($expression, $with, array $expressionValues = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
     {
         $authChecker = $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return);
 
         $container = $this->getDIContainerMock(['security.authorization_checker' => $authChecker]);
         $this->expressionLanguage->setContainer($container);
-        $this->$assertMethod($this->expressionLanguage->evaluate($expression, $expressionValues));
+
+        extract($expressionValues);
+
+        $code = $this->expressionLanguage->compile($expression, array_keys($expressionValues));
+
+        $this->$assertMethod(eval('return '.$code.';'));
     }
 
     private function getAuthorizationCheckerIsGrantedWithExpectation($with, $expects = null, $return = true)
