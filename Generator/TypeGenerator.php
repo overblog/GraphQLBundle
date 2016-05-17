@@ -189,6 +189,6 @@ CODE;
 
     private function getClassCollectionPath()
     {
-        return $this->getCacheDir().'/../types.php.cache';
+        return $this->getCacheDir().'/__types.bootstrap.php.cache';
     }
 }
