@@ -228,15 +228,13 @@ EOF;
             'data' => [
                 'simpleMutationWithThunkFields' => null,
             ],
-            'extensions' => [
-                'warnings' => [
-                    [
-                        'message' => 'Access denied to this field.',
-                        'locations' => [
-                            [
-                                'line' => 2,
-                                'column' => 3,
-                            ],
+            'errors' => [
+                [
+                    'message' => 'Access denied to this field.',
+                    'locations' => [
+                        [
+                            'line' => 2,
+                            'column' => 3,
                         ],
                     ],
                 ],
