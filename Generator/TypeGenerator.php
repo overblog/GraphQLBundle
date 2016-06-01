@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\Generator;
 
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
-use Symfony\Component\ClassLoader\ClassCollectionLoader;
 use Symfony\Component\ClassLoader\MapClassLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -150,7 +149,7 @@ CODE;
         return $code;
     }
 
-    public function compile(array $configs)
+    public function compile(array $configs, $loadClasses = true)
     {
         $cacheDir = $this->getCacheDir();
         if (file_exists($cacheDir)) {
@@ -159,16 +158,10 @@ CODE;
         }
 
         $classes = $this->generateClasses($configs, $cacheDir, true);
+        file_put_contents($this->getClassesMap(), "<?php\nreturn ".var_export($classes, true).';');
 
-        if (!empty($classes)) {
-            $file = $this->getClassCollectionPath();
-
-            $mapClassLoader = new MapClassLoader($classes);
-            $mapClassLoader->register();
-
-            ClassCollectionLoader::load(array_keys($classes), dirname($file), basename($file, '.php.cache'), false, false, '.php.cache');
-
-            self::$classMapLoaded = true;
+        if ($loadClasses) {
+            $this->loadClasses(true);
         }
 
         return $classes;
@@ -177,18 +170,17 @@ CODE;
     public function loadClasses($forceReload = false)
     {
         if (!self::$classMapLoaded || $forceReload) {
-            $classCollectionPath = $this->getClassCollectionPath();
+            $classes = require $this->getClassesMap();
 
-            if (file_exists($classCollectionPath)) {
-                require_once $classCollectionPath;
-            }
+            $mapClassLoader = new MapClassLoader($classes);
+            $mapClassLoader->register();
 
             self::$classMapLoaded = true;
         }
     }
 
-    private function getClassCollectionPath()
+    private function getClassesMap()
     {
-        return $this->getCacheDir().'/__types.bootstrap.php.cache';
+        return $this->getCacheDir().'/__classes.map';
     }
 }

@@ -21,11 +21,10 @@ matrix:
         - php: 7.0
           env: SYMFONY_VERSION=3.0.*
         - php: 7.0
-          env: SYMFONY_VERSION='3.1.*@dev'
+          env: SYMFONY_VERSION=3.1.*
 
 allow_failures:
     - php: nightly
-    - env: SYMFONY_VERSION='3.1.*@dev'
 
 cache:
     directories:
