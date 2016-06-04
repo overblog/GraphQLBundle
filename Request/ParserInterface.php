@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 interface ParserInterface
 {
@@ -29,8 +28,6 @@ interface ParserInterface
      * Parses the HTTP request and extracts the GraphQL request parameters.
      *
      * @param Request $request
-     *
-     * @throw BadRequestHttpException
      *
      * @return array
      */

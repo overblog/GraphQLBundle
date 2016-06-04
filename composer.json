@@ -35,7 +35,7 @@
         "twig/twig": "If you want to use graphiQL."
     },
     "require-dev": {
-        "fabpot/php-cs-fixer": "^1.11",
+        "friendsofphp/php-cs-fixer": "^1.11",
         "sensio/framework-extra-bundle": "^3.0.13",
         "sllh/php-cs-fixer-styleci-bridge": "^1.5",
         "symfony/browser-kit": "^2.7|^3.0",

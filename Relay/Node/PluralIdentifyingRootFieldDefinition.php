@@ -11,9 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Relay\Node;
 
-use GraphQL\Type\Definition\Config;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
-use Overblog\GraphQLBundle\Definition\Type;
 
 class PluralIdentifyingRootFieldDefinition implements MappingInterface
 {

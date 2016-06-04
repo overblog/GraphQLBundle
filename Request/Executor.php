@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\GraphQL;
-use GraphQL\Language\Source;
 use GraphQL\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
