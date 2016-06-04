@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
-use Overblog\GraphQLBundle\Definition\Type;
 
 class GlobalIdFieldDefinition implements MappingInterface
 {
