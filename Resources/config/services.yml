@@ -1,6 +1,8 @@
 parameters:
     overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
     overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
+    overblog_graphql.versions.graphiql: "0.7.1"
+    overblog_graphql.versions.react: "15.0.2"
 
 services:
     overblog_graphql.error_handler:
