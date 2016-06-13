@@ -35,7 +35,6 @@ User:
                 resolve: ['ROLE_USER']
             isEnabled:
                 type: Boolean
-                access: "@=service('fake').fake()"
                 resolve: true
             friends:
                 access: "@=object === 1"

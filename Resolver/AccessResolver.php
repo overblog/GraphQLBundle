@@ -70,12 +70,7 @@ class AccessResolver
     private function hasAccess(callable $accessChecker, $object, array $resolveArgs = [])
     {
         $resolveArgs[] = $object;
-
-        try {
-            $access = (bool) call_user_func_array($accessChecker, $resolveArgs);
-        } catch (\Exception $e) {
-            $access = false;
-        }
+        $access = (bool) call_user_func_array($accessChecker, $resolveArgs);
 
         return $access;
     }
