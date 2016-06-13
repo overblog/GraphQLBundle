@@ -36,6 +36,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setGraphiQLTemplate($config, $container);
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config);
+        $this->setVersions($config, $container);
 
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
@@ -49,6 +50,12 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setVersions(array $config, ContainerBuilder $container)
+    {
+        $container->setParameter($this->getAlias().'.versions.graphiql', $config['versions']['graphiql']);
+        $container->setParameter($this->getAlias().'.versions.react', $config['versions']['react']);
     }
 
     private function setConfigBuilders(array $config)
