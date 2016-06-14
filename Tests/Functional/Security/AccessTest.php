@@ -156,27 +156,6 @@ EOF;
         $this->assertResponse($this->userFriendsQuery, $expected, static::USER_ADMIN);
     }
 
-    public function testUserAccessToUserIsEnabledWithExpressionLanguageEvaluationFailed()
-    {
-        $expected = [
-            'data' => [
-                'user' => [
-                    'isEnabled' => null,
-                ],
-            ],
-            'extensions' => [
-                'warnings' => [
-                    [
-                        'message' => 'Access denied to this field.',
-                        'locations' => [['line' => 1, 'column' => 24]],
-                    ],
-                ],
-            ],
-        ];
-
-        $this->assertResponse($this->userIsEnabledQuery, $expected, static::USER_ADMIN);
-    }
-
     public function testMutationAllowedUser()
     {
         $result = 123;
