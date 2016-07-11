@@ -2,3 +2,4 @@ overblog_graphql_endpoint:
     path: /
     defaults:
         _controller: OverblogGraphQLBundle:Graph:endpoint
+        _format: "json"

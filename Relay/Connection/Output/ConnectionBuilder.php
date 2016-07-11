@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Definition\Argument;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class ConnectionBuilder.
@@ -178,7 +177,7 @@ class ConnectionBuilder
         }
         $offset = static::cursorToOffset($cursor);
 
-        return !is_numeric($offset) ?  $defaultOffset : (int) $offset;
+        return !is_numeric($offset) ? $defaultOffset : (int) $offset;
     }
 
     /**
@@ -207,9 +206,6 @@ class ConnectionBuilder
 
     private static function getOptionsWithDefaults(array $options, array $defaults)
     {
-        $arraySliceResolver = new OptionsResolver();
-        $arraySliceResolver->setDefaults($defaults);
-
-        return $arraySliceResolver->resolve($options);
+        return $options + $defaults;
     }
 }
