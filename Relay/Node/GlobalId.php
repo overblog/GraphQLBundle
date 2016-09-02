@@ -22,7 +22,7 @@ class GlobalId
 
     public static function fromGlobalId($globalId)
     {
-        $unBasedGlobalId = base64_decode($globalId, true);
+        $unBasedGlobalId = base64_decode($globalId, false);
 
         $decodeGlobalId = [
             'type' => null,
