@@ -45,28 +45,28 @@ class GlobalIdTest extends \PHPUnit_Framework_TestCase
 
     public function testFromGlobalId()
     {
-        $params = GlobalId::fromGlobalId('VXNlcjoxNQ==');
+        $params = GlobalId::fromGlobalId(base64_encode('User:15'));
 
         $this->assertEquals(['type' => 'User', 'id' => 15], $params);
     }
 
     public function testFromGlobalIdWithTypeEmpty()
     {
-        $params = GlobalId::fromGlobalId('OjE1=');
+        $params = GlobalId::fromGlobalId(base64_encode(':15'));
 
         $this->assertEquals(['type' => null, 'id' => 15], $params);
     }
 
     public function testFromGlobalIdWithIdEmpty()
     {
-        $params = GlobalId::fromGlobalId('VXNlcjo=');
+        $params = GlobalId::fromGlobalId(base64_encode('User:'));
 
         $this->assertEquals(['type' => 'User', 'id' => null], $params);
     }
 
     public function testFromGlobalIdWithTypeAndIdEmpty()
     {
-        $params = GlobalId::fromGlobalId('Og==');
+        $params = GlobalId::fromGlobalId(base64_encode(':'));
 
         $this->assertEquals(['type' => null, 'id' => null], $params);
     }
