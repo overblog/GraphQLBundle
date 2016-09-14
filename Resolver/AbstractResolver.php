@@ -48,6 +48,14 @@ abstract class AbstractResolver implements ResolverInterface
     }
 
     /**
+     * @return array
+     */
+    public function getSolutions()
+    {
+        return $this->solutions;
+    }
+
+    /**
      * @param $name
      *
      * @return mixed

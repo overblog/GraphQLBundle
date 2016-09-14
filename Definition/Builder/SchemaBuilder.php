@@ -46,6 +46,11 @@ class SchemaBuilder
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        return new Schema($query, $mutation, $subscription);
+        return new Schema([
+            'query' => $query,
+            'mutation' => $mutation,
+            'subscription' => $subscription,
+            'types' => $this->typeResolver->getSolutions(),
+        ]);
     }
 }

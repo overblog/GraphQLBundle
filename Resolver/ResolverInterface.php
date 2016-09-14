@@ -19,5 +19,7 @@ interface ResolverInterface
 
     public function getSolution($name);
 
+    public function getSolutions();
+
     public function getSolutionOptions($name);
 }

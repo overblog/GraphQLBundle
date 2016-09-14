@@ -38,6 +38,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
 
         $this->assertEquals(0, $commandTester->getStatusCode());
-        $this->assertEquals(file_get_contents(__DIR__.'/schema.json'), file_get_contents($file));
+        $this->assertEquals(trim(file_get_contents(__DIR__.'/schema.json')), file_get_contents($file));
     }
 }

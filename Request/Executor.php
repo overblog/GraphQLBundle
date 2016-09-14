@@ -82,6 +82,7 @@ class Executor
             $this->schema,
             isset($data['query']) ? $data['query'] : null,
             $context,
+            $context,
             $data['variables'],
             $data['operationName']
         );

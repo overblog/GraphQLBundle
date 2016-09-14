@@ -22,12 +22,12 @@ class Resolver
      */
     private static $accessor;
 
-    public static function defaultResolveFn($objectOrArray, $args, ResolveInfo $info)
+    public static function defaultResolveFn($objectOrArray, $args, $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
         $value = static::valueFromObjectOrArray($objectOrArray, $fieldName);
 
-        return $value instanceof \Closure ? $value($objectOrArray, $args, $info) : $value;
+        return $value instanceof \Closure ? $value($objectOrArray, $args, $context, $info) : $value;
     }
 
     public static function valueFromObjectOrArray($objectOrArray, $fieldName)

@@ -72,6 +72,17 @@ EOF;
         return  sprintf('$container->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
     }
 
+    /**
+     * todo replace generateResolve in vendor after spec-april2016 is merged
+     *
+     * @param array $value
+     * @return string
+     */
+    protected function generateResolve2(array $value)
+    {
+        return $this->callableCallbackFromArrayValue($value, 'resolve', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
+    }
+
     protected function generateResolve(array $value)
     {
         $accessIsSet = $this->arrayKeyExistsAndIsNotNull($value, 'access');
@@ -79,7 +90,7 @@ EOF;
         $fieldOptions['resolve'] = $this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve') ? $fieldOptions['resolve'] : $this->defaultResolver;
 
         if (!$accessIsSet || true === $fieldOptions['access']) { // access granted  to this field
-            $resolveCallback = parent::generateResolve($fieldOptions);
+            $resolveCallback = $this->generateResolve2($fieldOptions);
             if ('null' === $resolveCallback) {
                 return $resolveCallback;
             }
@@ -88,10 +99,10 @@ EOF;
             $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
 
             $code = <<<'CODE'
-function ($value, $args, %s $info) <closureUseStatements> {
+function ($value, $args, $context, %s $info) <closureUseStatements> {
 <spaces><spaces>$resolverCallback = %s;
 
-<spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $info]);
+<spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $context, $info]);
 <spaces>}
 CODE;
 
@@ -101,17 +112,17 @@ CODE;
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
-            $resolveCallback = parent::generateResolve($fieldOptions);
-            $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
+            $resolveCallback = $this->generateResolve2($fieldOptions);
+            $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
             $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
             $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
 
             $code = <<<'CODE'
-function ($value, $args, %s $info) <closureUseStatements> {
+function ($value, $args, $context, %s $info) <closureUseStatements> {
 <spaces><spaces>$resolverCallback = %s;
 <spaces><spaces>$accessChecker = %s;
 <spaces><spaces>$isMutation = $info instanceof ResolveInfo && 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
-<spaces><spaces>return $container->get('overblog_graphql.access_resolver')->resolve($accessChecker, $resolverCallback, [$value, new %s($args), $info], $isMutation);
+<spaces><spaces>return $container->get('overblog_graphql.access_resolver')->resolve($accessChecker, $resolverCallback, [$value, new %s($args), $context, $info], $isMutation);
 <spaces>}
 CODE;
 

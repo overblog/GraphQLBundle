@@ -27,7 +27,7 @@ class ResolverTest extends \PHPUnit_Framework_TestCase
     {
         $info = new ResolveInfo(['fieldName' => $fieldName]);
 
-        $this->assertEquals($expected, Resolver::defaultResolveFn($source, [], $info));
+        $this->assertEquals($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
 
     public function resolverProvider()
