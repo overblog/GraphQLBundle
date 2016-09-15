@@ -19,25 +19,32 @@ class GraphController extends Controller
 {
     public function endpointAction(Request $request)
     {
-        if ($request->query->has('batch')) {
-            $data = $this->processBatchQuery($request);
-        } else {
-            $data = $this->processNormalQuery($request);
-        }
+        $payload = $this->processNormalQuery($request);
 
-        return new JsonResponse($data, 200);
+        return new JsonResponse($payload, 200);
+    }
+
+    public function batchEndpointAction(Request $request)
+    {
+        $payloads = $this->processBatchQuery($request);
+
+        return new JsonResponse($payloads, 200);
     }
 
     private function processBatchQuery(Request $request)
     {
-        $params = $this->get('overblog_graphql.request_batch_parser')->parse($request);
-        $data = [];
+        $queries = $this->get('overblog_graphql.request_batch_parser')->parse($request);
+        $payloads = [];
 
-        foreach ($params as $i => $entry) {
-            $data[$i] = $this->get('overblog_graphql.request_executor')->execute($entry)->toArray();
+        foreach ($queries as $query) {
+            $payloadResult = $this->get('overblog_graphql.request_executor')->execute([
+                'query' => $query['query'],
+                'variables' => $query['variables'],
+            ]);
+            $payloads[] = ['id' => $query['id'], 'payload' => $payloadResult->toArray()];
         }
 
-        return $data;
+        return $payloads;
     }
 
     private function processNormalQuery(Request $request)

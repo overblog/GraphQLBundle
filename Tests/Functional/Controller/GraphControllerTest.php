@@ -154,20 +154,22 @@ EOF;
         $client = static::createClient(['test_case' => 'connection']);
 
         $data = [
-            'friends' => [
+            [
+                'id' => 'friends',
                 'query' => $this->friendsQuery,
             ],
-            'friendsTotalCount' => [
+            [
+                'id' => 'friendsTotalCount',
                 'query' => $this->friendsTotalCountQuery,
             ],
         ];
 
-        $client->request('POST', '/?batch', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
+        $client->request('POST', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
         $result = $client->getResponse()->getContent();
 
         $expected  = [
-            'friends' => ['data' => $this->expectedData],
-            'friendsTotalCount' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]],
+            ['id' => 'friends', 'payload' => ['data' => $this->expectedData]],
+            ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];
         $this->assertEquals($expected, json_decode($result, true), $result);
     }
@@ -179,18 +181,18 @@ EOF;
     public function testBatchEndpointWithEmptyQuery()
     {
         $client = static::createClient();
-        $client->request('GET', '/?batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
+        $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
         $client->getResponse()->getContent();
     }
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Only request with content type " is accepted.
+     * @expectedExceptionMessage Only request with content type "application/json" is accepted.
      */
     public function testBatchEndpointWrongContentType()
     {
         $client = static::createClient();
-        $client->request('GET', '/?batch');
+        $client->request('GET', '/batch');
         $client->getResponse()->getContent();
     }
 
@@ -201,18 +203,18 @@ EOF;
     public function testBatchEndpointWithInvalidJson()
     {
         $client = static::createClient();
-        $client->request('GET', '/?batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
+        $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
     }
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage No valid query found in node "test"
+     * @expectedExceptionMessage 1 is not a valid query
      */
     public function testBatchEndpointWithInvalidQuery()
     {
         $client = static::createClient();
-        $client->request('GET', '/?batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
+        $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();
     }
 }

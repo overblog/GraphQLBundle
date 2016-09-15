@@ -16,6 +16,14 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BatchParser implements ParserInterface
 {
+    const PARAM_ID = 'id';
+
+    private static $queriesDefaultValue = [
+        self::PARAM_ID => null,
+        self::PARAM_QUERY => null,
+        self::PARAM_VARIABLES => null,
+    ];
+
     /**
      * @param Request $request
      *
@@ -24,24 +32,21 @@ class BatchParser implements ParserInterface
     public function parse(Request $request)
     {
         // Extracts the GraphQL request parameters
-        $data = $this->getParsedBody($request);
+        $queries = $this->getParsedBody($request);
 
-        if (empty($data)) {
+        if (empty($queries)) {
             throw new BadRequestHttpException('Must provide at least one valid query.');
         }
 
-        foreach ($data as $i => &$entry) {
-            if (empty($entry[static::PARAM_QUERY]) || !is_string($entry[static::PARAM_QUERY])) {
-                throw new BadRequestHttpException(sprintf('No valid query found in node "%s"', $i));
-            }
+        foreach ($queries as $i => &$query) {
+            $query = $query + self::$queriesDefaultValue;
 
-            $entry = $entry + [
-                static::PARAM_VARIABLES => null,
-                static::PARAM_OPERATION_NAME => null,
-            ];
+            if (!is_string($query[static::PARAM_QUERY])) {
+                throw new BadRequestHttpException(sprintf('%s is not a valid query', json_encode($query[static::PARAM_QUERY])));
+            }
         }
 
-        return $data;
+        return $queries;
     }
 
     /**
@@ -57,7 +62,7 @@ class BatchParser implements ParserInterface
 
         // JSON object
         if ($type !== static::CONTENT_TYPE_JSON) {
-            throw new BadRequestHttpException(sprintf('Only request with content type "%" is accepted.', static::CONTENT_TYPE_JSON));
+            throw new BadRequestHttpException(sprintf('Only request with content type "%s" is accepted.', static::CONTENT_TYPE_JSON));
         }
 
         $parsedBody = json_decode($request->getContent(), true);
