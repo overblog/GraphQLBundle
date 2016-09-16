@@ -80,11 +80,11 @@ class Executor
 
         $executionResult = GraphQL::executeAndReturnResult(
             $this->schema,
-            isset($data['query']) ? $data['query'] : null,
+            isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
             $context,
             $context,
-            $data['variables'],
-            $data['operationName']
+            $data[ParserInterface::PARAM_VARIABLES],
+            isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
         if (null !== $this->errorHandler) {

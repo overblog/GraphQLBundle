@@ -3,3 +3,9 @@ overblog_graphql_endpoint:
     defaults:
         _controller: OverblogGraphQLBundle:Graph:endpoint
         _format: "json"
+
+overblog_graphql_batch_endpoint:
+    path: /batch
+    defaults:
+        _controller: OverblogGraphQLBundle:Graph:batchEndpoint
+        _format: "json"
