@@ -26,13 +26,17 @@ class ErrorHandler
     /** @var string */
     private $internalErrorMessage;
 
-    public function __construct($internalErrorMessage = null, LoggerInterface $logger = null)
+    /** @var array */
+    private $exceptionMap;
+
+    public function __construct($internalErrorMessage = null, LoggerInterface $logger = null, array $exceptionMap = [])
     {
         $this->logger = (null === $logger) ? new NullLogger() : $logger;
         if (empty($internalErrorMessage)) {
             $internalErrorMessage = self::DEFAULT_ERROR_MESSAGE;
         }
         $this->internalErrorMessage = $internalErrorMessage;
+        $this->exceptionMap = $exceptionMap;
     }
 
     /**
@@ -54,7 +58,7 @@ class ErrorHandler
 
         /** @var Error $error */
         foreach ($errors as $error) {
-            $rawException = $error->getPrevious();
+            $rawException = $this->convertException($error->getPrevious());
 
             // Parse error or user error
             if (null === $rawException) {
@@ -128,5 +132,33 @@ class ErrorHandler
         if (!empty($exceptions['extensions']['warnings'])) {
             $executionResult->extensions['warnings'] = array_map(['GraphQL\Error', 'formatError'], $exceptions['extensions']['warnings']);
         }
+    }
+
+    /**
+     * Tries to convert a raw exception into a user warning or error
+     * that is displayed to the user.
+     *
+     * @param \Exception $rawException
+     * @return \Exception
+     */
+    protected function convertException(\Exception $rawException = null)
+    {
+        if (empty($rawException)) {
+            return $rawException;
+        }
+
+        $types = [
+            'warnings' => 'Overblog\\GraphQLBundle\\Error\\UserWarning',
+            'errors' => 'Overblog\\GraphQLBundle\\Error\\UserError',
+        ];
+
+        foreach ($types as $type => $errorClass) {
+            if (!empty($this->exceptionMap[$type])
+                && in_array(get_class($rawException), $this->exceptionMap[$type])) {
+                return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
+            }
+        }
+
+        return $rawException;
     }
 }

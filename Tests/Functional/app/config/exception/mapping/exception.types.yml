@@ -1,0 +1,8 @@
+Query:
+    type: object
+    config:
+      fields:
+        test:
+          type: "Boolean"
+          resolve: "@=resolver('example_exception')"
+

@@ -102,6 +102,13 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 ->replaceArgument(0, $config['definitions']['internal_error_message'])
             ;
         }
+
+        if (isset($config['definitions']['exceptions'])) {
+            $container
+                ->getDefinition($this->getAlias().'.error_handler')
+                ->replaceArgument(2, $config['definitions']['exceptions'])
+            ;
+        }
     }
 
     private function setSchemaBuilderArguments(array $config, ContainerBuilder $container)
