@@ -143,20 +143,14 @@ class ErrorHandler
      */
     protected function convertException(\Exception $rawException = null)
     {
-        if (empty($rawException)) {
-            return $rawException;
+        if (null === $rawException) {
+            return null;
         }
 
-        $types = [
-            'warnings' => 'Overblog\\GraphQLBundle\\Error\\UserWarning',
-            'errors' => 'Overblog\\GraphQLBundle\\Error\\UserError',
-        ];
+        if (!empty($this->exceptionMap[get_class($rawException)])) {
+            $errorClass = $this->exceptionMap[get_class($rawException)];
 
-        foreach ($types as $type => $errorClass) {
-            if (!empty($this->exceptionMap[$type])
-                && in_array(get_class($rawException), $this->exceptionMap[$type])) {
-                return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
-            }
+            return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
         }
 
         return $rawException;

@@ -106,7 +106,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         if (isset($config['definitions']['exceptions'])) {
             $container
                 ->getDefinition($this->getAlias().'.error_handler')
-                ->replaceArgument(2, $config['definitions']['exceptions'])
+                ->replaceArgument(2, $this->buildExceptionMap($config['definitions']['exceptions']))
             ;
         }
     }
@@ -148,5 +148,29 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
         return new Configuration($container->getParameter('kernel.debug'));
+    }
+
+    /**
+     * Returns a list of custom exceptions mapped to error/warning classes.
+     *
+     * @param array $config
+     * @return array Custom exception map, [exception => UserError/UserWarning].
+     */
+    private function buildExceptionMap(array $exceptionConfig)
+    {
+        $exceptionMap = [];
+        $typeMap = $exceptionConfig['types'];
+
+        foreach ($exceptionConfig as $type => $exceptionList) {
+            if ('types' === $type) {
+                continue;
+            }
+
+            foreach ($exceptionList as $exception) {
+                $exceptionMap[$exception] = $typeMap[$type];
+            }
+        }
+
+        return $exceptionMap;
     }
 }

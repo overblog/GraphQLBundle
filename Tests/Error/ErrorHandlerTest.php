@@ -141,7 +141,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertExceptionToUserWarning()
     {
-        $errorHandler = new ErrorHandler(null, null, ['warnings' => ["InvalidArgumentException"]]);
+        $errorHandler = new ErrorHandler(null, null, ["InvalidArgumentException" => 'Overblog\\GraphQLBundle\\Error\\UserWarning']);
 
         $executionResult = new ExecutionResult(
             null,
