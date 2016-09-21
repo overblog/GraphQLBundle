@@ -1,0 +1,20 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: services.yml }
+
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Exception\\__DEFINITIONS__"
+
+overblog_graphql:
+    definitions:
+        exceptions:
+            errors:
+              - "InvalidArgumentException"
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yml
+                    dir: "%kernel.root_dir%/config/exception/mapping"

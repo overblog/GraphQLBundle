@@ -82,6 +82,42 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->load($configs, $this->container);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testCustomExceptions()
+    {
+        $ext = new OverblogGraphQLExtension();
+        $ext->load(
+            [
+                [
+                    'definitions' => [
+                        'exceptions' => [
+                            'warnings' => [
+                                'Symfony\Component\Routing\Exception\ResourceNotFoundException'
+                            ],
+                            'errors' => [
+                                'InvalidArgumentException'
+                            ],
+                        ]
+                    ],
+                ],
+            ],
+            $this->container
+        );
+
+        $expectedExceptionMap = [
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException' => 'Overblog\\GraphQLBundle\\Error\\UserWarning',
+            'InvalidArgumentException' => 'Overblog\\GraphQLBundle\\Error\\UserError',
+        ];
+
+        $definition = $this->container->getDefinition('overblog_graphql.error_handler');
+        $this->assertEquals($expectedExceptionMap, $definition->getArgument(2));
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testCustomBuilders()
     {
         $ext = new OverblogGraphQLExtension();

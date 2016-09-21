@@ -26,13 +26,17 @@ class ErrorHandler
     /** @var string */
     private $internalErrorMessage;
 
-    public function __construct($internalErrorMessage = null, LoggerInterface $logger = null)
+    /** @var array */
+    private $exceptionMap;
+
+    public function __construct($internalErrorMessage = null, LoggerInterface $logger = null, array $exceptionMap = [])
     {
         $this->logger = (null === $logger) ? new NullLogger() : $logger;
         if (empty($internalErrorMessage)) {
             $internalErrorMessage = self::DEFAULT_ERROR_MESSAGE;
         }
         $this->internalErrorMessage = $internalErrorMessage;
+        $this->exceptionMap = $exceptionMap;
     }
 
     /**
@@ -54,7 +58,7 @@ class ErrorHandler
 
         /** @var Error $error */
         foreach ($errors as $error) {
-            $rawException = $error->getPrevious();
+            $rawException = $this->convertException($error->getPrevious());
 
             // Parse error or user error
             if (null === $rawException) {
@@ -128,5 +132,27 @@ class ErrorHandler
         if (!empty($exceptions['extensions']['warnings'])) {
             $executionResult->extensions['warnings'] = array_map(['GraphQL\Error', 'formatError'], $exceptions['extensions']['warnings']);
         }
+    }
+
+    /**
+     * Tries to convert a raw exception into a user warning or error
+     * that is displayed to the user.
+     *
+     * @param \Exception $rawException
+     * @return \Exception
+     */
+    protected function convertException(\Exception $rawException = null)
+    {
+        if (null === $rawException) {
+            return null;
+        }
+
+        if (!empty($this->exceptionMap[get_class($rawException)])) {
+            $errorClass = $this->exceptionMap[get_class($rawException)];
+
+            return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
+        }
+
+        return $rawException;
     }
 }

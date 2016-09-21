@@ -138,4 +138,31 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $executionResult->toArray());
     }
+
+    public function testConvertExceptionToUserWarning()
+    {
+        $errorHandler = new ErrorHandler(null, null, ["InvalidArgumentException" => 'Overblog\\GraphQLBundle\\Error\\UserWarning']);
+
+        $executionResult = new ExecutionResult(
+            null,
+            [
+                new Error('Error with invalid argument exception', null, new \InvalidArgumentException('Invalid argument exception')),
+            ]
+        );
+
+        $errorHandler->handleErrors($executionResult, true);
+
+        $expected = [
+            'data' => null,
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Error with invalid argument exception',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $executionResult->toArray());
+    }
 }

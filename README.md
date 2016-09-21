@@ -665,6 +665,25 @@ class CharacterResolver
 }
 ```
 
+If you want to map your own exceptions to warnings and errors you can
+define a custom exception mapping:
+
+```yaml
+#app/config/config.yml
+overblog_graphql:
+    #... 
+    definitions:
+        #...
+        exceptions:
+            warnings:
+                - "Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException"
+            errors:
+                - "InvalidArgumentException"
+```
+
+The message of those exceptions are then shown to the user like other 
+`UserError`s or `UserWarning`s.
+
 Security
 --------
 

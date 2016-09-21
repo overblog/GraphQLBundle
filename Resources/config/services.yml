@@ -9,6 +9,7 @@ services:
         arguments:
             - ~
             - "@?logger"
+            - []
 
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
