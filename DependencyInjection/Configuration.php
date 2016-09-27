@@ -46,11 +46,26 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('internal_error_message')->defaultNull()->end()
                         ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                         ->arrayNode('schema')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('query')->defaultNull()->end()
-                                ->scalarNode('mutation')->defaultNull()->end()
-                                ->scalarNode('subscription')->defaultNull()->end()
+                            ->beforeNormalization()
+                                ->ifTrue(function ($v) {
+                                    $needNormalization = isset($v['query']) && is_string($v['query']) ||
+                                        isset($v['mutation']) && is_string($v['mutation']) ||
+                                        isset($v['subscription']) && is_string($v['subscription']);
+
+                                    return $needNormalization;
+                                })
+                                ->then(function ($v) {
+                                    return ['default' => $v];
+                                })
+                            ->end()
+                            ->useAttributeAsKey('name')
+                            ->prototype('array')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->scalarNode('query')->defaultNull()->end()
+                                    ->scalarNode('mutation')->defaultNull()->end()
+                                    ->scalarNode('subscription')->defaultNull()->end()
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('mappings')
@@ -142,8 +157,8 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('versions')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('graphiql')->defaultValue('0.7.1')->end()
-                        ->scalarNode('react')->defaultValue('15.0.2')->end()
+                        ->scalarNode('graphiql')->defaultValue('0.7.8')->end()
+                        ->scalarNode('react')->defaultValue('15.3.2')->end()
                     ->end()
                 ->end()
             ->end();

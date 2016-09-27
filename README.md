@@ -903,6 +903,38 @@ Batching
 Batching can help decrease io between server and client.
 The default route of batching is `/batch`.
 
+Multiple schema endpoint
+------------------------
+
+```yaml
+#app/config/config.yml
+
+overblog_graphql:
+    definitions:
+        schema:
+            foo:
+                query: fooQuery
+            bar:
+                query: barQuery
+                mutation: barMutation
+```
+
+**foo** schema endpoint can be access:
+
+type | Path
+-----| -----
+simple request | `/graphql/foo`
+batch request | `/graphql/foo/batch`
+graphiQL | `/graphiql/foo`
+
+**bar** schema endpoint can be access:
+
+type | Path
+-----| -----
+simple request | `/graphql/bar`
+batch request | `/graphql/bar/batch`
+graphiQL | `/graphiql/bar`
+
 Contribute
 ----------
 

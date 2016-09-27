@@ -20,10 +20,14 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Executor
 {
-    private $schema;
+    /**
+     * @var Schema[]
+     */
+    private $schemas;
 
     /**
      * @var EventDispatcherInterface|null
@@ -36,12 +40,18 @@ class Executor
     /** @var ErrorHandler|null */
     private $errorHandler;
 
-    public function __construct(Schema $schema, EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null)
+    public function __construct(EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null)
     {
-        $this->schema = $schema;
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
+    }
+
+    public function addSchema($name, Schema $schema)
+    {
+        $this->schemas[$name] = $schema;
+
+        return $this;
     }
 
     public function setMaxQueryDepth($maxQueryDepth)
@@ -70,7 +80,7 @@ class Executor
         return $this;
     }
 
-    public function execute(array $data, array $context = [])
+    public function execute(array $data, array $context = [], $schemaName = null)
     {
         if (null !== $this->dispatcher) {
             $event = new ExecutorContextEvent($context);
@@ -78,8 +88,10 @@ class Executor
             $context = $event->getExecutorContext();
         }
 
+        $schema = $this->getSchema($schemaName);
+
         $executionResult = GraphQL::executeAndReturnResult(
-            $this->schema,
+            $schema,
             isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
             $context,
             $context,
@@ -92,5 +104,28 @@ class Executor
         }
 
         return $executionResult;
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return Schema
+     */
+    public function getSchema($name = null)
+    {
+        if (empty($this->schemas)) {
+            throw new \RuntimeException('At least one schema should be declare.');
+        }
+
+        if (null === $name) {
+            $schema = array_values($this->schemas)[0];
+        } else {
+            if (!isset($this->schemas[$name])) {
+                throw new NotFoundHttpException(sprintf('Could not found "%s" schema.', $name));
+            }
+            $schema = $this->schemas[$name];
+        }
+
+        return $schema;
     }
 }
