@@ -14,7 +14,6 @@ services:
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
         arguments:
-            - "@overblog_graphql.schema"
             - "@event_dispatcher"
             - "%kernel.debug%"
             - "@overblog_graphql.error_handler"
@@ -27,15 +26,6 @@ services:
 
     overblog_graphql.request_batch_parser:
         class: Overblog\GraphQLBundle\Request\BatchParser
-
-    overblog_graphql.schema:
-        class: GraphQL\Schema
-        public: false
-        factory: ["@overblog_graphql.schema_builder", create]
-        arguments:
-            - ~
-            - ~
-            - ~
 
     overblog_graphql.schema_builder:
         class: Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder

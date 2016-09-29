@@ -63,13 +63,26 @@ EOF;
         ],
     ];
 
-    public function testEndpointAction()
+    /**
+     * @param $uri
+     * @dataProvider graphQLEndpointUriProvider
+     */
+    public function testEndpointAction($uri)
     {
         $client = static::createClient(['test_case' => 'connection']);
 
-        $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
+        $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
         $result = $client->getResponse()->getContent();
         $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+    }
+
+
+    public function graphQLEndpointUriProvider()
+    {
+        return [
+            ['/'],
+            ['/graphql/default'],
+        ];
     }
 
     /**
@@ -115,8 +128,6 @@ query FriendsQuery(\$firstFriends: Int) {
 EOF;
 
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']));
-        $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
     }
 
     /**
@@ -134,8 +145,23 @@ query {
 EOF;
 
         $client->request('GET', '/', ['query' => $query, 'variables' => '"firstFriends": 2}']);
-        $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @expectedExceptionMessage Could not found "fake" schema.
+     */
+    public function testMultipleEndpointActionWithUnknownSchemaName()
+    {
+        $client = static::createClient(['test_case' => 'connection']);
+
+        $query = <<<EOF
+query {
+  user
+}
+EOF;
+
+        $client->request('GET', '/graphql/fake', ['query' => $query]);
     }
 
     public function testEndpointActionWithOperationName()
@@ -149,7 +175,11 @@ EOF;
         $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
     }
 
-    public function testBatchEndpointAction()
+    /**
+     * @param $uri
+     * @dataProvider graphQLBatchEndpointUriProvider
+     */
+    public function testBatchEndpointAction($uri)
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -164,7 +194,7 @@ EOF;
             ],
         ];
 
-        $client->request('POST', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
+        $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
         $result = $client->getResponse()->getContent();
 
         $expected  = [
@@ -172,6 +202,14 @@ EOF;
             ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];
         $this->assertEquals($expected, json_decode($result, true), $result);
+    }
+
+    public function graphQLBatchEndpointUriProvider()
+    {
+        return [
+            ['/batch'],
+            ['/graphql/default/batch'],
+        ];
     }
 
     /**

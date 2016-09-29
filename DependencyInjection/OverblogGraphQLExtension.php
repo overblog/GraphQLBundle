@@ -14,8 +14,10 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLExtension extends Extension implements PrependExtensionInterface
@@ -120,13 +122,18 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setSchemaArguments(array $config, ContainerBuilder $container)
     {
         if (isset($config['definitions']['schema'])) {
-            $container
-                ->getDefinition($this->getAlias().'.schema')
-                ->replaceArgument(0, $config['definitions']['schema']['query'])
-                ->replaceArgument(1, $config['definitions']['schema']['mutation'])
-                ->replaceArgument(2, $config['definitions']['schema']['subscription'])
-                ->setPublic(true)
-            ;
+            $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
+
+            foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
+                $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+                $definition = new Definition('GraphQL\Schema');
+                $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
+                $definition->setArguments([$schemaConfig['query'], $schemaConfig['mutation'], $schemaConfig['subscription']]);
+                $definition->setPublic(false);
+                $container->setDefinition($schemaID, $definition);
+
+                $executorDefinition->addMethodCall('addSchema', [$schemaName, new Reference($schemaID)]);
+            }
         }
     }
 
@@ -153,7 +160,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     /**
      * Returns a list of custom exceptions mapped to error/warning classes.
      *
-     * @param array $config
+     * @param array $exceptionConfig
      * @return array Custom exception map, [exception => UserError/UserWarning].
      */
     private function buildExceptionMap(array $exceptionConfig)
