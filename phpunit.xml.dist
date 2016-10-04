@@ -30,6 +30,7 @@
 
     <php>
         <ini name="error_reporting" value="E_ALL"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="100" />
     </php>
 
 </phpunit>
