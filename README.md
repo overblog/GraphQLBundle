@@ -935,6 +935,32 @@ simple request | `/graphql/bar`
 batch request | `/graphql/bar/batch`
 graphiQL | `/graphiql/bar`
 
+Debug information
+-----------------
+
+To enabled or disabled debug information:
+
+```yaml
+# app/config/config.yml
+
+overblog_graphql:
+    definitions:
+        show_debug_info: true # Debug info is disabled by default
+```
+
+here an example of an answer when debug information is enabled
+```json
+{
+  "data": [{"isEnabled": true}],
+  "extensions": {
+    "debug": {
+      "executionTime": "400 ms",
+      "memoryUsage": "1.00 MiB"
+    }
+  }
+}
+```
+
 Contribute
 ----------
 

@@ -17,6 +17,7 @@ services:
             - "@event_dispatcher"
             - "%kernel.debug%"
             - "@overblog_graphql.error_handler"
+            - false
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]

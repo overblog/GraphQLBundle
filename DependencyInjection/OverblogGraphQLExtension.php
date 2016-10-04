@@ -40,6 +40,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setConfigBuilders($config);
         $this->setVersions($config, $container);
 
+        $container->getDefinition('overblog_graphql.request_executor')->replaceArgument(3, $config['definitions']['show_debug_info']);
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 

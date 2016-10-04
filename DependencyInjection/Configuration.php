@@ -44,6 +44,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('internal_error_message')->defaultNull()->end()
+                        ->booleanNode('show_debug_info')->defaultValue(false)->end()
                         ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                         ->arrayNode('schema')
                             ->beforeNormalization()
