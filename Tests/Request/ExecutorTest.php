@@ -63,8 +63,8 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
                     'resolve' => function () {
                         return false;
                     },
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $this->executor->addSchema('global', new Schema(['query' => $queryType]));

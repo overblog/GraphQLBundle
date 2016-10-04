@@ -124,7 +124,7 @@ class ConnectionBuilder
             $edges,
             new PageInfo(
                 $firstEdge instanceof Edge ? $firstEdge->cursor : null,
-                $lastEdge instanceof Edge  ? $lastEdge->cursor : null,
+                $lastEdge instanceof Edge ? $lastEdge->cursor : null,
                 $last !== null ? $startOffset > $lowerBound : false,
                 $first !== null ? $endOffset < $upperBound : false
             )

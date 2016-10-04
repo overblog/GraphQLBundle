@@ -36,7 +36,7 @@ class MutationFieldDefinition implements MappingInterface
 
     private function cleanMutateAndGetPayload($mutateAndGetPayload)
     {
-        if (is_string($mutateAndGetPayload) &&  0 === strpos($mutateAndGetPayload, '@=')) {
+        if (is_string($mutateAndGetPayload) && 0 === strpos($mutateAndGetPayload, '@=')) {
             $cleanMutateAndGetPayload = substr($mutateAndGetPayload, 2);
         } else {
             $cleanMutateAndGetPayload = json_encode($mutateAndGetPayload);

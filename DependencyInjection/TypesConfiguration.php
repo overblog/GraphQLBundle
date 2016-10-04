@@ -115,7 +115,9 @@ class TypesConfiguration implements ConfigurationInterface
 
     private function addBeforeNormalization(ArrayNodeDefinition $node)
     {
-        $typeKeyExists = function ($types) { return !empty($types) && is_array($types); };
+        $typeKeyExists = function ($types) {
+            return !empty($types) && is_array($types);
+        };
 
         $node
             // set type config.name
@@ -147,7 +149,9 @@ class TypesConfiguration implements ConfigurationInterface
             ->end()
             // normalized relay-mutation-payload
             ->beforeNormalization()
-                ->ifTrue(function ($types) { return !empty($types) && is_array($types); })
+                ->ifTrue(function ($types) {
+                    return !empty($types) && is_array($types);
+                })
                 ->then($this->relayNormalizer('relay-mutation-payload', 'Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition'))
             ->end();
     }

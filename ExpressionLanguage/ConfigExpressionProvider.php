@@ -25,7 +25,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($value) {
                     return sprintf('$container->get(%s)', $value);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -33,7 +34,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($value) {
                     return sprintf('$container->getParameter(%s)', $value);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -41,7 +43,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($className) {
                     return sprintf('($className = %s) && $value instanceof $className', $className);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -49,7 +52,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($alias, $args = '[]') {
                     return sprintf('$container->get(\'overblog_graphql.resolver_resolver\')->resolve([%s, %s])', $alias, $args);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -60,7 +64,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -71,7 +76,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -82,7 +88,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -93,7 +100,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -101,7 +109,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($alias, $args = '[]') {
                     return sprintf('$container->get(\'overblog_graphql.mutation_resolver\')->resolve([%s, %s])', $alias, $args);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -115,7 +124,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                         $id
                     );
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -126,7 +136,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                         $globalId
                     );
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -134,7 +145,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 function ($className, $args = '[]') {
                     return sprintf('(new \ReflectionClass(%s))->newInstanceArgs(%s)', $className, $args);
                 },
-                function () {}
+                function () {
+                }
             ),
         ];
     }

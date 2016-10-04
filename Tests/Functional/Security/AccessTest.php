@@ -26,7 +26,7 @@ class AccessTest extends TestCase
 
     private $userIsEnabledQuery = 'query MyQuery { user { isEnabled } }';
 
-    private $userFriendsQuery = <<<EOF
+    private $userFriendsQuery = <<<'EOF'
 query MyQuery {
   user {
     friends(first: 2) {
@@ -40,7 +40,7 @@ query MyQuery {
 }
 EOF;
 
-    private $simpleMutationWithThunkQuery = <<<EOF
+    private $simpleMutationWithThunkQuery = <<<'EOF'
 mutation M {
   simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
     result
@@ -127,7 +127,7 @@ EOF;
             ],
         ];
 
-        $query = <<<EOF
+        $query = <<<'EOF'
 query MyQuery {
   user {
     forbidden

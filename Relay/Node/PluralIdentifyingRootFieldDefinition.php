@@ -47,7 +47,7 @@ class PluralIdentifyingRootFieldDefinition implements MappingInterface
 
     private function cleanResolveSingleInput($resolveSingleInput)
     {
-        if (is_string($resolveSingleInput) &&  0 === strpos($resolveSingleInput, '@=')) {
+        if (is_string($resolveSingleInput) && 0 === strpos($resolveSingleInput, '@=')) {
             $cleanResolveSingleInput = substr($resolveSingleInput, 2);
         } else {
             $cleanResolveSingleInput = json_encode($resolveSingleInput);

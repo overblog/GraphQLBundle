@@ -24,7 +24,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 function ($role) {
                     return sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s)', $role);
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -34,7 +35,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -42,7 +44,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -50,7 +53,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -58,7 +62,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -66,7 +71,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -76,7 +82,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
 
             new ExpressionFunction(
@@ -86,7 +93,8 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
 
                     return $code;
                 },
-                function () {}
+                function () {
+                }
             ),
         ];
     }

@@ -13,10 +13,10 @@ namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 final class Connection
 {
-    /** @var Edge[]  */
+    /** @var Edge[] */
     public $edges = [];
 
-    /** @var PageInfo  */
+    /** @var PageInfo */
     public $pageInfo;
 
     public function __construct(array $edges, PageInfo $pageInfo)

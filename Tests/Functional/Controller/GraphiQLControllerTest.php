@@ -30,7 +30,7 @@ class GraphiQLControllerTest extends TestCase
     {
         return [
             ['/graphiql'],
-            ['/graphiql/default']
+            ['/graphiql/default'],
         ];
     }
 }

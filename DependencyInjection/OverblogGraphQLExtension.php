@@ -162,7 +162,8 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
      * Returns a list of custom exceptions mapped to error/warning classes.
      *
      * @param array $exceptionConfig
-     * @return array Custom exception map, [exception => UserError/UserWarning].
+     *
+     * @return array Custom exception map, [exception => UserError/UserWarning]
      */
     private function buildExceptionMap(array $exceptionConfig)
     {

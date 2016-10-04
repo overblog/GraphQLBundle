@@ -37,7 +37,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
         $node->validate()
             ->ifTrue(function ($v) {
-
                 return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
             })
             ->then(function ($v) {

@@ -29,7 +29,7 @@ class GlobalTest extends TestCase
 
     public function testGlobalIdFields()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   allObjects {
     id
@@ -65,7 +65,7 @@ EOF;
 
     public function testReFetchesTheIds()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
       user: node(id: "VXNlcjox") {
         id

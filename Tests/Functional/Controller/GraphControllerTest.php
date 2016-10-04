@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class GraphControllerTest extends TestCase
 {
-    private $friendsQuery = <<<EOF
+    private $friendsQuery = <<<'EOF'
 query FriendsQuery {
   user {
     friends(first: 2) {
@@ -31,7 +31,7 @@ query FriendsQuery {
 }
 EOF;
 
-    private $friendsTotalCountQuery = <<<EOF
+    private $friendsTotalCountQuery = <<<'EOF'
 query FriendsTotalCountQuery {
   user {
     friends {
@@ -76,7 +76,6 @@ EOF;
         $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
     }
 
-
     public function graphQLEndpointUriProvider()
     {
         return [
@@ -111,10 +110,10 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
 
-        $query = <<<EOF
-query FriendsQuery(\$firstFriends: Int) {
+        $query = <<<'EOF'
+query FriendsQuery($firstFriends: Int) {
   user {
-    friends(first: \$firstFriends) {
+    friends(first: $firstFriends) {
       totalCount
       edges {
         friendshipTime
@@ -138,7 +137,7 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
 
-        $query = <<<EOF
+        $query = <<<'EOF'
 query {
   user
 }
@@ -155,7 +154,7 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
 
-        $query = <<<EOF
+        $query = <<<'EOF'
 query {
   user
 }

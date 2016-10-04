@@ -61,12 +61,14 @@ class Executor
     public function enabledDebugInfo()
     {
         $this->hasDebugInfo = true;
+
         return $this;
     }
 
     public function disabledDebugInfo()
     {
         $this->hasDebugInfo = false;
+
         return $this;
     }
 

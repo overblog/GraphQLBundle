@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 class NodeResolver
 {
-    /** @var TypeResolver  */
+    /** @var TypeResolver */
     private $typeResolver;
 
     private $userData = [

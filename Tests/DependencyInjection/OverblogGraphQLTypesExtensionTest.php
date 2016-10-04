@@ -94,12 +94,12 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'definitions' => [
                         'exceptions' => [
                             'warnings' => [
-                                'Symfony\Component\Routing\Exception\ResourceNotFoundException'
+                                'Symfony\Component\Routing\Exception\ResourceNotFoundException',
                             ],
                             'errors' => [
-                                'InvalidArgumentException'
+                                'InvalidArgumentException',
                             ],
-                        ]
+                        ],
                     ],
                 ],
             ],

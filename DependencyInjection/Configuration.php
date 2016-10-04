@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
      */
     public function __construct($debug)
     {
-        $this->debug = (Boolean) $debug;
+        $this->debug = (bool) $debug;
     }
 
     public function getConfigTreeBuilder()
@@ -85,11 +85,11 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('exceptions')
                             ->children()
                                 ->arrayNode('warnings')
-                                    ->treatNullLike(array())
+                                    ->treatNullLike([])
                                     ->prototype('scalar')->end()
                                 ->end()
                                 ->arrayNode('errors')
-                                    ->treatNullLike(array())
+                                    ->treatNullLike([])
                                     ->prototype('scalar')->end()
                                 ->end()
                                 ->arrayNode('types')
@@ -175,12 +175,18 @@ class Configuration implements ConfigurationInterface
         $node
             ->info('Disabled if equal to false.')
             ->beforeNormalization()
-                ->ifTrue(function ($v) { return false === $v; })
-                ->then(function () use ($disabledValue) { return $disabledValue; })
+                ->ifTrue(function ($v) {
+                    return false === $v;
+                })
+                ->then(function () use ($disabledValue) {
+                    return $disabledValue;
+                })
             ->end()
             ->defaultFalse()
             ->validate()
-                ->ifTrue(function ($v) { return $v < 0; })
+                ->ifTrue(function ($v) {
+                    return $v < 0;
+                })
                 ->thenInvalid('"overblog_graphql.security.'.$name.'" must be greater or equal to 0.')
             ->end()
         ;
