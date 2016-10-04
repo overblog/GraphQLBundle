@@ -29,7 +29,7 @@ class PluralTest extends TestCase
 
     public function testNodeInterfaceAndFields()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
       usernames(usernames:["dschafer", "leebyron", "schrockn"]) {
         username
@@ -60,7 +60,7 @@ EOF;
 
     public function testCorrectlyIntrospects()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
       __schema {
         queryType {

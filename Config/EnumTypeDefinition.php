@@ -27,8 +27,12 @@ class EnumTypeDefinition extends TypeDefinition
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->beforeNormalization()
-                            ->ifTrue(function ($v) { return !is_null($v) && !is_array($v); })
-                            ->then(function ($v) { return ['value' => $v]; })
+                            ->ifTrue(function ($v) {
+                                return !is_null($v) && !is_array($v);
+                            })
+                            ->then(function ($v) {
+                                return ['value' => $v];
+                            })
                         ->end()
                         ->isRequired()
                         ->children()

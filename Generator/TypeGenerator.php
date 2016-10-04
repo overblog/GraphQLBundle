@@ -54,7 +54,7 @@ class TypeGenerator extends BaseTypeGenerator
 
     protected function generateClassDocBlock(array $value)
     {
-        return <<<EOF
+        return <<<'EOF'
 
 /**
  * THIS FIELD WAS GENERATED AND SHOULD NOT BE MODIFIED!
@@ -73,9 +73,10 @@ EOF;
     }
 
     /**
-     * todo replace generateResolve in vendor after spec-april2016 is merged
+     * todo replace generateResolve in vendor after spec-april2016 is merged.
      *
      * @param array $value
+     *
      * @return string
      */
     protected function generateResolve2(array $value)

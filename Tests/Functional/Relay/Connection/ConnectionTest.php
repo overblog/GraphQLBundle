@@ -29,7 +29,7 @@ class ConnectionTest extends TestCase
 
     public function testIncludesConnectionAndEdgeFields()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 query FriendsQuery {
   user {
     friends(first: 2) {
@@ -72,7 +72,7 @@ EOF;
 
     public function testWorksWithForwardConnectionArgs()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 query FriendsQuery {
   user {
     friendsForward(first: 2) {
@@ -110,7 +110,7 @@ EOF;
 
     public function testWorksWithBackwardConnectionArgs()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
       query FriendsQuery {
         user {
           friendsBackward(last: 2) {

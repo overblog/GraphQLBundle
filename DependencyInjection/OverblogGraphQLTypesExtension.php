@@ -105,7 +105,6 @@ class OverblogGraphQLTypesExtension extends Extension
         if (!empty($config['definitions']['mappings']['types'])) {
             $typesMappings = array_filter(array_map(
                 function (array $typeMapping) use ($container) {
-
                     $params = $this->detectConfigFiles($container, $typeMapping['dir'],  $typeMapping['type']);
 
                     return $params;

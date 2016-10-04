@@ -29,7 +29,7 @@ class MutationTest extends TestCase
 
     public function testRequiresAnArgument()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 mutation M {
   simpleMutation {
     result
@@ -47,7 +47,7 @@ EOF;
 
     public function testReturnTheSameClientMutationId()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 mutation M {
   simpleMutation(input: {clientMutationId: "abc"}) {
     result
@@ -68,7 +68,7 @@ EOF;
 
     public function testSupportsThunksAsInputAndOutputFields()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 mutation M {
   simpleMutationWithThunkFields(input: {inputData: 1234, clientMutationId: "abc"}) {
     result
@@ -88,7 +88,7 @@ EOF;
 
     public function testContainsCorrectInput()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   __type(name: "simpleMutationInput") {
     name
@@ -132,7 +132,7 @@ EOF;
 
     public function testContainsCorrectPayload()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   __type(name: "simpleMutationPayload") {
     name
@@ -186,7 +186,7 @@ EOF;
 
     public function testContainsCorrectField()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   __schema {
     mutationType {

@@ -29,7 +29,7 @@ class NodeTest extends TestCase
 
     public function testNodeInterfaceAndFields()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "1") {
     id
@@ -48,7 +48,7 @@ EOF;
 
     public function testGetsTheCorrectIdForPhotos()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "4") {
     id
@@ -67,7 +67,7 @@ EOF;
 
     public function testGetsTheCorrectWidthForPhotos()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "4") {
     id
@@ -90,7 +90,7 @@ EOF;
 
     public function testGetsTheCorrectTypeNameForUsers()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "1") {
     id
@@ -111,7 +111,7 @@ EOF;
 
     public function testGetsTheCorrectTypeNameForPhotos()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "4") {
     id
@@ -132,7 +132,7 @@ EOF;
 
     public function testIgnoresPhotoFragmentsOnUser()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "1") {
     id
@@ -154,7 +154,7 @@ EOF;
 
     public function testReturnsNullForBadIds()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
   node(id: "5") {
     id
@@ -171,7 +171,7 @@ EOF;
 
     public function testHasCorrectNodeInterface()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
         __type(name: "Node") {
           name
@@ -214,7 +214,7 @@ EOF;
 
     public function testHasCorrectNodeRootField()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 {
         __schema {
           queryType {

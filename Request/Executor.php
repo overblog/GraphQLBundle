@@ -40,11 +40,15 @@ class Executor
     /** @var ErrorHandler|null */
     private $errorHandler;
 
-    public function __construct(EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null)
+    /** @var bool */
+    private $hasDebugInfo;
+
+    public function __construct(EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null, $hasDebugInfo = false)
     {
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
+        $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
     }
 
     public function addSchema($name, Schema $schema)
@@ -52,6 +56,25 @@ class Executor
         $this->schemas[$name] = $schema;
 
         return $this;
+    }
+
+    public function enabledDebugInfo()
+    {
+        $this->hasDebugInfo = true;
+
+        return $this;
+    }
+
+    public function disabledDebugInfo()
+    {
+        $this->hasDebugInfo = false;
+
+        return $this;
+    }
+
+    public function hasDebugInfo()
+    {
+        return $this->hasDebugInfo;
     }
 
     public function setMaxQueryDepth($maxQueryDepth)
@@ -90,6 +113,9 @@ class Executor
 
         $schema = $this->getSchema($schemaName);
 
+        $startTime = microtime(true);
+        $startMemoryUsage = memory_get_usage(true);
+
         $executionResult = GraphQL::executeAndReturnResult(
             $schema,
             isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
@@ -98,6 +124,13 @@ class Executor
             $data[ParserInterface::PARAM_VARIABLES],
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
+
+        if ($this->hasDebugInfo()) {
+            $executionResult->extensions['debug'] = [
+                'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 1) * 1000),
+                'memoryUsage' => sprintf('%.2F MiB', (memory_get_usage(true) - $startMemoryUsage) / 1024 / 1024),
+            ];
+        }
 
         if (null !== $this->errorHandler) {
             $this->errorHandler->handleErrors($executionResult, $this->throwException);

@@ -13,16 +13,16 @@ namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 final class PageInfo
 {
-    /** @var string  */
+    /** @var string */
     public $startCursor;
 
-    /** @var  string */
+    /** @var string */
     public $endCursor;
 
-    /** @var  bool */
+    /** @var bool */
     public $hasPreviousPage;
 
-    /** @var  bool */
+    /** @var bool */
     public $hasNextPage;
 
     public function __construct($startCursor, $endCursor, $hasPreviousPage, $hasNextPage)

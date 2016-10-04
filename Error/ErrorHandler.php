@@ -139,12 +139,13 @@ class ErrorHandler
      * that is displayed to the user.
      *
      * @param \Exception $rawException
+     *
      * @return \Exception
      */
     protected function convertException(\Exception $rawException = null)
     {
         if (null === $rawException) {
-            return null;
+            return;
         }
 
         if (!empty($this->exceptionMap[get_class($rawException)])) {

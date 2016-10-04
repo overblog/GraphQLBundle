@@ -13,10 +13,10 @@ namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 final class Edge
 {
-    /** @var string  */
+    /** @var string */
     public $cursor;
 
-    /** @var  mixed */
+    /** @var mixed */
     public $node;
 
     public function __construct($cursor, $node)

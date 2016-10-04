@@ -29,7 +29,7 @@ class ExceptionTest extends TestCase
 
     public function testExceptionIsMappedToAWarning()
     {
-        $query = <<<EOF
+        $query = <<<'EOF'
 query ExceptionQuery {
     test
 }
@@ -46,7 +46,7 @@ EOF;
                     [
                         'line' => 2,
                         'column' => 5,
-                    ]
+                    ],
                 ],
             ],
         ];

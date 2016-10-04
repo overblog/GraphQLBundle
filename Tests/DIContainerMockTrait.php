@@ -12,7 +12,7 @@
 namespace Overblog\GraphQLBundle\Tests;
 
 /**
- * Class DIContainerMockTrait
+ * Class DIContainerMockTrait.
  *
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMockBuilder (string $className)
  */

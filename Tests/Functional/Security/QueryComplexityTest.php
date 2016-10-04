@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class QueryComplexityTest extends TestCase
 {
-    private $userFriendsWithoutLimitQuery = <<<EOF
+    private $userFriendsWithoutLimitQuery = <<<'EOF'
 query MyQuery {
   user {
     friends {
@@ -29,7 +29,7 @@ query MyQuery {
 }
 EOF;
 
-    private $userFriendsWithLimitQuery = <<<EOF
+    private $userFriendsWithLimitQuery = <<<'EOF'
 query MyQuery {
   user {
     friends(first: 1) {
