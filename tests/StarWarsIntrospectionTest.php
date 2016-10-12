@@ -33,8 +33,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => 'Query'],
                     ['name' => 'Episode'],
                     ['name' => 'Character'],
-                    ['name' => 'Human'],
                     ['name' => 'String'],
+                    ['name' => 'Human'],
                     ['name' => 'Droid'],
                     ['name' => '__Schema'],
                     ['name' => '__Type'],
@@ -44,9 +44,10 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => '__InputValue'],
                     ['name' => '__EnumValue'],
                     ['name' => '__Directive'],
+                    ['name' => '__DirectiveLocation'],
                     ['name' => 'ID'],
                     ['name' => 'Float'],
-                    ['name' => 'Int']
+                    ['name' => 'Int'],
                 ]
             ]
         ];

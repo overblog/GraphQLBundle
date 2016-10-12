@@ -85,7 +85,7 @@ class TypeGenerator extends AbstractTypeGenerator
      */
     protected function generateResolve(array $value)
     {
-        return $this->callableCallbackFromArrayValue($value, 'resolve', '$value, $args, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
+        return $this->callableCallbackFromArrayValue($value, 'resolve', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
     /**
@@ -94,7 +94,7 @@ class TypeGenerator extends AbstractTypeGenerator
      */
     protected function generateResolveType(array $value)
     {
-        return $this->callableCallbackFromArrayValue($value, 'resolveType', '$value');
+        return $this->callableCallbackFromArrayValue($value, 'resolveType', '$value, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
     /**
@@ -103,7 +103,7 @@ class TypeGenerator extends AbstractTypeGenerator
      */
     protected function generateIsTypeOf(array $value)
     {
-        return $this->callableCallbackFromArrayValue($value, 'isTypeOf', '$value, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
+        return $this->callableCallbackFromArrayValue($value, 'isTypeOf', '$value, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
     /**
@@ -112,7 +112,7 @@ class TypeGenerator extends AbstractTypeGenerator
      */
     protected function generateResolveField(array $value)
     {
-        return $this->callableCallbackFromArrayValue($value, 'resolveField', '$value, $args, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
+        return $this->callableCallbackFromArrayValue($value, 'resolveField', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
     /**
