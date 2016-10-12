@@ -37,15 +37,18 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         Resolver::setHumanType($this->getType('Human'));
         Resolver::setDroidType($this->getType('Droid'));
 
-        $this->schema = new Schema($this->getType('Query'));
+        $this->schema = new Schema(['query' => $this->getType('Query')]);
     }
 
     /**
      * Helper function to test a query and the expected response.
+     * @param $query
+     * @param $expected
+     * @param null $params
      */
     protected function assertValidQuery($query, $expected, $params = null)
     {
-        $result = GraphQL::execute($this->schema, $query, null, $params);
+        $result = GraphQL::execute($this->schema, $query, null, null, $params);
 
         $this->assertEquals(['data' => $expected], $result, json_encode($result));
     }
