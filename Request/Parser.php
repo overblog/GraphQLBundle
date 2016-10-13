@@ -50,6 +50,10 @@ class Parser implements ParserInterface
 
             // JSON object
             case static::CONTENT_TYPE_JSON:
+                if (empty($body)) {
+                    throw new BadRequestHttpException('The request content body must not be empty when using json content type request.');
+                }
+
                 $parsedBody = json_decode($body, true);
 
                 if (JSON_ERROR_NONE !== json_last_error()) {
