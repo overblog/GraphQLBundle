@@ -97,6 +97,18 @@ EOF;
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedExceptionMessage The request content body must not be empty when using json content type request.
+     */
+    public function testEndpointWithEmptyJsonBodyQuery()
+    {
+        $client = static::createClient();
+        $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json']);
+        $client->getResponse()->getContent();
+    }
+
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage POST body sent invalid JSON
      */
     public function testEndpointWithInvalidBodyQuery()

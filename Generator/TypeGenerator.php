@@ -72,18 +72,6 @@ EOF;
         return  sprintf('$container->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
     }
 
-    /**
-     * todo replace generateResolve in vendor after spec-april2016 is merged.
-     *
-     * @param array $value
-     *
-     * @return string
-     */
-    protected function generateResolve2(array $value)
-    {
-        return $this->callableCallbackFromArrayValue($value, 'resolve', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
-    }
-
     protected function generateResolve(array $value)
     {
         $accessIsSet = $this->arrayKeyExistsAndIsNotNull($value, 'access');
@@ -91,7 +79,7 @@ EOF;
         $fieldOptions['resolve'] = $this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve') ? $fieldOptions['resolve'] : $this->defaultResolver;
 
         if (!$accessIsSet || true === $fieldOptions['access']) { // access granted  to this field
-            $resolveCallback = $this->generateResolve2($fieldOptions);
+            $resolveCallback = parent::generateResolve($fieldOptions);
             if ('null' === $resolveCallback) {
                 return $resolveCallback;
             }
@@ -113,7 +101,7 @@ CODE;
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
-            $resolveCallback = $this->generateResolve2($fieldOptions);
+            $resolveCallback = parent::generateResolve($fieldOptions);
             $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
             $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
             $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
