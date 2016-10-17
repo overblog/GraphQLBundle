@@ -99,17 +99,17 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setErrorHandlerArguments(array $config, ContainerBuilder $container)
     {
+        $errorHandlerDefinition = $container->getDefinition($this->getAlias().'.error_handler');
+
         if (isset($config['definitions']['internal_error_message'])) {
-            $container
-                ->getDefinition($this->getAlias().'.error_handler')
-                ->replaceArgument(0, $config['definitions']['internal_error_message'])
-            ;
+            $errorHandlerDefinition->replaceArgument(0, $config['definitions']['internal_error_message']);
         }
 
         if (isset($config['definitions']['exceptions'])) {
-            $container
-                ->getDefinition($this->getAlias().'.error_handler')
+            $errorHandlerDefinition
                 ->replaceArgument(2, $this->buildExceptionMap($config['definitions']['exceptions']))
+                ->addMethodCall('setUserWarningClass', [$config['definitions']['exceptions']['types']['warnings']])
+                ->addMethodCall('setUserErrorClass', [$config['definitions']['exceptions']['types']['errors']])
             ;
         }
     }

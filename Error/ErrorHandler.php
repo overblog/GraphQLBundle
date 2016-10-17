@@ -15,10 +15,13 @@ use GraphQL\Error;
 use GraphQL\Executor\ExecutionResult;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Psr\Log\LogLevel;
 
 class ErrorHandler
 {
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
+    const DEFAULT_USER_WARNING_CLASS = 'Overblog\\GraphQLBundle\\Error\\UserWarning';
+    const DEFAULT_USER_ERROR_CLASS = 'Overblog\\GraphQLBundle\\Error\\UserError';
 
     /** @var LoggerInterface */
     private $logger;
@@ -29,6 +32,12 @@ class ErrorHandler
     /** @var array */
     private $exceptionMap;
 
+    /** @var string */
+    private $userWarningClass = self::DEFAULT_USER_WARNING_CLASS;
+
+    /** @var string */
+    private $userErrorClass = self::DEFAULT_USER_ERROR_CLASS;
+
     public function __construct($internalErrorMessage = null, LoggerInterface $logger = null, array $exceptionMap = [])
     {
         $this->logger = (null === $logger) ? new NullLogger() : $logger;
@@ -37,6 +46,20 @@ class ErrorHandler
         }
         $this->internalErrorMessage = $internalErrorMessage;
         $this->exceptionMap = $exceptionMap;
+    }
+
+    public function setUserWarningClass($userWarningClass)
+    {
+        $this->userWarningClass = $userWarningClass;
+
+        return $this;
+    }
+
+    public function setUserErrorClass($userErrorClass)
+    {
+        $this->userErrorClass = $userErrorClass;
+
+        return $this;
     }
 
     /**
@@ -66,7 +89,8 @@ class ErrorHandler
                 continue;
             }
 
-            if ($rawException instanceof UserError) {
+            // user error
+            if ($rawException instanceof $this->userErrorClass) {
                 $treatedExceptions['errors'][] = $error;
                 if ($rawException->getPrevious()) {
                     $this->logException($rawException->getPrevious());
@@ -74,11 +98,11 @@ class ErrorHandler
                 continue;
             }
 
-            // user warnings
-            if ($rawException instanceof UserWarning) {
+            // user warning
+            if ($rawException instanceof $this->userWarningClass) {
                 $treatedExceptions['extensions']['warnings'][] = $error;
                 if ($rawException->getPrevious()) {
-                    $this->logException($rawException->getPrevious());
+                    $this->logException($rawException->getPrevious(), LogLevel::WARNING);
                 }
                 continue;
             }
@@ -97,7 +121,7 @@ class ErrorHandler
                 throw $rawException;
             }
 
-            $this->logException($rawException);
+            $this->logException($rawException, LogLevel::CRITICAL);
 
             $treatedExceptions['errors'][] = new Error(
                 $this->internalErrorMessage,
@@ -111,7 +135,7 @@ class ErrorHandler
         return $treatedExceptions;
     }
 
-    public function logException(\Exception $exception)
+    public function logException(\Exception $exception, $errorLevel = LogLevel::ERROR)
     {
         $message = sprintf(
             '%s: %s[%d] (caught exception) at %s line %s.',
@@ -122,7 +146,7 @@ class ErrorHandler
             $exception->getLine()
         );
 
-        $this->logger->error($message, ['exception' => $exception]);
+        $this->logger->$errorLevel($message, ['exception' => $exception]);
     }
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
