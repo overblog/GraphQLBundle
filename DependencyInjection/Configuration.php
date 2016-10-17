@@ -13,6 +13,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -83,6 +84,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('exceptions')
+                            ->addDefaultsIfNotSet()
                             ->children()
                                 ->arrayNode('warnings')
                                     ->treatNullLike([])
@@ -96,10 +98,10 @@ class Configuration implements ConfigurationInterface
                                     ->addDefaultsIfNotSet()
                                     ->children()
                                         ->scalarNode('warnings')
-                                            ->defaultValue('Overblog\\GraphQLBundle\\Error\\UserWarning')
+                                            ->defaultValue(ErrorHandler::DEFAULT_USER_WARNING_CLASS)
                                         ->end()
                                         ->scalarNode('errors')
-                                            ->defaultValue('Overblog\\GraphQLBundle\\Error\\UserError')
+                                            ->defaultValue(ErrorHandler::DEFAULT_USER_ERROR_CLASS)
                                         ->end()
                                     ->end()
                                 ->end()
