@@ -12,7 +12,9 @@
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 abstract class TaggedServiceMappingPass implements CompilerPassInterface
 {
@@ -32,14 +34,23 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         return $serviceMapping;
     }
 
-    private function taggedServiceToParameterMapping(ContainerBuilder $container, $tagName, $parameterName)
-    {
-        $container->setParameter($parameterName, $this->getTaggedServiceMapping($container, $tagName));
-    }
-
     public function process(ContainerBuilder $container)
     {
-        $this->taggedServiceToParameterMapping($container, $this->getTagName(), $this->getParameterName());
+        $mapping = $this->getTaggedServiceMapping($container, $this->getTagName());
+        $container->setParameter($this->getParameterName(), $mapping);
+        $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
+
+        foreach ($mapping as $name => $options) {
+            $cleanOptions = $options;
+            $solutionID = $options['id'];
+            $solution = $container->get($solutionID);
+
+            if ($solution instanceof ContainerAwareInterface) {
+                $solutionDefinition = $container->findDefinition($options['id']);
+                $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
+            }
+            $resolverDefinition->addMethodCall('addSolution', [$name, new Reference($solutionID), $cleanOptions]);
+        }
     }
 
     protected function checkRequirements($id, array $tag)
@@ -52,6 +63,8 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     }
 
     abstract protected function getTagName();
+
+    abstract protected function getResolverServiceID();
 
     abstract protected function getParameterName();
 }
