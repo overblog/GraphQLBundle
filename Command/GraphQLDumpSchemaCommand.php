@@ -18,18 +18,25 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GraphDumpSchemaCommand extends ContainerAwareCommand
+class GraphQLDumpSchemaCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('graph:dump-schema')
+            ->setName('graphql:dump-schema')
+            ->setAliases(['graph:dump-schema'])
             ->setDescription('Dumps GraphQL schema')
             ->addOption(
                 'file',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Path to generate schema file.'
+            )
+            ->addOption(
+                'schema',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The schema name to generate.'
             );
     }
 
@@ -42,14 +49,15 @@ class GraphDumpSchemaCommand extends ContainerAwareCommand
             'variables' => [],
             'operationName' => null,
         ];
+        $schemaName = $input->getOption('schema');
 
         $container = $this->getContainer();
         $result = $container
             ->get('overblog_graphql.request_executor')
-            ->execute($request)
+            ->execute($request, [], $schemaName)
             ->toArray();
 
-        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').'/../var/schema.json';
+        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.json', $schemaName? '.'.$schemaName:'');
 
         $schema = json_encode($result['data']);
 
