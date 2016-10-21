@@ -37,28 +37,17 @@ services:
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureType"]
         arguments:
             -
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureResolver"]
 
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
-        configurator: ["@overblog_graphql.resolver_configurator", "configureMutation"]
 
     overblog_graphql.access_resolver:
         class: Overblog\GraphQLBundle\Resolver\AccessResolver
-
-    overblog_graphql.resolver_configurator:
-        class: Overblog\GraphQLBundle\DependencyInjection\Configurator\ResolverConfigurator
-        calls:
-            - ["setContainer", ["@service_container"]]
-            - ["addMapping", ["type", "%overblog_graphql.types_mapping%"]]
-            - ["addMapping", ["resolver", "%overblog_graphql.resolvers_mapping%"]]
-            - ["addMapping", ["mutation", "%overblog_graphql.mutations_mapping%"]]
 
     overblog_graphql.cache_expression_language_parser.default:
         class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache

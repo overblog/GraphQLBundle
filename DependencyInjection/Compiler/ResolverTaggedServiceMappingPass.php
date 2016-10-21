@@ -33,4 +33,9 @@ class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
             );
         }
     }
+
+    protected function getResolverServiceID()
+    {
+        return 'overblog_graphql.resolver_resolver';
+    }
 }

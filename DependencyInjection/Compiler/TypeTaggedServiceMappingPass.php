@@ -22,4 +22,9 @@ class TypeTaggedServiceMappingPass extends TaggedServiceMappingPass
     {
         return 'overblog_graphql.types_mapping';
     }
+
+    protected function getResolverServiceID()
+    {
+        return 'overblog_graphql.type_resolver';
+    }
 }
