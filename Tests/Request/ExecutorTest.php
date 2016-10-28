@@ -26,17 +26,47 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->executor = new Executor();
+        $queryType = new ObjectType([
+            'name' => 'Query',
+            'fields' => [
+                'myField' => [
+                    'type' => Type::boolean(),
+                    'resolve' => function () {
+                        return false;
+                    },
+                ],
+            ],
+        ]);
+        $this->executor->addSchema('global', new Schema(['query' => $queryType]));
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
+     */
+    public function testInvalidExecutorReturnNotObject()
+    {
+        $this->executor->setExecutor(function() { return false; });
+        $this->executor->execute($this->request);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
+     */
+    public function testInvalidExecutorReturnInvalidObject()
+    {
+        $this->executor->setExecutor(function() { return new \stdClass(); });
+        $this->executor->execute($this->request);
     }
 
     public function testDisabledDebugInfo()
     {
-        $this->addSchema();
         $this->assertArrayNotHasKey('debug', $this->executor->disabledDebugInfo()->execute($this->request)->extensions);
     }
 
     public function testEnabledDebugInfo()
     {
-        $this->addSchema();
         $result = $this->executor->enabledDebugInfo()->execute($this->request);
 
         $this->assertArrayHasKey('debug', $result->extensions);
@@ -50,23 +80,6 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSchemaNoSchemaFound()
     {
-        $this->executor->getSchema('fake');
-    }
-
-    private function addSchema()
-    {
-        $queryType = new ObjectType([
-            'name' => 'Query',
-            'fields' => [
-                'myField' => [
-                    'type' => Type::boolean(),
-                    'resolve' => function () {
-                        return false;
-                    },
-                ],
-            ],
-        ]);
-
-        $this->executor->addSchema('global', new Schema(['query' => $queryType]));
+        (new Executor())->getSchema('fake');
     }
 }

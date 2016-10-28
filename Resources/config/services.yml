@@ -1,6 +1,7 @@
 parameters:
     overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
     overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
+    overblog_graphql.default_executor: [GraphQL\GraphQL, executeAndReturnResult]
 
 services:
     overblog_graphql.error_handler:
@@ -18,6 +19,7 @@ services:
             - "%kernel.debug%"
             - "@overblog_graphql.error_handler"
             - false
+            - "%overblog_graphql.default_executor%"
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]

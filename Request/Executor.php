@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Request;
 
+use GraphQL\Executor\ExecutionResult;
 use GraphQL\GraphQL;
 use GraphQL\Schema;
 use GraphQL\Validator\DocumentValidator;
@@ -24,6 +25,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Executor
 {
+    const DEFAULT_EXECUTOR = 'GraphQL\\GraphQL::executeAndReturnResult';
+
     /**
      * @var Schema[]
      */
@@ -43,12 +46,35 @@ class Executor
     /** @var bool */
     private $hasDebugInfo;
 
-    public function __construct(EventDispatcherInterface $dispatcher = null, $throwException = false, ErrorHandler $errorHandler = null, $hasDebugInfo = false)
+    /**
+     * @var callable
+     */
+    private $executor;
+
+    public function __construct(
+        EventDispatcherInterface $dispatcher = null,
+        $throwException = false,
+        ErrorHandler $errorHandler = null,
+        $hasDebugInfo = false,
+        callable $executor = null
+    )
     {
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
         $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
+        $this->executor = $executor;
+        if (null === $this->executor) {
+            $this->executor = self::DEFAULT_EXECUTOR;
+        }
+
+    }
+
+    public function setExecutor(callable $executor)
+    {
+        $this->executor = $executor;
+
+        return $this;
     }
 
     public function addSchema($name, Schema $schema)
@@ -116,7 +142,8 @@ class Executor
         $startTime = microtime(true);
         $startMemoryUsage = memory_get_usage(true);
 
-        $executionResult = GraphQL::executeAndReturnResult(
+        $executionResult = call_user_func(
+            $this->executor,
             $schema,
             isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
             $context,
@@ -124,6 +151,10 @@ class Executor
             $data[ParserInterface::PARAM_VARIABLES],
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
+
+        if (!is_object($executionResult)  || !$executionResult instanceof ExecutionResult) {
+            throw new \RuntimeException(sprintf('Execution result should be an object instantiating "%s".', 'GraphQL\\Executor\\ExecutionResult'));
+        }
 
         if ($this->hasDebugInfo()) {
             $executionResult->extensions['debug'] = [
