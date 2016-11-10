@@ -145,7 +145,7 @@ require_once __DIR__ . '/../../../../vendor/webonyx/graphql-php/tests/StarWarsDa
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use GraphQL\StarWarsData;
+use GraphQL\Tests\StarWarsData;
 
 class CharacterResolver implements ContainerAwareInterface
 {
