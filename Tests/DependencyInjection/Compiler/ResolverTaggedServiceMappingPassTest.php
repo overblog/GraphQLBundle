@@ -4,7 +4,6 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,13 +24,17 @@ class ResolverTaggedServiceMappingPassTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $container = new ContainerBuilder();
-        $container->setDefinition('injected_service', new Definition(FakeInjectedService::class));
+        $container->setDefinition(
+            'injected_service',
+            new Definition('Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler\FakeInjectedService')
+        );
+
         $container->register(
             'overblog_graphql.resolver_resolver',
             "Overblog\\GraphQLBundle\\Resolver\\ResolverResolver"
         );
 
-        $fakeResolver = new Definition(FakeResolverService::class);
+        $fakeResolver = new Definition('Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler\FakeResolverService');
         $fakeResolver
             ->addTag( 'overblog_graphql.resolver', [
                 'alias' => 'fake_resolver', 'method' => 'doSomethingWithContainer'
