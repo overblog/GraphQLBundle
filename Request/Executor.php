@@ -158,7 +158,7 @@ class Executor
 
         if ($this->hasDebugInfo()) {
             $executionResult->extensions['debug'] = [
-                'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 1) * 1000),
+                'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 3) * 1000),
                 'memoryUsage' => sprintf('%.2F MiB', (memory_get_usage(true) - $startMemoryUsage) / 1024 / 1024),
             ];
         }
