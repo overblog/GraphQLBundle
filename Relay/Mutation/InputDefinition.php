@@ -30,7 +30,7 @@ class InputDefinition implements MappingInterface
                     'fields' => array_merge(
                         $inputFields,
                         [
-                            'clientMutationId' => ['type' => 'String!'],
+                            'clientMutationId' => ['type' => 'String'],
                         ]
                     ),
                 ],
