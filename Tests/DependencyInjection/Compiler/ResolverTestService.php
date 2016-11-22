@@ -1,13 +1,21 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Class ResolverTestService
- * @package DependencyInjection\Compiler
+ * Class ResolverTestService.
  */
 class ResolverTestService implements ContainerAwareInterface
 {

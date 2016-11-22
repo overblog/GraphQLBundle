@@ -14,8 +14,8 @@ namespace Overblog\GraphQLBundle\Error;
 use GraphQL\Error;
 use GraphQL\Executor\ExecutionResult;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 class ErrorHandler
 {

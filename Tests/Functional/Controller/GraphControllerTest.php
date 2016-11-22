@@ -106,7 +106,6 @@ EOF;
         $client->getResponse()->getContent();
     }
 
-
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage POST body sent invalid JSON

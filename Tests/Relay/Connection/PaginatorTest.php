@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the OverblogGraphQLBundle package.
+ *
+ * (c) Overblog <http://github.com/overblog/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -28,7 +37,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             return array_fill(0, 6, 'item');
         });
 
-        $this->assertCount(5, $paginator->forward(new Argument(['first' => 5, 'after' => base64_encode('arrayconnection:5') ]))->edges);
+        $this->assertCount(5, $paginator->forward(new Argument(['first' => 5, 'after' => base64_encode('arrayconnection:5')]))->edges);
     }
 
     public function testBackward()
@@ -88,6 +97,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $countCalled = false;
         $result = $paginator->auto(new Argument(['last' => 5]), function () use (&$countCalled) {
             $countCalled = true;
+
             return 10;
         });
 
