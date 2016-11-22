@@ -93,9 +93,17 @@ class ConnectionBuilder
         $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
 
         if (is_numeric($first)) {
+            if ($first < 0) {
+                throw new \InvalidArgumentException('Argument "first" must be a non-negative integer');
+            }
             $endOffset = min($endOffset, $startOffset + $first);
         }
+
         if (is_numeric($last)) {
+            if ($last < 0) {
+                throw new \InvalidArgumentException('Argument "last" must be a non-negative integer');
+            }
+
             $startOffset = max($startOffset, $endOffset - $last);
         }
 
