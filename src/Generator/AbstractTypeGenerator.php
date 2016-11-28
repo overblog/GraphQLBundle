@@ -251,12 +251,12 @@ EOF;
     protected function resolveTypesCode(array $values, $key)
     {
         if (isset($values[$key])) {
-            $types = $this->types2String($values[$key]);
+            $types = sprintf(static::$closureTemplate, '', $this->types2String($values[$key]));
         } else {
             $types = '[]';
         }
 
-        return $types;
+        return  $types;
     }
 
     protected function types2String(array $types)
