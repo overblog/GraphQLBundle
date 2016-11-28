@@ -31,6 +31,7 @@ EOF;
         'enum' => 'GraphQL\\Type\\Definition\\EnumType',
         'union' => 'GraphQL\\Type\\Definition\\UnionType',
         'input-object' => 'GraphQL\\Type\\Definition\\InputObjectType',
+        'custom-scalar' => 'GraphQL\\Type\\Definition\\CustomScalarType',
     ];
 
 

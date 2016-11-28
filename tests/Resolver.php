@@ -86,4 +86,9 @@ abstract class Resolver
         $droids = StarWarsData::droids();
         return isset($droids[$args['id']]) ? $droids[$args['id']] : null;
     }
+
+    public static function getDateTime($root, $args)
+    {
+        return isset($args['dateTime']) ? $args['dateTime'] : new \DateTime('2016-11-28 12:00:00');
+    }
 }

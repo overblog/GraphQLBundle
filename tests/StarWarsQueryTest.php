@@ -42,6 +42,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     public function testAllowsUsToQueryForTheIDAndFriendsOfR2D2()
     {
         $query = '
@@ -74,6 +75,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     // Nested Queries
     public function testAllowsUsToQueryForTheFriendsOfFriendsOfR2D2()
     {
@@ -130,6 +132,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     // Using IDs and query parameters to refetch objects
     public function testAllowsUsToQueryForLukeSkywalkerDirectlyUsingHisID()
     {
@@ -167,6 +170,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
+
     public function testGenericQueryToGetHanSoloById()
     {
         // Allows us to create a generic query, then use it to fetch Han Solo using his ID
@@ -187,6 +191,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
+
     public function testGenericQueryWithInvalidId()
     {
         // Allows us to create a generic query, then pass an invalid ID to get null back
@@ -205,6 +210,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
+
     // Using aliases to change the key in the response
     public function testLukeKeyAlias()
     {
@@ -223,6 +229,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     public function testTwoRootKeysAsAnAlias()
     {
         // Allows us to query for both Luke and Leia, using two root fields and an alias
@@ -246,6 +253,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     // Uses fragments to express more complex queries
     public function testQueryUsingDuplicatedContent()
     {
@@ -274,6 +282,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     public function testUsingFragment()
     {
         // Allows us to use a fragment to avoid duplicating content
@@ -303,6 +312,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     // Using __typename to find the type of an object
     public function testVerifyThatR2D2IsADroid()
     {
@@ -322,6 +332,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
+
     public function testVerifyThatLukeIsHuman()
     {
         $query = '
@@ -337,6 +348,21 @@ class StarWarsQueryTest extends AbstractStarWarsTest
                 '__typename' => 'Human',
                 'name' => 'Luke Skywalker'
             ],
+        ];
+        $this->assertValidQuery($query, $expected);
+    }
+
+    public function testDateTime()
+    {
+        $query = '{ dateTime }';
+        $expected = [
+            'dateTime' => '2016-11-28 12:00:00',
+        ];
+        $this->assertValidQuery($query, $expected);
+
+        $query = '{ dateTime(dateTime: "2016-01-18 23:00:00") }';
+        $expected = [
+            'dateTime' => '2016-01-18 23:00:00',
         ];
         $this->assertValidQuery($query, $expected);
     }

@@ -123,4 +123,31 @@ class TypeGenerator extends AbstractTypeGenerator
     {
         return $this->callableCallbackFromArrayValue($value, 'complexity', '$childrenComplexity, $args = []');
     }
+
+    /**
+     * @param array $value
+     * @return string
+     */
+    protected function generateSerialize(array $value)
+    {
+        return $this->callableCallbackFromArrayValue($value, 'serialize', '$value');
+    }
+
+    /**
+     * @param array $value
+     * @return string
+     */
+    protected function generateParseValue(array $value)
+    {
+        return $this->callableCallbackFromArrayValue($value, 'parseValue', '$value');
+    }
+
+    /**
+     * @param array $value
+     * @return string
+     */
+    protected function generateParseLiteral(array $value)
+    {
+        return $this->callableCallbackFromArrayValue($value, 'parseLiteral', '$value');
+    }
 }

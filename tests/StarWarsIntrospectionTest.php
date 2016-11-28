@@ -36,6 +36,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => 'String'],
                     ['name' => 'Human'],
                     ['name' => 'Droid'],
+                    ['name' => 'DateTime'],
                     ['name' => '__Schema'],
                     ['name' => '__Type'],
                     ['name' => '__TypeKind'],
@@ -356,6 +357,21 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                     ],
                                     'defaultValue' => null,
                                 ],
+                            ],
+                        ],
+                        [
+                            'name' => 'dateTime',
+                            'args' => [
+                                [
+                                    'name' => 'dateTime',
+                                    'description' => null,
+                                    'type' => [
+                                        'name' => 'DateTime',
+                                        'kind' => 'SCALAR',
+                                        'ofType' => null,
+                                    ],
+                                    'defaultValue' => 'null',
+                                ]
                             ],
                         ],
                     ],

@@ -1,4 +1,11 @@
 ---
+DateTime:
+    type: custom-scalar
+    config:
+        serialize: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "serialize"]
+        parseValue: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseValue"]
+        parseLiteral: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseLiteral"]
+
 # Characters in the Star Wars trilogy are either humans or droids.
 #
 # This implements the following type system shorthand:
@@ -152,6 +159,12 @@ Query:
                         description: "id of the droid"
                         type: "String!"
                 resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getDroid"]
+            dateTime:
+                type: "DateTime!"
+                args:
+                    dateTime:
+                        type: "DateTime"
+                resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getDateTime"]
 
 HumanAndDroid:
     type: union
