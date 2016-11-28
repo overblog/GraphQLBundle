@@ -63,7 +63,7 @@ class TypeGenerator extends AbstractTypeGenerator
         $type = 'null';
 
         if (isset($value['type'])) {
-            $type = sprintf('%s', $this->typeAlias2String($value['type']));
+            $type = $this->typeAlias2String($value['type']);
         }
 
         return $type;
