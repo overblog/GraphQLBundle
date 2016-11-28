@@ -15,12 +15,12 @@ class TypeGenerator extends AbstractTypeGenerator
 {
     protected function generateOutputFields(array $config)
     {
-        return $this->processFromArray($config['fields'], 'OutputField');
+        return  sprintf(static::$closureTemplate, '', $this->processFromArray($config['fields'], 'OutputField'));
     }
 
     protected function generateInputFields(array $config)
     {
-        return $this->processFromArray($config['fields'], 'InputField');
+        return sprintf(static::$closureTemplate, '', $this->processFromArray($config['fields'], 'InputField'));
     }
 
     protected function generateArgs(array $fields)
@@ -63,7 +63,7 @@ class TypeGenerator extends AbstractTypeGenerator
         $type = 'null';
 
         if (isset($value['type'])) {
-            $type = sprintf('function () <closureUseStatements>{ return %s; }', $this->typeAlias2String($value['type']));
+            $type = sprintf('%s', $this->typeAlias2String($value['type']));
         }
 
         return $type;

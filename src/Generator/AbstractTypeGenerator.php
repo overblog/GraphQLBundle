@@ -19,6 +19,12 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
     const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
 
+    protected static $closureTemplate = <<<EOF
+function (%s) <closureUseStatements>{
+<spaces><spaces>return %s;
+<spaces>}
+EOF;
+
     private static $typeSystems = [
         'object' => 'GraphQL\\Type\\Definition\\ObjectType',
         'interface' => 'GraphQL\\Type\\Definition\\InterfaceType',
@@ -161,7 +167,7 @@ EOF;
             return $default;
         }
 
-        $code = 'function (%s) <closureUseStatements>{ return %s; }';
+        $code = static::$closureTemplate;
 
         if (is_callable($value[$key])) {
             $func = $value[$key];
@@ -244,7 +250,7 @@ EOF;
     protected function resolveTypesCode(array $values, $key)
     {
         if (isset($values[$key])) {
-            $types = sprintf('function () <closureUseStatements>{ return %s; }', $this->types2String($values[$key]));
+            $types = $this->types2String($values[$key]);
         } else {
             $types = '[]';
         }

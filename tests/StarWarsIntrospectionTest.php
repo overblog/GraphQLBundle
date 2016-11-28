@@ -310,7 +310,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' => null,
+                                    'defaultValue' =>  'null',
                                     'description' => 'If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode.',
                                     'name' => 'episode',
                                     'type' => [
