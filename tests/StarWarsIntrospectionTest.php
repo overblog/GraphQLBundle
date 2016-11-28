@@ -36,6 +36,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => 'String'],
                     ['name' => 'Human'],
                     ['name' => 'Droid'],
+                    ['name' => 'DateTime'],
                     ['name' => '__Schema'],
                     ['name' => '__Type'],
                     ['name' => '__TypeKind'],
@@ -310,7 +311,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' => null,
+                                    'defaultValue' =>  'null',
                                     'description' => 'If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode.',
                                     'name' => 'episode',
                                     'type' => [
@@ -356,6 +357,21 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                     ],
                                     'defaultValue' => null,
                                 ],
+                            ],
+                        ],
+                        [
+                            'name' => 'dateTime',
+                            'args' => [
+                                [
+                                    'name' => 'dateTime',
+                                    'description' => null,
+                                    'type' => [
+                                        'name' => 'DateTime',
+                                        'kind' => 'SCALAR',
+                                        'ofType' => null,
+                                    ],
+                                    'defaultValue' => 'null',
+                                ]
                             ],
                         ],
                     ],
