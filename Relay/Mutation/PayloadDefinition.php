@@ -29,7 +29,7 @@ class PayloadDefinition implements MappingInterface
                     'fields' => array_merge(
                         $outputFields,
                         [
-                            'clientMutationId' => ['type' => 'String!'],
+                            'clientMutationId' => ['type' => 'String'],
                         ]
                     ),
                 ],

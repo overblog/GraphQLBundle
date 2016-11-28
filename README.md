@@ -891,6 +891,7 @@ Expression | Description | Scope
 **value** | Resolver value | only available in resolve context 
 **args** | Resolver args array | only available in resolve context 
 **info** | Resolver GraphQL\Type\Definition\ResolveInfo Object | only available in resolve context
+**context** | context is defined by your application on the top level of query execution (useful for storing current user, environment details, etc) | only available in resolve context
 **childrenComplexity** | Selection field children complexity | only available in complexity context
 
 [For more details on expression syntax](http://symfony.com/doc/current/components/expression_language/syntax.html)

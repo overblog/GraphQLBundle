@@ -98,10 +98,6 @@ EOF;
       type {
         name
         kind
-        ofType {
-          name
-          kind
-        }
       }
     }
   }
@@ -115,12 +111,8 @@ EOF;
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name' => null,
-                            'kind' => 'NON_NULL',
-                            'ofType' => [
-                                'name' => 'String',
-                                'kind' => 'SCALAR',
-                            ],
+                            'name' => 'String',
+                            'kind' => 'SCALAR',
                         ],
                     ],
                 ],
@@ -142,10 +134,6 @@ EOF;
       type {
         name
         kind
-        ofType {
-          name
-          kind
-        }
       }
     }
   }
@@ -162,18 +150,13 @@ EOF;
                         'type' => [
                             'name' => 'Int',
                             'kind' => 'SCALAR',
-                            'ofType' => null,
                         ],
                     ],
                     [
                         'name' => 'clientMutationId',
                         'type' => [
-                            'name' => null,
-                            'kind' => 'NON_NULL',
-                            'ofType' => [
-                                'name' => 'String',
-                                'kind' => 'SCALAR',
-                            ],
+                            'name' => 'String',
+                            'kind' => 'SCALAR',
                         ],
                     ],
 

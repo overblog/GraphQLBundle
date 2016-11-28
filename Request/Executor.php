@@ -57,8 +57,7 @@ class Executor
         ErrorHandler $errorHandler = null,
         $hasDebugInfo = false,
         callable $executor = null
-    )
-    {
+    ) {
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
@@ -67,7 +66,6 @@ class Executor
         if (null === $this->executor) {
             $this->executor = self::DEFAULT_EXECUTOR;
         }
-
     }
 
     public function setExecutor(callable $executor)
@@ -152,7 +150,7 @@ class Executor
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
-        if (!is_object($executionResult)  || !$executionResult instanceof ExecutionResult) {
+        if (!is_object($executionResult) || !$executionResult instanceof ExecutionResult) {
             throw new \RuntimeException(sprintf('Execution result should be an object instantiating "%s".', 'GraphQL\\Executor\\ExecutionResult'));
         }
 

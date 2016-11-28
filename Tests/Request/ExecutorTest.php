@@ -46,7 +46,9 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidExecutorReturnNotObject()
     {
-        $this->executor->setExecutor(function() { return false; });
+        $this->executor->setExecutor(function () {
+            return false;
+        });
         $this->executor->execute($this->request);
     }
 
@@ -56,7 +58,9 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidExecutorReturnInvalidObject()
     {
-        $this->executor->setExecutor(function() { return new \stdClass(); });
+        $this->executor->setExecutor(function () {
+            return new \stdClass();
+        });
         $this->executor->execute($this->request);
     }
 

@@ -57,7 +57,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
             ->execute($request, [], $schemaName)
             ->toArray();
 
-        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.json', $schemaName? '.'.$schemaName:'');
+        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.json', $schemaName ? '.'.$schemaName : '');
 
         $schema = json_encode($result['data']);
 

@@ -178,6 +178,30 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Argument "first" must be a non-negative integer
+     */
+    public function testThrowsAnErrorIfFirstLessThan0()
+    {
+        ConnectionBuilder::connectionFromArray(
+            $this->letters,
+            ['first' => -1]
+        );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Argument "last" must be a non-negative integer
+     */
+    public function testThrowsAnErrorIfLastLessThan0()
+    {
+        ConnectionBuilder::connectionFromArray(
+            $this->letters,
+            ['last' => -1]
+        );
+    }
+
     public function testReturnsNoElementsIfFirstIs0()
     {
         $actual = ConnectionBuilder::connectionFromArray(
