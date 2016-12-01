@@ -1,6 +1,7 @@
 phpunit.xml
-build
-vendor
+/build
+/vendor
+/bin
 composer.lock
 composer.phar
 .php_cs.cache
