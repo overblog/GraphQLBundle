@@ -34,7 +34,9 @@ before_install:
 
 install: composer update --prefer-dist --no-interaction
 
-script: if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then bin/phpunit -d xdebug.max_nesting_level=1000 --debug --coverage-clover=coverage.clover; else bin/phpunit --debug; fi
+script:
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then bin/phpunit -d xdebug.max_nesting_level=1000 --debug --coverage-clover=coverage.clover; else bin/phpunit --debug; fi
+    - if [ "$TRAVIS_PHP_VERSION" == "7.0" ]; then bin/php-cs-fixer fix --diff --dry-run -v; fi;
 
 after_script:
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
