@@ -15,7 +15,7 @@ class SimpleMutationWithThunkFieldsMutation
 {
     private static $hasMutate = false;
 
-    public static function hasMutate($reset  = false)
+    public static function hasMutate($reset = false)
     {
         $hasMutate = self::$hasMutate;
 

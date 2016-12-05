@@ -267,46 +267,46 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * transcript of JS implementation test : works with a just-right array slice
+     * transcript of JS implementation test : works with a just-right array slice.
      */
     public function testWorksWithAJustRightArraySlice()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 1, 2), // equals to letters.slice(1,3) in JS
-            ["first" => 2, 'after' => "YXJyYXljb25uZWN0aW9uOjA="],
-            ["sliceStart" => 1, "arrayLength" => 5]
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
+            ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['B','C'], false, true);
+        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
         $this->assertEquals($expected, $actual);
     }
 
     /**
-     * transcript of JS implementation test : works with an oversized array slice ("left" side)
+     * transcript of JS implementation test : works with an oversized array slice ("left" side).
      */
     public function testWorksWithAnOversizedArraySliceLeftSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 0, 3), // equals to letters.slice(0,3) in JS
-            ["first" => 2, 'after' => "YXJyYXljb25uZWN0aW9uOjA="],
-            ["sliceStart" => 0, "arrayLength" => 5]
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
+            ['sliceStart' => 0, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['B','C'], false, true);
+        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
         $this->assertEquals($expected, $actual);
     }
 
     /**
-     * transcript of JS implementation test : works with an oversized array slice ("right" side)
+     * transcript of JS implementation test : works with an oversized array slice ("right" side).
      */
     public function testWorksWithAnOversizedArraySliceRightSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
-            ["first" => 1, 'after' => "YXJyYXljb25uZWN0aW9uOjE="],
-            ["sliceStart" => 2, "arrayLength" => 5]
+            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
         $expected = $this->getExpectedConnection(['C'], false, true);
@@ -315,14 +315,14 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * transcript of JS implementation test : works with an oversized array slice (both sides)
+     * transcript of JS implementation test : works with an oversized array slice (both sides).
      */
     public function testWorksWithAnOversizedArraySliceBothSides()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 1, 3), // equals to letters.slice(1,4) in JS
-            ["first" => 1, 'after' => "YXJyYXljb25uZWN0aW9uOjE="],
-            ["sliceStart" => 1, "arrayLength" => 5]
+            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
         $expected = $this->getExpectedConnection(['C'], false, true);
@@ -331,14 +331,14 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * transcript of JS implementation test : works with an undersized array slice ("left" side)
+     * transcript of JS implementation test : works with an undersized array slice ("left" side).
      */
     public function testWorksWithAnUndersizedArraySliceLeftSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 3, 2), // equals to letters.slice(3,5) in JS
-            ["first" => 3, 'after' => "YXJyYXljb25uZWN0aW9uOjE="],
-            ["sliceStart" => 3, "arrayLength" => 5]
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
         $expected = $this->getExpectedConnection(['D', 'E'], false, false);
@@ -347,14 +347,14 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * transcript of JS implementation test : works with an undersized array slice ("right" side)
+     * transcript of JS implementation test : works with an undersized array slice ("right" side).
      */
     public function testWorksWithAnUndersizedArraySliceRightSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
-            ["first" => 3, 'after' => "YXJyYXljb25uZWN0aW9uOjE="],
-            ["sliceStart" => 2, "arrayLength" => 5]
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
         $expected = $this->getExpectedConnection(['C', 'D'], false, true);
@@ -363,14 +363,14 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * transcript of JS implementation test : works with an undersized array slice (both sides)
+     * transcript of JS implementation test : works with an undersized array slice (both sides).
      */
     public function worksWithAnUndersizedArraySliceBothSides()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             array_slice($this->letters, 3, 1), // equals to letters.slice(3,4) in JS
-            ["first" => 3, 'after' => "YXJyYXljb25uZWN0aW9uOjE="],
-            ["sliceStart" => 3, "arrayLength" => 5]
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
         $expected = $this->getExpectedConnection(['D'], false, true);
