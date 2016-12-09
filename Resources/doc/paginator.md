@@ -1,0 +1,152 @@
+# The Paginator helper
+
+## Relay behavior
+
+Relay specification: https://facebook.github.io/relay/graphql/connections.htm
+
+Connection implementation in JS: https://github.com/graphql/graphql-relay-js/tree/master/src/connection
+
+The `connectionFromArraySlice()` method:
+
+This method can be used to get a slice of a data set by passing:
+
+- the sliced data set to calculate the edges from
+- the args, as a `ConnectionArguments` object
+- the meta, as a `ArraySliceMetaInfo` object
+
+The sliced data set must contains: 
+
+- the item before the first item you want
+- the item after the slice, so `PageInfo->hasNextPage` can be calculated
+ 
+Exemple:
+ 
+- full data set is `['A','B','C','D','E']`
+- we want 2 items after `A`, meaning `['B','C']`
+
+
+- `after` cursor will be `arrayconnection:0`
+- `offset` will be calculated to `0`
+- so we need to passed a sliced data with `['A','B','C','D']` to `connectionFromArraySlice()` 
+
+## Paginator
+
+See: `Overblog\GraphQLBundle\Relay\Connection\Paginator`
+
+The purpose if this helper is to provide an easy way to paginate in a data set provided by a backend.
+
+When constructing the paginator, you need to pass a callable which will be responsible for providing the sliced data set.
+
+### Exemple
+ 
+#### With a `first` Relay parameter
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+function getData($offset = 0)
+{
+    return array_slice(['A', 'B', 'C', 'D', 'E'], $offset);
+}
+
+$paginator = new Paginator(function ($offset, $limit) {
+    return getData($offset);
+});
+
+$result = $paginator->forward(new Argument(['first' => 4]));
+
+var_dump($result->edges);
+
+```
+
+Returns
+
+```
+array(4) {
+  [0]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#24 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjA="
+    ["node"]=>
+    string(1) "A"
+  }
+  [1]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#25 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjE="
+    ["node"]=>
+    string(1) "B"
+  }
+  [2]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#26 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjI="
+    ["node"]=>
+    string(1) "C"
+  }
+  [3]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#27 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjM="
+    ["node"]=>
+    string(1) "D"
+  }
+}
+```
+#### With an `after` Relay parameter
+
+Note: we want 1 item after `C` so the decoded cursor is `arrayconnection:2`
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+function getData($offset = 0)
+{
+    return array_slice(['A', 'B', 'C', 'D', 'E'], $offset);
+}
+
+$paginator = new Paginator(function ($offset, $limit) {
+    return getData($offset);
+});
+
+$result = $paginator->forward(
+    new Argument(
+        [
+            'first' => 1, 
+            'after' => base64_encode('arrayconnection:2')
+        ]
+    )
+);
+
+var_dump($result->edges);
+
+```
+
+Returns
+
+```
+array(1) {
+  [0]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#26 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjM="
+    ["node"]=>
+    string(1) "D"
+  }
+}
+```
+
+**Important note:**
+ 
+The callback function will receive:
+
+- `$offset = 2`
+- `$limit = 3`
+
+And it must return at least `['C','D','E']`

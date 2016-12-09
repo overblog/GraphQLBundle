@@ -61,13 +61,19 @@ class Paginator
         $limit = $args['first'];
         $offset = ConnectionBuilder::getOffsetWithDefault($args['after'], 0);
 
-        // The extra fetched element is here to determine if there is a next page.
-        $entities = call_user_func($this->fetcher, $offset, $limit + 1);
+        // If we don't have a cursor or if it's not valid, then we must not use the slice method
+        if (!is_numeric(ConnectionBuilder::cursorToOffset($args['after'])) || !$args['after']) {
+            $entities = call_user_func($this->fetcher, $offset, $limit + 1);
 
-        return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
-            'sliceStart' => $offset,
-            'arrayLength' => $offset + count($entities),
-        ]);
+            return ConnectionBuilder::connectionFromArray($entities, $args);
+        } else {
+            $entities = call_user_func($this->fetcher, $offset, $limit + 2);
+
+            return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
+                'sliceStart' => $offset,
+                'arrayLength' => $offset + count($entities),
+            ]);
+        }
     }
 
     /**

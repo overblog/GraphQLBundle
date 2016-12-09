@@ -574,6 +574,59 @@ Post:
         interfaces: [NodeInterface]
 ```
 
+##### Pagination
+
+The `Paginator` can be used in resolvers to get a sliced data set when dealing with Relay Connections.
+
+Exemple:
+
+- Full data set is `['A','B','C','D','E']`.
+- We want one item after `C`, meaning `['D']` as the exepected result.
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+function getData($offset = 0)
+{
+    return array_slice(['A', 'B', 'C', 'D', 'E'], $offset);
+}
+
+$paginator = new Paginator(function ($offset, $limit) {
+    return getData($offset);
+});
+
+$result = $paginator->forward(
+    new Argument(
+        [
+            'first' => 1,
+            'after' => base64_encode('arrayconnection:2')
+        ]
+    )
+);
+
+var_dump($result->edges);
+
+```
+
+Returns
+
+```
+array(1) {
+  [0]=>
+  object(Overblog\GraphQLBundle\Relay\Connection\Output\Edge)#26 (2) {
+    ["cursor"]=>
+    string(24) "YXJyYXljb25uZWN0aW9uOjM="
+    ["node"]=>
+    string(1) "D"
+  }
+}
+```
+
+More information [here](Resources/doc/paginator.md).
+
 Error Handling
 --------------
 
