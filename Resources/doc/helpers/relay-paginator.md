@@ -1,4 +1,6 @@
-# The Paginator helper
+# Relay Pagination helper
+
+The `Paginator` can be used in resolvers to get a sliced data set when dealing with Relay Connections.
 
 ## Relay behavior
 
@@ -62,7 +64,7 @@ var_dump($result->edges);
 
 ```
 
-Returns
+Output
 
 ```
 array(4) {
@@ -128,7 +130,7 @@ var_dump($result->edges);
 
 ```
 
-Returns
+Output
 
 ```
 array(1) {
