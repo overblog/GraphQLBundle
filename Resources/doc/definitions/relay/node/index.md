@@ -2,5 +2,5 @@ Node
 =====
 
 * [node](node.md)
-* [plural](plurial.md)
+* [plural](plural.md)
 * [global id](global-id.md)
