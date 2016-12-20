@@ -253,4 +253,33 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
         $this->assertTrue($result->pageInfo->hasPreviousPage);
     }
+
+    public function testTotalCallableWithArguments()
+    {
+        $paginatorBackend = new PaginatorBackend();
+
+        $callable = [
+            $paginatorBackend,
+            'count',
+        ];
+
+        $this->assertSame(5, call_user_func_array($callable, ['array' => $this->data]));
+
+        $paginator = new Paginator(function ($offset, $limit) {
+            $this->assertSame(1, $offset);
+            $this->assertSame(4, $limit);
+
+            return $this->getData($offset);
+        });
+
+        $result = $paginator->auto(
+            new Argument(['last' => 4]),
+            $callable,
+            ['array' => $this->data]
+        );
+
+        $this->assertCount(4, $result->edges);
+        $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
+        $this->assertTrue($result->pageInfo->hasPreviousPage);
+    }
 }

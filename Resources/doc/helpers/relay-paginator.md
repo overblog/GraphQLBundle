@@ -152,3 +152,45 @@ The callback function will receive:
 - `$limit = 3`
 
 And it must return at least `['C','D','E']`
+
+#### With a `last` relay parameter
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+class DataBackend
+{
+    public $data = ['A', 'B', 'C', 'D', 'E'];
+
+    public function getData($offset = 0)
+    {
+        return array_slice($this->data, $offset);
+    }
+
+    public function count($array)
+    {
+        return count($array);
+    }
+}
+
+$backend = new DataBackend();
+
+$paginator = new Paginator(function ($offset, $limit) use ($backend) {
+    return $backend->getData($offset);
+});
+
+$result = $paginator->backward(
+    new Argument(
+        [
+            'last' => 4,
+        ]
+    ),
+    [$backend, 'count'],
+    ['array' => $backend->getData]
+);
+```
+
+You should get the 4 last items of the _data set_.
