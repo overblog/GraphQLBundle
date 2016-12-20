@@ -33,11 +33,14 @@ class Paginator
     /**
      * @param Argument|array $args
      * @param int|callable   $total
+     * @param array          $callableArgs
      *
      * @return Connection
      */
-    public function backward($args, $total)
+    public function backward($args, $total, array $callableArgs = [])
     {
+        $total = is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
+
         $args = $this->protectArgs($args);
         $limit = $args['last'];
         $offset = max(0, ConnectionBuilder::getOffsetWithDefault($args['before'], $total) - $limit);
@@ -79,15 +82,16 @@ class Paginator
     /**
      * @param Argument|array $args
      * @param int|callable   $total
+     * @param array          $callableArgs
      *
      * @return Connection
      */
-    public function auto($args, $total)
+    public function auto($args, $total, $callableArgs = [])
     {
         $args = $this->protectArgs($args);
 
         if ($args['last']) {
-            return $this->backward($args, is_callable($total) ? call_user_func($total) : $total);
+            return $this->backward($args, $total, $callableArgs);
         } else {
             return $this->forward($args);
         }
