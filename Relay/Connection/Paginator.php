@@ -11,23 +11,34 @@
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
+use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 
 class Paginator
 {
+    const MODE_REGULAR = false;
+    const MODE_PROMISE = true;
+
     /**
      * @var callable
      */
     private $fetcher;
 
     /**
-     * @param callable $fetcher
+     * @var bool
      */
-    public function __construct(callable $fetcher)
+    private $promise;
+
+    /**
+     * @param callable $fetcher
+     * @param bool     $promise
+     */
+    public function __construct(callable $fetcher, $promise = self::MODE_REGULAR)
     {
         $this->fetcher = $fetcher;
+        $this->promise = $promise;
     }
 
     /**
@@ -47,10 +58,12 @@ class Paginator
 
         $entities = call_user_func($this->fetcher, $offset, $limit);
 
-        return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
-            'sliceStart' => $offset,
-            'arrayLength' => $total,
-        ]);
+        return $this->handleEntities($entities, function ($entities) use ($args, $offset, $total) {
+            return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
+                'sliceStart' => $offset,
+                'arrayLength' => $total,
+            ]);
+        });
     }
 
     /**
@@ -68,14 +81,18 @@ class Paginator
         if (!is_numeric(ConnectionBuilder::cursorToOffset($args['after'])) || !$args['after']) {
             $entities = call_user_func($this->fetcher, $offset, $limit + 1);
 
-            return ConnectionBuilder::connectionFromArray($entities, $args);
+            return $this->handleEntities($entities, function ($entities) use ($args) {
+                return ConnectionBuilder::connectionFromArray($entities, $args);
+            });
         } else {
             $entities = call_user_func($this->fetcher, $offset, $limit + 2);
 
-            return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
-                'sliceStart' => $offset,
-                'arrayLength' => $offset + count($entities),
-            ]);
+            return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
+                return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
+                    'sliceStart' => $offset,
+                    'arrayLength' => $offset + count($entities),
+                ]);
+            });
         }
     }
 
@@ -95,6 +112,21 @@ class Paginator
         } else {
             return $this->forward($args);
         }
+    }
+
+    /**
+     * @param array|object $entities An array of entities to paginate or a promise
+     * @param callable     $callback
+     *
+     * @return Connection|object A connection or a promise
+     */
+    private function handleEntities($entities, callable $callback)
+    {
+        if ($this->promise) {
+            return $entities->then($callback);
+        }
+
+        return call_user_func($callback, $entities);
     }
 
     /**

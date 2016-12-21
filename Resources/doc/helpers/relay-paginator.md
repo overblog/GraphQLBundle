@@ -16,20 +16,20 @@ This method can be used to get a slice of a data set by passing:
 - the args, as a `ConnectionArguments` object
 - the meta, as a `ArraySliceMetaInfo` object
 
-The sliced data set must contains: 
+The sliced data set must contains:
 
 - the item before the first item you want
 - the item after the slice, so `PageInfo->hasNextPage` can be calculated
- 
-Exemple:
- 
+
+Example:
+
 - full data set is `['A','B','C','D','E']`
 - we want 2 items after `A`, meaning `['B','C']`
 
 
 - `after` cursor will be `arrayconnection:0`
 - `offset` will be calculated to `0`
-- so we need to passed a sliced data with `['A','B','C','D']` to `connectionFromArraySlice()` 
+- so we need to passed a sliced data with `['A','B','C','D']` to `connectionFromArraySlice()`
 
 ## Paginator
 
@@ -39,8 +39,8 @@ The purpose if this helper is to provide an easy way to paginate in a data set p
 
 When constructing the paginator, you need to pass a callable which will be responsible for providing the sliced data set.
 
-### Exemple
- 
+### Example
+
 #### With a `first` Relay parameter
 
 ```php
@@ -120,7 +120,7 @@ $paginator = new Paginator(function ($offset, $limit) {
 $result = $paginator->forward(
     new Argument(
         [
-            'first' => 1, 
+            'first' => 1,
             'after' => base64_encode('arrayconnection:2')
         ]
     )
@@ -145,7 +145,7 @@ array(1) {
 ```
 
 **Important note:**
- 
+
 The callback function will receive:
 
 - `$offset = 2`
@@ -194,3 +194,21 @@ $result = $paginator->backward(
 ```
 
 You should get the 4 last items of the _data set_.
+
+#### Promise handling
+
+Paginator also supports promises if you [use that feature](https://github.com/webonyx/graphql-php/pull/67)
+with the bundle. All you have to do is to toggle the `MODE_PROMISE` flag on and
+update your callback to return a `Executor/Promise/Promise` instance.
+
+```php
+// Let's pretend we use dataloader ( https://github.com/overblog/dataloader-php )
+public function resolveList($args)
+{
+    $pagination = new Paginator(function ($offset, $limit) {
+        return $this->dataLoader->loadMany($this->elasticsearch->getIds($offset, $limit));
+    }, Paginator::MODE_PROMISE); // This flag indicates that we will return a promise instead of an array of instances
+
+    return $pagination->forward($args);
+}
+```
