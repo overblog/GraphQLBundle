@@ -28,6 +28,7 @@ class TypesConfiguration implements ConfigurationInterface
         'interface',
         'union',
         'input-object',
+        'custom-scalar',
     ];
 
     public function getConfigTreeBuilder()
@@ -92,6 +93,7 @@ class TypesConfiguration implements ConfigurationInterface
                     ->append(Config\InterfaceTypeDefinition::create()->getDefinition())
                     ->append(Config\UnionTypeDefinition::create()->getDefinition())
                     ->append(Config\InputObjectTypeDefinition::create()->getDefinition())
+                    ->append(Config\CustomScalarTypeDefinition::create()->getDefinition())
                     ->variableNode('config')->end()
                 ->end()
                 // _{TYPE}_config is renamed config

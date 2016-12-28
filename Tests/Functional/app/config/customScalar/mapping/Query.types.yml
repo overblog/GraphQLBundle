@@ -1,0 +1,17 @@
+DateTime:
+    type: custom-scalar
+    config:
+        serialize: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "serialize"]
+        parseValue: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseValue"]
+        parseLiteral: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseLiteral"]
+
+Query:
+    type: object
+    config:
+        fields:
+            dateTime:
+                type: "DateTime!"
+                args:
+                    dateTime:
+                        type: "DateTime"
+                resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getDateTime"]
