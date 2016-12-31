@@ -7,6 +7,7 @@ Definitions
 Go further 
 ----------
 
+* [Mutation](mutation.md)
 * [Relay](relay/index.md)
 * [Builders](builders/index.md)
 * [Expression language](expression-language.md)
