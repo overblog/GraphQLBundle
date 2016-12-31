@@ -25,18 +25,31 @@ class EnumTypeDefinition extends TypeDefinition
                 ->append($this->nameSection())
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
+                    // if value not define we use name as value
+                    ->beforeNormalization()
+                        ->ifTrue(function ($v) {
+                            return is_array($v);
+                        })
+                        ->then(function ($v) {
+                            foreach ($v as $name => &$options) {
+                                // short syntax NAME: VALUE
+                                if (!is_null($options) && !is_array($options)) {
+                                    $options = ['value' => $options];
+                                }
+
+                                // use name as value if no value given
+                                if (!array_key_exists('value', $options)) {
+                                    $options['value'] = $name;
+                                }
+                            }
+
+                            return $v;
+                        })
+                    ->end()
                     ->prototype('array')
-                        ->beforeNormalization()
-                            ->ifTrue(function ($v) {
-                                return !is_null($v) && !is_array($v);
-                            })
-                            ->then(function ($v) {
-                                return ['value' => $v];
-                            })
-                        ->end()
                         ->isRequired()
                         ->children()
-                            ->scalarNode('value')->end()
+                            ->scalarNode('value')->isRequired()->end()
                             ->append($this->descriptionSection())
                             ->append($this->deprecationReasonSelection())
                         ->end()

@@ -78,7 +78,7 @@ abstract class TestCase extends WebTestCase
     {
         static::bootKernel($options);
 
-        static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')->loadClasses();
+        static::getContainer()->get('overblog_graphql.cache_compiler')->loadClasses();
     }
 
     protected static function executeGraphQLRequest($query, $rootValue = [], $throwException = false)
@@ -86,8 +86,8 @@ abstract class TestCase extends WebTestCase
         $request = new Request();
         $request->query->set('query', $query);
 
-        $req = static::$kernel->getContainer()->get('overblog_graphql.request_parser')->parse($request);
-        $executor = static::$kernel->getContainer()->get('overblog_graphql.request_executor');
+        $req = static::getContainer()->get('overblog_graphql.request_parser')->parse($request);
+        $executor = static::getContainer()->get('overblog_graphql.request_executor');
         $executor->setThrowException($throwException);
         $res = $executor->execute($req, $rootValue);
 
@@ -109,5 +109,10 @@ abstract class TestCase extends WebTestCase
         }
 
         static::assertEquals($expected, $result, json_encode($result));
+    }
+
+    protected static function getContainer()
+    {
+        return static::$kernel->getContainer();
     }
 }
