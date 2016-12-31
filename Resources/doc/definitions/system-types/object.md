@@ -20,6 +20,8 @@ Human:
             id:
                 type: "String!"
                 description: "The id of the character."
+                # to deprecate a field, only set the deprecation reason
+                #deprecationReason: "A terrible reason"
             name:
                 type: "String"
                 description: "The name of the character."

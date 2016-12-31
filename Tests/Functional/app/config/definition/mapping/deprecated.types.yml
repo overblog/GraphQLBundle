@@ -1,0 +1,21 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            fake:
+                type: String
+
+EnumWithDeprecatedValue:
+    type: enum
+    config:
+        values:
+            foo:
+                deprecationReason: "Just because"
+
+ObjectWithDeprecatedField:
+    type: object
+    config:
+        fields:
+            bar:
+                type: String
+                deprecationReason: "A terrible reason"
