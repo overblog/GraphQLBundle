@@ -2,43 +2,44 @@ Mutation
 ========
 
 ```yaml
-RootMutation:
+Mutation:
     type: object
     config:
         fields:
-            simpleMutation:
+            introduceShip:
                 builder: Mutation
                 builderConfig:
-                    inputType: simpleMutationInput
-                    payloadType: simpleMutationPayload
-                    mutateAndGetPayload: "@={'result': 1}"
-            simpleMutationWithThunkFields:
-                builder: Mutation
-                builderConfig:
-                    inputType: simpleMutationWithThunkFieldsInput
-                    payloadType: simpleMutationWithThunkFieldsPayload
-                    mutateAndGetPayload: "@={'result': value['inputData'] }"
+                    inputType: IntroduceShipInput
+                    payloadType: IntroduceShipPayload
+                    mutateAndGetPayload: "@=mutation('create_ship', [value['shipName'], value['factionId']])"
 
-simpleMutationInput:
-    type: relay-mutation-input
-    config:
-        fields: []
-
-simpleMutationWithThunkFieldsInput:
+#   input IntroduceShipInput {
+#     clientMutationId: string!
+#     shipName: string!
+#     factionId: ID!
+#   }
+IntroduceShipInput:
     type: relay-mutation-input
     config:
         fields:
-            inputData : { type: "Int" }
-            
-simpleMutationPayload:
-    type: relay-mutation-payload
-    config:
-        fields:
-            result: { type: "Int" }
+            shipName:
+                type: "String!"
+            factionId:
+                type: "String!"
 
-simpleMutationWithThunkFieldsPayload:
+#   type IntroduceShipPayload {
+#     clientMutationId: string!
+#     ship: Ship
+#     faction: Faction
+#   }
+IntroduceShipPayload:
     type: relay-mutation-payload
     config:
         fields:
-            result: { type: "Int" }
+            ship:
+                type: "Ship"
+            faction:
+                type: "Faction"
 ```
+
+Here the same example [without using relay mutation](../mutation.md).
