@@ -7,6 +7,7 @@ Definitions
 Go further 
 ----------
 
+* [Custom scalar](custom-scalar.md)
 * [Mutation](mutation.md)
 * [Relay](relay/index.md)
 * [Builders](builders/index.md)
