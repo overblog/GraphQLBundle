@@ -116,7 +116,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         throw new InvalidConfigurationException(sprintf('%s builder "%s" not found.', ucfirst($type), $name));
     }
 
-    protected function outputFieldsSelection($name, $withAccess = false)
+    protected function outputFieldsSelection($name)
     {
         $builder = new TreeBuilder();
         $node = $builder->root($name);
@@ -190,7 +190,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->prototype('array')
                         ->children()
                             ->append($this->typeSelection(true))
-                            ->scalarNode('description')->end()
+                            ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
                         ->end()
                     ->end()
@@ -206,17 +206,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                 ->variableNode('complexity')
                     ->info('Custom complexity calculator.')
                 ->end()
-                ->variableNode('map')->end()
             ->end();
-
-        if ($withAccess) {
-            $prototype
-                ->children()
-                    ->variableNode('access')
-                        ->info('Access control to field (expression language can be use here)')
-                    ->end()
-                ->end();
-        }
 
         return $node;
     }
