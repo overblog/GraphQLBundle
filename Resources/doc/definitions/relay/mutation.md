@@ -7,7 +7,7 @@ Mutation:
     config:
         fields:
             introduceShip:
-                builder: Mutation
+                builder: "Relay::Mutation"
                 builderConfig:
                     inputType: IntroduceShipInput
                     payloadType: IntroduceShipPayload

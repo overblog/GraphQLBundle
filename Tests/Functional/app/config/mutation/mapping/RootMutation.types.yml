@@ -3,13 +3,13 @@ RootMutation:
     config:
         fields:
             simpleMutation:
-                builder: Mutation
+                builder: "Relay::Mutation"
                 builderConfig:
                     inputType: simpleMutationInput
                     payloadType: simpleMutationPayload
                     mutateAndGetPayload: {result: 1}
             simpleMutationWithThunkFields:
-                builder: Mutation
+                builder: "Relay::Mutation"
                 builderConfig:
                     inputType: simpleMutationWithThunkFieldsInput
                     payloadType: simpleMutationWithThunkFieldsPayload

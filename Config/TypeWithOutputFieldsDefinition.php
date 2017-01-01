@@ -18,23 +18,26 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
+    const BUILDER_FIELD_TYPE = 'field';
+    const BUILDER_ARGS_TYPE = 'args';
+
     /**
      * @var MappingInterface[]
      */
     private static $argsBuilderClassMap = [
-        'ForwardConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition',
-        'BackwardConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition',
-        'ConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition',
+        'Relay::ForwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition',
+        'Relay::BackwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition',
+        'Relay::Connection' => 'Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition',
     ];
 
     /**
      * @var MappingInterface[]
      */
     private static $fieldBuilderClassMap = [
-        'Mutation' => 'Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition',
-        'GlobalId' => 'Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition',
-        'Node' => 'Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition',
-        'PluralIdentifyingRoot' => 'Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition',
+        'Relay::Mutation' => 'Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition',
+        'Relay::GlobalId' => 'Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition',
+        'Relay::Node' => 'Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition',
+        'Relay::PluralIdentifyingRoot' => 'Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition',
     ];
 
     public static function addArgsBuilderClass($name, $argBuilderClass)
@@ -80,37 +83,37 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param string $type
      *
-     * @return MappingInterface|null
+     * @return MappingInterface
+     *
+     * @throws InvalidConfigurationException if builder class not define
      */
-    protected function getArgsBuilder($name)
+    protected function getBuilder($name, $type)
     {
         static $builders = [];
-        if (isset($builders[$name])) {
-            return $builders[$name];
+        if (isset($builders[$type][$name])) {
+            return $builders[$type][$name];
         }
 
-        if (isset(self::$argsBuilderClassMap[$name])) {
-            return $builders[$name] = new self::$argsBuilderClassMap[$name]();
-        }
-    }
+        $builderClassMap = self::${$type.'BuilderClassMap'};
 
-    /**
-     * @param $name
-     *
-     * @return MappingInterface|null
-     */
-    protected function getFieldBuilder($name)
-    {
-        static $builders = [];
-        if (isset($builders[$name])) {
-            return $builders[$name];
+        if (isset($builderClassMap[$name])) {
+            return $builders[$type][$name] = new $builderClassMap[$name]();
+        }
+        // deprecated relay builder name ?
+        $newName = 'Relay::'.rtrim($name, 'Args');
+        if (isset($builderClassMap[$newName])) {
+            @trigger_error(
+                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.8. Use "%s" instead.', $name, $type, $newName),
+                E_USER_DEPRECATED
+            );
+
+            return $builders[$type][$newName] = new $builderClassMap[$newName]();
         }
 
-        if (isset(self::$fieldBuilderClassMap[$name])) {
-            return $builders[$name] = new self::$fieldBuilderClassMap[$name]();
-        }
+        throw new InvalidConfigurationException(sprintf('%s builder "%s" not found.', ucfirst($type), $name));
     }
 
     protected function outputFieldsSelection($name, $withAccess = false)
@@ -140,12 +143,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     }
 
                     if ($argsBuilderName) {
-                        if (!($argsBuilder = $this->getArgsBuilder($argsBuilderName))) {
-                            throw new InvalidConfigurationException(sprintf('Args builder "%s" not found.', $argsBuilder));
-                        }
-
-                        $args = $argsBuilder->toMappingDefinition([]);
-
+                        $args = $this->getBuilder($argsBuilderName, static::BUILDER_ARGS_TYPE)->toMappingDefinition([]);
                         $field['args'] = isset($field['args']) && is_array($field['args']) ? array_merge($args, $field['args']) : $args;
                     }
 
@@ -175,10 +173,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     }
 
                     if ($fieldBuilderName) {
-                        if (!($fieldBuilder = $this->getFieldBuilder($fieldBuilderName))) {
-                            throw new InvalidConfigurationException(sprintf('Field builder "%s" not found.', $fieldBuilderName));
-                        }
-                        $buildField = $fieldBuilder->toMappingDefinition($builderConfig);
+                        $buildField = $this->getBuilder($fieldBuilderName, static::BUILDER_FIELD_TYPE)->toMappingDefinition($builderConfig);
                         $field = is_array($field) ? array_merge($buildField, $field) : $buildField;
                     }
 
