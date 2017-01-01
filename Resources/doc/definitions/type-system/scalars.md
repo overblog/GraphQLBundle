@@ -1,6 +1,18 @@
-# Custom scalar
+Scalars
+=======
 
-Here a simple example to add a custom scalar:
+Here all supported built‐in Scalars:
+
+* **Int**
+* **Float**
+* **String**
+* **Boolean**
+* **ID**
+
+Custom Scalar
+-------------
+
+Here a simple example of how to add a custom Scalar:
 
 ```yaml
 DateTime:

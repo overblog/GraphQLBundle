@@ -1,5 +1,5 @@
 services:
-    # GraphQL ccalar types
+    # GraphQL build-in Scalars types
     overblog_graphql.definition.string_type:
         class: GraphQL\Type\Definition\StringType
         factory: ["GraphQL\\Type\\Definition\\Type", string]
