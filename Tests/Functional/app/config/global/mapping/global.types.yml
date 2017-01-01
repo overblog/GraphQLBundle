@@ -20,10 +20,7 @@ User:
     type: object
     config:
         fields:
-            id:
-                builder: "Relay::GlobalId"
-                builderConfig:
-                    typeName: User
+            id: "Relay::GlobalId"
             name:
                 type: String
         interfaces: [NodeInterface]
@@ -47,8 +44,6 @@ Post:
         fields:
             id:
                 builder: "Relay::GlobalId"
-                builderConfig:
-                    typeName: Post
             text:
                 type: String
             status:

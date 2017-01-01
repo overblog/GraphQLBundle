@@ -161,6 +161,11 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         $fieldBuilderName = $field['builder'];
                         unset($field['builder']);
                     } elseif (is_string($field)) {
+                        @trigger_error(
+                            'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.8. '.
+                            'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
+                            E_USER_DEPRECATED
+                        );
                         $fieldBuilderName = $field;
                     }
 
@@ -188,6 +193,15 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
                     ->useAttributeAsKey('name', false)
                     ->prototype('array')
+                        // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
+                        ->beforeNormalization()
+                            ->ifTrue(function ($options) {
+                                return is_string($options);
+                            })
+                            ->then(function ($options) {
+                                return ['type' => $options];
+                            })
+                        ->end()
                         ->children()
                             ->append($this->typeSelection(true))
                             ->append($this->descriptionSection())
