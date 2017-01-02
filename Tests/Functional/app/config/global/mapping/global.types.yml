@@ -8,7 +8,7 @@ Query:
     config:
         fields:
             node:
-                builder: Node
+                builder: "Relay::Node"
                 builderConfig:
                     nodeInterfaceType: NodeInterface
                     idFetcher: '@=service("overblog_graphql.test.resolver.global").idFetcher(value)'
@@ -20,10 +20,7 @@ User:
     type: object
     config:
         fields:
-            id:
-                builder: GlobalId
-                builderConfig:
-                    typeName: User
+            id: "Relay::GlobalId"
             name:
                 type: String
         interfaces: [NodeInterface]
@@ -33,7 +30,7 @@ Photo:
     config:
         fields:
             id:
-                builder: GlobalId
+                builder: "Relay::GlobalId"
                 builderConfig:
                     typeName: Photo
                     idFetcher: '@=value["photoId"]'
@@ -46,9 +43,7 @@ Post:
     config:
         fields:
             id:
-                builder: GlobalId
-                builderConfig:
-                    typeName: Post
+                builder: "Relay::GlobalId"
             text:
                 type: String
             status:

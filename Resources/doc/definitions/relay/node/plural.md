@@ -7,7 +7,7 @@ Query:
     config:
         fields:
             usernames:
-                builder: PluralIdentifyingRoot
+                builder: "Relay::PluralIdentifyingRoot"
                 builderConfig:
                     argName: 'usernames'
                     description: 'Map from a username to the user'

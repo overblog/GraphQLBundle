@@ -25,7 +25,6 @@ class EnumTypeDefinition extends TypeDefinition
                 ->append($this->nameSection())
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
-                    // if value not define we use name as value
                     ->beforeNormalization()
                         ->ifTrue(function ($v) {
                             return is_array($v);

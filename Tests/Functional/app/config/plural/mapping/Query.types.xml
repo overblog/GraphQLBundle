@@ -9,7 +9,7 @@
       <config>
         <fields>
           <usernames>
-            <builder>PluralIdentifyingRoot</builder>
+            <builder>Relay::PluralIdentifyingRoot</builder>
             <builderConfig>
               <argName>usernames</argName>
               <description>Map from a username to the user</description>

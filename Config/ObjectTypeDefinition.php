@@ -23,7 +23,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
         $node
             ->children()
                 ->append($this->nameSection())
-                ->append($this->outputFieldsSelection('fields', true))
+                ->append($this->outputFieldsSelection('fields'))
                 ->append($this->descriptionSection())
                 ->arrayNode('interfaces')
                     ->prototype('scalar')->info('One of internal or custom interface types.')->end()

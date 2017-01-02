@@ -1,13 +1,12 @@
 Definitions
 ===========
 
-* [System types](system-types/index.md)
+* [Type System](type-system/index.md)
 * [Schema](schema.md)
 
 Go further 
 ----------
 
-* [Custom scalar](custom-scalar.md)
 * [Mutation](mutation.md)
 * [Relay](relay/index.md)
 * [Builders](builders/index.md)

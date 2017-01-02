@@ -18,23 +18,26 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
+    const BUILDER_FIELD_TYPE = 'field';
+    const BUILDER_ARGS_TYPE = 'args';
+
     /**
      * @var MappingInterface[]
      */
     private static $argsBuilderClassMap = [
-        'ForwardConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition',
-        'BackwardConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition',
-        'ConnectionArgs' => 'Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition',
+        'Relay::ForwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition',
+        'Relay::BackwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition',
+        'Relay::Connection' => 'Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition',
     ];
 
     /**
      * @var MappingInterface[]
      */
     private static $fieldBuilderClassMap = [
-        'Mutation' => 'Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition',
-        'GlobalId' => 'Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition',
-        'Node' => 'Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition',
-        'PluralIdentifyingRoot' => 'Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition',
+        'Relay::Mutation' => 'Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition',
+        'Relay::GlobalId' => 'Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition',
+        'Relay::Node' => 'Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition',
+        'Relay::PluralIdentifyingRoot' => 'Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition',
     ];
 
     public static function addArgsBuilderClass($name, $argBuilderClass)
@@ -80,40 +83,40 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param string $type
      *
-     * @return MappingInterface|null
+     * @return MappingInterface
+     *
+     * @throws InvalidConfigurationException if builder class not define
      */
-    protected function getArgsBuilder($name)
+    protected function getBuilder($name, $type)
     {
         static $builders = [];
-        if (isset($builders[$name])) {
-            return $builders[$name];
+        if (isset($builders[$type][$name])) {
+            return $builders[$type][$name];
         }
 
-        if (isset(self::$argsBuilderClassMap[$name])) {
-            return $builders[$name] = new self::$argsBuilderClassMap[$name]();
+        $builderClassMap = self::${$type.'BuilderClassMap'};
+
+        if (isset($builderClassMap[$name])) {
+            return $builders[$type][$name] = new $builderClassMap[$name]();
         }
+        // deprecated relay builder name ?
+        $newName = 'Relay::'.rtrim($name, 'Args');
+        if (isset($builderClassMap[$newName])) {
+            @trigger_error(
+                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.8. Use "%s" instead.', $name, $type, $newName),
+                E_USER_DEPRECATED
+            );
+
+            return $builders[$type][$newName] = new $builderClassMap[$newName]();
+        }
+
+        throw new InvalidConfigurationException(sprintf('%s builder "%s" not found.', ucfirst($type), $name));
     }
 
-    /**
-     * @param $name
-     *
-     * @return MappingInterface|null
-     */
-    protected function getFieldBuilder($name)
-    {
-        static $builders = [];
-        if (isset($builders[$name])) {
-            return $builders[$name];
-        }
-
-        if (isset(self::$fieldBuilderClassMap[$name])) {
-            return $builders[$name] = new self::$fieldBuilderClassMap[$name]();
-        }
-    }
-
-    protected function outputFieldsSelection($name, $withAccess = false)
+    protected function outputFieldsSelection($name)
     {
         $builder = new TreeBuilder();
         $node = $builder->root($name);
@@ -140,12 +143,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     }
 
                     if ($argsBuilderName) {
-                        if (!($argsBuilder = $this->getArgsBuilder($argsBuilderName))) {
-                            throw new InvalidConfigurationException(sprintf('Args builder "%s" not found.', $argsBuilder));
-                        }
-
-                        $args = $argsBuilder->toMappingDefinition([]);
-
+                        $args = $this->getBuilder($argsBuilderName, static::BUILDER_ARGS_TYPE)->toMappingDefinition([]);
                         $field['args'] = isset($field['args']) && is_array($field['args']) ? array_merge($args, $field['args']) : $args;
                     }
 
@@ -163,6 +161,11 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         $fieldBuilderName = $field['builder'];
                         unset($field['builder']);
                     } elseif (is_string($field)) {
+                        @trigger_error(
+                            'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.8. '.
+                            'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
+                            E_USER_DEPRECATED
+                        );
                         $fieldBuilderName = $field;
                     }
 
@@ -175,10 +178,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     }
 
                     if ($fieldBuilderName) {
-                        if (!($fieldBuilder = $this->getFieldBuilder($fieldBuilderName))) {
-                            throw new InvalidConfigurationException(sprintf('Field builder "%s" not found.', $fieldBuilderName));
-                        }
-                        $buildField = $fieldBuilder->toMappingDefinition($builderConfig);
+                        $buildField = $this->getBuilder($fieldBuilderName, static::BUILDER_FIELD_TYPE)->toMappingDefinition($builderConfig);
                         $field = is_array($field) ? array_merge($buildField, $field) : $buildField;
                     }
 
@@ -193,9 +193,18 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
                     ->useAttributeAsKey('name', false)
                     ->prototype('array')
+                        // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
+                        ->beforeNormalization()
+                            ->ifTrue(function ($options) {
+                                return is_string($options);
+                            })
+                            ->then(function ($options) {
+                                return ['type' => $options];
+                            })
+                        ->end()
                         ->children()
                             ->append($this->typeSelection(true))
-                            ->scalarNode('description')->end()
+                            ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
                         ->end()
                     ->end()
@@ -211,17 +220,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                 ->variableNode('complexity')
                     ->info('Custom complexity calculator.')
                 ->end()
-                ->variableNode('map')->end()
             ->end();
-
-        if ($withAccess) {
-            $prototype
-                ->children()
-                    ->variableNode('access')
-                        ->info('Access control to field (expression language can be use here)')
-                    ->end()
-                ->end();
-        }
 
         return $node;
     }

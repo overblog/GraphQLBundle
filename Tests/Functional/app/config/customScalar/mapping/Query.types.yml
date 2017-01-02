@@ -10,8 +10,7 @@ Query:
     config:
         fields:
             dateTime:
-                type: "DateTime!"
+                type: DateTime!
                 args:
-                    dateTime:
-                        type: "DateTime"
+                    dateTime: DateTime
                 resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getDateTime"]

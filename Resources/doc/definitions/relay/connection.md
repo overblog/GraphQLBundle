@@ -18,15 +18,15 @@ User:
                 type: String
             friends:
                 type: friendConnection
-                argsBuilder: ConnectionArgs
+                argsBuilder: "Relay::Connection"
                 resolve: '@=resolver("friends", [value, args])'
             friendsForward:
                 type: userConnection
-                argsBuilder: ForwardConnectionArgs
+                argsBuilder: "Relay::ForwardConnection
                 resolve: '@=resolver("friends", [value, args])'
             friendsBackward:
                 type: userConnection
-                argsBuilder: BackwardConnectionArgs
+                argsBuilder: "Relay::BackwardConnection"
                 resolve: '@=resolver("friends", [value, args])'
 
 friendConnection:
