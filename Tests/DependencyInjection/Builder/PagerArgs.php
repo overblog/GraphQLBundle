@@ -17,10 +17,12 @@ class PagerArgs implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {
+        $defaultLimit = isset($config['defaultLimit']) ? (int) $config['defaultLimit'] : 20;
+
         return [
             'limit' => [
                 'type' => 'Int!',
-                'defaultValue' => 20,
+                'defaultValue' => $defaultLimit,
             ],
             'offset' => [
                 'type' => 'Int!',

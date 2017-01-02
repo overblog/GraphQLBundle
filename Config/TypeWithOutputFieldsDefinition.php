@@ -142,8 +142,13 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         $argsBuilderName = $field['argsBuilder']['builder'];
                     }
 
+                    $builderConfig = [];
+                    if (isset($field['argsBuilder']['config']) && is_array($field['argsBuilder']['config'])) {
+                        $builderConfig = $field['argsBuilder']['config'];
+                    }
+
                     if ($argsBuilderName) {
-                        $args = $this->getBuilder($argsBuilderName, static::BUILDER_ARGS_TYPE)->toMappingDefinition([]);
+                        $args = $this->getBuilder($argsBuilderName, static::BUILDER_ARGS_TYPE)->toMappingDefinition($builderConfig);
                         $field['args'] = isset($field['args']) && is_array($field['args']) ? array_merge($args, $field['args']) : $args;
                     }
 
