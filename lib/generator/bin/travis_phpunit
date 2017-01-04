@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PHPUNIT="php ${BIN_DIR}/phpunit --debug"
+EXCLUDE_GROUPS="--exclude-group cs"
+
+if [ "$TRAVIS_PHP_VERSION" == "7.0" ]
+then
+    $PHPUNIT -d xdebug.max_nesting_level=200 --coverage-clover=coverage.clover $EXCLUDE_GROUPS
+#elif [ "$TRAVIS_PHP_VERSION" == "5.6" ]
+#then
+#    $PHPUNIT
+else
+    $PHPUNIT $EXCLUDE_GROUPS
+fi
+
