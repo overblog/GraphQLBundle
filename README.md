@@ -16,7 +16,7 @@ For documentation, see:
 
     Resources/doc/
 
-[Read the documentation](Resources/doc/index.md)
+[Read the documentation](doc/index.md)
 
 Contribute
 ----------

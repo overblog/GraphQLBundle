@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit bootstrap="vendor/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
-         bootstrap="vendor/autoload.php"
-        >
+         syntaxCheck="true">
     <testsuites>
         <testsuite name="OverblogGraphQLBundle Test Suite">
-            <directory>./Tests/</directory>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>./</directory>
+            <directory>./src</directory>
             <exclude>
-                <directory>./Resources</directory>
-                <directory>./Tests</directory>
-                <directory>./vendor</directory>
+                <directory>./src/Resources</directory>
+                <directory>./src/Tests</directory>
             </exclude>
         </whitelist>
     </filter>

@@ -63,7 +63,7 @@ class AppKernel extends Kernel
         if ($this->testCase) {
             $loader->load(sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
         } else {
-            $loader->load(__DIR__.'/config/config.yml');
+            $loader->load(__DIR__ . '/config/config.yml');
         }
     }
 }

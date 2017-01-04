@@ -12,17 +12,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": ""
+            "Overblog\\GraphQLBundle\\": "src/"
         },
         "exclude-from-classmap": [
-            "/Tests/"
+            "**/Tests/"
         ]
     },
     "autoload-dev": {
-        "files": [
-            "vendor/overblog/graphql-php-generator/tests/DateTimeType.php",
-            "vendor/overblog/graphql-php-generator/tests/Resolver.php"
-        ]
+        "psr-4": {
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/"
+        }
     },
     "config" : {
         "bin-dir": "bin",
