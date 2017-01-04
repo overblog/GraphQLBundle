@@ -35,6 +35,9 @@
     "autoload-dev": {
         "psr-4": {
             "Overblog\\GraphQLGenerator\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "vendor/webonyx/graphql-php/tests/StarWarsData.php"
+        ]
     }
 }

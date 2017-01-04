@@ -37,7 +37,12 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $this->typeConfigs = $this->prepareTypeConfigs();
         $this->typeGenerator = new TypeGenerator();
         $this->typeGenerator->setExpressionLanguage(new ExpressionLanguage());
-        $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
+
+        if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
+            $this->classLoader = require __DIR__ . '/../../../../vendor/autoload.php';
+        } else {
+            $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
+        }
     }
 
     public function tearDown()

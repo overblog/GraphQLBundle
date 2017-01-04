@@ -12,16 +12,18 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": "src/"
-        },
-        "exclude-from-classmap": [
-            "**/Tests/"
-        ]
+            "Overblog\\GraphQLBundle\\": "src/",
+            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\Tests\\": "tests/"
-        }
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
+            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+        },
+        "files": [
+            "vendor/webonyx/graphql-php/tests/StarWarsData.php"
+        ]
     },
     "config" : {
         "bin-dir": "bin",
@@ -37,8 +39,8 @@
         "symfony/property-access": "^2.7|^3.1",
         "webonyx/graphql-php": "^0.7.0"
     },
-    "suggest": {
-        "twig/twig": "If you want to use graphiQL."
+    "replace": {
+        "overblog/graphql-php-generator": "*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",
@@ -55,5 +57,8 @@
         "symfony/twig-bundle": "^2.7|^3.1",
         "symfony/web-profiler-bundle": "^2.7|^3.1",
         "symfony/yaml": "^2.7|^3.1"
+    },
+    "suggest": {
+        "twig/twig": "If you want to use graphiQL."
     }
 }

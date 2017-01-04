@@ -11,8 +11,6 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
-use Symfony\Component\Process\ProcessBuilder;
-
 class StarWarsQueryTest extends AbstractStarWarsTest
 {
     /**
