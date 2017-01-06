@@ -15,5 +15,5 @@ trim_trailing_whitespace = false
 [*.mk,Makefile]
 indent_style = tab
 
-[*.{php,yml,yaml}]
+[*.{php,yml,yaml,json}]
 indent_size = 4

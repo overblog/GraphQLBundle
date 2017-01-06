@@ -32,7 +32,7 @@
     "require": {
         "php": "^5.4|~7.0",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "overblog/graphql-php-generator": "^0.4.1",
+        "overblog/graphql-php-generator": "0.7.*",
         "symfony/expression-language": "^2.7|^3.1",
         "symfony/framework-bundle": "^2.7|^3.1",
         "symfony/options-resolver": "^2.7|^3.1",
@@ -40,7 +40,7 @@
         "webonyx/graphql-php": "^0.7.0"
     },
     "replace": {
-        "overblog/graphql-php-generator": "*"
+        "overblog/graphql-php-generator": "self.version"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",
@@ -60,5 +60,10 @@
     },
     "suggest": {
         "twig/twig": "If you want to use graphiQL."
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.7-dev"
+        }
     }
 }

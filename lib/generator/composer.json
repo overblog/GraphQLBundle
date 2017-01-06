@@ -39,5 +39,10 @@
         "files": [
             "vendor/webonyx/graphql-php/tests/StarWarsData.php"
         ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.7-dev"
+        }
     }
 }

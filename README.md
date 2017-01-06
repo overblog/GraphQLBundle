@@ -14,7 +14,7 @@ Documentation
 
 For documentation, see:
 
-    Resources/doc/
+    doc/
 
 [Read the documentation](doc/index.md)
 
@@ -34,5 +34,5 @@ phpunit
 Fix PHP CS:
 
 ```bash
-vendor/bin/php-cs-fixer fix ./
+vendor/bin/php-cs-fixer fix .
 ```
