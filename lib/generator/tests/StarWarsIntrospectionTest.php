@@ -279,6 +279,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
 
     public function testAllowsQueryingTheSchemaForFieldArgs()
     {
+        $argIntrospectionDefaultValue = static::getArgIntrospectionDefaultValue();
+
         $query = '
         query IntrospectionQueryTypeQuery {
           __schema {
@@ -311,7 +313,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' =>  'null',
+                                    'defaultValue' =>  $argIntrospectionDefaultValue,
                                     'description' => 'If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode.',
                                     'name' => 'episode',
                                     'type' => [
@@ -370,7 +372,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                         'kind' => 'SCALAR',
                                         'ofType' => null,
                                     ],
-                                    'defaultValue' => 'null',
+                                    'defaultValue' => $argIntrospectionDefaultValue,
                                 ]
                             ],
                         ],
@@ -399,5 +401,10 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
             ]
         ];
         $this->assertValidQuery($query, $expected);
+    }
+
+    private static function getArgIntrospectionDefaultValue()
+    {
+        return class_exists('GraphQL\\Language\\AST\\NullValueNode') ? 'null' : null;
     }
 }
