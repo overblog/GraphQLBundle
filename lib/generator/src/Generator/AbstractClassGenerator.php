@@ -68,7 +68,7 @@ abstract class AbstractClassGenerator
 
     public function setClassNamespace($classNamespace)
     {
-        $this->classNamespace = ClassUtils::cleanClasseName($classNamespace);
+        $this->classNamespace = ClassUtils::cleanClassName($classNamespace);
 
         return $this;
     }
@@ -179,7 +179,7 @@ abstract class AbstractClassGenerator
 
     public function addUseStatement($useStatement)
     {
-        $cleanUse = ClassUtils::cleanClasseName($useStatement);
+        $cleanUse = ClassUtils::cleanClassName($useStatement);
         if (!in_array($cleanUse, $this->useStatements)) {
             $this->useStatements[] = $cleanUse;
         }
@@ -225,7 +225,7 @@ abstract class AbstractClassGenerator
 
     protected function addInternalUseStatement($use)
     {
-        $cleanUse = ClassUtils::cleanClasseName($use);
+        $cleanUse = ClassUtils::cleanClassName($use);
         if (!in_array($cleanUse, $this->internalUseStatements)) {
             $this->internalUseStatements[] = $cleanUse;
         }
