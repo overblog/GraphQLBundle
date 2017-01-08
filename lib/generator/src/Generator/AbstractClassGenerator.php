@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -12,8 +12,6 @@
 namespace Overblog\GraphQLGenerator\Generator;
 
 use Overblog\GraphQLGenerator\ClassUtils;
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 abstract class AbstractClassGenerator
 {
@@ -51,7 +49,7 @@ abstract class AbstractClassGenerator
     private static $templates = [];
 
     /**
-     * @param string $classNamespace The namespace to use for the classes.
+     * @param string          $classNamespace The namespace to use for the classes
      * @param string[]|string $skeletonDirs
      */
     public function __construct($classNamespace = null, $skeletonDirs = [])
@@ -75,6 +73,7 @@ abstract class AbstractClassGenerator
 
     /**
      * @param string[]|string $skeletonDirs
+     *
      * @return $this
      */
     public function setSkeletonDirs($skeletonDirs)
@@ -100,10 +99,10 @@ abstract class AbstractClassGenerator
 
     public function getSkeletonDirs($withDefault = true)
     {
-        $skeletonDirs = $this->skeletonDirs ;
+        $skeletonDirs = $this->skeletonDirs;
 
         if ($withDefault) {
-            $skeletonDirs[] =  __DIR__ . '/../Resources/skeleton';
+            $skeletonDirs[] =  __DIR__.'/../Resources/skeleton';
         }
 
         return $skeletonDirs;
@@ -127,11 +126,10 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-
     /**
      * Sets the number of spaces the exported class should have.
      *
-     * @param integer $numSpaces
+     * @param int $numSpaces
      *
      * @return self
      */
@@ -199,7 +197,7 @@ abstract class AbstractClassGenerator
         $skeletonDirs = $this->getSkeletonDirs($withDefault);
 
         foreach ($skeletonDirs as $skeletonDir) {
-            $path = $skeletonDir . '/' . $skeleton . static::SKELETON_FILE_PREFIX;
+            $path = $skeletonDir.'/'.$skeleton.static::SKELETON_FILE_PREFIX;
 
             if (!file_exists($path)) {
                 continue;
@@ -269,8 +267,8 @@ abstract class AbstractClassGenerator
         $replacements = [];
 
         foreach ($placeHolders as $placeHolder) {
-            $generator = [$this, 'generate' . ucfirst($placeHolder)];
-            $name = '<' . $placeHolder . '>';
+            $generator = [$this, 'generate'.ucfirst($placeHolder)];
+            $name = '<'.$placeHolder.'>';
 
             if (is_callable($generator)) {
                 $replacements[$name] = call_user_func_array($generator, [$values]);
@@ -278,7 +276,7 @@ abstract class AbstractClassGenerator
                 throw new \RuntimeException(
                     sprintf(
                         'Generator [%s] for placeholder "%s" is not callable.',
-                        get_class($generator[0]) . '::' . $generator[1],
+                        get_class($generator[0]).'::'.$generator[1],
                         $placeHolder
                     )
                 );
@@ -306,7 +304,7 @@ abstract class AbstractClassGenerator
 
     /**
      * @param string $code
-     * @param int $num
+     * @param int    $num
      *
      * @return string
      */
@@ -316,7 +314,7 @@ abstract class AbstractClassGenerator
 
         foreach ($lines as $key => $value) {
             if (!empty($value)) {
-                $lines[$key] = str_repeat($this->spaces, $num) . $lines[$key];
+                $lines[$key] = str_repeat($this->spaces, $num).$lines[$key];
             }
         }
 
@@ -330,7 +328,7 @@ abstract class AbstractClassGenerator
 
     protected function generateNamespace()
     {
-        return null !== $this->classNamespace ? 'namespace ' . $this->classNamespace . ';' : null;
+        return null !== $this->classNamespace ? 'namespace '.$this->classNamespace.';' : null;
     }
 
     protected function generateUseStatement(array $config)
@@ -347,14 +345,14 @@ abstract class AbstractClassGenerator
 
     protected function generateImplements()
     {
-        return count($this->implements) ? ' implements ' . implode(', ', $this->implements) : null;
+        return count($this->implements) ? ' implements '.implode(', ', $this->implements) : null;
     }
 
     protected function generateTraits()
     {
         $traits = $this->tokenizeUseStatements($this->traits, '<spaces>');
 
-        return $traits ? $traits . "\n" : $traits;
+        return $traits ? $traits."\n" : $traits;
     }
 
     protected function tokenizeUseStatements(array $useStatements, $prefix = '')
@@ -375,9 +373,9 @@ abstract class AbstractClassGenerator
     /**
      * Generates classes files.
      *
-     * @param array $configs raw configs
+     * @param array  $configs            raw configs
      * @param string $outputDirectory
-     * @param bool $regenerateIfExists
+     * @param bool   $regenerateIfExists
      *
      * @return array classes map [[FQCLN => classPath], [FQCLN => classPath], ...]
      */

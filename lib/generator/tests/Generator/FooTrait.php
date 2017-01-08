@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *

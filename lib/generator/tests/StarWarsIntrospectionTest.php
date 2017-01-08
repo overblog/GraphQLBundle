@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -49,8 +49,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => 'ID'],
                     ['name' => 'Float'],
                     ['name' => 'Int'],
-                ]
-            ]
+                ],
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -70,9 +70,9 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $expected = [
             '__schema' => [
                 'queryType' => [
-                    'name' => 'Query'
+                    'name' => 'Query',
                 ],
-            ]
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -89,8 +89,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         ';
         $expected = [
             '__type' => [
-                'name' => 'Droid'
-            ]
+                'name' => 'Droid',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -109,8 +109,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $expected = [
             '__type' => [
                 'name' => 'Droid',
-                'kind' => 'OBJECT'
-            ]
+                'kind' => 'OBJECT',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -129,8 +129,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $expected = [
             '__type' => [
                 'name' => 'Character',
-                'kind' => 'INTERFACE'
-            ]
+                'kind' => 'INTERFACE',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -160,39 +160,39 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                         'name' => 'id',
                         'type' => [
                             'name' => null,
-                            'kind' => 'NON_NULL'
-                        ]
+                            'kind' => 'NON_NULL',
+                        ],
                     ],
                     [
                         'name' => 'name',
                         'type' => [
                             'name' => 'String',
-                            'kind' => 'SCALAR'
-                        ]
+                            'kind' => 'SCALAR',
+                        ],
                     ],
                     [
                         'name' => 'friends',
                         'type' => [
                             'name' => null,
-                            'kind' => 'LIST'
-                        ]
+                            'kind' => 'LIST',
+                        ],
                     ],
                     [
                         'name' => 'appearsIn',
                         'type' => [
                             'name' => null,
-                            'kind' => 'LIST'
-                        ]
+                            'kind' => 'LIST',
+                        ],
                     ],
                     [
                         'name' => 'primaryFunction',
                         'type' => [
                             'name' => 'String',
-                            'kind' => 'SCALAR'
-                        ]
-                    ]
-                ]
-            ]
+                            'kind' => 'SCALAR',
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -229,17 +229,17 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'kind' => 'NON_NULL',
                             'ofType' => [
                                 'name' => 'String',
-                                'kind' => 'SCALAR'
-                            ]
-                        ]
+                                'kind' => 'SCALAR',
+                            ],
+                        ],
                     ],
                     [
                         'name' => 'name',
                         'type' => [
                             'name' => 'String',
                             'kind' => 'SCALAR',
-                            'ofType' => null
-                        ]
+                            'ofType' => null,
+                        ],
                     ],
                     [
                         'name' => 'friends',
@@ -248,9 +248,9 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'kind' => 'LIST',
                             'ofType' => [
                                 'name' => 'Character',
-                                'kind' => 'INTERFACE'
-                            ]
-                        ]
+                                'kind' => 'INTERFACE',
+                            ],
+                        ],
                     ],
                     [
                         'name' => 'appearsIn',
@@ -259,20 +259,20 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'kind' => 'LIST',
                             'ofType' => [
                                 'name' => 'Episode',
-                                'kind' => 'ENUM'
-                            ]
-                        ]
+                                'kind' => 'ENUM',
+                            ],
+                        ],
                     ],
                     [
                         'name' => 'primaryFunction',
                         'type' => [
                             'name' => 'String',
                             'kind' => 'SCALAR',
-                            'ofType' => null
-                        ]
-                    ]
-                ]
-            ]
+                            'ofType' => null,
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -313,7 +313,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' =>  $argIntrospectionDefaultValue,
+                                    'defaultValue' => $argIntrospectionDefaultValue,
                                     'description' => 'If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode.',
                                     'name' => 'episode',
                                     'type' => [
@@ -351,8 +351,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                     'type' => [
                                         'kind' => 'NON_NULL',
                                         'name' => null,
-                                        'ofType' =>
-                                            [
+                                        'ofType' => [
                                                 'kind' => 'SCALAR',
                                                 'name' => 'String',
                                             ],
@@ -373,7 +372,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                         'ofType' => null,
                                     ],
                                     'defaultValue' => $argIntrospectionDefaultValue,
-                                ]
+                                ],
                             ],
                         ],
                     ],
@@ -397,8 +396,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $expected = [
             '__type' => [
                 'name' => 'Droid',
-                'description' => 'A mechanical creature in the Star Wars universe.'
-            ]
+                'description' => 'A mechanical creature in the Star Wars universe.',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }

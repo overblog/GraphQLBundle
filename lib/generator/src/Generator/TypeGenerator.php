@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -81,6 +81,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateResolve(array $value)
@@ -90,6 +91,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateResolveType(array $value)
@@ -99,6 +101,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateIsTypeOf(array $value)
@@ -108,6 +111,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateResolveField(array $value)
@@ -117,6 +121,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateComplexity(array $value)
@@ -126,6 +131,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateSerialize(array $value)
@@ -135,6 +141,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateParseValue(array $value)
@@ -144,6 +151,7 @@ class TypeGenerator extends AbstractTypeGenerator
 
     /**
      * @param array $value
+     *
      * @return string
      */
     protected function generateParseLiteral(array $value)

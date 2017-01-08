@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -35,8 +35,8 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ';
         $expected = [
             'hero' => [
-                'name' => 'R2-D2'
-            ]
+                'name' => 'R2-D2',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -68,8 +68,8 @@ class StarWarsQueryTest extends AbstractStarWarsTest
                     [
                         'name' => 'Leia Organa',
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -97,36 +97,35 @@ class StarWarsQueryTest extends AbstractStarWarsTest
                 'friends' => [
                     [
                         'name' => 'Luke Skywalker',
-                        'appearsIn' => ['NEWHOPE', 'EMPIRE', 'JEDI',],
+                        'appearsIn' => ['NEWHOPE', 'EMPIRE', 'JEDI'],
                         'friends' => [
-                            ['name' => 'Han Solo',],
-                            ['name' => 'Leia Organa',],
-                            ['name' => 'C-3PO',],
-                            ['name' => 'R2-D2',],
+                            ['name' => 'Han Solo'],
+                            ['name' => 'Leia Organa'],
+                            ['name' => 'C-3PO'],
+                            ['name' => 'R2-D2'],
                         ],
                     ],
                     [
                         'name' => 'Han Solo',
                         'appearsIn' => ['NEWHOPE', 'EMPIRE', 'JEDI'],
                         'friends' => [
-                            ['name' => 'Luke Skywalker',],
+                            ['name' => 'Luke Skywalker'],
                             ['name' => 'Leia Organa'],
-                            ['name' => 'R2-D2',],
-                        ]
+                            ['name' => 'R2-D2'],
+                        ],
                     ],
                     [
                         'name' => 'Leia Organa',
                         'appearsIn' => ['NEWHOPE', 'EMPIRE', 'JEDI'],
-                        'friends' =>
-                            [
-                                ['name' => 'Luke Skywalker',],
-                                ['name' => 'Han Solo',],
-                                ['name' => 'C-3PO',],
-                                ['name' => 'R2-D2',],
+                        'friends' => [
+                                ['name' => 'Luke Skywalker'],
+                                ['name' => 'Han Solo'],
+                                ['name' => 'C-3PO'],
+                                ['name' => 'R2-D2'],
                             ],
                     ],
                 ],
-            ]
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -143,8 +142,8 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ';
         $expected = [
             'human' => [
-                'name' => 'Luke Skywalker'
-            ]
+                'name' => 'Luke Skywalker',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -159,12 +158,12 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         }
         ';
         $params = [
-            'someId' => '1000'
+            'someId' => '1000',
         ];
         $expected = [
             'human' => [
-                'name' => 'Luke Skywalker'
-            ]
+                'name' => 'Luke Skywalker',
+            ],
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
@@ -180,12 +179,12 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         }
         ';
         $params = [
-            'someId' => '1002'
+            'someId' => '1002',
         ];
         $expected = [
             'human' => [
-                'name' => 'Han Solo'
-            ]
+                'name' => 'Han Solo',
+            ],
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
@@ -201,10 +200,10 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         }
         ';
         $params = [
-            'id' => 'not a valid id'
+            'id' => 'not a valid id',
         ];
         $expected = [
-            'human' => null
+            'human' => null,
         ];
         $this->assertValidQuery($query, $expected, $params);
     }
@@ -222,7 +221,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ';
         $expected = [
             'luke' => [
-                'name' => 'Luke Skywalker'
+                'name' => 'Luke Skywalker',
             ],
         ];
         $this->assertValidQuery($query, $expected);
@@ -243,11 +242,11 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ';
         $expected = [
             'luke' => [
-                'name' => 'Luke Skywalker'
+                'name' => 'Luke Skywalker',
             ],
             'leia' => [
-                'name' => 'Leia Organa'
-            ]
+                'name' => 'Leia Organa',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -271,12 +270,12 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $expected = [
             'luke' => [
                 'name' => 'Luke Skywalker',
-                'homePlanet' => 'Tatooine'
+                'homePlanet' => 'Tatooine',
             ],
             'leia' => [
                 'name' => 'Leia Organa',
-                'homePlanet' => 'Alderaan'
-            ]
+                'homePlanet' => 'Alderaan',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -301,12 +300,12 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $expected = [
             'luke' => [
                 'name' => 'Luke Skywalker',
-                'homePlanet' => 'Tatooine'
+                'homePlanet' => 'Tatooine',
             ],
             'leia' => [
                 'name' => 'Leia Organa',
-                'homePlanet' => 'Alderaan'
-            ]
+                'homePlanet' => 'Alderaan',
+            ],
         ];
         $this->assertValidQuery($query, $expected);
     }
@@ -325,7 +324,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $expected = [
             'hero' => [
                 '__typename' => 'Droid',
-                'name' => 'R2-D2'
+                'name' => 'R2-D2',
             ],
         ];
         $this->assertValidQuery($query, $expected);
@@ -344,7 +343,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $expected = [
             'hero' => [
                 '__typename' => 'Human',
-                'name' => 'Luke Skywalker'
+                'name' => 'Luke Skywalker',
             ],
         ];
         $this->assertValidQuery($query, $expected);

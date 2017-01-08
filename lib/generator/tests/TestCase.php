@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -29,10 +29,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         ]);
 
         if (null !== $level) {
-            $csBuilder->add('--level=' . $level);
+            $csBuilder->add('--level='.$level);
         }
         if (null !== $fixers) {
-            $csBuilder->add('--fixers=' . $fixers);
+            $csBuilder->add('--fixers='.$fixers);
         }
 
         $process = $csBuilder->getProcess();

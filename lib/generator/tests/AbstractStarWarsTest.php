@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -14,7 +14,6 @@ namespace Overblog\GraphQLGenerator\Tests;
 use GraphQL\GraphQL;
 use GraphQL\Schema;
 use GraphQL\Type\Definition\Config;
-use Overblog\GraphQLGenerator\Generator\TypeGenerator;
 use Overblog\GraphQLGenerator\Tests\Generator\AbstractTypeGeneratorTest;
 
 abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
@@ -40,6 +39,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
 
     /**
      * Helper function to test a query and the expected response.
+     *
      * @param $query
      * @param $expected
      * @param null $params

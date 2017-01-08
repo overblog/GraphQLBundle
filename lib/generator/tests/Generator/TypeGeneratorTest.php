@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -42,7 +42,6 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
     {
         $this->typeGenerator->setSkeletonDirs(new \stdClass());
     }
-
 
     /**
      * @expectedException \InvalidArgumentException
@@ -95,16 +94,16 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
                 'config' => [
                     'fields' => [
                         'invalidlistOfString' => ['type' => '[String'],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ]);
     }
 
     public function testAddTraitAndClearTraits()
     {
-        $trait = __NAMESPACE__ . '\\FooTrait';
-        $interface = __NAMESPACE__ . '\\FooInterface';
+        $trait = __NAMESPACE__.'\\FooTrait';
+        $interface = __NAMESPACE__.'\\FooInterface';
         $this->typeGenerator->addTrait($trait)
             ->addImplement($interface);
         $this->generateClasses(['U' => $this->getConfigs()['T']]);
@@ -138,9 +137,9 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
                     'fields' => [
                         'resolveObject' => ['type' => '[String]', 'resolve' => new \stdClass()],
                         'resolveAnyNotObject' => ['type' => '[String]', 'resolve' => ['result' => 1]],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ]);
 
         /** @var ObjectType $type */
@@ -205,9 +204,9 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
                         'listOfString' => ['type' => '[String]'],
                         'listOfListOfString' => ['type' => '[[String]]'],
                         'listOfListOfStringNonNull' => ['type' => '[[String!]!]!'],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
     }
 }

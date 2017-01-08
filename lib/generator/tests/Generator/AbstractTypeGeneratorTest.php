@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -32,16 +32,16 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     public function setUp()
     {
         $this->filesystem = new Filesystem();
-        $this->tmpDir = sys_get_temp_dir() . '/mcgweb-graphql-generator';
+        $this->tmpDir = sys_get_temp_dir().'/mcgweb-graphql-generator';
         $this->filesystem->remove($this->tmpDir);
         $this->typeConfigs = $this->prepareTypeConfigs();
         $this->typeGenerator = new TypeGenerator();
         $this->typeGenerator->setExpressionLanguage(new ExpressionLanguage());
 
-        if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
-            $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
+        if (file_exists(__DIR__.'/../../vendor/autoload.php')) {
+            $this->classLoader = require __DIR__.'/../../vendor/autoload.php';
         } else {
-            $this->classLoader = require __DIR__ . '/../../../../vendor/autoload.php';
+            $this->classLoader = require __DIR__.'/../../../../vendor/autoload.php';
         }
     }
 
@@ -73,7 +73,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     protected function prepareTypeConfigs()
     {
         $yaml = new \Symfony\Component\Yaml\Parser();
-        $typeConfigs = $yaml->parse(file_get_contents(__DIR__ . '/../starWarsSchema.yml'));
+        $typeConfigs = $yaml->parse(file_get_contents(__DIR__.'/../starWarsSchema.yml'));
 
         return $this->processConfig($typeConfigs);
     }
@@ -96,6 +96,6 @@ abstract class AbstractTypeGeneratorTest extends TestCase
 
     protected function getType($type)
     {
-        return call_user_func(["\\".$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
+        return call_user_func(['\\'.$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
     }
 }

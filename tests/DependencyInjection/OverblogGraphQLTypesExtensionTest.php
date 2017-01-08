@@ -247,7 +247,7 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'types' => [
                         [
                             'type' => $type,
-                            'dir' => __DIR__ . '/mapping/' .$type,
+                            'dir' => __DIR__.'/mapping/'.$type,
                         ],
                     ],
                 ],

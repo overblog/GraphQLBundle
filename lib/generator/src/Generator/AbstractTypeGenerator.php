@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -19,7 +19,7 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
     const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
 
-    protected static $closureTemplate = <<<EOF
+    protected static $closureTemplate = <<<'EOF'
 function (%s) <closureUseStatements>{
 <spaces><spaces>return %s;
 <spaces>}
@@ -33,7 +33,6 @@ EOF;
         'input-object' => 'GraphQL\\Type\\Definition\\InputObjectType',
         'custom-scalar' => 'GraphQL\\Type\\Definition\\CustomScalarType',
     ];
-
 
     private static $internalTypes = [
         Type::STRING => '\\GraphQL\\Type\\Definition\\Type::string()',
@@ -56,8 +55,8 @@ EOF;
     private $expressionLanguage;
 
     /**
-     * @param string           $classNamespace The namespace to use for the classes.
-     * @param string[]|string  $skeletonDirs
+     * @param string          $classNamespace The namespace to use for the classes
+     * @param string[]|string $skeletonDirs
      */
     public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [])
     {
@@ -99,7 +98,7 @@ EOF;
 
     protected function generateClassName(array $config)
     {
-        return $config['config']['name'] . 'Type';
+        return $config['config']['name'].'Type';
     }
 
     protected function generateClassDocBlock(array $config)
@@ -134,10 +133,11 @@ EOF;
                 $indexed = array_keys($var) === range(0, count($var) - 1);
                 $r = [];
                 foreach ($var as $key => $value) {
-                    $r[] = ($indexed ? '' : $this->varExport($key, $default) . ' => ')
-                        . $this->varExport($value, $default);
+                    $r[] = ($indexed ? '' : $this->varExport($key, $default).' => ')
+                        .$this->varExport($value, $default);
                 }
-                return "[" . implode(", ", $r)  . "]";
+
+                return '['.implode(', ', $r).']';
 
             case $this->isExpression($var):
                 return $code = $this->getExpressionLanguage()->compile($var, $compilerNames);
@@ -156,10 +156,10 @@ EOF;
 
         foreach ($values as $name => $value) {
             $value['name'] = isset($value['name']) ? $value['name'] : $name;
-            $code .= "\n" . $this->processTemplatePlaceHoldersReplacements($templatePrefix . 'Config', $value);
+            $code .= "\n".$this->processTemplatePlaceHoldersReplacements($templatePrefix.'Config', $value);
         }
 
-        return '[' . $this->prefixCodeWithSpaces($code, 2) . "\n<spaces>]";
+        return '['.$this->prefixCodeWithSpaces($code, 2)."\n<spaces>]";
     }
 
     protected function callableCallbackFromArrayValue(array $value, $key, $argDefinitions = null, $default = 'null', array $compilerNames = null)
@@ -206,7 +206,7 @@ EOF;
 
     protected function generateConfig(array $config)
     {
-        $template = str_replace(' ', '', ucwords(str_replace('-', ' ', $config['type']))) . 'Config';
+        $template = str_replace(' ', '', ucwords(str_replace('-', ' ', $config['type']))).'Config';
         $code = $this->processTemplatePlaceHoldersReplacements($template, $config['config']);
         $code = ltrim($this->prefixCodeWithSpaces($code, 2));
 
@@ -245,7 +245,7 @@ EOF;
 
     protected function resolveTypeCode($alias)
     {
-        return $alias . 'Type::getInstance()';
+        return $alias.'Type::getInstance()';
     }
 
     protected function resolveTypesCode(array $values, $key)
@@ -261,9 +261,9 @@ EOF;
 
     protected function types2String(array $types)
     {
-        $types = array_map(__CLASS__ . '::typeAlias2String', $types);
+        $types = array_map(__CLASS__.'::typeAlias2String', $types);
 
-        return '[' . implode(', ', $types) . ']';
+        return '['.implode(', ', $types).']';
     }
 
     protected function arrayKeyExistsAndIsNotNull(array $value, $key)
@@ -285,11 +285,12 @@ EOF;
      *     ],
      *     //...
      * ]
-     * </code>
+     * </code>.
      *
-     * @param array $configs
+     * @param array  $configs
      * @param string $outputDirectory
-     * @param bool $regenerateIfExists
+     * @param bool   $regenerateIfExists
+     *
      * @return array
      */
     public function generateClasses(array $configs, $outputDirectory, $regenerateIfExists = false)
@@ -311,11 +312,11 @@ EOF;
         static $treatLater = ['useStatement', 'spaces', 'closureUseStatements'];
         $this->clearInternalUseStatements();
         $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, $treatLater);
-        $code = $this->processPlaceHoldersReplacements($treatLater, $code, $config) . "\n";
+        $code = $this->processPlaceHoldersReplacements($treatLater, $code, $config)."\n";
 
         $className = $this->generateClassName($config);
 
-        $path = $outputDirectory . '/' . $className . '.php';
+        $path = $outputDirectory.'/'.$className.'.php';
         $dir = dirname($path);
 
         if (!is_dir($dir)) {

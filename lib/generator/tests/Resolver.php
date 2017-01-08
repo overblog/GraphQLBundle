@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the OverblogGraphQLPhpGenerator package.
+ * This file is part of the OverblogGraphQLBundle package.
  *
  * (c) Overblog <http://github.com/overblog/>
  *
@@ -62,6 +62,7 @@ abstract class Resolver
         if (isset($droids[$obj['id']])) {
             return static::getDroidType();
         }
+
         return null;
     }
 
@@ -78,12 +79,14 @@ abstract class Resolver
     public static function getHuman($root, $args)
     {
         $humans = StarWarsData::humans();
+
         return isset($humans[$args['id']]) ? $humans[$args['id']] : null;
     }
 
     public static function getDroid($root, $args)
     {
         $droids = StarWarsData::droids();
+
         return isset($droids[$args['id']]) ? $droids[$args['id']] : null;
     }
 
