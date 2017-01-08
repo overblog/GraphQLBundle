@@ -17,9 +17,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     public function assertCodeStandard($pathToCode, $level = null, $fixers = null)
     {
+        $phpCSBin = file_exists(__DIR__.'/../bin/php-cs-fixer') ? __DIR__.'/../bin/php-cs-fixer' : __DIR__.'/../../../bin/php-cs-fixer';
+
         // Run linter in dry-run mode so it changes nothing.
         $csBuilder = new ProcessBuilder([
-            'php-cs-fixer',
+            $phpCSBin,
             'fix',
             '--dry-run',
             '--diff',
@@ -34,7 +36,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         $process = $csBuilder->getProcess();
-        $process->setWorkingDirectory(__DIR__ . '/../bin');
+
         $process->setTimeout(60);
         $process->run();
 

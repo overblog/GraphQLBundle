@@ -38,10 +38,10 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $this->typeGenerator = new TypeGenerator();
         $this->typeGenerator->setExpressionLanguage(new ExpressionLanguage());
 
-        if (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-            $this->classLoader = require __DIR__ . '/../../../../vendor/autoload.php';
-        } else {
+        if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
             $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
+        } else {
+            $this->classLoader = require __DIR__ . '/../../../../vendor/autoload.php';
         }
     }
 
