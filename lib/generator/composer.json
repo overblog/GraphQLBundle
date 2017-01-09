@@ -1,0 +1,47 @@
+{
+    "name": "overblog/graphql-php-generator",
+    "type": "library",
+    "description": "GraphQL types generator",
+    "keywords": ["GraphQL", "type", "generator"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Overblog",
+            "homepage": "http://www.over-blog.com"
+        }
+    ],
+    "config" : {
+        "sort-packages": true,
+        "bin-dir": "bin"
+    },
+    "require": {
+        "php": "^5.4|~7.0",
+        "webonyx/graphql-php": ">=0.7"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^1.11",
+        "phpunit/phpunit": "^4.1|^5.1",
+        "symfony/expression-language": "^2.7|^3.0",
+        "symfony/filesystem": "^2.7|^3.0",
+        "symfony/process": "^2.7|^3.0",
+        "symfony/yaml": "^2.7|^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Overblog\\GraphQLGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Overblog\\GraphQLGenerator\\Tests\\": "tests/"
+        },
+        "files": [
+            "vendor/webonyx/graphql-php/tests/StarWarsData.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.7-dev"
+        }
+    }
+}

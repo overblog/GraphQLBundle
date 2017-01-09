@@ -1,0 +1,12 @@
+#!/bin/bash
+
+BIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PHPUNIT="php ${BIN_DIR}/phpunit --debug"
+
+if [ "$TRAVIS_PHP_VERSION" == "7.0" ]
+then
+    $PHPUNIT -d xdebug.max_nesting_level=200 --coverage-clover=coverage.clover
+else
+    $PHPUNIT
+fi
+

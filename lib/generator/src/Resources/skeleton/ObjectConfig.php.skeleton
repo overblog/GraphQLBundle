@@ -1,0 +1,8 @@
+[
+<spaces>'name' => <name>,
+<spaces>'description' => <description>,
+<spaces>'fields' => <outputFields>,
+<spaces>'interfaces' => <interfaces>,
+<spaces>'isTypeOf' => <isTypeOf>,
+<spaces>'resolveField' => <resolveField>,
+]

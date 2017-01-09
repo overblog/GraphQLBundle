@@ -14,9 +14,9 @@ Documentation
 
 For documentation, see:
 
-    Resources/doc/
+    doc/
 
-[Read the documentation](Resources/doc/index.md)
+[Read the documentation](doc/index.md)
 
 Contribute
 ----------
@@ -34,5 +34,5 @@ phpunit
 Fix PHP CS:
 
 ```bash
-vendor/bin/php-cs-fixer fix ./
+vendor/bin/php-cs-fixer fix .
 ```

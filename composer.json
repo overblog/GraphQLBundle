@@ -12,16 +12,17 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": ""
-        },
-        "exclude-from-classmap": [
-            "/Tests/"
-        ]
+            "Overblog\\GraphQLBundle\\": "src/",
+            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
+        }
     },
     "autoload-dev": {
+        "psr-4": {
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
+            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+        },
         "files": [
-            "vendor/overblog/graphql-php-generator/tests/DateTimeType.php",
-            "vendor/overblog/graphql-php-generator/tests/Resolver.php"
+            "vendor/webonyx/graphql-php/tests/StarWarsData.php"
         ]
     },
     "config" : {
@@ -31,21 +32,20 @@
     "require": {
         "php": "^5.4|~7.0",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "overblog/graphql-php-generator": "^0.4.1",
+        "overblog/graphql-php-generator": "0.7.*",
         "symfony/expression-language": "^2.7|^3.1",
         "symfony/framework-bundle": "^2.7|^3.1",
         "symfony/options-resolver": "^2.7|^3.1",
         "symfony/property-access": "^2.7|^3.1",
         "webonyx/graphql-php": "^0.7.0"
     },
-    "suggest": {
-        "twig/twig": "If you want to use graphiQL."
+    "replace": {
+        "overblog/graphql-php-generator": "self.version"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",
         "phpunit/phpunit": "^4.1|^5.5",
         "sensio/framework-extra-bundle": "^3.0",
-        "sllh/php-cs-fixer-styleci-bridge": "^1.5",
         "symfony/asset": "^2.7|^3.1",
         "symfony/browser-kit": "^2.7|^3.1",
         "symfony/css-selector": "^2.7|^3.1",
@@ -56,5 +56,13 @@
         "symfony/twig-bundle": "^2.7|^3.1",
         "symfony/web-profiler-bundle": "^2.7|^3.1",
         "symfony/yaml": "^2.7|^3.1"
+    },
+    "suggest": {
+        "twig/twig": "If you want to use graphiQL."
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.7-dev"
+        }
     }
 }
