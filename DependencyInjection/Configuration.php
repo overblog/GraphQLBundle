@@ -162,6 +162,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('graphiql')->defaultValue('0.7.8')->end()
                         ->scalarNode('react')->defaultValue('15.3.2')->end()
+                        ->scalarNode('fetch')->defaultValue('2.0.1')->end()
                     ->end()
                 ->end()
             ->end();
