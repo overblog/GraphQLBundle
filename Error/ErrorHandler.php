@@ -164,9 +164,9 @@ class ErrorHandler
      *
      * @param \Exception $rawException
      *
-     * @return \Exception
+     * @return \Exception|\Error
      */
-    protected function convertException(\Exception $rawException = null)
+    protected function convertException($rawException = null)
     {
         if (null === $rawException) {
             return;
