@@ -282,4 +282,23 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
         $this->assertTrue($result->pageInfo->hasPreviousPage);
     }
+
+    public function testPromiseMode()
+    {
+        $promise = $this->getMockBuilder('GraphQL\Executor\Promise\Promise')
+            ->setMethods(['then'])
+            ->getMock()
+        ;
+
+        $promise->expects($this->once())->method('then');
+
+        $paginator = new Paginator(function ($offset, $limit) use ($promise) {
+            $this->assertSame(0, $offset);
+            $this->assertSame(5, $limit);
+
+            return $promise;
+        }, Paginator::MODE_PROMISE);
+
+        $result = $paginator->auto(new Argument(['first' => 4]), 5);
+    }
 }
