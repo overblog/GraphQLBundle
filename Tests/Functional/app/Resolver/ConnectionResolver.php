@@ -11,8 +11,13 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
+use GraphQL\Deferred;
+use Overblog\GraphQLBundle\Executor\Promise\Adapter\GraphQLPromiseAdapter;
+use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
+use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
+use React\Promise\Promise;
 
 class ConnectionResolver
 {
@@ -39,23 +44,49 @@ class ConnectionResolver
         ],
     ];
 
+    /**
+     * @var PromiseAdapterInterface
+     */
+    private $promiseAdapter;
+
+    public function __construct(PromiseAdapterInterface $promiseAdapter)
+    {
+        $this->promiseAdapter = $promiseAdapter;
+    }
+
     public function friendsResolver($user, $args)
     {
-        return ConnectionBuilder::connectionFromArray($user['friends'], $args);
+        return $this->promiseAdapter->create(function (callable $resolve) use ($user, $args) {
+            return $resolve(ConnectionBuilder::connectionFromArray($user['friends'], $args));
+        });
     }
 
     public function resolveNode(Edge $edge)
     {
-        return isset($this->allUsers[$edge->node]) ? $this->allUsers[$edge->node] : null;
+        return $this->promiseAdapter->create(function (callable $resolve) use ($edge) {
+            return $resolve(isset($this->allUsers[$edge->node]) ? $this->allUsers[$edge->node] : null);
+        });
     }
 
     public function resolveConnection()
     {
-        return count($this->allUsers) - 1;
+        return $this->promiseAdapter->create(function (callable $resolve) {
+            return $resolve(count($this->allUsers) - 1);
+        });
     }
 
     public function resolveQuery()
     {
+        if ($this->promiseAdapter instanceof GraphQLPromiseAdapter) {
+            return new Deferred(function () {
+                return $this->allUsers[0];
+            });
+        } elseif ($this->promiseAdapter instanceof ReactPromiseAdapter) {
+            return new Promise(function (callable $resolve) {
+                return $resolve($this->allUsers[0]);
+            });
+        }
+
         return $this->allUsers[0];
     }
 }

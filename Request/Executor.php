@@ -12,7 +12,7 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
-use GraphQL\GraphQL;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
@@ -20,12 +20,14 @@ use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
+use Overblog\GraphQLBundle\Executor\ExecutorInterface;
+use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Executor
 {
-    const DEFAULT_EXECUTOR = 'GraphQL\\GraphQL::executeAndReturnResult';
+    const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
     /**
      * @var Schema[]
@@ -47,28 +49,32 @@ class Executor
     private $hasDebugInfo;
 
     /**
-     * @var callable
+     * @var ExecutorInterface
      */
     private $executor;
 
+    /**
+     * @var PromiseAdapterInterface
+     */
+    private $promiseAdapter;
+
     public function __construct(
+        ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher = null,
         $throwException = false,
         ErrorHandler $errorHandler = null,
         $hasDebugInfo = false,
-        callable $executor = null
+        PromiseAdapterInterface $promiseAdapter = null
     ) {
+        $this->executor = $executor;
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
         $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
-        $this->executor = $executor;
-        if (null === $this->executor) {
-            $this->executor = self::DEFAULT_EXECUTOR;
-        }
+        $this->promiseAdapter = $promiseAdapter;
     }
 
-    public function setExecutor(callable $executor)
+    public function setExecutor(ExecutorInterface $executor)
     {
         $this->executor = $executor;
 
@@ -140,8 +146,9 @@ class Executor
         $startTime = microtime(true);
         $startMemoryUsage = memory_get_usage(true);
 
-        $executionResult = call_user_func(
-            $this->executor,
+        $this->executor->setPromiseAdapter($this->promiseAdapter);
+
+        $result = $this->executor->execute(
             $schema,
             isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
             $context,
@@ -150,22 +157,37 @@ class Executor
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
-        if (!is_object($executionResult) || !$executionResult instanceof ExecutionResult) {
-            throw new \RuntimeException(sprintf('Execution result should be an object instantiating "%s".', 'GraphQL\\Executor\\ExecutionResult'));
+        if (!is_object($result) || (!$result instanceof ExecutionResult && !$result instanceof Promise)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Execution result should be an object instantiating "%s" or "%s".',
+                    'GraphQL\\Executor\\ExecutionResult',
+                    'GraphQL\\Executor\\Promise\\Promise'
+                )
+            );
         }
 
+        if ($this->promiseAdapter && $this->promiseAdapter->isThenable($result)) {
+            $result = $this->promiseAdapter->wait($result);
+        }
+
+        return $this->prepareResult($result, $startTime, $startMemoryUsage);
+    }
+
+    private function prepareResult($result, $startTime, $startMemoryUsage)
+    {
         if ($this->hasDebugInfo()) {
-            $executionResult->extensions['debug'] = [
+            $result->extensions['debug'] = [
                 'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 3) * 1000),
                 'memoryUsage' => sprintf('%.2F MiB', (memory_get_usage(true) - $startMemoryUsage) / 1024 / 1024),
             ];
         }
 
         if (null !== $this->errorHandler) {
-            $this->errorHandler->handleErrors($executionResult, $this->throwException);
+            $this->errorHandler->handleErrors($result, $this->throwException);
         }
 
-        return $executionResult;
+        return $result;
     }
 
     /**

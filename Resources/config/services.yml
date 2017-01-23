@@ -1,7 +1,6 @@
 parameters:
     overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
     overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
-    overblog_graphql.default_executor: [GraphQL\GraphQL, executeAndReturnResult]
 
 services:
     overblog_graphql.error_handler:
@@ -12,14 +11,19 @@ services:
             - "@?logger"
             - []
 
+    overblog_graphql.executor.default:
+        class: Overblog\GraphQLBundle\Executor\Executor
+        public: false
+
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
         arguments:
+            - "@overblog_graphql.executor"
             - "@event_dispatcher"
             - "%kernel.debug%"
             - "@overblog_graphql.error_handler"
             - false
-            - "%overblog_graphql.default_executor%"
+            - "@overblog_graphql.promise_adapter"
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
@@ -50,6 +54,8 @@ services:
 
     overblog_graphql.access_resolver:
         class: Overblog\GraphQLBundle\Resolver\AccessResolver
+        arguments:
+            - "@overblog_graphql.promise_adapter"
 
     overblog_graphql.cache_expression_language_parser.default:
         class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache
@@ -90,3 +96,11 @@ services:
             - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
+
+    overblog_graphql.promise_adapter.default:
+        class: Overblog\GraphQLBundle\Executor\Promise\Adapter\GraphQLPromiseAdapter
+        public: false
+
+    overblog_graphql.react.promise_adapter:
+        class: Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter
+        public: false

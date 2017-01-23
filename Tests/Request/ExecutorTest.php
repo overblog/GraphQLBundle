@@ -9,23 +9,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Tests\Resolver;
+namespace Overblog\GraphQLBundle\Tests\Request;
 
 use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Request\Executor;
+use Overblog\GraphQLBundle\Executor\Executor;
+use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 
 class ExecutorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Executor */
+    /** @var RequestExecutor */
     private $executor;
 
     private $request = ['query' => 'query debug{ myField }', 'variables' => [], 'operationName' => null];
 
     public function setUp()
     {
-        $this->executor = new Executor();
+        $this->executor = new RequestExecutor(new Executor());
         $queryType = new ObjectType([
             'name' => 'Query',
             'fields' => [
@@ -42,25 +43,21 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult" or "GraphQL\Executor\Promise\Promise".
      */
     public function testInvalidExecutorReturnNotObject()
     {
-        $this->executor->setExecutor(function () {
-            return false;
-        });
+        $this->executor->setExecutor($this->createExecutorExecuteMock(false));
         $this->executor->execute($this->request);
     }
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult" or "GraphQL\Executor\Promise\Promise".
      */
     public function testInvalidExecutorReturnInvalidObject()
     {
-        $this->executor->setExecutor(function () {
-            return new \stdClass();
-        });
+        $this->executor->setExecutor($this->createExecutorExecuteMock(new \stdClass()));
         $this->executor->execute($this->request);
     }
 
@@ -84,6 +81,17 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSchemaNoSchemaFound()
     {
-        (new Executor())->getSchema('fake');
+        (new RequestExecutor(new Executor()))->getSchema('fake');
+    }
+
+    private function createExecutorExecuteMock($returnValue)
+    {
+        $mock = $this->getMockBuilder('Overblog\GraphQLBundle\Executor\Executor')
+            ->setMethods(['execute'])
+            ->getMock();
+
+        $mock->method('execute')->will($this->returnValue($returnValue));
+
+        return $mock;
     }
 }
