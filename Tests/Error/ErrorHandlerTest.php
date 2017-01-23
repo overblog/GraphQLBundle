@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Error;
 
-use GraphQL\Error;
+use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
@@ -33,18 +33,17 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new Error('Error without wrapped exception'),
-                new Error('Error with wrapped exception', null, new \Exception('My Exception message')),
-                new Error('Error with wrapped user error', null, new UserError('My User Error')),
-                new Error('', null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
-                new Error('Error with wrapped user warning', null, new UserWarning('My User Warning')),
+                new GraphQLError('Error without wrapped exception'),
+                new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message')),
+                new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
+                new GraphQLError('', null, null, null, null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
+                new GraphQLError('Error with wrapped user warning', null, null, null, null, new UserWarning('My User Warning')),
             ]
         );
 
         $this->errorHandler->handleErrors($executionResult);
 
         $expected = [
-            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
@@ -86,7 +85,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new Error('Error with wrapped exception', null, new \Exception('My Exception message')),
+                new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message')),
             ]
         );
 
@@ -98,14 +97,13 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new Error('Error with wrapped user error', null, new UserError('My User Error')),
+                new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
             ]
         );
 
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error with wrapped user error',
@@ -121,14 +119,13 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new Error('Error without wrapped exception'),
+                new GraphQLError('Error without wrapped exception'),
             ]
         );
 
         $this->errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data' => null,
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
@@ -146,14 +143,13 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new Error('Error with invalid argument exception', null, new \InvalidArgumentException('Invalid argument exception')),
+                new GraphQLError('Error with invalid argument exception', null, null, null, null, new \InvalidArgumentException('Invalid argument exception')),
             ]
         );
 
         $errorHandler->handleErrors($executionResult, true);
 
         $expected = [
-            'data' => null,
             'extensions' => [
                 'warnings' => [
                     [

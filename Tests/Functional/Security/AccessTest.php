@@ -62,6 +62,7 @@ EOF;
                     [
                         'message' => 'Access denied to this field.',
                         'locations' => [['line' => 1, 'column' => 24]],
+                        'path' => ['user', 'name'],
                     ],
                 ],
             ],
@@ -122,6 +123,7 @@ EOF;
                                 'column' => 5,
                             ],
                         ],
+                        'path' => ['user', 'forbidden'],
                     ],
                 ],
             ],
@@ -192,6 +194,7 @@ EOF;
                                 'column' => 5,
                             ],
                         ],
+                        'path' => ['simpleMutationWithThunkFields', 'result'],
                     ],
                 ],
             ],
@@ -216,6 +219,7 @@ EOF;
                             'column' => 3,
                         ],
                     ],
+                    'path' => ['simpleMutationWithThunkFields'],
                 ],
             ],
         ];

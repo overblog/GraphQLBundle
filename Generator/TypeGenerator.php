@@ -57,7 +57,7 @@ class TypeGenerator extends BaseTypeGenerator
         return <<<'EOF'
 
 /**
- * THIS FIELD WAS GENERATED AND SHOULD NOT BE MODIFIED!
+ * THIS FILE WAS GENERATED AND SHOULD NOT BE MODIFIED!
  */
 EOF;
     }

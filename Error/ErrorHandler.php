@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Error;
 
-use GraphQL\Error;
+use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Executor\ExecutionResult;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -63,8 +63,8 @@ class ErrorHandler
     }
 
     /**
-     * @param Error[] $errors
-     * @param bool    $throwRawException
+     * @param GraphQLError[] $errors
+     * @param bool           $throwRawException
      *
      * @return array
      *
@@ -79,7 +79,7 @@ class ErrorHandler
             ],
         ];
 
-        /** @var Error $error */
+        /** @var GraphQLError $error */
         foreach ($errors as $error) {
             $rawException = $this->convertException($error->getPrevious());
 
@@ -111,7 +111,7 @@ class ErrorHandler
             if ($rawException instanceof UserErrors) {
                 $rawExceptions = $rawException;
                 foreach ($rawExceptions->getErrors() as $rawException) {
-                    $treatedExceptions['errors'][] = Error::createLocatedError($rawException, $error->nodes);
+                    $treatedExceptions['errors'][] = GraphQLError::createLocatedError($rawException, $error->nodes);
                 }
                 continue;
             }
@@ -123,19 +123,24 @@ class ErrorHandler
 
             $this->logException($rawException, LogLevel::CRITICAL);
 
-            $treatedExceptions['errors'][] = new Error(
+            $treatedExceptions['errors'][] = new GraphQLError(
                 $this->internalErrorMessage,
                 $error->nodes,
-                $rawException,
                 $error->getSource(),
-                $error->getPositions()
+                $error->getPositions(),
+                $error->path,
+                $rawException
             );
         }
 
         return $treatedExceptions;
     }
 
-    public function logException(\Exception $exception, $errorLevel = LogLevel::ERROR)
+    /**
+     * @param \Exception|\Error $exception
+     * @param string            $errorLevel
+     */
+    public function logException($exception, $errorLevel = LogLevel::ERROR)
     {
         $message = sprintf(
             '%s: %s[%d] (caught exception) at %s line %s.',
@@ -154,7 +159,7 @@ class ErrorHandler
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {
-            $executionResult->extensions['warnings'] = array_map(['GraphQL\Error', 'formatError'], $exceptions['extensions']['warnings']);
+            $executionResult->extensions['warnings'] = array_map(['GraphQL\Error\Error', 'formatError'], $exceptions['extensions']['warnings']);
         }
     }
 
@@ -162,7 +167,7 @@ class ErrorHandler
      * Tries to convert a raw exception into a user warning or error
      * that is displayed to the user.
      *
-     * @param \Exception $rawException
+     * @param \Exception|\Error $rawException
      *
      * @return \Exception|\Error
      */
@@ -172,8 +177,9 @@ class ErrorHandler
             return;
         }
 
-        if (!empty($this->exceptionMap[get_class($rawException)])) {
-            $errorClass = $this->exceptionMap[get_class($rawException)];
+        $rawExceptionClass = get_class($rawException);
+        if (isset($this->exceptionMap[$rawExceptionClass])) {
+            $errorClass = $this->exceptionMap[$rawExceptionClass];
 
             return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
         }

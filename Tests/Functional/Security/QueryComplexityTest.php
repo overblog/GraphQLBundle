@@ -46,7 +46,6 @@ EOF;
     public function testComplexityReachLimitation()
     {
         $expected = [
-            'data' => null,
             'errors' => [
                 [
                     'message' => 'Max query complexity should be 10 but got 54.',
