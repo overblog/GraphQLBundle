@@ -43,6 +43,11 @@
         body: JSON.stringify(params),
         credentials: 'include',
       }).then((res) => {
+        var xdebugToken = res.headers.get('X-Debug-Token')
+        if (typeof Sfjs !== "undefined") {
+          var toolbarElement = document.querySelector('.sf-toolbar')
+          Sfjs.load(toolbarElement.id, '/_wdt/' + xdebugToken)
+        }
         return res.text()
       }).then((body) => {
         try {
