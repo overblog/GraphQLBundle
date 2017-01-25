@@ -35,10 +35,10 @@ class Resolver
         $value = null;
         $index = sprintf('[%s]', $fieldName);
 
-        if (self::getAccessor()->isReadable($objectOrArray, $index)) {
+        if (self::isReadable($objectOrArray, $index)) {
             $value = self::getAccessor()->getValue($objectOrArray, $index);
-        } elseif (is_object($objectOrArray)) {
-            $value = self::propertyValueFromObject($objectOrArray, $fieldName);
+        } elseif (is_object($objectOrArray) && self::isReadable($objectOrArray, $fieldName)) {
+            $value = self::getAccessor()->getValue($objectOrArray, $fieldName);
         }
 
         return $value;
@@ -48,22 +48,21 @@ class Resolver
     {
         $index = sprintf('[%s]', $fieldName);
 
-        if (self::getAccessor()->isWritable($objectOrArray, $index)) {
+        if (self::isWritable($objectOrArray, $index)) {
             self::getAccessor()->setValue($objectOrArray, $index, $value);
-        } elseif (is_object($objectOrArray)) {
+        } elseif (is_object($objectOrArray) && self::isWritable($objectOrArray, $fieldName)) {
             self::getAccessor()->setValue($objectOrArray, $fieldName, $value);
         }
     }
 
-    private static function propertyValueFromObject($object, $fieldName)
+    private static function isReadable($objectOrArray, $indexOrProperty)
     {
-        $value = null;
+        return self::getAccessor()->isReadable($objectOrArray, $indexOrProperty);
+    }
 
-        if (self::getAccessor()->isReadable($object, $fieldName)) {
-            $value = self::getAccessor()->getValue($object, $fieldName);
-        }
-
-        return $value;
+    private static function isWritable($objectOrArray, $indexOrProperty)
+    {
+        return self::getAccessor()->isWritable($objectOrArray, $indexOrProperty);
     }
 
     private static function getAccessor()

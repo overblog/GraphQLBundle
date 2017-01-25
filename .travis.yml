@@ -19,9 +19,10 @@ matrix:
         - php: 7.1
           env: SYMFONY_VERSION=3.2.*
         - php: hhvm
-        - php: nightly
-    allow_failures:
-        - php: nightly
+# TODO(mcg-web): uncomment after fixing this bug https://github.com/travis-ci/travis-ci/issues/7124
+#        - php: nightly
+#    allow_failures:
+#        - php: nightly
 
 cache:
     directories:
