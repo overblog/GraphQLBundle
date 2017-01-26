@@ -7,7 +7,7 @@ It also supports batching using libs like [ReactRelayNetworkLayer](https://githu
 
 [![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=master)](https://travis-ci.org/overblog/GraphQLBundle) 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master) 
-[![Code Coverage](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=master)](https://coveralls.io/github/overblog/GraphQLBundle?branch=master)
 
 Documentation
 -------------
