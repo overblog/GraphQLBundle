@@ -1,6 +1,8 @@
 services:
     overblog_graphql.test.resolver.node:
         class: Overblog\GraphQLBundle\Tests\Functional\app\Resolver\ConnectionResolver
+        arguments:
+            - "@overblog_graphql.promise_adapter"
         tags:
             - { name: "overblog_graphql.resolver", alias: "friends", method: "friendsResolver" }
             - { name: "overblog_graphql.resolver", alias: "node", method: "resolveNode" }

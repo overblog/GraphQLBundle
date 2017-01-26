@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 class AuthorizationExpressionProvider implements ExpressionFunctionProviderInterface
@@ -23,8 +22,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 'hasRole',
                 function ($role) {
                     return sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s)', $role);
-                },
-                function () {
                 }
             ),
 
@@ -34,8 +31,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                     $code = sprintf('array_reduce(%s, function ($isGranted, $role) use ($container) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles);
 
                     return $code;
-                },
-                function () {
                 }
             ),
 
@@ -43,8 +38,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 'isAnonymous',
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
-                },
-                function () {
                 }
             ),
 
@@ -52,8 +45,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 'isRememberMe',
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
-                },
-                function () {
                 }
             ),
 
@@ -70,8 +61,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 'isAuthenticated',
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
-                },
-                function () {
                 }
             ),
 
@@ -81,8 +70,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                     $code = sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
 
                     return $code;
-                },
-                function () {
                 }
             ),
 
@@ -92,8 +79,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                     $code = sprintf('array_reduce(%s, function ($isGranted, $permission) use ($container, $object) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, $object);
 
                     return $code;
-                },
-                function () {
                 }
             ),
         ];

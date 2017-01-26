@@ -39,8 +39,8 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config);
         $this->setVersions($config, $container);
+        $this->setShowDebug($config, $container);
 
-        $container->getDefinition('overblog_graphql.request_executor')->replaceArgument(3, $config['definitions']['show_debug_info']);
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 
@@ -53,6 +53,11 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setShowDebug(array $config, ContainerBuilder $container)
+    {
+        $container->getDefinition($this->getAlias().'.request_executor')->replaceArgument(4, $config['definitions']['show_debug_info']);
     }
 
     private function setVersions(array $config, ContainerBuilder $container)

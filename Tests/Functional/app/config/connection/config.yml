@@ -15,3 +15,5 @@ overblog_graphql:
                 -
                     type: yml
                     dir: "%kernel.root_dir%/config/connection/mapping"
+    services:
+        promise_adapter: "overblog_graphql.react.promise_adapter"

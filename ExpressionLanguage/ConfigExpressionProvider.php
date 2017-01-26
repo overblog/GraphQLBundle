@@ -12,7 +12,6 @@
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
-use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
@@ -24,8 +23,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'service',
                 function ($value) {
                     return sprintf('$container->get(%s)', $value);
-                },
-                function () {
                 }
             ),
 
@@ -33,8 +30,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'parameter',
                 function ($value) {
                     return sprintf('$container->getParameter(%s)', $value);
-                },
-                function () {
                 }
             ),
 
@@ -42,8 +37,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'isTypeOf',
                 function ($className) {
                     return sprintf('($className = %s) && $value instanceof $className', $className);
-                },
-                function () {
                 }
             ),
 
@@ -51,8 +44,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'resolver',
                 function ($alias, $args = '[]') {
                     return sprintf('$container->get(\'overblog_graphql.resolver_resolver\')->resolve([%s, %s])', $alias, $args);
-                },
-                function () {
                 }
             ),
 
@@ -63,20 +54,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                     $code .= 'return '.$mutateAndGetPayload.'; }';
 
                     return $code;
-                },
-                function () {
-                }
-            ),
-
-            new ExpressionFunction(
-                'mutateAndGetPayloadCallback',
-                function ($mutateAndGetPayload) {
-                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
-                    $code .= 'return '.$mutateAndGetPayload.'; }';
-
-                    return $code;
-                },
-                function () {
                 }
             ),
 
@@ -87,8 +64,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                     $code .= 'return '.$idFetcher.'; }';
 
                     return $code;
-                },
-                function () {
                 }
             ),
 
@@ -99,8 +74,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                     $code .= 'return '.$resolveSingleInput.'; }';
 
                     return $code;
-                },
-                function () {
                 }
             ),
 
@@ -108,8 +81,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'mutation',
                 function ($alias, $args = '[]') {
                     return sprintf('$container->get(\'overblog_graphql.mutation_resolver\')->resolve([%s, %s])', $alias, $args);
-                },
-                function () {
                 }
             ),
 
@@ -123,8 +94,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                         sprintf($typeNameEmpty ? '$info->parentType->name' : '%s', $typeName),
                         $id
                     );
-                },
-                function () {
                 }
             ),
 
@@ -135,8 +104,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                         '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)',
                         $globalId
                     );
-                },
-                function () {
                 }
             ),
 
@@ -144,8 +111,6 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'newObject',
                 function ($className, $args = '[]') {
                     return sprintf('(new \ReflectionClass(%s))->newInstanceArgs(%s)', $className, $args);
-                },
-                function () {
                 }
             ),
         ];

@@ -11,6 +11,8 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Executor\Promise\Promise;
+use GraphQL\Executor\Promise\PromiseAdapter as PromiseAdapterInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -18,6 +20,14 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 
 class AccessResolver
 {
+    /** @var PromiseAdapterInterface */
+    private $promiseAdapter;
+
+    public function __construct(PromiseAdapterInterface $promiseAdapter)
+    {
+        $this->promiseAdapter = $promiseAdapter;
+    }
+
     public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], $isMutation = false)
     {
         // operation is mutation and is mutation field
@@ -38,30 +48,39 @@ class AccessResolver
     {
         $result = call_user_func_array($resolveCallback, $resolveArgs);
 
-        switch (true) {
-            case is_array($result):
-                $result = array_map(
-                    function ($object) use ($accessChecker, $resolveArgs) {
-                        return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
-                    },
-                    $result
-                );
-                break;
-            case $result instanceof Connection:
-                $result->edges = array_map(
-                    function (Edge $edge) use ($accessChecker, $resolveArgs) {
-                        $edge->node = $this->hasAccess($accessChecker, $edge->node, $resolveArgs) ? $edge->node : null;
+        if ($this->promiseAdapter->isThenable($result)) {
+            if (!$result instanceof Promise) {
+                $result = $this->promiseAdapter->convertThenable($result);
+            }
 
-                        return $edge;
-                    },
-                    $result->edges
-                );
-                break;
-            default:
-                if (!$this->hasAccess($accessChecker, $result, $resolveArgs)) {
-                    throw new UserWarning('Access denied to this field.');
-                }
-                break;
+            return $this->promiseAdapter->then($result, function ($result) use ($accessChecker, $resolveArgs) {
+                return $this->processFilter($result, $accessChecker, $resolveArgs);
+            });
+        }
+
+        return $this->processFilter($result, $accessChecker, $resolveArgs);
+    }
+
+    private function processFilter($result, $accessChecker, $resolveArgs)
+    {
+        if (is_array($result)) {
+            $result = array_map(
+                function ($object) use ($accessChecker, $resolveArgs) {
+                    return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
+                },
+                $result
+            );
+        } elseif ($result instanceof Connection) {
+            $result->edges = array_map(
+                function (Edge $edge) use ($accessChecker, $resolveArgs) {
+                    $edge->node = $this->hasAccess($accessChecker, $edge->node, $resolveArgs) ? $edge->node : null;
+
+                    return $edge;
+                },
+                $result->edges
+            );
+        } elseif (!$this->hasAccess($accessChecker, $result, $resolveArgs)) {
+            throw new UserWarning('Access denied to this field.');
         }
 
         return $result;

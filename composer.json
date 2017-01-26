@@ -36,7 +36,7 @@
         "symfony/framework-bundle": "^2.7|^3.1",
         "symfony/options-resolver": "^2.7|^3.1",
         "symfony/property-access": "^2.7|^3.1",
-        "webonyx/graphql-php": "^0.7.0"
+        "webonyx/graphql-php": "^0.9.0"
     },
     "suggest": {
         "twig/twig": "If you want to use graphiQL."
@@ -44,6 +44,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",
         "phpunit/phpunit": "^4.1|^5.5",
+        "react/promise": "^2.5",
         "sensio/framework-extra-bundle": "^3.0",
         "sllh/php-cs-fixer-styleci-bridge": "^1.5",
         "symfony/asset": "^2.7|^3.1",

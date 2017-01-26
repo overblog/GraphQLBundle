@@ -286,6 +286,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     public function testPromiseMode()
     {
         $promise = $this->getMockBuilder('GraphQL\Executor\Promise\Promise')
+            ->disableOriginalConstructor()
             ->setMethods(['then'])
             ->getMock()
         ;
