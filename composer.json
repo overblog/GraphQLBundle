@@ -39,7 +39,8 @@
         "webonyx/graphql-php": "^0.9.0"
     },
     "suggest": {
-        "twig/twig": "If you want to use graphiQL."
+        "twig/twig": "If you want to use graphiQL.",
+        "react/promise": "To use ReactPHP promise adapter"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^1.11",

@@ -41,16 +41,17 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     /**
      * Synchronously wait when promise completes.
      *
-     * @param Promise $promise
+     * @param Promise  $promise
+     * @param callable $onProgress
      *
      * @return ExecutionResult
      *
      * @throws \Exception
      */
-    public function wait(Promise $promise)
+    public function wait(Promise $promise, callable $onProgress = null)
     {
         if (!$this->isThenable($promise)) {
-            return;
+            throw new \InvalidArgumentException(sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
         }
         $wait = true;
         $resolvedValue = null;
@@ -58,17 +59,25 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
         /** @var \React\Promise\PromiseInterface $reactPromise */
         $reactPromise = $promise->adoptedPromise;
 
+        $reactPromise->then(function ($values) use (&$resolvedValue, &$wait) {
+            $resolvedValue = $values;
+            $wait = false;
+        }, function ($reason) use (&$exception, &$wait) {
+            $exception = $reason;
+            $wait = false;
+        });
+
+        // wait until promise resolution
         while ($wait) {
-            $reactPromise->then(function ($values) use (&$resolvedValue, &$wait) {
-                $resolvedValue = $values;
-                $wait = false;
-            }, function ($reason) use (&$exception, &$wait) {
-                $exception = $reason;
-                $wait = false;
-            });
+            if (null !== $onProgress) {
+                $onProgress();
+            }
+            // less CPU intensive without sacrificing the performance
+            usleep(5);
         }
 
-        if ($exception instanceof \Exception) {
+        /** @var \Exception|null $exception */
+        if (null !== $exception) {
             throw $exception;
         }
 
