@@ -52,8 +52,6 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
                 'isFullyAuthenticated',
                 function () {
                     return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
-                },
-                function () {
                 }
             ),
 
