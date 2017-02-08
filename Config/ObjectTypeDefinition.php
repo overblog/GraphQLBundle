@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Config;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
@@ -35,6 +36,19 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->end()
             ->end();
 
+        $this->treatFieldsDefaultAccess($node);
+        $this->treatResolveField($node);
+
+        return $node;
+    }
+
+    /**
+     * set empty fields.access with fieldsDefaultAccess values if is set?
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function treatFieldsDefaultAccess(ArrayNodeDefinition $node)
+    {
         $node->validate()
             ->ifTrue(function ($v) {
                 return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
@@ -50,8 +64,35 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
                 return $v;
             })
-            ->end();
+        ->end();
+    }
 
-        return $node;
+    /**
+     * resolveField is set as fields default resolver if not set
+     * then remove resolveField to keep "access" feature
+     * TODO(mcg-web) : get a cleaner way to use resolveField combine with "access" feature.
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function treatResolveField(ArrayNodeDefinition $node)
+    {
+        $node->validate()
+            ->ifTrue(function ($v) {
+                return array_key_exists('resolveField', $v) && null !== $v['resolveField'];
+            })
+            ->then(function ($v) {
+                $resolveField = $v['resolveField'];
+                unset($v['resolveField']);
+                foreach ($v['fields'] as &$field) {
+                    if (!empty($field['resolve'])) {
+                        continue;
+                    }
+
+                    $field['resolve'] = $resolveField;
+                }
+
+                return $v;
+            })
+        ->end();
     }
 }

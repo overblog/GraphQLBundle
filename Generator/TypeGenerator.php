@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use Symfony\Component\ClassLoader\MapClassLoader;
 use Symfony\Component\Filesystem\Filesystem;
@@ -77,10 +76,12 @@ EOF;
     {
         $accessIsSet = $this->arrayKeyExistsAndIsNotNull($value, 'access');
         $fieldOptions = $value;
-        $fieldOptions['resolve'] = $this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve') ? $fieldOptions['resolve'] : $this->defaultResolver;
+        if (!$this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve')) {
+            $fieldOptions['resolve'] = $this->defaultResolver;
+        }
+        $resolveCallback = parent::generateResolve($fieldOptions);
 
         if (!$accessIsSet || true === $fieldOptions['access']) { // access granted  to this field
-            $resolveCallback = parent::generateResolve($fieldOptions);
             if ('null' === $resolveCallback) {
                 return $resolveCallback;
             }
@@ -90,58 +91,35 @@ EOF;
 
             $code = <<<'CODE'
 function ($value, $args, $context, %s $info) <closureUseStatements> {
-<spaces><spaces>$onFulFilled = function ($value) use (%s, $args, $context, $info) {
-<spaces><spaces><spaces>$resolverCallback = %s;
-
-<spaces><spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $context, $info]);
-<spaces><spaces>};
-
-%s
+<spaces><spaces>$resolverCallback = %s;
+<spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $context, $info]);
 <spaces>}
 CODE;
 
-            return sprintf($code, $resolveInfoClass, static::USE_FOR_CLOSURES, $resolveCallback, $argumentClass, $this->promiseAdapter());
+            return sprintf($code, $resolveInfoClass, $resolveCallback, $argumentClass);
         } elseif ($accessIsSet && false === $fieldOptions['access']) { // access deny to this field
             $exceptionClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Error\\UserWarning');
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
-            $resolveCallback = parent::generateResolve($fieldOptions);
+
             $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
             $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
             $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
 
             $code = <<<'CODE'
 function ($value, $args, $context, %s $info) <closureUseStatements> {
-<spaces><spaces>$onFulFilled = function ($value) use (%s, $args, $context, $info) {
-<spaces><spaces><spaces>$resolverCallback = %s;
-<spaces><spaces><spaces>$accessChecker = %s;
-<spaces><spaces><spaces>$isMutation = $info instanceof ResolveInfo && 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
-<spaces><spaces><spaces>return $container->get('overblog_graphql.access_resolver')->resolve($accessChecker, $resolverCallback, [$value, new %s($args), $context, $info], $isMutation);
-<spaces><spaces>};
-
-%s
+<spaces><spaces>$resolverCallback = %s;
+<spaces><spaces>$accessChecker = %s;
+<spaces><spaces>$isMutation = $info instanceof ResolveInfo && 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
+<spaces><spaces>return $container->get('overblog_graphql.access_resolver')->resolve($accessChecker, $resolverCallback, [$value, new %s($args), $context, $info], $isMutation);
 <spaces>}
 CODE;
 
-            $code = sprintf($code, $resolveInfoClass, static::USE_FOR_CLOSURES, $resolveCallback, $accessChecker, $argumentClass, $this->promiseAdapter());
+            $code = sprintf($code, $resolveInfoClass, $resolveCallback, $accessChecker, $argumentClass);
 
             return $code;
         }
-    }
-
-    private function promiseAdapter()
-    {
-        $code = <<<'CODE'
-<spaces><spaces>$promiseAdapter = $container->get('%s');
-<spaces><spaces>if ($promiseAdapter->isThenable($value)) {
-<spaces><spaces><spaces>return $promiseAdapter->isThenable($value, $onFulFilled);
-<spaces><spaces>}
-<spaces><spaces>return $onFulFilled($value);
-CODE;
-        $code = sprintf($code, Executor::PROMISE_ADAPTER_SERVICE_ID);
-
-        return $code;
     }
 
     /**

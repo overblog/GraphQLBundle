@@ -106,7 +106,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $newName = 'Relay::'.rtrim($name, 'Args');
         if (isset($builderClassMap[$newName])) {
             @trigger_error(
-                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.8. Use "%s" instead.', $name, $type, $newName),
+                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 1.0. Use "%s" instead.', $name, $type, $newName),
                 E_USER_DEPRECATED
             );
 
@@ -162,7 +162,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         unset($field['builder']);
                     } elseif (is_string($field)) {
                         @trigger_error(
-                            'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.8. '.
+                            'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.9. '.
                             'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
                             E_USER_DEPRECATED
                         );
