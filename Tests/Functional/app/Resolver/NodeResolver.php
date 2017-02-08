@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 class NodeResolver
@@ -31,18 +32,30 @@ class NodeResolver
 
     private $photoData = [
         '3' => [
-            'id' => 3,
-            'width' => 300,
+            'photoID' => 3,
+            'photoWidth' => 300,
         ],
         '4' => [
-            'id' => 4,
-            'width' => 400,
+            'photoID' => 4,
+            'photoWidth' => 400,
         ],
     ];
 
     public function __construct(TypeResolver $typeResolver)
     {
         $this->typeResolver = $typeResolver;
+    }
+
+    public function resolvePhotoField($value, ResolveInfo $info)
+    {
+        switch ($info->fieldName) {
+            case 'id':
+                return $value['photoID'];
+            case 'width':
+                return $value['photoWidth'];
+            default:
+                return null;
+        }
     }
 
     public function idFetcher($id)
