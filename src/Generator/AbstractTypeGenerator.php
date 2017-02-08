@@ -145,6 +145,22 @@ EOF;
             case is_object($var):
                 return $default;
 
+            case is_string($var):
+                $string = var_export($var, true);
+
+                // handle multi-line strings
+                $lines = explode("\n", $string);
+                if (count($lines) > 1) {
+                    $firstLine = array_shift($lines) . "'" . ' . "\n"';
+                    $lastLine = "'" . array_pop($lines);
+                    $lines = array_map(function($s) { return "'" . $s . "'" . ' . "\n"'; }, $lines);
+                    array_unshift($lines, $firstLine);
+                    array_push($lines, $lastLine);
+                    $string = implode(" . \n", $lines);
+                }
+
+                return $string;
+
             default:
                 return var_export($var, true);
         }
