@@ -143,7 +143,9 @@ Query:
                 args:
                     episode:
                         type: "Episode"
-                        description: "If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode."
+                        description: |
+                          If omitted, returns the hero of the whole saga.
+                          If provided, returns the hero of that particular episode.
                 resolve: ["Overblog\\GraphQLGenerator\\Tests\\Resolver", "getHero"]
             human:
                 type: "Human"
