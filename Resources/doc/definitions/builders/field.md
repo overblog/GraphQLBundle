@@ -15,6 +15,8 @@ overblog_graphql:
                 -
                     alias: "RawId"
                     class: "MyBundle\\GraphQL\\Field\\RawIdField"
+#               using short syntax
+#               RawId: "MyBundle\\GraphQL\\Field\\RawIdField"
 ```
 
 Builder class must implements `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`

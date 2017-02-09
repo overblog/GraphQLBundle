@@ -16,6 +16,8 @@ overblog_graphql:
                 -
                     alias: "Pager"
                     class: "MyBundle\\GraphQL\\Args\\Pager"
+#               using short syntax
+#               Pager: "MyBundle\\GraphQL\\Args\\Pager"
 ```
 
 Builder class must implements `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`

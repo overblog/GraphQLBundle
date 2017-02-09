@@ -110,22 +110,8 @@ class Configuration implements ConfigurationInterface
 
                         ->arrayNode('builders')
                             ->children()
-                                ->arrayNode('field')
-                                    ->prototype('array')
-                                        ->children()
-                                            ->scalarNode('alias')->isRequired()->end()
-                                            ->scalarNode('class')->isRequired()->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('args')
-                                    ->prototype('array')
-                                        ->children()
-                                            ->scalarNode('alias')->isRequired()->end()
-                                            ->scalarNode('class')->isRequired()->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
+                                ->append($this->addBuilderSection('field'))
+                                ->append($this->addBuilderSection('args'))
                             ->end()
                         ->end()
 
@@ -174,6 +160,39 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function addBuilderSection($name)
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root($name);
+        $node->beforeNormalization()
+            ->ifTrue(function ($v) {
+                return is_array($v) && !empty($v);
+            })
+            ->then(function ($v) {
+                foreach ($v as $key => &$config) {
+                    if (is_string($config)) {
+                        $config = [
+                            'alias' => $key,
+                            'class' => $config,
+                        ];
+                    }
+                }
+
+                return $v;
+            })
+        ->end();
+
+        $node->prototype('array')
+            ->children()
+                ->scalarNode('alias')->isRequired()->end()
+                ->scalarNode('class')->isRequired()->end()
+            ->end()
+        ->end()
+        ;
+
+        return $node;
     }
 
     private function addSecurityQuerySection($name, $disabledValue)

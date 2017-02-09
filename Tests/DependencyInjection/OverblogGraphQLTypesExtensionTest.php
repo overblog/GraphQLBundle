@@ -127,10 +127,7 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'definitions' => [
                         'builders' => [
                             'field' => [
-                                [
-                                    'alias' => 'RawId',
-                                    'class' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\RawIdField',
-                                ],
+                                'RawId' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\RawIdField',
                             ],
                             'args' => [
                                 [
