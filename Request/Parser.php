@@ -86,11 +86,11 @@ class Parser implements ParserInterface
     private function getParams(Request $request, array $data = [])
     {
         // Add default request parameters
-        $data = $data + [
-            static::PARAM_QUERY => null,
-            static::PARAM_VARIABLES => null,
-            static::PARAM_OPERATION_NAME => null,
-        ];
+        $data = array_filter($data) + [
+                static::PARAM_QUERY => null,
+                static::PARAM_VARIABLES => null,
+                static::PARAM_OPERATION_NAME => null,
+            ];
 
         // Keep a reference to the query-string
         $qs = $request->query;

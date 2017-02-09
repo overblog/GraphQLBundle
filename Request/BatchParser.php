@@ -39,7 +39,7 @@ class BatchParser implements ParserInterface
         }
 
         foreach ($queries as $i => &$query) {
-            $query = $query + self::$queriesDefaultValue;
+            $query = array_filter($query) + self::$queriesDefaultValue;
 
             if (!is_string($query[static::PARAM_QUERY])) {
                 throw new BadRequestHttpException(sprintf('%s is not a valid query', json_encode($query[static::PARAM_QUERY])));
