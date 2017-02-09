@@ -202,11 +202,11 @@ class OverblogGraphQLTypesExtension extends Extension
         $container->addResource(new FileResource($resource));
 
         $extension = $this->getMappingResourceExtension();
-        $finder = new Finder();
 
         $types = null === $type ? ['yml', 'xml', 'graphqls'] : [$type];
 
         foreach ($types as $type) {
+            $finder = new Finder();
             try {
                 $finder->files()->in($configPath)->name('*.'.$extension.'.'.$type);
             } catch (\InvalidArgumentException $e) {
