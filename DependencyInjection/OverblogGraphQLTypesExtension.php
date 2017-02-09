@@ -207,8 +207,9 @@ class OverblogGraphQLTypesExtension extends Extension
 
         foreach ($types as $type) {
             $finder = new Finder();
+            $pattern = '*.' . ($type === 'graphqls' ? $type : $extension . '.' . $type);
             try {
-                $finder->files()->in($configPath)->name('*.'.$extension.'.'.$type);
+                $finder->files()->in($configPath)->name($pattern);
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
