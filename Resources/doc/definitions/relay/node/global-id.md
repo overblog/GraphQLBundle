@@ -26,8 +26,6 @@ User:
         fields:
             id:
                 builder: "Relay::GlobalId"
-                builderConfig:
-                    typeName: User
             name:
                 type: String
         interfaces: [NodeInterface]
@@ -38,8 +36,11 @@ Photo:
         fields:
             id:
                 builder: "Relay::GlobalId"
+                # here the entry to custom your field builder
                 builderConfig:
-                    typeName: Photo
+                    # Change the type name
+                    typeName: Image
+                    # custom id fetcher function
                     idFetcher: '@=value["photoId"]'
             width:
                 type: Int
@@ -51,8 +52,6 @@ Post:
         fields:
             id:
                 builder: "Relay::GlobalId"
-                builderConfig:
-                    typeName: Post
             text:
                 type: String
         interfaces: [NodeInterface]

@@ -127,10 +127,7 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'definitions' => [
                         'builders' => [
                             'field' => [
-                                [
-                                    'alias' => 'RawId',
-                                    'class' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\RawIdField',
-                                ],
+                                'RawId' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\RawIdField',
                             ],
                             'args' => [
                                 [
@@ -164,6 +161,10 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                                 'categories' => [
                                     'type' => '[String!]!',
                                     'argsBuilder' => ['builder' => 'Pager'],
+                                ],
+                                'categories2' => [
+                                    'type' => '[String!]!',
+                                    'argsBuilder' => ['builder' => 'Pager', 'config' => ['defaultLimit' => 50]],
                                 ],
                             ],
                         ],
@@ -211,6 +212,19 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                                     'limit' => [
                                         'type' => 'Int!',
                                         'defaultValue' => 20,
+                                    ],
+                                    'offset' => [
+                                        'type' => 'Int!',
+                                        'defaultValue' => 0,
+                                    ],
+                                ],
+                            ],
+                            'categories2' => [
+                                'type' => '[String!]!',
+                                'args' => [
+                                    'limit' => [
+                                        'type' => 'Int!',
+                                        'defaultValue' => 50,
                                     ],
                                     'offset' => [
                                         'type' => 'Int!',
