@@ -11,8 +11,9 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use GraphQL\Executor\Promise\Promise;
-use GraphQL\Executor\Promise\PromiseAdapter as PromiseAdapterInterface;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -20,10 +21,10 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 
 class AccessResolver
 {
-    /** @var PromiseAdapterInterface */
+    /** @var PromiseAdapter */
     private $promiseAdapter;
 
-    public function __construct(PromiseAdapterInterface $promiseAdapter)
+    public function __construct(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
     }
@@ -47,15 +48,17 @@ class AccessResolver
     private function filterResultUsingAccess(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
     {
         $result = call_user_func_array($resolveCallback, $resolveArgs);
+        if ($result instanceof Promise) {
+            $result = $result->adoptedPromise;
+        }
 
-        if ($this->promiseAdapter->isThenable($result)) {
-            if (!$result instanceof Promise) {
-                $result = $this->promiseAdapter->convertThenable($result);
-            }
-
-            return $this->promiseAdapter->then($result, function ($result) use ($accessChecker, $resolveArgs) {
-                return $this->processFilter($result, $accessChecker, $resolveArgs);
-            });
+        if ($this->promiseAdapter->isThenable($result) || $result instanceof SyncPromise) {
+            return $this->promiseAdapter->then(
+                new Promise($result, $this->promiseAdapter),
+                function ($result) use ($accessChecker, $resolveArgs) {
+                    return $this->processFilter($result, $accessChecker, $resolveArgs);
+                }
+            );
         }
 
         return $this->processFilter($result, $accessChecker, $resolveArgs);

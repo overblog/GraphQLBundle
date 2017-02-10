@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Request;
 
+use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
 use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -43,7 +44,7 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult" or "GraphQL\Executor\Promise\Promise".
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
      */
     public function testInvalidExecutorReturnNotObject()
     {
@@ -53,11 +54,21 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult" or "GraphQL\Executor\Promise\Promise".
+     * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
      */
     public function testInvalidExecutorReturnInvalidObject()
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(new \stdClass()));
+        $this->executor->execute($this->request);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage PromiseAdapter should be an object instantiating "Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface" or "GraphQL\Executor\Promise\PromiseAdapter" with a "wait" method.
+     */
+    public function testInvalidExecutorAdapterPromise()
+    {
+        $this->executor->setPromiseAdapter(new ReactPromiseAdapter());
         $this->executor->execute($this->request);
     }
 

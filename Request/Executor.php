@@ -12,7 +12,7 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
-use GraphQL\Executor\Promise\Promise;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
@@ -54,7 +54,7 @@ class Executor
     private $executor;
 
     /**
-     * @var PromiseAdapterInterface
+     * @var PromiseAdapter
      */
     private $promiseAdapter;
 
@@ -64,7 +64,7 @@ class Executor
         $throwException = false,
         ErrorHandler $errorHandler = null,
         $hasDebugInfo = false,
-        PromiseAdapterInterface $promiseAdapter = null
+        PromiseAdapter $promiseAdapter = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
@@ -77,6 +77,13 @@ class Executor
     public function setExecutor(ExecutorInterface $executor)
     {
         $this->executor = $executor;
+
+        return $this;
+    }
+
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
+    {
+        $this->promiseAdapter = $promiseAdapter;
 
         return $this;
     }
@@ -141,6 +148,18 @@ class Executor
             $context = $event->getExecutorContext();
         }
 
+        if ($this->promiseAdapter) {
+            if (!$this->promiseAdapter instanceof PromiseAdapterInterface && !is_callable([$this->promiseAdapter, 'wait'])) {
+                throw new \RuntimeException(
+                    sprintf(
+                        'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
+                        'Overblog\\GraphQLBundle\\Executor\\Promise\\PromiseAdapterInterface',
+                        'GraphQL\\Executor\\Promise\\PromiseAdapter'
+                    )
+                );
+            }
+        }
+
         $schema = $this->getSchema($schemaName);
 
         $startTime = microtime(true);
@@ -157,18 +176,17 @@ class Executor
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
-        if (!is_object($result) || (!$result instanceof ExecutionResult && !$result instanceof Promise)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Execution result should be an object instantiating "%s" or "%s".',
-                    'GraphQL\\Executor\\ExecutionResult',
-                    'GraphQL\\Executor\\Promise\\Promise'
-                )
-            );
-        }
-
         if ($this->promiseAdapter && $this->promiseAdapter->isThenable($result)) {
             $result = $this->promiseAdapter->wait($result);
+        }
+
+        if (!is_object($result) || !$result instanceof ExecutionResult) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Execution result should be an object instantiating "%s".',
+                    'GraphQL\\Executor\\ExecutionResult'
+                )
+            );
         }
 
         return $this->prepareResult($result, $startTime, $startMemoryUsage);
