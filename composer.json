@@ -31,7 +31,7 @@
     "require": {
         "php": "^5.4|~7.0",
         "doctrine/doctrine-cache-bundle": "^1.2",
-        "overblog/graphql-php-generator": "^0.4.1",
+        "overblog/graphql-php-generator": "^0.4.2",
         "symfony/expression-language": "^2.7|^3.1",
         "symfony/framework-bundle": "^2.7|^3.1",
         "symfony/options-resolver": "^2.7|^3.1",
