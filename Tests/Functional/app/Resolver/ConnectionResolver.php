@@ -12,9 +12,9 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
 use GraphQL\Deferred;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\GraphQLPromiseAdapter;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
-use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use React\Promise\Promise;
@@ -45,11 +45,11 @@ class ConnectionResolver
     ];
 
     /**
-     * @var PromiseAdapterInterface
+     * @var PromiseAdapter
      */
     private $promiseAdapter;
 
-    public function __construct(PromiseAdapterInterface $promiseAdapter)
+    public function __construct(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
     }

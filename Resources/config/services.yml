@@ -98,7 +98,7 @@ services:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
 
     overblog_graphql.promise_adapter.default:
-        class: Overblog\GraphQLBundle\Executor\Promise\Adapter\GraphQLPromiseAdapter
+        class: GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter
         public: false
 
     overblog_graphql.react.promise_adapter:

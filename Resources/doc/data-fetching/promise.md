@@ -3,8 +3,11 @@
 The bundle is totally "promise ready", by default it use **Webonyx/GraphQL-Php**
 SyncPromise adapter (supporting the native deferred feature) and it also comes 
 with [ReactPHP/Promise](https://github.com/reactphp/promise) adapter.
-To integrate an other promise implementation, you must create a new service that 
-implements `Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface`.
+To integrate an other promise implementation, you must create a new service that
+implements `Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface`
+or `GraphQL\Executor\Promise\PromiseAdapter` with a `wait` method that accepts 
+a Promise like argument and returns the result of the promise resolved
+or throw an exception otherwise.
 
 Config bundle to use the new service:
 
@@ -23,11 +26,11 @@ in resolver like this:
 ```php
 <?php
 
-use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
+use GraphQL\Executor\Promise\PromiseAdapter;
 
 class MyResolver
 {
-    public function __construct(PromiseAdapterInterface $promiseAdapter)
+    public function __construct(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
     }

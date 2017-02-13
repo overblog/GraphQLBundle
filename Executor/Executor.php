@@ -13,8 +13,8 @@ namespace Overblog\GraphQLBundle\Executor;
 
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Schema;
-use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 
 class Executor implements ExecutorInterface
 {
@@ -34,9 +34,9 @@ class Executor implements ExecutorInterface
     }
 
     /**
-     * @param PromiseAdapterInterface|null $promiseAdapter
+     * @param PromiseAdapter|null $promiseAdapter
      */
-    public function setPromiseAdapter(PromiseAdapterInterface $promiseAdapter = null)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
     {
         call_user_func_array('GraphQL\GraphQL::setPromiseAdapter', func_get_args());
     }
