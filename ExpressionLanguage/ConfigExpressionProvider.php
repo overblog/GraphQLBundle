@@ -50,7 +50,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             new ExpressionFunction(
                 'mutateAndGetPayloadCallback',
                 function ($mutateAndGetPayload) {
-                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $context, $info) { ';
                     $code .= 'return '.$mutateAndGetPayload.'; }';
 
                     return $code;
@@ -60,7 +60,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             new ExpressionFunction(
                 'idFetcherCallback',
                 function ($idFetcher) {
-                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $context, $info) { ';
                     $code .= 'return '.$idFetcher.'; }';
 
                     return $code;
@@ -70,7 +70,7 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
             new ExpressionFunction(
                 'resolveSingleInputCallback',
                 function ($resolveSingleInput) {
-                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $info) { ';
+                    $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $context, $info) { ';
                     $code .= 'return '.$resolveSingleInput.'; }';
 
                     return $code;

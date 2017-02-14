@@ -8,3 +8,8 @@ simpleMutationWithThunkFieldsInput:
     config:
         fields:
             inputData : { type: "Int" }
+
+simplePromiseMutationInput:
+    type: relay-mutation-input
+    config:
+        fields: []

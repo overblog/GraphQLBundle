@@ -13,8 +13,8 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 
 class NodeFieldResolver
 {
-    public function resolve($args, \Closure $idFetcherCallback)
+    public function resolve($args, $context, $info, \Closure $idFetcherCallback)
     {
-        return $idFetcherCallback($args['id']);
+        return $idFetcherCallback($args['id'], $context, $info);
     }
 }

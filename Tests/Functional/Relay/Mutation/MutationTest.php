@@ -86,6 +86,26 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
+    public function testSupportsPromiseMutations()
+    {
+        $query = <<<'EOF'
+mutation M {
+  simplePromiseMutation(input: {clientMutationId: "abc"}) {
+    result
+    clientMutationId
+  }
+}
+EOF;
+        $expectedData = [
+            'simplePromiseMutation' => [
+                'result' => 1,
+                'clientMutationId' => 'abc',
+            ],
+        ];
+
+        $this->assertGraphQL($query, $expectedData);
+    }
+
     public function testContainsCorrectInput()
     {
         $query = <<<'EOF'
@@ -237,6 +257,26 @@ EOF;
                             ],
                             'type' => [
                                 'name' => 'simpleMutationWithThunkFieldsPayload',
+                                'kind' => 'OBJECT',
+                            ],
+                        ],
+                        [
+                            'name' => 'simplePromiseMutation',
+                            'args' => [
+                                [
+                                    'name' => 'input',
+                                    'type' => [
+                                        'name' => null,
+                                        'kind' => 'NON_NULL',
+                                        'ofType' => [
+                                            'name' => 'simplePromiseMutationInput',
+                                            'kind' => 'INPUT_OBJECT',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'type' => [
+                                'name' => 'simplePromiseMutationPayload',
                                 'kind' => 'OBJECT',
                             ],
                         ],

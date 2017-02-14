@@ -13,7 +13,6 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
-use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
 /**
@@ -21,10 +20,8 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
  *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/__tests__/arrayconnection.js
  */
-class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
+class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 {
-    private $letters = ['A', 'B', 'C', 'D', 'E'];
-
     public function testBasicSlicing()
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters);
@@ -390,28 +387,5 @@ class ConnectionBuilderTest extends \PHPUnit_Framework_TestCase
         $letterCursor = ConnectionBuilder::cursorForObjectInConnection($this->letters, 'F');
 
         $this->assertNull($letterCursor);
-    }
-
-    private function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage)
-    {
-        $edges = [
-            'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-            'B' => new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-            'C' => new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-            'D' => new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
-        ];
-
-        $expectedEdges = array_values(array_intersect_key($edges, array_flip($wantedEdges)));
-
-        return new Connection(
-            $expectedEdges,
-            new PageInfo(
-                isset($expectedEdges[0]) ? $expectedEdges[0]->cursor : null,
-                end($expectedEdges) ? end($expectedEdges)->cursor : null,
-                $hasPreviousPage,
-                $hasNextPage
-            )
-        );
     }
 }

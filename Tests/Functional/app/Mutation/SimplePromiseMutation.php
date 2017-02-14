@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Overblog\GraphQLBundle\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Functional\app\Mutation;
 
 use GraphQL\Executor\Promise\PromiseAdapter;
 
-class PluralIdentifyingRootFieldResolver
+class SimplePromiseMutation
 {
     /**
      * @var PromiseAdapter
@@ -25,14 +25,8 @@ class PluralIdentifyingRootFieldResolver
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    public function resolve(array $inputs, $context, $info, callable $resolveSingleInput)
+    public function mutate()
     {
-        $data = [];
-
-        foreach ($inputs as $input) {
-            $data[$input] = $this->promiseAdapter->createFulfilled(call_user_func_array($resolveSingleInput, [$input, $context, $info]));
-        }
-
-        return $this->promiseAdapter->all($data);
+        return $this->promiseAdapter->createFulfilled(['result' => 1]);
     }
 }

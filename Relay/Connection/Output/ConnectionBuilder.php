@@ -45,6 +45,24 @@ class ConnectionBuilder
     }
 
     /**
+     * A version of `connectionFromArray` that takes a promised array, and returns a
+     * promised connection.
+     *
+     * @param mixed          $dataPromise a promise
+     * @param array|Argument $args
+     *
+     * @return mixed a promise
+     */
+    public static function connectionFromPromisedArray($dataPromise, $args = [])
+    {
+        self::checkPromise($dataPromise);
+
+        return $dataPromise->then(function ($data) use ($args) {
+            return static::connectionFromArray($data, $args);
+        });
+    }
+
+    /**
      * Given a slice (subset) of an array, returns a connection object for use in
      * GraphQL.
      *
@@ -140,6 +158,25 @@ class ConnectionBuilder
     }
 
     /**
+     * A version of `connectionFromArraySlice` that takes a promised array slice,
+     * and returns a promised connection.
+     *
+     * @param mixed          $dataPromise a promise
+     * @param array|Argument $args
+     * @param array          $meta
+     *
+     * @return mixed a promise
+     */
+    public static function connectionFromPromisedArraySlice($dataPromise, $args, array $meta)
+    {
+        self::checkPromise($dataPromise);
+
+        return $dataPromise->then(function ($arraySlice) use ($args, $meta) {
+            return static::connectionFromArraySlice($arraySlice, $args, $meta);
+        });
+    }
+
+    /**
      * Return the cursor associated with an object in an array.
      *
      * @param array $data
@@ -215,5 +252,12 @@ class ConnectionBuilder
     private static function getOptionsWithDefaults(array $options, array $defaults)
     {
         return $options + $defaults;
+    }
+
+    private static function checkPromise($value)
+    {
+        if (!is_callable([$value, 'then'])) {
+            throw new \InvalidArgumentException('This is not a valid promise.');
+        }
     }
 }

@@ -62,7 +62,7 @@ class NodeFieldDefinitionTest extends \PHPUnit_Framework_TestCase
             'description' => 'Fetches an object given its ID',
             'type' => $nodeInterfaceType,
             'args' => ['id' => ['type' => 'ID!', 'description' => 'The ID of an object']],
-            'resolve' => '@=resolver(\'relay_node_field\', [args, idFetcherCallback('.$idFetcherCallbackArg.')])',
+            'resolve' => '@=resolver(\'relay_node_field\', [args, context, info, idFetcherCallback('.$idFetcherCallbackArg.')])',
         ];
 
         $this->assertEquals($expected, $this->definition->toMappingDefinition($config));

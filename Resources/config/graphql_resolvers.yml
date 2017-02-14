@@ -1,6 +1,8 @@
 services:
     overblog_graphql.resolver.relay_mutation_field:
         class: Overblog\GraphQLBundle\Relay\Mutation\MutationFieldResolver
+        arguments:
+            - "@overblog_graphql.promise_adapter"
         tags:
             - { name: overblog_graphql.resolver, alias: "relay_mutation_field", method: "resolve" }
 
@@ -16,5 +18,7 @@ services:
 
     overblog_graphql.resolver.relay_plural_identifying_field:
         class: Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldResolver
+        arguments:
+            - "@overblog_graphql.promise_adapter"
         tags:
             - { name: overblog_graphql.resolver, alias: "relay_plural_identifying_field", method: "resolve" }

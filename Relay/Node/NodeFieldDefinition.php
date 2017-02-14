@@ -30,7 +30,7 @@ class NodeFieldDefinition implements MappingInterface
             'args' => [
                 'id' => ['type' => 'ID!', 'description' => 'The ID of an object'],
             ],
-            'resolve' => "@=resolver('relay_node_field', [args, idFetcherCallback($idFetcher)])",
+            'resolve' => "@=resolver('relay_node_field', [args, context, info, idFetcherCallback($idFetcher)])",
         ];
     }
 
