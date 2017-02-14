@@ -12,8 +12,8 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\app\Resolver;
 
 use GraphQL\Deferred;
+use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use Overblog\GraphQLBundle\Executor\Promise\Adapter\GraphQLPromiseAdapter;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
@@ -77,7 +77,7 @@ class ConnectionResolver
 
     public function resolveQuery()
     {
-        if ($this->promiseAdapter instanceof GraphQLPromiseAdapter) {
+        if ($this->promiseAdapter instanceof SyncPromiseAdapter) {
             return new Deferred(function () {
                 return $this->allUsers[0];
             });
