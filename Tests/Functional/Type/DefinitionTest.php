@@ -22,7 +22,7 @@ class DefinitionTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'definition']);
+        static::bootKernel(['test_case' => 'definition']);
     }
 
     public function testDefinesEnumTypeWithDeprecatedValue()

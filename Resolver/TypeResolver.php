@@ -12,19 +12,19 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
-use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class TypeResolver extends AbstractResolver
 {
     /**
-     * @var CacheInterface
+     * @var CacheItemPoolInterface
      */
-    private $cache;
+    private $cacheAdapter;
 
-    public function __construct(CacheInterface $cache = null)
+    public function __construct(CacheItemPoolInterface $cacheAdapter = null)
     {
-        $this->cache = null !== $cache ? $cache : new ArrayCache();
+        $this->cacheAdapter = null !== $cacheAdapter ? $cacheAdapter : new ArrayAdapter();
     }
 
     /**
@@ -37,16 +37,14 @@ class TypeResolver extends AbstractResolver
         if (null === $alias) {
             return;
         }
+        $item = $this->cacheAdapter->getItem(md5($alias));
 
-        if (null !== $type = $this->cache->fetch($alias)) {
-            return $type;
+        if (!$item->isHit()) {
+            $item->set($this->string2Type($alias));
+            $this->cacheAdapter->save($item);
         }
 
-        $type = $this->string2Type($alias);
-
-        $this->cache->save($alias, $type);
-
-        return $type;
+        return $item->get();
     }
 
     private function string2Type($alias)

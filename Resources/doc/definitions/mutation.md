@@ -11,7 +11,7 @@ Mutation:
                 type: IntroduceShipPayload!
                 resolve: "@=mutation('create_ship', [args['input']['shipName'], args['input']['factionId']])"
                 args:
-                    #using input object type is optionnal, we use it here to be iso with relay mutation example.
+                    #using input object type is optional, we use it here to be iso with relay mutation example.
                     input:
                         type: IntroduceShipInput!
 

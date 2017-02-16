@@ -22,12 +22,6 @@
 <spaces><spaces>parent::__construct(<config>);
 <spaces>}
 
-<spaces>public static function getName()
-<spaces>{
-<spaces><spaces>$class = substr(strrchr(__CLASS__, "\\"), 1);
-<spaces><spaces>return substr($class, 0, -4);
-<spaces>}
-
 <spaces>private static function applyPublicFilters($fields)
 <spaces>{
 <spaces><spaces>$filtered = [];
@@ -41,5 +35,10 @@
 <spaces><spaces><spaces>}
 <spaces><spaces>}
 <spaces><spaces>return $filtered;
+<spaces>}
+
+<spaces>public static function getAliases()
+<spaces>{
+<spaces><spaces>return [preg_replace('/Type$/', '', substr(strrchr(__CLASS__, '\\'), 1))];
 <spaces>}
 }

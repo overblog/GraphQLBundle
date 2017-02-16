@@ -42,7 +42,7 @@ abstract class AbstractProxyResolver extends AbstractResolver
         }
 
         $options = $this->getSolutionOptions($alias);
-        $func = isset($options['method']) ? [$solution, $options['method']] : $solution;
+        $func = [$solution, $options['method']];
 
         return call_user_func_array($func, $funcArgs);
     }

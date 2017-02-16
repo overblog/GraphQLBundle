@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class PayloadDefinition implements MappingInterface
+final class PayloadDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {

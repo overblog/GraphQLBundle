@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Config\FileLocator;
@@ -29,7 +30,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
-        $loader->load('graphql_resolvers.yml');
 
         $config = $this->treatConfigs($configs, $container);
 
@@ -43,6 +43,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setConfigBuilders($config);
         $this->setVersions($config, $container);
         $this->setShowDebug($config, $container);
+        $this->setAutoMappingParameters($config, $container);
 
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
@@ -56,6 +57,12 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setAutoMappingParameters(array $config, ContainerBuilder $container)
+    {
+        $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
+        $container->setParameter($this->getAlias().'.auto_mapping.directories', $config['definitions']['auto_mapping']['directories']);
     }
 
     private function setExpressionLanguageDefaultParser(ContainerBuilder $container)
@@ -164,6 +171,10 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             foreach ($config['services'] as $name => $id) {
                 $alias = sprintf('%s.%s', $this->getAlias(), $name);
                 $container->setAlias($alias, $id);
+                // set autowiring types for promise adapter service
+                if ($this->getAlias().'.promise_adapter' === $alias) {
+                    $container->findDefinition($id)->setAutowiringTypes([PromiseAdapter::class]);
+                }
             }
         }
     }

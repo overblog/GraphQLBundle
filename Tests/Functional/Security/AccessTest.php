@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
-use Overblog\GraphQLBundle\Tests\Functional\app\Mutation\SimpleMutationWithThunkFieldsMutation;
+use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class AccessTest extends TestCase

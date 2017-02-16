@@ -51,7 +51,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
 
         $format = strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
@@ -62,7 +62,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
         $content = $this->createFileContent($requestExecutor, $format, $schemaName);
         file_put_contents($file, $content);
 
-        $output->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
+        $io->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
     }
 
     private function createFileContent(Executor $requestExecutor, $format, $schemaName)

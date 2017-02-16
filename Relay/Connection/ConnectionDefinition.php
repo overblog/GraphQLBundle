@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class ConnectionDefinition implements MappingInterface
+final class ConnectionDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {

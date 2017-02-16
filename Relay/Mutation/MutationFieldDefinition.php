@@ -12,8 +12,9 @@
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldResolver;
 
-class MutationFieldDefinition implements MappingInterface
+final class MutationFieldDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {
@@ -24,13 +25,14 @@ class MutationFieldDefinition implements MappingInterface
         $mutateAndGetPayload = $this->cleanMutateAndGetPayload($config['mutateAndGetPayload']);
         $payloadType = isset($config['payloadType']) && is_string($config['payloadType']) ? $config['payloadType'] : null;
         $inputType = isset($config['inputType']) && is_string($config['inputType']) ? $config['inputType'].'!' : null;
+        $resolver = addslashes(MutationFieldResolver::class);
 
         return [
             'type' => $payloadType,
             'args' => [
                 'input' => ['type' => $inputType],
             ],
-            'resolve' => "@=resolver('relay_mutation_field', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
+            'resolve' => "@=resolver('$resolver', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
         ];
     }
 

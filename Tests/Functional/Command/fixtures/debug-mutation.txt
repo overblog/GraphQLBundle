@@ -1,0 +1,15 @@
+
+GraphQL Mutations Services
+==========================
+
+ --------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------- 
+  id                                                        aliases                                                                                                              
+ --------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------- 
+  overblog_graphql.test.simple_mutation_with_thunk_fields   simple_mutation_with_thunk_fields (method: mutate)                                                                   
+                                                            Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation::mutate (method: mutate)  
+  overblog_graphql.test.simple_promise_mutation             simple_promise_mutation (method: mutate)                                                                             
+                                                            Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimplePromiseMutation::mutate (method: mutate)                  
+ --------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------- 
+
+
+

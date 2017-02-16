@@ -24,7 +24,7 @@ class GlobalTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'global']);
+        static::bootKernel(['test_case' => 'global']);
     }
 
     public function testGlobalIdFields()

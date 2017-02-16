@@ -42,7 +42,7 @@ class GraphDumpSchemaCommandTest extends TestCase
 
         $application = new Application($kernel);
         $application->add(new GraphQLDumpSchemaCommand());
-        $this->command = $application->find('graph:dump-schema');
+        $this->command = $application->find('graphql:dump-schema');
         $this->commandTester = new CommandTester($this->command);
         $this->cacheDir = $kernel->getCacheDir();
     }
@@ -67,7 +67,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->commandTester->execute($input);
 
         $this->assertEquals(0, $this->commandTester->getStatusCode());
-        $this->assertEquals(trim(file_get_contents(__DIR__.'/schema.'.$format)), trim(file_get_contents($file)));
+        $this->assertEquals(trim(file_get_contents(__DIR__.'/fixtures/schema.'.$format)), trim(file_get_contents($file)));
     }
 
     /**

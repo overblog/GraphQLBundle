@@ -24,7 +24,7 @@ class ExceptionTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'exception']);
+        static::bootKernel(['test_case' => 'exception']);
     }
 
     public function testExceptionIsMappedToAWarning()

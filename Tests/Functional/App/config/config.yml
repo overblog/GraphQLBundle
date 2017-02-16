@@ -1,0 +1,19 @@
+framework:
+    test: ~
+    secret: test
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+    templating:
+        engines: ['twig']
+    profiler:
+        enabled: false
+
+overblog_graphql:
+    definitions:
+        config_validation: true
+        auto_mapping: false
+
+services:
+    #disable twig error pages
+    twig.exception_listener:
+        class: stdClass

@@ -76,6 +76,7 @@ services:
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
             - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
+            - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     overblog_graphql.event_listener.classloader_listener:
