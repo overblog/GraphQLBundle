@@ -9,3 +9,9 @@ simpleMutationWithThunkFieldsPayload:
     config:
         fields:
             result: { type: "Int" }
+
+simplePromiseMutationPayload:
+    type: relay-mutation-payload
+    config:
+        fields:
+            result: { type: "Int" }

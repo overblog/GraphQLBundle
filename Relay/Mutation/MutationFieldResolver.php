@@ -11,18 +11,31 @@
 
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
+use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 
 class MutationFieldResolver
 {
-    public function resolve($args, \Closure $mutateAndGetPayloadCallback)
+    /**
+     * @var PromiseAdapter
+     */
+    private $promiseAdapter;
+
+    public function __construct(PromiseAdapter $promiseAdapter)
+    {
+        $this->promiseAdapter = $promiseAdapter;
+    }
+
+    public function resolve($args, $context, $info, \Closure $mutateAndGetPayloadCallback)
     {
         $input = new Argument($args['input']);
 
-        $payload = $mutateAndGetPayloadCallback($input);
-        Resolver::setObjectOrArrayValue($payload, 'clientMutationId', $input['clientMutationId']);
+        return $this->promiseAdapter->createFulfilled($mutateAndGetPayloadCallback($input, $context, $info))
+            ->then(function ($payload) use ($input) {
+                Resolver::setObjectOrArrayValue($payload, 'clientMutationId', $input['clientMutationId']);
 
-        return $payload;
+                return $payload;
+            });
     }
 }

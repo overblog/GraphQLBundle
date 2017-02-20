@@ -14,3 +14,9 @@ RootMutation:
                     inputType: simpleMutationWithThunkFieldsInput
                     payloadType: simpleMutationWithThunkFieldsPayload
                     mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', [value])"
+            simplePromiseMutation:
+                builder: "Relay::Mutation"
+                builderConfig:
+                    inputType: simplePromiseMutationInput
+                    payloadType: simplePromiseMutationPayload
+                    mutateAndGetPayload: "@=mutation('simple_promise_mutation')"

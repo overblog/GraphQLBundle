@@ -30,7 +30,7 @@ class MutationFieldDefinition implements MappingInterface
             'args' => [
                 'input' => ['type' => $inputType],
             ],
-            'resolve' => "@=resolver('relay_mutation_field', [args, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
+            'resolve' => "@=resolver('relay_mutation_field', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
         ];
     }
 

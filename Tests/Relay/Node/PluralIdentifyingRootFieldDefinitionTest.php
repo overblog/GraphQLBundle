@@ -106,7 +106,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends \PHPUnit_Framework_TestCa
         $expected = [
             'type' => '[User]',
             'args' => ['username' => ['type' => '[UserInput!]!']],
-            'resolve' => '@=resolver(\'relay_plural_identifying_field\', [args[\'username\'], resolveSingleInputCallback('.$expectedResolveSingleInputCallbackArg.')])',
+            'resolve' => '@=resolver(\'relay_plural_identifying_field\', [args[\'username\'], context, info, resolveSingleInputCallback('.$expectedResolveSingleInputCallbackArg.')])',
         ];
 
         $this->assertEquals($expected, $this->definition->toMappingDefinition($config));
