@@ -158,6 +158,7 @@ CODE;
             $fs->remove($cacheDir);
         }
 
+        $configs = $this->substituteEnumNamesInDefaultValues($configs);
         $classes = $this->generateClasses($configs, $cacheDir, true);
         file_put_contents($this->getClassesMap(), "<?php\nreturn ".var_export($classes, true).';');
 
@@ -183,5 +184,96 @@ CODE;
     private function getClassesMap()
     {
         return $this->getCacheDir().'/__classes.map';
+    }
+
+    /**
+     * Substitute enum value's names with enum value's values in all relevant defaultValue.
+     *
+     * Longer explanation follows.
+     *
+     * First, let's establish a terminology shorthand:
+     * enum value's name = e_name.
+     * enum value's value = e_value.
+     *
+     * So, type definitions in GraphQL schema language have no knowledge of custom e_values. They will therefore
+     * always use e_names for field argument default values.
+     *
+     * Problem: in cases when e_name != e_value, webonyx/graphql-php library requires e_values in defaultValue.
+     *
+     * Solution: translate e_names into e_values during class generation.
+     *
+     * Since the types in need of conversion could have been defined in a different graphqls file than the relevant
+     * enums, this class is the first place where both definitions are guaranteed to exist side-by-side,
+     * arg default values can be checked for whether they contain e_names, and if they do, converted into e_values.
+     *
+     * @param array $configs
+     * @throws \Exception If someone was very silly indeed and mixed e_names and e_values in defaultValue
+     */
+    protected function substituteEnumNamesInDefaultValues($configs)
+    {
+        // generate a lookup table
+        $enumConfigsByName = [];
+
+        foreach ($configs as $classConfig) {
+            if ($classConfig['type'] == 'enum') {
+                $name = $classConfig['config']['name'];
+                $enumConfigsByName[$name] = $classConfig;
+            }
+        }
+
+        // check each type config for fields which have arguments of an enum type, and also have a defaultValue
+
+        // first, check each type config for field arguments that have a defaultValue (cheaper check first)
+        foreach ($configs as &$classConfig) {
+            if (isset($classConfig['config']['fields'])) {
+                foreach ($classConfig['config']['fields'] as &$fieldConfig) {
+                    if (isset($fieldConfig['args'])) {
+                        foreach ($fieldConfig['args'] as &$argConfig) {
+                            if (isset($argConfig['defaultValue'])) {
+
+                                // this argument has a default value, now perform the (more expensive) type check
+                                $type = $argConfig['type'];
+                                $type = ('[' === $type[0]) ? substr($type, 1, -1) : $type;
+
+                                if (isset($enumConfigsByName[$type])) {
+                                    // we've found an enum type argument that has a defaultValue
+
+                                    // If defaultValue is an array, check only its first element, assuming for the sake
+                                    // of performance that people won't mix e_names and e_values in defaultValue
+
+                                    $maybeName = is_array($argConfig['defaultValue'])
+                                        ? $argConfig['defaultValue'][0]
+                                        : $argConfig['defaultValue'];
+
+                                    // Check whether defaultValue is defined by enum element names.
+                                    if (isset($enumConfigsByName[$type]['config']['values'][$maybeName])) {
+
+                                        // Convert enum element names to enum element values.
+                                        if (is_array($argConfig['defaultValue'])) {
+                                            foreach ($argConfig['defaultValue'] as &$elem) {
+                                                // perform a very unlikely sanity check
+                                                if (isset($enumConfigsByName[$type]['config']['values'][$elem])) {
+                                                    // swapsies!
+                                                    $elem = $enumConfigsByName[$type]['config']['values'][$elem]['value'];
+                                                } else {
+                                                    // someone DID mix up e_names and e_values, le sigh
+                                                    // todo: choose a better exception type and add a descriptive message
+                                                    throw new \Exception('Your mother was a hamster and your father smelt of elderberries');
+                                                }
+                                            }
+                                        } else {
+                                            // easy peasy, swapsies!
+                                            $argConfig['defaultValue'] = $enumConfigsByName[$type]['config']['values'][$maybeName]['value'];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $configs;
     }
 }
