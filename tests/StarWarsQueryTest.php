@@ -336,8 +336,8 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     public function testVerifyThatLukeIsHuman()
     {
         $query = '
-        query CheckTypeOfLuke {
-          hero(episode: EMPIRE) {
+        query CheckTypeOfLuke($episode: HeroInput!) {
+          hero(episode: $episode) {
             __typename
             name
           }
@@ -349,7 +349,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
                 'name' => 'Luke Skywalker'
             ],
         ];
-        $this->assertValidQuery($query, $expected);
+        $this->assertValidQuery($query, $expected, ['episode' => ['name' => 'EMPIRE']]);
     }
 
     public function testDateTime()

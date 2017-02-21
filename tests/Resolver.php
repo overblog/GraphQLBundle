@@ -72,7 +72,7 @@ abstract class Resolver
 
     public static function getHero($root, $args)
     {
-        return StarWarsData::getHero(isset($args['episode']) ? $args['episode'] : null);
+        return StarWarsData::getHero(isset($args['episode']['name']) ? $args['episode']['name'] : null);
     }
 
     public static function getHuman($root, $args)

@@ -44,11 +44,11 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
      * Helper function to test a query and the expected response.
      * @param $query
      * @param $expected
-     * @param null $params
+     * @param null $variables
      */
-    protected function assertValidQuery($query, $expected, $params = null)
+    protected function assertValidQuery($query, $expected, $variables = null)
     {
-        $result = GraphQL::execute($this->schema, $query, null, null, $params);
+        $result = GraphQL::execute($this->schema, $query, null, null, $variables);
 
         $this->assertEquals(['data' => $expected], $result, json_encode($result));
     }

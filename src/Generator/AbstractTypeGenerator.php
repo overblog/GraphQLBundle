@@ -153,10 +153,12 @@ EOF;
                 if (count($lines) > 1) {
                     $firstLine = array_shift($lines) . "'" . ' . "\n"';
                     $lastLine = "'" . array_pop($lines);
-                    $lines = array_map(function($s) { return "'" . $s . "'" . ' . "\n"'; }, $lines);
+                    $lines = array_map(function ($s) {
+                        return "'" . $s . "'" . ' . "\n"';
+                    }, $lines);
                     array_unshift($lines, $firstLine);
                     array_push($lines, $lastLine);
-                    $string = implode(" . \n", $lines);
+                    $string = implode(" . ", $lines);
                 }
 
                 return $string;

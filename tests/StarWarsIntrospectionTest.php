@@ -31,6 +31,8 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
             '__schema' => [
                 'types' => [
                     ['name' => 'Query'],
+                    ['name' => 'HeroInput'],
+                    ['name' => 'ID'],
                     ['name' => 'Episode'],
                     ['name' => 'Character'],
                     ['name' => 'String'],
@@ -46,7 +48,6 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                     ['name' => '__EnumValue'],
                     ['name' => '__Directive'],
                     ['name' => '__DirectiveLocation'],
-                    ['name' => 'ID'],
                     ['name' => 'Float'],
                     ['name' => 'Int'],
                 ]
@@ -311,12 +312,12 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' =>  'null',
+                                    'defaultValue' =>  null,
                                     'description' => "If omitted, returns the hero of the whole saga.\nIf provided, returns the hero of that particular episode.\n",
                                     'name' => 'episode',
                                     'type' => [
-                                        'kind' => 'ENUM',
-                                        'name' => 'Episode',
+                                        'kind' => 'INPUT_OBJECT',
+                                        'name' => 'HeroInput',
                                         'ofType' => null,
                                     ],
                                 ],
@@ -370,7 +371,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                         'kind' => 'SCALAR',
                                         'ofType' => null,
                                     ],
-                                    'defaultValue' => 'null',
+                                    'defaultValue' => null,
                                 ]
                             ],
                         ],
