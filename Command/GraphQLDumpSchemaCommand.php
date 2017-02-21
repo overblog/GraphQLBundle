@@ -12,6 +12,8 @@
 namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
+use GraphQL\Utils\SchemaPrinter;
+use Overblog\GraphQLBundle\Request\Executor;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,6 +39,13 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'The schema name to generate.'
+            )
+            ->addOption(
+                'format',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The schema name to generate ("graphqls" or "json"). ',
+                'json'
             );
     }
 
@@ -44,25 +53,43 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
     {
         $output = new SymfonyStyle($input, $output);
 
-        $request = [
-            'query' => Introspection::getIntrospectionQuery(false),
-            'variables' => [],
-            'operationName' => null,
-        ];
+        $format = strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
-
         $container = $this->getContainer();
-        $result = $container
-            ->get('overblog_graphql.request_executor')
-            ->execute($request, [], $schemaName)
-            ->toArray();
+        $requestExecutor = $container->get('overblog_graphql.request_executor');
+        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
-        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.json', $schemaName ? '.'.$schemaName : '');
-
-        $schema = json_encode($result['data']);
-
-        file_put_contents($file, $schema);
+        $content = $this->createFileContent($requestExecutor, $format, $schemaName);
+        file_put_contents($file, $content);
 
         $output->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
+    }
+
+    private function createFileContent(Executor $requestExecutor, $format, $schemaName)
+    {
+        switch ($format) {
+            case 'json':
+                $request = [
+                    'query' => Introspection::getIntrospectionQuery(false),
+                    'variables' => [],
+                    'operationName' => null,
+                ];
+
+                $result = $requestExecutor
+                    ->execute($request, [], $schemaName)
+                    ->toArray();
+
+                $content = json_encode($result['data']);
+                break;
+
+            case 'graphqls':
+                $content = SchemaPrinter::doPrint($requestExecutor->getSchema($schemaName));
+                break;
+
+            default:
+                throw new \InvalidArgumentException(sprintf('Unknown format %s.', json_encode($format)));
+        }
+
+        return $content;
     }
 }
