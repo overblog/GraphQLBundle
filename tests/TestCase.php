@@ -19,7 +19,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         // Run linter in dry-run mode so it changes nothing.
         $csBuilder = new ProcessBuilder([
-            'php-cs-fixer',
+            __DIR__ . '/../bin/php-cs-fixer',
             'fix',
             '--dry-run',
             '--diff',

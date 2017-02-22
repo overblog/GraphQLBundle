@@ -151,12 +151,17 @@ EOF;
                 // handle multi-line strings
                 $lines = explode("\n", $string);
                 if (count($lines) > 1) {
-                    $firstLine = array_shift($lines) . "'" . ' . "\n"';
-                    $lastLine = "'" . array_pop($lines);
-                    $lines = array_map(function($s) { return "'" . $s . "'" . ' . "\n"'; }, $lines);
+                    $firstLine = sprintf('%s\' . "\n"', array_shift($lines));
+                    $lastLine = sprintf("'%s", array_pop($lines));
+                    $lines = array_map(
+                        function ($line) {
+                            return sprintf('\'%s\' . "\n"', $line);
+                        },
+                        $lines
+                    );
                     array_unshift($lines, $firstLine);
                     array_push($lines, $lastLine);
-                    $string = implode(" . \n", $lines);
+                    $string = implode(' . ', $lines);
                 }
 
                 return $string;

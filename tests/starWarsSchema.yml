@@ -142,7 +142,7 @@ Query:
                 type: "Character"
                 args:
                     episode:
-                        type: "Episode"
+                        type: "HeroInput"
                         description: |
                           If omitted, returns the hero of the whole saga.
                           If provided, returns the hero of that particular episode.
@@ -178,5 +178,8 @@ HeroInput:
     type: input-object
     config:
         fields:
+            id:
+                type: "ID"
             name:
-                type: "Episode!"
+                type: "Episode"
+                defaultValue: 4
