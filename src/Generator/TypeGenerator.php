@@ -55,12 +55,12 @@ class TypeGenerator extends AbstractTypeGenerator
 
     protected function generateDefaultValue(array $value)
     {
-        if (!array_key_exists('defaultValue', $value)) {
+        $key = 'defaultValue';
+        if (!array_key_exists($key, $value)) {
             return '';
         }
-        $defaultValue = $this->varExportFromArrayValue($value, 'defaultValue');
 
-        return "\n".'<spaces>\'defaultValue\' => '.$defaultValue.',';
+        return sprintf("\n<spaces>'%s' => %s,", $key, $this->varExportFromArrayValue($value, $key));
     }
 
     protected function generateType(array $value)
