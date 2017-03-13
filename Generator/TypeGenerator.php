@@ -80,6 +80,7 @@ EOF;
             $fieldOptions['resolve'] = $this->defaultResolver;
         }
         $resolveCallback = parent::generateResolve($fieldOptions);
+        $resolveCallback = ltrim($this->prefixCodeWithSpaces($resolveCallback));
 
         if (!$accessIsSet || true === $fieldOptions['access']) { // access granted  to this field
             if ('null' === $resolveCallback) {
@@ -90,7 +91,7 @@ EOF;
             $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
 
             $code = <<<'CODE'
-function ($value, $args, $context, %s $info) <closureUseStatements> {
+function ($value, $args, $context, %s $info) <closureUseStatements>{
 <spaces><spaces>$resolverCallback = %s;
 <spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $context, $info]);
 <spaces>}
@@ -130,6 +131,7 @@ CODE;
     protected function generateComplexity(array $value)
     {
         $resolveComplexity = parent::generateComplexity($value);
+        $resolveComplexity = ltrim($this->prefixCodeWithSpaces($resolveComplexity));
 
         if ('null' === $resolveComplexity) {
             return $resolveComplexity;
@@ -138,7 +140,7 @@ CODE;
         $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
 
         $code = <<<'CODE'
-function ($childrenComplexity, $args = []) <closureUseStatements> {
+function ($childrenComplexity, $args = []) <closureUseStatements>{
 <spaces><spaces>$resolveComplexity = %s;
 
 <spaces><spaces>return call_user_func_array($resolveComplexity, [$childrenComplexity, new %s($args)]);

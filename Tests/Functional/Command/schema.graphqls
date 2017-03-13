@@ -20,9 +20,9 @@ type Query {
 type User {
   # the user name
   name: String
-  friends(after: String = null, first: Int = null, before: String = null, last: Int = null): friendConnection
-  friendsForward(after: String = null, first: Int = null): userConnection
-  friendsBackward(before: String = null, last: Int = null): userConnection
+  friends(after: String, first: Int, before: String, last: Int): friendConnection
+  friendsForward(after: String, first: Int): userConnection
+  friendsBackward(before: String, last: Int): userConnection
 }
 
 # A connection to a list of items.

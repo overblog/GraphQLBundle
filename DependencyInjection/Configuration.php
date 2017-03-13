@@ -152,9 +152,9 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('versions')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('graphiql')->defaultValue('0.7.8')->end()
-                        ->scalarNode('react')->defaultValue('15.3.2')->end()
-                        ->scalarNode('fetch')->defaultValue('2.0.1')->end()
+                        ->scalarNode('graphiql')->defaultValue('0.9')->end()
+                        ->scalarNode('react')->defaultValue('15.4')->end()
+                        ->scalarNode('fetch')->defaultValue('2.0')->end()
                     ->end()
                 ->end()
             ->end();
