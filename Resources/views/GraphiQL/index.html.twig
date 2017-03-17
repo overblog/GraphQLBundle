@@ -46,7 +46,7 @@
         var xdebugToken = res.headers.get('X-Debug-Token')
         if (typeof Sfjs !== "undefined" && xdebugToken) {
           var toolbarElement = document.querySelector('.sf-toolbar')
-          var debugUrlPattern = "{{ url('_wdt', {'token': '__TOKEN__'}) }}"
+          var debugUrlPattern = "{{ app.debug ? url('_wdt', {'token': '__TOKEN__'}) : '/_wdt/__TOKEN__' }}"
           Sfjs.load(toolbarElement.id, debugUrlPattern.replace('__TOKEN__', xdebugToken ))
         }
         return res.text()
