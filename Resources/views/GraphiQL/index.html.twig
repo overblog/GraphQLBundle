@@ -43,12 +43,14 @@
         body: JSON.stringify(params),
         credentials: 'include',
       }).then((res) => {
-        var xdebugToken = res.headers.get('X-Debug-Token')
-        if (typeof Sfjs !== "undefined" && xdebugToken) {
-          var toolbarElement = document.querySelector('.sf-toolbar')
-          var debugUrlPattern = "{{ url('_wdt', {'token': '__TOKEN__'}) }}"
-          Sfjs.load(toolbarElement.id, debugUrlPattern.replace('__TOKEN__', xdebugToken ))
-        }
+        {% if app.debug %} 
+          var xdebugToken = res.headers.get('X-Debug-Token')
+          if (typeof Sfjs !== "undefined" && xdebugToken) {
+            var toolbarElement = document.querySelector('.sf-toolbar')
+            var debugUrlPattern = "{{ url('_wdt', {'token': '__TOKEN__'}) }}"
+            Sfjs.load(toolbarElement.id, debugUrlPattern.replace('__TOKEN__', xdebugToken ))
+          }
+        {% endif %}   
         return res.text()
       }).then((body) => {
         try {
