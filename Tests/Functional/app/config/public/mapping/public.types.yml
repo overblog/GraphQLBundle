@@ -1,0 +1,18 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            object:
+                type: ObjectWithPrivateField
+                resolve: '@={"name": "His name"}'
+
+ObjectWithPrivateField:
+    type: object
+    config:
+        fields:
+            name:
+                type: String
+            privateData:
+                type: String
+                public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
+                resolve: ThisIsPrivate
