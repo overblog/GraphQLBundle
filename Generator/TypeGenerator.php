@@ -62,6 +62,16 @@ class TypeGenerator extends BaseTypeGenerator
 EOF;
     }
 
+    protected function generateOutputFields(array $config)
+    {
+        $outputFieldsCode = sprintf(
+            'self::applyPublicFilters(%s)',
+            $this->processFromArray($config['fields'], 'OutputField')
+        );
+
+        return sprintf(static::$closureTemplate, '', $outputFieldsCode);
+    }
+
     protected function generateClosureUseStatements(array $config)
     {
         return 'use ('.static::USE_FOR_CLOSURES.') ';
@@ -70,6 +80,30 @@ EOF;
     protected function resolveTypeCode($alias)
     {
         return  sprintf('$container->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
+    }
+
+    protected function generatePublic(array $value)
+    {
+        if (!$this->arrayKeyExistsAndIsNotNull($value, 'public')) {
+            return 'null';
+        }
+
+        $publicCallback = $this->callableCallbackFromArrayValue($value, 'public');
+
+        if ('null' === $publicCallback) {
+            return $publicCallback;
+        }
+
+        $code = <<<'CODE'
+function () <closureUseStatements> {
+<spaces><spaces>$publicCallback = %s;
+<spaces><spaces>return call_user_func($publicCallback);
+<spaces>}
+CODE;
+
+        $code = sprintf($code, $publicCallback);
+
+        return $code;
     }
 
     protected function generateResolve(array $value)

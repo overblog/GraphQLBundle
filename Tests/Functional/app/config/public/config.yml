@@ -1,0 +1,35 @@
+imports:
+    - { resource: ../config.yml }
+
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\PublicField\\__DEFINITIONS__"
+
+overblog_graphql:
+    definitions:
+        schema:
+            query: RootQuery
+        mappings:
+            types:
+                -
+                    type: yml
+                    dir: "%kernel.root_dir%/config/public/mapping"
+
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    ryan:
+                        password: 123
+                        roles: 'ROLE_USER'
+                    admin:
+                        password: 123
+                        roles: 'ROLE_ADMIN'
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+    firewalls:
+        graph:
+            pattern: ^/
+            http_basic: ~
+            stateless: true
+            anonymous: true
