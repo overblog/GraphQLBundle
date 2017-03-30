@@ -21,6 +21,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class TestCase extends WebTestCase
 {
+    const USER_RYAN = 'ryan';
+    const USER_ADMIN = 'admin';
+    const ANONYMOUS_USER = null;
+    const DEFAULT_PASSWORD = '123';
+
     /**
      * @var AppKernel[]
      */
@@ -114,5 +119,39 @@ abstract class TestCase extends WebTestCase
     protected static function getContainer()
     {
         return static::$kernel->getContainer();
+    }
+
+    protected static function query($query, $username, $testCase, $password = self::DEFAULT_PASSWORD)
+    {
+        $client = static::createClientAuthenticated($username, $testCase, $password);
+        $client->request('GET', '/', ['query' => $query]);
+
+        return $client;
+    }
+
+    protected static function createClientAuthenticated($username, $testCase, $password = self::DEFAULT_PASSWORD)
+    {
+        $client = static::createClient(['test_case' => $testCase]);
+
+        if ($username) {
+            $client->setServerParameters([
+                'PHP_AUTH_USER' => $username,
+                'PHP_AUTH_PW' => $password,
+            ]);
+        }
+
+        return $client;
+    }
+
+    protected static function assertResponse($query, array $expected, $username, $testCase, $password = self::DEFAULT_PASSWORD)
+    {
+        $client = self::createClientAuthenticated($username, $testCase, $password);
+        $client->request('GET', '/', ['query' => $query]);
+
+        $result = $client->getResponse()->getContent();
+
+        static::assertEquals($expected, json_decode($result, true), $result);
+
+        return $client;
     }
 }

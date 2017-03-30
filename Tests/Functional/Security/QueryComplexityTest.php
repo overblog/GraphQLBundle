@@ -16,7 +16,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 class QueryComplexityTest extends TestCase
 {
     private $userFriendsWithoutLimitQuery = <<<'EOF'
-query MyQuery {
+query {
   user {
     friends {
       edges {
@@ -30,7 +30,7 @@ query MyQuery {
 EOF;
 
     private $userFriendsWithLimitQuery = <<<'EOF'
-query MyQuery {
+query {
   user {
     friends(first: 1) {
       edges {
@@ -53,7 +53,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected);
+        $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexity');
     }
 
     public function testComplexityUnderLimitation()
@@ -70,18 +70,6 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userFriendsWithLimitQuery, $expected);
-    }
-
-    private static function assertResponse($query, array $expected)
-    {
-        $client = static::createClient(['test_case' => 'queryComplexity']);
-        $client->request('GET', '/', ['query' => $query]);
-
-        $result = $client->getResponse()->getContent();
-
-        static::assertEquals($expected, json_decode($result, true), $result);
-
-        return $client;
+        $this->assertResponse($this->userFriendsWithLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexity');
     }
 }
