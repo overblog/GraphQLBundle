@@ -79,7 +79,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                     ->execute($request, [], $schemaName)
                     ->toArray();
 
-                $content = json_encode($result['data']);
+                $content = json_encode($result['data'], \JSON_PRETTY_PRINT);
                 break;
 
             case 'graphqls':
