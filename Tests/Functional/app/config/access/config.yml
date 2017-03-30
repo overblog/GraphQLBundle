@@ -1,5 +1,6 @@
 imports:
     - { resource: ../config.yml }
+    - { resource: ../security.yml }
     - { resource: ../connection/services.yml }
     - { resource: ../mutation/services.yml }
 
@@ -16,23 +17,3 @@ overblog_graphql:
                 -
                     type: yml
                     dir: "%kernel.root_dir%/config/access/mapping"
-
-security:
-    providers:
-        in_memory:
-            memory:
-                users:
-                    ryan:
-                        password: 123
-                        roles: 'ROLE_USER'
-                    admin:
-                        password: 123
-                        roles: 'ROLE_ADMIN'
-    encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
-    firewalls:
-        graph:
-            pattern: ^/
-            http_basic: ~
-            stateless: true
-            anonymous: true

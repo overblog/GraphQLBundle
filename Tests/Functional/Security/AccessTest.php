@@ -16,18 +16,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class AccessTest extends TestCase
 {
-    const USER_RYAN = 'ryan';
-    const USER_ADMIN = 'admin';
-    const ANONYMOUS_USER = null;
+    private $userNameQuery = 'query { user { name } }';
 
-    private $userNameQuery = 'query MyQuery { user { name } }';
+    private $userRolesQuery = 'query { user { roles } }';
 
-    private $userRolesQuery = 'query MyQuery { user { roles } }';
-
-    private $userIsEnabledQuery = 'query MyQuery { user { isEnabled } }';
+    private $userIsEnabledQuery = 'query { user { isEnabled } }';
 
     private $userFriendsQuery = <<<'EOF'
-query MyQuery {
+query {
   user {
     friends(first: 2) {
       edges {
@@ -61,14 +57,14 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'locations' => [['line' => 1, 'column' => 24]],
+                        'locations' => [['line' => 1, 'column' => 16]],
                         'path' => ['user', 'name'],
                     ],
                 ],
             ],
         ];
 
-        $this->assertResponse($this->userNameQuery, $expected, static::ANONYMOUS_USER);
+        $this->assertResponse($this->userNameQuery, $expected, static::ANONYMOUS_USER, 'access');
     }
 
     public function testFullyAuthenticatedUserAccessToUserName()
@@ -81,17 +77,17 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userNameQuery, $expected, static::USER_RYAN);
+        $this->assertResponse($this->userNameQuery, $expected, static::USER_RYAN, 'access');
     }
 
     public function testNotAuthenticatedUserAccessToUserRoles()
     {
-        $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::ANONYMOUS_USER);
+        $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::ANONYMOUS_USER, 'access');
     }
 
     public function testAuthenticatedUserAccessToUserRolesWithoutEnoughRights()
     {
-        $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::USER_RYAN);
+        $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::USER_RYAN, 'access');
     }
 
     public function testUserWithCorrectRightsAccessToUserRoles()
@@ -104,7 +100,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userRolesQuery, $expected, static::USER_ADMIN);
+        $this->assertResponse($this->userRolesQuery, $expected, static::USER_ADMIN, 'access');
     }
 
     public function testUserForbiddenField()
@@ -137,7 +133,7 @@ query MyQuery {
 }
 EOF;
 
-        $this->assertResponse($query, $expected, static::USER_ADMIN);
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
     public function testUserAccessToUserFriends()
@@ -155,7 +151,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userFriendsQuery, $expected, static::USER_ADMIN);
+        $this->assertResponse($this->userFriendsQuery, $expected, static::USER_ADMIN, 'access');
     }
 
     public function testMutationAllowedUser()
@@ -171,7 +167,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, $result), $expected, static::USER_ADMIN);
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, $result), $expected, static::USER_ADMIN, 'access');
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
@@ -200,7 +196,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 321), $expected, static::USER_ADMIN);
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 321), $expected, static::USER_ADMIN, 'access');
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
@@ -224,7 +220,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 123), $expected, static::USER_RYAN);
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 123), $expected, static::USER_RYAN, 'access');
         $this->assertFalse(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
@@ -237,31 +233,5 @@ EOF;
                 ],
             ],
         ];
-    }
-
-    private static function assertResponse($query, array $expected, $username)
-    {
-        $client = self::createClientAuthenticated($username);
-        $client->request('GET', '/', ['query' => $query]);
-
-        $result = $client->getResponse()->getContent();
-
-        static::assertEquals($expected, json_decode($result, true), $result);
-
-        return $client;
-    }
-
-    private static function createClientAuthenticated($username)
-    {
-        $client = static::createClient(['test_case' => 'access']);
-
-        if ($username) {
-            $client->setServerParameters([
-                'PHP_AUTH_USER' => $username,
-                'PHP_AUTH_PW' => '123',
-            ]);
-        }
-
-        return $client;
     }
 }

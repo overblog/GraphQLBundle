@@ -15,9 +15,6 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class TypeGeneratorTest extends TestCase
 {
-    private $user = 'ryan';
-    private $adminUser = 'admin';
-
     public function testPublicCallback()
     {
         $expected = [
@@ -29,19 +26,15 @@ class TypeGeneratorTest extends TestCase
             ],
         ];
 
-        $client = static::query(
-            'query { object { name privateData } }',
-            $this->adminUser
-        );
-
-        $this->assertResponse('query { object { name privateData } }', $expected, $this->adminUser);
+        $this->assertResponse('query { object { name privateData } }', $expected, self::USER_ADMIN, 'public');
 
         $this->assertEquals(
             'Cannot query field "privateData" on type "ObjectWithPrivateField".',
             json_decode(
                 static::query(
                     'query { object { name privateData } }',
-                    $this->user
+                    self::USER_RYAN,
+                    'public'
                 )->getResponse()->getContent(),
                 true
             )['errors'][0]['message']
@@ -50,38 +43,6 @@ class TypeGeneratorTest extends TestCase
         $expectedWithoutPrivateData = $expected;
         unset($expectedWithoutPrivateData['data']['object']['privateData']);
 
-        $this->assertResponse('query { object { name } }', $expectedWithoutPrivateData, $this->user);
-    }
-
-    private static function assertResponse($query, array $expected, $username)
-    {
-        $client = self::query($query, $username);
-        $result = $client->getResponse()->getContent();
-
-        static::assertEquals($expected, json_decode($result, true), $result);
-
-        return $client;
-    }
-
-    private static function query($query, $username)
-    {
-        $client = self::createClientAuthenticated($username);
-        $client->request('GET', '/', ['query' => $query]);
-
-        return $client;
-    }
-
-    private static function createClientAuthenticated($username)
-    {
-        $client = static::createClient(['test_case' => 'public']);
-
-        if ($username) {
-            $client->setServerParameters([
-                'PHP_AUTH_USER' => $username,
-                'PHP_AUTH_PW' => '123',
-            ]);
-        }
-
-        return $client;
+        $this->assertResponse('query { object { name } }', $expectedWithoutPrivateData, self::USER_RYAN, 'public');
     }
 }
