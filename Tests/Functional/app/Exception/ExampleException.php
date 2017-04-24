@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\app\Exception;
 
 class ExampleException
 {
-    public function throwException()
+    public function __invoke()
     {
         throw new \InvalidArgumentException('Invalid argument exception');
     }
