@@ -13,7 +13,12 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
 
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
+use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
+use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -94,10 +99,10 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'definitions' => [
                         'exceptions' => [
                             'warnings' => [
-                                'Symfony\Component\Routing\Exception\ResourceNotFoundException',
+                                ResourceNotFoundException::class,
                             ],
                             'errors' => [
-                                'InvalidArgumentException',
+                                \InvalidArgumentException::class,
                             ],
                         ],
                     ],
@@ -107,8 +112,8 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
         );
 
         $expectedExceptionMap = [
-            'Symfony\Component\Routing\Exception\ResourceNotFoundException' => 'Overblog\\GraphQLBundle\\Error\\UserWarning',
-            'InvalidArgumentException' => 'Overblog\\GraphQLBundle\\Error\\UserError',
+            ResourceNotFoundException::class => UserWarning::class,
+            \InvalidArgumentException::class => UserError::class,
         ];
 
         $definition = $this->container->getDefinition('overblog_graphql.error_handler');
@@ -127,12 +132,12 @@ class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
                     'definitions' => [
                         'builders' => [
                             'field' => [
-                                'RawId' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\RawIdField',
+                                'RawId' => RawIdField::class,
                             ],
                             'args' => [
                                 [
                                     'alias' => 'Pager',
-                                    'class' => 'Overblog\\GraphQLBundle\\Tests\\DependencyInjection\\Builder\\PagerArgs',
+                                    'class' => PagerArgs::class,
                                 ],
                             ],
                         ],

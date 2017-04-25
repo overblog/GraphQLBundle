@@ -11,6 +11,8 @@
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
@@ -42,7 +44,7 @@ class TypeResolverTest extends AbstractResolverTest
     {
         $type = $this->resolver->resolve('Toto');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\ObjectType', $type);
+        $this->assertInstanceOf(ObjectType::class, $type);
         $this->assertEquals('Toto', $type->name);
     }
 
@@ -67,7 +69,7 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Tata]');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
+        $this->assertInstanceOf(ListOfType::class, $type);
         $this->assertEquals('Tata', $type->getWrappedType());
     }
 
@@ -76,7 +78,7 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('Toto!');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
+        $this->assertInstanceOf(NonNull::class, $type);
         $this->assertEquals('Toto', $type->getWrappedType());
     }
 
@@ -85,8 +87,8 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto]!');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
+        $this->assertInstanceOf(NonNull::class, $type);
+        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 
@@ -95,8 +97,8 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto!]');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
-        $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type->getWrappedType());
+        $this->assertInstanceOf(ListOfType::class, $type);
+        $this->assertInstanceOf(NonNull::class, $type->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 
@@ -105,9 +107,9 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto!]!');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type);
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
-        $this->assertInstanceOf('GraphQL\Type\Definition\NonNull', $type->getWrappedType()->getWrappedType());
+        $this->assertInstanceOf(NonNull::class, $type);
+        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
+        $this->assertInstanceOf(NonNull::class, $type->getWrappedType()->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType()->getWrappedType());
     }
 
@@ -116,8 +118,8 @@ class TypeResolverTest extends AbstractResolverTest
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[[Toto]]');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type);
-        $this->assertInstanceOf('GraphQL\Type\Definition\ListOfType', $type->getWrappedType());
+        $this->assertInstanceOf(ListOfType::class, $type);
+        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 }

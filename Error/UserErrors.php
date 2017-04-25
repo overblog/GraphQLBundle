@@ -47,7 +47,7 @@ class UserErrors extends UserFacingError
         if (is_string($error)) {
             $error = new UserError($error);
         } elseif (!is_object($error) || !$error instanceof UserError) {
-            throw new \InvalidArgumentException('Error must be string or instance of Overblog\\GraphQLBundle\\Error\\UserError.');
+            throw new \InvalidArgumentException(sprintf('Error must be string or instance of %s.', UserError::class));
         }
 
         $this->errors[] = $error;

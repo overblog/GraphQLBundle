@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -133,7 +134,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
             foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
                 $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
-                $definition = new Definition('GraphQL\Schema');
+                $definition = new Definition(Schema::class);
                 $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
                 $definition->setArguments([$schemaConfig['query'], $schemaConfig['mutation'], $schemaConfig['subscription']]);
                 $definition->setPublic(false);

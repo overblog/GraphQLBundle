@@ -13,6 +13,7 @@ namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -153,7 +154,7 @@ class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
 
     private function getAuthorizationCheckerMock()
     {
-        $AuthorizationChecker = $this->getMockBuilder('Symfony\\Component\Security\\Core\Authorization\\AuthorizationCheckerInterface')
+        $AuthorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)
             ->disableOriginalConstructor()
             ->setMethods(['isGranted'])
             ->getMock()

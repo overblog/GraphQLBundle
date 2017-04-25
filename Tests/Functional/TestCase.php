@@ -35,7 +35,7 @@ abstract class TestCase extends WebTestCase
     {
         require_once __DIR__.'/app/AppKernel.php';
 
-        return 'Overblog\GraphQLBundle\Tests\Functional\app\AppKernel';
+        return AppKernel::class;
     }
 
     /**

@@ -97,7 +97,7 @@ class ExecutorTest extends \PHPUnit_Framework_TestCase
 
     private function createExecutorExecuteMock($returnValue)
     {
-        $mock = $this->getMockBuilder('Overblog\GraphQLBundle\Executor\Executor')
+        $mock = $this->getMockBuilder(Executor::class)
             ->setMethods(['execute'])
             ->getMock();
 

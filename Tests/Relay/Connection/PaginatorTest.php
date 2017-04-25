@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
+use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
@@ -285,7 +286,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
 
     public function testPromiseMode()
     {
-        $promise = $this->getMockBuilder('GraphQL\Executor\Promise\Promise')
+        $promise = $this->getMockBuilder(Promise::class)
             ->disableOriginalConstructor()
             ->setMethods(['then'])
             ->getMock()

@@ -29,7 +29,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": "^5.4|~7.0",
+        "php": ">=5.5.9",
         "doctrine/doctrine-cache-bundle": "^1.2",
         "overblog/graphql-php-generator": "^0.4.1",
         "symfony/expression-language": "^2.7|^3.1",

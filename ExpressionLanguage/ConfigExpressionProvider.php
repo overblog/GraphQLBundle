@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
@@ -90,7 +91,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                     $typeNameEmpty = null === $typeName || '""' === $typeName || 'null' === $typeName || 'false' === $typeName;
 
                     return sprintf(
-                        '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::toGlobalId(%s, %s)',
+                        '%s::toGlobalId(%s, %s)',
+                        GlobalId::class,
                         sprintf($typeNameEmpty ? '$info->parentType->name' : '%s', $typeName),
                         $id
                     );
@@ -101,7 +103,8 @@ class ConfigExpressionProvider implements ExpressionFunctionProviderInterface
                 'fromGlobalId',
                 function ($globalId) {
                     return sprintf(
-                        '\\Overblog\\GraphQLBundle\\Relay\\Node\\GlobalId::fromGlobalId(%s)',
+                        '%s::fromGlobalId(%s)',
+                        GlobalId::class,
                         $globalId
                     );
                 }

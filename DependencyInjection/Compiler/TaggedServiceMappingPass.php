@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -44,7 +45,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
             $solutionID = $options['id'];
 
             $definition = $container->findDefinition($solutionID);
-            if (is_subclass_of($definition->getClass(), 'Symfony\Component\DependencyInjection\ContainerAwareInterface')) {
+            if (is_subclass_of($definition->getClass(), ContainerAwareInterface::class)) {
                 $solutionDefinition = $container->findDefinition($options['id']);
                 $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
             }

@@ -8,8 +8,6 @@ branches:
 matrix:
     fast_finish: true
     include:
-        - php: 5.4
-          env: SYMFONY_VERSION=2.7.*
         - php: 5.5
           env: SYMFONY_VERSION=2.8.*
         - php: 5.6
@@ -19,10 +17,9 @@ matrix:
         - php: 7.1
           env: SYMFONY_VERSION=3.2.*
         - php: hhvm
-# TODO(mcg-web): uncomment after fixing this bug https://github.com/travis-ci/travis-ci/issues/7124
-#        - php: nightly
-#    allow_failures:
-#        - php: nightly
+        - php: nightly
+    allow_failures:
+        - php: nightly
 
 cache:
     directories:

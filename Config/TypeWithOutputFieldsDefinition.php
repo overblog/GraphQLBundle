@@ -12,6 +12,13 @@
 namespace Overblog\GraphQLBundle\Config;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition;
+use Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition;
+use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
+use Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition;
+use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
+use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -25,19 +32,19 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
      * @var MappingInterface[]
      */
     private static $argsBuilderClassMap = [
-        'Relay::ForwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition',
-        'Relay::BackwardConnection' => 'Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition',
-        'Relay::Connection' => 'Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition',
+        'Relay::ForwardConnection' => ForwardConnectionArgsDefinition::class,
+        'Relay::BackwardConnection' => BackwardConnectionArgsDefinition::class,
+        'Relay::Connection' => ConnectionArgsDefinition::class,
     ];
 
     /**
      * @var MappingInterface[]
      */
     private static $fieldBuilderClassMap = [
-        'Relay::Mutation' => 'Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition',
-        'Relay::GlobalId' => 'Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition',
-        'Relay::Node' => 'Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition',
-        'Relay::PluralIdentifyingRoot' => 'Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition',
+        'Relay::Mutation' => MutationFieldDefinition::class,
+        'Relay::GlobalId' => GlobalIdFieldDefinition::class,
+        'Relay::Node' => NodeFieldDefinition::class,
+        'Relay::PluralIdentifyingRoot' => PluralIdentifyingRootFieldDefinition::class,
     ];
 
     public static function addArgsBuilderClass($name, $argBuilderClass)
@@ -56,7 +63,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 
     protected static function checkBuilderClass($builderClass, $type)
     {
-        $interface = 'Overblog\\GraphQLBundle\\Definition\\Builder\\MappingInterface';
+        $interface = MappingInterface::class;
 
         if (!is_string($builderClass)) {
             throw new \InvalidArgumentException(

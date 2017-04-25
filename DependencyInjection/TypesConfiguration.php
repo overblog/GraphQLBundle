@@ -13,6 +13,10 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionDefinition;
+use Overblog\GraphQLBundle\Relay\Mutation\InputDefinition;
+use Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition;
+use Overblog\GraphQLBundle\Relay\Node\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -137,24 +141,24 @@ class TypesConfiguration implements ConfigurationInterface
             // normalized relay-connection
             ->beforeNormalization()
                 ->ifTrue($typeKeyExists)
-                ->then($this->relayNormalizer('relay-connection', 'Overblog\GraphQLBundle\Relay\Connection\ConnectionDefinition'))
+                ->then($this->relayNormalizer('relay-connection', ConnectionDefinition::class))
             ->end()
             // normalized relay-node
             ->beforeNormalization()
                 ->ifTrue($typeKeyExists)
-                ->then($this->relayNormalizer('relay-node', 'Overblog\GraphQLBundle\Relay\Node\NodeDefinition'))
+                ->then($this->relayNormalizer('relay-node', NodeDefinition::class))
             ->end()
             // normalized relay-mutation-input
             ->beforeNormalization()
                 ->ifTrue($typeKeyExists)
-                ->then($this->relayNormalizer('relay-mutation-input', 'Overblog\GraphQLBundle\Relay\Mutation\InputDefinition'))
+                ->then($this->relayNormalizer('relay-mutation-input', InputDefinition::class))
             ->end()
             // normalized relay-mutation-payload
             ->beforeNormalization()
                 ->ifTrue(function ($types) {
                     return !empty($types) && is_array($types);
                 })
-                ->then($this->relayNormalizer('relay-mutation-payload', 'Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition'))
+                ->then($this->relayNormalizer('relay-mutation-payload', PayloadDefinition::class))
             ->end();
     }
 

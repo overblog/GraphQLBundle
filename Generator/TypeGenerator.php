@@ -11,6 +11,9 @@
 
 namespace Overblog\GraphQLBundle\Generator;
 
+use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use Symfony\Component\ClassLoader\MapClassLoader;
 use Symfony\Component\Filesystem\Filesystem;
@@ -121,8 +124,8 @@ CODE;
                 return $resolveCallback;
             }
 
-            $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
-            $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
+            $argumentClass = $this->shortenClassName(Argument::class);
+            $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
 
             $code = <<<'CODE'
 function ($value, $args, $context, %s $info) <closureUseStatements>{
@@ -133,14 +136,14 @@ CODE;
 
             return sprintf($code, $resolveInfoClass, $resolveCallback, $argumentClass);
         } elseif ($accessIsSet && false === $fieldOptions['access']) { // access deny to this field
-            $exceptionClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Error\\UserWarning');
+            $exceptionClass = $this->shortenClassName(UserWarning::class);
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
 
-            $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
-            $resolveInfoClass = $this->shortenClassName('\\GraphQL\\Type\\Definition\\ResolveInfo');
-            $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
+            $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, '.ResolveInfo::class.' $info, $object');
+            $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
+            $argumentClass = $this->shortenClassName(Argument::class);
 
             $code = <<<'CODE'
 function ($value, $args, $context, %s $info) <closureUseStatements> {
@@ -171,7 +174,7 @@ CODE;
             return $resolveComplexity;
         }
 
-        $argumentClass = $this->shortenClassName('\\Overblog\\GraphQLBundle\\Definition\\Argument');
+        $argumentClass = $this->shortenClassName(Argument::class);
 
         $code = <<<'CODE'
 function ($childrenComplexity, $args = []) <closureUseStatements>{

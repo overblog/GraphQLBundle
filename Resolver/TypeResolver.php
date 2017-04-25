@@ -102,6 +102,6 @@ class TypeResolver extends AbstractResolver
 
     protected function supportedSolutionClass()
     {
-        return 'GraphQL\\Type\\Definition\\Type';
+        return Type::class;
     }
 }

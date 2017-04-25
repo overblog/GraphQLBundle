@@ -15,10 +15,8 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
 {
     protected function getResolverSolutionsMapping()
     {
-        $solutionClass = sprintf('%s\\Toto', __NAMESPACE__);
-
         return [
-            'Toto' => ['solution' => new $solutionClass(), 'method' => 'resolve'],
+            'Toto' => ['solution' => new Toto(), 'method' => 'resolve'],
         ];
     }
 

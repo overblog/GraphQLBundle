@@ -153,8 +153,8 @@ class Executor
                 throw new \RuntimeException(
                     sprintf(
                         'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
-                        'Overblog\\GraphQLBundle\\Executor\\Promise\\PromiseAdapterInterface',
-                        'GraphQL\\Executor\\Promise\\PromiseAdapter'
+                        PromiseAdapterInterface::class,
+                        PromiseAdapter::class
                     )
                 );
             }
@@ -182,10 +182,7 @@ class Executor
 
         if (!is_object($result) || !$result instanceof ExecutionResult) {
             throw new \RuntimeException(
-                sprintf(
-                    'Execution result should be an object instantiating "%s".',
-                    'GraphQL\\Executor\\ExecutionResult'
-                )
+                sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
             );
         }
 

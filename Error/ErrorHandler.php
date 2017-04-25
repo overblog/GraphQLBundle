@@ -20,8 +20,8 @@ use Psr\Log\NullLogger;
 class ErrorHandler
 {
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
-    const DEFAULT_USER_WARNING_CLASS = 'Overblog\\GraphQLBundle\\Error\\UserWarning';
-    const DEFAULT_USER_ERROR_CLASS = 'Overblog\\GraphQLBundle\\Error\\UserError';
+    const DEFAULT_USER_WARNING_CLASS = UserWarning::class;
+    const DEFAULT_USER_ERROR_CLASS = UserError::class;
 
     /** @var LoggerInterface */
     private $logger;
@@ -159,7 +159,7 @@ class ErrorHandler
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {
-            $executionResult->extensions['warnings'] = array_map(['GraphQL\Error\Error', 'formatError'], $exceptions['extensions']['warnings']);
+            $executionResult->extensions['warnings'] = array_map([GraphQLError::class, 'formatError'], $exceptions['extensions']['warnings']);
         }
     }
 

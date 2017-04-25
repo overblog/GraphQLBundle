@@ -11,6 +11,8 @@
 
 namespace Overblog\GraphQLBundle\Tests;
 
+use Symfony\Component\DependencyInjection\Container;
+
 /**
  * Class DIContainerMockTrait.
  *
@@ -20,7 +22,7 @@ trait DIContainerMockTrait
 {
     private function getDIContainerMock(array $services = [], array $parameters = [])
     {
-        $container = $this->getMockBuilder('Symfony\\Component\\DependencyInjection\\Container')
+        $container = $this->getMockBuilder(Container::class)
             ->setMethods(['get', 'getParameter', 'has'])
             ->getMock();
 
