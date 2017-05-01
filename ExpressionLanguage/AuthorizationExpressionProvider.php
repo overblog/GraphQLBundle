@@ -11,6 +11,14 @@
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
 class AuthorizationExpressionProvider implements ExpressionFunctionProviderInterface
@@ -18,67 +26,14 @@ class AuthorizationExpressionProvider implements ExpressionFunctionProviderInter
     public function getFunctions()
     {
         return [
-            new ExpressionFunction(
-                'hasRole',
-                function ($role) {
-                    return sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s)', $role);
-                }
-            ),
-
-            new ExpressionFunction(
-                'hasAnyRole',
-                function ($roles) {
-                    $code = sprintf('array_reduce(%s, function ($isGranted, $role) use ($container) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles);
-
-                    return $code;
-                }
-            ),
-
-            new ExpressionFunction(
-                'isAnonymous',
-                function () {
-                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
-                }
-            ),
-
-            new ExpressionFunction(
-                'isRememberMe',
-                function () {
-                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
-                }
-            ),
-
-            new ExpressionFunction(
-                'isFullyAuthenticated',
-                function () {
-                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
-                }
-            ),
-
-            new ExpressionFunction(
-                'isAuthenticated',
-                function () {
-                    return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
-                }
-            ),
-
-            new ExpressionFunction(
-                'hasPermission',
-                function ($object, $permission) {
-                    $code = sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
-
-                    return $code;
-                }
-            ),
-
-            new ExpressionFunction(
-                'hasAnyPermission',
-                function ($object, $permissions) {
-                    $code = sprintf('array_reduce(%s, function ($isGranted, $permission) use ($container, $object) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, $object);
-
-                    return $code;
-                }
-            ),
+            new HasRole(),
+            new HasAnyRole(),
+            new IsAnonymous(),
+            new IsRememberMe(),
+            new IsFullyAuthenticated(),
+            new IsAuthenticated(),
+            new HasPermission(),
+            new HasAnyPermission(),
         ];
     }
 }
