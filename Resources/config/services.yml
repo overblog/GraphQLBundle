@@ -57,10 +57,6 @@ services:
         arguments:
             - "@overblog_graphql.promise_adapter"
 
-    overblog_graphql.cache_expression_language_parser.default:
-        class: Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache
-        public: false
-
     overblog_graphql.expression_language.default:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
         public: false

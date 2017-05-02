@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\HttpKernel\Kernel;
 
 class OverblogGraphQLExtension extends Extension implements PrependExtensionInterface
 {
@@ -32,6 +33,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
         $config = $this->treatConfigs($configs, $container);
 
+        $this->setExpressionLanguageDefaultParser($container);
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
         $this->setSchemaArguments($config, $container);
@@ -54,6 +56,17 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         /** @var OverblogGraphQLTypesExtension $typesExtension */
         $typesExtension = $container->getExtension($this->getAlias().'_types');
         $typesExtension->containerPrependExtensionConfig($config, $container);
+    }
+
+    private function setExpressionLanguageDefaultParser(ContainerBuilder $container)
+    {
+        $class = version_compare(Kernel::VERSION, '3.2.0', '>=') ?
+            'Symfony\\Component\\Cache\Adapter\\ArrayAdapter'
+            : 'Symfony\\Component\\ExpressionLanguage\\ParserCache\\ArrayParserCache'
+        ;
+        $definition = new Definition($class);
+        $definition->setPublic(false);
+        $container->setDefinition($this->getAlias().'.cache_expression_language_parser.default', $definition);
     }
 
     private function setShowDebug(array $config, ContainerBuilder $container)
