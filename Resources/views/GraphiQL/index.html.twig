@@ -3,72 +3,67 @@
 <head>
   {% block head %}
   {% block style %}
-  <style>
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
   <link href="https://unpkg.com/graphiql@{{ versions.graphiql }}/graphiql.css" rel="stylesheet">
   {% endblock style %}
-  <script src="https://unpkg.com/whatwg-fetch@{{ versions.fetch }}/fetch.js"></script>
-  <script src="https://unpkg.com/react@{{ versions.react }}/dist/react.min.js"></script>
-  <script src="https://unpkg.com/react-dom@{{ versions.react }}/dist/react-dom.min.js"></script>
-  <script src="https://unpkg.com/graphiql@{{ versions.graphiql }}/graphiql.min.js"></script>
-  <title>{% block title %}GraphiQL{% endblock title %}</title>
+    <script src="https://unpkg.com/whatwg-fetch@{{ versions.fetch }}/fetch.js"></script>
+    <script src="https://unpkg.com/react@{{ versions.react }}/dist/react.min.js"></script>
+    <script src="https://unpkg.com/react-dom@{{ versions.react }}/dist/react-dom.min.js"></script>
+    <script src="https://unpkg.com/graphiql@{{ versions.graphiql }}/graphiql.min.js"></script>
+    <title>{% block title %}GraphiQL{% endblock title %}</title>
   {% endblock head %}
 </head>
 <body>
-  {% block body %}
+{% block body %}
   {% block body_loading %}Loading...{% endblock body_loading %}
   {% block body_script %}
-  <script>
-    var endpoint = {{ endpoint | json_encode | raw }}
+    <script>
+      var endpoint = {{ endpoint | json_encode | raw }}
 
-    function graphQLFetcher(params) {
-      var headers
+        function graphQLFetcher(params) {
+          {% block fetcher_function_body %}
+          var headers
 
-      {% block graphql_fetcher_headers %}
-      headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      }
-      {% endblock graphql_fetcher_headers %}
-
-      return fetch(endpoint, {
-        method: "post",
-        headers: headers,
-        body: JSON.stringify(params),
-        credentials: 'include',
-      }).then((res) => {
-        {% if app.debug %} 
-          var xdebugToken = res.headers.get('X-Debug-Token')
-          if (typeof Sfjs !== "undefined" && xdebugToken) {
-            var toolbarElement = document.querySelector('.sf-toolbar')
-            var debugUrlPattern = "{{ url('_wdt', {'token': '__TOKEN__'}) }}"
-            Sfjs.load(toolbarElement.id, debugUrlPattern.replace('__TOKEN__', xdebugToken ))
+          {% block graphql_fetcher_headers %}
+          headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
           }
-        {% endif %}   
-        return res.text()
-      }).then((body) => {
-        try {
-          return JSON.parse(body)
-        } catch (err) {
-          return body
-        }
-      })
-    }
+          {% endblock graphql_fetcher_headers %}
 
-    ReactDOM.render(
-      React.createElement(GraphiQL, {
-        fetcher: graphQLFetcher
-      }),
-      document.body
-    )
-  </script>
+          return fetch(endpoint, {
+              method: "post",
+              headers: headers,
+              body: JSON.stringify(params),
+              credentials: 'include',
+            }).then((res) => {
+              {% block post_fetch %}{% endblock post_fetch %}
+              return res.text()
+            }).then((body) => {
+            try {
+              return JSON.parse(body)
+            } catch (err) {
+              return body
+            }
+          })
+          {% endblock fetcher_function_body %}
+        }
+
+      ReactDOM.render(
+        React.createElement(GraphiQL, {
+          fetcher: graphQLFetcher
+        }),
+        document.body
+      )
+    </script>
   {% endblock body_script %}
-  {% endblock body %}
+{% endblock body %}
 </body>
 </html>
