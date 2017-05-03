@@ -24,7 +24,7 @@ class MutationTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'mutation']);
+        static::bootKernel(['test_case' => 'mutation']);
     }
 
     public function testRequiresAnArgument()

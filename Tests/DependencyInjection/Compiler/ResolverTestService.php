@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace DependencyInjection\Compiler;
+namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;

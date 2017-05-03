@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class InputDefinition implements MappingInterface
+final class InputDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {

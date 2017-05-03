@@ -5,24 +5,24 @@ All definitions configs entries can use expression language but it must be expli
 
 **Functions description:**
 
-Expression | Description | Usage 
----------- | ----------- | -----
-object **service**(string $id) | Get a service from the container | @=service('my_service').customMethod()
-mixed **parameter**(string $name) | Get parameter from the container | @=parameter('kernel.debug')
-boolean **isTypeOf**(string $className) | Verified if `value` is instance of className | @=isTypeOf('AppBundle\\User\\User')
-mixed **resolver**(string $alias, array $args = []) | call the method on the tagged service "overblog_graphql.resolver" with args | @=resolver('blog_by_id', [value['blogID']])
-mixed **mutation**(string $alias, array $args = []) | call the method on the tagged service "overblog_graphql.mutation" with args | @=mutation('remove_post_from_community', [value])
-string **globalId**(string\|int id, string $typeName = null) | Relay node globalId | @=globalId(15, 'User')
-array **fromGlobalId**(string $globalId) | Relay node fromGlobalId | @=fromGlobalId('QmxvZzox')
-object **newObject**(string $className, array $args = []) | Instantiation $className object with $args | @=newObject('AppBundle\\User\\User', ['John', 15])
-boolean **hasRole**(string $role) | Checks whether the token has a certain role. | @=hasRole('ROLE_API')
-boolean **hasAnyRole**(string $role1, string $role2, ...string $roleN) | Checks whether the token has any of the given roles. | @=hasAnyRole('ROLE_API', 'ROLE_ADMIN')
-boolean **isAnonymous**() | Checks whether the token is anonymous. | @=isAnonymous()
-boolean **isRememberMe**() | Checks whether the token is remember me. | @=isRememberMe()
-boolean **isFullyAuthenticated**() | Checks whether the token is fully authenticated. | @=isFullyAuthenticated()
-boolean **isAuthenticated**() | Checks whether the token is not anonymous. | @=isAuthenticated()
-boolean **hasPermission**(mixed $var, string $permission) | Checks whether the token has the given permission for the given object (requires the ACL system). |@=hasPermission(object, 'OWNER')
-boolean **hasAnyPermission**(mixed $var, array $permissions) | Checks whether the token has any of the given permissions for the given object | @=hasAnyPermission(object, ['OWNER', 'ADMIN'])
+Expression | Description | Usage | Alias
+---------- | ----------- | ----- | -----
+object **service**(string $id) | Get a service from the container | @=service('my_service').customMethod() | serv
+mixed **parameter**(string $name) | Get parameter from the container | @=parameter('kernel.debug') | param
+boolean **isTypeOf**(string $className) | Verified if `value` is instance of className | @=isTypeOf('AppBundle\\User\\User') |
+mixed **resolver**(string $alias, array $args = []) | call the method on the tagged service "overblog_graphql.resolver" with args | @=resolver('blog_by_id', [value['blogID']] | res
+mixed **mutation**(string $alias, array $args = []) | call the method on the tagged service "overblog_graphql.mutation" with args | @=mutation('remove_post_from_community', [value]) | mut
+string **globalId**(string\|int id, string $typeName = null) | Relay node globalId | @=globalId(15, 'User') |
+array **fromGlobalId**(string $globalId) | Relay node fromGlobalId | @=fromGlobalId('QmxvZzox') |
+object **newObject**(string $className, array $args = []) | Instantiation $className object with $args | @=newObject('AppBundle\\User\\User', ['John', 15]) |
+boolean **hasRole**(string $role) | Checks whether the token has a certain role. | @=hasRole('ROLE_API') |
+boolean **hasAnyRole**(string $role1, string $role2, ...string $roleN) | Checks whether the token has any of the given roles. | @=hasAnyRole('ROLE_API', 'ROLE_ADMIN') |
+boolean **isAnonymous**() | Checks whether the token is anonymous. | @=isAnonymous() |
+boolean **isRememberMe**() | Checks whether the token is remember me. | @=isRememberMe() |
+boolean **isFullyAuthenticated**() | Checks whether the token is fully authenticated. | @=isFullyAuthenticated() |
+boolean **isAuthenticated**() | Checks whether the token is not anonymous. | @=isAuthenticated() |
+boolean **hasPermission**(mixed $var, string $permission) | Checks whether the token has the given permission for the given object (requires the ACL system). | @=hasPermission(object, 'OWNER') |
+boolean **hasAnyPermission**(mixed $var, array $permissions) | Checks whether the token has any of the given permissions for the given object | @=hasAnyPermission(object, ['OWNER', 'ADMIN']) |
 
 **Variables description:**
 

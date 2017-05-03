@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
+use Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
 
 class NodeFieldDefinitionTest extends \PHPUnit_Framework_TestCase
@@ -62,7 +63,7 @@ class NodeFieldDefinitionTest extends \PHPUnit_Framework_TestCase
             'description' => 'Fetches an object given its ID',
             'type' => $nodeInterfaceType,
             'args' => ['id' => ['type' => 'ID!', 'description' => 'The ID of an object']],
-            'resolve' => '@=resolver(\'relay_node_field\', [args, context, info, idFetcherCallback('.$idFetcherCallbackArg.')])',
+            'resolve' => '@=resolver(\''.addslashes(NodeFieldResolver::class).'\', [args, context, info, idFetcherCallback('.$idFetcherCallbackArg.')])',
         ];
 
         $this->assertEquals($expected, $this->definition->toMappingDefinition($config));

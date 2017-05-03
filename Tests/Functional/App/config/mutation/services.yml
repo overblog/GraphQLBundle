@@ -1,0 +1,12 @@
+services:
+    overblog_graphql.test.simple_mutation_with_thunk_fields:
+        class: Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation
+        tags:
+            - { name: "overblog_graphql.mutation", alias: "simple_mutation_with_thunk_fields", method: "mutate" }
+
+    overblog_graphql.test.simple_promise_mutation:
+        class: Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimplePromiseMutation
+        arguments:
+            - "@overblog_graphql.react.promise_adapter"
+        tags:
+            - { name: "overblog_graphql.mutation", alias: "simple_promise_mutation", method: "mutate" }

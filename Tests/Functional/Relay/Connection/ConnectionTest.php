@@ -24,7 +24,7 @@ class ConnectionTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'connection']);
+        static::bootKernel(['test_case' => 'connection']);
     }
 
     public function testIncludesConnectionAndEdgeFields()

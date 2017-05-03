@@ -12,33 +12,26 @@
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\Config\Util\XmlUtils;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser as YamlParser;
 
 class OverblogGraphQLTypesExtension extends Extension
 {
-    private $yamlParser;
+    private static $configTypes = ['yml', 'xml'];
 
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('overblog_graphql_types.config', $config);
+        $container->setParameter($this->getAlias().'.config', $config);
     }
 
     public function containerPrependExtensionConfig(array $config, ContainerBuilder $container)
     {
-        $typesMappings = array_merge(
-            $this->typesConfigsMappingFromConfig($config, $container),
-            $this->typesConfigsMappingFromBundles($container)
-        );
+        $typesMappings = $this->mappingConfig($config, $container);
 
         // treats mappings
         foreach ($typesMappings as $params) {
@@ -55,68 +48,39 @@ class OverblogGraphQLTypesExtension extends Extension
     {
         /** @var SplFileInfo $file */
         foreach ($files as $file) {
-            $typeConfig = 'yml' === $type ? $this->typesConfigFromYml($file, $container) : $this->typesConfigFromXml($file, $container);
+            $parserClass = sprintf('Overblog\\GraphQLBundle\\Config\\Parser\\%sParser', ucfirst($type));
+
+            $typeConfig = call_user_func($parserClass.'::parse', $file, $container);
             $container->prependExtensionConfig($this->getAlias(), $typeConfig);
         }
     }
 
-    private function typesConfigFromXml(SplFileInfo $file, ContainerBuilder $container)
+    private function mappingConfig(array $config, ContainerBuilder $container)
     {
-        $typesConfig = [];
+        $typesMappings = empty($config['definitions']['mappings']['types']) ? [] : $config['definitions']['mappings']['types'];
 
-        try {
-            //@todo fix xml validateSchema
-            $xml = XmlUtils::loadFile($file->getRealPath());
-            foreach ($xml->documentElement->childNodes as $node) {
-                if (!$node instanceof \DOMElement) {
-                    continue;
-                }
-                $values = XmlUtils::convertDomElementToArray($node);
-                $typesConfig = array_merge($typesConfig, $values);
-            }
-            $container->addResource(new FileResource($file->getRealPath()));
-        } catch (\InvalidArgumentException $e) {
-            throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
+        // app only config files (yml or xml)
+        if ($container->hasParameter('kernel.root_dir')) {
+            $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'type' => null];
         }
 
-        return $typesConfig;
-    }
+        $mappingFromBundles = $this->mappingFromBundles($container);
+        $typesMappings = array_merge($typesMappings, $mappingFromBundles);
 
-    private function typesConfigFromYml(SplFileInfo $file, ContainerBuilder $container)
-    {
-        if (null === $this->yamlParser) {
-            $this->yamlParser = new YamlParser();
-        }
-
-        try {
-            $typesConfig = $this->yamlParser->parse($file->getContents());
-            $container->addResource(new FileResource($file->getRealPath()));
-        } catch (ParseException $e) {
-            throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
-        }
-
-        return $typesConfig;
-    }
-
-    private function typesConfigsMappingFromConfig(array $config, ContainerBuilder $container)
-    {
-        $typesMappings = [];
         // from config
-        if (!empty($config['definitions']['mappings']['types'])) {
-            $typesMappings = array_filter(array_map(
-                function (array $typeMapping) use ($container) {
-                    $params = $this->detectConfigFiles($container, $typeMapping['dir'],  $typeMapping['type']);
+        $typesMappings = array_filter(array_map(
+            function (array $typeMapping) use ($container) {
+                $params = $this->detectFilesByType($container, $typeMapping['dir'],  $typeMapping['type']);
 
-                    return $params;
-                },
-                $config['definitions']['mappings']['types']
-            ));
-        }
+                return $params;
+            },
+            $typesMappings
+        ));
 
         return $typesMappings;
     }
 
-    private function typesConfigsMappingFromBundles(ContainerBuilder $container)
+    private function mappingFromBundles(ContainerBuilder $container)
     {
         $typesMappings = [];
         $bundles = $container->getParameter('kernel.bundles');
@@ -126,34 +90,29 @@ class OverblogGraphQLTypesExtension extends Extension
             $bundle = new \ReflectionClass($class);
             $bundleDir = dirname($bundle->getFileName());
 
-            $configPath = $bundleDir.'/'.$this->getMappingResourceConfigDirectory();
-            $params = $this->detectConfigFiles($container, $configPath);
-
-            if (null !== $params) {
-                $typesMappings[] = $params;
-            }
+            // only config files (yml or xml)
+            $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'type' => null];
         }
 
         return $typesMappings;
     }
 
-    private function detectConfigFiles(ContainerBuilder $container, $configPath, $type = null)
+    private function detectFilesByType(ContainerBuilder $container, $path, $type = null)
     {
         // add the closest existing directory as a resource
-        $resource = $configPath;
+        $resource = $path;
         while (!is_dir($resource)) {
             $resource = dirname($resource);
         }
         $container->addResource(new FileResource($resource));
 
-        $extension = $this->getMappingResourceExtension();
         $finder = new Finder();
 
-        $types = null === $type ? ['yml', 'xml'] : [$type];
+        $types = null === $type ? self::$configTypes : [$type];
 
         foreach ($types as $type) {
             try {
-                $finder->files()->in($configPath)->name('*.'.$extension.'.'.$type);
+                $finder->files()->in($path)->name('*.types.'.$type);
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
@@ -166,16 +125,6 @@ class OverblogGraphQLTypesExtension extends Extension
         }
 
         return;
-    }
-
-    private function getMappingResourceConfigDirectory()
-    {
-        return 'Resources/config/graphql';
-    }
-
-    private function getMappingResourceExtension()
-    {
-        return 'types';
     }
 
     public function getAliasPrefix()

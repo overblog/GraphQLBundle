@@ -14,7 +14,7 @@ namespace Overblog\GraphQLBundle\Relay\Connection;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class BackwardConnectionArgsDefinition implements MappingInterface
+final class BackwardConnectionArgsDefinition implements MappingInterface
 {
     /**
      * @param array $config

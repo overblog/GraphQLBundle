@@ -1,0 +1,13 @@
+imports:
+    - { resource: ../config.yml }
+parameters:
+    echo.prefix: "You said: "
+
+overblog_graphql:
+    definitions:
+        auto_mapping:
+            enabled: true
+            directories: ["%kernel.root_dir%/IsolatedResolver"]
+        schema:
+            query: "Overblog\\GraphQLBundle\\Tests\\Functional\\App\\GraphQL\\HelloWord\\Type\\QueryType"
+            mutation: "Overblog\\GraphQLBundle\\Tests\\Functional\\App\\GraphQL\\HelloWord\\Type\\MutationType"

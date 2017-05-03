@@ -24,7 +24,7 @@ class NodeTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'node']);
+        static::bootKernel(['test_case' => 'node']);
     }
 
     public function testNodeInterfaceAndFields()

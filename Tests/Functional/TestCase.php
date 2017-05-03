@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional;
 
-use Overblog\GraphQLBundle\Tests\Functional\app\AppKernel;
+use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,15 +27,16 @@ abstract class TestCase extends WebTestCase
     const DEFAULT_PASSWORD = '123';
 
     /**
-     * @var AppKernel[]
+     * @var TestKernel[]
      */
     private static $kernels = [];
 
+    /**
+     * {@inheritdoc}
+     */
     protected static function getKernelClass()
     {
-        require_once __DIR__.'/app/AppKernel.php';
-
-        return AppKernel::class;
+        return TestKernel::class;
     }
 
     /**
@@ -77,13 +78,6 @@ abstract class TestCase extends WebTestCase
     protected function tearDown()
     {
         static::$kernel = null;
-    }
-
-    protected static function createAndBootKernel(array $options = [])
-    {
-        static::bootKernel($options);
-
-        static::getContainer()->get('overblog_graphql.cache_compiler')->loadClasses();
     }
 
     protected static function executeGraphQLRequest($query, $rootValue = [], $throwException = false)

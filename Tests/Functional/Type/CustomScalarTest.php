@@ -19,7 +19,7 @@ class CustomScalarTest extends TestCase
     {
         parent::setUp();
 
-        static::createAndBootKernel(['test_case' => 'customScalar']);
+        static::bootKernel(['test_case' => 'customScalar']);
     }
 
     public function testDateTimeTypeSerialize()
