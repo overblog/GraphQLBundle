@@ -19,3 +19,21 @@ AnObject:
                 public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
 
 ```
+
+You can also use `config.fieldsDefaultPublic` to handle the setting globally on an object :
+
+```yaml
+AnObject:
+    type: object
+    fieldsDefaultPublic: "@=service('my_service').isGranted(typeName, fieldName)"
+    config:
+        fields:
+            id:
+                type: "String!"
+            privateData:
+                type: "String"
+```
+
+Have you noticed `typeName` and `fieldName` here ? This variables are always set to the current
+type name and current field name, meaning you can apply a per field `public` setting on all the
+fields with one line of yaml.

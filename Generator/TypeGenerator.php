@@ -91,16 +91,16 @@ EOF;
             return 'null';
         }
 
-        $publicCallback = $this->callableCallbackFromArrayValue($value, 'public');
+        $publicCallback = $this->callableCallbackFromArrayValue($value, 'public', '$typeName, $fieldName');
 
         if ('null' === $publicCallback) {
             return $publicCallback;
         }
 
         $code = <<<'CODE'
-function () <closureUseStatements> {
+function ($fieldName) <closureUseStatements> {
 <spaces><spaces>$publicCallback = %s;
-<spaces><spaces>return call_user_func($publicCallback);
+<spaces><spaces>return call_user_func($publicCallback, $this->name, $fieldName);
 <spaces>}
 CODE;
 

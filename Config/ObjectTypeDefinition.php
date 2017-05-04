@@ -32,11 +32,15 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->variableNode('isTypeOf')->end()
                 ->variableNode('resolveField')->end()
                 ->variableNode('fieldsDefaultAccess')
-                ->info('Default access control to fields (expression language can be use here)')
+                    ->info('Default access control to fields (expression language can be use here)')
+                ->end()
+                ->variableNode('fieldsDefaultPublic')
+                    ->info('Default public control to fields (expression language can be use here)')
                 ->end()
             ->end();
 
         $this->treatFieldsDefaultAccess($node);
+        $this->treatFieldsDefaultPublic($node);
         $this->treatResolveField($node);
 
         return $node;
@@ -60,6 +64,31 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                     }
 
                     $field['access'] = $v['fieldsDefaultAccess'];
+                }
+
+                return $v;
+            })
+        ->end();
+    }
+
+    /**
+     * set empty fields.public with fieldsDefaultPublic values if is set?
+     *
+     * @param ArrayNodeDefinition $node
+     */
+    private function treatFieldsDefaultPublic(ArrayNodeDefinition $node)
+    {
+        $node->validate()
+            ->ifTrue(function ($v) {
+                return array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
+            })
+            ->then(function ($v) {
+                foreach ($v['fields'] as &$field) {
+                    if (array_key_exists('public', $field) && null !== $field['public']) {
+                        continue;
+                    }
+
+                    $field['public'] = $v['fieldsDefaultPublic'];
                 }
 
                 return $v;
