@@ -13,5 +13,6 @@ Go further
 * [Builders](builders/index.md)
 * [Expression language](expression-language.md)
 * [Debug](debug/index.md)
+* [GraphiQL](graphiql/index.md)
 
 Next step [Data fetching](../data-fetching/index.md).
