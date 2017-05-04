@@ -25,7 +25,7 @@ overblog_graphql:
 2. Create a new template:  
 
 ```twig
-{# AppBundle/Resources/views/GraphiQL/index.html.twig #}
+{# src/AppBundle/Resources/views/GraphiQL/index.html.twig #}
 {% extends 'OverblogGraphQLBundle:GraphiQL:index.html.twig' %}
 
 {% block graphql_fetcher_headers %}
@@ -40,7 +40,7 @@ headers = {
 Or append headers instead of replacing the default one:
 
 ```twig
-{# app/Resources/views/graphiql.html.twig #}
+{# src/AppBundle/Resources/views/GraphiQL/index.html.twig #}
 {% extends 'OverblogGraphQLBundle:GraphiQL:index.html.twig' %}
 
 {% block graphql_fetcher_headers %}
