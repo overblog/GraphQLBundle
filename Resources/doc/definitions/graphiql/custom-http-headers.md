@@ -14,17 +14,18 @@ Headers sent by GraphiQL can be modified.
 For example, let's assume an `access-token` header is required in development.
 The header can be added the following way:
 
-1. Override the default GraphiQL template using parameter:
+1. Override the default GraphiQL template:
 
 ```yml
 # app/config/config_dev.yml
-parameters:
-  overblog_graphql.graphiql_template: 'graphiql.html.twig'
+overblog_graphql:
+  templates:
+    graphiql: AppBundle:GraphiQL:index.html.twig
 ```
 2. Create a new template:  
 
 ```twig
-{# app/Resources/views/graphiql.html.twig #}
+{# AppBundle/Resources/views/GraphiQL/index.html.twig #}
 {% extends 'OverblogGraphQLBundle:GraphiQL:index.html.twig' %}
 
 {% block graphql_fetcher_headers %}
