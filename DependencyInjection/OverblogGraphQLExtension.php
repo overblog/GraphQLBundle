@@ -170,9 +170,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             foreach ($config['services'] as $name => $id) {
                 $alias = sprintf('%s.%s', $this->getAlias(), $name);
                 $container->setAlias($alias, $id);
-                // set autowiring types for promise adapter service
-                if ($this->getAlias().'.promise_adapter' === $alias) {
-                }
             }
         }
     }
