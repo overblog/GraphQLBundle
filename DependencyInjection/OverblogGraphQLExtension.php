@@ -39,7 +39,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setErrorHandlerArguments($config, $container);
         $this->setGraphiQLTemplate($config, $container);
         $this->setSecurity($config, $container);
-        $this->setConfigBuilders($config);
+        $this->setConfigBuilders($config, $container);
         $this->setVersions($config, $container);
         $this->setShowDebug($config, $container);
 
@@ -80,13 +80,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setParameter($this->getAlias().'.versions.fetch', $config['versions']['fetch']);
     }
 
-    private function setConfigBuilders(array $config)
+    private function setConfigBuilders(array $config, ContainerBuilder $container)
     {
         foreach (['args', 'field'] as $category) {
             if (!empty($config['definitions']['builders'][$category])) {
                 $method = 'add'.ucfirst($category).'BuilderClass';
 
                 foreach ($config['definitions']['builders'][$category] as $params) {
+                    $container->addClassResource(new \ReflectionClass($params['class']));
                     TypeWithOutputFieldsDefinition::$method($params['alias'], $params['class']);
                 }
             }
