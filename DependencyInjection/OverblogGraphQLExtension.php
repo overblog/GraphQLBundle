@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
-use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Config\FileLocator;
@@ -173,7 +172,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $container->setAlias($alias, $id);
                 // set autowiring types for promise adapter service
                 if ($this->getAlias().'.promise_adapter' === $alias) {
-                    $container->findDefinition($id)->setAutowiringTypes([PromiseAdapter::class]);
                 }
             }
         }
