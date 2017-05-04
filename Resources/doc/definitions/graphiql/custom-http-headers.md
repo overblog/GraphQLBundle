@@ -44,6 +44,7 @@ Or append headers instead of replacing the default one:
 {% extends 'OverblogGraphQLBundle:GraphiQL:index.html.twig' %}
 
 {% block graphql_fetcher_headers %}
+{{ parent() }}
 headers["access-token"] = "sometoken";
 {% endblock graphql_fetcher_headers %}
 ```
