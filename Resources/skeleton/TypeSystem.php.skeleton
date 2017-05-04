@@ -28,7 +28,7 @@
 <spaces><spaces>foreach ($fields as $fieldName => $field) {
 <spaces><spaces><spaces>$isPublic = isset($field['public']) ? $field['public'] : true;
 <spaces><spaces><spaces>if (is_callable($isPublic)) {
-<spaces><spaces><spaces><spaces>$isPublic = call_user_func($isPublic);
+<spaces><spaces><spaces><spaces>$isPublic = call_user_func($isPublic, $fieldName);
 <spaces><spaces><spaces>}
 <spaces><spaces><spaces>if ($isPublic) {
 <spaces><spaces><spaces><spaces>$filtered[$fieldName] = $field;
