@@ -24,7 +24,7 @@ class TypeResolver extends AbstractResolver
 
     public function __construct(CacheItemPoolInterface $cacheAdapter = null)
     {
-        $this->cacheAdapter = null !== $cacheAdapter ? $cacheAdapter : new ArrayAdapter();
+        $this->cacheAdapter = null !== $cacheAdapter ? $cacheAdapter : new ArrayAdapter(0, false);
     }
 
     /**
