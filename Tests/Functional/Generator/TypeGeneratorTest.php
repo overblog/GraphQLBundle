@@ -45,4 +45,19 @@ class TypeGeneratorTest extends TestCase
 
         $this->assertResponse('query { object { name } }', $expectedWithoutPrivateData, self::USER_RYAN, 'public');
     }
+
+    public function testFieldDefaultPublic()
+    {
+        $this->assertEquals(
+            'Cannot query field "other" on type "ObjectWithPrivateField".',
+            json_decode(
+                static::query(
+                    'query { object { name other } }',
+                    self::USER_RYAN,
+                    'public'
+                )->getResponse()->getContent(),
+                true
+            )['errors'][0]['message']
+        );
+    }
 }
