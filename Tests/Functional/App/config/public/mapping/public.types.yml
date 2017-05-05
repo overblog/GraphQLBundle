@@ -9,8 +9,11 @@ RootQuery:
 ObjectWithPrivateField:
     type: object
     config:
+        fieldsDefaultPublic: "@=(fieldName == 'name')"
         fields:
             name:
+                type: String
+            other:
                 type: String
             privateData:
                 type: String
