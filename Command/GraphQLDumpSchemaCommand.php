@@ -13,7 +13,6 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
-use Overblog\GraphQLBundle\Request\Executor;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,29 +43,39 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                 'format',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'The schema name to generate ("graphqls" or "json"). ',
+                'The schema name to generate ("graphqls" or "json").',
                 'json'
-            );
+            )
+            ->addOption(
+                'modern',
+                null,
+                InputOption::VALUE_NONE,
+                'Enabled modern json format: { "data": { "__schema": {...} } }.'
+            )
+            ->addOption(
+                'classic',
+                null,
+                InputOption::VALUE_NONE,
+                'Enabled classic json format: { "__schema": {...} }.'
+            )
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-
-        $format = strtolower($input->getOption('format'));
-        $schemaName = $input->getOption('schema');
-        $container = $this->getContainer();
-        $requestExecutor = $container->get('overblog_graphql.request_executor');
-        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
-
-        $content = $this->createFileContent($requestExecutor, $format, $schemaName);
-        file_put_contents($file, $content);
-
+        $file = $this->createFile($input);
         $io->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
     }
 
-    private function createFileContent(Executor $requestExecutor, $format, $schemaName)
+    private function createFile(InputInterface $input)
     {
+        $container = $this->getContainer();
+        $format = strtolower($input->getOption('format'));
+        $schemaName = $input->getOption('schema');
+        $requestExecutor = $container->get('overblog_graphql.request_executor');
+        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+
         switch ($format) {
             case 'json':
                 $request = [
@@ -75,11 +84,13 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                     'operationName' => null,
                 ];
 
+                $modern = $this->useModernJsonFormat($input);
+
                 $result = $requestExecutor
                     ->execute($request, [], $schemaName)
                     ->toArray();
 
-                $content = json_encode($result['data'], \JSON_PRETTY_PRINT);
+                $content = json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);
                 break;
 
             case 'graphqls':
@@ -90,6 +101,24 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                 throw new \InvalidArgumentException(sprintf('Unknown format %s.', json_encode($format)));
         }
 
-        return $content;
+        file_put_contents($file, $content);
+
+        return $file;
+    }
+
+    private function useModernJsonFormat(InputInterface $input)
+    {
+        $modern = $input->getOption('modern');
+        $classic = $input->getOption('classic');
+        if ($modern && $classic) {
+            throw new \InvalidArgumentException('"modern" and "classic" options should not be used together.');
+        }
+
+        // none chosen so fallback on default behavior
+        if (!$modern && !$classic) {
+            return 'modern' === $this->getContainer()->getParameter('overblog_graphql.versions.relay');
+        }
+
+        return $modern;
     }
 }

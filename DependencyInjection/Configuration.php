@@ -169,6 +169,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('graphiql')->defaultValue('0.9')->end()
                         ->scalarNode('react')->defaultValue('15.4')->end()
                         ->scalarNode('fetch')->defaultValue('2.0')->end()
+                        ->enumNode('relay')->values(['modern', 'classic'])->defaultValue('classic')->end()
                     ->end()
                 ->end()
             ->end();
