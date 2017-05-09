@@ -1,0 +1,9 @@
+imports:
+    - { resource: ../connection/config.yml }
+
+parameters:
+    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\ConnectionWithCORSPreflightOptions\\__DEFINITIONS__"
+
+overblog_graphql:
+    security:
+        handle_cors_preflight_options: true

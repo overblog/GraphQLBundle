@@ -14,21 +14,48 @@ namespace Overblog\GraphQLBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GraphController extends Controller
 {
     public function endpointAction(Request $request, $schemaName = null)
     {
-        $payload = $this->processNormalQuery($request, $schemaName);
-
-        return new JsonResponse($payload, 200);
+        return $this->createResponse($request, $schemaName, false);
     }
 
     public function batchEndpointAction(Request $request, $schemaName = null)
     {
-        $payloads = $this->processBatchQuery($request, $schemaName);
+        return $this->createResponse($request, $schemaName, true);
+    }
 
-        return new JsonResponse($payloads, 200);
+    private function createResponse(Request $request, $schemaName, $batched)
+    {
+        if (
+            $this->container->getParameter('overblog_graphql.handle_cors_preflight_options')
+            && $request->headers->has('Origin')
+            && 'OPTIONS' === $request->getMethod()
+        ) {
+            $response = new Response('', 200);
+            $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            $response->headers->set('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
+            $response->headers->set('Access-Control-Max-Age', 3600);
+
+            return $response;
+        }
+
+        if (!in_array($request->getMethod(), ['POST', 'GET'])) {
+            return new Response('', 405);
+        }
+
+        if ($batched) {
+            $payload = $this->processBatchQuery($request, $schemaName);
+        } else {
+            $payload = $this->processNormalQuery($request, $schemaName);
+        }
+
+        return new JsonResponse($payload, 200);
     }
 
     private function processBatchQuery(Request $request, $schemaName = null)
