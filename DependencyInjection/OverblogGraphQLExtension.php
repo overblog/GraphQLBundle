@@ -115,8 +115,9 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setSecurity(array $config, ContainerBuilder $container)
     {
-        $container->setParameter($this->getAlias().'.query_max_depth', $config['security']['query_max_depth']);
-        $container->setParameter($this->getAlias().'.query_max_complexity', $config['security']['query_max_complexity']);
+        foreach ($config['security'] as $key => $value) {
+            $container->setParameter($this->getAlias().'.'.$key, $value);
+        }
     }
 
     private function setGraphiQLTemplate(array $config, ContainerBuilder $container)

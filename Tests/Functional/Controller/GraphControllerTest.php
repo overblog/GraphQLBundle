@@ -69,7 +69,7 @@ EOF;
      */
     public function testEndpointAction($uri)
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = static::createClient(['test_case' => 'connectionWithCORSPreflightOptions']);
 
         $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
         $result = $client->getResponse()->getContent();
@@ -264,5 +264,25 @@ EOF;
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();
+    }
+
+    public function testPreflightedRequestWhenDisabled()
+    {
+        $client = static::createClient(['test_case' => 'connection']);
+        $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
+        $this->assertEquals(405, $client->getResponse()->getStatusCode());
+    }
+
+    public function testPreflightedRequestWhenEnabled()
+    {
+        $client = static::createClient(['test_case' => 'connectionWithCORSPreflightOptions']);
+        $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('http://example.com', $response->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('OPTIONS, GET, POST', $response->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals('true', $response->headers->get('Access-Control-Allow-Credentials'));
+        $this->assertEquals('Content-Type, Authorization', $response->headers->get('Access-Control-Allow-Headers'));
+        $this->assertEquals(3600, $response->headers->get('Access-Control-Max-Age'));
     }
 }
