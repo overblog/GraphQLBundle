@@ -30,32 +30,31 @@ class GraphController extends Controller
 
     private function createResponse(Request $request, $schemaName, $batched)
     {
-        if (
-            $this->container->getParameter('overblog_graphql.handle_cors_preflight_options')
-            && $request->headers->has('Origin')
-            && 'OPTIONS' === $request->getMethod()
-        ) {
+        if ('OPTIONS' === $request->getMethod()) {
             $response = new Response('', 200);
-            $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
-            $response->headers->set('Access-Control-Allow-Credentials', 'true');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-            $response->headers->set('Access-Control-Allow-Methods', 'OPTIONS, GET, POST');
-            $response->headers->set('Access-Control-Max-Age', 3600);
-
-            return $response;
-        }
-
-        if (!in_array($request->getMethod(), ['POST', 'GET'])) {
-            return new Response('', 405);
-        }
-
-        if ($batched) {
-            $payload = $this->processBatchQuery($request, $schemaName);
         } else {
-            $payload = $this->processNormalQuery($request, $schemaName);
+            if (!in_array($request->getMethod(), ['POST', 'GET'])) {
+                return new Response('', 405);
+            }
+
+            if ($batched) {
+                $payload = $this->processBatchQuery($request, $schemaName);
+            } else {
+                $payload = $this->processNormalQuery($request, $schemaName);
+            }
+
+            $response = new JsonResponse($payload, 200);
         }
 
-        return new JsonResponse($payload, 200);
+        if ($this->container->getParameter('overblog_graphql.handle_cors') && $request->headers->has('Origin')) {
+            $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'), true);
+            $response->headers->set('Access-Control-Allow-Credentials', 'true', true);
+            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization', true);
+            $response->headers->set('Access-Control-Allow-Methods', 'OPTIONS, GET, POST', true);
+            $response->headers->set('Access-Control-Max-Age', 3600, true);
+        }
+
+        return $response;
     }
 
     private function processBatchQuery(Request $request, $schemaName = null)

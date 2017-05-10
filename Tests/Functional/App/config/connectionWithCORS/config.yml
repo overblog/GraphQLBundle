@@ -6,4 +6,4 @@ parameters:
 
 overblog_graphql:
     security:
-        handle_cors_preflight_options: true
+        handle_cors: true

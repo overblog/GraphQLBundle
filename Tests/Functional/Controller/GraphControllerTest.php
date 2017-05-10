@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Component\HttpKernel\Client;
 
 class GraphControllerTest extends TestCase
 {
@@ -69,11 +70,12 @@ EOF;
      */
     public function testEndpointAction($uri)
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORSPreflightOptions']);
+        $client = static::createClient(['test_case' => 'connectionWithCORS']);
 
-        $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
+        $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql', 'HTTP_Origin' => 'http://example.com']);
         $result = $client->getResponse()->getContent();
         $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+        $this->assertCORSHeadersExists($client);
     }
 
     public function graphQLEndpointUriProvider()
@@ -270,13 +272,47 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
         $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
+        $response = $client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertCORSHeadersNotExists($client);
+    }
+
+    public function testUnAuthorizedMethod()
+    {
+        $client = static::createClient(['test_case' => 'connection']);
+        $client->request('PUT', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
         $this->assertEquals(405, $client->getResponse()->getStatusCode());
     }
 
     public function testPreflightedRequestWhenEnabled()
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORSPreflightOptions']);
-        $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
+        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+        $client->request('OPTIONS', '/batch', [], [], ['HTTP_Origin' => 'http://example.com']);
+        $this->assertCORSHeadersExists($client);
+    }
+
+    public function testNoCORSHeadersIfOriginHeaderNotExists()
+    {
+        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+
+        $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
+        $result = $client->getResponse()->getContent();
+        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+        $this->assertCORSHeadersNotExists($client);
+    }
+
+    private function assertCORSHeadersNotExists(Client $client)
+    {
+        $headers = $client->getResponse()->headers->all();
+        $this->assertArrayNotHasKey('access-control-allow-origin', $headers);
+        $this->assertArrayNotHasKey('access-control-allow-methods', $headers);
+        $this->assertArrayNotHasKey('access-control-allow-credentials', $headers);
+        $this->assertArrayNotHasKey('access-control-allow-headers', $headers);
+        $this->assertArrayNotHasKey('access-control-max-age', $headers);
+    }
+
+    private function assertCORSHeadersExists(Client $client)
+    {
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('http://example.com', $response->headers->get('Access-Control-Allow-Origin'));

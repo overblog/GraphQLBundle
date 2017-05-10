@@ -1,7 +1,7 @@
-Handle CORS preflight options
-=============================
+Handle CORS
+===========
 
-The bundle comes out of the box with a generic and simple CORS (Cross-Origin Resource Sharing) preflight options handler 
+The bundle comes out of the box with a generic and simple CORS (Cross-Origin Resource Sharing) handler 
 but we recommends using [NelmioCorsBundle](https://github.com/nelmio/NelmioCorsBundle) for more flexibility... 
 
 The handler is disabled by default. To enabled it:
@@ -10,7 +10,7 @@ The handler is disabled by default. To enabled it:
 overblog_graphql:
     # ...
     security:
-        handle_cors_preflight_options: true
+        handle_cors: true
 ```
 
 Here the values of the headers that will be returns on preflight request:

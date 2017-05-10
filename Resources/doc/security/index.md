@@ -1,7 +1,7 @@
 Security
 ========
 
-* [Handle CORS preflight options](handle-cors-preflight-option.md)
+* [Handle CORS](handle-cors.md)
 * [Fields access control](fields-access-control.md)
 * [Fields public control](fields-public-control.md)
 * [Limiting query depth](limiting-query-depth.md)
