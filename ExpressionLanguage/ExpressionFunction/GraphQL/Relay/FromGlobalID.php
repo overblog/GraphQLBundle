@@ -21,7 +21,7 @@ final class FromGlobalID extends ExpressionFunction
             $name,
             function ($globalId) {
                 return sprintf(
-                    '%s::fromGlobalId(%s)',
+                    '\%s::fromGlobalId(%s)',
                     \Overblog\GraphQLBundle\Relay\Node\GlobalId::class,
                     $globalId
                 );
