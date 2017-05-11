@@ -30,7 +30,6 @@ class XmlParser implements ParserInterface
         $typesConfig = [];
 
         try {
-            //@todo fix xml validateSchema
             $xml = XmlUtils::loadFile($file->getRealPath());
             foreach ($xml->documentElement->childNodes as $node) {
                 if (!$node instanceof \DOMElement) {

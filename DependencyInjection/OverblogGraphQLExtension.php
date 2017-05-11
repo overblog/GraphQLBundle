@@ -13,12 +13,14 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -58,6 +60,16 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $typesExtension->containerPrependExtensionConfig($config, $container);
     }
 
+    public function getAlias()
+    {
+        return 'overblog_graphql';
+    }
+
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration($container->getParameter('kernel.debug'));
+    }
+
     private function setAutoMappingParameters(array $config, ContainerBuilder $container)
     {
         $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
@@ -66,10 +78,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setExpressionLanguageDefaultParser(ContainerBuilder $container)
     {
-        $class = version_compare(Kernel::VERSION, '3.2.0', '>=') ?
-            'Symfony\\Component\\Cache\Adapter\\ArrayAdapter'
-            : 'Symfony\\Component\\ExpressionLanguage\\ParserCache\\ArrayParserCache'
-        ;
+        $class = version_compare(Kernel::VERSION, '3.2.0', '>=') ? ArrayAdapter::class : ArrayParserCache::class;
         $definition = new Definition($class);
         $definition->setPublic(false);
         $container->setDefinition($this->getAlias().'.cache_expression_language_parser.default', $definition);
@@ -83,7 +92,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setVersions(array $config, ContainerBuilder $container)
     {
         foreach ($config['versions'] as $key => $version) {
-            $container->setParameter($this->getAlias().'.versions.'.$key, $version);
+            $container->setParameter(sprintf('%s.versions.%s', $this->getAlias(), $key), $version);
         }
     }
 
@@ -116,7 +125,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setSecurity(array $config, ContainerBuilder $container)
     {
         foreach ($config['security'] as $key => $value) {
-            $container->setParameter($this->getAlias().'.'.$key, $value);
+            $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
         }
     }
 
@@ -174,16 +183,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $container->setAlias($alias, $id);
             }
         }
-    }
-
-    public function getAlias()
-    {
-        return 'overblog_graphql';
-    }
-
-    public function getConfiguration(array $config, ContainerBuilder $container)
-    {
-        return new Configuration($container->getParameter('kernel.debug'));
     }
 
     /**

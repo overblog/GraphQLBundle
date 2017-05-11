@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class ForwardConnectionArgsDefinition implements MappingInterface

@@ -17,9 +17,6 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * @todo fix xml
- */
 class Configuration implements ConfigurationInterface
 {
     private $debug;

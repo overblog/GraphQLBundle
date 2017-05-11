@@ -15,6 +15,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -41,8 +42,7 @@ class AutoMappingPass implements CompilerPassInterface
             $directories = array_merge(
                 array_map(
                     function ($class) {
-                        $bundle = new \ReflectionClass($class);
-                        $bundleDir = dirname($bundle->getFileName());
+                        $bundleDir = $this->bundleDir($class);
 
                         return $bundleDir.'/GraphQL';
                     },
@@ -56,7 +56,7 @@ class AutoMappingPass implements CompilerPassInterface
             }
         } else {
             // enabled auto mapping only for this bundle
-            $directories = [__DIR__.'/../../GraphQL'];
+            $directories = [$this->bundleDir(OverblogGraphQLBundle::class).'/GraphQL'];
         }
         $directoryList = [];
 
@@ -201,5 +201,13 @@ class AutoMappingPass implements CompilerPassInterface
         }
 
         return [array_intersect_key($reflectionClasses, $classes), $directoryList];
+    }
+
+    private function bundleDir($bundleClass)
+    {
+        $bundle = new \ReflectionClass($bundleClass);
+        $bundleDir = dirname($bundle->getFileName());
+
+        return $bundleDir;
     }
 }
