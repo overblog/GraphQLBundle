@@ -82,9 +82,9 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setVersions(array $config, ContainerBuilder $container)
     {
-        $container->setParameter($this->getAlias().'.versions.graphiql', $config['versions']['graphiql']);
-        $container->setParameter($this->getAlias().'.versions.react', $config['versions']['react']);
-        $container->setParameter($this->getAlias().'.versions.fetch', $config['versions']['fetch']);
+        foreach ($config['versions'] as $key => $version) {
+            $container->setParameter($this->getAlias().'.versions.'.$key, $version);
+        }
     }
 
     private function setConfigBuilders(array $config, ContainerBuilder $container)

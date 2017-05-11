@@ -64,10 +64,41 @@ class GraphDumpSchemaCommandTest extends TestCase
         if ($withFormatOption) {
             $input['--format'] = $format;
         }
-        $this->commandTester->execute($input);
+        $this->assertCommandExecution(
+            $input,
+            __DIR__.'/fixtures/schema.'.$format,
+            $file
+        );
+    }
 
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
-        $this->assertEquals(trim(file_get_contents(__DIR__.'/fixtures/schema.'.$format)), trim(file_get_contents($file)));
+    public function testClassicJsonFormat()
+    {
+        $file = $this->cacheDir.'/schema.json';
+        $this->assertCommandExecution(
+            [
+                'command' => $this->command->getName(),
+                '--file' => $file,
+                '--classic' => true,
+                '--format' => 'json',
+            ],
+            __DIR__.'/fixtures/schema.json',
+            $file
+        );
+    }
+
+    public function testModernJsonFormat()
+    {
+        $file = $this->cacheDir.'/schema.json';
+        $this->assertCommandExecution(
+            [
+                'command' => $this->command->getName(),
+                '--file' => $file,
+                '--modern' => true,
+                '--format' => 'json',
+            ],
+            __DIR__.'/fixtures/schema.modern.json',
+            $file
+        );
     }
 
     /**
@@ -82,6 +113,20 @@ class GraphDumpSchemaCommandTest extends TestCase
         ]);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage "modern" and "classic" options should not be used together.
+     */
+    public function testInvalidModernAndClassicUsedTogether()
+    {
+        $this->commandTester->execute([
+            'command' => $this->command->getName(),
+            '--format' => 'json',
+            '--classic' => true,
+            '--modern' => true,
+        ]);
+    }
+
     public function formatDataProvider()
     {
         return [
@@ -89,5 +134,13 @@ class GraphDumpSchemaCommandTest extends TestCase
             ['json', true],
             ['graphqls'],
         ];
+    }
+
+    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $expectedStatusCode = 0)
+    {
+        $this->commandTester->execute($input);
+
+        $this->assertEquals($expectedStatusCode, $this->commandTester->getStatusCode());
+        $this->assertEquals(trim(file_get_contents($expectedFile)), trim(file_get_contents($actualFile)));
     }
 }
