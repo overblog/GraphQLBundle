@@ -1,0 +1,19 @@
+
+GraphQL Resolvers Services
+==========================
+
+ ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
+  id                                                                             aliases                                                                                          
+ ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
+  Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldResolver            Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldResolver (method: __invoke)           
+                                                                                 relay_mutation_field (method: __invoke)                                                          
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\GlobalIdFieldResolver                Overblog\GraphQLBundle\GraphQL\Relay\Node\GlobalIdFieldResolver (method: __invoke)               
+                                                                                 relay_globalid_field (method: __invoke)                                                          
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver                    Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver (method: __invoke)                   
+                                                                                 relay_node_field (method: __invoke)                                                              
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver   Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver (method: __invoke)  
+                                                                                 relay_plural_identifying_field (method: __invoke)                                                
+ ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
+
+
+

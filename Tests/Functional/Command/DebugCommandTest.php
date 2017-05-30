@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\HttpKernel\Kernel;
 
 class DebugCommandTest extends TestCase
 {
@@ -42,7 +43,15 @@ class DebugCommandTest extends TestCase
         $this->command = $application->find('graphql:debug');
         $this->commandTester = new CommandTester($this->command);
         foreach (DebugCommand::getCategories() as $category) {
-            $this->logs[$category] = trim(str_replace('ø', '', file_get_contents(__DIR__.'/fixtures/debug-'.$category.'.txt')));
+            $this->logs[$category] = trim(
+                file_get_contents(
+                    sprintf(
+                        __DIR__.'/fixtures/%sdebug-%s.txt',
+                        version_compare(Kernel::VERSION, '3.3.0') >= 0 ? 'case-sensitive/' : '',
+                        $category
+                    )
+                )
+            );
         }
     }
 
