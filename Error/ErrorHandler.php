@@ -12,7 +12,7 @@
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\Error as GraphQLError;
-use GraphQL\Error\InvariantViolation;
+use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -85,7 +85,7 @@ class ErrorHandler
             $rawException = $this->convertException($error->getPrevious());
 
             // raw GraphQL Error or InvariantViolation exception
-            if (null === $rawException || $rawException instanceof InvariantViolation) {
+            if (null === $rawException || $rawException instanceof GraphQLUserError) {
                 $treatedExceptions['errors'][] = $error;
                 continue;
             }

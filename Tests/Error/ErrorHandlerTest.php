@@ -12,7 +12,7 @@
 namespace Overblog\GraphQLBundle\Tests\Error;
 
 use GraphQL\Error\Error as GraphQLError;
-use GraphQL\Error\InvariantViolation;
+use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
@@ -39,7 +39,7 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
                 new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
                 new GraphQLError('', null, null, null, null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
                 new GraphQLError('Error with wrapped user warning', null, null, null, null, new UserWarning('My User Warning')),
-                new GraphQLError('Invalid value!', null, null, null, null, new InvariantViolation('Invalid value!')),
+                new GraphQLError('Invalid value!', null, null, null, null, new GraphQLUserError('Invalid value!')),
             ]
         );
 
