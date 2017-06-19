@@ -54,20 +54,25 @@ namespace MyBundle\GraphQL\Resolver;
 
 require_once __DIR__ . '/../../../../vendor/webonyx/graphql-php/tests/StarWarsData.php';
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use GraphQL\Tests\StarWarsData;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
-class CharacterResolver implements ContainerAwareInterface
+class CharacterResolver
 {
-    use ContainerAwareTrait;
+    /**
+     * @var TypeResolver
+     */
+    private $typeResolver;
+    
+    public function __construct(TypeResolver $typeResolver)
+    {
+        $this->typeResolver = $typeResolver;
+    }
     
     public function resolveType($data)
     {
-        $typeResolver = $this->container->get('overblog_graphql.type_resolver');
-    
-        $humanType = $typeResolver->resolve('Human');
-        $droidType = $typeResolver->resolve('Droid');
+        $humanType = $this->typeResolver->resolve('Human');
+        $droidType = $this->typeResolver->resolve('Droid');
         
         $humans = StarWarsData::humans();
         $droids = StarWarsData::droids();
