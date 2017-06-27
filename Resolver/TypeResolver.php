@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Introspection;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,6 +50,11 @@ class TypeResolver extends AbstractResolver
      */
     public function resolve($alias)
     {
+        if (strpos($alias, '__') === 0) {
+            $staticName = '_'.lcfirst(substr($alias, 2));
+            return Introspection::$staticName();
+        }
+
         if (null === $alias) {
             return;
         }

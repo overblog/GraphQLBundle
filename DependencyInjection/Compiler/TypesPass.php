@@ -36,7 +36,16 @@ class TypesPass implements CompilerPassInterface
             ;
         }
 
-        $types = [];
+        $types = [
+            '__Schema' => 1,
+            '__Type' => 1,
+            '__TypeKind' => 1,
+            '__Field' => 1,
+            '__InputValue' => 1,
+            '__EnumValue' => 1,
+            '__Directive' => 1,
+            '__DirectiveLocation' => 1
+        ];
         $possibleTypes = [];
 
         foreach ($config as $typeConf) {
