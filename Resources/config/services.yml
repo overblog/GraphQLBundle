@@ -49,6 +49,8 @@ services:
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
+        arguments:
+            - "@service_container"
 
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
