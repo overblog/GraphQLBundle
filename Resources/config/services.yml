@@ -39,6 +39,7 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.type_resolver"
+            - "%overblog_graphql.definition.lazy_types_descriptor%"
             - false
 
     overblog_graphql.type_resolver:

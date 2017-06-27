@@ -23,12 +23,29 @@ class SchemaBuilder
      */
     private $typeResolver;
 
+    /**
+     * @var array
+     */
+    private $schemaDescriptor;
+
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(ResolverInterface $typeResolver, $enableValidation = false)
+    /**
+     * SchemaBuilder constructor.
+     *
+     * @param ResolverInterface $typeResolver
+     * @param array             $schemaDescriptor
+     * @param bool              $enableValidation
+     */
+    public function __construct(
+        ResolverInterface $typeResolver,
+        array $schemaDescriptor,
+        $enableValidation = false
+    )
     {
         $this->typeResolver = $typeResolver;
+        $this->schemaDescriptor = $schemaDescriptor;
         $this->enableValidation = $enableValidation;
     }
 
@@ -47,37 +64,11 @@ class SchemaBuilder
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        $config = [
+        return new Schema([
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
-        ];
-
-        $descriptorFile = __DIR__.'/../../../../../var/cache/dev/overblog/graph-bundle/schema-descriptor.php';
-        if (file_exists($descriptorFile)) {
-            $descriptor = include $descriptorFile;
-
-            $config['typeResolution'] = new LazyResolution($descriptor, [$this->typeResolver, 'resolve']);
-        } else {
-            $solutions = $this->typeResolver->getSolutions();
-            $config['types'] = array_map(function($type, $typeName) {
-                if (! $type) {
-                    return $this->typeResolver->resolve($typeName);
-                }
-
-                return $type;
-            }, $solutions, array_keys($solutions));
-        }
-
-        $schema = new Schema($config);
-
-        if (! file_exists($descriptorFile)) {
-            file_put_contents(
-                $descriptorFile,
-                "<?php\n return " . var_export($schema->getDescriptor(), true) . ';'
-            );
-        }
-
-        return $schema;
+            'typeResolution' => new LazyResolution($this->schemaDescriptor, [$this->typeResolver, 'resolve'])
+        ]);
     }
 }
