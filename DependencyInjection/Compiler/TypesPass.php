@@ -51,16 +51,20 @@ class TypesPass implements CompilerPassInterface
         foreach ($config as $typeConf) {
             $typeName = $typeConf['config']['name'];
             $types[$typeName] = 1;
-            if ($typeConf['type'] != 'object') {
-                continue;
-            }
-
-            $ifaces = $typeConf['config']['interfaces'] ?? [];
-            foreach ($ifaces as $iface) {
-                if (!array_key_exists($iface, $possibleTypes)) {
-                    $possibleTypes[$iface] = [];
+            if ($typeConf['type'] == 'object') {
+                $ifaces = $typeConf['config']['interfaces'] ?? [];
+                foreach ($ifaces as $iface) {
+                    if (!array_key_exists($iface, $possibleTypes)) {
+                        $possibleTypes[$iface] = [];
+                    }
+                    $possibleTypes[$iface][$typeName] = 1;
                 }
-                $possibleTypes[$iface][$typeName] = 1;
+            }
+            if ($typeConf['type'] == 'union') {
+                $possibleTypes[$typeName] = [];
+                foreach ($typeConf['config']['types'] as $unionMember) {
+                    $possibleTypes[$typeName][$unionMember] = 1;
+                }
             }
         }
 
