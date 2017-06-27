@@ -58,20 +58,7 @@ class SchemaBuilder
         if (file_exists($descriptorFile)) {
             $descriptor = include $descriptorFile;
 
-            $config['typeResolution'] = new LazyResolution($descriptor, function($typeName) {
-                $classNames = [
-                    "Overblog\\GraphQLBundle\\__DEFINITIONS__\\{$typeName}Type",
-                    "GraphQL\\Type\\Definition\\{$typeName}Type"
-                ];
-
-                foreach ($classNames as $className) {
-                    if (class_exists($className)) {
-                        return new $className;
-                    }
-                }
-
-                return null;
-            });
+            $config['typeResolution'] = new LazyResolution($descriptor, [$this->typeResolver, 'resolve']);
         }
 
         $schema = new Schema($config);
