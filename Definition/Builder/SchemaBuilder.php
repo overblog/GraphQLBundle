@@ -51,7 +51,6 @@ class SchemaBuilder
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
-            'types' => $this->typeResolver->getSolutions()
         ];
 
         $descriptorFile = __DIR__.'/../../../../../var/cache/dev/overblog/graph-bundle/schema-descriptor.php';
@@ -59,6 +58,15 @@ class SchemaBuilder
             $descriptor = include $descriptorFile;
 
             $config['typeResolution'] = new LazyResolution($descriptor, [$this->typeResolver, 'resolve']);
+        } else {
+            $solutions = $this->typeResolver->getSolutions();
+            $config['types'] = array_map(function($type, $typeName) {
+                if (! $type) {
+                    return $this->typeResolver->resolve($typeName);
+                }
+
+                return $type;
+            }, $solutions, array_keys($solutions));
         }
 
         $schema = new Schema($config);
