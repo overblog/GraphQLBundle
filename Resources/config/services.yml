@@ -82,7 +82,6 @@ services:
             - "%overblog_graphql.default_resolver%"
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
-            - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     overblog_graphql.event_listener.classloader_listener:

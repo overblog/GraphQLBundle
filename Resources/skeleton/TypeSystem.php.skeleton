@@ -6,18 +6,6 @@
 {<traits>
 <spaces>public function __construct(ContainerInterface $container)
 <spaces>{
-<spaces><spaces>$request = null;
-<spaces><spaces>$token = null;
-<spaces><spaces>$user = null;
-<spaces><spaces>if ($container->has('request_stack')) {
-<spaces><spaces><spaces>$request = $container->get('request_stack')->getCurrentRequest();
-<spaces><spaces>}
-<spaces><spaces>if ($container->has('security.token_storage')) {
-<spaces><spaces><spaces>$token = $container->get('security.token_storage')->getToken();
-<spaces><spaces><spaces>if ($token instanceof TokenInterface) {
-<spaces><spaces><spaces><spaces>$user = $token->getUser();
-<spaces><spaces><spaces>}
-<spaces><spaces>}
 
 <spaces><spaces>parent::__construct(<config>);
 <spaces>}
