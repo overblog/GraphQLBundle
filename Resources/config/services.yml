@@ -45,6 +45,7 @@ services:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         arguments:
             -
+            - "@service_container"
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver

@@ -40,15 +40,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
 
         foreach ($mapping as $name => $options) {
-            $cleanOptions = $options;
-            $solutionID = $options['id'];
-
-            $definition = $container->findDefinition($solutionID);
-            if (is_subclass_of($definition->getClass(), 'Symfony\Component\DependencyInjection\ContainerAwareInterface')) {
-                $solutionDefinition = $container->findDefinition($options['id']);
-                $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
-            }
-            $resolverDefinition->addMethodCall('addSolution', [$name, new Reference($solutionID), $cleanOptions]);
+            $resolverDefinition->addMethodCall('addSolution', [$name, null, $options]);
         }
     }
 

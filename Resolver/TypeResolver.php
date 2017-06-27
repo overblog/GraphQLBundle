@@ -14,6 +14,7 @@ namespace Overblog\GraphQLBundle\Resolver;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TypeResolver extends AbstractResolver
 {
@@ -22,9 +23,23 @@ class TypeResolver extends AbstractResolver
      */
     private $cache;
 
-    public function __construct(CacheInterface $cache = null)
-    {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * LazyTypeResolver constructor.
+     *
+     * @param CacheInterface|null $cache
+     * @param ContainerInterface  $container
+     */
+    public function __construct(
+        CacheInterface $cache = null,
+        ContainerInterface $container
+    ) {
         $this->cache = null !== $cache ? $cache : new ArrayCache();
+        $this->container = $container;
     }
 
     /**
@@ -65,6 +80,11 @@ class TypeResolver extends AbstractResolver
             return $type;
         }
 
+        $typeOptions = $this->getSolutionOptions($alias);
+        if ($typeOptions and $this->container->has($typeOptions['id'])) {
+            return $this->container->get($typeOptions['id']);
+        }
+
         throw new UnresolvableException(
             sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
         );
@@ -98,10 +118,5 @@ class TypeResolver extends AbstractResolver
         }
 
         return false;
-    }
-
-    protected function supportedSolutionClass()
-    {
-        return 'GraphQL\\Type\\Definition\\Type';
     }
 }
