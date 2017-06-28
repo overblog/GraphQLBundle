@@ -12,8 +12,10 @@
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Introspection;
 use Overblog\GraphQLBundle\Resolver\Cache\ArrayCache;
 use Overblog\GraphQLBundle\Resolver\Cache\CacheInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class TypeResolver extends AbstractResolver
 {
@@ -22,9 +24,23 @@ class TypeResolver extends AbstractResolver
      */
     private $cache;
 
-    public function __construct(CacheInterface $cache = null)
-    {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * LazyTypeResolver constructor.
+     *
+     * @param CacheInterface|null $cache
+     * @param ContainerInterface  $container
+     */
+    public function __construct(
+        CacheInterface $cache = null,
+        ContainerInterface $container
+    ) {
         $this->cache = null !== $cache ? $cache : new ArrayCache();
+        $this->container = $container;
     }
 
     /**
@@ -34,6 +50,11 @@ class TypeResolver extends AbstractResolver
      */
     public function resolve($alias)
     {
+        if (strpos($alias, '__') === 0) {
+            $staticName = '_'.lcfirst(substr($alias, 2));
+            return Introspection::$staticName();
+        }
+
         if (null === $alias) {
             return;
         }
@@ -63,6 +84,11 @@ class TypeResolver extends AbstractResolver
         $type = $this->getSolution($alias);
         if (null !== $type) {
             return $type;
+        }
+
+        $typeOptions = $this->getSolutionOptions($alias);
+        if ($typeOptions and $this->container->has($typeOptions['id'])) {
+            return $this->container->get($typeOptions['id']);
         }
 
         throw new UnresolvableException(
@@ -98,10 +124,5 @@ class TypeResolver extends AbstractResolver
         }
 
         return false;
-    }
-
-    protected function supportedSolutionClass()
-    {
-        return 'GraphQL\\Type\\Definition\\Type';
     }
 }

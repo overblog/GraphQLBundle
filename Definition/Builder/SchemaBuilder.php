@@ -13,6 +13,7 @@ namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Schema;
 use GraphQL\Type\Definition\Config;
+use GraphQL\Type\LazyResolution;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class SchemaBuilder
@@ -22,12 +23,29 @@ class SchemaBuilder
      */
     private $typeResolver;
 
+    /**
+     * @var array
+     */
+    private $schemaDescriptor;
+
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(ResolverInterface $typeResolver, $enableValidation = false)
+    /**
+     * SchemaBuilder constructor.
+     *
+     * @param ResolverInterface $typeResolver
+     * @param array             $schemaDescriptor
+     * @param bool              $enableValidation
+     */
+    public function __construct(
+        ResolverInterface $typeResolver,
+        array $schemaDescriptor,
+        $enableValidation = false
+    )
     {
         $this->typeResolver = $typeResolver;
+        $this->schemaDescriptor = $schemaDescriptor;
         $this->enableValidation = $enableValidation;
     }
 
@@ -50,7 +68,7 @@ class SchemaBuilder
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
-            'types' => $this->typeResolver->getSolutions(),
+            'typeResolution' => new LazyResolution($this->schemaDescriptor, [$this->typeResolver, 'resolve'])
         ]);
     }
 }

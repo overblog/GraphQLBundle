@@ -17,7 +17,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
 {
-    const USE_FOR_CLOSURES = '$container, $request, $user, $token';
+    const USE_FOR_CLOSURES = '$container';
 
     private $cacheDir;
 

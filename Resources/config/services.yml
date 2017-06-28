@@ -39,15 +39,19 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.type_resolver"
+            - "%overblog_graphql.definition.lazy_types_descriptor%"
             - false
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         arguments:
             -
+            - "@service_container"
 
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
+        arguments:
+            - "@service_container"
 
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
@@ -79,7 +83,6 @@ services:
             - "%overblog_graphql.default_resolver%"
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
-            - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     overblog_graphql.event_listener.classloader_listener:

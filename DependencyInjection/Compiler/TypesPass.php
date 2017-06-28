@@ -35,6 +35,44 @@ class TypesPass implements CompilerPassInterface
                 ->addTag('overblog_graphql.type', ['alias' => $name])
             ;
         }
+
+        $types = [
+            '__Schema' => 1,
+            '__Type' => 1,
+            '__TypeKind' => 1,
+            '__Field' => 1,
+            '__InputValue' => 1,
+            '__EnumValue' => 1,
+            '__Directive' => 1,
+            '__DirectiveLocation' => 1
+        ];
+        $possibleTypes = [];
+
+        foreach ($config as $typeConf) {
+            $typeName = $typeConf['config']['name'];
+            $types[$typeName] = 1;
+            if ($typeConf['type'] == 'object') {
+                $ifaces = $typeConf['config']['interfaces'] ?? [];
+                foreach ($ifaces as $iface) {
+                    if (!array_key_exists($iface, $possibleTypes)) {
+                        $possibleTypes[$iface] = [];
+                    }
+                    $possibleTypes[$iface][$typeName] = 1;
+                }
+            }
+            if ($typeConf['type'] == 'union') {
+                $possibleTypes[$typeName] = [];
+                foreach ($typeConf['config']['types'] as $unionMember) {
+                    $possibleTypes[$typeName][$unionMember] = 1;
+                }
+            }
+        }
+
+        $container->getDefinition('overblog_graphql.schema_builder')->replaceArgument(1, [
+            'typeMap' => $types,
+            'possibleTypeMap' => $possibleTypes,
+            'version' => '1.0'
+        ]);
     }
 
     private function processConfig(array $configs)
