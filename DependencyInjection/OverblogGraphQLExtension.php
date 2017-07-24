@@ -34,6 +34,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
         $config = $this->treatConfigs($configs, $container);
 
+        $this->setBatchingMethod($config, $container);
         $this->setExpressionLanguageDefaultParser($container);
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
@@ -74,6 +75,11 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     {
         $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
         $container->setParameter($this->getAlias().'.auto_mapping.directories', $config['definitions']['auto_mapping']['directories']);
+    }
+
+    private function setBatchingMethod(array $config, ContainerBuilder $container)
+    {
+        $container->setParameter($this->getAlias().'.batching_method', $config['batching_method']);
     }
 
     private function setExpressionLanguageDefaultParser(ContainerBuilder $container)

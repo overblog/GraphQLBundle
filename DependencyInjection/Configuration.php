@@ -38,6 +38,10 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->enumNode('batching_method')
+                    ->values(['relay', 'apollo'])
+                    ->defaultValue('relay')
+                ->end()
                 ->arrayNode('definitions')
                     ->addDefaultsIfNotSet()
                     ->children()

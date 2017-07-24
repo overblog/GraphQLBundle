@@ -60,6 +60,7 @@ class GraphController extends Controller
     private function processBatchQuery(Request $request, $schemaName = null)
     {
         $queries = $this->get('overblog_graphql.request_batch_parser')->parse($request);
+        $apolloBatching = 'apollo' === $this->getParameter('overblog_graphql.batching_method');
         $payloads = [];
 
         foreach ($queries as $query) {
@@ -71,7 +72,7 @@ class GraphController extends Controller
                 [],
                 $schemaName
             );
-            $payloads[] = ['id' => $query['id'], 'payload' => $payloadResult->toArray()];
+            $payloads[] = $apolloBatching ? $payloadResult->toArray() : ['id' => $query['id'], 'payload' => $payloadResult->toArray()];
         }
 
         return $payloads;
