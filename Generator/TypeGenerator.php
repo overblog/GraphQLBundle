@@ -210,10 +210,13 @@ CODE;
     public function loadClasses($forceReload = false)
     {
         if (!self::$classMapLoaded || $forceReload) {
-            $classes = require $this->getClassesMap();
 
-            $mapClassLoader = new MapClassLoader($classes);
-            $mapClassLoader->register();
+            if (PHP_VERSION_ID < 70000) {
+                $classes = require $this->getClassesMap();
+
+                $mapClassLoader = new MapClassLoader($classes);
+                $mapClassLoader->register();
+            }
 
             self::$classMapLoaded = true;
         }
