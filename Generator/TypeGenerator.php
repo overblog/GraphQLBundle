@@ -195,7 +195,12 @@ CODE;
         }
 
         $classes = $this->generateClasses($configs, $cacheDir, true);
-        file_put_contents($this->getClassesMap(), "<?php\nreturn ".var_export($classes, true).';');
+
+        $content = "<?php\nreturn ".var_export($classes, true).';';
+        // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
+        $content = str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
+
+        file_put_contents($this->getClassesMap(), $content);
 
         if ($loadClasses) {
             $this->loadClasses(true);
