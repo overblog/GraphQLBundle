@@ -7,7 +7,7 @@ parameters:
 
 overblog_graphql:
     security:
-        query_max_complexity: 10
+        query_max_complexity: '10'
     definitions:
         schema:
             query: Query

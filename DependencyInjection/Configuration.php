@@ -215,6 +215,14 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder();
         $node = $builder->root($name, 'integer');
+        $node->beforeNormalization()
+                ->ifTrue(function ($v) {
+                    return is_string($v) && is_numeric($v);
+                })
+                ->then(function ($v) {
+                    return intval($v);
+                })
+            ->end();
 
         $node
             ->info('Disabled if equal to false.')
