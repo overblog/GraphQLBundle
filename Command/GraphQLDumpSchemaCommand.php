@@ -93,7 +93,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                 $content = json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);
                 break;
 
-            case 'graphqls':
+            case 'graphql':
                 $content = SchemaPrinter::doPrint($requestExecutor->getSchema($schemaName));
                 break;
 

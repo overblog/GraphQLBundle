@@ -132,7 +132,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         return [
             ['json', false],
             ['json', true],
-            ['graphqls'],
+            ['graphql'],
         ];
     }
 
