@@ -198,13 +198,13 @@ class Configuration implements ConfigurationInterface
     private function addSecurityQuerySection($name, $disabledValue)
     {
         $builder = new TreeBuilder();
-        $node = $builder->root($name, 'integer');
+        $node = $builder->root($name, 'scalar');
         $node->beforeNormalization()
                 ->ifTrue(function ($v) {
                     return is_string($v) && is_numeric($v);
                 })
                 ->then(function ($v) {
-                    return intval($v);
+                    return (int) $v;
                 })
             ->end();
 
@@ -221,7 +221,7 @@ class Configuration implements ConfigurationInterface
             ->defaultFalse()
             ->validate()
                 ->ifTrue(function ($v) {
-                    return $v < 0;
+                    return is_int($v) && $v < 0;
                 })
                 ->thenInvalid('"overblog_graphql.security.'.$name.'" must be greater or equal to 0.')
             ->end()
