@@ -13,12 +13,12 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class QueryComplexityTest extends TestCase
+class QueryMaxDepthTest extends TestCase
 {
-    private $userFriendsWithoutLimitQuery = <<<'EOF'
+    private $userFriendsWithoutViolationQuery = <<<'EOF'
 query {
   user {
-    friends {
+    friends(first:1) {
       edges {
         node {
           name
@@ -29,13 +29,20 @@ query {
 }
 EOF;
 
-    private $userFriendsWithLimitQuery = <<<'EOF'
+    private $userFriendsWithViolationQuery = <<<'EOF'
 query {
   user {
     friends(first: 1) {
       edges {
         node {
           name
+          friends {
+            edges {
+              node {
+                name
+              }
+            }
+          }
         }
       }
     }
@@ -43,30 +50,30 @@ query {
 }
 EOF;
 
-    public function testComplexityReachLimitation()
+    public function testMaxDepthReachLimitation()
     {
         $expected = [
             'errors' => [
                 [
-                    'message' => 'Max query complexity should be 10 but got 54.',
+                    'message' => 'Max query depth should be 3 but got 6.',
                 ],
             ],
         ];
 
-        $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexity');
+        $this->assertResponse($this->userFriendsWithViolationQuery, $expected, self::ANONYMOUS_USER, 'queryMaxDepth');
     }
 
-    public function testComplexityReachLimitationEnv()
+    public function testMaxDepthReachLimitationEnv()
     {
         $expected = [
             'errors' => [
                 [
-                    'message' => 'Max query complexity should be 10 but got 54.',
+                    'message' => 'Max query depth should be 3 but got 6.',
                 ],
             ],
         ];
 
-        $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexityEnv');
+        $this->assertResponse($this->userFriendsWithViolationQuery, $expected, self::ANONYMOUS_USER, 'queryMaxDepthEnv');
     }
 
     public function testComplexityUnderLimitation()
@@ -83,6 +90,6 @@ EOF;
             ],
         ];
 
-        $this->assertResponse($this->userFriendsWithLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexity');
+        $this->assertResponse($this->userFriendsWithoutViolationQuery, $expected, self::ANONYMOUS_USER, 'queryMaxDepth');
     }
 }
