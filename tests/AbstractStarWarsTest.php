@@ -32,7 +32,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
 
         $this->generateClasses();
 
-        Config::enableValidation();
+        @Config::enableValidation();
 
         Resolver::setHumanType($this->getType('Human'));
         Resolver::setDroidType($this->getType('Droid'));
@@ -48,8 +48,10 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
      */
     protected function assertValidQuery($query, $expected, $variables = null)
     {
-        $result = GraphQL::execute($this->schema, $query, null, null, $variables);
+        $actual = GraphQL::execute($this->schema, $query, null, null, $variables);
+        $expected = ['data' => $expected];
 
-        $this->assertEquals(['data' => $expected], $result, json_encode($result));
+        //$this->assertSame(array_diff($expected, $actual), array_diff($actual, $expected));
+        $this->assertEquals($expected, $actual, json_encode($actual));
     }
 }

@@ -30,26 +30,26 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $expected = [
             '__schema' => [
                 'types' => [
-                    ['name' => 'Query'],
-                    ['name' => 'HeroInput'],
                     ['name' => 'ID'],
-                    ['name' => 'Episode'],
-                    ['name' => 'Character'],
                     ['name' => 'String'],
-                    ['name' => 'Human'],
-                    ['name' => 'Droid'],
-                    ['name' => 'DateTime'],
+                    ['name' => 'Float'],
+                    ['name' => 'Int'],
+                    ['name' => 'Boolean'],
                     ['name' => '__Schema'],
                     ['name' => '__Type'],
                     ['name' => '__TypeKind'],
-                    ['name' => 'Boolean'],
                     ['name' => '__Field'],
                     ['name' => '__InputValue'],
                     ['name' => '__EnumValue'],
                     ['name' => '__Directive'],
                     ['name' => '__DirectiveLocation'],
-                    ['name' => 'Float'],
-                    ['name' => 'Int'],
+                    ['name' => 'Query'],
+                    ['name' => 'HeroInput'],
+                    ['name' => 'Episode'],
+                    ['name' => 'Character'],
+                    ['name' => 'Human'],
+                    ['name' => 'Droid'],
+                    ['name' => 'DateTime'],
                 ]
             ]
         ];
