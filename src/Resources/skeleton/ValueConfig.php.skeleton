@@ -1,4 +1,4 @@
-[
+<name> => [
 <spaces>'name' => <name>,
 <spaces>'value' => <value>,
 <spaces>'deprecationReason' => <deprecationReason>,
