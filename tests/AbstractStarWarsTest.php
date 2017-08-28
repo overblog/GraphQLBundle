@@ -12,9 +12,7 @@
 namespace Overblog\GraphQLGenerator\Tests;
 
 use GraphQL\GraphQL;
-use GraphQL\Schema;
-use GraphQL\Type\Definition\Config;
-use Overblog\GraphQLGenerator\Generator\TypeGenerator;
+use GraphQL\Type\Schema;
 use Overblog\GraphQLGenerator\Tests\Generator\AbstractTypeGeneratorTest;
 
 abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
@@ -32,12 +30,11 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
 
         $this->generateClasses();
 
-        @Config::enableValidation();
-
         Resolver::setHumanType($this->getType('Human'));
         Resolver::setDroidType($this->getType('Droid'));
 
         $this->schema = new Schema(['query' => $this->getType('Query')]);
+        $this->schema->assertValid();
     }
 
     /**
@@ -50,8 +47,6 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
     {
         $actual = GraphQL::execute($this->schema, $query, null, null, $variables);
         $expected = ['data' => $expected];
-
-        //$this->assertSame(array_diff($expected, $actual), array_diff($actual, $expected));
         $this->assertEquals($expected, $actual, json_encode($actual));
     }
 }
