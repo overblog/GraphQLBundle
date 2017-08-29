@@ -11,8 +11,7 @@
 
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
-use GraphQL\Schema;
-use GraphQL\Type\Definition\Config;
+use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class SchemaBuilder
@@ -40,17 +39,20 @@ class SchemaBuilder
      */
     public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null)
     {
-        $this->enableValidation ? Config::enableValidation() : Config::disableValidation();
-
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        return new Schema([
+        $schema = new Schema([
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
             'types' => $this->typeResolver->getSolutions(),
         ]);
+        if ($this->enableValidation) {
+            $schema->assertValid();
+        }
+
+        return $schema;
     }
 }

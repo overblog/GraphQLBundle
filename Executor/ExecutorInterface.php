@@ -14,7 +14,7 @@ namespace Overblog\GraphQLBundle\Executor;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Schema;
+use GraphQL\Type\Schema;
 
 interface ExecutorInterface
 {

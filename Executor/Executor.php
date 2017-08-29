@@ -14,10 +14,16 @@ namespace Overblog\GraphQLBundle\Executor;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Schema;
+use GraphQL\GraphQL;
+use GraphQL\Type\Schema;
 
 class Executor implements ExecutorInterface
 {
+    /**
+     * @var PromiseAdapter
+     */
+    private $promiseAdapter;
+
     /**
      * @param Schema      $schema
      * @param string      $requestString
@@ -30,7 +36,16 @@ class Executor implements ExecutorInterface
      */
     public function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
     {
-        return call_user_func_array('GraphQL\GraphQL::executeAndReturnResult', func_get_args());
+        $args = func_get_args();
+
+        if (null === $this->promiseAdapter) {
+            $method = 'executeQuery';
+        } else {
+            array_unshift($args, $this->promiseAdapter);
+            $method = 'promiseToExecute';
+        }
+
+        return call_user_func_array(sprintf('\%s::%s', GraphQL::class, $method), $args);
     }
 
     /**
@@ -38,6 +53,6 @@ class Executor implements ExecutorInterface
      */
     public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
     {
-        call_user_func_array('GraphQL\GraphQL::setPromiseAdapter', func_get_args());
+        $this->promiseAdapter = $promiseAdapter;
     }
 }

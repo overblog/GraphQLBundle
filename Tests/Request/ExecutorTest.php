@@ -12,9 +12,9 @@
 namespace Overblog\GraphQLBundle\Tests\Request;
 
 use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
-use GraphQL\Schema;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 

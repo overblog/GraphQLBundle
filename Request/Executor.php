@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Schema;
+use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
@@ -176,7 +176,7 @@ class Executor
             isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
-        if ($this->promiseAdapter && $this->promiseAdapter->isThenable($result)) {
+        if ($this->promiseAdapter) {
             $result = $this->promiseAdapter->wait($result);
         }
 
@@ -189,6 +189,13 @@ class Executor
         return $this->prepareResult($result, $startTime, $startMemoryUsage);
     }
 
+    /**
+     * @param ExecutionResult $result
+     * @param int             $startTime
+     * @param int             $startMemoryUsage
+     *
+     * @return ExecutionResult
+     */
     private function prepareResult($result, $startTime, $startMemoryUsage)
     {
         if ($this->hasDebugInfo()) {
