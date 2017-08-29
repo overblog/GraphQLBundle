@@ -11,7 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
-use GraphQL\Schema;
+use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;

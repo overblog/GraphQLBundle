@@ -54,6 +54,7 @@ PhotoAndPost:
     type: union
     config:
         types: [Photo, Post]
+        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
 
 PhotoInput:
     type: input-object
