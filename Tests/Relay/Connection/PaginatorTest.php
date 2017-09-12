@@ -279,6 +279,8 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             ['array' => $this->data]
         );
 
+        $this->assertSame(count($this->data), $result->totalCount);
+
         $this->assertCount(4, $result->edges);
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
         $this->assertTrue($result->pageInfo->hasPreviousPage);
