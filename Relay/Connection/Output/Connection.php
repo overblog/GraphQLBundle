@@ -19,6 +19,9 @@ final class Connection
     /** @var PageInfo */
     public $pageInfo;
 
+    /** @var int */
+    public $totalCount;
+
     public function __construct(array $edges, PageInfo $pageInfo)
     {
         $this->edges = $edges;

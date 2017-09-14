@@ -279,6 +279,8 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             ['array' => $this->data]
         );
 
+        $this->assertSame(count($this->data), $result->totalCount);
+
         $this->assertCount(4, $result->edges);
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
         $this->assertTrue($result->pageInfo->hasPreviousPage);
@@ -292,7 +294,10 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             ->getMock()
         ;
 
-        $promise->expects($this->once())->method('then');
+        $promise
+            ->expects($this->exactly(2))
+            ->method('then')
+            ->willReturnSelf();
 
         $paginator = new Paginator(function ($offset, $limit) use ($promise) {
             $this->assertSame(0, $offset);

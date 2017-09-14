@@ -31,6 +31,11 @@ class Paginator
     private $promise;
 
     /**
+     * @var int
+     */
+    private $totalCount;
+
+    /**
      * @param callable $fetcher
      * @param bool     $promise
      */
@@ -49,7 +54,7 @@ class Paginator
      */
     public function backward($args, $total, array $callableArgs = [])
     {
-        $total = is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
+        $total = $this->computeTotalCount($total, $callableArgs);
 
         $args = $this->protectArgs($args);
         $limit = $args['last'];
@@ -107,10 +112,20 @@ class Paginator
         $args = $this->protectArgs($args);
 
         if ($args['last']) {
-            return $this->backward($args, $total, $callableArgs);
+            $connection = $this->backward($args, $total, $callableArgs);
         } else {
-            return $this->forward($args);
+            $connection = $this->forward($args);
         }
+
+        if ($this->promise) {
+            $connection->then(function (Connection $connection) use ($total, $callableArgs) {
+                $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
+            });
+        } else {
+            $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
+        }
+
+        return $connection;
     }
 
     /**
@@ -136,5 +151,22 @@ class Paginator
     private function protectArgs($args)
     {
         return $args instanceof Argument ? $args : new Argument($args);
+    }
+
+    /**
+     * @param int   $total
+     * @param array $callableArgs
+     *
+     * @return int|mixed
+     */
+    private function computeTotalCount($total, array $callableArgs = [])
+    {
+        if ($this->totalCount !== null) {
+            return $this->totalCount;
+        }
+
+        $this->totalCount = is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
+
+        return $this->totalCount;
     }
 }
