@@ -294,7 +294,10 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
             ->getMock()
         ;
 
-        $promise->expects($this->once())->method('then');
+        $promise
+            ->expects($this->exactly(2))
+            ->method('then')
+            ->willReturnSelf();
 
         $paginator = new Paginator(function ($offset, $limit) use ($promise) {
             $this->assertSame(0, $offset);
