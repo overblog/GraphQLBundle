@@ -12,6 +12,7 @@ services:
 
 overblog_graphql:
     definitions:
+        config_validation: false
         schema:
             query: Query
             mutation: ~
