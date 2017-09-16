@@ -16,8 +16,13 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping()
     {
         return [
-            'Toto' => ['solution' => new Toto(), 'method' => 'resolve'],
+            'Toto' => ['solutionFunc' => [$this, 'createToto'], 'solutionFuncArgs' => [],  'method' => 'resolve'],
         ];
+    }
+
+    public function createToto()
+    {
+        return new Toto();
     }
 
     public function testResolveKnownMutation()

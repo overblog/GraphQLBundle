@@ -27,7 +27,7 @@ abstract class AbstractResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver = $this->createResolver();
 
         foreach ($this->getResolverSolutionsMapping() as $name => $options) {
-            $this->resolver->addSolution($name, $options['solution'], $options);
+            $this->resolver->addSolution($name, $options['solutionFunc'], $options['solutionFuncArgs'], $options);
         }
     }
 }

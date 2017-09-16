@@ -23,15 +23,20 @@ abstract class AbstractResolver implements ResolverInterface
      */
     private $solutionOptions = [];
 
-    public function addSolution($name, $solution, $options = [])
-    {
-        if (!$this->supportsSolution($solution)) {
-            throw new UnsupportedResolverException(
-                sprintf('Resolver "%s" must be "%s" "%s" given.', $name, $this->supportedSolutionClass(), get_class($solution))
-            );
-        }
+    /**
+     * @var array
+     */
+    private $fullyLoadedSolutions = [];
 
-        $this->solutions[$name] = $solution;
+    public function addSolution($name, callable $solutionFunc, array $solutionFuncArgs = [], array $options = [])
+    {
+        $this->fullyLoadedSolutions[$name] = false;
+        $this->solutions[$name] = function () use ($name, $solutionFunc, $solutionFuncArgs) {
+            $solution = call_user_func_array($solutionFunc, $solutionFuncArgs);
+            $this->checkSolution($name, $solution);
+
+            return $solution;
+        };
         $this->solutionOptions[$name] = $options;
 
         return $this;
@@ -44,7 +49,7 @@ abstract class AbstractResolver implements ResolverInterface
      */
     public function getSolution($name)
     {
-        return isset($this->solutions[$name]) ? $this->solutions[$name] : null;
+        return isset($this->solutions[$name]) ? $this->loadSolution($name) : null;
     }
 
     /**
@@ -52,7 +57,7 @@ abstract class AbstractResolver implements ResolverInterface
      */
     public function getSolutions()
     {
-        return $this->solutions;
+        return $this->loadSolutions();
     }
 
     /**
@@ -66,6 +71,44 @@ abstract class AbstractResolver implements ResolverInterface
     }
 
     /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    private function loadSolution($name)
+    {
+        if ($this->fullyLoadedSolutions[$name]) {
+            return $this->solutions[$name];
+        } else {
+            $loader = $this->solutions[$name];
+            $this->solutions[$name] = $loader();
+            $this->fullyLoadedSolutions[$name] = true;
+            $this->postLoadSolution($this->solutions[$name]);
+
+            return $this->solutions[$name];
+        }
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function loadSolutions()
+    {
+        foreach ($this->solutions as $name => &$solution) {
+            $solution = $this->loadSolution($name);
+        }
+
+        return $this->solutions;
+    }
+
+    /**
+     * @param mixed $solution
+     */
+    protected function postLoadSolution($solution)
+    {
+    }
+
+    /**
      * @param mixed $solution
      *
      * @return bool
@@ -75,6 +118,15 @@ abstract class AbstractResolver implements ResolverInterface
         $supportedClass = $this->supportedSolutionClass();
 
         return  null === $supportedClass || $solution instanceof $supportedClass;
+    }
+
+    protected function checkSolution($name, $solution)
+    {
+        if (!$this->supportsSolution($solution)) {
+            throw new UnsupportedResolverException(
+                sprintf('Resolver "%s" must be "%s" "%s" given.', $name, $this->supportedSolutionClass(), get_class($solution))
+            );
+        }
     }
 
     /**
