@@ -61,7 +61,9 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
             $cleanOptions = $options;
             $solutionID = $options['id'];
 
-            $solutionDefinition = $container->findDefinition($options['id']);
+            $solutionDefinition = $container->findDefinition($solutionID);
+            // make solution service public to improve lazy loading
+            $solutionDefinition->setPublic(true);
 
             $methods = array_map(
                 function ($methodCall) {
@@ -80,7 +82,10 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
                 $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
             }
 
-            $resolverDefinition->addMethodCall('addSolution', [$name, new Reference($solutionID), $cleanOptions]);
+            $resolverDefinition->addMethodCall(
+                'addSolution',
+                [$name, [new Reference('service_container'), 'get'], [$solutionID],  $cleanOptions]
+            );
         }
     }
 

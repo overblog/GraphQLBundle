@@ -26,9 +26,14 @@ class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping()
     {
         return [
-            'Toto' => ['solution' => new ObjectType(['name' => 'Toto'])],
-            'Tata' => ['solution' => new ObjectType(['name' => 'Tata'])],
+            'Toto' => ['solutionFunc' => [$this, 'createObjectType'], 'solutionFuncArgs' => [['name' => 'Toto']]],
+            'Tata' => ['solutionFunc' => [$this, 'createObjectType'], 'solutionFuncArgs' => [['name' => 'Tata']]],
         ];
+    }
+
+    public function createObjectType(array $config)
+    {
+        return new ObjectType($config);
     }
 
     /**
@@ -37,7 +42,10 @@ class TypeResolverTest extends AbstractResolverTest
      */
     public function testAddNotSupportedSolution()
     {
-        $this->resolver->addSolution('not-supported', new \stdClass());
+        $this->resolver->addSolution('not-supported', function () {
+            return new \stdClass();
+        });
+        $this->resolver->getSolution('not-supported');
     }
 
     public function testResolveKnownType()

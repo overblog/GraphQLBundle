@@ -40,7 +40,8 @@ class TypeResolver extends AbstractResolver
         $item = $this->cacheAdapter->getItem(md5($alias));
 
         if (!$item->isHit()) {
-            $item->set($this->string2Type($alias));
+            $type = $this->string2Type($alias);
+            $item->set($type);
             $this->cacheAdapter->save($item);
         }
 
@@ -96,6 +97,16 @@ class TypeResolver extends AbstractResolver
         }
 
         return false;
+    }
+
+    protected function postLoadSolution($solution)
+    {
+        // also add solution with real type name if needed for typeLoader when using autoMapping
+        if ($solution && !isset($this->getSolutions()[$solution->name])) {
+            $this->addSolution($solution->name, function () use ($solution) {
+                return $solution;
+            });
+        }
     }
 
     protected function supportedSolutionClass()

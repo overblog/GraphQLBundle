@@ -47,7 +47,8 @@ class SchemaBuilder
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
-            'types' => $this->typeResolver->getSolutions(),
+            'typeLoader' => [$this->typeResolver, 'resolve'],
+            'types' => [$this->typeResolver, 'getSolutions'],
         ]);
         if ($this->enableValidation) {
             $schema->assertValid();

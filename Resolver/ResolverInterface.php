@@ -15,7 +15,7 @@ interface ResolverInterface
 {
     public function resolve($input);
 
-    public function addSolution($name, $solution, $extraOptions = []);
+    public function addSolution($name, callable $solutionFunc, array $solutionFuncArgs = [], array $options = []);
 
     public function getSolution($name);
 
