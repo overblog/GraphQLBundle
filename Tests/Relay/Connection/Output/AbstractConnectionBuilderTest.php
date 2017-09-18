@@ -14,8 +14,9 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractConnectionBuilderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractConnectionBuilderTest extends TestCase
 {
     protected $letters = ['A', 'B', 'C', 'D', 'E'];
 

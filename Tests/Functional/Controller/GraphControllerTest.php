@@ -209,7 +209,7 @@ EOF;
         $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
         $result = $client->getResponse()->getContent();
 
-        $expected  = [
+        $expected = [
             ['id' => 'friends', 'payload' => ['data' => $this->expectedData]],
             ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];

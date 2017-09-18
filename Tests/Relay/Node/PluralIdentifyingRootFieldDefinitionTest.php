@@ -13,8 +13,9 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver;
 use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
+use PHPUnit\Framework\TestCase;
 
-class PluralIdentifyingRootFieldDefinitionTest extends \PHPUnit_Framework_TestCase
+class PluralIdentifyingRootFieldDefinitionTest extends TestCase
 {
     /**
      * @var PluralIdentifyingRootFieldDefinition

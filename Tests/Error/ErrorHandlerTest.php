@@ -18,8 +18,9 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use PHPUnit\Framework\TestCase;
 
-class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
+class ErrorHandlerTest extends TestCase
 {
     /** @var ErrorHandler */
     private $errorHandler;

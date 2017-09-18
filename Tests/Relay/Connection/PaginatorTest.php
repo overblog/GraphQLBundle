@@ -15,8 +15,9 @@ use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+use PHPUnit\Framework\TestCase;
 
-class PaginatorTest extends \PHPUnit_Framework_TestCase
+class PaginatorTest extends TestCase
 {
     protected $data = ['A', 'B', 'C', 'D', 'E'];
 

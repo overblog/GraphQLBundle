@@ -17,10 +17,11 @@ use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
-class OverblogGraphQLTypesExtensionTest extends \PHPUnit_Framework_TestCase
+class OverblogGraphQLTypesExtensionTest extends TestCase
 {
     /**
      * @var ContainerBuilder

@@ -13,8 +13,9 @@ namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use PHPUnit\Framework\TestCase;
 
-class ConfigExpressionProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigExpressionProviderTest extends TestCase
 {
     use DIContainerMockTrait;
 

@@ -13,8 +13,9 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Resolver\Resolver;
+use PHPUnit\Framework\TestCase;
 
-class ResolverTest extends \PHPUnit_Framework_TestCase
+class ResolverTest extends TestCase
 {
     /**
      * @param $fieldName
