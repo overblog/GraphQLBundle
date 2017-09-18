@@ -12,8 +12,9 @@
 namespace Overblog\GraphQLBundle\Tests\Definition;
 
 use Overblog\GraphQLBundle\Definition\Argument;
+use PHPUnit\Framework\TestCase;
 
-class ArgumentTest extends \PHPUnit_Framework_TestCase
+class ArgumentTest extends TestCase
 {
     /**
      * @var array

@@ -13,9 +13,10 @@ namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class AuthorizationExpressionProviderTest extends \PHPUnit_Framework_TestCase
+class AuthorizationExpressionProviderTest extends TestCase
 {
     use DIContainerMockTrait;
 

@@ -13,13 +13,14 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * Class ResolverTaggedServiceMappingPassTest.
  */
-class ResolverTaggedServiceMappingPassTest extends \PHPUnit_Framework_TestCase
+class ResolverTaggedServiceMappingPassTest extends TestCase
 {
     /**
      * @var ContainerBuilder

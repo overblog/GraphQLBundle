@@ -13,8 +13,9 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
+use PHPUnit\Framework\TestCase;
 
-class NodeFieldDefinitionTest extends \PHPUnit_Framework_TestCase
+class NodeFieldDefinitionTest extends TestCase
 {
     /**
      * @var NodeFieldDefinition

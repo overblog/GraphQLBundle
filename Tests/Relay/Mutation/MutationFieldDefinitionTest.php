@@ -12,8 +12,9 @@
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
+use PHPUnit\Framework\TestCase;
 
-class MutationFieldDefinitionTest extends \PHPUnit_Framework_TestCase
+class MutationFieldDefinitionTest extends TestCase
 {
     /**
      * @var MutationFieldDefinition

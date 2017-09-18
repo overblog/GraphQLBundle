@@ -13,9 +13,10 @@ namespace Overblog\GraphQLBundle\Tests\Error;
 
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\PhpProcess;
 
-class ReactPromiseAdapterTest extends \PHPUnit_Framework_TestCase
+class ReactPromiseAdapterTest extends TestCase
 {
     /** @var ReactPromiseAdapter */
     private $adapter;

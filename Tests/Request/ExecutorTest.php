@@ -17,8 +17,9 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use PHPUnit\Framework\TestCase;
 
-class ExecutorTest extends \PHPUnit_Framework_TestCase
+class ExecutorTest extends TestCase
 {
     /** @var RequestExecutor */
     private $executor;

@@ -12,8 +12,9 @@
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use PHPUnit\Framework\TestCase;
 
-class GlobalIdTest extends \PHPUnit_Framework_TestCase
+class GlobalIdTest extends TestCase
 {
     public function testToGlobalId()
     {
