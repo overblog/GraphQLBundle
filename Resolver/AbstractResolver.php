@@ -42,6 +42,11 @@ abstract class AbstractResolver implements ResolverInterface
         return $this;
     }
 
+    public function hasSolution($name)
+    {
+        return isset($this->solutions[$name]);
+    }
+
     /**
      * @param $name
      *
@@ -49,7 +54,7 @@ abstract class AbstractResolver implements ResolverInterface
      */
     public function getSolution($name)
     {
-        return isset($this->solutions[$name]) ? $this->loadSolution($name) : null;
+        return $this->loadSolution($name);
     }
 
     /**
@@ -77,6 +82,10 @@ abstract class AbstractResolver implements ResolverInterface
      */
     private function loadSolution($name)
     {
+        if (!$this->hasSolution($name)) {
+            return null;
+        }
+
         if ($this->fullyLoadedSolutions[$name]) {
             return $this->solutions[$name];
         } else {
