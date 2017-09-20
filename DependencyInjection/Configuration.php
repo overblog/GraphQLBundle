@@ -135,7 +135,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('graphiql')
-                            ->defaultValue('OverblogGraphQLBundle:GraphiQL:index.html.twig')
+                            ->defaultValue('@OverblogGraphQL/GraphiQL/index.html.twig')
                         ->end()
                     ->end()
                 ->end()
