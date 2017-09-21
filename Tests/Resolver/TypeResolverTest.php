@@ -66,6 +66,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     /**
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
+     * @expectedExceptionMessage Malformed ListOf wrapper type "[Tata" expected "]" but got ""a"".
      */
     public function testWrongListOfWrappingType()
     {

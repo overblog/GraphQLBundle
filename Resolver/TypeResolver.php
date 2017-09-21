@@ -89,7 +89,7 @@ class TypeResolver extends AbstractResolver
             $got = $alias[strlen($alias) - 1];
             if (']' !== $got) {
                 throw new UnresolvableException(
-                    sprintf('Malformed ListOf wrapper type "%s" expected "]" but got .', $alias, json_encode($got))
+                    sprintf('Malformed ListOf wrapper type "%s" expected "]" but got "%s".', $alias, json_encode($got))
                 );
             }
 
