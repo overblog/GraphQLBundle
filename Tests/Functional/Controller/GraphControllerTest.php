@@ -140,6 +140,8 @@ query FriendsQuery($firstFriends: Int) {
 EOF;
 
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']));
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
     /**

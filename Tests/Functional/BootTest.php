@@ -17,5 +17,7 @@ class BootTest extends TestCase
     {
         $kernel = $this->createKernel();
         $kernel->boot();
+
+        $this->assertTrue($kernel->isBooted());
     }
 }
