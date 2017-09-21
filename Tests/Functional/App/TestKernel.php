@@ -56,6 +56,11 @@ final class TestKernel extends Kernel
         return __DIR__;
     }
 
+    public function isBooted()
+    {
+        return $this->booted;
+    }
+
     /**
      * {@inheritdoc}
      */

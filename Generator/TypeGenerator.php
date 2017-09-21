@@ -11,11 +11,11 @@
 
 namespace Overblog\GraphQLBundle\Generator;
 
+use Composer\Autoload\ClassLoader;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
-use Symfony\Component\ClassLoader\MapClassLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
@@ -217,7 +217,8 @@ CODE;
         if (!self::$classMapLoaded || $forceReload) {
             $classes = require $this->getClassesMap();
 
-            $mapClassLoader = new MapClassLoader($classes);
+            $mapClassLoader = new ClassLoader();
+            $mapClassLoader->addClassMap($classes);
             $mapClassLoader->register();
 
             self::$classMapLoaded = true;
