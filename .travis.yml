@@ -18,6 +18,8 @@ matrix:
           env: SYMFONY_VERSION=3.2.*
         - php: 7.1
           env: SYMFONY_VERSION=3.3.* PHPUNIT_FLAGS="-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"
+        - php: 7.1
+          env: GRAPHQLPHP_VERSION=0.10.0
         - php: hhvm
         - php: nightly
     allow_failures:
@@ -32,6 +34,7 @@ before_install:
     - if [[ "$TRAVIS_PHP_VERSION" != "7.1" && "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
     - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ "$GRAPHQLPHP_VERSION" != "" ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
 install: composer update --prefer-source --no-interaction --optimize-autoloader
 
