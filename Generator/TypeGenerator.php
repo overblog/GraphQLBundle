@@ -11,11 +11,11 @@
 
 namespace Overblog\GraphQLBundle\Generator;
 
+use Composer\Autoload\ClassLoader;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
-use Composer\Autoload\ClassLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
