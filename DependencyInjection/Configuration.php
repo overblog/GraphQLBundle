@@ -14,6 +14,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Resolver\Resolver;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -21,14 +22,18 @@ class Configuration implements ConfigurationInterface
 {
     private $debug;
 
+    private $cacheDir;
+
     /**
      * Constructor.
      *
-     * @param bool $debug Whether to use the debug mode
+     * @param bool        $debug    Whether to use the debug mode
+     * @param null|string $cacheDir
      */
-    public function __construct($debug)
+    public function __construct($debug, $cacheDir = null)
     {
         $this->debug = (bool) $debug;
+        $this->cacheDir = $cacheDir;
     }
 
     public function getConfigTreeBuilder()
@@ -46,6 +51,10 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('internal_error_message')->defaultNull()->end()
+                        ->variableNode('default_resolver')->defaultValue([Resolver::class, 'defaultResolveFn'])->end()
+                        ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
+                        ->scalarNode('cache_dir')->defaultValue($this->cacheDir.'/overblog/graphql-bundle/__definitions__')->end()
+                        ->booleanNode('use_classloader_listener')->defaultTrue()->end()
                         ->booleanNode('show_debug_info')->defaultFalse()->end()
                         ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                         ->arrayNode('schema')

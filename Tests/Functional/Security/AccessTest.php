@@ -11,11 +11,16 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
+use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Component\HttpKernel\Kernel;
 
 class AccessTest extends TestCase
 {
+    /** @var ClassLoader */
+    private $loader;
+
     private $userNameQuery = 'query { user { name } }';
 
     private $userRolesQuery = 'query { user { roles } }';
@@ -44,6 +49,30 @@ mutation M {
   }
 }
 EOF;
+
+    public function setUp()
+    {
+        parent::setUp();
+        // load types
+        /** @var ClassLoader $loader */
+        $loader = new ClassLoader();
+        $loader->addPsr4(
+            'Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__\\',
+            '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/overbloggraphbundletestaccess/overblog/graphql-bundle/__definitions__'
+        );
+        $loader->register();
+        $this->loader = $loader;
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Type class "Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__\\PageInfoType" not found. If you are using your own classLoader verify the path and the namespace please.
+     */
+    public function testCustomClassLoaderNotRegister()
+    {
+        $this->loader->unregister();
+        $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
+    }
 
     public function testNotAuthenticatedUserAccessToUserName()
     {

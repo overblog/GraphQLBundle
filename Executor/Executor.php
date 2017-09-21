@@ -11,8 +11,6 @@
 
 namespace Overblog\GraphQLBundle\Executor;
 
-use GraphQL\Executor\ExecutionResult;
-use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
@@ -25,14 +23,7 @@ class Executor implements ExecutorInterface
     private $promiseAdapter;
 
     /**
-     * @param Schema      $schema
-     * @param string      $requestString
-     * @param null|array  $rootValue
-     * @param null|array  $contextValue
-     * @param null|array  $variableValues
-     * @param null|string $operationName
-     *
-     * @return ExecutionResult|Promise
+     * {@inheritdoc}
      */
     public function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
     {
@@ -49,10 +40,18 @@ class Executor implements ExecutorInterface
     }
 
     /**
-     * @param PromiseAdapter|null $promiseAdapter
+     * {@inheritdoc}
      */
     public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
     {
         $this->promiseAdapter = $promiseAdapter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultFieldResolver(callable $fn)
+    {
+        call_user_func_array(sprintf('\%s::setDefaultFieldResolver', GraphQL::class), func_get_args());
     }
 }

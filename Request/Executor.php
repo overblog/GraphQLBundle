@@ -58,13 +58,19 @@ class Executor
      */
     private $promiseAdapter;
 
+    /**
+     * @var callable|null
+     */
+    private $defaultFieldResolver;
+
     public function __construct(
         ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher = null,
         $throwException = false,
         ErrorHandler $errorHandler = null,
         $hasDebugInfo = false,
-        PromiseAdapter $promiseAdapter = null
+        PromiseAdapter $promiseAdapter = null,
+        callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
@@ -72,6 +78,7 @@ class Executor
         $this->errorHandler = $errorHandler;
         $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
         $this->promiseAdapter = $promiseAdapter;
+        $this->defaultFieldResolver = $defaultFieldResolver;
     }
 
     public function setExecutor(ExecutorInterface $executor)
@@ -166,6 +173,10 @@ class Executor
         $startMemoryUsage = memory_get_usage(true);
 
         $this->executor->setPromiseAdapter($this->promiseAdapter);
+        // this is needed when not using only generated types
+        if ($this->defaultFieldResolver) {
+            $this->executor->setDefaultFieldResolver($this->defaultFieldResolver);
+        }
 
         $result = $this->executor->execute(
             $schema,

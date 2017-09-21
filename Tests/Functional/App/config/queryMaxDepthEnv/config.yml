@@ -3,13 +3,13 @@ imports:
     - { resource: ../connection/services.yml }
 
 parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
     env(GRAPHQL_QUERY_MAX_DEPTH): 3
 
 overblog_graphql:
     security:
         query_max_depth: '%env(GRAPHQL_QUERY_MAX_DEPTH)%'
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~

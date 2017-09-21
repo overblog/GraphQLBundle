@@ -1,7 +1,3 @@
-parameters:
-    overblog_graphql.default_resolver: [Overblog\GraphQLBundle\Resolver\Resolver, defaultResolveFn]
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
-
 services:
     overblog_graphql.error_handler:
         class: Overblog\GraphQLBundle\Error\ErrorHandler
@@ -24,6 +20,7 @@ services:
             - "@overblog_graphql.error_handler"
             - false
             - "@overblog_graphql.promise_adapter"
+            - "%overblog_graphql.default_resolver%"
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
@@ -69,23 +66,15 @@ services:
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
         arguments:
-            - "%overblog_graphql.type_class_namespace%"
+            - "%overblog_graphql.class_namespace%"
             - ["%overblog_graphql.resources_dir%/skeleton"]
-            - "%kernel.cache_dir%/overblog/graph-bundle/__definitions__"
+            - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql.default_resolver%"
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
             - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
-
-    overblog_graphql.event_listener.classloader_listener:
-        arguments:
-            - "@overblog_graphql.cache_compiler"
-        class: Overblog\GraphQLBundle\EventListener\ClassLoaderListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: load, priority: 255 }
-            - { name: kernel.event_listener, event: console.command, method: load, priority: 255 }
 
     overblog_graphql.event_listener.request_file_listener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener

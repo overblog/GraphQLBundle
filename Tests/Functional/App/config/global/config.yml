@@ -1,9 +1,6 @@
 imports:
     - { resource: ../config.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\RelayGlobal\\__DEFINITIONS__"
-
 services:
     overblog_graphql.test.resolver.global:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\GlobalResolver
@@ -12,6 +9,7 @@ services:
 
 overblog_graphql:
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\RelayGlobal\\__DEFINITIONS__"
         config_validation: false
         schema:
             query: Query
