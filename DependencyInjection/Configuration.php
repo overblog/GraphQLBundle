@@ -98,8 +98,18 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('types')
                                     ->prototype('array')
                                         ->addDefaultsIfNotSet()
+                                        ->beforeNormalization()
+                                            ->ifTrue(function ($v) {
+                                                return isset($v['type']) && $v['type'] === 'yml';
+                                            })
+                                            ->then(function ($v) {
+                                                $v['type'] = 'yaml';
+
+                                                return $v;
+                                            })
+                                        ->end()
                                         ->children()
-                                            ->enumNode('type')->isRequired()->values(['yml', 'xml'])->end()
+                                            ->enumNode('type')->isRequired()->values(['yaml', 'xml'])->end()
                                             ->scalarNode('dir')->defaultNull()->end()
                                         ->end()
                                     ->end()

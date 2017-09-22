@@ -36,6 +36,7 @@ class ConfigTypesPass implements CompilerPassInterface
             $aliases = call_user_func($class.'::getAliases');
             $this->setTypeServiceDefinition($container, $class, $aliases);
         }
+        $container->getParameterBag()->remove('overblog_graphql_types.config');
     }
 
     private function setTypeServiceDefinition(ContainerBuilder $container, $class, array $aliases)

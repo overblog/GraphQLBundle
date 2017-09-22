@@ -17,5 +17,5 @@ overblog_graphql:
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/global/mapping"

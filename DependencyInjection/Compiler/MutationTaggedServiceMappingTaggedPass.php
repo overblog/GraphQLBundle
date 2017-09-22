@@ -18,11 +18,6 @@ class MutationTaggedServiceMappingTaggedPass extends ResolverTaggedServiceMappin
         return 'overblog_graphql.mutation';
     }
 
-    protected function getParameterName()
-    {
-        return 'overblog_graphql.mutations_mapping';
-    }
-
     protected function getResolverServiceID()
     {
         return 'overblog_graphql.mutation_resolver';
