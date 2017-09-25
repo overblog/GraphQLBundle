@@ -1,9 +1,6 @@
 imports:
     - { resource: ../config.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Node\\__DEFINITIONS__"
-
 services:
     overblog_graphql.test.resolver.node:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NodeResolver
@@ -16,11 +13,12 @@ services:
 
 overblog_graphql:
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Node\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/node/mapping"

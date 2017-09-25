@@ -199,13 +199,13 @@ CODE;
 
         $classes = $this->generateClasses($configs, $cacheDir, true);
 
-        $content = "<?php\nreturn ".var_export($classes, true).';';
-        // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
-        $content = str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
-
-        file_put_contents($this->getClassesMap(), $content);
-
         if ($loadClasses) {
+            $content = "<?php\nreturn ".var_export($classes, true).';';
+            // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
+            $content = str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
+
+            file_put_contents($this->getClassesMap(), $content);
+
             $this->loadClasses(true);
         }
 
@@ -216,8 +216,14 @@ CODE;
     {
         if (!self::$classMapLoaded || $forceReload) {
             $classes = require $this->getClassesMap();
-
-            $mapClassLoader = new ClassLoader();
+            /** @var ClassLoader $mapClassLoader */
+            static $mapClassLoader = null;
+            if (null === $mapClassLoader) {
+                $mapClassLoader = new ClassLoader();
+                $mapClassLoader->setClassMapAuthoritative(true);
+            } else {
+                $mapClassLoader->unregister();
+            }
             $mapClassLoader->addClassMap($classes);
             $mapClassLoader->register();
 

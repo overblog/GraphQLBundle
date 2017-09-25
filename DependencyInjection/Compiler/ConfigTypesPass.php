@@ -21,12 +21,22 @@ class ConfigTypesPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $config = $container->getParameter('overblog_graphql_types.config');
-        $generatedClasses = $container->get('overblog_graphql.cache_compiler')->compile($this->processConfig($config));
+        $generatedClasses = $container->get('overblog_graphql.cache_compiler')->compile(
+            $this->processConfig($config),
+            $container->getParameter('overblog_graphql.use_classloader_listener')
+        );
 
         foreach ($generatedClasses as $class => $file) {
+            if (!class_exists($class)) {
+                throw new \RuntimeException(sprintf(
+                    'Type class %s not found. If you are using your own classLoader verify the path and the namespace please.',
+                        json_encode($class))
+                );
+            }
             $aliases = call_user_func($class.'::getAliases');
             $this->setTypeServiceDefinition($container, $class, $aliases);
         }
+        $container->getParameterBag()->remove('overblog_graphql_types.config');
     }
 
     private function setTypeServiceDefinition(ContainerBuilder $container, $class, array $aliases)

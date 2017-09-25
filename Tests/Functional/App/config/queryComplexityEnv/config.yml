@@ -3,18 +3,18 @@ imports:
     - { resource: ../connection/services.yml }
 
 parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
     env(GRAPHQL_QUERY_MAX_COMPLEXITY): 10
 
 overblog_graphql:
     security:
         query_max_complexity: '%env(GRAPHQL_QUERY_MAX_COMPLEXITY)%'
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/queryComplexity/mapping"

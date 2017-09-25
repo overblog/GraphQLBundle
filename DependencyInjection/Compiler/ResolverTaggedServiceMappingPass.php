@@ -18,11 +18,6 @@ class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
         return 'overblog_graphql.resolver';
     }
 
-    protected function getParameterName()
-    {
-        return 'overblog_graphql.resolvers_mapping';
-    }
-
     protected function checkRequirements($id, array $tag)
     {
         parent::checkRequirements($id, $tag);

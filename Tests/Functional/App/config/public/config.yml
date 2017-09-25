@@ -2,15 +2,13 @@ imports:
     - { resource: ../config.yml }
     - { resource: ../security.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\PublicField\\__DEFINITIONS__"
-
 overblog_graphql:
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\PublicField\\__DEFINITIONS__"
         schema:
             query: RootQuery
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/public/mapping"

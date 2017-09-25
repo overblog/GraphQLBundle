@@ -13,6 +13,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
+use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -45,7 +46,8 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setConfigBuilders($config, $container);
         $this->setVersions($config, $container);
         $this->setShowDebug($config, $container);
-        $this->setAutoMappingParameters($config, $container);
+        $this->setDefinitionParameters($config, $container);
+        $this->setClassLoaderListener($config, $container);
 
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
@@ -68,13 +70,35 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
-        return new Configuration($container->getParameter('kernel.debug'));
+        return new Configuration(
+            $container->getParameter('kernel.debug'),
+            $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
+        );
     }
 
-    private function setAutoMappingParameters(array $config, ContainerBuilder $container)
+    private function setClassLoaderListener(array $config, ContainerBuilder $container)
     {
+        $container->setParameter($this->getAlias().'.use_classloader_listener', $config['definitions']['use_classloader_listener']);
+        if ($config['definitions']['use_classloader_listener']) {
+            $definition = $container->setDefinition(
+                $this->getAlias().'.event_listener.classloader_listener',
+                new Definition(ClassLoaderListener::class)
+            );
+            $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
+            $definition->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'load', 'priority' => 255]);
+            $definition->addTag('kernel.event_listener', ['event' => 'console.command', 'method' => 'load', 'priority' => 255]);
+        }
+    }
+
+    private function setDefinitionParameters(array $config, ContainerBuilder $container)
+    {
+        // auto mapping
         $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
         $container->setParameter($this->getAlias().'.auto_mapping.directories', $config['definitions']['auto_mapping']['directories']);
+        // generator and config
+        $container->setParameter($this->getAlias().'.default_resolver', $config['definitions']['default_resolver']);
+        $container->setParameter($this->getAlias().'.class_namespace', $config['definitions']['class_namespace']);
+        $container->setParameter($this->getAlias().'.cache_dir', $config['definitions']['cache_dir']);
     }
 
     private function setBatchingMethod(array $config, ContainerBuilder $container)

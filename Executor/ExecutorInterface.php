@@ -34,4 +34,9 @@ interface ExecutorInterface
      * @param PromiseAdapter|null $promiseAdapter
      */
     public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null);
+
+    /**
+     * @param callable $fn
+     */
+    public function setDefaultFieldResolver(callable $fn);
 }

@@ -1,9 +1,6 @@
 imports:
     - { resource: ../config.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Plural\\__DEFINITIONS__"
-
 services:
     overblog_graphql.test.resolver.plural:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\PluralResolver
@@ -12,6 +9,7 @@ services:
 
 overblog_graphql:
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Plural\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~

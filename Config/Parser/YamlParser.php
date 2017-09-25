@@ -16,9 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Parser as YamlParser;
+use Symfony\Component\Yaml\Parser;
 
-class YmlParser implements ParserInterface
+class YamlParser implements ParserInterface
 {
     private static $yamlParser;
 
@@ -31,7 +31,7 @@ class YmlParser implements ParserInterface
     public static function parse(SplFileInfo $file, ContainerBuilder $container)
     {
         if (null === self::$yamlParser) {
-            self::$yamlParser = new YamlParser();
+            self::$yamlParser = new Parser();
         }
 
         try {

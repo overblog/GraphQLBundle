@@ -54,7 +54,6 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $mapping = $this->getTaggedServiceMapping($container, $this->getTagName());
-        $container->setParameter($this->getParameterName(), $mapping);
         $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
 
         foreach ($mapping as $name => $options) {
@@ -101,6 +100,4 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     abstract protected function getTagName();
 
     abstract protected function getResolverServiceID();
-
-    abstract protected function getParameterName();
 }

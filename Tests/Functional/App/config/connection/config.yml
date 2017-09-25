@@ -2,11 +2,9 @@ imports:
     - { resource: ../config.yml }
     - { resource: services.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__"
-
 overblog_graphql:
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~

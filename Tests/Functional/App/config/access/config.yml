@@ -4,16 +4,15 @@ imports:
     - { resource: ../connection/services.yml }
     - { resource: ../mutation/services.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__"
-
 overblog_graphql:
     definitions:
+        use_classloader_listener: false
+        class_namespace: "Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__"
         schema:
             query: RootQuery
             mutation: RootMutation
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/access/mapping"

@@ -27,7 +27,7 @@ Types can be define 3 different ways:
             mappings:
                 types:
                     -
-                        type: yml # or xml
+                        type: yaml # or xml
                         dir: "%kernel.root_dir%/.../mapping"
     ```
 

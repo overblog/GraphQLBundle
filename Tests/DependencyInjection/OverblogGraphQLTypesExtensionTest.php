@@ -61,7 +61,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      */
     public function testBrokenYmlOnPrepend()
     {
-        $this->extension->containerPrependExtensionConfig($this->getBrokenMappingConfig('yml'), $this->container);
+        $this->extension->containerPrependExtensionConfig($this->getBrokenMappingConfig('yaml'), $this->container);
     }
 
     /**

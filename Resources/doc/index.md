@@ -7,7 +7,7 @@ It also supports batching using libs like [ReactRelayNetworkLayer](https://githu
 
 Requirements
 ------------
-PHP >= 5.4
+PHP >= 5.5
 
 Installation
 ------------
@@ -52,6 +52,42 @@ overblog_graphql_endpoint:
 # in app/config/routing_dev.yml
 overblog_graphql_graphiql:
     resource: "@OverblogGraphQLBundle/Resources/config/routing/graphiql.yml"
+```
+
+**e)** Use composer ClassLoader to load generated class (optional but recommended)
+
+Using composer ClassLoader will help keeping hand on loader optimization
+in production environment...
+
+First start by some configuration:
+
+```yaml
+overblog_graphql:
+    definitions:
+        # disable listener the bundle out of box classLoader
+        use_classloader_listener: false
+        # change classes cache dir (recommends using a directory that will be committed)
+        cache_dir: "/my/path/to/my/generated/classes"
+        # Can also change the namespace
+        #class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
+```
+
+then enable composer autoloader in project `composer.json`:
+
+```json
+{
+    "autoload": {
+        "psr-4": {
+            "Overblog\\GraphQLBundle\\__DEFINITIONS__\\": "my/path/to/my/generated/classes/"
+        }
+    }
+}
+```
+
+Finish by dumping the new autoloader.
+
+```bash
+composer dump-autoload
 ```
 
 Now you can define your [graphQL schema](definitions/index.md).

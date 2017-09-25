@@ -2,18 +2,16 @@ imports:
     - { resource: ../config.yml }
     - { resource: ../connection/services.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
-
 overblog_graphql:
     security:
         query_max_depth: '3'
     definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
         schema:
             query: Query
             mutation: ~
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/queryMaxDepth/mapping"

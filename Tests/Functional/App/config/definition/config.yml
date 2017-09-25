@@ -1,9 +1,6 @@
 imports:
     - { resource: ../config.yml }
 
-parameters:
-    overblog_graphql.type_class_namespace: "Overblog\\GraphQLBundle\\Definition\\__DEFINITIONS__"
-
 overblog_graphql:
     definitions:
         schema:
@@ -11,5 +8,5 @@ overblog_graphql:
         mappings:
             types:
                 -
-                    type: yml
+                    type: yaml
                     dir: "%kernel.root_dir%/config/definition/mapping"
