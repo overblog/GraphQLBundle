@@ -67,7 +67,8 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->assertCommandExecution(
             $input,
             __DIR__.'/fixtures/schema.'.$format,
-            $file
+            $file,
+            $format
         );
     }
 
@@ -82,7 +83,8 @@ class GraphDumpSchemaCommandTest extends TestCase
                 '--format' => 'json',
             ],
             __DIR__.'/fixtures/schema.json',
-            $file
+            $file,
+            'json'
         );
     }
 
@@ -97,7 +99,8 @@ class GraphDumpSchemaCommandTest extends TestCase
                 '--format' => 'json',
             ],
             __DIR__.'/fixtures/schema.modern.json',
-            $file
+            $file,
+            'json'
         );
     }
 
@@ -136,11 +139,33 @@ class GraphDumpSchemaCommandTest extends TestCase
         ];
     }
 
-    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $expectedStatusCode = 0)
+    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $format, $expectedStatusCode = 0)
     {
         $this->commandTester->execute($input);
 
         $this->assertEquals($expectedStatusCode, $this->commandTester->getStatusCode());
-        $this->assertEquals(trim(file_get_contents($expectedFile)), trim(file_get_contents($actualFile)));
+        $expected = trim(file_get_contents($expectedFile));
+        $actual = trim(file_get_contents($actualFile));
+        if ('json' === $format) {
+            $expected = json_decode($expected, true);
+            $actual = json_decode($actual, true);
+            $this->sortSchemaEntry($expected, 'types', 'name');
+            $this->sortSchemaEntry($actual, 'types', 'name');
+        }
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    private function sortSchemaEntry(array &$entries, $entryKey, $sortBy)
+    {
+        if (isset($entries['data']['__schema'][$entryKey])) {
+            $data = &$entries['data']['__schema'][$entryKey];
+        } else {
+            $data = &$entries['__schema'][$entryKey];
+        }
+
+        usort($data, function ($data1, $data2) use ($sortBy) {
+            return strcmp($data1[$sortBy], $data2[$sortBy]);
+        });
     }
 }
