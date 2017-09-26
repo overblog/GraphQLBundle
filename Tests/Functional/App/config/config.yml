@@ -12,6 +12,8 @@ overblog_graphql:
     definitions:
         config_validation: true
         auto_mapping: false
+        mappings:
+            auto_discover: false
 
 services:
     #disable twig error pages

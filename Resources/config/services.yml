@@ -1,3 +1,6 @@
+parameters:
+    overblog_graphql_types.config: []
+
 services:
     overblog_graphql.error_handler:
         class: Overblog\GraphQLBundle\Error\ErrorHandler
