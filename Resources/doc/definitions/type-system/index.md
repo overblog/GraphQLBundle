@@ -25,10 +25,12 @@ Types can be define 3 different ways:
     overblog_graphql:
         definitions:
             mappings:
+                # auto_discover: false # to disable bundles and root dir auto discover
                 types:
                     -
-                        type: yaml # or xml
+                        type: yaml # or xml or null
                         dir: "%kernel.root_dir%/.../mapping"
+                        # suffix: .types # use to change default file suffix
     ```
 
 2. **The PHP way**

@@ -18,7 +18,8 @@ overblog_graphql:
             query: Query
             mutation: ~
         mappings:
+            auto_discover: true
             types:
                 -
-                    type: yaml
                     dir: "%kernel.root_dir%/config/node/mapping"
+                    suffix: _type

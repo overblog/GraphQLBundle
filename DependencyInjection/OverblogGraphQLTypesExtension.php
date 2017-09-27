@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
@@ -22,6 +23,20 @@ class OverblogGraphQLTypesExtension extends Extension
     private static $configTypes = ['yaml', 'xml'];
 
     private static $typeExtensions = ['yaml' => '{yaml,yml}', 'xml' => 'xml'];
+
+    private static $defaultDefaultConfig = [
+        'definitions' => [
+            'mappings' => [
+                'auto_discover' => [
+                    'root_dir' => true,
+                    'bundles' => true,
+                ],
+                'types' => [],
+            ],
+        ],
+    ];
+
+    const DEFAULT_TYPES_SUFFIX = '.types';
 
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -59,27 +74,48 @@ class OverblogGraphQLTypesExtension extends Extension
 
     private function mappingConfig(array $config, ContainerBuilder $container)
     {
-        $typesMappings = empty($config['definitions']['mappings']['types']) ? [] : $config['definitions']['mappings']['types'];
+        // use default value if needed
+        $config = array_replace_recursive(self::$defaultDefaultConfig, $config);
+
+        $mappingConfig = $config['definitions']['mappings'];
+        $typesMappings = $mappingConfig['types'];
 
         // app only config files (yml or xml)
-        if ($container->hasParameter('kernel.root_dir')) {
+        if ($mappingConfig['auto_discover']['root_dir'] && $container->hasParameter('kernel.root_dir')) {
             $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'type' => null];
         }
-
-        $mappingFromBundles = $this->mappingFromBundles($container);
-        $typesMappings = array_merge($typesMappings, $mappingFromBundles);
+        if ($mappingConfig['auto_discover']['bundles']) {
+            $mappingFromBundles = $this->mappingFromBundles($container);
+            $typesMappings = array_merge($typesMappings, $mappingFromBundles);
+        } else {
+            // enabled only for this bundle
+            $typesMappings[] = [
+                'dir' => $this->bundleDir(OverblogGraphQLBundle::class).'/Resources/config/graphql',
+                'type' => 'yaml',
+            ];
+        }
 
         // from config
-        $typesMappings = array_filter(array_map(
+        $typesMappings = $this->detectFilesFromTypesMappings($typesMappings, $container);
+
+        return $typesMappings;
+    }
+
+    private function detectFilesFromTypesMappings(array $typesMappings, ContainerBuilder $container)
+    {
+        return array_filter(array_map(
             function (array $typeMapping) use ($container) {
-                $params = $this->detectFilesByType($container, $typeMapping['dir'],  $typeMapping['type']);
+                $params = $this->detectFilesByType(
+                    $container,
+                    $typeMapping['dir'],
+                    $typeMapping['type'],
+                    isset($typeMapping['suffix']) ? $typeMapping['suffix'] : ''
+                );
 
                 return $params;
             },
             $typesMappings
         ));
-
-        return $typesMappings;
     }
 
     private function mappingFromBundles(ContainerBuilder $container)
@@ -89,8 +125,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
         // auto detect from bundle
         foreach ($bundles as $name => $class) {
-            $bundle = new \ReflectionClass($class);
-            $bundleDir = dirname($bundle->getFileName());
+            $bundleDir = $this->bundleDir($class);
 
             // only config files (yml or xml)
             $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'type' => null];
@@ -99,7 +134,7 @@ class OverblogGraphQLTypesExtension extends Extension
         return $typesMappings;
     }
 
-    private function detectFilesByType(ContainerBuilder $container, $path, $type = null)
+    private function detectFilesByType(ContainerBuilder $container, $path, $type, $suffix)
     {
         // add the closest existing directory as a resource
         $resource = $path;
@@ -114,7 +149,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
         foreach ($types as $type) {
             try {
-                $finder->files()->in($path)->name('*.types.'.self::$typeExtensions[$type]);
+                $finder->files()->in($path)->name('*'.$suffix.'.'.self::$typeExtensions[$type]);
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
@@ -127,6 +162,14 @@ class OverblogGraphQLTypesExtension extends Extension
         }
 
         return;
+    }
+
+    private function bundleDir($bundleClass)
+    {
+        $bundle = new \ReflectionClass($bundleClass);
+        $bundleDir = dirname($bundle->getFileName());
+
+        return $bundleDir;
     }
 
     public function getAliasPrefix()
