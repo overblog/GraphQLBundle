@@ -20,9 +20,7 @@ class AuthorizationExpressionProviderTest extends TestCase
 {
     use DIContainerMockTrait;
 
-    /**
-     * @var ExpressionLanguage
-     */
+    /** @var ExpressionLanguage */
     private $expressionLanguage;
 
     public function setUp()

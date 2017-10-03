@@ -13,19 +13,13 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 abstract class AbstractResolver implements ResolverInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $solutions = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $solutionOptions = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $fullyLoadedSolutions = [];
 
     public function addSolution($name, callable $solutionFunc, array $solutionFuncArgs = [], array $options = [])

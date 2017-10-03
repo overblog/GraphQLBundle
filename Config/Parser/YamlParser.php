@@ -20,6 +20,7 @@ use Symfony\Component\Yaml\Parser;
 
 class YamlParser implements ParserInterface
 {
+    /** @var Parser */
     private static $yamlParser;
 
     /**

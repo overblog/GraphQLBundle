@@ -16,14 +16,10 @@ use PHPUnit\Framework\TestCase;
 
 class ArgumentTest extends TestCase
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $rawArgs;
 
-    /**
-     * @var Argument
-     */
+    /** @var Argument */
     private $argument;
 
     public function setUp()

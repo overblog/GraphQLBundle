@@ -19,9 +19,7 @@ use Overblog\GraphQLBundle\Resolver\Resolver;
 
 final class MutationFieldResolver implements ResolverInterface, AliasedInterface
 {
-    /**
-     * @var PromiseAdapter
-     */
+    /** @var PromiseAdapter */
     private $promiseAdapter;
 
     public function __construct(PromiseAdapter $promiseAdapter)

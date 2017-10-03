@@ -16,9 +16,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 
 class SchemaBuilder
 {
-    /**
-     * @var ResolverInterface
-     */
+    /** @var ResolverInterface */
     private $typeResolver;
 
     /** @var bool */

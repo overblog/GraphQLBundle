@@ -23,13 +23,10 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class OverblogGraphQLTypesExtensionTest extends TestCase
 {
-    /**
-     * @var ContainerBuilder
-     */
+    /** @var ContainerBuilder */
     private $container;
-    /**
-     * @var OverblogGraphQLTypesExtension
-     */
+
+    /** @var OverblogGraphQLTypesExtension */
     private $extension;
 
     public function setUp()

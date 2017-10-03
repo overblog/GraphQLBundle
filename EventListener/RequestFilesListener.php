@@ -17,9 +17,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestFilesListener
 {
-    /**
-     * @var RequestStack
-     */
+    /** @var RequestStack */
     private $requestStack;
 
     public function __construct(RequestStack $requestStack)

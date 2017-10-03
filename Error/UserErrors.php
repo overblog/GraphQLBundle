@@ -16,9 +16,7 @@ namespace Overblog\GraphQLBundle\Error;
  */
 class UserErrors extends UserFacingError
 {
-    /**
-     * @var UserError[]
-     */
+    /** @var UserError[] */
     private $errors = [];
 
     public function __construct(array $errors, $message = '', $code = 0, \Exception $previous = null)
