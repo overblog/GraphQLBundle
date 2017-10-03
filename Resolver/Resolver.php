@@ -17,9 +17,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Resolver
 {
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private static $accessor;
 
     public static function defaultResolveFn($objectOrArray, $args, $context, ResolveInfo $info)

@@ -22,9 +22,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 class ResolverTaggedServiceMappingPassTest extends TestCase
 {
-    /**
-     * @var ContainerBuilder
-     */
+    /** @var ContainerBuilder */
     private $container;
 
     public function setUp()

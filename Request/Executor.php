@@ -29,14 +29,10 @@ class Executor
 {
     const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
-    /**
-     * @var Schema[]
-     */
+    /** @var Schema[] */
     private $schemas;
 
-    /**
-     * @var EventDispatcherInterface|null
-     */
+    /** @var EventDispatcherInterface|null */
     private $dispatcher;
 
     /** @var bool */
@@ -48,19 +44,13 @@ class Executor
     /** @var bool */
     private $hasDebugInfo;
 
-    /**
-     * @var ExecutorInterface
-     */
+    /** @var ExecutorInterface */
     private $executor;
 
-    /**
-     * @var PromiseAdapter
-     */
+    /** @var PromiseAdapter */
     private $promiseAdapter;
 
-    /**
-     * @var callable|null
-     */
+    /** @var callable|null */
     private $defaultFieldResolver;
 
     public function __construct(

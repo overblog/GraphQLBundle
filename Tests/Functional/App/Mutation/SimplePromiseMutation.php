@@ -15,9 +15,7 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 
 class SimplePromiseMutation
 {
-    /**
-     * @var PromiseAdapter
-     */
+    /** @var PromiseAdapter */
     private $promiseAdapter;
 
     public function __construct(PromiseAdapter $promiseAdapter)

@@ -20,14 +20,10 @@ use Symfony\Component\HttpKernel\Kernel;
 
 class DebugCommandTest extends TestCase
 {
-    /**
-     * @var Command
-     */
+    /** @var Command */
     private $command;
 
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
 
     private $logs = [];

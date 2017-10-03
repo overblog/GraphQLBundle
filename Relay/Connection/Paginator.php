@@ -20,19 +20,13 @@ class Paginator
     const MODE_REGULAR = false;
     const MODE_PROMISE = true;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     private $fetcher;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $promise;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $totalCount;
 
     /**

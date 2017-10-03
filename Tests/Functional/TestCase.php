@@ -26,9 +26,7 @@ abstract class TestCase extends WebTestCase
     const ANONYMOUS_USER = null;
     const DEFAULT_PASSWORD = '123';
 
-    /**
-     * @var TestKernel[]
-     */
+    /** @var TestKernel[] */
     private static $kernels = [];
 
     /**

@@ -19,19 +19,13 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class GraphDumpSchemaCommandTest extends TestCase
 {
-    /**
-     * @var Command
-     */
+    /** @var Command */
     private $command;
 
-    /**
-     * @var CommandTester
-     */
+    /** @var CommandTester */
     private $commandTester;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $cacheDir;
 
     public function setUp()

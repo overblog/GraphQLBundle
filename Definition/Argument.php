@@ -13,9 +13,7 @@ namespace Overblog\GraphQLBundle\Definition;
 
 class Argument implements \ArrayAccess, \Countable
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $arguments;
 
     public function __construct(array $arguments = null)
