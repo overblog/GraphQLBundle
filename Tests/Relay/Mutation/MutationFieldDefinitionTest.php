@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class MutationFieldDefinitionTest extends TestCase
 {
-    /**
-     * @var MutationFieldDefinition
-     */
+    /** @var MutationFieldDefinition */
     private $definition;
 
     public function setUp()

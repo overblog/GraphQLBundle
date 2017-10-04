@@ -28,18 +28,14 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
     const BUILDER_FIELD_TYPE = 'field';
     const BUILDER_ARGS_TYPE = 'args';
 
-    /**
-     * @var MappingInterface[]
-     */
+    /** @var MappingInterface[] */
     private static $argsBuilderClassMap = [
         'Relay::ForwardConnection' => ForwardConnectionArgsDefinition::class,
         'Relay::BackwardConnection' => BackwardConnectionArgsDefinition::class,
         'Relay::Connection' => ConnectionArgsDefinition::class,
     ];
 
-    /**
-     * @var MappingInterface[]
-     */
+    /** @var MappingInterface[] */
     private static $fieldBuilderClassMap = [
         'Relay::Mutation' => MutationFieldDefinition::class,
         'Relay::GlobalId' => GlobalIdFieldDefinition::class,

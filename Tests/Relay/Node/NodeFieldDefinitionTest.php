@@ -17,9 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class NodeFieldDefinitionTest extends TestCase
 {
-    /**
-     * @var NodeFieldDefinition
-     */
+    /** @var NodeFieldDefinition */
     private $definition;
 
     public function setUp()

@@ -17,9 +17,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class TypeResolver extends AbstractResolver
 {
-    /**
-     * @var CacheItemPoolInterface
-     */
+    /** @var CacheItemPoolInterface */
     private $cacheAdapter;
 
     public function __construct(CacheItemPoolInterface $cacheAdapter = null)
@@ -30,7 +28,7 @@ class TypeResolver extends AbstractResolver
     /**
      * @param string $alias
      *
-     * @return \GraphQL\Type\Definition\Type
+     * @return Type
      */
     public function resolve($alias)
     {

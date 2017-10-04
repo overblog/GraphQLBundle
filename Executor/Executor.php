@@ -17,9 +17,7 @@ use GraphQL\Type\Schema;
 
 class Executor implements ExecutorInterface
 {
-    /**
-     * @var PromiseAdapter
-     */
+    /** @var PromiseAdapter */
     private $promiseAdapter;
 
     /**
