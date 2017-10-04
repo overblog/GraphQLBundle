@@ -43,7 +43,7 @@ class CharacterResolver
         $errors = [];
 
         if (!isset($humans[$args['human_id']])) {
-            $errors[] = new UserError(sprintf('Could not find Human#%d', $args['human_id']));
+            $errors[] = sprintf('Could not find Human#%d', $args['human_id']);
         }
 
         $droids = StarWarsData::droids();
