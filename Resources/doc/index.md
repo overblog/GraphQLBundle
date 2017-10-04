@@ -9,7 +9,7 @@ Requirements
 ------------
 PHP >= 5.5
 
-After Installation
+After installation
 ------------
 
 Define your [graphQL schema](definitions/index.md).
@@ -17,7 +17,7 @@ Define your [graphQL schema](definitions/index.md).
 Symfony Flex installation
 ------------
 
-**Note:** OverBlogGraphQLBundle only supports Symfony Flex from version 0.9.0 onwards
+**Note:** OverblogGraphQLBundle only supports Symfony Flex from version 0.9.0 onwards
 
 **a)** Download the bundle
 
@@ -27,9 +27,9 @@ In the project directory:
 composer require overblog/graphql-bundle
 ```
 
-**b)** Accept the contrib recipes installation from SF Flex
+**b)** Accept the contrib recipes installation from Symfony Flex
 
-```bash
+```
 -  WARNING  overblog/graphql-bundle (0.9): From github.com/symfony/recipes-contrib
     The recipe for this package comes from the "contrib" repository, which is open to community contributions.
     Do you want to execute this recipe?
@@ -40,7 +40,7 @@ composer require overblog/graphql-bundle
     (defaults to n): 
 ```
 
-**c)** If you want to run GraphiQL interface twig is require, install it via:
+**c)** If you want to run GraphiQL interface Twig is require, install it via:
 
  ```bash
  composer require twig
@@ -94,7 +94,7 @@ overblog_graphql_graphiql:
 Composer autoloader configuration (optional)
 ------------
 
-Use composer ClassLoader to load generated class (optional but recommended)
+Use composer `ClassLoader` to load generated class (optional but recommended)
 
 Using composer ClassLoader will help keeping hand on loader optimization
 in production environment...

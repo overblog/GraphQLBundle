@@ -6,15 +6,15 @@ Default files location
 
 **Symfony Flex:**
 
-- ***Main configuration:*** ```/config/packages/graphql.yaml```
-- ***Types:*** ```/config/graphql/types/query.yaml```
-- ***Routes:*** ```/config/routes/graphql.yaml``` and ```/config/routes/dev/graphql_graphiql.yaml``` 
+- ***Main configuration:*** `/config/packages/graphql.yaml`
+- ***Types:*** `/config/graphql/types/query.yaml`
+- ***Routes:*** `/config/routes/graphql.yaml` and `/config/routes/dev/graphql_graphiql.yaml` 
 
 **Symfony Standard:**
 
-- ***Main configuration:*** ```/app/config/config.yml```
-- ***Types:*** ```src/MyBundle/Resources/config/graphql/Query.types.yml```
-- ***Routes:*** ```/app/config/routing.yml``` and ```/app/config/routing_dev.yml```
+- ***Main configuration:*** `/app/config/config.yml`
+- ***Types:*** `src/MyBundle/Resources/config/graphql/Query.types.yml`
+- ***Routes:*** `/app/config/routing.yml` and `/app/config/routing_dev.yml`
 
 Yaml configuration
 -------
