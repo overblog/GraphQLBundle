@@ -1,8 +1,25 @@
 Schema
 =======
 
+Default files location
+-------
+
+**Symfony Flex:**
+
+- ***Main configuration:*** `/config/packages/graphql.yaml`
+- ***Types:*** `/config/graphql/types/query.yaml`
+- ***Routes:*** `/config/routes/graphql.yaml` and `/config/routes/dev/graphql_graphiql.yaml` 
+
+**Symfony Standard:**
+
+- ***Main configuration:*** `/app/config/config.yml`
+- ***Types:*** `src/MyBundle/Resources/config/graphql/Query.types.yml`
+- ***Routes:*** `/app/config/routing.yml` and `/app/config/routing_dev.yml`
+
+Yaml configuration
+-------
+
 ```yaml
-# src/MyBundle/Resources/config/graphql/Query.types.yml
 # This is the type that will be the root of our query, and the
 # entry point into our schema. It gives us the ability to fetch
 # objects by their IDs, as well as to fetch the undisputed hero
@@ -44,7 +61,6 @@ Query:
 ```
 
 ```yaml
-#app/config/config.yml
 overblog_graphql:
     definitions:
         schema:
@@ -61,8 +77,6 @@ The default route of batching is `/batch`.
 ## Multiple schema endpoint
 
 ```yaml
-#app/config/config.yml
-
 overblog_graphql:
     definitions:
         schema:
