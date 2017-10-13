@@ -24,6 +24,7 @@ matrix:
         - php: nightly
     allow_failures:
         - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
 cache:
     directories:
@@ -36,7 +37,7 @@ before_install:
     - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}" --dev --no-update; fi;
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
-install: composer update --prefer-source --no-interaction --optimize-autoloader
+install: composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 
 script:
     - bin/phpunit --debug $( if [ $TEST_COVERAGE = true ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
