@@ -22,6 +22,7 @@ matrix:
           env: GRAPHQLPHP_VERSION=0.10.0
         - php: hhvm
         - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
