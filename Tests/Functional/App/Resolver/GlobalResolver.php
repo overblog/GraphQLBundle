@@ -63,9 +63,9 @@ class GlobalResolver
     {
         list($type, $id) = array_values(GlobalId::fromGlobalId($globalId));
 
-        if ($type === 'User') {
+        if ('User' === $type) {
             return $this->userData[$id];
-        } elseif ($type === 'Photo') {
+        } elseif ('Photo' === $type) {
             return $this->photoData[$id];
         } else {
             return $this->postData[$id];

@@ -155,7 +155,7 @@ class Paginator
      */
     private function computeTotalCount($total, array $callableArgs = [])
     {
-        if ($this->totalCount !== null) {
+        if (null !== $this->totalCount) {
             return $this->totalCount;
         }
 

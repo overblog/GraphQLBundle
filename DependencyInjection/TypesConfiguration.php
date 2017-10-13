@@ -66,7 +66,7 @@ class TypesConfiguration implements ConfigurationInterface
                         ->thenInvalid(
                             sprintf(
                                 'Don\'t use internal config keys %s, replace it by "config" instead.',
-                                implode(', ',  $configTypeKeys)
+                                implode(', ', $configTypeKeys)
                             )
                         )
                 ->end()

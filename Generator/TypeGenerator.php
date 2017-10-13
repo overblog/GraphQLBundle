@@ -140,7 +140,6 @@ CODE;
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
-
             $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, '.ResolveInfo::class.' $info, $object');
             $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
             $argumentClass = $this->shortenClassName(Argument::class);
