@@ -2,13 +2,53 @@
 
 namespace Overblog\GraphQLBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Overblog\GraphQLBundle\Request as GraphQLRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GraphController extends Controller
+final class GraphController
 {
+
+    /**
+     * @var GraphQLRequest\BatchParser
+     */
+    private $batchParser;
+
+    /**
+     * @var GraphQLRequest\Executor
+     */
+    private $requestExecutor;
+
+    /**
+     * @var GraphQLRequest\Parser
+     */
+    private $requestParser;
+
+    /**
+     * @var bool
+     */
+    private $shouldHandleCORS;
+
+    /**
+     * @var string
+     */
+    private $graphQLBatchingMethod;
+
+    public function __construct(
+        GraphQLRequest\BatchParser $batchParser,
+        GraphQLRequest\Executor $requestExecutor,
+        GraphQLRequest\Parser $requestParser,
+        $shouldHandleCORS,
+        $graphQLBatchingMethod
+    ) {
+        $this->batchParser = $batchParser;
+        $this->requestExecutor = $requestExecutor;
+        $this->requestParser = $requestParser;
+        $this->shouldHandleCORS = $shouldHandleCORS;
+        $this->graphQLBatchingMethod = $graphQLBatchingMethod;
+    }
+
     public function endpointAction(Request $request, $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, false);
@@ -37,7 +77,7 @@ class GraphController extends Controller
             $response = new JsonResponse($payload, 200);
         }
 
-        if ($this->container->getParameter('overblog_graphql.handle_cors') && $request->headers->has('Origin')) {
+        if ($this->shouldHandleCORS && $request->headers->has('Origin')) {
             $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'), true);
             $response->headers->set('Access-Control-Allow-Credentials', 'true', true);
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization', true);
@@ -50,12 +90,12 @@ class GraphController extends Controller
 
     private function processBatchQuery(Request $request, $schemaName = null)
     {
-        $queries = $this->get('overblog_graphql.request_batch_parser')->parse($request);
-        $apolloBatching = 'apollo' === $this->getParameter('overblog_graphql.batching_method');
+        $queries = $this->batchParser->parse($request);
+        $apolloBatching = 'apollo' === $this->graphQLBatchingMethod;
         $payloads = [];
 
         foreach ($queries as $query) {
-            $payloadResult = $this->get('overblog_graphql.request_executor')->execute(
+            $payloadResult = $this->requestExecutor->execute(
                 [
                     'query' => $query['query'],
                     'variables' => $query['variables'],
@@ -71,9 +111,8 @@ class GraphController extends Controller
 
     private function processNormalQuery(Request $request, $schemaName = null)
     {
-        $params = $this->get('overblog_graphql.request_parser')->parse($request);
-        $data = $this->get('overblog_graphql.request_executor')->execute($params, [], $schemaName)->toArray();
+        $params = $this->requestParser->parse($request);
 
-        return $data;
+        return $this->requestExecutor->execute($params, [], $schemaName)->toArray();
     }
 }
