@@ -130,7 +130,6 @@ EOF;
                     ],
                 ],
             ],
-
         ];
 
         $this->assertGraphQL($query, $expectedData);

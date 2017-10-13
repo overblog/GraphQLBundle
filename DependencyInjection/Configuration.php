@@ -112,7 +112,7 @@ class Configuration implements ConfigurationInterface
                                         ->addDefaultsIfNotSet()
                                         ->beforeNormalization()
                                             ->ifTrue(function ($v) {
-                                                return isset($v['type']) && $v['type'] === 'yml';
+                                                return isset($v['type']) && 'yml' === $v['type'];
                                             })
                                             ->then(function ($v) {
                                                 $v['type'] = 'yaml';

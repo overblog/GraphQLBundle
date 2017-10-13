@@ -239,7 +239,6 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                         'interfaces' => [],
                     ],
                 ],
-
             ],
             $this->container->getParameter('overblog_graphql_types.config')
         );
