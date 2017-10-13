@@ -94,12 +94,12 @@ services:
         class: Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter
         public: false
 
-    overblog_graphql.controller:
-      class: Overblog\GraphQLBundle\Controller\GraphController
-      public: false
-      arguments:
-          - "@overblog_graphql.request_batch_parser"
-          - "@overblog_graphql.request_executor"
-          - "@overblog_graphql.request_parser"
-          - "%overblog_graphql.handle_cors%"
-          - "%overblog_graphql.batching_method%"
+    overblog_graphql.controller.graphql:
+        class: Overblog\GraphQLBundle\Controller\GraphController
+        public: true
+        arguments:
+            - "@overblog_graphql.request_batch_parser"
+            - "@overblog_graphql.request_executor"
+            - "@overblog_graphql.request_parser"
+            - "%overblog_graphql.handle_cors%"
+            - "%overblog_graphql.batching_method%"
