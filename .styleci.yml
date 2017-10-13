@@ -1,7 +1,0 @@
-preset: symfony
-enabled:
-    - ordered_use
-    - short_array_syntax
-
-disabled:
-    - unalign_equals
