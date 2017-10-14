@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the OverblogGraphQLBundle package.
- *
- * (c) Overblog <http://github.com/overblog/>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
@@ -140,7 +131,6 @@ CODE;
 
             return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
         } else { // wrap resolver with access
-
             $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, '.ResolveInfo::class.' $info, $object');
             $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
             $argumentClass = $this->shortenClassName(Argument::class);

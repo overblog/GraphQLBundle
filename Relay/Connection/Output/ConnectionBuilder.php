@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the OverblogGraphQLBundle package.
- *
- * (c) Overblog <http://github.com/overblog/>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -151,8 +142,8 @@ class ConnectionBuilder
             new PageInfo(
                 $firstEdge instanceof Edge ? $firstEdge->cursor : null,
                 $lastEdge instanceof Edge ? $lastEdge->cursor : null,
-                $last !== null ? $startOffset > $lowerBound : false,
-                $first !== null ? $endOffset < $upperBound : false
+                null !== $last ? $startOffset > $lowerBound : false,
+                null !== $first ? $endOffset < $upperBound : false
             )
         );
     }

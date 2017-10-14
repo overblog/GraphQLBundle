@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the OverblogGraphQLBundle package.
- *
- * (c) Overblog <http://github.com/overblog/>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
 
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
@@ -239,7 +230,6 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                         'interfaces' => [],
                     ],
                 ],
-
             ],
             $this->container->getParameter('overblog_graphql_types.config')
         );
