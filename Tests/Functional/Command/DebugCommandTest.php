@@ -26,9 +26,9 @@ class DebugCommandTest extends TestCase
         $kernel = $client->getKernel();
 
         $application = new Application($kernel);
-        $application->add(new DebugCommand());
         $this->command = $application->find('graphql:debug');
         $this->commandTester = new CommandTester($this->command);
+
         foreach (DebugCommand::getCategories() as $category) {
             $this->logs[$category] = trim(
                 file_get_contents(

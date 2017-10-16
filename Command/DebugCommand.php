@@ -2,16 +2,45 @@
 
 namespace Overblog\GraphQLBundle\Command;
 
+use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\ResolverInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class DebugCommand extends ContainerAwareCommand
+class DebugCommand extends Command
 {
     private static $categories = ['type', 'mutation', 'resolver'];
+
+    /**
+     * @var TypeResolver
+     */
+    private $typeResolver;
+
+    /**
+     * @var MutationResolver
+     */
+    private $mutationResolver;
+
+    /**
+     * @var ResolverResolver
+     */
+    private $resolverResolver;
+
+    public function __construct(
+        TypeResolver $typeResolver,
+        MutationResolver $mutationResolver,
+        ResolverResolver $resolverResolver
+    ) {
+        parent::__construct();
+        $this->typeResolver = $typeResolver;
+        $this->mutationResolver = $mutationResolver;
+        $this->resolverResolver = $resolverResolver;
+    }
 
     protected function configure()
     {
@@ -42,8 +71,10 @@ class DebugCommand extends ContainerAwareCommand
         $tableHeaders = ['id', 'aliases'];
         foreach ($categories as $category) {
             $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
+
             /** @var ResolverInterface $resolver */
-            $resolver = $this->getContainer()->get(sprintf('overblog_graphql.%s_resolver', $category));
+            $resolver = $this->{$category.'Resolver'};
+
             $solutions = $this->retrieveSolutions($resolver);
             $this->renderTable($tableHeaders, $solutions, $io);
         }
