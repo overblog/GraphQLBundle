@@ -106,7 +106,6 @@ services:
 
     overblog_graphql.command.dump_schema:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
-        public: false
         arguments:
             - "@overblog_graphql.request_executor"
             - "%overblog_graphql.versions.relay%"
@@ -116,7 +115,6 @@ services:
 
     overblog_graphql.command.debug:
         class: Overblog\GraphQLBundle\Command\DebugCommand
-        public: false
         arguments:
             - "@overblog_graphql.type_resolver"
             - "@overblog_graphql.mutation_resolver"

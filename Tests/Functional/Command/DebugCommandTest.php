@@ -4,7 +4,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\Kernel;
@@ -22,11 +21,9 @@ class DebugCommandTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $client = static::createClient(['test_case' => 'mutation']);
-        $kernel = $client->getKernel();
+        static::bootKernel(['test_case' => 'mutation']);
 
-        $application = new Application($kernel);
-        $this->command = $application->find('graphql:debug');
+        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.debug');
         $this->commandTester = new CommandTester($this->command);
 
         foreach (DebugCommand::getCategories() as $category) {
@@ -48,17 +45,13 @@ class DebugCommandTest extends TestCase
      */
     public function testProcess(array $categories)
     {
-        $input = [
-            'command' => $this->command->getName(),
-        ];
         if (empty($categories)) {
             $categories = DebugCommand::getCategories();
-        } else {
-            $input['--category'] = $categories;
         }
 
-        $this->commandTester->execute($input);
+        $this->commandTester->execute(['--category' => $categories]);
         $this->assertEquals(0, $this->commandTester->getStatusCode());
+
         $expected = "\n";
         foreach ($categories as $category) {
             $expected .= $this->logs[$category]." \n\n\n\n";
@@ -74,7 +67,6 @@ class DebugCommandTest extends TestCase
     public function testInvalidFormat()
     {
         $this->commandTester->execute([
-            'command' => $this->command->getName(),
             '--category' => 'fake',
         ]);
     }
