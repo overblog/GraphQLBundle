@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
-use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +25,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         $kernel = $client->getKernel();
 
         $application = new Application($kernel);
-        $application->add(new GraphQLDumpSchemaCommand());
         $this->command = $application->find('graphql:dump-schema');
         $this->commandTester = new CommandTester($this->command);
         $this->cacheDir = $kernel->getCacheDir();

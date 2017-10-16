@@ -103,3 +103,13 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
+
+    overblog_graphql.command.dump_schema:
+        class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
+        public: false
+        arguments:
+            - "@overblog_graphql.request_executor"
+            - "%overblog_graphql.versions.relay%"
+            - "%kernel.root_dir%"
+        tags:
+            - { name: console.command }
