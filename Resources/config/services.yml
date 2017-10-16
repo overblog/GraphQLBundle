@@ -113,3 +113,13 @@ services:
             - "%kernel.root_dir%"
         tags:
             - { name: console.command }
+
+    overblog_graphql.command.debug:
+        class: Overblog\GraphQLBundle\Command\DebugCommand
+        public: false
+        arguments:
+            - "@overblog_graphql.type_resolver"
+            - "@overblog_graphql.mutation_resolver"
+            - "@overblog_graphql.resolver_resolver"
+        tags:
+            - { name: console.command }
