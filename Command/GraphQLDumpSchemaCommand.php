@@ -4,14 +4,35 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GraphQLDumpSchemaCommand extends ContainerAwareCommand
+class GraphQLDumpSchemaCommand extends Command
 {
+    /** @var RequestExecutor */
+    private $requestExecutor;
+
+    /** @var string */
+    private $relayVersion;
+
+    /** @var string */
+    private $baseExportPath;
+
+    public function __construct(
+        RequestExecutor $requestExecutor,
+        $relayVersion,
+        $baseExportPath
+    ) {
+        parent::__construct();
+        $this->requestExecutor = $requestExecutor;
+        $this->relayVersion = $relayVersion;
+        $this->baseExportPath = $baseExportPath;
+    }
+
     protected function configure()
     {
         $this
@@ -61,11 +82,10 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
 
     private function createFile(InputInterface $input)
     {
-        $container = $this->getContainer();
         $format = strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
-        $requestExecutor = $container->get('overblog_graphql.request_executor');
-        $file = $input->getOption('file') ?: $container->getParameter('kernel.root_dir').sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+
+        $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
@@ -77,7 +97,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
 
                 $modern = $this->useModernJsonFormat($input);
 
-                $result = $requestExecutor
+                $result = $this->requestExecutor
                     ->execute($request, [], $schemaName)
                     ->toArray();
 
@@ -85,7 +105,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
                 break;
 
             case 'graphql':
-                $content = SchemaPrinter::doPrint($requestExecutor->getSchema($schemaName));
+                $content = SchemaPrinter::doPrint($this->requestExecutor->getSchema($schemaName));
                 break;
 
             default:
@@ -107,7 +127,7 @@ class GraphQLDumpSchemaCommand extends ContainerAwareCommand
 
         // none chosen so fallback on default behavior
         if (!$modern && !$classic) {
-            return 'modern' === $this->getContainer()->getParameter('overblog_graphql.versions.relay');
+            return 'modern' === $this->relayVersion;
         }
 
         return $modern;

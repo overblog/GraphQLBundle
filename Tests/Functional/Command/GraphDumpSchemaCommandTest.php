@@ -2,9 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
-use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -22,14 +20,11 @@ class GraphDumpSchemaCommandTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $client = static::createClient(['test_case' => 'connection']);
-        $kernel = $client->getKernel();
+        static::bootKernel(['test_case' => 'connection']);
 
-        $application = new Application($kernel);
-        $application->add(new GraphQLDumpSchemaCommand());
-        $this->command = $application->find('graphql:dump-schema');
+        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.dump_schema');
         $this->commandTester = new CommandTester($this->command);
-        $this->cacheDir = $kernel->getCacheDir();
+        $this->cacheDir = static::$kernel->getCacheDir();
     }
 
     /**
@@ -42,7 +37,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         $file = $this->cacheDir.'/schema.'.$format;
 
         $input = [
-            'command' => $this->command->getName(),
             '--file' => $file,
         ];
 
@@ -62,7 +56,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
             [
-                'command' => $this->command->getName(),
                 '--file' => $file,
                 '--classic' => true,
                 '--format' => 'json',
@@ -78,7 +71,6 @@ class GraphDumpSchemaCommandTest extends TestCase
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
             [
-                'command' => $this->command->getName(),
                 '--file' => $file,
                 '--modern' => true,
                 '--format' => 'json',
@@ -96,7 +88,6 @@ class GraphDumpSchemaCommandTest extends TestCase
     public function testInvalidFormat()
     {
         $this->commandTester->execute([
-            'command' => $this->command->getName(),
             '--format' => 'fake',
         ]);
     }
@@ -108,7 +99,6 @@ class GraphDumpSchemaCommandTest extends TestCase
     public function testInvalidModernAndClassicUsedTogether()
     {
         $this->commandTester->execute([
-            'command' => $this->command->getName(),
             '--format' => 'json',
             '--classic' => true,
             '--modern' => true,

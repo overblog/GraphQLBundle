@@ -103,3 +103,21 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
+
+    overblog_graphql.command.dump_schema:
+        class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
+        arguments:
+            - "@overblog_graphql.request_executor"
+            - "%overblog_graphql.versions.relay%"
+            - "%kernel.root_dir%"
+        tags:
+            - { name: console.command }
+
+    overblog_graphql.command.debug:
+        class: Overblog\GraphQLBundle\Command\DebugCommand
+        arguments:
+            - "@overblog_graphql.type_resolver"
+            - "@overblog_graphql.mutation_resolver"
+            - "@overblog_graphql.resolver_resolver"
+        tags:
+            - { name: console.command }
