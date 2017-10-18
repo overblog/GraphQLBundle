@@ -10,11 +10,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class GraphQLDumpSchemaCommand extends Command
 {
-    /** @var RequestExecutor */
-    private $requestExecutor;
+    /** @var ContainerInterface */
+    private $container;
 
     /** @var string */
     private $relayVersion;
@@ -23,12 +24,12 @@ class GraphQLDumpSchemaCommand extends Command
     private $baseExportPath;
 
     public function __construct(
-        RequestExecutor $requestExecutor,
+        ContainerInterface $container,
         $relayVersion,
         $baseExportPath
     ) {
         parent::__construct();
-        $this->requestExecutor = $requestExecutor;
+        $this->container = $container;
         $this->relayVersion = $relayVersion;
         $this->baseExportPath = $baseExportPath;
     }
@@ -97,7 +98,7 @@ class GraphQLDumpSchemaCommand extends Command
 
                 $modern = $this->useModernJsonFormat($input);
 
-                $result = $this->requestExecutor
+                $result = $this->getRequestExecutor()
                     ->execute($request, [], $schemaName)
                     ->toArray();
 
@@ -105,7 +106,7 @@ class GraphQLDumpSchemaCommand extends Command
                 break;
 
             case 'graphql':
-                $content = SchemaPrinter::doPrint($this->requestExecutor->getSchema($schemaName));
+                $content = SchemaPrinter::doPrint($this->getRequestExecutor()->getSchema($schemaName));
                 break;
 
             default:
@@ -131,5 +132,13 @@ class GraphQLDumpSchemaCommand extends Command
         }
 
         return $modern;
+    }
+
+    /**
+     * @return RequestExecutor
+     */
+    private function getRequestExecutor()
+    {
+        return $this->container->get('overblog_graphql.request_executor');
     }
 }
