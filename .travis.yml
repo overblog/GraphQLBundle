@@ -12,19 +12,19 @@ matrix:
     include:
         - php: 5.5
           env: SYMFONY_VERSION=2.8.*
-        - php: 5.6
-          env: SYMFONY_VERSION=3.1.*
         - php: 7.0
           env: SYMFONY_VERSION=3.2.*
         - php: 7.1
           env: SYMFONY_VERSION=3.3.* TEST_COVERAGE=true
         - php: 7.1
           env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
-        - php: hhvm-stable
+        - php: 7.1
+          env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev
+        - php: hhvm
           dist: trusty
           group: edge
         - php: nightly
-          env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
         - php: nightly
 
@@ -37,7 +37,7 @@ before_install:
     - if [ "$DEPENDENCIES" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
     - if [ ${TEST_COVERAGE} != true ]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
-    - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
 install: composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
