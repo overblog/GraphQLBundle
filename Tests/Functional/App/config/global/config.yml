@@ -4,6 +4,7 @@ imports:
 services:
     overblog_graphql.test.resolver.global:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\GlobalResolver
+        public: true
         arguments:
             - "@overblog_graphql.type_resolver"
 

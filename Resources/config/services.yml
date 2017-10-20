@@ -16,6 +16,7 @@ services:
 
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
+        public: true
         arguments:
             - "@overblog_graphql.executor"
             - "@event_dispatcher"
@@ -28,8 +29,14 @@ services:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
 
+    Overblog\GraphQLBundle\Request\Executor:
+        alias: overblog_graphql.request_executor
+
     overblog_graphql.request_parser:
         class: Overblog\GraphQLBundle\Request\Parser
+        public: true
+
+
 
     overblog_graphql.request_batch_parser:
         class: Overblog\GraphQLBundle\Request\BatchParser
@@ -43,19 +50,35 @@ services:
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
+        public: true
         arguments:
             -
 
+    Overblog\GraphQLBundle\Resolver\TypeResolver:
+        alias: overblog_graphql.type_resolver
+
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
+        public: true
+
+    Overblog\GraphQLBundle\Resolver\ResolverResolver:
+        alias: overblog_graphql.resolver_resolver
 
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
+        public: true
+
+    Overblog\GraphQLBundle\Resolver\MutationResolver:
+        alias: overblog_graphql.mutation_resolver
 
     overblog_graphql.access_resolver:
         class: Overblog\GraphQLBundle\Resolver\AccessResolver
+        public: true
         arguments:
             - "@overblog_graphql.promise_adapter"
+
+    Overblog\GraphQLBundle\Resolver\AccessResolver:
+        alias: overblog_graphql.access_resolver
 
     overblog_graphql.expression_language.default:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
@@ -68,6 +91,7 @@ services:
 
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
+        public: true
         arguments:
             - "%overblog_graphql.class_namespace%"
             - ["%overblog_graphql.resources_dir%/skeleton"]
@@ -81,6 +105,7 @@ services:
 
     overblog_graphql.event_listener.request_file_listener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
+        public: true
         arguments:
             - "@request_stack"
         tags:
@@ -106,6 +131,7 @@ services:
 
     overblog_graphql.command.dump_schema:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
+        public: true
         arguments:
             # "overblog_graphql.request_executor" service must be load lazy since that command service
             # is instanced before ClassLoaderEvent. This issues is fix in Symfony 3.4 introducing lazy commands
@@ -118,6 +144,7 @@ services:
 
     overblog_graphql.command.debug:
         class: Overblog\GraphQLBundle\Command\DebugCommand
+        public: true
         arguments:
             - "@overblog_graphql.type_resolver"
             - "@overblog_graphql.mutation_resolver"
