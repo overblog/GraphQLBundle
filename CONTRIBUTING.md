@@ -16,5 +16,6 @@ Giving some love to PHP CS
 ---------------------------
 
 ```bash
-bin/php-cs-fixer fix ./
+composer require --dev 'friendsofphp/php-cs-fixer:^2.0'
+bin/php-cs-fixer fix
 ```
