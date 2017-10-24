@@ -16,3 +16,7 @@ overblog_graphql:
                 -
                     type: yaml
                     dir: "%kernel.root_dir%/config/access/mapping"
+                # include the same files twice
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/access/mapping"

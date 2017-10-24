@@ -36,6 +36,8 @@ class OverblogGraphQLTypesExtension extends Extension
         ],
     ];
 
+    private $treatedFiles = [];
+
     const DEFAULT_TYPES_SUFFIX = '.types';
 
     public function load(array $configs, ContainerBuilder $container)
@@ -49,7 +51,8 @@ class OverblogGraphQLTypesExtension extends Extension
     public function containerPrependExtensionConfig(array $config, ContainerBuilder $container)
     {
         $typesMappings = $this->mappingConfig($config, $container);
-
+        // reset treated files
+        $this->treatedFiles = [];
         // treats mappings
         foreach ($typesMappings as $params) {
             $this->prependExtensionConfigFromFiles($params['type'], $params['files'], $container);
@@ -63,12 +66,17 @@ class OverblogGraphQLTypesExtension extends Extension
      */
     private function prependExtensionConfigFromFiles($type, $files, ContainerBuilder $container)
     {
-        /** @var SplFileInfo $file */
         foreach ($files as $file) {
+            $fileRealPath = $file->getRealPath();
+            if (isset($this->treatedFiles[$fileRealPath])) {
+                continue;
+            }
+
             $parserClass = sprintf('Overblog\\GraphQLBundle\\Config\\Parser\\%sParser', ucfirst($type));
 
             $typeConfig = call_user_func($parserClass.'::parse', $file, $container);
             $container->prependExtensionConfig($this->getAlias(), $typeConfig);
+            $this->treatedFiles[$file->getRealPath()] = true;
         }
     }
 
