@@ -49,7 +49,7 @@ EOF;
         $loader = new ClassLoader();
         $loader->addPsr4(
             'Overblog\\GraphQLBundle\\Access\\__DEFINITIONS__\\',
-            '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/overbloggraphbundletestaccess/overblog/graphql-bundle/__definitions__'
+            '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__'
         );
         $loader->register();
         $this->loader = $loader;

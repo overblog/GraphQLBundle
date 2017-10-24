@@ -1,6 +1,10 @@
-dist: trusty
-
 language: php
+
+dist: trusty
+sudo: false
+
+git:
+    depth: 1
 
 branches:
     only:
@@ -10,8 +14,6 @@ branches:
 matrix:
     fast_finish: true
     include:
-        - php: 5.5
-          env: SYMFONY_VERSION=2.8.*
         - php: 5.6
           env: SYMFONY_VERSION=3.1.*
         - php: 7.0
@@ -19,13 +21,13 @@ matrix:
         - php: 7.1
           env: SYMFONY_VERSION=3.3.* TEST_COVERAGE=true
         - php: 7.1
-          env: GRAPHQLPHP_VERSION=0.10.0
-        - php: hhvm
+          env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
+        - php: 7.1
+          env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
         - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
 cache:
     directories:
@@ -33,16 +35,17 @@ cache:
         - $HOME/.php_cs.cache
 
 before_install:
+    - if [ "$DEPENDENCIES" = "dev" ]; then perl -pi -e 's/^}$/,"minimum-stability":"dev"}/' composer.json; fi;
     - if [ ${TEST_COVERAGE} != true ]; then phpenv config-rm xdebug.ini || true; fi
     - composer selfupdate
-    - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
 install: composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 
 script:
     - bin/phpunit --debug $( if [ $TEST_COVERAGE = true ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
-    - if [ ${TRAVIS_PHP_VERSION} == "7.0" ]; then bin/php-cs-fixer fix --diff --dry-run -v; fi;
+    - if [ ${TRAVIS_PHP_VERSION} == "7.0" ]; then composer require --dev 'friendsofphp/php-cs-fixer:^2.0' && bin/php-cs-fixer fix --diff --dry-run -v; fi;
 
 after_script:
     - if [ ${TEST_COVERAGE} = true ]; then wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi

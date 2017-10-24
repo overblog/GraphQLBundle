@@ -17,9 +17,6 @@ abstract class TestCase extends WebTestCase
     const ANONYMOUS_USER = null;
     const DEFAULT_PASSWORD = '123';
 
-    /** @var TestKernel[] */
-    private static $kernels = [];
-
     /**
      * {@inheritdoc}
      */
@@ -39,17 +36,10 @@ abstract class TestCase extends WebTestCase
 
         $options['test_case'] = isset($options['test_case']) ? $options['test_case'] : null;
 
-        $env = isset($options['environment']) ? $options['environment'] : 'overbloggraphbundletest'.strtolower($options['test_case']);
+        $env = isset($options['environment']) ? $options['environment'] : 'test'.strtolower($options['test_case']);
         $debug = isset($options['debug']) ? $options['debug'] : true;
 
-        $kernelKey = $options['test_case'] ?: '__default__';
-        $kernelKey .= '//'.$env.'//'.var_export($debug, true);
-
-        if (!isset(self::$kernels[$kernelKey])) {
-            self::$kernels[$kernelKey] = new static::$class($env, $debug, $options['test_case']);
-        }
-
-        return self::$kernels[$kernelKey];
+        return new static::$class($env, $debug, $options['test_case']);
     }
 
     /**
