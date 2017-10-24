@@ -29,7 +29,7 @@ Types can be define 3 different ways:
                 types:
                     -
                         type: yaml # or xml or null
-                        dir: "%kernel.root_dir%/.../mapping"
+                        dir: "%kernel.root_dir%/.../mapping" # sub directories are also searched
                         # suffix: .types # use to change default file suffix
     ```
 
