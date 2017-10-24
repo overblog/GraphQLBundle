@@ -1,6 +1,10 @@
 language: php
 
 dist: trusty
+sudo: false
+
+git:
+    depth: 1
 
 branches:
     only:
@@ -20,7 +24,6 @@ matrix:
           env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
         - php: 7.1
           env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev
-        - php: hhvm
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
