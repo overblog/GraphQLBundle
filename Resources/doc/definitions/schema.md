@@ -19,6 +19,9 @@ Default files location
 Yaml configuration
 -------
 
+For more examples on what can be done with Symfony Expression Language (the stuff after `@=`), check 
+[here](expression-language.md) and [here](http://symfony.com/doc/current/components/expression_language/syntax.html).
+
 ```yaml
 # This is the type that will be the root of our query, and the
 # entry point into our schema. It gives us the ability to fetch
@@ -43,7 +46,7 @@ Query:
                     episode:
                         description: "If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode."
                         type: "Episode"
-                resolve: "@=resolver('character_hero', [args['episode']])"
+                resolve: "@=resolver('character_hero', [args['episode'].getId()])"
             human:
                 type: "Human"
                 args:
@@ -57,7 +60,7 @@ Query:
                     id:
                         description: "id of the droid"
                         type: "String!"
-                resolve: "@=resolver('character_droid', [args['id']])"
+                resolve: "@=resolver('character_droid', [args])"
 ```
 
 ```yaml
