@@ -45,10 +45,10 @@ composer require overblog/graphql-bundle
     (defaults to n): 
 ```
 
-**c)** If you want to run GraphiQL interface Twig is require, install it via:
+**c)** If you want to run GraphiQL interface we have a bundle:
 
  ```bash
- composer require twig
+ composer require overblog/graphiql-bundle
  ```
 
 Manual installation
@@ -86,14 +86,6 @@ class AppKernel extends Kernel
 # in app/config/routing.yml
 overblog_graphql_endpoint:
     resource: "@OverblogGraphQLBundle/Resources/config/routing/graphql.yml"
-```
-
-**d)** Enable GraphiQL in dev mode (required twig)
-
-```yaml
-# in app/config/routing_dev.yml
-overblog_graphql_graphiql:
-    resource: "@OverblogGraphQLBundle/Resources/config/routing/graphiql.yml"
 ```
 
 Composer autoloader configuration (optional)

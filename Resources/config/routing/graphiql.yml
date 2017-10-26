@@ -1,9 +1,0 @@
-overblog_graphql_graphiql:
-    path: /graphiql
-    defaults:
-        _controller: OverblogGraphQLBundle:GraphiQL:index
-
-overblog_graphql_graphiql_multiple:
-    path: /graphiql/{schemaName}
-    defaults:
-        _controller: OverblogGraphQLBundle:GraphiQL:index

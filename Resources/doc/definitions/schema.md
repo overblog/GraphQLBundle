@@ -8,13 +8,13 @@ Default files location
 
 - ***Main configuration:*** `/config/packages/graphql.yaml`
 - ***Types:*** `/config/graphql/types/query.yaml`
-- ***Routes:*** `/config/routes/graphql.yaml` and `/config/routes/dev/graphql_graphiql.yaml` 
+- ***Routes:*** `/config/routes/graphql.yaml`
 
 **Symfony Standard:**
 
 - ***Main configuration:*** `/app/config/config.yml`
 - ***Types:*** `src/MyBundle/Resources/config/graphql/Query.types.yml`
-- ***Routes:*** `/app/config/routing.yml` and `/app/config/routing_dev.yml`
+- ***Routes:*** `/app/config/routing.yml`
 
 Yaml configuration
 -------
@@ -96,7 +96,7 @@ type | Path
 -----| -----
 simple request | `/graphql/foo`
 batch request | `/graphql/foo/batch`
-graphiQL | `/graphiql/foo`
+GraphiQL | `/graphiql/foo`
 
 **bar** schema endpoint can be access:
 
@@ -104,4 +104,5 @@ type | Path
 -----| -----
 simple request | `/graphql/bar`
 batch request | `/graphql/bar/batch`
-graphiQL | `/graphiql/bar`
+GraphiQL | `/graphiql/bar`
+
