@@ -19,7 +19,7 @@ Default files location
 Yaml configuration
 -------
 
-For more examples on what can be done with Symfony Expression Language (the stuff after `@=`), check 
+For more examples on what can be done with Symfony Expression Language (the stuff after `@=`), check
 [here](expression-language.md) and [here](http://symfony.com/doc/current/components/expression_language/syntax.html).
 
 ```yaml
@@ -96,7 +96,7 @@ type | Path
 -----| -----
 simple request | `/graphql/foo`
 batch request | `/graphql/foo/batch`
-GraphiQL | `/graphiql/foo`
+GraphiQL* | `/graphiql/foo`
 
 **bar** schema endpoint can be access:
 
@@ -104,5 +104,6 @@ type | Path
 -----| -----
 simple request | `/graphql/bar`
 batch request | `/graphql/bar/batch`
-GraphiQL | `/graphiql/bar`
+GraphiQL* | `/graphiql/bar`
 
+\* `/graphiql` depends on [OverblogGraphiQLBundle](https://github.com/overblog/GraphiQLBundle)
