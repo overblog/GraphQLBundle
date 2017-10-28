@@ -49,7 +49,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      */
     public function testBrokenYmlOnPrepend()
     {
-        $this->extension->containerPrependExtensionConfig($this->getBrokenMappingConfig('yaml'), $this->container);
+        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('yaml'), $this->container);
     }
 
     /**
@@ -58,7 +58,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      */
     public function testBrokenXmlOnPrepend()
     {
-        $this->extension->containerPrependExtensionConfig($this->getBrokenMappingConfig('xml'), $this->container);
+        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('xml'), $this->container);
     }
 
     /**
@@ -246,7 +246,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         ];
     }
 
-    private function getBrokenMappingConfig($type)
+    private function getMappingConfig($type)
     {
         $config = [
             'definitions' => [

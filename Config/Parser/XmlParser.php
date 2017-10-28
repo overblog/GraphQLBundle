@@ -34,6 +34,6 @@ class XmlParser implements ParserInterface
             throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
         }
 
-        return $typesConfig;
+        return (array) $typesConfig;
     }
 }

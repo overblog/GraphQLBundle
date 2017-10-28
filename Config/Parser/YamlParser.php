@@ -33,6 +33,6 @@ class YamlParser implements ParserInterface
             throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
         }
 
-        return $typesConfig;
+        return (array) $typesConfig;
     }
 }
