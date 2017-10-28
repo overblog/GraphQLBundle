@@ -18,6 +18,13 @@ For documentation, see:
 
 [Read the documentation](Resources/doc/index.md)
 
+Community
+---------
+
+* Get some support on [Symfony devs Slack](https://symfony.com/slack-invite)
+  on the dedicated channel **overblog-graphql**.
+* Follow us on [GitHub](https://github.com/overblog)
+
 Contributing
 ------------
 
