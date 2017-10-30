@@ -25,5 +25,5 @@ UPGRADE FROM 0.9 to 0.10
      - For standard Symfony installation: `/app/config/routing_dev.yml`
      - For Symfony Flex: `/config/routes/dev/graphql_graphiql.yaml`
    - Installing OverblogGraphiQLBundle
-     - `composer require overblog/graphiql-bundle`
+     - `composer require --dev overblog/graphiql-bundle`
      - Follow instructions at https://github.com/overblog/GraphiQLBundle

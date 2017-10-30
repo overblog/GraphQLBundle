@@ -48,7 +48,7 @@ composer require overblog/graphql-bundle
 **c)** If you want to run GraphiQL interface we have a bundle:
 
  ```bash
- composer require overblog/graphiql-bundle
+ composer require --dev overblog/graphiql-bundle
  ```
 
 Manual installation
