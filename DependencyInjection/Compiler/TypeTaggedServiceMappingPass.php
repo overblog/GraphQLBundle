@@ -4,9 +4,11 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 class TypeTaggedServiceMappingPass extends TaggedServiceMappingPass
 {
+    const TAG_NAME = 'overblog_graphql.type';
+
     protected function getTagName()
     {
-        return 'overblog_graphql.type';
+        return self::TAG_NAME;
     }
 
     protected function getResolverServiceID()

@@ -1,0 +1,6 @@
+imports:
+    - { resource: ../connection/config.yml }
+
+overblog_graphql:
+    definitions:
+        auto_compile: false

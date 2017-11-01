@@ -7,6 +7,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
@@ -17,12 +18,18 @@ class TypeGenerator extends BaseTypeGenerator
 
     private $defaultResolver;
 
+    private $configs;
+
+    private $useClassMap = true;
+
     private static $classMapLoaded = false;
 
-    public function __construct($classNamespace, array $skeletonDirs, $cacheDir, callable $defaultResolver)
+    public function __construct($classNamespace, array $skeletonDirs, $cacheDir, callable $defaultResolver, array $configs, $useClassMap = true)
     {
         $this->setCacheDir($cacheDir);
         $this->defaultResolver = $defaultResolver;
+        $this->configs = $this->processConfigs($configs);
+        $this->useClassMap = $useClassMap;
         parent::__construct($classNamespace, $skeletonDirs);
     }
 
@@ -179,17 +186,17 @@ CODE;
         return $code;
     }
 
-    public function compile(array $configs, $loadClasses = true)
+    public function compile($mode)
     {
         $cacheDir = $this->getCacheDir();
-        if (file_exists($cacheDir)) {
+        $writeMode = $mode & self::MODE_WRITE;
+        if ($writeMode && file_exists($cacheDir)) {
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
+        $classes = $this->generateClasses($this->configs, $cacheDir, $mode);
 
-        $classes = $this->generateClasses($configs, $cacheDir, true);
-
-        if ($loadClasses) {
+        if ($writeMode && $this->useClassMap) {
             $content = "<?php\nreturn ".var_export($classes, true).';';
             // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
             $content = str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
@@ -204,8 +211,9 @@ CODE;
 
     public function loadClasses($forceReload = false)
     {
-        if (!self::$classMapLoaded || $forceReload) {
-            $classes = require $this->getClassesMap();
+        if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
+            $classMapFile = $this->getClassesMap();
+            $classes = file_exists($classMapFile) ? require $classMapFile : [];
             /** @var ClassLoader $mapClassLoader */
             static $mapClassLoader = null;
             if (null === $mapClassLoader) {
@@ -224,5 +232,21 @@ CODE;
     private function getClassesMap()
     {
         return $this->getCacheDir().'/__classes.map';
+    }
+
+    private function processConfigs(array $configs)
+    {
+        return array_map(
+            function ($v) {
+                if (is_array($v)) {
+                    return call_user_func([$this, 'processConfigs'], $v);
+                } elseif (is_string($v) && 0 === strpos($v, '@=')) {
+                    return new Expression(substr($v, 2));
+                }
+
+                return $v;
+            },
+            $configs
+        );
     }
 }

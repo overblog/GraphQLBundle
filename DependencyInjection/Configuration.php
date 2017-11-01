@@ -48,6 +48,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
                         ->scalarNode('cache_dir')->defaultValue($this->cacheDir.'/overblog/graphql-bundle/__definitions__')->end()
                         ->booleanNode('use_classloader_listener')->defaultTrue()->end()
+                        ->booleanNode('auto_compile')->defaultTrue()->end()
                         ->booleanNode('show_debug_info')->defaultFalse()->end()
                         ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                         ->arrayNode('schema')
