@@ -19,6 +19,13 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
     const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
 
+    const MODE_DRY_RUN = 1;
+    const MODE_MAPPING_ONLY = 2;
+    const MODE_WRITE = 4;
+    const MODE_OVERRIDE = 8;
+
+    protected static $deferredPlaceHolders = ['useStatement', 'spaces', 'closureUseStatements'];
+
     protected static $closureTemplate = <<<EOF
 function (%s) <closureUseStatements>{
 <spaces><spaces>return %s;
@@ -308,18 +315,19 @@ EOF;
      * ]
      * </code>
      *
-     * @param array $configs
-     * @param string $outputDirectory
-     * @param bool $regenerateIfExists
+     * @param array    $configs
+     * @param string   $outputDirectory
+     * @param int|bool $mode
+     *
      * @return array
      */
-    public function generateClasses(array $configs, $outputDirectory, $regenerateIfExists = false)
+    public function generateClasses(array $configs, $outputDirectory, $mode = false)
     {
         $classesMap = [];
 
         foreach ($configs as $name => $config) {
             $config['config']['name'] = isset($config['config']['name']) ? $config['config']['name'] : $name;
-            $classMap = $this->generateClass($config, $outputDirectory, $regenerateIfExists);
+            $classMap = $this->generateClass($config, $outputDirectory, $mode);
 
             $classesMap = array_merge($classesMap, $classMap);
         }
@@ -327,26 +335,41 @@ EOF;
         return $classesMap;
     }
 
-    public function generateClass(array $config, $outputDirectory, $regenerateIfExists = false)
+    /**
+     * @param array    $config
+     * @param string   $outputDirectory
+     * @param int|bool $mode true consider as MODE_WRITE|MODE_OVERRIDE and false as MODE_WRITE
+     *
+     * @return array
+     */
+    public function generateClass(array $config, $outputDirectory, $mode = false)
     {
-        static $treatLater = ['useStatement', 'spaces', 'closureUseStatements'];
-        $this->clearInternalUseStatements();
-        $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, $treatLater);
-        $code = $this->processPlaceHoldersReplacements($treatLater, $code, $config) . "\n";
+        if (true === $mode) {
+            $mode = self::MODE_WRITE|self::MODE_OVERRIDE;
+        } elseif (false === $mode) {
+            $mode = self::MODE_WRITE;
+        }
 
         $className = $this->generateClassName($config);
-
         $path = $outputDirectory . '/' . $className . '.php';
-        $dir = dirname($path);
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0775, true);
-        }
-        if ($regenerateIfExists || !file_exists($path)) {
-            file_put_contents($path, $code);
-            chmod($path, 0664);
+        if (!($mode & self::MODE_MAPPING_ONLY)) {
+            $this->clearInternalUseStatements();
+            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::$deferredPlaceHolders);
+            $code = $this->processPlaceHoldersReplacements(static::$deferredPlaceHolders, $code, $config) . "\n";
+
+            if ($mode & self::MODE_WRITE) {
+                $dir = dirname($path);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0775, true);
+                }
+                if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
+                    file_put_contents($path, $code);
+                    chmod($path, 0664);
+                }
+            }
         }
 
-        return [$this->getClassNamespace().'\\'.$className => realpath($path)];
+        return [$this->getClassNamespace().'\\'.$className => $path];
     }
 }
