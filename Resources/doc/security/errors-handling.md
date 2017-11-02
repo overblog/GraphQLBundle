@@ -2,7 +2,7 @@ Errors handling
 ===============
 
 In no debug mode all errors will be logged and replace by a generic error message.
-Only query parsed error will not be replace.
+Only query parsed error won't be replaced.
 If you want to send explicit error or warnings messages to your users you can use exceptions:
 
 1- **Overblog\\GraphQLBundle\\Error\\UserError** to send unique error
