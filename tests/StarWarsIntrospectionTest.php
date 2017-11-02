@@ -11,6 +11,8 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
+use GraphQL\GraphQL;
+
 class StarWarsIntrospectionTest extends AbstractStarWarsTest
 {
     // Star Wars Introspection Tests
@@ -53,7 +55,12 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                 ]
             ]
         ];
-        $this->assertValidQuery($query, $expected);
+
+        $actual = GraphQL::execute($this->schema, $query);
+        $this->sortSchemaEntry($actual, 'types', 'name');
+        $this->sortSchemaEntry($expected, 'types', 'name');
+        $expected = ['data' => $expected];
+        $this->assertEquals($expected, $actual, json_encode($actual));
     }
 
     // it('Allows querying the schema for query type')

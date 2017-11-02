@@ -49,4 +49,17 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         $expected = ['data' => $expected];
         $this->assertEquals($expected, $actual, json_encode($actual));
     }
+
+    protected function sortSchemaEntry(array &$entries, $entryKey, $sortBy)
+    {
+        if (isset($entries['data']['__schema'][$entryKey])) {
+            $data = &$entries['data']['__schema'][$entryKey];
+        } else {
+            $data = &$entries['__schema'][$entryKey];
+        }
+
+        usort($data, function ($data1, $data2) use ($sortBy) {
+            return strcmp($data1[$sortBy], $data2[$sortBy]);
+        });
+    }
 }
