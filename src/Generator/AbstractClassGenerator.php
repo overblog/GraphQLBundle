@@ -375,13 +375,22 @@ abstract class AbstractClassGenerator
     /**
      * Generates classes files.
      *
-     * @param array $configs raw configs
-     * @param string $outputDirectory
-     * @param bool $regenerateIfExists
+     * @param array    $configs raw configs
+     * @param string   $outputDirectory
+     * @param int|bool $mode
      *
      * @return array classes map [[FQCLN => classPath], [FQCLN => classPath], ...]
      */
-    abstract public function generateClasses(array $configs, $outputDirectory, $regenerateIfExists = false);
+    abstract public function generateClasses(array $configs, $outputDirectory, $mode = false);
 
-    abstract public function generateClass(array $config, $outputDirectory, $regenerateIfExists = false);
+    /**
+     * Generates a class file.
+     *
+     * @param array $config
+     * @param $outputDirectory
+     * @param bool $mode
+     *
+     * @return array classes map [FQCLN => classPath]
+     */
+    abstract public function generateClass(array $config, $outputDirectory, $mode = false);
 }
