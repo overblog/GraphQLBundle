@@ -8,7 +8,7 @@ If you want to send explicit error or warnings messages to your users you can us
 1- **Overblog\\GraphQLBundle\\Error\\UserError** to send unique error
 
 ```php
-use Overblog\GraphQLBundle\Error\UserError
+use Overblog\GraphQLBundle\Error\UserError;
 
 class CharacterResolver
 {
@@ -30,8 +30,8 @@ class CharacterResolver
 2- **Overblog\\GraphQLBundle\\Error\\UserErrors** to send multiple errors
 
 ```php
-use Overblog\GraphQLBundle\Error\UserError
-use Overblog\GraphQLBundle\Error\UserErrors
+use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserErrors;
 
 class CharacterResolver
 {
@@ -68,7 +68,7 @@ class CharacterResolver
 3- **Overblog\\GraphQLBundle\\Error\\UserWarning** to send unique warning
 
 ```php
-use Overblog\GraphQLBundle\Error\UserWarning
+use Overblog\GraphQLBundle\Error\UserWarning;
 
 class CharacterResolver
 {
