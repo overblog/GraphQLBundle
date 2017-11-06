@@ -45,7 +45,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
      */
     protected function assertValidQuery($query, $expected, $variables = null)
     {
-        $actual = GraphQL::execute($this->schema, $query, null, null, $variables);
+        $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)->toArray();
         $expected = ['data' => $expected];
         $this->assertEquals($expected, $actual, json_encode($actual));
     }
