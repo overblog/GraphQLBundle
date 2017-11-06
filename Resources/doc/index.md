@@ -106,6 +106,9 @@ overblog_graphql:
     definitions:
         # disable listener the bundle out of box classLoader
         use_classloader_listener: false
+        # change to "false" to disable auto compilation.
+        # To generate types manually, see "graphql:compile" command.
+        auto_compile: true
         # change classes cache dir (recommends using a directory that will be committed)
         cache_dir: "/my/path/to/my/generated/classes"
         # Can also change the namespace
