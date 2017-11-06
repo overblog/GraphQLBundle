@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -39,6 +40,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setShowDebug($config, $container);
         $this->setDefinitionParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
+        $this->setCompilerCacheWarmer($config, $container);
 
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
@@ -65,6 +67,18 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             $container->getParameter('kernel.debug'),
             $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
         );
+    }
+
+    private function setCompilerCacheWarmer(array $config, ContainerBuilder $container)
+    {
+        if ($config['definitions']['auto_compile']) {
+            $definition = $container->setDefinition(
+                CompileCacheWarmer::class,
+                new Definition(CompileCacheWarmer::class)
+            );
+            $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
+            $definition->addTag('kernel.cache_warmer', ['priority' => 50]);
+        }
     }
 
     private function setClassLoaderListener(array $config, ContainerBuilder $container)

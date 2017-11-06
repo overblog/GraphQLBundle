@@ -15,10 +15,10 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         $serviceMapping = [];
 
         $taggedServices = $container->findTaggedServiceIds($tagName);
+        $isType = TypeTaggedServiceMappingPass::TAG_NAME === $tagName;
 
         foreach ($taggedServices as $id => $tags) {
             $className = $container->findDefinition($id)->getClass();
-            $isType = is_subclass_of($className, Type::class);
             foreach ($tags as $tag) {
                 $this->checkRequirements($id, $tag);
                 $tag = array_merge($tag, ['id' => $id]);
@@ -62,7 +62,8 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
                 $solutionDefinition->getMethodCalls()
             );
             if (
-                is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
+                empty($options['generated']) // false is consider as empty
+                && is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
                 && !in_array('setContainer', $methods)
             ) {
                 @trigger_error(

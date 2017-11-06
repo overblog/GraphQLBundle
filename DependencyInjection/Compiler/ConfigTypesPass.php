@@ -2,57 +2,32 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ConfigTypesPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $config = $container->getParameter('overblog_graphql_types.config');
-        $generatedClasses = $container->get('overblog_graphql.cache_compiler')->compile(
-            $this->processConfig($config),
-            $container->getParameter('overblog_graphql.use_classloader_listener')
-        );
+        $generatedClasses = $container->get('overblog_graphql.cache_compiler')
+            ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
         foreach ($generatedClasses as $class => $file) {
-            if (!class_exists($class)) {
-                throw new \RuntimeException(sprintf(
-                    'Type class %s not found. If you are using your own classLoader verify the path and the namespace please.',
-                        json_encode($class))
-                );
-            }
-            $aliases = call_user_func($class.'::getAliases');
+            $aliases = [preg_replace('/Type$/', '', substr(strrchr($class, '\\'), 1))];
             $this->setTypeServiceDefinition($container, $class, $aliases);
         }
-        $container->getParameterBag()->remove('overblog_graphql_types.config');
     }
 
     private function setTypeServiceDefinition(ContainerBuilder $container, $class, array $aliases)
     {
         $definition = $container->setDefinition($class, new Definition($class));
         $definition->setPublic(false);
-        $definition->setAutowired(true);
+        $definition->setArguments([new Reference('service_container')]);
         foreach ($aliases as $alias) {
-            $definition->addTag('overblog_graphql.type', ['alias' => $alias]);
+            $definition->addTag('overblog_graphql.type', ['alias' => $alias, 'generated' => true]);
         }
-    }
-
-    private function processConfig(array $configs)
-    {
-        return array_map(
-            function ($v) {
-                if (is_array($v)) {
-                    return call_user_func([$this, 'processConfig'], $v);
-                } elseif (is_string($v) && 0 === strpos($v, '@=')) {
-                    return new Expression(substr($v, 2));
-                }
-
-                return $v;
-            },
-            $configs
-        );
     }
 }

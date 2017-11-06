@@ -4,6 +4,7 @@
 <classDocBlock>
 <classType>class <className> extends <parentClassName><implements>
 {<traits>
+
 <spaces>public function __construct(ContainerInterface $container)
 <spaces>{
 <spaces><spaces>$request = null;
@@ -35,10 +36,5 @@
 <spaces><spaces><spaces>}
 <spaces><spaces>}
 <spaces><spaces>return $filtered;
-<spaces>}
-
-<spaces>public static function getAliases()
-<spaces>{
-<spaces><spaces>return [preg_replace('/Type$/', '', substr(strrchr(__CLASS__, '\\'), 1))];
 <spaces>}
 }

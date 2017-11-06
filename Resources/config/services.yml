@@ -36,8 +36,6 @@ services:
         class: Overblog\GraphQLBundle\Request\Parser
         public: true
 
-
-
     overblog_graphql.request_batch_parser:
         class: Overblog\GraphQLBundle\Request\BatchParser
 
@@ -97,6 +95,8 @@ services:
             - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql.default_resolver%"
+            - "%overblog_graphql_types.config%"
+            - "%overblog_graphql.use_classloader_listener%"
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
             - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
@@ -149,5 +149,13 @@ services:
             - "@overblog_graphql.type_resolver"
             - "@overblog_graphql.mutation_resolver"
             - "@overblog_graphql.resolver_resolver"
+        tags:
+            - { name: console.command }
+
+    overblog_graphql.command.compile:
+        class: Overblog\GraphQLBundle\Command\CompileCommand
+        public: true
+        arguments:
+            - "@overblog_graphql.cache_compiler"
         tags:
             - { name: console.command }
