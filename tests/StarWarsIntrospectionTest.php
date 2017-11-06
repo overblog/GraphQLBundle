@@ -56,7 +56,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
             ]
         ];
 
-        $actual = GraphQL::execute($this->schema, $query);
+        $actual = GraphQL::executeQuery($this->schema, $query)->toArray();
         $this->sortSchemaEntry($actual, 'types', 'name');
         $this->sortSchemaEntry($expected, 'types', 'name');
         $expected = ['data' => $expected];

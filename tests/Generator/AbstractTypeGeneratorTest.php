@@ -45,7 +45,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $this->filesystem->remove($this->tmpDir);
     }
 
-    protected function generateClasses(array $typeConfigs = null, $tmpDir = null, $regenerateIfExists = true)
+    protected function generateClasses(array $typeConfigs = null, $tmpDir = null, $mode = true)
     {
         if (null === $typeConfigs) {
             $typeConfigs = $this->typeConfigs;
@@ -55,7 +55,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
             $tmpDir = $this->tmpDir;
         }
 
-        $classes = $this->typeGenerator->generateClasses($typeConfigs, $tmpDir, $regenerateIfExists);
+        $classes = $this->typeGenerator->generateClasses($typeConfigs, $tmpDir, $mode);
 
         $this->classLoader->addClassMap($classes);
 
