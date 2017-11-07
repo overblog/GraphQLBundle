@@ -4,31 +4,43 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
 use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
 {
     const USE_FOR_CLOSURES = '$container, $request, $user, $token';
 
+    const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
+
     private $cacheDir;
 
     private $defaultResolver;
 
+    private $configProcessor;
+
     private $configs;
 
-    private $useClassMap = true;
+    private $useClassMap;
 
     private static $classMapLoaded = false;
 
-    public function __construct($classNamespace, array $skeletonDirs, $cacheDir, callable $defaultResolver, array $configs, $useClassMap = true)
+    public function __construct(
+        $classNamespace,
+        array $skeletonDirs,
+        $cacheDir,
+        callable $defaultResolver,
+        array $configs,
+        $useClassMap = true,
+        callable $configProcessor = null)
     {
         $this->setCacheDir($cacheDir);
         $this->defaultResolver = $defaultResolver;
-        $this->configs = $this->processConfigs($configs);
+        $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
+        $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         parent::__construct($classNamespace, $skeletonDirs);
     }
@@ -194,7 +206,8 @@ CODE;
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
-        $classes = $this->generateClasses($this->configs, $cacheDir, $mode);
+        $configs = call_user_func($this->configProcessor, $this->configs);
+        $classes = $this->generateClasses($configs, $cacheDir, $mode);
 
         if ($writeMode && $this->useClassMap) {
             $content = "<?php\nreturn ".var_export($classes, true).';';
@@ -232,21 +245,5 @@ CODE;
     private function getClassesMap()
     {
         return $this->getCacheDir().'/__classes.map';
-    }
-
-    private function processConfigs(array $configs)
-    {
-        return array_map(
-            function ($v) {
-                if (is_array($v)) {
-                    return call_user_func([$this, 'processConfigs'], $v);
-                } elseif (is_string($v) && 0 === strpos($v, '@=')) {
-                    return new Expression(substr($v, 2));
-                }
-
-                return $v;
-            },
-            $configs
-        );
     }
 }

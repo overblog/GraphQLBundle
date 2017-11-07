@@ -1,0 +1,21 @@
+Day:
+    type: enum
+    config:
+        values:
+            DAY: 1
+
+Month:
+    type: enum
+    config:
+        values:
+            MONTH: 2
+
+Year:
+    type: enum
+    config:
+        values:
+            YEAR: 3
+
+Period:
+    type: enum
+    inherits: [Day, Month, Year]

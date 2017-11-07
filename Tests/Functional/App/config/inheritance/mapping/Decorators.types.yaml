@@ -1,0 +1,15 @@
+QueryBarDecorator:
+    decorator: true
+    heirs: QueryBar
+    config:
+        interfaces: [QueryHelloWord]
+        fields:
+            bar:
+                type: String
+
+QueryFooDecorator:
+    decorator: true
+    config:
+        fields:
+            period:
+                type: Period

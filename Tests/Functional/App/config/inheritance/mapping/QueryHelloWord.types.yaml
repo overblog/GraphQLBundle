@@ -1,0 +1,8 @@
+QueryHelloWord:
+    type: interface
+    heirs: [Query]
+    config:
+        fields:
+            sayHello:
+                type: String
+        resolveType: true

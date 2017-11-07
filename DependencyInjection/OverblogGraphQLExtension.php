@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
-use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
+use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
@@ -142,7 +142,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 foreach ($config['definitions']['builders'][$category] as $params) {
                     $object = $useObjectToAddResource ? $params['class'] : new \ReflectionClass($params['class']);
                     $container->$objectToAddResourceMethod($object);
-                    TypeWithOutputFieldsDefinition::$method($params['alias'], $params['class']);
+                    BuilderProcessor::$method($params['alias'], $params['class']);
                 }
             }
         }
