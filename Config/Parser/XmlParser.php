@@ -19,7 +19,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class XmlParser implements ParserInterface
 {
-    /*
+    /**
      * @param SplFileInfo      $file
      * @param ContainerBuilder $container
      *
