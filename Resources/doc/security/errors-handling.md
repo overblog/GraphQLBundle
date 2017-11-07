@@ -108,6 +108,9 @@ overblog_graphql:
     #... 
     definitions:
         #...
+        # change to true to try to map an exception to a parent exception if the exact exception is not in 
+        # the mapping
+        map_exceptions_to_parent: false
         exceptions:
             warnings:
                 - "Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException"

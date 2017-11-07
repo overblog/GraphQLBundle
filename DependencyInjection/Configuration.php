@@ -121,6 +121,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->booleanNode('map_exceptions_to_parent')->defaultFalse()->end()
                         ->arrayNode('exceptions')
                             ->addDefaultsIfNotSet()
                             ->children()

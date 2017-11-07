@@ -181,6 +181,13 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             $errorHandlerDefinition->replaceArgument(0, $config['definitions']['internal_error_message']);
         }
 
+        if (isset($config['definitions']['map_exceptions_to_parent'])) {
+            $errorHandlerDefinition->replaceArgument(
+                3,
+                $config['definitions']['map_exceptions_to_parent']
+            );
+        }
+
         if (isset($config['definitions']['exceptions'])) {
             $errorHandlerDefinition
                 ->replaceArgument(2, $this->buildExceptionMap($config['definitions']['exceptions']))
