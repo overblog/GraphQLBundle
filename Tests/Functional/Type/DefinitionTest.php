@@ -26,7 +26,7 @@ class DefinitionTest extends TestCase
             'description' => null,
             'deprecationReason' => 'Just because',
             'value' => 'foo',
-        ],  $value->config);
+        ], $value->config);
         $this->assertTrue($value->isDeprecated());
     }
 
