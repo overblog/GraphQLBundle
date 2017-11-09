@@ -10,7 +10,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class XmlParser implements ParserInterface
 {
-    /*
+    /**
      * @param SplFileInfo      $file
      * @param ContainerBuilder $container
      *
@@ -27,13 +27,15 @@ class XmlParser implements ParserInterface
                     continue;
                 }
                 $values = XmlUtils::convertDomElementToArray($node);
-                $typesConfig = array_merge($typesConfig, $values);
+                if (is_array($values)) {
+                    $typesConfig = array_merge($typesConfig, $values);
+                }
             }
             $container->addResource(new FileResource($file->getRealPath()));
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
         }
 
-        return (array) $typesConfig;
+        return $typesConfig;
     }
 }

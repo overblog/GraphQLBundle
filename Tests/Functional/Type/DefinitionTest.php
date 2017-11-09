@@ -26,8 +26,8 @@ class DefinitionTest extends TestCase
             'description' => null,
             'deprecationReason' => 'Just because',
             'value' => 'foo',
-        ], $value->config);
-        $this->assertEquals(true, $this->isDeprecated($value));
+        ],  $value->config);
+        $this->assertTrue($value->isDeprecated());
     }
 
     public function testDefinesAnObjectTypeWithDeprecatedField()
@@ -36,20 +36,10 @@ class DefinitionTest extends TestCase
         $TypeWithDeprecatedField = $this->getType('ObjectWithDeprecatedField');
         $field = $TypeWithDeprecatedField->getField('bar');
         $this->assertEquals(Type::string(), $field->getType());
-        $this->assertEquals(true, $this->isDeprecated($field));
+        $this->assertTrue($field->isDeprecated());
         $this->assertEquals('A terrible reason', $field->deprecationReason);
         $this->assertEquals('bar', $field->name);
         $this->assertEquals([], $field->args);
-    }
-
-    private function isDeprecated($node)
-    {
-        // TODO(mcg-web) refactor after moving to latest lib version
-        if (is_callable([$node, 'isDeprecated'])) {
-            return $node->isDeprecated();
-        }
-
-        return (bool) $node->deprecationReason;
     }
 
     private function getType($type)
