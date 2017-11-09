@@ -37,7 +37,8 @@ User:
                 type: Boolean
                 resolve: true
             friends:
-                access: "@=object === 1"
+                # replace by strict equality after fix compilation expression language bug in sf 4.0
+                access: "@=object == 1"
                 type: friendConnection
                 argsBuilder: ConnectionArgs
                 resolve: '@=resolver("friends", [value, args])'
@@ -84,4 +85,5 @@ simpleMutationWithThunkFieldsPayload:
     type: relay-mutation-payload
     config:
         fields:
-            result: { type: "Int", access: "@=object === 123" }
+            # replace by strict equality after fix compilation expression language bug in sf 4.0
+            result: { type: "Int", access: "@=object == 123" }
