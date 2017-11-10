@@ -5,6 +5,7 @@ namespace Overblog\GraphQLBundle\Tests\Error;
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
 use PHPUnit\Framework\TestCase;
+use React\Promise\FulfilledPromise;
 use Symfony\Component\Process\PhpProcess;
 
 class ReactPromiseAdapterTest extends TestCase
@@ -60,5 +61,18 @@ EOF
                 $process->wait();
             })
         );
+    }
+
+    public function testSkipsConversionWhenPromiseIsAGraphQlOne()
+    {
+        $reactAdapter = new ReactPromiseAdapter();
+        $reactPromise = new FulfilledPromise(1);
+
+        $promise = $reactAdapter->convertThenable($reactPromise);
+        // Test it's already converted then skip it
+        $reactAdapter->convertThenable($promise);
+
+        $this->assertInstanceOf(Promise::class, $promise);
+        $this->assertInstanceOf(FulfilledPromise::class, $promise->adoptedPromise);
     }
 }
