@@ -30,14 +30,22 @@ class ErrorHandler
     /** @var string */
     private $userErrorClass = self::DEFAULT_USER_ERROR_CLASS;
 
-    public function __construct($internalErrorMessage = null, LoggerInterface $logger = null, array $exceptionMap = [])
-    {
+    /** @var bool */
+    private $mapExceptionsToParent;
+
+    public function __construct(
+        $internalErrorMessage = null,
+        LoggerInterface $logger = null,
+        array $exceptionMap = [],
+        $mapExceptionsToParent = false
+    ) {
         $this->logger = (null === $logger) ? new NullLogger() : $logger;
         if (empty($internalErrorMessage)) {
             $internalErrorMessage = self::DEFAULT_ERROR_MESSAGE;
         }
         $this->internalErrorMessage = $internalErrorMessage;
         $this->exceptionMap = $exceptionMap;
+        $this->mapExceptionsToParent = $mapExceptionsToParent;
     }
 
     public function setUserWarningClass($userWarningClass)
@@ -170,13 +178,46 @@ class ErrorHandler
             return;
         }
 
-        $rawExceptionClass = get_class($rawException);
-        if (isset($this->exceptionMap[$rawExceptionClass])) {
-            $errorClass = $this->exceptionMap[$rawExceptionClass];
-
+        $errorClass = $this->findErrorClass($rawException);
+        if (null !== $errorClass) {
             return new $errorClass($rawException->getMessage(), $rawException->getCode(), $rawException);
         }
 
         return $rawException;
+    }
+
+    /**
+     * @param \Exception|\Error $rawException
+     *
+     * @return string|null
+     */
+    private function findErrorClass($rawException)
+    {
+        $rawExceptionClass = get_class($rawException);
+        if (isset($this->exceptionMap[$rawExceptionClass])) {
+            return $this->exceptionMap[$rawExceptionClass];
+        }
+
+        if ($this->mapExceptionsToParent) {
+            return $this->findErrorClassUsingParentException($rawException);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \Exception|\Error $rawException
+     *
+     * @return string|null
+     */
+    private function findErrorClassUsingParentException($rawException)
+    {
+        foreach ($this->exceptionMap as $rawExceptionClass => $errorClass) {
+            if ($rawException instanceof $rawExceptionClass) {
+                return $errorClass;
+            }
+        }
+
+        return null;
     }
 }

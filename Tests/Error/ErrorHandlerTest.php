@@ -158,4 +158,140 @@ class ErrorHandlerTest extends TestCase
 
         $this->assertEquals($expected, $executionResult->toArray());
     }
+
+    /**
+     * @param array        $exceptionMap
+     * @param bool         $mapExceptionsToParent
+     * @param array|string $expectedUserError
+     *
+     * @dataProvider parentExceptionMappingDataProvider
+     */
+    public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError)
+    {
+        $errorHandler = new ErrorHandler(null, null, $exceptionMap, $mapExceptionsToParent);
+
+        $executionResult = new ExecutionResult(
+            null,
+            [
+                new GraphQLError(
+                    'Error with invalid argument exception',
+                    null,
+                    null,
+                    null,
+                    null,
+                    new ChildOfInvalidArgumentException('Invalid argument exception')
+                ),
+            ]
+        );
+
+        if (is_string($expectedUserError)) {
+            self::expectException($expectedUserError);
+        }
+        $errorHandler->handleErrors($executionResult, true);
+
+        if (is_array($expectedUserError)) {
+            $this->assertEquals($expectedUserError, $executionResult->toArray());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function parentExceptionMappingDataProvider()
+    {
+        return [
+            'without $mapExceptionsToParent and only the exact class, maps to exact class' => [
+                [
+                    ChildOfInvalidArgumentException::class => UserError::class,
+                ],
+                false,
+                [
+                    'errors' => [
+                        [
+                            'message' => 'Error with invalid argument exception',
+                        ],
+                    ],
+                ],
+            ],
+            'without $mapExceptionsToParent and only the parent class, does not map to parent' => [
+                [
+                    \InvalidArgumentException::class => UserWarning::class,
+                ],
+                false,
+                ChildOfInvalidArgumentException::class,
+            ],
+            'with $mapExceptionsToParent and only the exact class' => [
+                [
+                    ChildOfInvalidArgumentException::class => UserError::class,
+                ],
+                true,
+                [
+                    'errors' => [
+                        [
+                            'message' => 'Error with invalid argument exception',
+                        ],
+                    ],
+                ],
+            ],
+            'with $mapExceptionsToParent and only the parent class' => [
+                [
+                    \InvalidArgumentException::class => UserWarning::class,
+                ],
+                true,
+                [
+                    'extensions' => [
+                        'warnings' => [
+                            [
+                                'message' => 'Error with invalid argument exception',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'with $mapExceptionsToParent and the exact class first matches exact class' => [
+                [
+                    ChildOfInvalidArgumentException::class => UserError::class,
+                    \InvalidArgumentException::class => UserWarning::class,
+                ],
+                true,
+                [
+                    'errors' => [
+                        [
+                            'message' => 'Error with invalid argument exception',
+                        ],
+                    ],
+                ],
+            ],
+            'with $mapExceptionsToParent and the exact class first but parent maps to error' => [
+                [
+                    ChildOfInvalidArgumentException::class => UserWarning::class,
+                    \InvalidArgumentException::class => UserError::class,
+                ],
+                true,
+                [
+                    'extensions' => [
+                        'warnings' => [
+                            [
+                                'message' => 'Error with invalid argument exception',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'with $mapExceptionsToParent and the parent class first still matches exact class' => [
+                [
+                    \InvalidArgumentException::class => UserWarning::class,
+                    ChildOfInvalidArgumentException::class => UserError::class,
+                ],
+                true,
+                [
+                    'errors' => [
+                        [
+                            'message' => 'Error with invalid argument exception',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
 }
