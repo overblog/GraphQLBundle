@@ -1,4 +1,4 @@
 Node:
     type: relay-node
     config:
-        resolveType: '@=resolver("node_type", [value])'
+        resolveType: '@=resolver("Overblog\\GraphQLBundle\\Tests\\Functional\\App\\Resolver\\NodeResolver::typeResolver", [value])'

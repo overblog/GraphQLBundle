@@ -6,7 +6,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class PluralResolver
 {
-    public function resolveSingleInput($username, ResolveInfo $info)
+    public function __invoke($username, ResolveInfo $info)
     {
         $lang = $info->rootValue['lang'];
 
