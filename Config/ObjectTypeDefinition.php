@@ -104,11 +104,9 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 $resolveField = $v['resolveField'];
                 unset($v['resolveField']);
                 foreach ($v['fields'] as &$field) {
-                    if (!empty($field['resolve'])) {
-                        continue;
+                    if (empty($field['resolve'])) {
+                        $field['resolve'] = $resolveField;
                     }
-
-                    $field['resolve'] = $resolveField;
                 }
 
                 return $v;
