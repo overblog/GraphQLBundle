@@ -73,12 +73,11 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $executionResult->toArray());
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage My Exception message
-     */
     public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('My Exception message');
+
         $executionResult = new ExecutionResult(
             null,
             [
@@ -87,6 +86,17 @@ class ErrorHandlerTest extends TestCase
         );
 
         $this->errorHandler->handleErrors($executionResult, true);
+    }
+
+    public function testInvalidUserErrorsItem()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Error must be string or instance of Overblog\GraphQLBundle\Error\UserError.');
+
+        new UserErrors([
+            'Some Error',
+            false,
+        ]);
     }
 
     public function testMaskErrorWithWrappedUserErrorAndThrowExceptionSetToTrue()
@@ -218,6 +228,11 @@ class ErrorHandlerTest extends TestCase
                     \InvalidArgumentException::class => UserWarning::class,
                 ],
                 false,
+                ChildOfInvalidArgumentException::class,
+            ],
+            'with $mapExceptionsToParent and no classes' => [
+                [],
+                true,
                 ChildOfInvalidArgumentException::class,
             ],
             'with $mapExceptionsToParent and only the exact class' => [
