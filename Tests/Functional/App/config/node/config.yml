@@ -7,7 +7,7 @@ services:
         arguments:
             - "@overblog_graphql.type_resolver"
         tags:
-            - { name: "overblog_graphql.resolver", alias: "node_type", method: "typeResolver" }
+            - { name: "overblog_graphql.resolver", method: "typeResolver" }
             - { name: "overblog_graphql.resolver", alias: "node_id_fetcher", method: "idFetcher" }
             - { name: "overblog_graphql.resolver", alias: "resolve_photo_field", method: "resolvePhotoField" }
 

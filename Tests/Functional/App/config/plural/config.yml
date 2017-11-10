@@ -5,7 +5,7 @@ services:
     overblog_graphql.test.resolver.plural:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\PluralResolver
         tags:
-            - { name: "overblog_graphql.resolver", alias: "plural_single_input", method: "resolveSingleInput" }
+            - { name: "overblog_graphql.resolver" }
 
 overblog_graphql:
     definitions:
