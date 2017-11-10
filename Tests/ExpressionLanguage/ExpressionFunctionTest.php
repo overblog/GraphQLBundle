@@ -20,6 +20,11 @@ class ExpressionFunctionTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Evaluator is not needed');
 
-        (new ExpressionFunction('name', function () {}))->getEvaluator()();
+        $expressionFunction = new ExpressionFunction('name', function () {});
+        $evaluator = $expressionFunction->getEvaluator();
+
+        $this->assertTrue(is_callable($evaluator));
+
+        $evaluator();
     }
 }
