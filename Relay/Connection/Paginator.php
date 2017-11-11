@@ -31,9 +31,9 @@ class Paginator
     }
 
     /**
-     * @param Argument $args
-     * @param int|callable   $total
-     * @param array          $callableArgs
+     * @param Argument     $args
+     * @param int|callable $total
+     * @param array        $callableArgs
      *
      * @return Connection
      */
@@ -86,9 +86,9 @@ class Paginator
     }
 
     /**
-     * @param Argument $args
-     * @param int|callable   $total
-     * @param array          $callableArgs
+     * @param Argument     $args
+     * @param int|callable $total
+     * @param array        $callableArgs
      *
      * @return Connection
      */
