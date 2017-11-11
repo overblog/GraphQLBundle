@@ -14,6 +14,9 @@ overblog_graphql:
         auto_mapping: false
         mappings:
             auto_discover: false
+    security:
+        query_max_depth: false
+        query_max_complexity: false
 
 services:
     #disable twig error pages

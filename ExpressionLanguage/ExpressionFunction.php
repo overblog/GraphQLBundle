@@ -9,7 +9,7 @@ class ExpressionFunction extends BaseExpressionFunction
     public function __construct($name, callable $compiler)
     {
         parent::__construct($name, $compiler, function () {
-            throw new \RuntimeException('No need evaluator.');
+            throw new \RuntimeException('Evaluator is not needed');
         });
     }
 }
