@@ -114,6 +114,10 @@ class AutoMappingPass implements CompilerPassInterface
         }
     }
 
+    /**
+     * @param string|null $className
+     * @param boolean $withMethod
+     */
     private function addDefinitionTagsFromAliasesMethod(Definition $definition, $className, $tagName, $withMethod)
     {
         // from getAliases

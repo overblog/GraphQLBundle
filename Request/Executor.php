@@ -76,6 +76,9 @@ class Executor
         return $this;
     }
 
+    /**
+     * @param string $name
+     */
     public function addSchema($name, Schema $schema)
     {
         $this->schemas[$name] = $schema;

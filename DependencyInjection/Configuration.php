@@ -203,6 +203,9 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @param string $name
+     */
     private function addBuilderSection($name)
     {
         $builder = new TreeBuilder();
@@ -236,6 +239,9 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    /**
+     * @param string $name
+     */
     private function addSecurityQuerySection($name, $disabledValue)
     {
         $builder = new TreeBuilder();

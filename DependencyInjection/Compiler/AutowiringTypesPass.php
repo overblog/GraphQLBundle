@@ -17,8 +17,7 @@ class AutowiringTypesPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         version_compare(Kernel::VERSION, '3.3.0', '>=') ?
-            $container->setAlias(PromiseAdapter::class, 'overblog_graphql.promise_adapter') :
-            $container->findDefinition('overblog_graphql.promise_adapter')->setAutowiringTypes([PromiseAdapter::class])
+            $container->setAlias(PromiseAdapter::class, 'overblog_graphql.promise_adapter') : $container->findDefinition('overblog_graphql.promise_adapter')->setAutowiringTypes([PromiseAdapter::class])
         ;
     }
 }
