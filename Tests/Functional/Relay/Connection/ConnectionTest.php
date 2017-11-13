@@ -39,7 +39,7 @@ EOF;
         $expectedData = [
             'user' => [
                 'friends' => [
-                   'totalCount' => 4,
+                    'totalCount' => 4,
                     'edges' => [
                         [
                             'friendshipTime' => 'Yesterday',

@@ -150,6 +150,9 @@ class TypesConfiguration implements ConfigurationInterface
             ->end();
     }
 
+    /**
+     * @param string $typeToTreat
+     */
     private function relayNormalizer($typeToTreat, $definitionBuilderClass)
     {
         return function ($types) use ($typeToTreat, $definitionBuilderClass) {

@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
-use GraphQL\Type\Definition\Type;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -75,7 +74,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
 
             $resolverDefinition->addMethodCall(
                 'addSolution',
-                [$name, [new Reference('service_container'), 'get'], [$solutionID],  $cleanOptions]
+                [$name, [new Reference('service_container'), 'get'], [$solutionID], $cleanOptions]
             );
         }
     }
@@ -91,5 +90,8 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
 
     abstract protected function getTagName();
 
+    /**
+     * @return string
+     */
     abstract protected function getResolverServiceID();
 }

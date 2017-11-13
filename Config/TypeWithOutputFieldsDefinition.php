@@ -48,6 +48,9 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         self::$fieldBuilderClassMap[$name] = $fieldBuilderClass;
     }
 
+    /**
+     * @param string $type
+     */
     protected static function checkBuilderClass($builderClass, $type)
     {
         $interface = MappingInterface::class;
@@ -110,6 +113,9 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         throw new InvalidConfigurationException(sprintf('%s builder "%s" not found.', ucfirst($type), $name));
     }
 
+    /**
+     * @param string $name
+     */
     protected function outputFieldsSelection($name)
     {
         $builder = new TreeBuilder();
