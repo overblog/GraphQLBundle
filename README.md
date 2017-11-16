@@ -44,6 +44,7 @@ Documentation
 - [Data fetching](Resources/doc/data-fetching/index.md)
   - [Query batching](Resources/doc/data-fetching/batching.md)
   - [Promise](Resources/doc/data-fetching/promise.md)
+  - N+1 problems: check out [overblog/dataloader-bundle](https://github.com/overblog/dataloader-bundle)
 - [Security](Resources/doc/security/index.md)
   - [Handle CORS](Resources/doc/security/handle-cors.md)
   - [Fields access control](Resources/doc/security/fields-access-control.md)
