@@ -50,7 +50,7 @@ class Paginator
      * @param int|callable   $total
      * @param array          $callableArgs
      *
-     * @return Connection
+     * @return Connection|object A connection or a promise
      */
     public function backward($args, $total, array $callableArgs = [])
     {
@@ -73,7 +73,7 @@ class Paginator
     /**
      * @param Argument|array $args
      *
-     * @return Connection
+     * @return Connection|object A connection or a promise
      */
     public function forward($args)
     {
@@ -105,7 +105,7 @@ class Paginator
      * @param int|callable   $total
      * @param array          $callableArgs
      *
-     * @return Connection
+     * @return Connection|object A connection or a promise
      */
     public function auto($args, $total, $callableArgs = [])
     {
@@ -118,14 +118,16 @@ class Paginator
         }
 
         if ($this->promise) {
-            $connection->then(function (Connection $connection) use ($total, $callableArgs) {
+            return $connection->then(function (Connection $connection) use ($total, $callableArgs) {
                 $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
+
+                return $connection;
             });
         } else {
             $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
-        }
 
-        return $connection;
+            return $connection;
+        }
     }
 
     /**
