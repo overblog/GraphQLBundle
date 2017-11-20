@@ -56,7 +56,7 @@ class GraphQLDumpSchemaCommand extends Command
                 'format',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'The schema name to generate ("graphqls" or "json").',
+                'The schema format to generate ("graphql" or "json").',
                 'json'
             )
             ->addOption(
