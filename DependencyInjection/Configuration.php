@@ -109,7 +109,7 @@ class Configuration implements ConfigurationInterface
                                             })
                                         ->end()
                                         ->children()
-                                            ->enumNode('type')->values(['yaml', 'xml'])->defaultNull()->end()
+                                            ->enumNode('type')->values(array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->defaultNull()->end()
                                             ->scalarNode('dir')->defaultNull()->end()
                                             ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
                                         ->end()

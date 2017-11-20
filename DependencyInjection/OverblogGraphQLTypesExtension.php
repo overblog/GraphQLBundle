@@ -2,6 +2,9 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\XmlParser;
+use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Config\Resource\FileResource;
@@ -12,9 +15,13 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLTypesExtension extends Extension
 {
-    private static $configTypes = ['yaml', 'xml'];
+    const SUPPORTED_TYPES_EXTENSIONS = ['yaml' => '{yaml,yml}', 'xml' => 'xml', 'graphql' => '{graphql,graphqls}'];
 
-    private static $typeExtensions = ['yaml' => '{yaml,yml}', 'xml' => 'xml'];
+    const PARSERS = [
+        'yaml' => YamlParser::class,
+        'xml' => XmlParser::class,
+        'graphql' => GraphQLParser::class,
+    ];
 
     private static $defaultDefaultConfig = [
         'definitions' => [
@@ -67,9 +74,7 @@ class OverblogGraphQLTypesExtension extends Extension
                 continue;
             }
 
-            $parserClass = sprintf('Overblog\\GraphQLBundle\\Config\\Parser\\%sParser', ucfirst($type));
-
-            $typeConfig = call_user_func($parserClass.'::parse', $file, $container);
+            $typeConfig = call_user_func(self::PARSERS[$type].'::parse', $file, $container);
             $container->prependExtensionConfig($this->getAlias(), $typeConfig);
             $this->treatedFiles[$file->getRealPath()] = true;
         }
@@ -162,11 +167,11 @@ class OverblogGraphQLTypesExtension extends Extension
 
         $finder = new Finder();
 
-        $types = null === $type ? self::$configTypes : [$type];
+        $types = null === $type ? array_keys(self::SUPPORTED_TYPES_EXTENSIONS) : [$type];
 
         foreach ($types as $type) {
             try {
-                $finder->files()->in($path)->name('*'.$suffix.'.'.self::$typeExtensions[$type]);
+                $finder->files()->in($path)->name(sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]));
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
