@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
-use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\FieldDefinitionNode;
 use GraphQL\Language\AST\InputValueDefinitionNode;
 use GraphQL\Language\AST\Node;
@@ -16,7 +15,8 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class GraphQLParser implements ParserInterface
 {
-    private static $instance;
+    /** @var self */
+    private static $parser;
 
     const DEFINITION_TYPE_MAPPING = [
         NodeKind::OBJECT_TYPE_DEFINITION => 'object',
@@ -39,19 +39,19 @@ class GraphQLParser implements ParserInterface
         if (empty($content)) {
             return [];
         }
-        if (!self::$instance) {
-            self::$instance = new static();
+        if (!self::$parser) {
+            self::$parser = new static();
         }
         try {
             $ast = Parser::parse($content);
-
-            /** @var Node $typeDef */
-            foreach ($ast->definitions as $typeDef) {
-                $typeConfig = self::$instance->typeDefinitionToConfig($typeDef);
-                $typesConfig[$typeDef->name->value] = $typeConfig;
-            }
-        } catch (SyntaxError $e) {
+        } catch (\Exception $e) {
             throw new InvalidArgumentException(sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
+        }
+
+        /** @var Node $typeDef */
+        foreach ($ast->definitions as $typeDef) {
+            $typeConfig = self::$parser->typeDefinitionToConfig($typeDef);
+            $typesConfig[$typeDef->name->value] = $typeConfig;
         }
 
         return $typesConfig;

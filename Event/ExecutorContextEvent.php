@@ -6,26 +6,22 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ExecutorContextEvent extends Event
 {
-    private $executorContext = [];
+    /** @var \ArrayObject */
+    private $executorContext;
 
-    public function __construct(array $executorContext)
+    /**
+     * @param \ArrayObject $executorContext
+     */
+    public function __construct(\ArrayObject $executorContext)
     {
         $this->executorContext = $executorContext;
     }
 
     /**
-     * @return array
+     * @return \ArrayObject
      */
     public function getExecutorContext()
     {
         return $this->executorContext;
-    }
-
-    /**
-     * @param array $executionContext
-     */
-    public function setExecutorContext(array $executionContext)
-    {
-        $this->executorContext = $executionContext;
     }
 }

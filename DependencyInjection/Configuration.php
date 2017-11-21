@@ -6,6 +6,7 @@ use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Resolver\Resolver;
+use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -184,6 +185,8 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param string $name
+     *
+     * @return NodeParentInterface
      */
     private function addBuilderSection($name)
     {
@@ -220,6 +223,9 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param string $name
+     * @param bool   $disabledValue
+     *
+     * @return NodeParentInterface
      */
     private function addSecurityQuerySection($name, $disabledValue)
     {

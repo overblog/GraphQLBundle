@@ -94,7 +94,7 @@ final class GraphQLDumpSchemaCommand extends Command
                 $modern = $this->useModernJsonFormat($input);
 
                 $result = $this->getRequestExecutor()
-                    ->execute($request, [], $schemaName)
+                    ->execute($schemaName, $request)
                     ->toArray();
 
                 $content = json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);

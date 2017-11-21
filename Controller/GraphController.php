@@ -95,12 +95,7 @@ class GraphController
 
         foreach ($queries as $query) {
             $payloadResult = $this->requestExecutor->execute(
-                [
-                    'query' => $query['query'],
-                    'variables' => $query['variables'],
-                ],
-                [],
-                $schemaName
+                $schemaName, ['query' => $query['query'], 'variables' => $query['variables']]
             );
             $payloads[] = $apolloBatching ? $payloadResult->toArray() : ['id' => $query['id'], 'payload' => $payloadResult->toArray()];
         }
@@ -112,6 +107,6 @@ class GraphController
     {
         $params = $this->requestParser->parse($request);
 
-        return $this->requestExecutor->execute($params, [], $schemaName)->toArray();
+        return $this->requestExecutor->execute($schemaName, $params)->toArray();
     }
 }

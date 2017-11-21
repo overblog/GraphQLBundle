@@ -9,17 +9,24 @@ use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ExecutorTest extends TestCase
 {
     /** @var RequestExecutor */
     private $executor;
 
+    /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+    private $dispatcher;
+
     private $request = ['query' => 'query debug{ myField }', 'variables' => [], 'operationName' => null];
 
     public function setUp()
     {
-        $this->executor = new RequestExecutor(new Executor());
+        $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
+        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
+
+        $this->executor = new RequestExecutor(new Executor(), $this->dispatcher);
         $queryType = new ObjectType([
             'name' => 'Query',
             'fields' => [
@@ -41,7 +48,7 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorReturnNotObject()
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(false));
-        $this->executor->execute($this->request);
+        $this->executor->execute(null, $this->request);
     }
 
     /**
@@ -51,7 +58,7 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorReturnInvalidObject()
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(new \stdClass()));
-        $this->executor->execute($this->request);
+        $this->executor->execute(null, $this->request);
     }
 
     /**
@@ -61,17 +68,17 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorAdapterPromise()
     {
         $this->executor->setPromiseAdapter(new ReactPromiseAdapter());
-        $this->executor->execute($this->request);
+        $this->executor->execute(null, $this->request);
     }
 
     public function testDisabledDebugInfo()
     {
-        $this->assertArrayNotHasKey('debug', $this->executor->disabledDebugInfo()->execute($this->request)->extensions);
+        $this->assertArrayNotHasKey('debug', $this->executor->disabledDebugInfo()->execute(null, $this->request)->extensions);
     }
 
     public function testEnabledDebugInfo()
     {
-        $result = $this->executor->enabledDebugInfo()->execute($this->request);
+        $result = $this->executor->enabledDebugInfo()->execute(null, $this->request);
 
         $this->assertArrayHasKey('debug', $result->extensions);
         $this->assertArrayHasKey('executionTime', $result->extensions['debug']);
@@ -84,7 +91,7 @@ class ExecutorTest extends TestCase
      */
     public function testGetSchemaNoSchemaFound()
     {
-        (new RequestExecutor(new Executor()))->getSchema('fake');
+        (new RequestExecutor(new Executor(), $this->dispatcher))->getSchema('fake');
     }
 
     private function createExecutorExecuteMock($returnValue)

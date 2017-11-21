@@ -35,6 +35,7 @@
         "symfony/cache": "^3.1 || ^4.0",
         "symfony/config": "^3.1 || ^4.0",
         "symfony/dependency-injection": "^3.1 || ^4.0",
+        "symfony/event-dispatcher": "^3.1 || ^4.0",
         "symfony/expression-language": "^3.1 || ^4.0",
         "symfony/framework-bundle": "^3.1 || ^4.0",
         "symfony/options-resolver": "^3.1 || ^4.0",

@@ -67,7 +67,7 @@ abstract class TestCase extends WebTestCase
         $req = static::getContainer()->get('overblog_graphql.request_parser')->parse($request);
         $executor = static::getContainer()->get('overblog_graphql.request_executor');
         $executor->setThrowException($throwException);
-        $res = $executor->execute($req, $rootValue);
+        $res = $executor->execute(null, $req, $rootValue);
 
         return $res->toArray();
     }
