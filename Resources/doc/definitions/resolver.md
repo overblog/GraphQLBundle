@@ -165,3 +165,5 @@ Resolvers can be define 2 different ways
     ```
     `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
     `add` alias.
+
+Next step [solving N+1 problem](solving-n-plus-1-problem.md)
