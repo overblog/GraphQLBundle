@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
@@ -34,9 +35,6 @@ class Executor
     /** @var ErrorHandler|null */
     private $errorHandler;
 
-    /** @var bool */
-    private $hasDebugInfo;
-
     /** @var ExecutorInterface */
     private $executor;
 
@@ -51,7 +49,6 @@ class Executor
         EventDispatcherInterface $dispatcher,
         $throwException = false,
         ErrorHandler $errorHandler = null,
-        $hasDebugInfo = false,
         PromiseAdapter $promiseAdapter = null,
         callable $defaultFieldResolver = null
     ) {
@@ -59,7 +56,6 @@ class Executor
         $this->dispatcher = $dispatcher;
         $this->throwException = (bool) $throwException;
         $this->errorHandler = $errorHandler;
-        $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
         $this->promiseAdapter = $promiseAdapter;
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
@@ -114,25 +110,6 @@ class Executor
         return $schema;
     }
 
-    public function enabledDebugInfo()
-    {
-        $this->hasDebugInfo = true;
-
-        return $this;
-    }
-
-    public function disabledDebugInfo()
-    {
-        $this->hasDebugInfo = false;
-
-        return $this;
-    }
-
-    public function hasDebugInfo()
-    {
-        return $this->hasDebugInfo;
-    }
-
     public function setMaxQueryDepth($maxQueryDepth)
     {
         /** @var QueryDepth $queryDepth */
@@ -178,9 +155,6 @@ class Executor
             isset($config[ParserInterface::PARAM_OPERATION_NAME]) ? $config[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
-        $startTime = microtime(true);
-        $startMemoryUsage = memory_get_usage(true);
-
         $result = $this->executor->execute(
             $executorEvent->getSchema(),
             $executorEvent->getRequestString(),
@@ -190,7 +164,7 @@ class Executor
             $executorEvent->getOperationName()
         );
 
-        $result = $this->postExecute($executorEvent->getContextValue(), $result, $startTime, $startMemoryUsage);
+        $result = $this->postExecute($executorEvent->getContextValue(), $result);
 
         return $result;
     }
@@ -223,21 +197,19 @@ class Executor
     }
 
     /**
-     * @param \ArrayObject    $contextValue
-     * @param ExecutionResult $result
-     * @param int             $startTime
-     * @param int             $startMemoryUsage
+     * @param \ArrayObject            $contextValue
+     * @param ExecutionResult|Promise $result
      *
      * @return ExecutionResult
      */
-    private function postExecute(\ArrayObject $contextValue, ExecutionResult $result, $startTime, $startMemoryUsage)
+    private function postExecute(\ArrayObject $contextValue, $result)
     {
         if ($this->promiseAdapter) {
             $result = $this->promiseAdapter->wait($result);
         }
 
         $this->checkExecutionResult($result);
-        $result = $this->prepareResult($result, $startTime, $startMemoryUsage);
+        $result = $this->prepareResult($result);
 
         $event = $this->dispatcher->dispatch(
             Events::POST_EXECUTOR,
@@ -249,20 +221,11 @@ class Executor
 
     /**
      * @param ExecutionResult $result
-     * @param int             $startTime
-     * @param int             $startMemoryUsage
      *
      * @return ExecutionResult
      */
-    private function prepareResult($result, $startTime, $startMemoryUsage)
+    private function prepareResult($result)
     {
-        if ($this->hasDebugInfo()) {
-            $result->extensions['debug'] = [
-                'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 3) * 1000),
-                'memoryUsage' => sprintf('%.2F MiB', (memory_get_usage(true) - $startMemoryUsage) / 1024 / 1024),
-            ];
-        }
-
         if (null !== $this->errorHandler) {
             $this->errorHandler->handleErrors($result, $this->throwException);
         }

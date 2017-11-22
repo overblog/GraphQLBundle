@@ -71,20 +71,6 @@ class ExecutorTest extends TestCase
         $this->executor->execute(null, $this->request);
     }
 
-    public function testDisabledDebugInfo()
-    {
-        $this->assertArrayNotHasKey('debug', $this->executor->disabledDebugInfo()->execute(null, $this->request)->extensions);
-    }
-
-    public function testEnabledDebugInfo()
-    {
-        $result = $this->executor->enabledDebugInfo()->execute(null, $this->request);
-
-        $this->assertArrayHasKey('debug', $result->extensions);
-        $this->assertArrayHasKey('executionTime', $result->extensions['debug']);
-        $this->assertArrayHasKey('memoryUsage', $result->extensions['debug']);
-    }
-
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage At least one schema should be declare.
