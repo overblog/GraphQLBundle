@@ -10,13 +10,9 @@ class ExecutorResultEvent extends Event
     /** @var ExecutionResult */
     private $result;
 
-    /** @var \ArrayObject */
-    private $contextValue;
-
-    public function __construct(ExecutionResult $result, \ArrayObject $contextValue)
+    public function __construct(ExecutionResult $result)
     {
         $this->result = $result;
-        $this->contextValue = $contextValue;
     }
 
     /**
@@ -25,13 +21,5 @@ class ExecutorResultEvent extends Event
     public function getResult()
     {
         return $this->result;
-    }
-
-    /**
-     * @return \ArrayObject
-     */
-    public function getContextValue()
-    {
-        return $this->contextValue;
     }
 }

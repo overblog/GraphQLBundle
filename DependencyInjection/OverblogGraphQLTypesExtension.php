@@ -102,7 +102,7 @@ class OverblogGraphQLTypesExtension extends Extension
         $mappingConfig = $config['definitions']['mappings'];
         $typesMappings = $mappingConfig['types'];
 
-        // app only config files (yml or xml)
+        // app only config files (yml or xml or graphql)
         if ($mappingConfig['auto_discover']['root_dir'] && $container->hasParameter('kernel.root_dir')) {
             $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'type' => null];
         }

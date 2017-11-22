@@ -1,0 +1,23 @@
+PhotoDecorator:
+    decorator: true
+    heirs: [Photo]
+    config:
+        fields:
+            id:
+                builder: "Relay::GlobalId"
+                builderConfig:
+                    typeName: Photo
+                    idFetcher: '@=value["photoId"]'
+
+PostDecorator:
+    decorator: true
+    heirs: [Post]
+    config:
+        fields:
+            id: "Relay::GlobalId"
+
+PhotoAndPostDecorator:
+    decorator: true
+    heirs: PhotoAndPost
+    config:
+        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'

@@ -1,0 +1,14 @@
+type Photo implements NodeInterface {
+  # The ID of an object
+  id: ID!
+  width: Int
+}
+
+type Post implements NodeInterface {
+  # The ID of an object
+  id: ID!
+  text: String
+  status: Status
+}
+
+union PhotoAndPost = Photo | Post

@@ -9,7 +9,6 @@ use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
-use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Overblog\GraphQLBundle\Event\ExecutorEvent;
@@ -29,12 +28,6 @@ class Executor
     /** @var EventDispatcherInterface|null */
     private $dispatcher;
 
-    /** @var bool */
-    private $throwException;
-
-    /** @var ErrorHandler|null */
-    private $errorHandler;
-
     /** @var ExecutorInterface */
     private $executor;
 
@@ -47,15 +40,11 @@ class Executor
     public function __construct(
         ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher,
-        $throwException = false,
-        ErrorHandler $errorHandler = null,
         PromiseAdapter $promiseAdapter = null,
         callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
-        $this->throwException = (bool) $throwException;
-        $this->errorHandler = $errorHandler;
         $this->promiseAdapter = $promiseAdapter;
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
@@ -125,34 +114,22 @@ class Executor
     }
 
     /**
-     * @param bool $throwException
-     *
-     * @return $this
-     */
-    public function setThrowException($throwException)
-    {
-        $this->throwException = (bool) $throwException;
-
-        return $this;
-    }
-
-    /**
      * @param null|string                    $schemaName
-     * @param array                          $config
+     * @param array                          $request
      * @param null|array|\ArrayObject|object $rootValue
      * @param null|array|\ArrayObject|object $contextValue
      *
      * @return ExecutionResult
      */
-    public function execute($schemaName, array $config, $rootValue = null, $contextValue = null)
+    public function execute($schemaName, array $request, $rootValue = null, $contextValue = null)
     {
         $executorEvent = $this->preExecute(
             $this->getSchema($schemaName),
-            isset($config[ParserInterface::PARAM_QUERY]) ? $config[ParserInterface::PARAM_QUERY] : null,
+            isset($request[ParserInterface::PARAM_QUERY]) ? $request[ParserInterface::PARAM_QUERY] : null,
             self::createArrayObject($rootValue),
             self::createArrayObject($contextValue),
-            $config[ParserInterface::PARAM_VARIABLES],
-            isset($config[ParserInterface::PARAM_OPERATION_NAME]) ? $config[ParserInterface::PARAM_OPERATION_NAME] : null
+            $request[ParserInterface::PARAM_VARIABLES],
+            isset($request[ParserInterface::PARAM_OPERATION_NAME]) ? $request[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
         $result = $this->executor->execute(
@@ -164,7 +141,7 @@ class Executor
             $executorEvent->getOperationName()
         );
 
-        $result = $this->postExecute($executorEvent->getContextValue(), $result);
+        $result = $this->postExecute($result);
 
         return $result;
     }
@@ -179,8 +156,13 @@ class Executor
      *
      * @return ExecutorEvent
      */
-    private function preExecute(Schema $schema, $requestString, \ArrayObject $rootValue, \ArrayObject $contextValue, array $variableValue = null, $operationName = null)
-    {
+    private function preExecute(
+        Schema $schema, $requestString,
+        \ArrayObject $rootValue,
+        \ArrayObject $contextValue,
+        array $variableValue = null,
+        $operationName = null
+    ) {
         $this->checkPromiseAdapter();
 
         $this->executor->setPromiseAdapter($this->promiseAdapter);
@@ -197,40 +179,24 @@ class Executor
     }
 
     /**
-     * @param \ArrayObject            $contextValue
      * @param ExecutionResult|Promise $result
      *
      * @return ExecutionResult
      */
-    private function postExecute(\ArrayObject $contextValue, $result)
+    private function postExecute($result)
     {
         if ($this->promiseAdapter) {
             $result = $this->promiseAdapter->wait($result);
         }
 
         $this->checkExecutionResult($result);
-        $result = $this->prepareResult($result);
 
         $event = $this->dispatcher->dispatch(
             Events::POST_EXECUTOR,
-            new ExecutorResultEvent($result, $contextValue)
+            new ExecutorResultEvent($result)
         );
 
         return $event->getResult();
-    }
-
-    /**
-     * @param ExecutionResult $result
-     *
-     * @return ExecutionResult
-     */
-    private function prepareResult($result)
-    {
-        if (null !== $this->errorHandler) {
-            $this->errorHandler->handleErrors($result, $this->throwException);
-        }
-
-        return $result;
     }
 
     private function checkPromiseAdapter()
@@ -257,9 +223,7 @@ class Executor
 
     private static function createArrayObject($data)
     {
-        if ($data instanceof  \ArrayObject) {
-            $object = $data;
-        } elseif (is_array($data) || is_object($data)) {
+        if (is_array($data) || is_object($data)) {
             $object = new \ArrayObject($data);
         } else {
             $object = new \ArrayObject();
