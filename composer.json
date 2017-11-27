@@ -43,7 +43,7 @@
     },
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
-        "twig/twig": "If you want to use graphiQL.",
+        "overblog/graphiql-bundle": "If you want to use graphiQL.",
         "react/promise": "To use ReactPHP promise adapter"
     },
     "require-dev": {

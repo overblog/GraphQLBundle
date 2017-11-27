@@ -33,7 +33,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setSchemaBuilderArguments($config, $container);
         $this->setSchemaArguments($config, $container);
         $this->setErrorHandlerArguments($config, $container);
-        $this->setGraphiQLTemplate($config, $container);
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config, $container);
         $this->setVersions($config, $container);
@@ -166,11 +165,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         foreach ($config['security'] as $key => $value) {
             $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
         }
-    }
-
-    private function setGraphiQLTemplate(array $config, ContainerBuilder $container)
-    {
-        $container->setParameter($this->getAlias().'.graphiql_template', $config['templates']['graphiql']);
     }
 
     private function setErrorHandlerArguments(array $config, ContainerBuilder $container)
