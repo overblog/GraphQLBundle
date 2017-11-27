@@ -44,7 +44,6 @@ Documentation
   - [Expression language](Resources/doc/definitions/expression-language.md)
   - [Debug](Resources/doc/definitions/debug/index.md)
   - [GraphiQL](Resources/doc/definitions/graphiql/index.md)
-    - [Custom HTTP headers](Resources/doc/definitions/graphiql/custom-http-headers.md)
 - [Data fetching](Resources/doc/data-fetching/index.md)
   - [Query batching](Resources/doc/data-fetching/batching.md)
   - [Promise](Resources/doc/data-fetching/promise.md)
