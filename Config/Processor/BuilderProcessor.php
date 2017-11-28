@@ -17,19 +17,24 @@ final class BuilderProcessor implements ProcessorInterface
     const BUILDER_FIELD_TYPE = 'field';
     const BUILDER_ARGS_TYPE = 'args';
 
-    /** @var MappingInterface[] */
-    private static $argsBuilderClassMap = [
-        'Relay::ForwardConnection' => ForwardConnectionArgsDefinition::class,
-        'Relay::BackwardConnection' => BackwardConnectionArgsDefinition::class,
-        'Relay::Connection' => ConnectionArgsDefinition::class,
+    const BUILDER_TYPES = [
+        self::BUILDER_FIELD_TYPE,
+        self::BUILDER_ARGS_TYPE,
     ];
 
     /** @var MappingInterface[] */
-    private static $fieldBuilderClassMap = [
-        'Relay::Mutation' => MutationFieldDefinition::class,
-        'Relay::GlobalId' => GlobalIdFieldDefinition::class,
-        'Relay::Node' => NodeFieldDefinition::class,
-        'Relay::PluralIdentifyingRoot' => PluralIdentifyingRootFieldDefinition::class,
+    private static $builderClassMap = [
+        self::BUILDER_ARGS_TYPE => [
+            'Relay::ForwardConnection' => ForwardConnectionArgsDefinition::class,
+            'Relay::BackwardConnection' => BackwardConnectionArgsDefinition::class,
+            'Relay::Connection' => ConnectionArgsDefinition::class,
+        ],
+        self::BUILDER_FIELD_TYPE => [
+            'Relay::Mutation' => MutationFieldDefinition::class,
+            'Relay::GlobalId' => GlobalIdFieldDefinition::class,
+            'Relay::Node' => NodeFieldDefinition::class,
+            'Relay::PluralIdentifyingRoot' => PluralIdentifyingRootFieldDefinition::class,
+        ],
     ];
 
     /**
@@ -46,16 +51,10 @@ final class BuilderProcessor implements ProcessorInterface
         return $configs;
     }
 
-    public static function addArgsBuilderClass($name, $argBuilderClass)
+    public static function addBuilderClass($name, $type, $builderClass)
     {
-        self::checkBuilderClass($argBuilderClass, 'args');
-        self::$argsBuilderClassMap[$name] = $argBuilderClass;
-    }
-
-    public static function addFieldBuilderClass($name, $fieldBuilderClass)
-    {
-        self::checkBuilderClass($fieldBuilderClass, 'field');
-        self::$fieldBuilderClassMap[$name] = $fieldBuilderClass;
+        self::checkBuilderClass($builderClass, $type);
+        self::$builderClassMap[$type][$name] = $builderClass;
     }
 
     /**
@@ -68,7 +67,7 @@ final class BuilderProcessor implements ProcessorInterface
 
         if (!is_string($builderClass)) {
             throw new \InvalidArgumentException(
-                sprintf('%s builder class should be string, but "%s" given.', ucfirst($type), gettype($builderClass))
+                sprintf('%s builder class should be string, but %s given.', ucfirst($type), gettype($builderClass))
             );
         }
 
@@ -81,7 +80,7 @@ final class BuilderProcessor implements ProcessorInterface
         if (!is_subclass_of($builderClass, $interface)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '%s builder class should be instance of "%s", but "%s" given.',
+                    '%s builder class should implement "%s", but "%s" given.',
                     ucfirst($type),
                     $interface,
                     $builderClass
@@ -100,7 +99,7 @@ final class BuilderProcessor implements ProcessorInterface
                 unset($field['builder']);
             } elseif (is_string($field)) {
                 @trigger_error(
-                    'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.9. '.
+                    'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.12. '.
                     'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
                     E_USER_DEPRECATED
                 );
@@ -142,7 +141,7 @@ final class BuilderProcessor implements ProcessorInterface
             return $builders[$type][$name];
         }
 
-        $builderClassMap = self::${$type.'BuilderClassMap'};
+        $builderClassMap = self::$builderClassMap[$type];
 
         if (isset($builderClassMap[$name])) {
             return $builders[$type][$name] = new $builderClassMap[$name]();
@@ -151,7 +150,7 @@ final class BuilderProcessor implements ProcessorInterface
         $newName = 'Relay::'.rtrim($name, 'Args');
         if (isset($builderClassMap[$newName])) {
             @trigger_error(
-                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 1.0. Use "%s" instead.', $name, $type, $newName),
+                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.12. Use "%s" instead.', $name, $type, $newName),
                 E_USER_DEPRECATED
             );
 

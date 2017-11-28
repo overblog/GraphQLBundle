@@ -12,6 +12,7 @@ class InheritanceProcessorTest extends TestCase
         'bar' => [InheritanceProcessor::INHERITS_KEY => ['toto'], 'type' => 'object', 'config' => []],
         'baz' => ['type' => 'object', 'config' => []],
         'toto' => ['type' => 'interface', 'config' => []],
+        'tata' => ['type' => 'interface', InheritanceProcessor::HEIRS_KEY => ['foo'], 'config' => []],
     ];
 
     /**
@@ -22,6 +23,18 @@ class InheritanceProcessorTest extends TestCase
     {
         $configs = $this->fixtures;
         unset($configs['toto']);
+
+        InheritanceProcessor::process($configs);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Type "foo" child of "tata" not found.
+     */
+    public function testHeirsUnknownType()
+    {
+        $configs = $this->fixtures;
+        unset($configs['foo']);
 
         InheritanceProcessor::process($configs);
     }
