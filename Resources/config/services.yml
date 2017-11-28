@@ -138,7 +138,6 @@ services:
             # is instanced before ClassLoaderEvent. This issues is fix in Symfony 3.4 introducing lazy commands
             # see https://symfony.com/blog/new-in-symfony-3-4-lazy-commands
             - '@service_container'
-            - "%overblog_graphql.versions.relay%"
             - "%kernel.root_dir%"
         tags:
             - { name: console.command }

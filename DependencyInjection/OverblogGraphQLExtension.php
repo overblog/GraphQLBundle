@@ -35,7 +35,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setErrorHandlerArguments($config, $container);
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config, $container);
-        $this->setVersions($config, $container);
         $this->setShowDebug($config, $container);
         $this->setDefinitionParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
@@ -121,13 +120,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setShowDebug(array $config, ContainerBuilder $container)
     {
         $container->getDefinition($this->getAlias().'.request_executor')->replaceArgument(4, $config['definitions']['show_debug_info']);
-    }
-
-    private function setVersions(array $config, ContainerBuilder $container)
-    {
-        foreach ($config['versions'] as $key => $version) {
-            $container->setParameter(sprintf('%s.versions.%s', $this->getAlias(), $key), $version);
-        }
     }
 
     private function setConfigBuilders(array $config, ContainerBuilder $container)
