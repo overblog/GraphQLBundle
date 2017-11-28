@@ -12,25 +12,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class GraphQLDumpSchemaCommand extends Command
+final class GraphQLDumpSchemaCommand extends Command
 {
     /** @var ContainerInterface */
     private $container;
-
-    /** @var string */
-    private $relayVersion;
 
     /** @var string */
     private $baseExportPath;
 
     public function __construct(
         ContainerInterface $container,
-        $relayVersion,
         $baseExportPath
     ) {
         parent::__construct();
         $this->container = $container;
-        $this->relayVersion = $relayVersion;
         $this->baseExportPath = $baseExportPath;
     }
 
@@ -126,12 +121,7 @@ class GraphQLDumpSchemaCommand extends Command
             throw new \InvalidArgumentException('"modern" and "classic" options should not be used together.');
         }
 
-        // none chosen so fallback on default behavior
-        if (!$modern && !$classic) {
-            return 'modern' === $this->relayVersion;
-        }
-
-        return $modern;
+        return $modern === true;
     }
 
     /**
