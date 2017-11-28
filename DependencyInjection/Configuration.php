@@ -177,12 +177,6 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('handle_cors')->defaultFalse()->end()
                     ->end()
                 ->end()
-                ->arrayNode('versions')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->enumNode('relay')->values(['modern', 'classic'])->defaultValue('classic')->end()
-                    ->end()
-                ->end()
             ->end();
 
         return $treeBuilder;
