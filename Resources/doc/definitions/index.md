@@ -2,6 +2,7 @@ Definitions
 ===========
 
 * [Type System](type-system/index.md)
+* [Type Inheritance](type-inheritance.md)
 * [Schema](schema.md)
 
 Go further 

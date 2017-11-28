@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
 
+use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Overblog\GraphQLBundle\Error\UserError;
@@ -172,6 +173,8 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
             [
                 'foo' => [
                     'type' => 'object',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
                     'config' => [
                         'name' => 'foo',
                         'fields' => [

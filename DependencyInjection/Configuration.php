@@ -54,11 +54,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('schema')
                             ->beforeNormalization()
                                 ->ifTrue(function ($v) {
-                                    $needNormalization = isset($v['query']) && is_string($v['query']) ||
-                                        isset($v['mutation']) && is_string($v['mutation']) ||
-                                        isset($v['subscription']) && is_string($v['subscription']);
-
-                                    return $needNormalization;
+                                    return isset($v['query']) && is_string($v['query']) || isset($v['mutation']) && is_string($v['mutation']);
                                 })
                                 ->then(function ($v) {
                                     return ['default' => $v];

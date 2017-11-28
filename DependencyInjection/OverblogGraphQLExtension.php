@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
-use Overblog\GraphQLBundle\Config\TypeWithOutputFieldsDefinition;
+use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
@@ -135,14 +135,12 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $useObjectToAddResource = method_exists($container, 'addObjectResource');
         $objectToAddResourceMethod = $useObjectToAddResource ? 'addObjectResource' : 'addClassResource';
 
-        foreach (['args', 'field'] as $category) {
-            if (!empty($config['definitions']['builders'][$category])) {
-                $method = 'add'.ucfirst($category).'BuilderClass';
-
-                foreach ($config['definitions']['builders'][$category] as $params) {
+        foreach (BuilderProcessor::BUILDER_TYPES as $type) {
+            if (!empty($config['definitions']['builders'][$type])) {
+                foreach ($config['definitions']['builders'][$type] as $params) {
                     $object = $useObjectToAddResource ? $params['class'] : new \ReflectionClass($params['class']);
                     $container->$objectToAddResourceMethod($object);
-                    TypeWithOutputFieldsDefinition::$method($params['alias'], $params['class']);
+                    BuilderProcessor::addBuilderClass($params['alias'], $type, $params['class']);
                 }
             }
         }

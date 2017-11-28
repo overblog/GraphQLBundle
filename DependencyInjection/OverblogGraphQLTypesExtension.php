@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
+use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
@@ -33,8 +34,11 @@ class OverblogGraphQLTypesExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = $this->getConfiguration($configs, $container);
-        $config = $this->processConfiguration($configuration, $configs);
+        $this->checkTypesDuplication($configs);
+        // flatten config is a requirement to support inheritance
+        $flattenConfig = [call_user_func_array('array_merge', $configs)];
+        $configuration = $this->getConfiguration($flattenConfig, $container);
+        $config = $this->processConfiguration($configuration, $flattenConfig);
 
         $container->setParameter($this->getAlias().'.config', $config);
     }
@@ -68,6 +72,20 @@ class OverblogGraphQLTypesExtension extends Extension
             $typeConfig = call_user_func($parserClass.'::parse', $file, $container);
             $container->prependExtensionConfig($this->getAlias(), $typeConfig);
             $this->treatedFiles[$file->getRealPath()] = true;
+        }
+    }
+
+    private function checkTypesDuplication(array $typeConfigs)
+    {
+        $types = call_user_func_array('array_merge', array_map('array_keys', $typeConfigs));
+        $duplications = array_keys(array_filter(array_count_values($types), function ($count) {
+            return $count > 1;
+        }));
+        if (!empty($duplications)) {
+            throw new ForbiddenOverwriteException(sprintf(
+                'Types (%s) cannot be overwritten. See inheritance doc section for more details.',
+                implode(', ', array_map('json_encode', $duplications))
+            ));
         }
     }
 

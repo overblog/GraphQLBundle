@@ -1,0 +1,10 @@
+Query:
+    type: object
+    inherits: [QueryFoo, QueryBar]
+
+QueryFoo:
+    type: object
+    inherits: [QueryFooDecorator]
+
+QueryBar:
+    type: object

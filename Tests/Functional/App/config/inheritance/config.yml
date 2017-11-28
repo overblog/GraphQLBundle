@@ -1,0 +1,14 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Inheritance\\__DEFINITIONS__"
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/inheritance/mapping"
