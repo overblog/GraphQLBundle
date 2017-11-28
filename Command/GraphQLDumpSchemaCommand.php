@@ -121,7 +121,7 @@ final class GraphQLDumpSchemaCommand extends Command
             throw new \InvalidArgumentException('"modern" and "classic" options should not be used together.');
         }
 
-        return $modern === true;
+        return true === $modern;
     }
 
     /**

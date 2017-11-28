@@ -34,3 +34,9 @@ UPGRADE FROM 0.10 to 0.11
          +        react: "15.6"
          +        fetch: "2.0"
         ```
+     - If you were using the `graphql:dump-schema` and depending on the `relay`
+     version as in the previous configuration, now you have to explicitly choose
+     for a format during the command:
+        ```
+        bin/console graphql:dump-schema --modern
+        ```
