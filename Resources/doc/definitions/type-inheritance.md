@@ -58,7 +58,7 @@ ObjectA:
             bar: {type: String!}
             bar2: {type: String!}
             bar3: {type: String!}
-            foo: {type: String!}
+            baz: {type: String!}
 
 ObjectC:
     type: object
