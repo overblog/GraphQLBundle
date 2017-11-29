@@ -256,7 +256,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                 'mappings' => [
                     'types' => [
                         [
-                            'type' => $type,
+                            'types' => [$type],
                             'dir' => __DIR__.'/mapping/'.$type,
                         ],
                     ],

@@ -55,6 +55,7 @@ class OverblogGraphQLTypesExtension extends Extension
         $typesMappings = $this->mappingConfig($config, $container);
         // reset treated files
         $this->treatedFiles = [];
+        $typesMappings = call_user_func_array('array_merge', $typesMappings);
         // treats mappings
         foreach ($typesMappings as $params) {
             $this->prependExtensionConfigFromFiles($params['type'], $params['files'], $container);
@@ -104,7 +105,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
         // app only config files (yml or xml or graphql)
         if ($mappingConfig['auto_discover']['root_dir'] && $container->hasParameter('kernel.root_dir')) {
-            $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'type' => null];
+            $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'types' => null];
         }
         if ($mappingConfig['auto_discover']['bundles']) {
             $mappingFromBundles = $this->mappingFromBundles($container);
@@ -113,7 +114,7 @@ class OverblogGraphQLTypesExtension extends Extension
             // enabled only for this bundle
             $typesMappings[] = [
                 'dir' => $this->bundleDir(OverblogGraphQLBundle::class).'/Resources/config/graphql',
-                'type' => 'yaml',
+                'types' => ['yaml'],
             ];
         }
 
@@ -127,12 +128,9 @@ class OverblogGraphQLTypesExtension extends Extension
     {
         return array_filter(array_map(
             function (array $typeMapping) use ($container) {
-                $params = $this->detectFilesByType(
-                    $container,
-                    $typeMapping['dir'],
-                    $typeMapping['type'],
-                    isset($typeMapping['suffix']) ? $typeMapping['suffix'] : ''
-                );
+                $suffix = isset($typeMapping['suffix']) ? $typeMapping['suffix'] : '';
+                $types = isset($typeMapping['types']) ? $typeMapping['types'] : null;
+                $params = $this->detectFilesByTypes($container, $typeMapping['dir'], $suffix, $types);
 
                 return $params;
             },
@@ -150,13 +148,13 @@ class OverblogGraphQLTypesExtension extends Extension
             $bundleDir = $this->bundleDir($class);
 
             // only config files (yml or xml)
-            $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'type' => null];
+            $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'types' => null];
         }
 
         return $typesMappings;
     }
 
-    private function detectFilesByType(ContainerBuilder $container, $path, $type, $suffix)
+    private function detectFilesByTypes(ContainerBuilder $container, $path, $suffix, array $types = null)
     {
         // add the closest existing directory as a resource
         $resource = $path;
@@ -165,25 +163,30 @@ class OverblogGraphQLTypesExtension extends Extension
         }
         $container->addResource(new FileResource($resource));
 
-        $finder = new Finder();
+        $stopOnFirstTypeMatching = empty($types);
 
-        $types = null === $type ? array_keys(self::SUPPORTED_TYPES_EXTENSIONS) : [$type];
+        $types = $stopOnFirstTypeMatching ? array_keys(self::SUPPORTED_TYPES_EXTENSIONS) : $types;
+        $files = [];
 
         foreach ($types as $type) {
+            $finder = Finder::create();
             try {
                 $finder->files()->in($path)->name(sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]));
             } catch (\InvalidArgumentException $e) {
                 continue;
             }
             if ($finder->count() > 0) {
-                return [
+                $files[] = [
                     'type' => $type,
                     'files' => $finder,
                 ];
+                if ($stopOnFirstTypeMatching) {
+                    break;
+                }
             }
         }
 
-        return;
+        return $files;
     }
 
     private function bundleDir($bundleClass)

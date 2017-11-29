@@ -21,3 +21,10 @@ PhotoAndPostDecorator:
     heirs: PhotoAndPost
     config:
         resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
+
+UserDecorator:
+    decorator: true
+    heirs: [User]
+    config:
+        fields:
+            id: "Relay::GlobalId"

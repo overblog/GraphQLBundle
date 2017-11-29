@@ -1,8 +1,3 @@
-NodeInterface:
-    type: relay-node
-    config:
-        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
-
 Query:
     type: object
     config:
@@ -16,20 +11,10 @@ Query:
                 type: '[NodeInterface]'
                 resolve: '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()'
 
-User:
-    type: object
+NodeInterface:
+    type: relay-node
     config:
-        fields:
-            id: "Relay::GlobalId"
-            name:
-                type: String
-        interfaces: [NodeInterface]
-
-PhotoInput:
-    type: input-object
-    config:
-        fields:
-            width: { type: Int, defaultValue: 100 }
+        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
 
 Status:
     type: enum
@@ -40,3 +25,4 @@ Status:
             STANDBY:
                 value: 3
                 description: Waiting for validation
+

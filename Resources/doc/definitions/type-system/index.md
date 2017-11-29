@@ -28,9 +28,12 @@ Types can be define 3 different ways:
                 # auto_discover: false # to disable bundles and root dir auto discover
                 types:
                     -
-                        type: yaml # or xml or null
+                        type: yaml # or xml or graphql null
                         dir: "%kernel.root_dir%/.../mapping" # sub directories are also searched
                         # suffix: .types # use to change default file suffix
+                    -
+                        types: [yaml, graphql] # to include different types in the same dir
+                        dir: "%kernel.root_dir%/.../mapping"
     ```
 
 2. **The PHP way**
