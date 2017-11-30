@@ -89,6 +89,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $this->getAlias().'.event_listener.classloader_listener',
                 new Definition(ClassLoaderListener::class)
             );
+            $definition->setPublic(true);
             $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
             $definition->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'load', 'priority' => 255]);
             $definition->addTag('kernel.event_listener', ['event' => 'console.command', 'method' => 'load', 'priority' => 255]);

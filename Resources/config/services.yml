@@ -13,7 +13,7 @@ services:
 
     Overblog\GraphQLBundle\EventListener\ErrorHandlerListener:
         class: Overblog\GraphQLBundle\EventListener\ErrorHandlerListener
-        public: false
+        public: true
         arguments:
             - "@overblog_graphql.error_handler"
             - "%kernel.debug%"
@@ -112,7 +112,7 @@ services:
 
     Overblog\GraphQLBundle\EventListener\RequestFilesListener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
-        public: false
+        public: true
         arguments:
             - "@request_stack"
         tags:
