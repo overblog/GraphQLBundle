@@ -32,7 +32,7 @@ Types can be define 3 different ways:
                         dir: "%kernel.root_dir%/.../mapping" # sub directories are also searched
                         # suffix: .types # use to change default file suffix
                     -
-                        types: [yaml, graphql] # to include different types in the same dir
+                        types: [yaml, graphql] # to include different types from the same dir
                         dir: "%kernel.root_dir%/.../mapping"
     ```
 
