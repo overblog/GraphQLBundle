@@ -28,6 +28,14 @@ matrix:
           env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
         - php: 7.1
           env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev
+        - php: 7.2
+          env: PHP_CS_FIXER=true
+        - php: 7.2
+          env: SYMFONY_VERSION=3.3.* TEST_COVERAGE=true
+        - php: 7.2
+          env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
+        - php: 7.2
+          env: SYMFONY_VERSION=4.0.* DEPENDENCIES=dev
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
