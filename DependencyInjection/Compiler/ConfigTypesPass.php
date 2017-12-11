@@ -27,7 +27,7 @@ class ConfigTypesPass implements CompilerPassInterface
         $definition->setPublic(false);
         $definition->setArguments([new Reference('service_container')]);
         foreach ($aliases as $alias) {
-            $definition->addTag('overblog_graphql.type', ['alias' => $alias, 'generated' => true]);
+            $definition->addTag(TypeTaggedServiceMappingPass::TAG_NAME, ['alias' => $alias, 'generated' => true]);
         }
     }
 }

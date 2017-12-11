@@ -17,10 +17,10 @@ use Symfony\Component\Finder\Finder;
 
 class AutoMappingPass implements CompilerPassInterface
 {
-    private static $serviceSubclassTagMapping = [
+    const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
         ResolverInterface::class => 'overblog_graphql.resolver',
-        Type::class => 'overblog_graphql.type',
+        Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
     ];
 
     public function process(ContainerBuilder $container)
@@ -88,9 +88,7 @@ class AutoMappingPass implements CompilerPassInterface
 
     private function addDefinitionTags(Definition $definition, \ReflectionClass $reflectionClass)
     {
-        $className = $definition->getClass();
-
-        foreach (self::$serviceSubclassTagMapping as $subclass => $tagName) {
+        foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $subclass => $tagName) {
             if (!$reflectionClass->isSubclassOf($subclass)) {
                 continue;
             }
@@ -104,36 +102,15 @@ class AutoMappingPass implements CompilerPassInterface
                     }
                     $definition->addTag($tagName, ['method' => $publicReflectionMethod->name]);
                 }
-                if ($isAliased) {
-                    $this->addDefinitionTagsFromAliasesMethod($definition, $className, $tagName, true);
-                }
             } else {
                 $definition->addTag($tagName);
-                $this->addDefinitionTagsFromAliasesMethod($definition, $className, $tagName, false);
             }
-        }
-    }
-
-    /**
-     * @param string|null $className
-     * @param bool        $withMethod
-     */
-    private function addDefinitionTagsFromAliasesMethod(Definition $definition, $className, $tagName, $withMethod)
-    {
-        // from getAliases
-        if (!is_callable([$className, 'getAliases'])) {
-            return;
-        }
-        $aliases = call_user_func([$className, 'getAliases']);
-
-        foreach ($aliases as $key => $alias) {
-            $definition->addTag($tagName, $withMethod ? ['alias' => $alias, 'method' => $key] : ['alias' => $alias]);
         }
     }
 
     private function subclass($class)
     {
-        $interfaces = array_keys(self::$serviceSubclassTagMapping);
+        $interfaces = array_keys(self::SERVICE_SUBCLASS_TAG_MAPPING);
 
         foreach ($interfaces as $interface) {
             if (is_a($class, $interface, true)) {
