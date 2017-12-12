@@ -109,11 +109,30 @@ Resolvers can be define 2 different ways
                     - "%kernel.root_dir%/src/*Bundle/CustomDir"
                     - "%kernel.root_dir%/src/AppBundle/{foo,bar}"
     ```
-    To disable auto mapping:
+
+    If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
+    DI `autoconfigure`:
+
     ```yaml
     overblog_graphql:
         definitions:
             auto_mapping: false
+    ```
+
+    Here an example of how this can be done with DI `autoconfigure`:
+
+    ```yaml
+    App\Mutation\:
+        resource: '../src/Mutation'
+        tags: ['overblog_graphql.mutation']
+
+    App\Resolver\:
+        resource: '../src/Resolver'
+        tags: ['overblog_graphql.resolver']
+
+    App\Type\:
+        resource: '../src/Type'
+        tags: ['overblog_graphql.type']
     ```
 
     **Note:**
