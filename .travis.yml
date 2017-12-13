@@ -26,7 +26,7 @@ matrix:
         - php: 7.2
           env: SYMFONY_VERSION=3.3.*
         - php: 7.2
-          env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=0.10.0 DEPENDENCIES=dev
+          env: SYMFONY_VERSION=3.4.*
         - php: 7.2
           env: SYMFONY_VERSION=4.0.* TEST_COVERAGE=true
         - php: 7.2

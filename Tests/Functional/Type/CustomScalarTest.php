@@ -30,4 +30,10 @@ class CustomScalarTest extends TestCase
         ];
         $this->assertGraphQL($query, $expected);
     }
+
+    public function testDateTimeTypeDescription()
+    {
+        $dateTimeType = static::$kernel->getContainer()->get('overblog_graphql.type_resolver')->resolve('DateTime');
+        $this->assertEquals('The DateTime type', $dateTimeType->description);
+    }
 }
