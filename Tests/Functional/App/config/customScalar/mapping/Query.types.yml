@@ -1,6 +1,7 @@
 DateTime:
     type: custom-scalar
     config:
+        description: "The DateTime type"
         serialize: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "serialize"]
         parseValue: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseValue"]
         parseLiteral: ["Overblog\\GraphQLGenerator\\Tests\\DateTimeType", "parseLiteral"]
