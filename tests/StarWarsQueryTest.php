@@ -365,5 +365,6 @@ class StarWarsQueryTest extends AbstractStarWarsTest
             'dateTime' => '2016-01-18 23:00:00',
         ];
         $this->assertValidQuery($query, $expected);
+        $this->assertEquals('The DateTime type', $this->getType('DateTime')->description);
     }
 }
