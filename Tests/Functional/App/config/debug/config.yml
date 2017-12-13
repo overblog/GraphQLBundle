@@ -1,0 +1,7 @@
+imports:
+    - { resource: ../connection/config.yml }
+
+overblog_graphql:
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Debug\\__DEFINITIONS__"
+        show_debug_info: true

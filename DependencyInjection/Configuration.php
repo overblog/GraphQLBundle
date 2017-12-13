@@ -6,6 +6,7 @@ use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Resolver\Resolver;
+use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -83,40 +84,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
-                        ->arrayNode('mappings')
-                            ->children()
-                                ->arrayNode('auto_discover')
-                                    ->treatFalseLike(['bundles' => false, 'root_dir' => false])
-                                    ->treatTrueLike(['bundles' => true, 'root_dir' => true])
-                                    ->treatNullLike(['bundles' => true, 'root_dir' => true])
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->booleanNode('bundles')->defaultTrue()->end()
-                                        ->booleanNode('root_dir')->defaultTrue()->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('types')
-                                    ->prototype('array')
-                                        ->addDefaultsIfNotSet()
-                                        ->beforeNormalization()
-                                            ->ifTrue(function ($v) {
-                                                return isset($v['type']) && 'yml' === $v['type'];
-                                            })
-                                            ->then(function ($v) {
-                                                $v['type'] = 'yaml';
-
-                                                return $v;
-                                            })
-                                        ->end()
-                                        ->children()
-                                            ->enumNode('type')->values(['yaml', 'xml'])->defaultNull()->end()
-                                            ->scalarNode('dir')->defaultNull()->end()
-                                            ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
+                        ->append($this->addMappingSection())
                         ->booleanNode('map_exceptions_to_parent')->defaultFalse()->end()
                         ->arrayNode('exceptions')
                             ->addDefaultsIfNotSet()
@@ -182,8 +150,59 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    private function addMappingSection()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('mappings');
+        $node
+            ->children()
+                ->arrayNode('auto_discover')
+                    ->treatFalseLike(['bundles' => false, 'root_dir' => false])
+                    ->treatTrueLike(['bundles' => true, 'root_dir' => true])
+                    ->treatNullLike(['bundles' => true, 'root_dir' => true])
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('bundles')->defaultTrue()->end()
+                        ->booleanNode('root_dir')->defaultTrue()->end()
+                    ->end()
+                ->end()
+                ->arrayNode('types')
+                    ->prototype('array')
+                        ->addDefaultsIfNotSet()
+                        ->beforeNormalization()
+                            ->ifTrue(function ($v) {
+                                return isset($v['type']) && is_string($v['type']);
+                            })
+                            ->then(function ($v) {
+                                if ('yml' === $v['type']) {
+                                    $v['types'] = ['yaml'];
+                                } else {
+                                    $v['types'] = [$v['type']];
+                                }
+                                unset($v['type']);
+
+                                return $v;
+                            })
+                        ->end()
+                        ->children()
+                            ->arrayNode('types')
+                                ->prototype('enum')->values(array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
+                            ->end()
+                            ->scalarNode('dir')->defaultNull()->end()
+                            ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
     /**
      * @param string $name
+     *
+     * @return NodeParentInterface
      */
     private function addBuilderSection($name)
     {
@@ -220,6 +239,9 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param string $name
+     * @param bool   $disabledValue
+     *
+     * @return NodeParentInterface
      */
     private function addSecurityQuerySection($name, $disabledValue)
     {

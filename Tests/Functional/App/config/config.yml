@@ -22,3 +22,6 @@ services:
     #disable twig error pages
     twig.exception_listener:
         class: stdClass
+    error_handler_listener:
+        public: true
+        alias: Overblog\GraphQLBundle\EventListener\ErrorHandlerListener

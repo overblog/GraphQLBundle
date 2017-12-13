@@ -11,6 +11,15 @@ services:
             - []
             - false
 
+    Overblog\GraphQLBundle\EventListener\ErrorHandlerListener:
+        class: Overblog\GraphQLBundle\EventListener\ErrorHandlerListener
+        public: true
+        arguments:
+            - "@overblog_graphql.error_handler"
+            - "%kernel.debug%"
+        tags:
+            - { name: kernel.event_listener, event: graphql.post_executor, method: onPostExecutor }
+
     overblog_graphql.executor.default:
         class: Overblog\GraphQLBundle\Executor\Executor
         public: false
@@ -21,9 +30,6 @@ services:
         arguments:
             - "@overblog_graphql.executor"
             - "@event_dispatcher"
-            - "%kernel.debug%"
-            - "@overblog_graphql.error_handler"
-            - false
             - "@overblog_graphql.promise_adapter"
             - "%overblog_graphql.default_resolver%"
         calls:
@@ -104,7 +110,7 @@ services:
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
-    overblog_graphql.event_listener.request_file_listener:
+    Overblog\GraphQLBundle\EventListener\RequestFilesListener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
         public: true
         arguments:
