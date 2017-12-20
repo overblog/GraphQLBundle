@@ -2,9 +2,23 @@
 
 namespace Overblog\GraphQLBundle\Error;
 
-/**
- * Class UserFacingError.
- */
-abstract class UserFacingError extends \Exception
+use GraphQL\Error\ClientAware;
+
+abstract class UserFacingError extends \RuntimeException implements ClientAware
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function isClientSafe()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCategory()
+    {
+        return 'user';
+    }
 }

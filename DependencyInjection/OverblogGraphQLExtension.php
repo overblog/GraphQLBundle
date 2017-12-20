@@ -187,6 +187,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 ->replaceArgument(2, $this->buildExceptionMap($config['definitions']['exceptions']))
                 ->addMethodCall('setUserWarningClass', [$config['definitions']['exceptions']['types']['warnings']])
                 ->addMethodCall('setUserErrorClass', [$config['definitions']['exceptions']['types']['errors']])
+                ->addMethodCall('setErrorFormatter', [$config['definitions']['error_formatter']])
             ;
         }
     }

@@ -6,6 +6,6 @@ class ExampleException
 {
     public function __invoke()
     {
-        throw new \InvalidArgumentException('Invalid argument exception');
+        throw new \InvalidArgumentException('Invalid argument exception', 321);
     }
 }

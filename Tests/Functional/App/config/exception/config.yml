@@ -4,10 +4,11 @@ imports:
 
 overblog_graphql:
     definitions:
-        class_namespace: "Overblog\\GraphQLBundle\\Exception\\__DEFINITIONS__"
+        error_formatter: 'Overblog\GraphQLBundle\Tests\Error\CustomErrorFormatter::format'
+        class_namespace: 'Overblog\GraphQLBundle\Exception\__DEFINITIONS__'
         exceptions:
             errors:
-              - "InvalidArgumentException"
+              - 'InvalidArgumentException'
         schema:
             query: Query
             mutation: ~
@@ -15,4 +16,4 @@ overblog_graphql:
             types:
                 -
                     type: yaml
-                    dir: "%kernel.root_dir%/config/exception/mapping"
+                    dir: '%kernel.root_dir%/config/exception/mapping'

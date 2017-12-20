@@ -120,3 +120,51 @@ overblog_graphql:
 
 The message of those exceptions are then shown to the user like other 
 `UserError`s or `UserWarning`s.
+
+Custom Error Formatting
+-------------------------
+
+It is possible to define custom formatter for result errors.
+Let's say we want to add `code` entry to each error.
+
+```php
+<?php
+
+namespace App\GraphQL;
+
+use GraphQL\Error\Error;
+use GraphQL\Error\FormattedError;
+
+class MyErrorFormatter
+{
+    /**
+     * @param \Error|\Exception $e
+     *
+     * @return array
+     */
+    public static function format($e)
+    {
+        $code = $e->getCode();
+        if ($e instanceof Error && $e->getPrevious()) {
+            $code = $e->getPrevious()->getCode();
+        }
+
+        $formattedError = FormattedError::createFromException($e);
+        $formattedError['code'] = $code;
+
+        return $formattedError;
+    }
+}
+```
+
+Change configuration to use custom `error_formatter`:
+
+```yaml
+#app/config/config.yml
+overblog_graphql:
+    definitions:
+        error_formatter: 'App\GraphQL\MyErrorFormatter::format'
+```
+
+**Note:**
+- `error_formatter` is also impacting the formatting `extensions.warnings`.

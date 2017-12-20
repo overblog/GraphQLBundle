@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\Error as GraphQLError;
+use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
 use Psr\Log\LoggerInterface;
@@ -14,6 +15,8 @@ class ErrorHandler
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
     const DEFAULT_USER_WARNING_CLASS = UserWarning::class;
     const DEFAULT_USER_ERROR_CLASS = UserError::class;
+    /** callable */
+    const DEFAULT_ERROR_FORMATTER = [FormattedError::class, 'createFromException'];
 
     /** @var LoggerInterface */
     private $logger;
@@ -29,6 +32,9 @@ class ErrorHandler
 
     /** @var string */
     private $userErrorClass = self::DEFAULT_USER_ERROR_CLASS;
+
+    /** @var callable|null */
+    private $errorFormatter;
 
     /** @var bool */
     private $mapExceptionsToParent;
@@ -62,78 +68,11 @@ class ErrorHandler
         return $this;
     }
 
-    /**
-     * @param GraphQLError[] $errors
-     * @param bool           $throwRawException
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    protected function treatExceptions(array $errors, $throwRawException)
+    public function setErrorFormatter(callable $errorFormatter = null)
     {
-        $treatedExceptions = [
-            'errors' => [],
-            'extensions' => [
-                'warnings' => [],
-            ],
-        ];
+        $this->errorFormatter = $errorFormatter;
 
-        /** @var GraphQLError $error */
-        foreach ($errors as $error) {
-            $rawException = $this->convertException($error->getPrevious());
-
-            // raw GraphQL Error or InvariantViolation exception
-            if (null === $rawException || $rawException instanceof GraphQLUserError) {
-                $treatedExceptions['errors'][] = $error;
-                continue;
-            }
-
-            // user error
-            if ($rawException instanceof $this->userErrorClass) {
-                $treatedExceptions['errors'][] = $error;
-                if ($rawException->getPrevious()) {
-                    $this->logException($rawException->getPrevious());
-                }
-                continue;
-            }
-
-            // user warning
-            if ($rawException instanceof $this->userWarningClass) {
-                $treatedExceptions['extensions']['warnings'][] = $error;
-                if ($rawException->getPrevious()) {
-                    $this->logException($rawException->getPrevious(), LogLevel::WARNING);
-                }
-                continue;
-            }
-
-            // multiple errors
-            if ($rawException instanceof UserErrors) {
-                $rawExceptions = $rawException;
-                foreach ($rawExceptions->getErrors() as $rawException) {
-                    $treatedExceptions['errors'][] = GraphQLError::createLocatedError($rawException, $error->nodes);
-                }
-                continue;
-            }
-
-            // if is a try catch exception wrapped in Error
-            if ($throwRawException) {
-                throw $rawException;
-            }
-
-            $this->logException($rawException, LogLevel::CRITICAL);
-
-            $treatedExceptions['errors'][] = new GraphQLError(
-                $this->internalErrorMessage,
-                $error->nodes,
-                $error->getSource(),
-                $error->getPositions(),
-                $error->path,
-                $rawException
-            );
-        }
-
-        return $treatedExceptions;
+        return $this;
     }
 
     /**
@@ -156,12 +95,107 @@ class ErrorHandler
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
     {
-        $executionResult->setErrorFormatter([GraphQLError::class, 'formatError']);
+        $errorFormatter = $this->errorFormatter ? $this->errorFormatter : self::DEFAULT_ERROR_FORMATTER;
+        $executionResult->setErrorFormatter($errorFormatter);
+        FormattedError::setInternalErrorMessage($this->internalErrorMessage);
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {
-            $executionResult->extensions['warnings'] = array_map([GraphQLError::class, 'formatError'], $exceptions['extensions']['warnings']);
+            $executionResult->extensions['warnings'] = array_map($errorFormatter, $exceptions['extensions']['warnings']);
         }
+    }
+
+    /**
+     * @param GraphQLError[] $errors
+     * @param bool           $throwRawException
+     *
+     * @return array
+     *
+     * @throws \Error|\Exception
+     */
+    private function treatExceptions(array $errors, $throwRawException)
+    {
+        $treatedExceptions = [
+            'errors' => [],
+            'extensions' => [
+                'warnings' => [],
+            ],
+        ];
+
+        /** @var GraphQLError $error */
+        foreach ($this->flattenErrors($errors) as $error) {
+            $rawException = $this->convertException($error->getPrevious());
+
+            // raw GraphQL Error or InvariantViolation exception
+            if (null === $rawException || $rawException instanceof GraphQLUserError) {
+                $treatedExceptions['errors'][] = $error;
+                continue;
+            }
+
+            // recreate a error with converted exception
+            $errorWithConvertedException = new GraphQLError(
+                $error->getMessage(),
+                $error->nodes,
+                $error->getSource(),
+                $error->getPositions(),
+                $error->path,
+                $rawException
+            );
+
+            // user error
+            if ($rawException instanceof $this->userErrorClass) {
+                $treatedExceptions['errors'][] = $errorWithConvertedException;
+                if ($rawException->getPrevious()) {
+                    $this->logException($rawException->getPrevious());
+                }
+                continue;
+            }
+
+            // user warning
+            if ($rawException instanceof $this->userWarningClass) {
+                $treatedExceptions['extensions']['warnings'][] = $errorWithConvertedException;
+                if ($rawException->getPrevious()) {
+                    $this->logException($rawException->getPrevious(), LogLevel::WARNING);
+                }
+                continue;
+            }
+
+            // if is a catch exception wrapped in Error
+            if ($throwRawException) {
+                throw $rawException;
+            }
+
+            $this->logException($rawException, LogLevel::CRITICAL);
+
+            $treatedExceptions['errors'][] = $errorWithConvertedException;
+        }
+
+        return $treatedExceptions;
+    }
+
+    /**
+     * @param GraphQLError[] $errors
+     *
+     * @return GraphQLError[]
+     */
+    private function flattenErrors(array $errors)
+    {
+        $flattenErrors = [];
+
+        foreach ($errors as $error) {
+            $rawException = $error->getPrevious();
+            // multiple errors
+            if ($rawException instanceof UserErrors) {
+                $rawExceptions = $rawException;
+                foreach ($rawExceptions->getErrors() as $rawException) {
+                    $flattenErrors[] = GraphQLError::createLocatedError($rawException, $error->nodes, $error->path);
+                }
+            } else {
+                $flattenErrors[] = $error;
+            }
+        }
+
+        return $flattenErrors;
     }
 
     /**
@@ -172,7 +206,7 @@ class ErrorHandler
      *
      * @return \Exception|\Error
      */
-    protected function convertException($rawException = null)
+    private function convertException($rawException = null)
     {
         if (null === $rawException) {
             return;
