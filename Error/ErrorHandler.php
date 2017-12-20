@@ -156,7 +156,7 @@ class ErrorHandler
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
     {
-        $executionResult->setErrorFormatter(sprintf('\%s::formatError', GraphQLError::class));
+        $executionResult->setErrorFormatter([GraphQLError::class, 'formatError']);
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {

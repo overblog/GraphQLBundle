@@ -26,6 +26,5 @@ class RequestFilesListener
 
         $context = $event->getExecutorContext();
         $context['request_files'] = $request->files;
-        $event->setExecutorContext($context);
     }
 }

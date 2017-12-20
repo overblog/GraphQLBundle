@@ -5,7 +5,9 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
+use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
+use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,7 +37,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setErrorHandlerArguments($config, $container);
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config, $container);
-        $this->setShowDebug($config, $container);
+        $this->setDebugListener($config, $container);
         $this->setDefinitionParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
@@ -87,6 +89,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $this->getAlias().'.event_listener.classloader_listener',
                 new Definition(ClassLoaderListener::class)
             );
+            $definition->setPublic(true);
             $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
             $definition->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'load', 'priority' => 255]);
             $definition->addTag('kernel.event_listener', ['event' => 'console.command', 'method' => 'load', 'priority' => 255]);
@@ -117,9 +120,16 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setDefinition($this->getAlias().'.cache_expression_language_parser.default', $definition);
     }
 
-    private function setShowDebug(array $config, ContainerBuilder $container)
+    private function setDebugListener(array $config, ContainerBuilder $container)
     {
-        $container->getDefinition($this->getAlias().'.request_executor')->replaceArgument(4, $config['definitions']['show_debug_info']);
+        if ($config['definitions']['show_debug_info']) {
+            $definition = $container->setDefinition(
+                DebugListener::class,
+                new Definition(DebugListener::class)
+            );
+            $definition->addTag('kernel.event_listener', ['event' => Events::PRE_EXECUTOR, 'method' => 'onPreExecutor']);
+            $definition->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
+        }
     }
 
     private function setConfigBuilders(array $config, ContainerBuilder $container)

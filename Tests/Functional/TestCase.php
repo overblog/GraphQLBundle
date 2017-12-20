@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Tests\Functional;
 
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,9 +66,8 @@ abstract class TestCase extends WebTestCase
         $request->query->set('query', $query);
 
         $req = static::getContainer()->get('overblog_graphql.request_parser')->parse($request);
-        $executor = static::getContainer()->get('overblog_graphql.request_executor');
-        $executor->setThrowException($throwException);
-        $res = $executor->execute($req, $rootValue);
+        static::getContainer()->get('error_handler_listener')->setThrowException($throwException);
+        $res = static::getContainer()->get('overblog_graphql.request_executor')->execute(null, $req, $rootValue);
 
         return $res->toArray();
     }
@@ -119,12 +119,18 @@ abstract class TestCase extends WebTestCase
     protected static function assertResponse($query, array $expected, $username, $testCase, $password = self::DEFAULT_PASSWORD)
     {
         $client = self::createClientAuthenticated($username, $testCase, $password);
-        $client->request('GET', '/', ['query' => $query]);
-
-        $result = $client->getResponse()->getContent();
+        $result = self::sendRequest($client, $query);
 
         static::assertEquals($expected, json_decode($result, true), $result);
 
         return $client;
+    }
+
+    protected static function sendRequest(Client $client, $query, $isDecoded = false)
+    {
+        $client->request('GET', '/', ['query' => $query]);
+        $result = $client->getResponse()->getContent();
+
+        return $isDecoded ? json_decode($result, true) : $result;
     }
 }
