@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\EventListener;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
-class ClassLoaderListener
+final class ClassLoaderListener
 {
     private $typeGenerator;
 

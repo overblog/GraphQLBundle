@@ -3,12 +3,12 @@ imports:
     - { resource: services.yml }
 
 overblog_graphql:
-    definitions:
-        error_formatter: 'Overblog\GraphQLBundle\Tests\Error\CustomErrorFormatter::format'
-        class_namespace: 'Overblog\GraphQLBundle\Exception\__DEFINITIONS__'
+    errors_handler:
         exceptions:
             errors:
               - 'InvalidArgumentException'
+    definitions:
+        class_namespace: 'Overblog\GraphQLBundle\Exception\__DEFINITIONS__'
         schema:
             query: Query
             mutation: ~

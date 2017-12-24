@@ -6,7 +6,7 @@ use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RequestFilesListener
+final class RequestFilesListener
 {
     /** @var RequestStack */
     private $requestStack;

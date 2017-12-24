@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class ExecutorContextEvent extends Event
+final class ExecutorContextEvent extends Event
 {
     /** @var \ArrayObject */
     private $executorContext;

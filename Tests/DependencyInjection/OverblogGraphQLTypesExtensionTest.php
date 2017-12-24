@@ -86,7 +86,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $ext->load(
             [
                 [
-                    'definitions' => [
+                    'errors_handler' => [
                         'exceptions' => [
                             'warnings' => [
                                 ResourceNotFoundException::class,

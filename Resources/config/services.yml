@@ -2,24 +2,6 @@ parameters:
     overblog_graphql_types.config: []
 
 services:
-    overblog_graphql.error_handler:
-        class: Overblog\GraphQLBundle\Error\ErrorHandler
-        public: false
-        arguments:
-            - ~
-            - "@?logger"
-            - []
-            - false
-
-    Overblog\GraphQLBundle\EventListener\ErrorHandlerListener:
-        class: Overblog\GraphQLBundle\EventListener\ErrorHandlerListener
-        public: true
-        arguments:
-            - "@overblog_graphql.error_handler"
-            - "%kernel.debug%"
-        tags:
-            - { name: kernel.event_listener, event: graphql.post_executor, method: onPostExecutor }
-
     overblog_graphql.executor.default:
         class: Overblog\GraphQLBundle\Executor\Executor
         public: false

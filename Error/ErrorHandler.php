@@ -2,24 +2,24 @@
 
 namespace Overblog\GraphQLBundle\Error;
 
+use GraphQL\Error\ClientAware;
+use GraphQL\Error\Debug;
 use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
-use Psr\Log\NullLogger;
+use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
+use Overblog\GraphQLBundle\Event\Events;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ErrorHandler
 {
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
     const DEFAULT_USER_WARNING_CLASS = UserWarning::class;
     const DEFAULT_USER_ERROR_CLASS = UserError::class;
-    /** callable */
-    const DEFAULT_ERROR_FORMATTER = [FormattedError::class, 'createFromException'];
 
-    /** @var LoggerInterface */
-    private $logger;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
 
     /** @var string */
     private $internalErrorMessage;
@@ -33,19 +33,16 @@ class ErrorHandler
     /** @var string */
     private $userErrorClass = self::DEFAULT_USER_ERROR_CLASS;
 
-    /** @var callable|null */
-    private $errorFormatter;
-
     /** @var bool */
     private $mapExceptionsToParent;
 
     public function __construct(
+        EventDispatcherInterface $dispatcher,
         $internalErrorMessage = null,
-        LoggerInterface $logger = null,
         array $exceptionMap = [],
         $mapExceptionsToParent = false
     ) {
-        $this->logger = (null === $logger) ? new NullLogger() : $logger;
+        $this->dispatcher = $dispatcher;
         if (empty($internalErrorMessage)) {
             $internalErrorMessage = self::DEFAULT_ERROR_MESSAGE;
         }
@@ -68,41 +65,30 @@ class ErrorHandler
         return $this;
     }
 
-    public function setErrorFormatter(callable $errorFormatter = null)
+    public function handleErrors(ExecutionResult $executionResult, $throwRawException = false, $debug = false)
     {
-        $this->errorFormatter = $errorFormatter;
-
-        return $this;
-    }
-
-    /**
-     * @param \Exception|\Error $exception
-     * @param string            $errorLevel
-     */
-    public function logException($exception, $errorLevel = LogLevel::ERROR)
-    {
-        $message = sprintf(
-            '%s: %s[%d] (caught exception) at %s line %s.',
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getCode(),
-            $exception->getFile(),
-            $exception->getLine()
-        );
-
-        $this->logger->$errorLevel($message, ['exception' => $exception]);
-    }
-
-    public function handleErrors(ExecutionResult $executionResult, $throwRawException = false)
-    {
-        $errorFormatter = $this->errorFormatter ? $this->errorFormatter : self::DEFAULT_ERROR_FORMATTER;
+        $errorFormatter = $this->createErrorFormatter($debug);
         $executionResult->setErrorFormatter($errorFormatter);
-        FormattedError::setInternalErrorMessage($this->internalErrorMessage);
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {
             $executionResult->extensions['warnings'] = array_map($errorFormatter, $exceptions['extensions']['warnings']);
         }
+    }
+
+    private function createErrorFormatter($debug = false)
+    {
+        $debugMode = false;
+        if ($debug) {
+            $debugMode = Debug::INCLUDE_TRACE | Debug::INCLUDE_DEBUG_MESSAGE;
+        }
+
+        return function (GraphQLError $error) use ($debugMode) {
+            $event = new ErrorFormattingEvent($error, FormattedError::createFromException($error, $debugMode, $this->internalErrorMessage));
+            $this->dispatcher->dispatch(Events::ERROR_FORMATTING, $event);
+
+            return $event->getFormattedError()->getArrayCopy();
+        };
     }
 
     /**
@@ -145,18 +131,12 @@ class ErrorHandler
             // user error
             if ($rawException instanceof $this->userErrorClass) {
                 $treatedExceptions['errors'][] = $errorWithConvertedException;
-                if ($rawException->getPrevious()) {
-                    $this->logException($rawException->getPrevious());
-                }
                 continue;
             }
 
             // user warning
             if ($rawException instanceof $this->userWarningClass) {
                 $treatedExceptions['extensions']['warnings'][] = $errorWithConvertedException;
-                if ($rawException->getPrevious()) {
-                    $this->logException($rawException->getPrevious(), LogLevel::WARNING);
-                }
                 continue;
             }
 
@@ -164,8 +144,6 @@ class ErrorHandler
             if ($throwRawException) {
                 throw $rawException;
             }
-
-            $this->logException($rawException, LogLevel::CRITICAL);
 
             $treatedExceptions['errors'][] = $errorWithConvertedException;
         }
@@ -208,8 +186,8 @@ class ErrorHandler
      */
     private function convertException($rawException = null)
     {
-        if (null === $rawException) {
-            return;
+        if (null === $rawException || $rawException instanceof ClientAware) {
+            return $rawException;
         }
 
         $errorClass = $this->findErrorClass($rawException);

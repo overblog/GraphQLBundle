@@ -9,6 +9,8 @@ framework:
         enabled: false
 
 overblog_graphql:
+    errors_handler:
+        debug: false
     definitions:
         config_validation: true
         auto_mapping: false
@@ -22,6 +24,3 @@ services:
     #disable twig error pages
     twig.exception_listener:
         class: stdClass
-    error_handler_listener:
-        public: true
-        alias: Overblog\GraphQLBundle\EventListener\ErrorHandlerListener

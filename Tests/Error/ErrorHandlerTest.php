@@ -10,15 +10,21 @@ use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ErrorHandlerTest extends TestCase
 {
     /** @var ErrorHandler */
     private $errorHandler;
 
+    /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+    private $dispatcher;
+
     public function setUp()
     {
-        $this->errorHandler = new ErrorHandler();
+        $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
+        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
+        $this->errorHandler = new ErrorHandler($this->dispatcher);
     }
 
     public function testMaskErrorWithThrowExceptionSetToFalse()
@@ -130,6 +136,29 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $executionResult->toArray());
     }
 
+    public function testDebugEnabled()
+    {
+        try {
+            throw new \Exception();
+        } catch (\Exception $exception) {
+            $executionResult = new ExecutionResult(
+                null,
+                [
+                    new GraphQLError('Error wrapped exception', null, null, null, null, $exception),
+                ]
+            );
+
+            $this->errorHandler->handleErrors($executionResult, false, true);
+
+            $errors = $executionResult->toArray()['errors'];
+            $this->assertCount(1, $errors);
+            $this->assertArrayHasKey('debugMessage', $errors[0]);
+            $this->assertEquals('Error wrapped exception', $errors[0]['debugMessage']);
+            $this->assertEquals(ErrorHandler::DEFAULT_ERROR_MESSAGE, $errors[0]['message']);
+            $this->assertArrayHasKey('trace', $errors[0]);
+        }
+    }
+
     public function testMaskErrorWithoutWrappedExceptionAndThrowExceptionSetToTrue()
     {
         $executionResult = new ExecutionResult(
@@ -155,7 +184,7 @@ class ErrorHandlerTest extends TestCase
 
     public function testConvertExceptionToUserWarning()
     {
-        $errorHandler = new ErrorHandler(null, null, [\InvalidArgumentException::class => UserWarning::class]);
+        $errorHandler = new ErrorHandler($this->dispatcher, null, [\InvalidArgumentException::class => UserWarning::class]);
 
         $executionResult = new ExecutionResult(
             null,
@@ -189,7 +218,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError)
     {
-        $errorHandler = new ErrorHandler(null, null, $exceptionMap, $mapExceptionsToParent);
+        $errorHandler = new ErrorHandler($this->dispatcher, null, $exceptionMap, $mapExceptionsToParent);
 
         $executionResult = new ExecutionResult(
             null,
@@ -213,29 +242,6 @@ class ErrorHandlerTest extends TestCase
         if (is_array($expectedUserError)) {
             $this->assertEquals($expectedUserError, $executionResult->toArray());
         }
-    }
-
-    public function testCustomFormatterError()
-    {
-        $executionResult = new ExecutionResult(
-            null,
-            [
-                new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message', 123)),
-            ]
-        );
-
-        $this->errorHandler->setErrorFormatter(new CustomErrorFormatter());
-
-        $this->errorHandler->handleErrors($executionResult);
-        $this->assertEquals([
-            'errors' => [
-                [
-                    'message' => 'Internal server Error',
-                    'category' => 'internal',
-                    'code' => 123,
-                ],
-            ],
-        ], $executionResult->toArray());
     }
 
     /**

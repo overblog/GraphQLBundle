@@ -4,6 +4,7 @@ UPGRADE FROM 0.10 to 0.11
 # Table of Contents
 
 - [GraphiQL](#graphiql)
+- [Error Handler](#error-handler)
 
 ### GraphiQL
 
@@ -39,4 +40,23 @@ UPGRADE FROM 0.10 to 0.11
      for a format during the command:
         ```
         bin/console graphql:dump-schema --modern
+        ```
+
+### Errors Handler
+
+  * Made errors handler more customizable
+
+  Upgrading:
+   - Move `internal_error_message`, `map_exceptions_to_parent` and `exceptions` configurations
+   from `definitions` to new dedicated `error_handler` section.
+        ```diff
+        overblog_graphql:
+            definitions:
+        -       internal_error_message: ~
+        -       map_exceptions_to_parent: ~
+        -       exceptions: ~
+        +   errors_handler:
+        +      internal_error_message: ~
+        +      map_exceptions_to_parent: ~
+        +      exceptions: ~
         ```

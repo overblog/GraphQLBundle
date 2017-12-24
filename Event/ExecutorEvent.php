@@ -5,7 +5,7 @@ namespace Overblog\GraphQLBundle\Event;
 use GraphQL\Type\Schema;
 use Symfony\Component\EventDispatcher\Event;
 
-class ExecutorEvent extends Event
+final class ExecutorEvent extends Event
 {
     /** @var Schema */
     private $schema;

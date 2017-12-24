@@ -60,13 +60,12 @@ abstract class TestCase extends WebTestCase
         static::$kernel = null;
     }
 
-    protected static function executeGraphQLRequest($query, $rootValue = [], $throwException = false)
+    protected static function executeGraphQLRequest($query, $rootValue = [])
     {
         $request = new Request();
         $request->query->set('query', $query);
 
         $req = static::getContainer()->get('overblog_graphql.request_parser')->parse($request);
-        static::getContainer()->get('error_handler_listener')->setThrowException($throwException);
         $res = static::getContainer()->get('overblog_graphql.request_executor')->execute(null, $req, $rootValue);
 
         return $res->toArray();
@@ -74,7 +73,7 @@ abstract class TestCase extends WebTestCase
 
     protected static function assertGraphQL($query, array $expectedData = null, array $expectedErrors = null, $rootValue = [])
     {
-        $result = static::executeGraphQLRequest($query, $rootValue, true);
+        $result = static::executeGraphQLRequest($query, $rootValue/*, true*/);
 
         $expected = [];
 

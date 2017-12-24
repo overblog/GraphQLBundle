@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\EventListener;
 
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 
-class DebugListener
+final class DebugListener
 {
     /** @var float */
     private $startTime;
