@@ -2,7 +2,8 @@
 
 namespace Overblog\GraphQLBundle\EventListener;
 
-use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -15,20 +16,10 @@ final class ErrorLoggerListener
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var string */
-    private $userErrorClass;
-
-    /** @var string */
-    private $userWarningClass;
-
     public function __construct(
-        LoggerInterface $logger = null,
-        $userErrorClass = ErrorHandler::DEFAULT_USER_ERROR_CLASS,
-        $userWarningClass = ErrorHandler::DEFAULT_USER_WARNING_CLASS
+        LoggerInterface $logger = null
     ) {
         $this->logger = null === $logger ? new NullLogger() : $logger;
-        $this->userErrorClass = $userErrorClass;
-        $this->userWarningClass = $userWarningClass;
     }
 
     public function onErrorFormatting(ErrorFormattingEvent $event)
@@ -37,13 +28,13 @@ final class ErrorLoggerListener
         if ($error->getPrevious()) {
             $exception = $error->getPrevious();
             if ($exception->getPrevious()) {
-                if ($exception instanceof $this->userErrorClass) {
+                if ($exception instanceof UserError) {
                     $this->logException($exception->getPrevious());
 
                     return;
                 }
 
-                if ($exception instanceof $this->userWarningClass) {
+                if ($exception instanceof UserWarning) {
                     $this->logException($exception->getPrevious(), LogLevel::WARNING);
 
                     return;

@@ -6,6 +6,8 @@ use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Error\UserError;
+use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Overblog\GraphQLBundle\EventListener\DebugListener;
@@ -185,8 +187,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                         $config['errors_handler']['map_exceptions_to_parent'],
                     ]
                 )
-                ->addMethodCall('setUserWarningClass', [$config['errors_handler']['exceptions']['types']['warnings']])
-                ->addMethodCall('setUserErrorClass', [$config['errors_handler']['exceptions']['types']['errors']])
             ;
 
             $errorHandlerListenerDefinition = $container->setDefinition(ErrorHandlerListener::class, new Definition(ErrorHandlerListener::class));
@@ -200,12 +200,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $invalidBehavior = ErrorLoggerListener::DEFAULT_LOGGER_SERVICE === $loggerServiceId ? ContainerInterface::NULL_ON_INVALID_REFERENCE : ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
                 $errorHandlerListenerDefinition = $container->setDefinition(ErrorLoggerListener::class, new Definition(ErrorLoggerListener::class));
                 $errorHandlerListenerDefinition->setPublic(true)
-                    ->setArguments([
-                            new Reference($loggerServiceId, $invalidBehavior),
-                            $config['errors_handler']['exceptions']['types']['errors'],
-                            $config['errors_handler']['exceptions']['types']['warnings'],
-                        ]
-                    )
+                    ->setArguments([new Reference($loggerServiceId, $invalidBehavior)])
                     ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting'])
                 ;
             }
@@ -256,15 +251,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function buildExceptionMap(array $exceptionConfig)
     {
         $exceptionMap = [];
-        $typeMap = $exceptionConfig['types'];
+        $errorsMapping = [
+            'errors' => UserError::class,
+            'warnings' => UserWarning::class,
+        ];
 
         foreach ($exceptionConfig as $type => $exceptionList) {
-            if ('types' === $type) {
-                continue;
-            }
-
             foreach ($exceptionList as $exception) {
-                $exceptionMap[$exception] = $typeMap[$type];
+                $exceptionMap[$exception] = $errorsMapping[$type];
             }
         }
 

@@ -17,21 +17,15 @@ class Executor implements ExecutorInterface
     public function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
     {
         $args = func_get_args();
+        array_unshift($args, $this->promiseAdapter);
 
-        if (null === $this->promiseAdapter) {
-            $method = 'executeQuery';
-        } else {
-            array_unshift($args, $this->promiseAdapter);
-            $method = 'promiseToExecute';
-        }
-
-        return call_user_func_array(sprintf('\%s::%s', GraphQL::class, $method), $args);
+        return call_user_func_array([GraphQL::class, 'promiseToExecute'], $args);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
     }
@@ -41,6 +35,6 @@ class Executor implements ExecutorInterface
      */
     public function setDefaultFieldResolver(callable $fn)
     {
-        call_user_func_array(sprintf('\%s::setDefaultFieldResolver', GraphQL::class), func_get_args());
+        call_user_func_array([GraphQL::class, 'setDefaultFieldResolver'], func_get_args());
     }
 }

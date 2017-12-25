@@ -40,7 +40,7 @@ class Executor
     public function __construct(
         ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher,
-        PromiseAdapter $promiseAdapter = null,
+        PromiseAdapter $promiseAdapter,
         callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
@@ -56,7 +56,7 @@ class Executor
         return $this;
     }
 
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
 
@@ -185,18 +185,13 @@ class Executor
      */
     private function postExecute($result)
     {
-        if ($this->promiseAdapter) {
+        if ($result instanceof Promise) {
             $result = $this->promiseAdapter->wait($result);
         }
 
         $this->checkExecutionResult($result);
 
-        $event = $this->dispatcher->dispatch(
-            Events::POST_EXECUTOR,
-            new ExecutorResultEvent($result)
-        );
-
-        return $event->getResult();
+        return  $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
     }
 
     private function checkPromiseAdapter()

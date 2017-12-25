@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Tests\Request;
 
 use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
@@ -26,7 +27,7 @@ class ExecutorTest extends TestCase
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
         $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
 
-        $this->executor = new RequestExecutor(new Executor(), $this->dispatcher);
+        $this->executor = $this->createRequestExecutor();
         $queryType = new ObjectType([
             'name' => 'Query',
             'fields' => [
@@ -77,7 +78,7 @@ class ExecutorTest extends TestCase
      */
     public function testGetSchemaNoSchemaFound()
     {
-        (new RequestExecutor(new Executor(), $this->dispatcher))->getSchema('fake');
+        $this->createRequestExecutor()->getSchema('fake');
     }
 
     private function createExecutorExecuteMock($returnValue)
@@ -89,5 +90,15 @@ class ExecutorTest extends TestCase
         $mock->method('execute')->will($this->returnValue($returnValue));
 
         return $mock;
+    }
+
+    private function createRequestExecutor()
+    {
+        /** @var PromiseAdapter|\PHPUnit_Framework_MockObject_MockObject $promiseAdapter */
+        $promiseAdapter = $this->getMockBuilder(PromiseAdapter::class)
+            ->setMethods(array_merge(['wait'], get_class_methods(PromiseAdapter::class)))
+            ->getMock();
+
+        return new RequestExecutor(new Executor(), $this->dispatcher, $promiseAdapter);
     }
 }

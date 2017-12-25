@@ -5,6 +5,7 @@ UPGRADE FROM 0.10 to 0.11
 
 - [GraphiQL](#graphiql)
 - [Error Handler](#error-handler)
+- [Promise adapter interface](#promise-adapter-interface)
 
 ### GraphiQL
 
@@ -47,6 +48,15 @@ UPGRADE FROM 0.10 to 0.11
   * Made errors handler more customizable
 
   Upgrading:
+   - Delete configuration to override base user exception classes.
+        ```diff
+        overblog_graphql:
+            definitions:
+        -       exceptions:
+        -           types:
+        -               warnings: ~
+        -               errors: ~
+        ```
    - Move `internal_error_message`, `map_exceptions_to_parent` and `exceptions` configurations
    from `definitions` to new dedicated `error_handler` section.
         ```diff
@@ -59,4 +69,17 @@ UPGRADE FROM 0.10 to 0.11
         +      internal_error_message: ~
         +      map_exceptions_to_parent: ~
         +      exceptions: ~
+        ```
+
+
+### Promise adapter interface
+
+  * Changed the promise adapter interface (`Overblog\GraphQLBundle\Executor\ExecutorInterface`)
+  as the promiseAdapter is not nullable in the bundle context.
+
+  Upgrading:
+   - `setPromiseAdapter` method no more nullable.
+        ```diff
+        - public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null);
+        + public function setPromiseAdapter(PromiseAdapter $promiseAdapter);
         ```

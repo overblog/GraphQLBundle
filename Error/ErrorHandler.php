@@ -15,8 +15,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ErrorHandler
 {
     const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
-    const DEFAULT_USER_WARNING_CLASS = UserWarning::class;
-    const DEFAULT_USER_ERROR_CLASS = UserError::class;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
@@ -26,12 +24,6 @@ class ErrorHandler
 
     /** @var array */
     private $exceptionMap;
-
-    /** @var string */
-    private $userWarningClass = self::DEFAULT_USER_WARNING_CLASS;
-
-    /** @var string */
-    private $userErrorClass = self::DEFAULT_USER_ERROR_CLASS;
 
     /** @var bool */
     private $mapExceptionsToParent;
@@ -49,20 +41,6 @@ class ErrorHandler
         $this->internalErrorMessage = $internalErrorMessage;
         $this->exceptionMap = $exceptionMap;
         $this->mapExceptionsToParent = $mapExceptionsToParent;
-    }
-
-    public function setUserWarningClass($userWarningClass)
-    {
-        $this->userWarningClass = $userWarningClass;
-
-        return $this;
-    }
-
-    public function setUserErrorClass($userErrorClass)
-    {
-        $this->userErrorClass = $userErrorClass;
-
-        return $this;
     }
 
     public function handleErrors(ExecutionResult $executionResult, $throwRawException = false, $debug = false)
@@ -129,13 +107,13 @@ class ErrorHandler
             );
 
             // user error
-            if ($rawException instanceof $this->userErrorClass) {
+            if ($rawException instanceof UserError) {
                 $treatedExceptions['errors'][] = $errorWithConvertedException;
                 continue;
             }
 
             // user warning
-            if ($rawException instanceof $this->userWarningClass) {
+            if ($rawException instanceof UserWarning) {
                 $treatedExceptions['extensions']['warnings'][] = $errorWithConvertedException;
                 continue;
             }
