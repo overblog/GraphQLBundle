@@ -5,7 +5,7 @@ namespace Overblog\GraphQLBundle\Error;
 /**
  * Class UserErrors.
  */
-class UserErrors extends UserFacingError
+class UserErrors extends \RuntimeException
 {
     /** @var UserError[] */
     private $errors = [];

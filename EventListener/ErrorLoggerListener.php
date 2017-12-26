@@ -2,7 +2,7 @@
 
 namespace Overblog\GraphQLBundle\EventListener;
 
-use Overblog\GraphQLBundle\Error\UserError;
+use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Psr\Log\LoggerInterface;
@@ -25,40 +25,53 @@ final class ErrorLoggerListener
     public function onErrorFormatting(ErrorFormattingEvent $event)
     {
         $error = $event->getError();
+
         if ($error->getPrevious()) {
             $exception = $error->getPrevious();
-            if ($exception->getPrevious()) {
-                if ($exception instanceof UserError) {
-                    $this->logException($exception->getPrevious());
-
-                    return;
+            if ($exception instanceof UserError) {
+                if ($exception->getPrevious()) {
+                    $this->log($exception->getPrevious());
                 }
 
-                if ($exception instanceof UserWarning) {
-                    $this->logException($exception->getPrevious(), LogLevel::WARNING);
-
-                    return;
-                }
+                return;
             }
-            $this->logException($error->getPrevious(), LogLevel::CRITICAL);
+
+            if ($exception instanceof UserWarning) {
+                if ($exception->getPrevious()) {
+                    $this->log($exception->getPrevious(), LogLevel::WARNING);
+                }
+
+                return;
+            }
+            $this->log($error->getPrevious(), LogLevel::CRITICAL);
         }
     }
 
     /**
-     * @param \Throwable $exception
+     * @param \Throwable $throwable
      * @param string     $errorLevel
      */
-    public function logException($exception, $errorLevel = LogLevel::ERROR)
+    public function log($throwable, $errorLevel = LogLevel::ERROR)
+    {
+        $this->logger->$errorLevel(self::serializeThrowableObject($throwable), ['throwable' => $throwable]);
+    }
+
+    /**
+     * @param \Throwable $throwable
+     *
+     * @return string
+     */
+    private static function serializeThrowableObject($throwable)
     {
         $message = sprintf(
-            '%s: %s[%d] (caught exception) at %s line %s.',
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getCode(),
-            $exception->getFile(),
-            $exception->getLine()
+            '[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.',
+            get_class($throwable),
+            $throwable->getMessage(),
+            $throwable->getCode(),
+            $throwable->getFile(),
+            $throwable->getLine()
         );
 
-        $this->logger->$errorLevel($message, ['exception' => $exception]);
+        return $message;
     }
 }

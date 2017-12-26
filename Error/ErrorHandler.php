@@ -91,7 +91,7 @@ class ErrorHandler
             $rawException = $this->convertException($error->getPrevious());
 
             // raw GraphQL Error or InvariantViolation exception
-            if (null === $rawException || $rawException instanceof GraphQLUserError) {
+            if (null === $rawException) {
                 $treatedExceptions['errors'][] = $error;
                 continue;
             }
@@ -107,7 +107,7 @@ class ErrorHandler
             );
 
             // user error
-            if ($rawException instanceof UserError) {
+            if ($rawException instanceof GraphQLUserError) {
                 $treatedExceptions['errors'][] = $errorWithConvertedException;
                 continue;
             }

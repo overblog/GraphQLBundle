@@ -35,9 +35,9 @@ class ErrorHandlerTest extends TestCase
                 new GraphQLError('Error without wrapped exception'),
                 new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message')),
                 new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
+                new GraphQLError('Error with wrapped base user error', null, null, null, null, new GraphQLUserError('My bases User Error')),
                 new GraphQLError('', null, null, null, null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
                 new GraphQLError('Error with wrapped user warning', null, null, null, null, new UserWarning('My User Warning')),
-                new GraphQLError('Invalid value!', null, null, null, null, new GraphQLUserError('Invalid value!')),
             ]
         );
 
@@ -58,6 +58,10 @@ class ErrorHandlerTest extends TestCase
                     'category' => 'user',
                 ],
                 [
+                    'message' => 'Error with wrapped base user error',
+                    'category' => 'user',
+                ],
+                [
                     'message' => 'My User Error 1',
                     'category' => 'user',
                 ],
@@ -67,10 +71,6 @@ class ErrorHandlerTest extends TestCase
                 ],
                 [
                     'message' => 'My User Error 3',
-                    'category' => 'user',
-                ],
-                [
-                    'message' => 'Invalid value!',
                     'category' => 'user',
                 ],
             ],

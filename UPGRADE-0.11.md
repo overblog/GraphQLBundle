@@ -4,7 +4,7 @@ UPGRADE FROM 0.10 to 0.11
 # Table of Contents
 
 - [GraphiQL](#graphiql)
-- [Error Handler](#error-handler)
+- [Errors Handler](#errors-handler)
 - [Promise adapter interface](#promise-adapter-interface)
 
 ### GraphiQL
@@ -48,11 +48,12 @@ UPGRADE FROM 0.10 to 0.11
   * Made errors handler more customizable
 
   Upgrading:
+   - User
    - Delete configuration to override base user exception classes.
         ```diff
         overblog_graphql:
             definitions:
-        -       exceptions:
+                exceptions:
         -           types:
         -               warnings: ~
         -               errors: ~

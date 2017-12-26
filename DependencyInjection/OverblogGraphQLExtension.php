@@ -2,11 +2,11 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Error\UserError;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
-use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
