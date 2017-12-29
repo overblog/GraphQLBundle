@@ -365,7 +365,6 @@ EOF;
                 }
                 if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
                     file_put_contents($path, $code);
-                    chmod($path, 0664);
                 }
             }
         }
