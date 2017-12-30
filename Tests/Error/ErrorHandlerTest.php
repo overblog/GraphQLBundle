@@ -105,7 +105,7 @@ class ErrorHandlerTest extends TestCase
     public function testInvalidUserErrorsItem()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Error must be string or instance of Overblog\GraphQLBundle\Error\UserError.');
+        $this->expectExceptionMessage(sprintf('Error must be string or instance of %s', GraphQLUserError::class));
 
         new UserErrors([
             'Some Error',
