@@ -10,8 +10,8 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Event\Events;
+use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
-use Overblog\GraphQLBundle\Event\ExecutorEvent;
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Overblog\GraphQLBundle\Executor\ExecutorInterface;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
@@ -117,28 +117,27 @@ class Executor
      * @param null|string                    $schemaName
      * @param array                          $request
      * @param null|array|\ArrayObject|object $rootValue
-     * @param null|array|\ArrayObject|object $contextValue
      *
      * @return ExecutionResult
      */
-    public function execute($schemaName, array $request, $rootValue = null, $contextValue = null)
+    public function execute($schemaName, array $request, $rootValue = null)
     {
-        $executorEvent = $this->preExecute(
+        $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
             isset($request[ParserInterface::PARAM_QUERY]) ? $request[ParserInterface::PARAM_QUERY] : null,
-            self::createArrayObject($rootValue),
-            self::createArrayObject($contextValue),
+            new \ArrayObject(),
+            $rootValue,
             $request[ParserInterface::PARAM_VARIABLES],
             isset($request[ParserInterface::PARAM_OPERATION_NAME]) ? $request[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
         $result = $this->executor->execute(
-            $executorEvent->getSchema(),
-            $executorEvent->getRequestString(),
-            $executorEvent->getRootValue(),
-            $executorEvent->getContextValue(),
-            $executorEvent->getVariableValue(),
-            $executorEvent->getOperationName()
+            $executorArgumentsEvent->getSchema(),
+            $executorArgumentsEvent->getRequestString(),
+            $executorArgumentsEvent->getRootValue(),
+            $executorArgumentsEvent->getContextValue(),
+            $executorArgumentsEvent->getVariableValue(),
+            $executorArgumentsEvent->getOperationName()
         );
 
         $result = $this->postExecute($result);
@@ -149,17 +148,18 @@ class Executor
     /**
      * @param Schema       $schema
      * @param string       $requestString
-     * @param \ArrayObject $rootValue
      * @param \ArrayObject $contextValue
+     * @param mixed        $rootValue
      * @param array|null   $variableValue
      * @param string|null  $operationName
      *
-     * @return ExecutorEvent
+     * @return ExecutorArgumentsEvent
      */
     private function preExecute(
-        Schema $schema, $requestString,
-        \ArrayObject $rootValue,
+        Schema $schema,
+        $requestString,
         \ArrayObject $contextValue,
+        $rootValue = null,
         array $variableValue = null,
         $operationName = null
     ) {
@@ -174,7 +174,7 @@ class Executor
 
         return $this->dispatcher->dispatch(
             Events::PRE_EXECUTOR,
-            new ExecutorEvent($schema, $requestString, $rootValue, $contextValue, $variableValue, $operationName)
+            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName)
         );
     }
 
@@ -214,16 +214,5 @@ class Executor
                 sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
             );
         }
-    }
-
-    private static function createArrayObject($data)
-    {
-        if (is_array($data) || is_object($data)) {
-            $object = new \ArrayObject($data);
-        } else {
-            $object = new \ArrayObject();
-        }
-
-        return $object;
     }
 }
