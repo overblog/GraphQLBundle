@@ -14,7 +14,7 @@ trait DIContainerMockTrait
     /**
      * @return null|\Symfony\Component\DependencyInjection\ContainerInterface
      */
-    private function getDIContainerMock(array $services = [], array $parameters = [])
+    protected function getDIContainerMock(array $services = [], array $parameters = [])
     {
         $container = $this->getMockBuilder(Container::class)
             ->setMethods(['get', 'getParameter', 'has'])

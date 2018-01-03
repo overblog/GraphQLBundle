@@ -24,6 +24,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
+        $loader->load('expression_language_functions.yml');
 
         $config = $this->treatConfigs($configs, $container);
 
