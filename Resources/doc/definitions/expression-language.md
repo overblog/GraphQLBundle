@@ -41,4 +41,54 @@ Expression | Description | Scope
 
 [For more details on expression syntax](http://symfony.com/doc/current/components/expression_language/syntax.html)
 
-**Tips**: the expression language service can be custom using bundle configuration.
+Custom expression function
+--------------------------
+
+Custom expression function is easy as creating a tagged service.
+Adding useful expression function can help user create simple resolver without having to leave config file,
+this also improve performance by removing a useless external resolver call.
+
+Here an example to add an custom expression equivalent to php `json_decode`:
+
+```php
+<?php
+
+namespace App\ExpressionLanguage;
+
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
+
+class JsonDecode extends ExpressionFunction
+{
+    public function __construct()
+    {
+        parent::__construct(
+            'json_encode',
+            function ($json, $assoc) {
+                return sprintf('json_decode(%s, %s)', $json, $assoc);
+            }
+        );
+    }
+}
+```
+
+now register your service
+
+```yaml
+App\ExpressionLanguage\JsonDecode:
+    tags: ['overblog_graphql.expression_function']
+```
+
+Now `json_decode` can be use in schema:
+
+```yaml
+Object:
+    type: object
+    config:
+        fields:
+            name:
+            type: String!
+            resolve: "@=json_decode(value.json_data, true)['name']"
+```
+
+**Tips**: At last if this is till no answer to all your needs, the expression language service can be custom
+using bundle configuration.

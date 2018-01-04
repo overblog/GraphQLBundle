@@ -3,9 +3,9 @@
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
-class ExpressionFunctionTest extends TestCase
+class ExpressionFunctionTest extends BaseTestCase
 {
     public function testThereIsNoEvaluator()
     {

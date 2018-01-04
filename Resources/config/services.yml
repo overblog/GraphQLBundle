@@ -83,8 +83,7 @@ services:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
         public: false
         arguments:
-            - "@overblog_graphql.cache_expression_language_parser"
-            - []
+            - '@overblog_graphql.cache_expression_language_parser'
         calls:
             - ["setContainer", ["@service_container"]]
 
