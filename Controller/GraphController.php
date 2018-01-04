@@ -35,9 +35,9 @@ class GraphController
     private $graphQLBatchingMethod;
 
     public function __construct(
-        GraphQLRequest\BatchParser $batchParser,
+        GraphQLRequest\ParserInterface $batchParser,
         GraphQLRequest\Executor $requestExecutor,
-        GraphQLRequest\Parser $requestParser,
+        GraphQLRequest\ParserInterface $requestParser,
         $shouldHandleCORS,
         $graphQLBatchingMethod
     ) {
