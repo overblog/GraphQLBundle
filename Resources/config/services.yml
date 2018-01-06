@@ -86,8 +86,7 @@ services:
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
         calls:
-            - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
-            - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
+            - ["addUseStatement", ["Overblog\\GraphQLBundle\\Definition\\ConfigProcessor"]]
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
@@ -146,3 +145,7 @@ services:
             - "@overblog_graphql.cache_compiler"
         tags:
             - { name: console.command }
+
+    Overblog\GraphQLBundle\Definition\ConfigProcessor:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor
+        public: false

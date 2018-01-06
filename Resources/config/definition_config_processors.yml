@@ -1,0 +1,14 @@
+services:
+    Overblog\GraphQLBundle\Definition\ConfigProcessor\PublicFieldsFilterConfigProcessor:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\PublicFieldsFilterConfigProcessor
+        public: false
+        tags:
+            - { name: overblog_graphql.definition_config_processor, priority: 2048 }
+
+    Overblog\GraphQLBundle\Definition\ConfigProcessor\InjectServices:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\InjectServices
+        public: false
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: overblog_graphql.definition_config_processor }

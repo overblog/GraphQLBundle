@@ -75,16 +75,6 @@ class TypeGenerator extends BaseTypeGenerator
 EOF;
     }
 
-    protected function generateOutputFields(array $config)
-    {
-        $outputFieldsCode = sprintf(
-            'self::applyPublicFilters(%s)',
-            $this->processFromArray($config['fields'], 'OutputField')
-        );
-
-        return sprintf(static::$closureTemplate, '', $outputFieldsCode);
-    }
-
     protected function generateClosureUseStatements(array $config)
     {
         return 'use ('.static::USE_FOR_CLOSURES.') ';
