@@ -3,10 +3,8 @@
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
-use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -93,10 +91,6 @@ EOF;
 
         $publicCallback = $this->callableCallbackFromArrayValue($value, 'public', '$typeName, $fieldName');
 
-        if ('null' === $publicCallback) {
-            return $publicCallback;
-        }
-
         $code = <<<'CODE'
 function ($fieldName) <closureUseStatements> {
 <spaces><spaces>$publicCallback = %s;
@@ -109,54 +103,27 @@ CODE;
         return $code;
     }
 
+    protected function generateAccess(array $value)
+    {
+        if (!$this->arrayKeyExistsAndIsNotNull($value, 'access')) {
+            return 'null';
+        }
+
+        if (is_bool($value['access'])) {
+            return $this->varExport($value['access']);
+        }
+
+        return $this->callableCallbackFromArrayValue($value, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
+    }
+
     protected function generateResolve(array $value)
     {
-        $accessIsSet = $this->arrayKeyExistsAndIsNotNull($value, 'access');
         $fieldOptions = $value;
         if (!$this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve')) {
             $fieldOptions['resolve'] = $this->defaultResolver;
         }
-        $resolveCallback = parent::generateResolve($fieldOptions);
-        $resolveCallback = ltrim($this->prefixCodeWithSpaces($resolveCallback));
 
-        if (!$accessIsSet || true === $fieldOptions['access']) { // access granted  to this field
-            if ('null' === $resolveCallback) {
-                return $resolveCallback;
-            }
-
-            $argumentClass = $this->shortenClassName(Argument::class);
-            $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
-
-            $code = <<<'CODE'
-function ($value, $args, $context, %s $info) <closureUseStatements>{
-<spaces><spaces>$resolverCallback = %s;
-<spaces><spaces>return call_user_func_array($resolverCallback, [$value, new %s($args), $context, $info]);
-<spaces>}
-CODE;
-
-            return sprintf($code, $resolveInfoClass, $resolveCallback, $argumentClass);
-        } elseif ($accessIsSet && false === $fieldOptions['access']) { // access deny to this field
-            $exceptionClass = $this->shortenClassName(UserWarning::class);
-
-            return sprintf('function () { throw new %s(\'Access denied to this field.\'); }', $exceptionClass);
-        } else { // wrap resolver with access
-            $accessChecker = $this->callableCallbackFromArrayValue($fieldOptions, 'access', '$value, $args, $context, '.ResolveInfo::class.' $info, $object');
-            $resolveInfoClass = $this->shortenClassName(ResolveInfo::class);
-            $argumentClass = $this->shortenClassName(Argument::class);
-
-            $code = <<<'CODE'
-function ($value, $args, $context, %s $info) <closureUseStatements> {
-<spaces><spaces>$resolverCallback = %s;
-<spaces><spaces>$accessChecker = %s;
-<spaces><spaces>$isMutation = $info instanceof ResolveInfo && 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
-<spaces><spaces>return $container->get('overblog_graphql.access_resolver')->resolve($accessChecker, $resolverCallback, [$value, new %s($args), $context, $info], $isMutation);
-<spaces>}
-CODE;
-
-            $code = sprintf($code, $resolveInfoClass, $resolveCallback, $accessChecker, $argumentClass);
-
-            return $code;
-        }
+        return $resolveCallback = parent::generateResolve($fieldOptions);
     }
 
     /**

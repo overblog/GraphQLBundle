@@ -6,7 +6,7 @@ use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-final class InjectServices implements ConfigProcessorInterface
+final class InjectServicesConfigProcessor implements ConfigProcessorInterface
 {
     /** @var ContainerInterface */
     private $container;

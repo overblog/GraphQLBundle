@@ -13,12 +13,8 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
             function ($field, $fieldName) {
                 $exposed = true;
 
-                if (isset($field['public'])) {
-                    if (is_callable($field['public'])) {
-                        $exposed = call_user_func($field['public'], $fieldName);
-                    } else {
-                        $exposed = (bool) $field['public'];
-                    }
+                if (isset($field['public']) && is_callable($field['public'])) {
+                    $exposed = (bool) call_user_func($field['public'], $fieldName);
                 }
 
                 return $exposed;
@@ -32,11 +28,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
      */
     public function process(LazyConfig $lazyConfig)
     {
-        $configLoader = $lazyConfig->getLoader();
-
-        $lazyConfig->setLoader(function (...$args) use ($configLoader) {
-            $config = $configLoader(...$args);
-
+        $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['fields']) && is_callable($config['fields'])) {
                 $config['fields'] = function () use ($config) {
                     $fields = $config['fields']();

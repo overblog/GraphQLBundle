@@ -10,6 +10,11 @@ final class LazyConfig
     /** @var  */
     private $vars;
 
+    /**
+     * @var callable
+     */
+    private $onPostLoad = [];
+
     private function __construct(\Closure $loader, array $vars = [])
     {
         $this->loader = $loader;
@@ -27,8 +32,17 @@ final class LazyConfig
     public function load()
     {
         $loader = $this->loader;
+        $config = $loader($this->vars->getArrayCopy());
+        foreach ($this->onPostLoad as $postLoader) {
+            $config = $postLoader($config);
+        }
 
-        return $loader($this->vars->getArrayCopy());
+        return $config;
+    }
+
+    public function addPostLoader(callable $postLoader)
+    {
+        $this->onPostLoad[] = $postLoader;
     }
 
     /**
@@ -50,10 +64,5 @@ final class LazyConfig
     public function getVars()
     {
         return $this->vars;
-    }
-
-    public function setVars(\ArrayObject $vars)
-    {
-        $this->vars = $vars;
     }
 }
