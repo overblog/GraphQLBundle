@@ -14,7 +14,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
     /**
      * @var bool
      */
-    private $isProcessed = false;
+    private $isInitialized = false;
 
     public function addConfigProcessor(ConfigProcessorInterface $configProcessor, $priority = 0)
     {
@@ -23,7 +23,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
 
     public function register(ConfigProcessorInterface $configProcessor, $priority = 0)
     {
-        if ($this->isProcessed) {
+        if ($this->isInitialized) {
             throw new \LogicException('Registering config processor after calling process() is not supported.');
         }
         $this->processors[] = ['processor' => $configProcessor, 'priority' => $priority];
@@ -41,7 +41,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
 
     private function initialize()
     {
-        if (!$this->isProcessed) {
+        if (!$this->isInitialized) {
             // order processors by DESC priority
             usort($this->processors, function ($processorA, $processorB) {
                 if ($processorA['priority'] === $processorB['priority']) {
@@ -52,7 +52,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
             });
 
             $this->processors = array_column($this->processors, 'processor');
-            $this->isProcessed = true;
+            $this->isInitialized = true;
         }
     }
 }

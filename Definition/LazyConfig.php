@@ -46,19 +46,6 @@ final class LazyConfig
     }
 
     /**
-     * @return \Closure
-     */
-    public function getLoader()
-    {
-        return $this->loader;
-    }
-
-    public function setLoader(\Closure $loader)
-    {
-        $this->loader = $loader;
-    }
-
-    /**
      * @return \ArrayObject
      */
     public function getVars()
