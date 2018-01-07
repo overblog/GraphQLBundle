@@ -15,13 +15,14 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
         $node
             ->children()
                 ->append($this->nameSection())
-                ->append($this->outputFieldsSelection('fields'))
+                ->append($this->outputFieldsSelection())
                 ->append($this->descriptionSection())
                 ->arrayNode('interfaces')
                     ->prototype('scalar')->info('One of internal or custom interface types.')->end()
                 ->end()
                 ->variableNode('isTypeOf')->end()
                 ->variableNode('resolveField')->end()
+                ->append($this->resolverMapSection())
                 ->variableNode('fieldsDefaultAccess')
                     ->info('Default access control to fields (expression language can be use here)')
                 ->end()
@@ -32,6 +33,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
         $this->treatFieldsDefaultAccess($node);
         $this->treatFieldsDefaultPublic($node);
+        $this->validateResolverMap($node);
 
         return $node;
     }

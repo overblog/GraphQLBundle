@@ -12,7 +12,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
      *
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
-    protected function outputFieldsSelection($name)
+    protected function outputFieldsSelection($name = 'fields')
     {
         $builder = new TreeBuilder();
         $node = $builder->root($name);

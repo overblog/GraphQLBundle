@@ -14,10 +14,13 @@ class InterfaceTypeDefinition extends TypeWithOutputFieldsDefinition
         $node
             ->children()
                 ->append($this->nameSection())
-                ->append($this->outputFieldsSelection('fields'))
+                ->append($this->outputFieldsSelection())
                 ->append($this->resolveTypeSection())
+                ->append($this->resolverMapSection())
                 ->append($this->descriptionSection())
             ->end();
+
+        $this->validateResolverMap($node);
 
         return $node;
     }
