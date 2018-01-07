@@ -9,6 +9,11 @@ final class ConfigProcessor implements ConfigProcessorInterface
     /**
      * @var ConfigProcessorInterface[]
      */
+    private $orderedProcessors;
+
+    /**
+     * @var array
+     */
     private $processors;
 
     /**
@@ -32,7 +37,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
     public function process(LazyConfig $lazyConfig)
     {
         $this->initialize();
-        foreach ($this->processors as $processor) {
+        foreach ($this->orderedProcessors as $processor) {
             $lazyConfig = $processor->process($lazyConfig);
         }
 
@@ -43,7 +48,8 @@ final class ConfigProcessor implements ConfigProcessorInterface
     {
         if (!$this->isInitialized) {
             // order processors by DESC priority
-            usort($this->processors, function ($processorA, $processorB) {
+            $processors = $this->processors;
+            usort($processors, function ($processorA, $processorB) {
                 if ($processorA['priority'] === $processorB['priority']) {
                     return 0;
                 }
@@ -51,7 +57,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
                 return ($processorA['priority'] < $processorB['priority']) ? 1 : -1;
             });
 
-            $this->processors = array_column($this->processors, 'processor');
+            $this->orderedProcessors = array_column($processors, 'processor');
             $this->isInitialized = true;
         }
     }

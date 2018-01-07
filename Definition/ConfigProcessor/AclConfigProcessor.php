@@ -13,12 +13,16 @@ final class AclConfigProcessor implements ConfigProcessorInterface
     /** @var AccessResolver */
     private $accessResolver;
 
-    public function __construct(AccessResolver $accessResolver)
+    /** @var callable */
+    private $defaultResolver;
+
+    public function __construct(AccessResolver $accessResolver, callable $defaultResolver)
     {
         $this->accessResolver = $accessResolver;
+        $this->defaultResolver = $defaultResolver;
     }
 
-    public static function acl(array $fields, AccessResolver $accessResolver)
+    public static function acl(array $fields, AccessResolver $accessResolver, callable $defaultResolver)
     {
         $deniedAccess = static function () {
             throw new UserWarning('Access denied to this field.');
@@ -28,9 +32,9 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 $accessChecker = $field['access'];
                 if (false === $accessChecker) {
                     $field['resolve'] = $deniedAccess;
-                } elseif (is_callable($accessChecker) && isset($field['resolve'])) { // todo manage when resolver is not set
-                    $field['resolve'] = static function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver) {
-                        $resolverCallback = $field['resolve'];
+                } elseif (is_callable($accessChecker)) {
+                    $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver) {
+                        $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
                         $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
 
                         return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, new Argument($args), $context, $info], $isMutation);
@@ -49,7 +53,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 $config['fields'] = function () use ($config) {
                     $fields = $config['fields']();
 
-                    return static::acl($fields, $this->accessResolver);
+                    return static::acl($fields, $this->accessResolver, $this->defaultResolver);
                 };
             }
 
@@ -57,5 +61,25 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         });
 
         return $lazyConfig;
+    }
+
+    /**
+     * @param array       $field
+     * @param ResolveInfo $info
+     * @param callable    $defaultResolver
+     *
+     * @return callable
+     */
+    private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver)
+    {
+        if (isset($field['resolve'])) {
+            $resolver = $field['resolve'];
+        } elseif (isset($info->parentType->config['resolveField'])) {
+            $resolver = $info->parentType->config['resolveField'];
+        } else {
+            $resolver = $defaultResolver;
+        }
+
+        return $resolver;
     }
 }

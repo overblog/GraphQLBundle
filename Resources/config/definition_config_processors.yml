@@ -17,6 +17,7 @@ services:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor\AclConfigProcessor
         arguments:
             - '@overblog_graphql.access_resolver'
+            - "%overblog_graphql.default_resolver%"
         public: false
         tags:
             - { name: overblog_graphql.definition_config_processor }

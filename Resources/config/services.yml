@@ -82,7 +82,6 @@ services:
             - "%overblog_graphql.class_namespace%"
             - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
-            - "%overblog_graphql.default_resolver%"
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
         calls:

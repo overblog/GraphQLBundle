@@ -39,15 +39,15 @@ class ConfigProcessorTest extends TestCase
             return [];
         }));
 
-        $getProcessors = \Closure::bind(
+        $getOrderedProcessors = \Closure::bind(
             function () {
-                return $this->processors;
+                return $this->orderedProcessors;
             },
             $configProcessor,
             get_class($configProcessor)
         );
 
-        $processors = $getProcessors();
+        $processors = $getOrderedProcessors();
 
         $this->assertSame(
             $processors,

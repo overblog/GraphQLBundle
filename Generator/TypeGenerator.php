@@ -16,8 +16,6 @@ class TypeGenerator extends BaseTypeGenerator
 
     private $cacheDir;
 
-    private $defaultResolver;
-
     private $configProcessor;
 
     private $configs;
@@ -30,13 +28,11 @@ class TypeGenerator extends BaseTypeGenerator
         $classNamespace,
         array $skeletonDirs,
         $cacheDir,
-        callable $defaultResolver,
         array $configs,
         $useClassMap = true,
         callable $configProcessor = null)
     {
         $this->setCacheDir($cacheDir);
-        $this->defaultResolver = $defaultResolver;
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
@@ -114,16 +110,6 @@ CODE;
         }
 
         return $this->callableCallbackFromArrayValue($value, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
-    }
-
-    protected function generateResolve(array $value)
-    {
-        $fieldOptions = $value;
-        if (!$this->arrayKeyExistsAndIsNotNull($fieldOptions, 'resolve')) {
-            $fieldOptions['resolve'] = $this->defaultResolver;
-        }
-
-        return $resolveCallback = parent::generateResolve($fieldOptions);
     }
 
     /**
