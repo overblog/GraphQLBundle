@@ -19,7 +19,7 @@ ObjectA:
     type: object
     # ObjectB inherited config (fields, args...) from ObjectA
     heirs: [ObjectB]
-    extends: [InterfaceA, ObjectC]
+    inherits: [InterfaceA, ObjectC]
 
 ObjectC:
     type: object
