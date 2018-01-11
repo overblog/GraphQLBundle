@@ -3,9 +3,10 @@ imports:
     - { resource: services.yml }
 
 overblog_graphql:
+    errors_handler:
+        internal_error_message: "Mutation has failed."
     definitions:
         class_namespace: "Overblog\\GraphQLBundle\\Mutation\\__DEFINITIONS__"
-        internal_error_message: "Mutation has failled."
         schema:
             query: RootMutation
             mutation: RootMutation

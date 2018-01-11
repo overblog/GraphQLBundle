@@ -54,7 +54,8 @@ Documentation
   - [Fields public control](Resources/doc/security/fields-public-control.md)
   - [Limiting query depth](Resources/doc/security/limiting-query-depth.md)
   - [Query complexity analysis](Resources/doc/security/query-complexity-analysis.md)
-  - [Errors handling](Resources/doc/security/errors-handling.md)
+- [Errors handling](Resources/doc/error-handling/index.md)
+- [Events](Resources/doc/events/index.md)
 
 Talks and slides to help you start
 ----------------------------------

@@ -24,7 +24,7 @@ interface ExecutorInterface
     /**
      * @param PromiseAdapter|null $promiseAdapter
      */
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null);
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter);
 
     /**
      * @param callable $fn

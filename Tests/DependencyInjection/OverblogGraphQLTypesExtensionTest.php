@@ -2,10 +2,10 @@
 
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
 
+use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
-use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
@@ -86,7 +86,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $ext->load(
             [
                 [
-                    'definitions' => [
+                    'errors_handler' => [
                         'exceptions' => [
                             'warnings' => [
                                 ResourceNotFoundException::class,

@@ -2,13 +2,21 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Error\UserError;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
+use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
+use Overblog\GraphQLBundle\EventListener\DebugListener;
+use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
+use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -33,10 +41,10 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
         $this->setSchemaArguments($config, $container);
-        $this->setErrorHandlerArguments($config, $container);
+        $this->setErrorHandler($config, $container);
         $this->setSecurity($config, $container);
         $this->setConfigBuilders($config, $container);
-        $this->setShowDebug($config, $container);
+        $this->setDebugListener($config, $container);
         $this->setDefinitionParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
@@ -57,7 +65,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     public function getAlias()
     {
-        return 'overblog_graphql';
+        return Configuration::NAME;
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container)
@@ -88,6 +96,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $this->getAlias().'.event_listener.classloader_listener',
                 new Definition(ClassLoaderListener::class)
             );
+            $definition->setPublic(true);
             $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
             $definition->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'load', 'priority' => 255]);
             $definition->addTag('kernel.event_listener', ['event' => 'console.command', 'method' => 'load', 'priority' => 255]);
@@ -118,9 +127,16 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setDefinition($this->getAlias().'.cache_expression_language_parser.default', $definition);
     }
 
-    private function setShowDebug(array $config, ContainerBuilder $container)
+    private function setDebugListener(array $config, ContainerBuilder $container)
     {
-        $container->getDefinition($this->getAlias().'.request_executor')->replaceArgument(4, $config['definitions']['show_debug_info']);
+        if ($config['definitions']['show_debug_info']) {
+            $definition = $container->setDefinition(
+                DebugListener::class,
+                new Definition(DebugListener::class)
+            );
+            $definition->addTag('kernel.event_listener', ['event' => Events::PRE_EXECUTOR, 'method' => 'onPreExecutor']);
+            $definition->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
+        }
     }
 
     private function setConfigBuilders(array $config, ContainerBuilder $container)
@@ -158,27 +174,37 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setErrorHandlerArguments(array $config, ContainerBuilder $container)
+    private function setErrorHandler(array $config, ContainerBuilder $container)
     {
-        $errorHandlerDefinition = $container->getDefinition($this->getAlias().'.error_handler');
-
-        if (isset($config['definitions']['internal_error_message'])) {
-            $errorHandlerDefinition->replaceArgument(0, $config['definitions']['internal_error_message']);
-        }
-
-        if (isset($config['definitions']['map_exceptions_to_parent'])) {
-            $errorHandlerDefinition->replaceArgument(
-                3,
-                $config['definitions']['map_exceptions_to_parent']
-            );
-        }
-
-        if (isset($config['definitions']['exceptions'])) {
-            $errorHandlerDefinition
-                ->replaceArgument(2, $this->buildExceptionMap($config['definitions']['exceptions']))
-                ->addMethodCall('setUserWarningClass', [$config['definitions']['exceptions']['types']['warnings']])
-                ->addMethodCall('setUserErrorClass', [$config['definitions']['exceptions']['types']['errors']])
+        if ($config['errors_handler']['enabled']) {
+            $id = $this->getAlias().'.error_handler';
+            $errorHandlerDefinition = $container->setDefinition($id, new Definition(ErrorHandler::class));
+            $errorHandlerDefinition->setPublic(false)
+                ->setArguments(
+                    [
+                        new Reference('event_dispatcher'),
+                        $config['errors_handler']['internal_error_message'],
+                        $this->buildExceptionMap($config['errors_handler']['exceptions']),
+                        $config['errors_handler']['map_exceptions_to_parent'],
+                    ]
+                )
             ;
+
+            $errorHandlerListenerDefinition = $container->setDefinition(ErrorHandlerListener::class, new Definition(ErrorHandlerListener::class));
+            $errorHandlerListenerDefinition->setPublic(true)
+                ->setArguments([new Reference($id), $config['errors_handler']['rethrow_internal_exceptions'], $config['errors_handler']['debug']])
+                ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor'])
+            ;
+
+            if ($config['errors_handler']['log']) {
+                $loggerServiceId = $config['errors_handler']['logger_service'];
+                $invalidBehavior = ErrorLoggerListener::DEFAULT_LOGGER_SERVICE === $loggerServiceId ? ContainerInterface::NULL_ON_INVALID_REFERENCE : ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
+                $errorHandlerListenerDefinition = $container->setDefinition(ErrorLoggerListener::class, new Definition(ErrorLoggerListener::class));
+                $errorHandlerListenerDefinition->setPublic(true)
+                    ->setArguments([new Reference($loggerServiceId, $invalidBehavior)])
+                    ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting'])
+                ;
+            }
         }
     }
 
@@ -226,15 +252,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function buildExceptionMap(array $exceptionConfig)
     {
         $exceptionMap = [];
-        $typeMap = $exceptionConfig['types'];
+        $errorsMapping = [
+            'errors' => UserError::class,
+            'warnings' => UserWarning::class,
+        ];
 
         foreach ($exceptionConfig as $type => $exceptionList) {
-            if ('types' === $type) {
-                continue;
-            }
-
             foreach ($exceptionList as $exception) {
-                $exceptionMap[$exception] = $typeMap[$type];
+                $exceptionMap[$exception] = $errorsMapping[$type];
             }
         }
 

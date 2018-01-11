@@ -35,6 +35,7 @@ EOF;
                     ],
                 ],
                 'path' => ['test'],
+                'category' => 'user',
             ],
         ];
 

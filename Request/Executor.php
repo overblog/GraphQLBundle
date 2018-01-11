@@ -3,14 +3,16 @@
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
-use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\Events;
+use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
+use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Overblog\GraphQLBundle\Executor\ExecutorInterface;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -26,15 +28,6 @@ class Executor
     /** @var EventDispatcherInterface|null */
     private $dispatcher;
 
-    /** @var bool */
-    private $throwException;
-
-    /** @var ErrorHandler|null */
-    private $errorHandler;
-
-    /** @var bool */
-    private $hasDebugInfo;
-
     /** @var ExecutorInterface */
     private $executor;
 
@@ -46,18 +39,12 @@ class Executor
 
     public function __construct(
         ExecutorInterface $executor,
-        EventDispatcherInterface $dispatcher = null,
-        $throwException = false,
-        ErrorHandler $errorHandler = null,
-        $hasDebugInfo = false,
-        PromiseAdapter $promiseAdapter = null,
+        EventDispatcherInterface $dispatcher,
+        PromiseAdapter $promiseAdapter,
         callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
-        $this->throwException = (bool) $throwException;
-        $this->errorHandler = $errorHandler;
-        $hasDebugInfo ? $this->enabledDebugInfo() : $this->disabledDebugInfo();
         $this->promiseAdapter = $promiseAdapter;
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
@@ -69,7 +56,7 @@ class Executor
         return $this;
     }
 
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter)
     {
         $this->promiseAdapter = $promiseAdapter;
 
@@ -78,133 +65,15 @@ class Executor
 
     /**
      * @param string $name
+     * @param Schema $schema
+     *
+     * @return $this
      */
     public function addSchema($name, Schema $schema)
     {
         $this->schemas[$name] = $schema;
 
         return $this;
-    }
-
-    public function enabledDebugInfo()
-    {
-        $this->hasDebugInfo = true;
-
-        return $this;
-    }
-
-    public function disabledDebugInfo()
-    {
-        $this->hasDebugInfo = false;
-
-        return $this;
-    }
-
-    public function hasDebugInfo()
-    {
-        return $this->hasDebugInfo;
-    }
-
-    public function setMaxQueryDepth($maxQueryDepth)
-    {
-        /** @var QueryDepth $queryDepth */
-        $queryDepth = DocumentValidator::getRule('QueryDepth');
-        $queryDepth->setMaxQueryDepth($maxQueryDepth);
-    }
-
-    public function setMaxQueryComplexity($maxQueryComplexity)
-    {
-        /** @var QueryComplexity $queryComplexity */
-        $queryComplexity = DocumentValidator::getRule('QueryComplexity');
-        $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
-    }
-
-    /**
-     * @param bool $throwException
-     *
-     * @return $this
-     */
-    public function setThrowException($throwException)
-    {
-        $this->throwException = (bool) $throwException;
-
-        return $this;
-    }
-
-    public function execute(array $data, array $context = [], $schemaName = null)
-    {
-        if (null !== $this->dispatcher) {
-            $event = new ExecutorContextEvent($context);
-            $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, $event);
-            $context = $event->getExecutorContext();
-        }
-
-        if ($this->promiseAdapter) {
-            if (!$this->promiseAdapter instanceof PromiseAdapterInterface && !is_callable([$this->promiseAdapter, 'wait'])) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
-                        PromiseAdapterInterface::class,
-                        PromiseAdapter::class
-                    )
-                );
-            }
-        }
-
-        $schema = $this->getSchema($schemaName);
-
-        $startTime = microtime(true);
-        $startMemoryUsage = memory_get_usage(true);
-
-        $this->executor->setPromiseAdapter($this->promiseAdapter);
-        // this is needed when not using only generated types
-        if ($this->defaultFieldResolver) {
-            $this->executor->setDefaultFieldResolver($this->defaultFieldResolver);
-        }
-
-        $result = $this->executor->execute(
-            $schema,
-            isset($data[ParserInterface::PARAM_QUERY]) ? $data[ParserInterface::PARAM_QUERY] : null,
-            $context,
-            $context,
-            $data[ParserInterface::PARAM_VARIABLES],
-            isset($data[ParserInterface::PARAM_OPERATION_NAME]) ? $data[ParserInterface::PARAM_OPERATION_NAME] : null
-        );
-
-        if ($this->promiseAdapter) {
-            $result = $this->promiseAdapter->wait($result);
-        }
-
-        if (!is_object($result) || !$result instanceof ExecutionResult) {
-            throw new \RuntimeException(
-                sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
-            );
-        }
-
-        return $this->prepareResult($result, $startTime, $startMemoryUsage);
-    }
-
-    /**
-     * @param ExecutionResult $result
-     * @param int             $startTime
-     * @param int             $startMemoryUsage
-     *
-     * @return ExecutionResult
-     */
-    private function prepareResult($result, $startTime, $startMemoryUsage)
-    {
-        if ($this->hasDebugInfo()) {
-            $result->extensions['debug'] = [
-                'executionTime' => sprintf('%d ms', round(microtime(true) - $startTime, 3) * 1000),
-                'memoryUsage' => sprintf('%.2F MiB', (memory_get_usage(true) - $startMemoryUsage) / 1024 / 1024),
-            ];
-        }
-
-        if (null !== $this->errorHandler) {
-            $this->errorHandler->handleErrors($result, $this->throwException);
-        }
-
-        return $result;
     }
 
     /**
@@ -228,5 +97,122 @@ class Executor
         }
 
         return $schema;
+    }
+
+    public function setMaxQueryDepth($maxQueryDepth)
+    {
+        /** @var QueryDepth $queryDepth */
+        $queryDepth = DocumentValidator::getRule('QueryDepth');
+        $queryDepth->setMaxQueryDepth($maxQueryDepth);
+    }
+
+    public function setMaxQueryComplexity($maxQueryComplexity)
+    {
+        /** @var QueryComplexity $queryComplexity */
+        $queryComplexity = DocumentValidator::getRule('QueryComplexity');
+        $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
+    }
+
+    /**
+     * @param null|string                    $schemaName
+     * @param array                          $request
+     * @param null|array|\ArrayObject|object $rootValue
+     *
+     * @return ExecutionResult
+     */
+    public function execute($schemaName, array $request, $rootValue = null)
+    {
+        $executorArgumentsEvent = $this->preExecute(
+            $this->getSchema($schemaName),
+            isset($request[ParserInterface::PARAM_QUERY]) ? $request[ParserInterface::PARAM_QUERY] : null,
+            new \ArrayObject(),
+            $rootValue,
+            $request[ParserInterface::PARAM_VARIABLES],
+            isset($request[ParserInterface::PARAM_OPERATION_NAME]) ? $request[ParserInterface::PARAM_OPERATION_NAME] : null
+        );
+
+        $result = $this->executor->execute(
+            $executorArgumentsEvent->getSchema(),
+            $executorArgumentsEvent->getRequestString(),
+            $executorArgumentsEvent->getRootValue(),
+            $executorArgumentsEvent->getContextValue(),
+            $executorArgumentsEvent->getVariableValue(),
+            $executorArgumentsEvent->getOperationName()
+        );
+
+        $result = $this->postExecute($result);
+
+        return $result;
+    }
+
+    /**
+     * @param Schema       $schema
+     * @param string       $requestString
+     * @param \ArrayObject $contextValue
+     * @param mixed        $rootValue
+     * @param array|null   $variableValue
+     * @param string|null  $operationName
+     *
+     * @return ExecutorArgumentsEvent
+     */
+    private function preExecute(
+        Schema $schema,
+        $requestString,
+        \ArrayObject $contextValue,
+        $rootValue = null,
+        array $variableValue = null,
+        $operationName = null
+    ) {
+        $this->checkPromiseAdapter();
+
+        $this->executor->setPromiseAdapter($this->promiseAdapter);
+        // this is needed when not using only generated types
+        if ($this->defaultFieldResolver) {
+            $this->executor->setDefaultFieldResolver($this->defaultFieldResolver);
+        }
+        $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, new ExecutorContextEvent($contextValue));
+
+        return $this->dispatcher->dispatch(
+            Events::PRE_EXECUTOR,
+            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName)
+        );
+    }
+
+    /**
+     * @param ExecutionResult|Promise $result
+     *
+     * @return ExecutionResult
+     */
+    private function postExecute($result)
+    {
+        if ($result instanceof Promise) {
+            $result = $this->promiseAdapter->wait($result);
+        }
+
+        $this->checkExecutionResult($result);
+
+        return  $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
+    }
+
+    private function checkPromiseAdapter()
+    {
+        if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !is_callable([$this->promiseAdapter, 'wait'])) {
+            throw new \RuntimeException(
+                sprintf(
+                    'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
+                    PromiseAdapterInterface::class,
+                    PromiseAdapter::class
+                )
+            );
+        }
+    }
+
+    private function checkExecutionResult($result)
+    {
+        if (!is_object($result) || !$result instanceof ExecutionResult) {
+            throw new \RuntimeException(
+                sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
+            );
+        }
     }
 }

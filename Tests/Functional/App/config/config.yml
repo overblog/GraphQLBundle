@@ -9,6 +9,8 @@ framework:
         enabled: false
 
 overblog_graphql:
+    errors_handler:
+        debug: false
     definitions:
         config_validation: true
         auto_mapping: false

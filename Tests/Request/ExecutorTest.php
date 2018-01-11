@@ -3,23 +3,31 @@
 namespace Overblog\GraphQLBundle\Tests\Request;
 
 use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ExecutorTest extends TestCase
 {
     /** @var RequestExecutor */
     private $executor;
 
+    /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+    private $dispatcher;
+
     private $request = ['query' => 'query debug{ myField }', 'variables' => [], 'operationName' => null];
 
     public function setUp()
     {
-        $this->executor = new RequestExecutor(new Executor());
+        $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
+        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
+
+        $this->executor = $this->createRequestExecutor();
         $queryType = new ObjectType([
             'name' => 'Query',
             'fields' => [
@@ -41,7 +49,7 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorReturnNotObject()
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(false));
-        $this->executor->execute($this->request);
+        $this->executor->execute(null, $this->request);
     }
 
     /**
@@ -51,7 +59,7 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorReturnInvalidObject()
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(new \stdClass()));
-        $this->executor->execute($this->request);
+        $this->executor->execute(null, $this->request);
     }
 
     /**
@@ -61,21 +69,7 @@ class ExecutorTest extends TestCase
     public function testInvalidExecutorAdapterPromise()
     {
         $this->executor->setPromiseAdapter(new ReactPromiseAdapter());
-        $this->executor->execute($this->request);
-    }
-
-    public function testDisabledDebugInfo()
-    {
-        $this->assertArrayNotHasKey('debug', $this->executor->disabledDebugInfo()->execute($this->request)->extensions);
-    }
-
-    public function testEnabledDebugInfo()
-    {
-        $result = $this->executor->enabledDebugInfo()->execute($this->request);
-
-        $this->assertArrayHasKey('debug', $result->extensions);
-        $this->assertArrayHasKey('executionTime', $result->extensions['debug']);
-        $this->assertArrayHasKey('memoryUsage', $result->extensions['debug']);
+        $this->executor->execute(null, $this->request);
     }
 
     /**
@@ -84,7 +78,7 @@ class ExecutorTest extends TestCase
      */
     public function testGetSchemaNoSchemaFound()
     {
-        (new RequestExecutor(new Executor()))->getSchema('fake');
+        $this->createRequestExecutor()->getSchema('fake');
     }
 
     private function createExecutorExecuteMock($returnValue)
@@ -96,5 +90,15 @@ class ExecutorTest extends TestCase
         $mock->method('execute')->will($this->returnValue($returnValue));
 
         return $mock;
+    }
+
+    private function createRequestExecutor()
+    {
+        /** @var PromiseAdapter|\PHPUnit_Framework_MockObject_MockObject $promiseAdapter */
+        $promiseAdapter = $this->getMockBuilder(PromiseAdapter::class)
+            ->setMethods(array_merge(['wait'], get_class_methods(PromiseAdapter::class)))
+            ->getMock();
+
+        return new RequestExecutor(new Executor(), $this->dispatcher, $promiseAdapter);
     }
 }
