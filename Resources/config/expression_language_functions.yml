@@ -1,5 +1,11 @@
 services:
     # Authorization
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser:
+        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser
+        public: false
+        tags:
+            - { name: overblog_graphql.expression_function }
+
     Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission
         public: false

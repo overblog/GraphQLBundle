@@ -4,8 +4,9 @@ UPGRADE FROM 0.10 to 0.11
 # Table of Contents
 
 - [GraphiQL](#graphiql)
-- [Errors Handler](#errors-handler)
+- [Errors handler](#errors-handler)
 - [Promise adapter interface](#promise-adapter-interface)
+- [Expression language](#expression-language)
 
 ### GraphiQL
 
@@ -83,4 +84,15 @@ UPGRADE FROM 0.10 to 0.11
         ```diff
         - public function setPromiseAdapter(PromiseAdapter $promiseAdapter = null);
         + public function setPromiseAdapter(PromiseAdapter $promiseAdapter);
+        ```
+
+### Expression language
+
+  * **user** expression variable has been replaced by **getUser** expression function
+
+  Upgrading:
+   - Replace `user` by `getUser` in you schema configuration
+        ```diff
+        - resolve: '@=user'
+        + resolve: '@=getUser()'
         ```

@@ -11,7 +11,7 @@ final class IsAuthenticated extends ExpressionFunction
         parent::__construct(
             $name,
             function () {
-                return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
+                return '$vars[\'container\']->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\') || $vars[\'container\']->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_FULLY\')';
             }
         );
     }

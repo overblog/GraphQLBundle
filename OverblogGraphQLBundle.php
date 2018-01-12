@@ -6,11 +6,12 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\AliasedPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AutoMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AutowiringTypesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigTypesPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\DefinitionConfigProcessorCompilerPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\DefinitionConfigProcessorPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ExpressionFunctionPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationTaggedServiceMappingTaggedPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypeTaggedServiceMappingPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\VariablesInjectorConfigProcessorPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -29,7 +30,8 @@ class OverblogGraphQLBundle extends Bundle
 
         //ConfigTypesPass and AutoMappingPass must be before TypeTaggedServiceMappingPass
         $container->addCompilerPass(new ExpressionFunctionPass());
-        $container->addCompilerPass(new DefinitionConfigProcessorCompilerPass());
+        $container->addCompilerPass(new VariablesInjectorConfigProcessorPass());
+        $container->addCompilerPass(new DefinitionConfigProcessorPass());
         $container->addCompilerPass(new AutoMappingPass());
         $container->addCompilerPass(new ConfigTypesPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new AliasedPass());

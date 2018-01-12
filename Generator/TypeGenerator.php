@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
 {
-    const USE_FOR_CLOSURES = '$container, $request, $user, $token';
+    const USE_FOR_CLOSURES = '$vars';
 
     const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
 
@@ -71,12 +71,12 @@ EOF;
 
     protected function generateClosureUseStatements(array $config)
     {
-        return 'use ('.static::USE_FOR_CLOSURES.') ';
+        return sprintf('use (%s) ', static::USE_FOR_CLOSURES);
     }
 
     protected function resolveTypeCode($alias)
     {
-        return  sprintf('$container->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
+        return  sprintf('$vars[\'container\']->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
     }
 
     protected function generatePublic(array $value)

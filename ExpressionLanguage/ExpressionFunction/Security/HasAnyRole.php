@@ -11,7 +11,7 @@ final class HasAnyRole extends ExpressionFunction
         parent::__construct(
             $name,
             function ($roles) {
-                $code = sprintf('array_reduce(%s, function ($isGranted, $role) use ($container) { return $isGranted || $container->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles);
+                $code = sprintf('array_reduce(%s, function ($isGranted, $role) use ($vars) { return $isGranted || $vars[\'container\']->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles);
 
                 return $code;
             }

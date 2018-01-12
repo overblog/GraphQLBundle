@@ -11,7 +11,7 @@ final class IsAnonymous extends ExpressionFunction
         parent::__construct(
             $name,
             function () {
-                return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
+                return '$vars[\'container\']->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_ANONYMOUSLY\')';
             }
         );
     }

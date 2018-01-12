@@ -11,7 +11,7 @@ final class Parameter extends ExpressionFunction
         parent::__construct(
             $name,
             function ($value) {
-                return sprintf('$container->getParameter(%s)', $value);
+                return sprintf('$vars[\'container\']->getParameter(%s)', $value);
             }
         );
     }

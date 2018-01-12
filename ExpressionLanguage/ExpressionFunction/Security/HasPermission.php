@@ -11,7 +11,7 @@ final class HasPermission extends ExpressionFunction
         parent::__construct(
             $name,
             function ($object, $permission) {
-                $code = sprintf('$container->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
+                $code = sprintf('$vars[\'container\']->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
 
                 return $code;
             }

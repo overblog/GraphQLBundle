@@ -8,8 +8,6 @@
 <spaces>public function __construct(ConfigProcessor $configProcessor)
 <spaces>{
 <spaces><spaces>$configLoader = function(array $vars) {
-<spaces><spaces><spaces>extract($vars);
-
 <spaces><spaces><spaces>return <config>;
 <spaces><spaces>};
 <spaces><spaces>$config = $configProcessor->process(\Overblog\GraphQLBundle\Definition\LazyConfig::create($configLoader))->load();

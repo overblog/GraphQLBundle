@@ -18,9 +18,8 @@ class ParameterTest extends TestCase
      */
     public function testParameter($name)
     {
-        $container = $this->getDIContainerMock([], ['test' => 5]);
-        $this->expressionLanguage->setContainer($container);
-        $this->assertEquals(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
+        $vars['container'] = $this->getDIContainerMock([], ['test' => 5]);
+        $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
     }
 
     public function getNames()

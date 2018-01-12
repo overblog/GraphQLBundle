@@ -19,9 +19,8 @@ class ServiceTest extends TestCase
     public function testService($name)
     {
         $object = new \stdClass();
-        $container = $this->getDIContainerMock(['toto' => $object]);
-        $this->expressionLanguage->setContainer($container);
-        $this->assertEquals($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
+        $vars['container'] = $this->getDIContainerMock(['toto' => $object]);
+        $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
     public function getNames()

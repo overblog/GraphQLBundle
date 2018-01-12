@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-final class DefinitionConfigProcessorCompilerPass implements CompilerPassInterface
+final class DefinitionConfigProcessorPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
@@ -15,7 +15,7 @@ final class DefinitionConfigProcessorCompilerPass implements CompilerPassInterfa
     public function process(ContainerBuilder $container)
     {
         $definition = $container->findDefinition(ConfigProcessor::class);
-        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.definition_config_processor');
+        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.definition_config_processor', true);
 
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall(

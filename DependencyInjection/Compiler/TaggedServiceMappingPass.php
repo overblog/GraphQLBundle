@@ -13,7 +13,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     {
         $serviceMapping = [];
 
-        $taggedServices = $container->findTaggedServiceIds($tagName);
+        $taggedServices = $container->findTaggedServiceIds($tagName, true);
         $isType = TypeTaggedServiceMappingPass::TAG_NAME === $tagName;
 
         foreach ($taggedServices as $id => $tags) {

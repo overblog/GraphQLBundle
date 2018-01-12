@@ -72,8 +72,6 @@ services:
         public: false
         arguments:
             - '@overblog_graphql.cache_expression_language_parser'
-        calls:
-            - ["setContainer", ["@service_container"]]
 
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
