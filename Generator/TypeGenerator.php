@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
 {
-    const USE_FOR_CLOSURES = '$vars';
+    const USE_FOR_CLOSURES = '$globalVariable';
 
     const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
 
@@ -76,7 +76,7 @@ EOF;
 
     protected function resolveTypeCode($alias)
     {
-        return  sprintf('$vars[\'container\']->get(\'%s\')->resolve(%s)', 'overblog_graphql.type_resolver', var_export($alias, true));
+        return  sprintf('$globalVariable->get(\'typeResolver\')->resolve(%s)', var_export($alias, true));
     }
 
     protected function generatePublic(array $value)

@@ -11,7 +11,7 @@ final class GetUser extends ExpressionFunction
         parent::__construct(
             'getUser',
             function () {
-                return 'null !== $vars[\'token\'] ? $vars[\'token\']->getUser() : null';
+                return sprintf('\%s::getUser($globalVariable)', Helper::class);
             }
         );
     }

@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
 use PHPUnit\Framework\TestCase as BaseTestCase;
@@ -30,9 +31,14 @@ abstract class TestCase extends BaseTestCase
 
     protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
     {
-        extract($vars);
         $code = $this->expressionLanguage->compile($expression, array_keys($vars));
-        $vars['container'] = $this->getDIContainerMock(['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]);
+        $globalVariable = new GlobalVariables([
+            'container' => $this->getDIContainerMock(
+                ['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]
+            ),
+        ]);
+        $globalVariable->get('container');
+        extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
     }

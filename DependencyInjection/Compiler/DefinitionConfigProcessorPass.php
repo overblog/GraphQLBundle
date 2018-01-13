@@ -18,13 +18,15 @@ final class DefinitionConfigProcessorPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('overblog_graphql.definition_config_processor', true);
 
         foreach ($taggedServices as $id => $tags) {
-            $definition->addMethodCall(
-                'addConfigProcessor',
-                [
-                    new Reference($id),
-                    isset($tags[0]['priority']) ? $tags[0]['priority'] : 0,
-                ]
-            );
+            foreach ($tags as $attributes) {
+                $definition->addMethodCall(
+                    'addConfigProcessor',
+                    [
+                        new Reference($id),
+                        isset($attributes['priority']) ? $attributes['priority'] : 0,
+                    ]
+                );
+            }
         }
     }
 }

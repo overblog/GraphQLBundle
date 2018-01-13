@@ -7,10 +7,10 @@
 
 <spaces>public function __construct(ConfigProcessor $configProcessor)
 <spaces>{
-<spaces><spaces>$configLoader = function(array $vars) {
+<spaces><spaces>$configLoader = function(GlobalVariables $globalVariable) {
 <spaces><spaces><spaces>return <config>;
 <spaces><spaces>};
-<spaces><spaces>$config = $configProcessor->process(\Overblog\GraphQLBundle\Definition\LazyConfig::create($configLoader))->load();
+<spaces><spaces>$config = $configProcessor->process(LazyConfig::create($configLoader))->load();
 <spaces><spaces>parent::__construct($config);
 <spaces>}
 }

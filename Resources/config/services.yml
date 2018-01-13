@@ -40,6 +40,8 @@ services:
         public: true
         arguments:
             -
+        tags:
+            - { name: overblog_graphql.global_variable, alias: typeResolver }
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         alias: overblog_graphql.type_resolver
@@ -47,6 +49,8 @@ services:
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
         public: true
+        tags:
+            - { name: overblog_graphql.global_variable, alias: resolverResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\ResolverResolver:
         alias: overblog_graphql.resolver_resolver
@@ -54,6 +58,8 @@ services:
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
         public: true
+        tags:
+            - { name: overblog_graphql.global_variable, alias: mutationResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\MutationResolver:
         alias: overblog_graphql.mutation_resolver
@@ -83,8 +89,11 @@ services:
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
         calls:
-            - ["addUseStatement", ["Overblog\\GraphQLBundle\\Definition\\ConfigProcessor"]]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\LazyConfig']]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
+
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     Overblog\GraphQLBundle\EventListener\RequestFilesListener:

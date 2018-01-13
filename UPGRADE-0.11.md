@@ -89,10 +89,43 @@ UPGRADE FROM 0.10 to 0.11
 ### Expression language
 
   * **user** expression variable has been replaced by **getUser** expression function
+  * **container**, **request** and **token** expression variables has been removed.
+    `service` or `serv` expression function should be used instead.
 
-  Upgrading:
-   - Replace `user` by `getUser` in you schema configuration
+  Upgrading your schema configuration:
+   - Replace `user` by `getUser()`:
         ```diff
         - resolve: '@=user'
         + resolve: '@=getUser()'
+        ```
+
+        or
+
+        ```diff
+        - resolve: '@=resolver('foo', [user])'
+        + resolve: '@=resolver('foo', [getUser()])'
+        ```
+   - Replace `token` by `serv('security.token_storage')`
+        ```diff
+        - resolve: '@=token'
+        + resolve: '@=serv('security.token_storage')'
+        ```
+
+        or
+
+        ```diff
+        - resolve: '@=resolver('foo', [token])'
+        + resolve: '@=resolver('foo', [serv('security.token_storage')])'
+        ```
+   - Replace `request` by `serv('request_stack')`
+        ```diff
+        - resolve: '@=request'
+        + resolve: '@=serv('request_stack')'
+        ```
+
+        or
+
+        ```diff
+        - resolve: '@=resolver('foo', [request])'
+        + resolve: '@=resolver('foo', [serv('request_stack')])'
         ```

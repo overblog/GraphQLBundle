@@ -11,7 +11,7 @@ final class Service extends ExpressionFunction
         parent::__construct(
             $name,
             function ($value) {
-                return sprintf('$vars[\'container\']->get(%s)', $value);
+                return sprintf('$globalVariable->get(\'container\')->get(%s)', $value);
             }
         );
     }

@@ -6,9 +6,7 @@ RootQuery:
             user:
                 type: User
                 resolve: '@=resolver("query")'
-            current_user:
-                type: User
-                resolve: '@=getUser()'
+
 Mutation:
     type: object
     config:
