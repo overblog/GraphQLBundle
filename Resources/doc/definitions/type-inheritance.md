@@ -135,8 +135,8 @@ CharacterWizard:
  * `heirs` is the inverse of `inherits` section
  * Inheritance priority is defined by the order in the `inherits` section.
  * Inheritance use internally [array_replace_recursive](http://php.net/manual/en/function.array-replace-recursive.php) php function.
-   for example ObjectA config is the result of
-   `array_replace_recursive(ObjectCConfig, InterfaceAConfig, ObjectAConfig)`
+   for example `CharacterWizard` config is the result of
+   `array_replace_recursive(CharacterConfig, CharacterWizardConfig)`
 
 You can also create decorator types to be used as reusable templates.
 Decorators are only virtual and will not exists in final schema.
