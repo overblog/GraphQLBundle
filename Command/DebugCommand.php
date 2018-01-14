@@ -2,8 +2,8 @@
 
 namespace Overblog\GraphQLBundle\Command;
 
+use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\Console\Command\Command;
@@ -72,7 +72,7 @@ class DebugCommand extends Command
         foreach ($categories as $category) {
             $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
 
-            /** @var ResolverInterface $resolver */
+            /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};
 
             $solutions = $this->retrieveSolutions($resolver);
@@ -91,7 +91,7 @@ class DebugCommand extends Command
         $io->write("\n\n");
     }
 
-    private function retrieveSolutions(ResolverInterface $resolver)
+    private function retrieveSolutions(FluentResolverInterface $resolver)
     {
         $data = [];
         foreach ($resolver->getSolutions() as $alias => $solution) {

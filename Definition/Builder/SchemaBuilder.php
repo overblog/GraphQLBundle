@@ -3,17 +3,17 @@
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Type\Schema;
-use Overblog\GraphQLBundle\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
 
 class SchemaBuilder
 {
-    /** @var ResolverInterface */
+    /** @var FluentResolverInterface */
     private $typeResolver;
 
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(ResolverInterface $typeResolver, $enableValidation = false)
+    public function __construct(FluentResolverInterface $typeResolver, $enableValidation = false)
     {
         $this->typeResolver = $typeResolver;
         $this->enableValidation = $enableValidation;
