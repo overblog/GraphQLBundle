@@ -4,76 +4,127 @@ Inheritance
 In some cases, inheritance can help to not repeating yourself, better organisation,
 clearer schema, easier interfaces implementation...
 
-Here an example using inheritance:
+Imagine you have something like that:
+
+![](_resources/type-inheritance/class-diagram.png)
+
+This is how we will implement it:
 
 ```yaml
-ObjectB:
+# First, let's define our mother class
+Character:
     type: object
-    config:
-        interfaces: [InterfaceA]
-        fields:
-             foo: {type: String!}
-
-# ObjectA inherited config from InterfaceA and ObjectC
-ObjectA:
-    type: object
-    # ObjectB inherited config (fields, args...) from ObjectA
-    heirs: [ObjectB]
-    inherits: [InterfaceA, ObjectC]
-
-ObjectC:
-    type: object
+    heirs: # the opposite of « inherits »
+           # optional if « inherits » already exists on daughters classes
+      - CharacterWarrior
+      - WizardWarrior
     config:
         fields:
-            baz: {type: String!}
+            id: {type: Int!}
+            type: {type: String!}
+            name: {type: String!}
+            staminaPoints: {type: Int!}
 
-InterfaceA:
-    type: interface
+# Then let's define our daughters classes
+CharacterWarrior:
+    type: object
+    inherits: [Character] # the opposite of « heirs » 
+                          # optional if « heirs » already exists on mother class
     config:
-        resolveType: '@=...'
         fields:
-            bar: {type: String!}
-            bar2: {type: String!}
-            bar3: {type: String!}
+            furyPoints: {type: Int!}
+
+CharacterWizard:
+    type: object
+    inherits: [Character] # the opposite of « heirs » 
+                          # optional if « heirs » already exists on mother class
+    config:
+        fields:
+            magicPoints: {type: Int!}
 ```
 
 This is equivalent to:
 
 ```yaml
-ObjectB:
-    type: object
-    config:
-        interfaces: [InterfaceA]
-        fields:
-             foo: {type: String!}
-             bar: {type: String!}
-             bar2: {type: String!}
-             bar3: {type: String!}
-             baz: {type: String!}
-
-ObjectA:
+CharacterWarrior:
     type: object
     config:
         fields:
-            bar: {type: String!}
-            bar2: {type: String!}
-            bar3: {type: String!}
-            baz: {type: String!}
+            id: {type: Int!}
+            type: {type: String!}
+            name: {type: String!}
+            staminaPoints: {type: Int!}
+            furyPoints: {type: Int!}
 
-ObjectC:
+CharacterWizard:
     type: object
     config:
         fields:
-            baz: {type: String!}
+            id: {type: Int!}
+            type: {type: String!}
+            name: {type: String!}
+            staminaPoints: {type: Int!}
+            magicPoints: {type: Int!}
+```
 
-InterfaceA:
+**« So, we defined our types, but how can I query `furyPoints` field for `CharacterWarrior` only? »**
+
+To do that, you should use [Inline Fragments](http://graphql.org/learn/queries/#inline-fragments), e.g.:
+
+```graphql
+{
+    characters {
+        id
+        type
+        name
+        staminaPoints
+        
+        ... on CharacterWarrior {
+            furyPoints
+        }
+        
+        ... on CharacterWizard {
+            magicPoints
+        }
+    }
+}
+```
+
+**« But it does not work??? »**
+
+Yes, we should refactor our types:
+- `Character` will be an interface
+- `CharacterWarrior` and `CharacterWizard` will **implement** the interface `Character`
+- `CharacterWarrior` and `CharacterWizard` will **extend configuration fields** of interface `Character`
+
+```yaml
+Character:
     type: interface
     config:
-        resolveType: '@=...'
+        # depending of `value.type`, this resolver should 
+        # returns `CharacterWarrior` or `CharacterWizard`
+        resolveType: "@=resolver('character_type_resolver', [value.type])"
         fields:
-            bar: {type: String!}
-            bar2: {type: String!}
-            bar3: {type: String!}
+            id: {type: Int!}
+            type: {type: String!}
+            name: {type: String!}
+            staminaPoints: {type: Int!}
+
+CharacterWarrior:
+    type: object
+    inherits: [Character] # We don't have to implement all `Character` fields
+    config:
+        interfaces: [Character] # `CharacterWarrior` implements `Character` interface
+        fields:
+            furyPoints: {type: Int!}
+
+CharacterWizard:
+    type: object
+    inherits: [Character] # We don't have to implement all `Character` fields
+    config:
+        interfaces: [Character] # `CharacterWizard` implements `Character` interface 
+        fields:
+            magicPoints: {type: Int!}
 ```
 
 **Notes:**
@@ -84,8 +135,8 @@ InterfaceA:
  * `heirs` is the inverse of `inherits` section
  * Inheritance priority is defined by the order in the `inherits` section.
  * Inheritance use internally [array_replace_recursive](http://php.net/manual/en/function.array-replace-recursive.php) php function.
-   for example ObjectA config is the result of
-   `array_replace_recursive(ObjectCConfig, InterfaceAConfig, ObjectAConfig)`
+   for example `CharacterWizard` config is the result of
+   `array_replace_recursive(CharacterConfig, CharacterWizardConfig)`
 
 You can also create decorator types to be used as reusable templates.
 Decorators are only virtual and will not exists in final schema.
