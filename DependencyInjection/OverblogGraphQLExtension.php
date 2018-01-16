@@ -136,6 +136,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             );
             $definition->addTag('kernel.event_listener', ['event' => Events::PRE_EXECUTOR, 'method' => 'onPreExecutor']);
             $definition->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
+            $definition->addTag('kernel.event_listener', ['event' => Events::PRE_RESOLVER, 'method' => 'onPreResolver']);
         }
     }
 

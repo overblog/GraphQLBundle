@@ -2,10 +2,29 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use Overblog\GraphQLBundle\Event\Events;
+use Overblog\GraphQLBundle\Event\PreResolverEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractProxyResolver extends AbstractResolver
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
+     * AbstractProxyResolver constructor.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(
+        EventDispatcherInterface $dispatcher
+    ) {
+        $this->dispatcher = $dispatcher;
+    }
+
     /**
      * @param $input
      *
@@ -34,6 +53,9 @@ abstract class AbstractProxyResolver extends AbstractResolver
 
         $options = $this->getSolutionOptions($alias);
         $func = [$solution, $options['method']];
+
+        $event = new PreResolverEvent($func, $funcArgs);
+        $this->dispatcher->dispatch(Events::PRE_RESOLVER, $event);
 
         return call_user_func_array($func, $funcArgs);
     }
