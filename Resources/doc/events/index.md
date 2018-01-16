@@ -160,3 +160,56 @@ For example:
 *Note:*
 - This event is dispatch by this bundle default error handler, that the reason why, disabling
 error handler will also disable this event.
+
+Before resolve event
+----------------
+
+*Event:* `graphql.pre_resolver`
+
+This event dispatching right before calling resolver method. It can be useful to add custom annotation to resolver method or class.
+
+For example:
+
+```yaml
+App\EventListener\GraphqlPreResolverListener:
+    tags:
+        - { name: kernel.event_listener, event: graphql.pre_resolver, method: onPreResolver }
+```
+
+```php
+<?php
+
+namespace App\EventListener;
+
+
+use Doctrine\Common\Annotations\Reader as AnnotationReader;
+use Overblog\GraphQLBundle\Event\PreResolverEvent;
+
+class GraphqlPreResolverListener
+{
+    private $annotationReader;
+
+    public function __construct(
+        AnnotationReader $annotationReader
+    )
+    {
+        $this->annotationReader = $annotationReader;
+    }
+
+    public function onPreResolver(PreResolverEvent $event)
+    {
+        $className = $event->getFunc()[0];
+        $methodName = $event->getFunc()[1];
+
+        $object = new \ReflectionClass($className);
+        $method = $object->getMethod($methodName);
+
+        $classAnnotatioins = $this->annotationReader->getClassAnnotations($object);
+        $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
+
+        //process your annotations
+       
+    }
+
+}
+```
