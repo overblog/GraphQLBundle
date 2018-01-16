@@ -47,6 +47,8 @@ services:
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
         public: true
+        arguments:
+            - "@event_dispatcher"
 
     Overblog\GraphQLBundle\Resolver\ResolverResolver:
         alias: overblog_graphql.resolver_resolver
@@ -54,6 +56,8 @@ services:
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
         public: true
+        arguments:
+            - "@event_dispatcher"
 
     Overblog\GraphQLBundle\Resolver\MutationResolver:
         alias: overblog_graphql.mutation_resolver

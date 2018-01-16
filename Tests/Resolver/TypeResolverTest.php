@@ -6,10 +6,11 @@ use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TypeResolverTest extends AbstractResolverTest
 {
-    protected function createResolver()
+    protected function createResolver(EventDispatcherInterface $eventDispatcher)
     {
         return new TypeResolver();
     }
