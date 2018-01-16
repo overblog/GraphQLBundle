@@ -14,7 +14,7 @@ class PreResolverEvent extends Event
 
     /**
      * PreResolverEvent constructor.
-     * 
+     *
      * @param $func
      * @param $funcArgs
      */
