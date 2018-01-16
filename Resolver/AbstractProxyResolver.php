@@ -16,6 +16,7 @@ abstract class AbstractProxyResolver extends AbstractResolver
 
     /**
      * AbstractProxyResolver constructor.
+     * 
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(

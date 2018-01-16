@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Event;
 
-
 use Symfony\Component\EventDispatcher\Event;
 
 class PreResolverEvent extends Event
@@ -15,6 +14,7 @@ class PreResolverEvent extends Event
 
     /**
      * PreResolverEvent constructor.
+     * 
      * @param $func
      * @param $funcArgs
      */
@@ -27,7 +27,7 @@ class PreResolverEvent extends Event
     /**
      * @return array
      */
-    public function getFunc(): array
+    public function getFunc()
     {
         return $this->func;
     }
@@ -35,7 +35,7 @@ class PreResolverEvent extends Event
     /**
      * @return array
      */
-    public function getFuncArgs(): array
+    public function getFuncArgs()
     {
         return $this->funcArgs;
     }
