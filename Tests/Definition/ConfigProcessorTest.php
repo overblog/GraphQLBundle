@@ -29,7 +29,7 @@ class ConfigProcessorTest extends TestCase
     {
         $configProcessor = new ConfigProcessor();
 
-        $configProcessor->addConfigProcessor($nullConfigProcessor1 = new NullConfigProcessor());
+        $configProcessor->addConfigProcessor($nullConfigProcessor1 = new NullConfigProcessor(), 2);
         $configProcessor->addConfigProcessor($nullConfigProcessor2 = new NullConfigProcessor(), 4);
         $configProcessor->addConfigProcessor($nullConfigProcessor3 = new NullConfigProcessor(), 256);
         $configProcessor->addConfigProcessor($nullConfigProcessor4 = new NullConfigProcessor());
