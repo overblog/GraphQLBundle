@@ -124,8 +124,8 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param DefinitionNode  $typeDef
-     * @param array           $config
+     * @param DefinitionNode $typeDef
+     * @param array          $config
      */
     private function addTypeFields(DefinitionNode $typeDef, array &$config)
     {
@@ -146,7 +146,7 @@ class GraphQLParser implements ParserInterface
 
     /**
      * @param Node  $fieldDef
-     * @param array                     $fieldConf
+     * @param array $fieldConf
      */
     private function addFieldArguments(Node $fieldDef, array &$fieldConf)
     {
@@ -164,8 +164,8 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param DefinitionNode  $typeDef
-     * @param array           $config
+     * @param DefinitionNode $typeDef
+     * @param array          $config
      */
     private function addInterfaces(DefinitionNode $typeDef, array &$config)
     {
@@ -179,8 +179,8 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param DefinitionNode  $typeDef
-     * @param array           $config
+     * @param DefinitionNode $typeDef
+     * @param array          $config
      */
     private function addTypes(DefinitionNode $typeDef, array &$config)
     {
@@ -194,8 +194,8 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param DefinitionNode  $typeDef
-     * @param array $config
+     * @param DefinitionNode $typeDef
+     * @param array          $config
      */
     private function addValues(DefinitionNode $typeDef, array &$config)
     {
@@ -222,7 +222,7 @@ class GraphQLParser implements ParserInterface
 
     /**
      * @param Node  $definition
-     * @param array           $config
+     * @param array $config
      */
     private function addDescription(Node $definition, array &$config)
     {
@@ -235,8 +235,8 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param Node $definition
-     * @param array                                        $config
+     * @param Node  $definition
+     * @param array $config
      */
     private function addDefaultValue(Node $definition, array &$config)
     {
