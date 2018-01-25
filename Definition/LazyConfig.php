@@ -11,7 +11,7 @@ final class LazyConfig
     private $globalVariables;
 
     /**
-     * @var callable
+     * @var callable[]
      */
     private $onPostLoad = [];
 

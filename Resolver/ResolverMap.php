@@ -4,7 +4,7 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 class ResolverMap implements ResolverMapInterface
 {
-    /** @var callable[] */
+    /** @var array[] */
     private $loadedMap;
 
     /** @var bool */

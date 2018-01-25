@@ -2,8 +2,10 @@
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
+use GraphQL\Language\AST\DefinitionNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
 use GraphQL\Language\AST\InputValueDefinitionNode;
+use GraphQL\Language\AST\NameNode;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\TypeNode;
@@ -49,10 +51,13 @@ class GraphQLParser implements ParserInterface
             throw new InvalidArgumentException(sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
         }
 
-        /** @var Node $typeDef */
         foreach ($ast->definitions as $typeDef) {
-            $typeConfig = self::$parser->typeDefinitionToConfig($typeDef);
-            $typesConfig[$typeDef->name->value] = $typeConfig;
+            if (isset($typeDef->name) && $typeDef->name instanceof NameNode) {
+                $typeConfig = self::$parser->typeDefinitionToConfig($typeDef);
+                $typesConfig[$typeDef->name->value] = $typeConfig;
+            } else {
+                self::throwUnsupportedDefinitionNode($typeDef);
+            }
         }
 
         return $typesConfig;
@@ -63,56 +68,66 @@ class GraphQLParser implements ParserInterface
         throw new \RuntimeException('Config entry must be override with ResolverMap to be used.');
     }
 
-    protected function typeDefinitionToConfig(Node $typeDef)
+    protected function typeDefinitionToConfig(DefinitionNode $typeDef)
     {
-        switch ($typeDef->kind) {
-            case NodeKind::OBJECT_TYPE_DEFINITION:
-            case NodeKind::INTERFACE_TYPE_DEFINITION:
-            case NodeKind::INPUT_OBJECT_TYPE_DEFINITION:
-            case NodeKind::ENUM_TYPE_DEFINITION:
-            case NodeKind::UNION_TYPE_DEFINITION:
-                $config = [];
-                $this->addTypeFields($typeDef, $config);
-                $this->addDescription($typeDef, $config);
-                $this->addInterfaces($typeDef, $config);
-                $this->addTypes($typeDef, $config);
-                $this->addValues($typeDef, $config);
+        if (isset($typeDef->kind)) {
+            switch ($typeDef->kind) {
+                case NodeKind::OBJECT_TYPE_DEFINITION:
+                case NodeKind::INTERFACE_TYPE_DEFINITION:
+                case NodeKind::INPUT_OBJECT_TYPE_DEFINITION:
+                case NodeKind::ENUM_TYPE_DEFINITION:
+                case NodeKind::UNION_TYPE_DEFINITION:
+                    $config = [];
+                    $this->addTypeFields($typeDef, $config);
+                    $this->addDescription($typeDef, $config);
+                    $this->addInterfaces($typeDef, $config);
+                    $this->addTypes($typeDef, $config);
+                    $this->addValues($typeDef, $config);
 
-                return [
-                    'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
-                    'config' => $config,
-                ];
+                    return [
+                        'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
+                        'config' => $config,
+                    ];
 
-            case NodeKind::SCALAR_TYPE_DEFINITION:
-                $mustOverride = [__CLASS__, 'mustOverrideConfig'];
-                $config = [
-                    'serialize' => $mustOverride,
-                    'parseValue' => $mustOverride,
-                    'parseLiteral' => $mustOverride,
-                ];
-                $this->addDescription($typeDef, $config);
+                case NodeKind::SCALAR_TYPE_DEFINITION:
+                    $mustOverride = [__CLASS__, 'mustOverrideConfig'];
+                    $config = [
+                        'serialize' => $mustOverride,
+                        'parseValue' => $mustOverride,
+                        'parseLiteral' => $mustOverride,
+                    ];
+                    $this->addDescription($typeDef, $config);
 
-                return [
-                    'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
-                    'config' => $config,
-                ];
-                break;
+                    return [
+                        'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
+                        'config' => $config,
+                    ];
+                    break;
 
-            default:
-                throw new InvalidArgumentException(
-                    sprintf(
-                        '%s definition is not supported right now.',
-                        preg_replace('@Definition$@', '', $typeDef->kind)
-                    )
-                );
+                default:
+                    self::throwUnsupportedDefinitionNode($typeDef);
+            }
         }
+
+        self::throwUnsupportedDefinitionNode($typeDef);
+    }
+
+    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef)
+    {
+        $path = explode('\\', get_class($typeDef));
+        throw new InvalidArgumentException(
+            sprintf(
+                '%s definition is not supported right now.',
+                preg_replace('@DefinitionNode$@', '', array_pop($path))
+            )
+        );
     }
 
     /**
-     * @param Node  $typeDef
-     * @param array $config
+     * @param DefinitionNode  $typeDef
+     * @param array           $config
      */
-    private function addTypeFields(Node $typeDef, array &$config)
+    private function addTypeFields(DefinitionNode $typeDef, array &$config)
     {
         if (!empty($typeDef->fields)) {
             $fields = [];
@@ -131,13 +146,12 @@ class GraphQLParser implements ParserInterface
 
     /**
      * @param Node  $fieldDef
-     * @param array $fieldConf
+     * @param array                     $fieldConf
      */
     private function addFieldArguments(Node $fieldDef, array &$fieldConf)
     {
         if (!empty($fieldDef->arguments)) {
             $arguments = [];
-            /** @var InputValueDefinitionNode $definition */
             foreach ($fieldDef->arguments as $definition) {
                 $name = $definition->name->value;
                 $arguments[$name] = [];
@@ -150,10 +164,10 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param Node  $typeDef
-     * @param array $config
+     * @param DefinitionNode  $typeDef
+     * @param array           $config
      */
-    private function addInterfaces(Node $typeDef, array &$config)
+    private function addInterfaces(DefinitionNode $typeDef, array &$config)
     {
         if (!empty($typeDef->interfaces)) {
             $interfaces = [];
@@ -165,10 +179,10 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param Node  $typeDef
-     * @param array $config
+     * @param DefinitionNode  $typeDef
+     * @param array           $config
      */
-    private function addTypes(Node $typeDef, array &$config)
+    private function addTypes(DefinitionNode $typeDef, array &$config)
     {
         if (!empty($typeDef->types)) {
             $types = [];
@@ -180,10 +194,10 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param Node  $typeDef
+     * @param DefinitionNode  $typeDef
      * @param array $config
      */
-    private function addValues(Node $typeDef, array &$config)
+    private function addValues(DefinitionNode $typeDef, array &$config)
     {
         if (!empty($typeDef->values)) {
             $values = [];
@@ -208,7 +222,7 @@ class GraphQLParser implements ParserInterface
 
     /**
      * @param Node  $definition
-     * @param array $config
+     * @param array           $config
      */
     private function addDescription(Node $definition, array &$config)
     {
@@ -221,10 +235,10 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
-     * @param InputValueDefinitionNode|FieldDefinitionNode $definition
+     * @param Node $definition
      * @param array                                        $config
      */
-    private function addDefaultValue($definition, array &$config)
+    private function addDefaultValue(Node $definition, array &$config)
     {
         if (!empty($definition->defaultValue)) {
             $config['defaultValue'] = $this->astValueNodeToConfig($definition->defaultValue);
