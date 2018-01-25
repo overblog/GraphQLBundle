@@ -15,6 +15,7 @@ It also supports batching using libs like [ReactRelayNetworkLayer](https://githu
 Documentation
 -------------
 
+- [Quick start](Resources/doc/definitions/quick-start.md)
 - [Installation](Resources/doc/index.md)
 - [Definitions](Resources/doc/definitions/index.md)
   - [Type System](Resources/doc/definitions/type-system/index.md)
