@@ -5,16 +5,6 @@ services:
         tags:
             - { name: overblog_graphql.definition_config_processor, priority: 2048 }
 
-    Overblog\GraphQLBundle\Definition\ConfigProcessor\GlobalVariablesInjectorConfigProcessor:
-        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\GlobalVariablesInjectorConfigProcessor
-        arguments:
-            - '@overblog_graphql.expression_language'
-        calls:
-            - ['addGlobalVariable', ['container', '@service_container', false]]
-        public: false
-        tags:
-            - { name: overblog_graphql.definition_config_processor, priority: 1024 }
-
     Overblog\GraphQLBundle\Definition\ConfigProcessor\AclConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor\AclConfigProcessor
         arguments:

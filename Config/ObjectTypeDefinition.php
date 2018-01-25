@@ -22,7 +22,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->end()
                 ->variableNode('isTypeOf')->end()
                 ->variableNode('resolveField')->end()
-                ->append($this->resolverMapSection())
                 ->variableNode('fieldsDefaultAccess')
                     ->info('Default access control to fields (expression language can be use here)')
                 ->end()
@@ -33,7 +32,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
         $this->treatFieldsDefaultAccess($node);
         $this->treatFieldsDefaultPublic($node);
-        $this->validateResolverMap($node);
 
         return $node;
     }

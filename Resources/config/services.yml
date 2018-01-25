@@ -33,7 +33,12 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.type_resolver"
+            - '@Overblog\GraphQLBundle\Definition\Type\SchemaDecorator'
             - false
+
+    Overblog\GraphQLBundle\Definition\Type\SchemaDecorator:
+        class: Overblog\GraphQLBundle\Definition\Type\SchemaDecorator
+        public: false
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
@@ -155,3 +160,9 @@ services:
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor
         public: false
+
+    Overblog\GraphQLBundle\Definition\GlobalVariables:
+        class: Overblog\GraphQLBundle\Definition\GlobalVariables
+        public: false
+        arguments:
+            - []

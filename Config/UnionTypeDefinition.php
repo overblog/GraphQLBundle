@@ -22,11 +22,8 @@ class UnionTypeDefinition extends TypeDefinition
                     ->requiresAtLeastOneElement()
                 ->end()
                 ->append($this->resolveTypeSection())
-                ->append($this->resolverMapSection())
                 ->append($this->descriptionSection())
             ->end();
-
-        $this->validateResolverMap($node);
 
         return $node;
     }

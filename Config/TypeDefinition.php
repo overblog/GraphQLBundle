@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 abstract class TypeDefinition
@@ -25,45 +24,6 @@ abstract class TypeDefinition
     {
         $builder = new TreeBuilder();
         $node = $builder->root('resolveType', 'variable');
-
-        return $node;
-    }
-
-    protected function resolverMapSection()
-    {
-        $builder = new TreeBuilder();
-        $node = $builder->root('resolverMap', 'scalar');
-
-        return $node;
-    }
-
-    protected function validateResolverMap(NodeDefinition $node)
-    {
-        $node->validate()
-            ->ifTrue(function ($config) {
-                if (isset($config['resolverMap'])) {
-                    foreach ($config['fields'] as $field) {
-                        if (isset($field['resolve'])) {
-                            return true;
-                        }
-                    }
-
-                    return isset($config['resolveField']);
-                }
-
-                return false;
-            })
-            ->then(function () {
-                throw new \InvalidArgumentException('ResolverMap should not be combine with resolveField or fields.*.resolve.');
-            });
-
-        $node->validate()
-            ->ifTrue(function ($config) {
-                return isset($config['resolverMap']) && isset($config['resolveType']);
-            })
-            ->then(function () {
-                throw new \InvalidArgumentException('ResolverMap should not be combine with resolveType.');
-            });
 
         return $node;
     }

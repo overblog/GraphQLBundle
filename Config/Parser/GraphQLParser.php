@@ -24,6 +24,7 @@ class GraphQLParser implements ParserInterface
         NodeKind::ENUM_TYPE_DEFINITION => 'enum',
         NodeKind::UNION_TYPE_DEFINITION => 'union',
         NodeKind::INPUT_OBJECT_TYPE_DEFINITION => 'input-object',
+        NodeKind::SCALAR_TYPE_DEFINITION => 'custom-scalar',
     ];
 
     /**
@@ -57,6 +58,11 @@ class GraphQLParser implements ParserInterface
         return $typesConfig;
     }
 
+    public static function mustOverrideConfig()
+    {
+        throw new \RuntimeException('Config entry must be override with ResolverMap to be used.');
+    }
+
     protected function typeDefinitionToConfig(Node $typeDef)
     {
         switch ($typeDef->kind) {
@@ -76,6 +82,21 @@ class GraphQLParser implements ParserInterface
                     'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
                     'config' => $config,
                 ];
+
+            case NodeKind::SCALAR_TYPE_DEFINITION:
+                $mustOverride = [__CLASS__, 'mustOverrideConfig'];
+                $config = [
+                    'serialize' => $mustOverride,
+                    'parseValue' => $mustOverride,
+                    'parseLiteral' => $mustOverride,
+                ];
+                $this->addDescription($typeDef, $config);
+
+                return [
+                    'type' => self::DEFINITION_TYPE_MAPPING[$typeDef->kind],
+                    'config' => $config,
+                ];
+                break;
 
             default:
                 throw new InvalidArgumentException(
@@ -124,7 +145,7 @@ class GraphQLParser implements ParserInterface
                 $this->addDescription($definition, $arguments[$name]);
                 $this->addDefaultValue($definition, $arguments[$name]);
             }
-            $fieldConf['arguments'] = $arguments;
+            $fieldConf['args'] = $arguments;
         }
     }
 
@@ -167,7 +188,8 @@ class GraphQLParser implements ParserInterface
         if (!empty($typeDef->values)) {
             $values = [];
             foreach ($typeDef->values as $value) {
-                $values[] = ['value' => $value->name->value];
+                $values[$value->name->value] = ['value' => $value->name->value];
+                $this->addDescription($value, $values[$value->name->value]);
             }
             $config['values'] = $values;
         }

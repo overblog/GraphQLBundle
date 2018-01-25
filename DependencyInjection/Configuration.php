@@ -196,6 +196,10 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('query')->defaultNull()->end()
                     ->scalarNode('mutation')->defaultNull()->end()
                     ->scalarNode('subscription')->defaultNull()->end()
+                    ->arrayNode('resolver_maps')
+                        ->defaultValue([])
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end()
         ->end();

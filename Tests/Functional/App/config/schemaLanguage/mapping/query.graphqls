@@ -1,0 +1,33 @@
+type Query {
+  character(id: ID!): Character
+  findHumansByDateOfBirth(years: [Year!]!): [Human!]!
+  humans: [Human!]!
+  direwolves: [Direwolf!]!
+}
+
+scalar Year
+
+interface Character {
+  id: ID!
+  name: String!
+  status: Status!
+}
+
+type Human implements Character {
+  id: ID!
+  name: String!
+  direwolf: Direwolf!
+  status: Status!
+  dateOfBirth: Year!
+}
+
+type Direwolf implements Character {
+  id: ID!
+  name: String!
+  status: Status!
+}
+
+enum Status {
+  ALIVE
+  DECEASED
+}

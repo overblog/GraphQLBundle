@@ -7,7 +7,7 @@ final class GlobalVariables
     /** @var array */
     private $services;
 
-    public function __construct(array $services)
+    public function __construct(array $services = [])
     {
         $this->services = $services;
     }

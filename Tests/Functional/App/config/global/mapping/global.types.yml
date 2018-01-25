@@ -1,3 +1,8 @@
+NodeInterface:
+    type: relay-node
+    config:
+        resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
+
 Query:
     type: object
     config:
@@ -11,10 +16,51 @@ Query:
                 type: '[NodeInterface]'
                 resolve: '@=service("overblog_graphql.test.resolver.global").resolveAllObjects()'
 
-NodeInterface:
-    type: relay-node
+User:
+    type: object
     config:
+        fields:
+            id: "Relay::GlobalId"
+            name:
+                type: String
+        interfaces: [NodeInterface]
+
+Photo:
+    type: object
+    config:
+        fields:
+            id:
+                builder: "Relay::GlobalId"
+                builderConfig:
+                    typeName: Photo
+                    idFetcher: '@=value["photoId"]'
+            width:
+                type: Int
+        interfaces: [NodeInterface]
+
+Post:
+    type: object
+    config:
+        fields:
+            id:
+                builder: "Relay::GlobalId"
+            text:
+                type: String
+            status:
+                type: Status
+        interfaces: [NodeInterface]
+
+PhotoAndPost:
+    type: union
+    config:
+        types: [Photo, Post]
         resolveType: '@=service("overblog_graphql.test.resolver.global").typeResolver(value)'
+
+PhotoInput:
+    type: input-object
+    config:
+        fields:
+            width: { type: Int, defaultValue: 100 }
 
 Status:
     type: enum

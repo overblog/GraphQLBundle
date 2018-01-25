@@ -115,19 +115,19 @@ abstract class TestCase extends WebTestCase
         return $client;
     }
 
-    protected static function assertResponse($query, array $expected, $username, $testCase, $password = self::DEFAULT_PASSWORD)
+    protected static function assertResponse($query, array $expected, $username, $testCase, $password = self::DEFAULT_PASSWORD, array $variables = null)
     {
         $client = self::createClientAuthenticated($username, $testCase, $password);
-        $result = self::sendRequest($client, $query);
+        $result = self::sendRequest($client, $query, false, $variables);
 
         static::assertEquals($expected, json_decode($result, true), $result);
 
         return $client;
     }
 
-    protected static function sendRequest(Client $client, $query, $isDecoded = false)
+    protected static function sendRequest(Client $client, $query, $isDecoded = false, array $variables = null)
     {
-        $client->request('GET', '/', ['query' => $query]);
+        $client->request('GET', '/', ['query' => $query, 'variables' => json_encode($variables)]);
         $result = $client->getResponse()->getContent();
 
         return $isDecoded ? json_decode($result, true) : $result;

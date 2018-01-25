@@ -216,7 +216,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setSchemaBuilderArguments(array $config, ContainerBuilder $container)
     {
         $container->getDefinition($this->getAlias().'.schema_builder')
-            ->replaceArgument(1, $config['definitions']['config_validation']);
+            ->replaceArgument(2, $config['definitions']['config_validation']);
     }
 
     private function setSchemaArguments(array $config, ContainerBuilder $container)
@@ -228,7 +228,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
                 $definition = new Definition(Schema::class);
                 $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
-                $definition->setArguments([$schemaConfig['query'], $schemaConfig['mutation'], $schemaConfig['subscription']]);
+                $definition->setArguments([
+                    $schemaConfig['query'],
+                    $schemaConfig['mutation'],
+                    $schemaConfig['subscription'],
+                    array_map(function ($id) {
+                        return new Reference($id);
+                    }, $schemaConfig['resolver_maps']),
+                ]);
                 $definition->setPublic(false);
                 $container->setDefinition($schemaID, $definition);
 

@@ -50,3 +50,5 @@ input ReviewInput {
   stars: Int! = 5
   commentary: String = null
 }
+
+scalar Year

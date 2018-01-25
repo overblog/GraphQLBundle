@@ -100,7 +100,7 @@ Resolvers can be define 2 different ways
     `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
     `add` alias.
 
-    You can also define custom dirs using the config:
+    You can also define custom dirs using the config (Symfony <3.3):
     ```yaml
     overblog_graphql:
         definitions:
@@ -122,22 +122,27 @@ Resolvers can be define 2 different ways
     Here an example of how this can be done with DI `autoconfigure`:
 
     ```yaml
-    App\Mutation\:
-        resource: '../src/Mutation'
-        tags: ['overblog_graphql.mutation']
+    services:
+        _instanceof:
+            GraphQL\Type\Definition\Type:
+                tags: ['overblog_graphql.type']
 
-    App\Resolver\:
-        resource: '../src/Resolver'
-        tags: ['overblog_graphql.resolver']
+        App\Mutation\:
+            resource: '../src/Mutation'
+            tags: ['overblog_graphql.mutation']
 
-    App\Type\:
-        resource: '../src/Type'
-        tags: ['overblog_graphql.type']
+        App\Resolver\:
+            resource: '../src/Resolver'
+            tags: ['overblog_graphql.resolver']
+
+        App\Type\:
+            resource: '../src/Type'
     ```
 
     **Note:**
     * When using FQCN in yaml definition, backslash must be correctly quotes,
       here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args['name']])'`.
+    * You can also see the more straight forward way using [resolver map](resolver-map.md)
 
 2. **The service way**
 

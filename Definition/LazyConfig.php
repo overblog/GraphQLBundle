@@ -7,7 +7,7 @@ final class LazyConfig
     /** @var \Closure */
     private $loader;
 
-    /** @var \ArrayObject */
+    /** @var GlobalVariables */
     private $globalVariables;
 
     /**
@@ -15,13 +15,13 @@ final class LazyConfig
      */
     private $onPostLoad = [];
 
-    private function __construct(\Closure $loader, array $globalVariables = [])
+    private function __construct(\Closure $loader, GlobalVariables $globalVariables = null)
     {
         $this->loader = $loader;
-        $this->globalVariables = new \ArrayObject($globalVariables);
+        $this->globalVariables = $globalVariables ?: new GlobalVariables();
     }
 
-    public static function create(\Closure $loader, array $globalVariables = [])
+    public static function create(\Closure $loader, GlobalVariables $globalVariables = null)
     {
         return new self($loader, $globalVariables);
     }
@@ -32,7 +32,7 @@ final class LazyConfig
     public function load()
     {
         $loader = $this->loader;
-        $config = $loader(new GlobalVariables($this->globalVariables->getArrayCopy()));
+        $config = $loader($this->globalVariables);
         foreach ($this->onPostLoad as $postLoader) {
             $config = $postLoader($config);
         }
@@ -43,13 +43,5 @@ final class LazyConfig
     public function addPostLoader(callable $postLoader)
     {
         $this->onPostLoad[] = $postLoader;
-    }
-
-    /**
-     * @return \ArrayObject
-     */
-    public function getGlobalVariables()
-    {
-        return $this->globalVariables;
     }
 }

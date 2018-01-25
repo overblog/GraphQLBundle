@@ -22,7 +22,7 @@ class GraphQLParserTest extends TestCase
         $fileName = __DIR__.'/fixtures/graphql/schema.graphql';
         $expected = include __DIR__.'/fixtures/graphql/schema.php';
 
-        $this->assertContainerAddFileToRessources($fileName);
+        $this->assertContainerAddFileToResources($fileName);
         $config = GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
         $this->assertEquals($expected, $config);
     }
@@ -31,7 +31,7 @@ class GraphQLParserTest extends TestCase
     {
         $fileName = __DIR__.'/fixtures/graphql/empty.graphql';
 
-        $this->assertContainerAddFileToRessources($fileName);
+        $this->assertContainerAddFileToResources($fileName);
 
         $config = GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
         $this->assertEquals([], $config);
@@ -52,14 +52,14 @@ class GraphQLParserTest extends TestCase
         GraphQLParser::parse(new \SplFileInfo(__DIR__.'/fixtures/graphql/not-supported-schema-definition.graphql'), $this->containerBuilder);
     }
 
-    public function testParseNotSupportedScalarDefinition()
+    public function testCustomScalarTypeDefaultFieldValue()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('ScalarType definition is not supported right now.');
-        GraphQLParser::parse(new \SplFileInfo(__DIR__.'/fixtures/graphql/not-supported-scalar-definition.graphql'), $this->containerBuilder);
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Config entry must be override with ResolverMap to be used.');
+        GraphQLParser::mustOverrideConfig();
     }
 
-    private function assertContainerAddFileToRessources($fileName)
+    private function assertContainerAddFileToResources($fileName)
     {
         $this->containerBuilder->expects($this->once())
             ->method('addResource')

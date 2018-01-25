@@ -8,7 +8,7 @@ return [
             'fields' => [
                 'hero' => [
                     'type' => 'Character',
-                    'arguments' => [
+                    'args' => [
                         'episodes' => [
                             'type' => '[Episode!]!',
                             'description' => 'Episode list to use to filter',
@@ -19,7 +19,7 @@ return [
                 'droid' => [
                     'type' => 'Droid',
                     'description' => 'search for a droid',
-                    'arguments' => [
+                    'args' => [
                         'id' => [
                             'type' => 'ID!',
                         ],
@@ -36,7 +36,7 @@ return [
                 'name' => ['type' => 'String!'],
                 'length' => [
                     'type' => 'Float',
-                    'arguments' => [
+                    'args' => [
                         'unit' => [
                             'type' => 'LengthUnit',
                             'defaultValue' => 'METER',
@@ -50,9 +50,9 @@ return [
         'type' => 'enum',
         'config' => [
             'values' => [
-                ['value' => 'NEWHOPE'],
-                ['value' => 'EMPIRE'],
-                ['value' => 'JEDI'],
+                'NEWHOPE' => ['value' => 'NEWHOPE'],
+                'EMPIRE' => ['value' => 'EMPIRE'],
+                'JEDI' => ['value' => 'JEDI'],
             ],
         ],
     ],
@@ -107,6 +107,14 @@ return [
                 'stars' => ['type' => 'Int!', 'defaultValue' => 5],
                 'commentary' => ['type' => 'String', 'defaultValue' => null],
             ],
+        ],
+    ],
+    'Year' => [
+        'type' => 'custom-scalar',
+        'config' => [
+            'serialize' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
+            'parseValue' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
+            'parseLiteral' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
         ],
     ],
 ];
