@@ -122,7 +122,7 @@ class TypeResolver extends AbstractResolver
         if ($solution && !$this->hasSolution($solution->name)) {
             $this->addSolution($solution->name, function () use ($solution) {
                 return $solution;
-            });
+            }, [], ['id' => get_class($solution), 'alias' => $solution->name]);
         }
     }
 
