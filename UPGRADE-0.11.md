@@ -7,6 +7,7 @@ UPGRADE FROM 0.10 to 0.11
 - [Errors handler](#errors-handler)
 - [Promise adapter interface](#promise-adapter-interface)
 - [Expression language](#expression-language)
+- [Type autoMapping and Symfony DI autoconfigure](#type-automapping-and-symfony-di-autoconfigure)
 
 ### GraphiQL
 
@@ -49,7 +50,6 @@ UPGRADE FROM 0.10 to 0.11
   * Made errors handler more customizable
 
   Upgrading:
-   - User
    - Delete configuration to override base user exception classes.
         ```diff
         overblog_graphql:
@@ -129,3 +129,52 @@ UPGRADE FROM 0.10 to 0.11
         - resolve: '@=resolver('foo', [request])'
         + resolve: '@=resolver('foo', [serv('request_stack')])'
         ```
+### Type autoMapping and Symfony DI `autoconfigure`
+
+   When using these functionality, type will be accessible only by FQCN in schema definition,
+   (if class not implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`).
+   So if you want to use the `true` type name don't forget to declare it as an alias using interface.
+   This change is for a performance mater types are lazy loaded.
+
+   example:
+
+   ```php
+   <?php
+
+   namespace App\GraphQL\Type;
+
+   use GraphQL\Type\Definition\ScalarType;
+
+   class DateTimeType extends ScalarType
+   {
+       public $name = 'DateTme';
+       // ...
+   }
+   ```
+   **Before 0.11**: DateTimeType could be accessed by FQCN `App\GraphQL\Type\DateTimeType` and the real `DateTimeType`.
+   **Since 0.11**: Only FQCN `App\GraphQL\Type\DateTimeType` is accessible
+
+   here how this can be done in 0.11:
+
+   ```php
+   <?php
+
+   namespace App\GraphQL\Type;
+
+   use GraphQL\Type\Definition\ScalarType;
+   use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+
+   class DateTimeType extends ScalarType implements AliasedInterface
+   {
+       public $name = 'DateTme';
+
+       /**
+        * {@inheritdoc}
+        */
+       public static function getAliases()
+       {
+           return ['DateTime'];
+       }
+       // ...
+   }
+   ```

@@ -4,10 +4,11 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\HelloWord\Type;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 use Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver\EchoResolver;
 
-final class QueryType extends ObjectType
+final class QueryType extends ObjectType implements AliasedInterface
 {
     public function __construct(ResolverResolver $resolver)
     {
@@ -28,5 +29,13 @@ final class QueryType extends ObjectType
                 ],
             ],
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getAliases()
+    {
+        return ['Query'];
     }
 }

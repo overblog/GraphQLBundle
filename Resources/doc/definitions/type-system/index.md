@@ -41,9 +41,33 @@ Types can be define 3 different ways:
     You can also declare PHP types (any subclass of `GraphQL\Type\Definition\Type`) 
     in `src/*Bundle/GraphQL` or `app/GraphQL`
     they will be auto discover (thanks to auto mapping). Auto map classes are accessible by FQCN
-    (example: `AppBunble\GraphQL\Type\DateTimeType`), you can also alias type adding
-    a public static function `getAliases`
+    (example: `AppBunble\GraphQL\Type\DateTimeType`), you can also alias a type by
+    implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`
     that returns an array of aliases.
+
+    here an example:
+
+    ```php
+    <?php
+
+    namespace App\GraphQL\Type;
+
+    use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+    use GraphQL\Type\Definition\ScalarType;
+
+    class DateTimeType extends ScalarType implements AliasedInterface
+    {
+        /**
+         * {@inheritdoc}
+         */
+        public static function getAliases()
+        {
+            return ['DateTime', 'Date'];
+        }
+        // ...
+    }
+    ```
+
     You can also define custom dirs using config:
     ```yaml
     overblog_graphql:
@@ -53,12 +77,32 @@ Types can be define 3 different ways:
                     - "%kernel.root_dir%/src/*Bundle/CustomDir"
                     - "%kernel.root_dir%/src/AppBundle/{foo,bar}"
     ```
-    To disable auto mapping:
+
+    If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
+    DI `autoconfigure`:
+
     ```yaml
     overblog_graphql:
         definitions:
             auto_mapping: false
     ```
+
+    Here an example of how this can be done with DI `autoconfigure`:
+
+    ```yaml
+    services:
+        _instanceof:
+            GraphQL\Type\Definition\Type:
+                tags: ['overblog_graphql.type']
+
+        App\Type\:
+            resource: '../src/Type'
+    ```
+
+    **Note:**
+    * Types are lazy loaded so when using Symfony DI `autoconfigure` or this bundle auto mapping, the
+    only access to type is FQCN (or aliases if implements the aliases interface).
+    * When using FQCN in yaml definition, backslash must be correctly quotes,
 
 3. **The service way**
 
