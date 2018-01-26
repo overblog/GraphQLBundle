@@ -21,12 +21,11 @@ trait DIContainerMockTrait
             ->getMock();
 
         $getMethod = $container->expects($this->any())->method('get');
+        $hasMethod = $container->expects($this->any())->method('has');
 
         foreach ($services as $id => $service) {
-            $getMethod
-                ->with($id)
-                ->willReturn($service)
-            ;
+            $getMethod->with($id)->willReturn($service);
+            $hasMethod->with($id)->willReturn(true);
         }
 
         $getParameterMethod = $container->expects($this->any())->method('getParameter');

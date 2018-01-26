@@ -11,7 +11,7 @@ final class Resolver extends ExpressionFunction
         parent::__construct(
             $name,
             function ($alias, $args = '[]') {
-                return sprintf('$container->get(\'overblog_graphql.resolver_resolver\')->resolve([%s, %s])', $alias, $args);
+                return sprintf('$globalVariable->get(\'resolverResolver\')->resolve([%s, %s])', $alias, $args);
             }
         );
     }

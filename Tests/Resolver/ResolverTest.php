@@ -22,6 +22,18 @@ class ResolverTest extends TestCase
         $this->assertEquals($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
 
+    public function testSetObjectOrArrayValue()
+    {
+        $object = new \stdClass();
+        $object->foo = null;
+        Resolver::setObjectOrArrayValue($object, 'foo', 'bar');
+        $this->assertSame($object->foo, 'bar');
+
+        $data = ['foo' => null];
+        Resolver::setObjectOrArrayValue($data, 'foo', 'bar');
+        $this->assertSame($data['foo'], 'bar');
+    }
+
     public function resolverProvider()
     {
         $object = new Toto();

@@ -2,7 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-abstract class AbstractResolver implements ResolverInterface
+abstract class AbstractResolver implements FluentResolverInterface
 {
     /** @var array */
     private $solutions = [];

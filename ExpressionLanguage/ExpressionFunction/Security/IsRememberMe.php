@@ -11,7 +11,7 @@ final class IsRememberMe extends ExpressionFunction
         parent::__construct(
             $name,
             function () {
-                return '$container->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
+                return '$globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
             }
         );
     }

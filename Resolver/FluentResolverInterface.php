@@ -2,7 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-interface ResolverInterface
+interface FluentResolverInterface
 {
     public function resolve($input);
 

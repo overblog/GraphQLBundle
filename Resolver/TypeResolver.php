@@ -37,9 +37,6 @@ class TypeResolver extends AbstractResolver
         return $item->get();
     }
 
-    /**
-     * @param string $alias
-     */
     private function string2Type($alias)
     {
         if (false !== ($type = $this->wrapTypeIfNeeded($alias))) {

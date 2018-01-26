@@ -14,7 +14,7 @@ final class ExpressionFunctionPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $definition = $container->findDefinition('overblog_graphql.expression_language');
-        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.expression_function');
+        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.expression_function', true);
 
         foreach ($taggedServices as $id => $tags) {
             $definition->addMethodCall('addFunction', [new Reference($id)]);

@@ -5,3 +5,7 @@ build:
     tests:
         override:
             - true
+
+filter:
+    excluded_paths:
+        - "Tests/"

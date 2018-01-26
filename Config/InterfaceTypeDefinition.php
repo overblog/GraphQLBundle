@@ -14,7 +14,7 @@ class InterfaceTypeDefinition extends TypeWithOutputFieldsDefinition
         $node
             ->children()
                 ->append($this->nameSection())
-                ->append($this->outputFieldsSelection('fields'))
+                ->append($this->outputFieldsSelection())
                 ->append($this->resolveTypeSection())
                 ->append($this->descriptionSection())
             ->end();

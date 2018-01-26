@@ -2,6 +2,8 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use Overblog\GraphQLBundle\Definition\ConfigProcessor;
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,7 +27,7 @@ class ConfigTypesPass implements CompilerPassInterface
     {
         $definition = $container->setDefinition($class, new Definition($class));
         $definition->setPublic(false);
-        $definition->setArguments([new Reference('service_container')]);
+        $definition->setArguments([new Reference(ConfigProcessor::class), new Reference(GlobalVariables::class)]);
         foreach ($aliases as $alias) {
             $definition->addTag(TypeTaggedServiceMappingPass::TAG_NAME, ['alias' => $alias, 'generated' => true]);
         }

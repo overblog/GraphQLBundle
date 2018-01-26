@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
 use PHPUnit\Framework\TestCase as BaseTestCase;
@@ -18,8 +19,6 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         $this->expressionLanguage = new ExpressionLanguage();
-        $container = $this->getDIContainerMock();
-        $this->expressionLanguage->setContainer($container);
         foreach ($this->getFunctions() as $function) {
             $this->expressionLanguage->addFunction($function);
         }
@@ -30,12 +29,16 @@ abstract class TestCase extends BaseTestCase
      */
     abstract protected function getFunctions();
 
-    protected function assertExpressionCompile($expression, $with, array $expressionValues = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
+    protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
     {
-        $expressionValues['container'] = $this->getDIContainerMock(['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]);
-        extract($expressionValues);
-
-        $code = $this->expressionLanguage->compile($expression, array_keys($expressionValues));
+        $code = $this->expressionLanguage->compile($expression, array_keys($vars));
+        $globalVariable = new GlobalVariables([
+            'container' => $this->getDIContainerMock(
+                ['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]
+            ),
+        ]);
+        $globalVariable->get('container');
+        extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
     }

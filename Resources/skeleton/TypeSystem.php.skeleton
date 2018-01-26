@@ -5,36 +5,12 @@
 <classType>class <className> extends <parentClassName><implements>
 {<traits>
 
-<spaces>public function __construct(ContainerInterface $container)
+<spaces>public function __construct(ConfigProcessor $configProcessor, GlobalVariables $globalVariables = null)
 <spaces>{
-<spaces><spaces>$request = null;
-<spaces><spaces>$token = null;
-<spaces><spaces>$user = null;
-<spaces><spaces>if ($container->has('request_stack')) {
-<spaces><spaces><spaces>$request = $container->get('request_stack')->getCurrentRequest();
-<spaces><spaces>}
-<spaces><spaces>if ($container->has('security.token_storage')) {
-<spaces><spaces><spaces>$token = $container->get('security.token_storage')->getToken();
-<spaces><spaces><spaces>if ($token instanceof TokenInterface) {
-<spaces><spaces><spaces><spaces>$user = $token->getUser();
-<spaces><spaces><spaces>}
-<spaces><spaces>}
-
-<spaces><spaces>parent::__construct(<config>);
-<spaces>}
-
-<spaces>private static function applyPublicFilters($fields)
-<spaces>{
-<spaces><spaces>$filtered = [];
-<spaces><spaces>foreach ($fields as $fieldName => $field) {
-<spaces><spaces><spaces>$isPublic = isset($field['public']) ? $field['public'] : true;
-<spaces><spaces><spaces>if (is_callable($isPublic)) {
-<spaces><spaces><spaces><spaces>$isPublic = call_user_func($isPublic, $fieldName);
-<spaces><spaces><spaces>}
-<spaces><spaces><spaces>if ($isPublic) {
-<spaces><spaces><spaces><spaces>$filtered[$fieldName] = $field;
-<spaces><spaces><spaces>}
-<spaces><spaces>}
-<spaces><spaces>return $filtered;
+<spaces><spaces>$configLoader = function(GlobalVariables $globalVariable) {
+<spaces><spaces><spaces>return <config>;
+<spaces><spaces>};
+<spaces><spaces>$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load();
+<spaces><spaces>parent::__construct($config);
 <spaces>}
 }

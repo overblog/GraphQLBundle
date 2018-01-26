@@ -3,11 +3,13 @@ Definitions
 
 * [Type System](type-system/index.md)
 * [Type Inheritance](type-inheritance.md)
+* [GraphQL schema language](graphql-schema-language.md)
 * [Schema](schema.md)
 
 Go further 
 ----------
 
+* [Solving N+1 problem](solving-n-plus-1-problem.md)
 * [Resolver](resolver.md)
 * [Mutation](mutation.md)
 * [Relay](relay/index.md)

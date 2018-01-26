@@ -15,6 +15,7 @@ It also supports batching using libs like [ReactRelayNetworkLayer](https://githu
 Documentation
 -------------
 
+- [Quick start](Resources/doc/definitions/quick-start.md)
 - [Installation](Resources/doc/index.md)
 - [Definitions](Resources/doc/definitions/index.md)
   - [Type System](Resources/doc/definitions/type-system/index.md)
@@ -27,6 +28,7 @@ Documentation
     - [Lists](Resources/doc/definitions/type-system/lists.md)
     - [Non-Null](Resources/doc/definitions/type-system/non-null.md)
   - [Type Inheritance](Resources/doc/definitions/type-inheritance.md)
+  - [GraphQL schema language](Resources/doc/definitions/graphql-schema-language.md)
   - [Schema](Resources/doc/definitions/schema.md)
   - [Resolver](Resources/doc/definitions/resolver.md)
   - [Solving N+1 problem](Resources/doc/definitions/solving-n-plus-1-problem.md)

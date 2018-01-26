@@ -2,21 +2,23 @@
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
-    use ContainerAwareTrait;
+    private $globalNames = [];
+
+    /**
+     * @param $index
+     * @param $name
+     */
+    public function addGlobalName($index, $name)
+    {
+        $this->globalNames[$index] = $name;
+    }
 
     public function compile($expression, $names = [])
     {
-        $names[] = 'container';
-        $names[] = 'request';
-        $names[] = 'security.token_storage';
-        $names[] = 'token';
-        $names[] = 'user';
-
-        return parent::compile($expression, $names);
+        return parent::compile($expression, array_merge($names, $this->globalNames));
     }
 }

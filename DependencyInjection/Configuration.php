@@ -94,7 +94,6 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('errors')
                             ->treatNullLike([])
                             ->prototype('scalar')->end()
-                        ->end()
                     ->end()
                 ->end()
             ->end();
@@ -197,6 +196,10 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('query')->defaultNull()->end()
                     ->scalarNode('mutation')->defaultNull()->end()
                     ->scalarNode('subscription')->defaultNull()->end()
+                    ->arrayNode('resolver_maps')
+                        ->defaultValue([])
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end()
         ->end();
@@ -229,7 +232,6 @@ class Configuration implements ConfigurationInterface
     private function definitionsMappingsSection()
     {
         $builder = new TreeBuilder();
-        /** @var ArrayNodeDefinition $node */
         $node = $builder->root('mappings');
         $node
             ->children()
@@ -248,23 +250,30 @@ class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->beforeNormalization()
                             ->ifTrue(function ($v) {
-                                return isset($v['type']) && 'yml' === $v['type'];
+                                return isset($v['type']) && is_string($v['type']);
                             })
                             ->then(function ($v) {
-                                $v['type'] = 'yaml';
+                                if ('yml' === $v['type']) {
+                                    $v['types'] = ['yaml'];
+                                } else {
+                                    $v['types'] = [$v['type']];
+                                }
+                                unset($v['type']);
 
                                 return $v;
                             })
                         ->end()
                         ->children()
-                            ->enumNode('type')->values(['yaml', 'xml'])->defaultNull()->end()
+                            ->arrayNode('types')
+                                ->prototype('enum')->values(array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
+                            ->end()
                             ->scalarNode('dir')->defaultNull()->end()
                             ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
                         ->end()
                     ->end()
                 ->end()
             ->end()
-        ->end();
+        ;
 
         return $node;
     }

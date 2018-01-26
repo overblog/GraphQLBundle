@@ -33,13 +33,20 @@ services:
         public: false
         arguments:
             - "@overblog_graphql.type_resolver"
+            - '@Overblog\GraphQLBundle\Definition\Type\SchemaDecorator'
             - false
+
+    Overblog\GraphQLBundle\Definition\Type\SchemaDecorator:
+        class: Overblog\GraphQLBundle\Definition\Type\SchemaDecorator
+        public: false
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         public: true
         arguments:
             -
+        tags:
+            - { name: overblog_graphql.global_variable, alias: typeResolver }
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         alias: overblog_graphql.type_resolver
@@ -47,6 +54,8 @@ services:
     overblog_graphql.resolver_resolver:
         class: Overblog\GraphQLBundle\Resolver\ResolverResolver
         public: true
+        tags:
+            - { name: overblog_graphql.global_variable, alias: resolverResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\ResolverResolver:
         alias: overblog_graphql.resolver_resolver
@@ -54,6 +63,8 @@ services:
     overblog_graphql.mutation_resolver:
         class: Overblog\GraphQLBundle\Resolver\MutationResolver
         public: true
+        tags:
+            - { name: overblog_graphql.global_variable, alias: mutationResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\MutationResolver:
         alias: overblog_graphql.mutation_resolver
@@ -72,8 +83,6 @@ services:
         public: false
         arguments:
             - '@overblog_graphql.cache_expression_language_parser'
-        calls:
-            - ["setContainer", ["@service_container"]]
 
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
@@ -82,13 +91,14 @@ services:
             - "%overblog_graphql.class_namespace%"
             - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
-            - "%overblog_graphql.default_resolver%"
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
         calls:
-            - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
-            - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\LazyConfig']]
+            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
+
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     Overblog\GraphQLBundle\EventListener\RequestFilesListener:
@@ -146,3 +156,13 @@ services:
             - "@overblog_graphql.cache_compiler"
         tags:
             - { name: console.command }
+
+    Overblog\GraphQLBundle\Definition\ConfigProcessor:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor
+        public: false
+
+    Overblog\GraphQLBundle\Definition\GlobalVariables:
+        class: Overblog\GraphQLBundle\Definition\GlobalVariables
+        public: false
+        arguments:
+            - []

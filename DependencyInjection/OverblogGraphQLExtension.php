@@ -29,11 +29,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-        $loader->load('graphql_types.yml');
-        $loader->load('expression_language_functions.yml');
-
+        $this->loadConfigFiles($container);
         $config = $this->treatConfigs($configs, $container);
 
         $this->setBatchingMethod($config, $container);
@@ -74,6 +70,15 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             $container->getParameter('kernel.debug'),
             $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
         );
+    }
+
+    private function loadConfigFiles(ContainerBuilder $container)
+    {
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
+        $loader->load('graphql_types.yml');
+        $loader->load('expression_language_functions.yml');
+        $loader->load('definition_config_processors.yml');
     }
 
     private function setCompilerCacheWarmer(array $config, ContainerBuilder $container)
@@ -211,7 +216,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setSchemaBuilderArguments(array $config, ContainerBuilder $container)
     {
         $container->getDefinition($this->getAlias().'.schema_builder')
-            ->replaceArgument(1, $config['definitions']['config_validation']);
+            ->replaceArgument(2, $config['definitions']['config_validation']);
     }
 
     private function setSchemaArguments(array $config, ContainerBuilder $container)
@@ -223,7 +228,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
                 $definition = new Definition(Schema::class);
                 $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
-                $definition->setArguments([$schemaConfig['query'], $schemaConfig['mutation'], $schemaConfig['subscription']]);
+                $definition->setArguments([
+                    $schemaConfig['query'],
+                    $schemaConfig['mutation'],
+                    $schemaConfig['subscription'],
+                    array_map(function ($id) {
+                        return new Reference($id);
+                    }, $schemaConfig['resolver_maps']),
+                ]);
                 $definition->setPublic(false);
                 $container->setDefinition($schemaID, $definition);
 

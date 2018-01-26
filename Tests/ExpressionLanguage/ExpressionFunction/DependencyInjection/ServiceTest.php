@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\DependencyInjection;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
@@ -19,9 +20,9 @@ class ServiceTest extends TestCase
     public function testService($name)
     {
         $object = new \stdClass();
-        $container = $this->getDIContainerMock(['toto' => $object]);
-        $this->expressionLanguage->setContainer($container);
-        $this->assertEquals($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
+        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $globalVariable->get('container');
+        $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
     public function getNames()
