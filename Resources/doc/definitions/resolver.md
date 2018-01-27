@@ -123,10 +123,6 @@ Resolvers can be define 2 different ways
 
     ```yaml
     services:
-        _instanceof:
-            GraphQL\Type\Definition\Type:
-                tags: ['overblog_graphql.type']
-
         App\Mutation\:
             resource: '../src/Mutation'
             tags: ['overblog_graphql.mutation']
@@ -134,9 +130,6 @@ Resolvers can be define 2 different ways
         App\Resolver\:
             resource: '../src/Resolver'
             tags: ['overblog_graphql.resolver']
-
-        App\Type\:
-            resource: '../src/Type'
     ```
 
     **Note:**

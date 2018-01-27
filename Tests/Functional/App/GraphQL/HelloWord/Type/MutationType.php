@@ -4,9 +4,10 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\HelloWord\Type;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 
-final class MutationType extends ObjectType
+final class MutationType extends ObjectType implements AliasedInterface
 {
     public function __construct(MutationResolver $mutator)
     {
@@ -28,5 +29,13 @@ final class MutationType extends ObjectType
                 ],
             ],
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getAliases()
+    {
+        return ['Calc'];
     }
 }

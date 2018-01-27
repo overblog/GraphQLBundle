@@ -77,7 +77,6 @@ abstract class AbstractResolver implements FluentResolverInterface
             $loader = $this->solutions[$name];
             $this->solutions[$name] = $loader();
             $this->fullyLoadedSolutions[$name] = true;
-            $this->postLoadSolution($this->solutions[$name]);
 
             return $this->solutions[$name];
         }
@@ -93,13 +92,6 @@ abstract class AbstractResolver implements FluentResolverInterface
         }
 
         return $this->solutions;
-    }
-
-    /**
-     * @param mixed $solution
-     */
-    protected function postLoadSolution($solution)
-    {
     }
 
     /**

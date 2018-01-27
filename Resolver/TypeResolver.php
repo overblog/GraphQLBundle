@@ -113,16 +113,6 @@ class TypeResolver extends AbstractResolver
         );
     }
 
-    protected function postLoadSolution($solution)
-    {
-        // also add solution with real type name if needed for typeLoader when using autoMapping
-        if ($solution && !$this->hasSolution($solution->name)) {
-            $this->addSolution($solution->name, function () use ($solution) {
-                return $solution;
-            }, [], ['id' => get_class($solution), 'alias' => $solution->name]);
-        }
-    }
-
     protected function supportedSolutionClass()
     {
         return Type::class;
