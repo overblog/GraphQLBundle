@@ -17,5 +17,6 @@ Go further
 * [Expression language](expression-language.md)
 * [Debug](debug/index.md)
 * [GraphiQL](graphiql/index.md)
+* [Upload files](upload-files.md)
 
 Next step [Data fetching](../data-fetching/index.md).
