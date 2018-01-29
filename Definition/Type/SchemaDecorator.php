@@ -9,7 +9,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Schema;
-use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Resolver\Resolver;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 
 class SchemaDecorator
@@ -49,7 +49,7 @@ class SchemaDecorator
             if (ResolverMapInterface::IS_TYPEOF === $fieldName) {
                 $this->configTypeMapping($type, $resolverMap, ResolverMapInterface::IS_TYPEOF);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
-                $resolveFieldFn = self::wrapResolver($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
+                $resolveFieldFn = Resolver::wrapArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
                 $type->config[substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
@@ -139,7 +139,7 @@ class SchemaDecorator
                 $fieldName = isset($field['name']) ? $field['name'] : $key;
 
                 if ($resolverMap->isResolvable($type->name, $fieldName)) {
-                    $field['resolve'] = self::wrapResolver($resolverMap->resolve($type->name, $fieldName));
+                    $field['resolve'] = Resolver::wrapArgs($resolverMap->resolve($type->name, $fieldName));
                 }
 
                 $fieldNames[] = $fieldName;
@@ -163,17 +163,5 @@ class SchemaDecorator
         if ($resolverMap->isResolvable($type->name, $fieldName)) {
             $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
         }
-    }
-
-    private static function wrapResolver(callable $resolver)
-    {
-        return static function () use ($resolver) {
-            $args = func_get_args();
-            if (count($args) > 1) {
-                $args[1] = new Argument($args[1]);
-            }
-
-            return call_user_func_array($resolver, $args);
-        };
     }
 }

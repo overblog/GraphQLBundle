@@ -12,4 +12,10 @@ services:
             - "%overblog_graphql.default_resolver%"
         public: false
         tags:
+            - { name: overblog_graphql.definition_config_processor, priority: 512 }
+
+    Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor
+        public: false
+        tags:
             - { name: overblog_graphql.definition_config_processor }

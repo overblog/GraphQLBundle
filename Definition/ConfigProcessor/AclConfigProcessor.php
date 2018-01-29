@@ -3,7 +3,6 @@
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Resolver\AccessResolver;
@@ -37,7 +36,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                         $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
                         $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
 
-                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, new Argument($args), $context, $info], $isMutation);
+                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $isMutation);
                     };
                 }
             }

@@ -1,0 +1,16 @@
+RootQuery:
+    type: object
+    config:
+        resolveField: '@="Arguments: " ~ args["unknown"] ~ args["name"]'
+        fields:
+            fieldWithResolverAndArgument:
+                type: String!
+                args:
+                    name: {type: String!}
+                resolve: '@="Arguments: " ~ args["unknown"] ~ args["name"]'
+            fieldWithDefaultResolverAndArgument:
+                type: String!
+                args:
+                    name: {type: String!}
+            field:
+                type: String!
