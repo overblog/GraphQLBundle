@@ -72,22 +72,25 @@ this is equivalent to:
 
 ```yaml
 foo:
-    categories:
-        type: "[String!]!"
-        args:
-            limit:
-                type: "Int!"
-                defaultValue: 20
-            offset:
-                type: "Int!"
-                defaultValue: 0
-    categories2:
-        type: "[String!]!"
-        args:
-            limit:
-                type: "Int!"
-                defaultValue: 50
-            offset:
-                type: "Int!"
-                defaultValue: 0
+    type: "object"
+    config:
+        fields:
+            categories:
+                type: "[String!]!"
+                args:
+                    limit:
+                        type: "Int!"
+                        defaultValue: 20
+                    offset:
+                        type: "Int!"
+                        defaultValue: 0
+            categories2:
+                type: "[String!]!"
+                args:
+                    limit:
+                        type: "Int!"
+                        defaultValue: 50
+                    offset:
+                        type: "Int!"
+                        defaultValue: 0
 ```
