@@ -147,7 +147,7 @@ UPGRADE FROM 0.10 to 0.11
 
    class DateTimeType extends ScalarType
    {
-       public $name = 'DateTme';
+       public $name = 'DateTime';
        // ...
    }
    ```
