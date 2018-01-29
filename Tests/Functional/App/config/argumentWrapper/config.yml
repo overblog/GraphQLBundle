@@ -1,0 +1,15 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    errors_handler:
+            debug: true
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\ArgumentWrapper\\__DEFINITIONS__"
+        schema:
+            query: RootQuery
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/argumentWrapper/mapping"
