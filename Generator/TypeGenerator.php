@@ -5,6 +5,7 @@ namespace Overblog\GraphQLBundle\Generator;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -139,6 +140,25 @@ CODE;
         $code = sprintf($code, $resolveComplexity, $argumentClass);
 
         return $code;
+    }
+
+    /**
+     * @param array $value
+     *
+     * @return string
+     */
+    protected function generateScalarType(array $value)
+    {
+        return $this->callableCallbackFromArrayValue($value, 'scalarType');
+    }
+
+    protected function generateParentClassName(array $config)
+    {
+        if ('custom-scalar' === $config['type']) {
+            return $this->shortenClassName(CustomScalarType::class);
+        } else {
+            return parent::generateParentClassName($config);
+        }
     }
 
     public function compile($mode)

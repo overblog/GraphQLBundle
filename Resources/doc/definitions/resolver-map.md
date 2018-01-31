@@ -39,9 +39,12 @@ and override `map` method and return an `array` or any `ArrayAccess` and `Traver
     - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_FIELD` equivalent to `resolveField`.
     - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::IS_TYPE_OF` equivalent to `isTypeOf`.
   * [Custom scalar](type-system/scalars.md#custom-scalar) type
-    - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::SERIALIZE` equivalent to `serialize`
-    - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::PARSE_VALUE` equivalent to `parseValue`
-    - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::PARSE_LITERAL` equivalent to `parseLiteral`
+    - Direct usage:
+      - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::SERIALIZE` equivalent to `serialize`
+      - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::PARSE_VALUE` equivalent to `parseValue`
+      - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::PARSE_LITERAL` equivalent to `parseLiteral`
+    - Reusing an existing scalar type
+      - `Overblog\GraphQLBundle\Resolver\ResolverMapInterface::SCALAR_TYPE` equivalent to `scalarType`
 
 Usage
 -----
@@ -109,6 +112,8 @@ class MyResolverMap extends ResolverMap
                     return str_replace(' Formatted Baz', '', $valueNode->value);
                 },
             ],
+            // or reuse an existing scalar (note: description and name will be override by decorator)
+            //'Baz' => [self::SCALAR_TYPE => function () { return new FooScalarType(); }],
         ];
     }
 }

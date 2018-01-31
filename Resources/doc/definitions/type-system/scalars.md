@@ -63,3 +63,12 @@ class DateTimeType
     }
 }
 ```
+
+If you prefer reusing a scalar type
+
+```yaml
+MyEmail:
+    type: custom-scalar
+    config:
+        scalarType: '@=newObject("App\\Type\\EmailType")'
+```

@@ -7,6 +7,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Parser implements ParserInterface
 {
+    use UploadParserTrait;
+
     /**
      * @param Request $request
      *
@@ -55,7 +57,7 @@ class Parser implements ParserInterface
             // URL-encoded query-string
             case static::CONTENT_TYPE_FORM:
             case static::CONTENT_TYPE_FORM_DATA:
-                $parsedBody = $request->request->all();
+                $parsedBody = $this->treatUploadFiles($request->request->all(), $request->files->all());
                 break;
 
             default:

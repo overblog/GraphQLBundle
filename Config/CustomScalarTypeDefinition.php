@@ -15,9 +15,10 @@ class CustomScalarTypeDefinition extends TypeDefinition
             ->children()
                 ->append($this->nameSection())
                 ->append($this->descriptionSection())
-                ->variableNode('serialize')->isRequired()->end()
-                ->variableNode('parseValue')->isRequired()->end()
-                ->variableNode('parseLiteral')->isRequired()->end()
+                ->variableNode('scalarType')->end()
+                ->variableNode('serialize')->end()
+                ->variableNode('parseValue')->end()
+                ->variableNode('parseLiteral')->end()
             ->end();
 
         return $node;

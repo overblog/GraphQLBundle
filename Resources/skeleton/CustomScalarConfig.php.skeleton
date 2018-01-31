@@ -1,0 +1,8 @@
+[
+<spaces>'name' => <name>,
+<spaces>'description' => <description>,
+<spaces>'scalarType' => <scalarType>,
+<spaces>'serialize' => <serialize>,
+<spaces>'parseValue' => <parseValue>,
+<spaces>'parseLiteral' => <parseLiteral>,
+]

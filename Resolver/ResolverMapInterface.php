@@ -10,6 +10,7 @@ interface ResolverMapInterface
     const RESOLVE_FIELD = '__resolveField';
     const IS_TYPEOF = '__isTypeOf';
     // custom scalar
+    const SCALAR_TYPE = '__scalarType';
     const SERIALIZE = '__serialize';
     const PARSE_VALUE = '__parseValue';
     const PARSE_LITERAL = '__parseLiteral';

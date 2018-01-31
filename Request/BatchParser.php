@@ -7,6 +7,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BatchParser implements ParserInterface
 {
+    use UploadParserTrait;
+
     const PARAM_ID = 'id';
 
     private static $queriesDefaultValue = [
@@ -49,17 +51,29 @@ class BatchParser implements ParserInterface
      */
     private function getParsedBody(Request $request)
     {
-        $type = explode(';', $request->headers->get('content-type'))[0];
+        $contentType = explode(';', $request->headers->get('content-type'))[0];
 
         // JSON object
-        if ($type !== static::CONTENT_TYPE_JSON) {
-            throw new BadRequestHttpException(sprintf('Only request with content type "%s" is accepted.', static::CONTENT_TYPE_JSON));
-        }
+        switch ($contentType) {
+            case static::CONTENT_TYPE_JSON:
+                $parsedBody = json_decode($request->getContent(), true);
 
-        $parsedBody = json_decode($request->getContent(), true);
+                if (JSON_ERROR_NONE !== json_last_error()) {
+                    throw new BadRequestHttpException('POST body sent invalid JSON');
+                }
+                break;
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new BadRequestHttpException('POST body sent invalid JSON');
+            case static::CONTENT_TYPE_FORM_DATA:
+                $parsedBody = $this->treatUploadFiles($request->request->all(), $request->files->all());
+                break;
+
+            default:
+                throw new BadRequestHttpException(sprintf(
+                    'Batching parser only accepts "%s" or "%s" content-type but got %s.',
+                    static::CONTENT_TYPE_JSON,
+                    static::CONTENT_TYPE_FORM_DATA,
+                    json_encode($contentType)
+                ));
         }
 
         return $parsedBody;

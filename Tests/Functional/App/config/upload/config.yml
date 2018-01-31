@@ -1,0 +1,16 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    errors_handler:
+        rethrow_internal_exceptions: true
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\Upload\\__DEFINITIONS__"
+        schema:
+            query: Query
+            mutation: Mutation
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/upload/mapping"

@@ -2,12 +2,10 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
-use GraphQL\Error\Error;
-use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Utils;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
+use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
 
 class SchemaLanguageQueryResolverMap extends ResolverMap
 {
@@ -58,22 +56,8 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
             ],
             // custom scalar
             'Year' => [
-                self::SERIALIZE => function ($value) {
-                    return sprintf('%s AC', $value);
-                },
-                self::PARSE_VALUE => function ($value) {
-                    if (!is_string($value)) {
-                        throw new Error(sprintf('Cannot represent following value as a valid year: %s.', Utils::printSafeJson($value)));
-                    }
-
-                    return (int) str_replace(' AC', '', $value);
-                },
-                self::PARSE_LITERAL => function ($valueNode) {
-                    if (!$valueNode instanceof StringValueNode) {
-                        throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, [$valueNode]);
-                    }
-
-                    return (int) str_replace(' AC', '', $valueNode->value);
+                self::SCALAR_TYPE => function () {
+                    return new YearScalarType();
                 },
             ],
         ];

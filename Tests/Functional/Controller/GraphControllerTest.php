@@ -230,7 +230,7 @@ EOF;
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Only request with content type "application/json" is accepted.
+     * @expectedExceptionMessage Batching parser only accepts "application/json" or "multipart/form-data" content-type but got "".
      */
     public function testBatchEndpointWrongContentType()
     {
