@@ -55,10 +55,22 @@ trait UploadParserTrait
 
     protected function treatUploadFiles(array $parsedBody, array $files)
     {
-        if ($this->isUploadPayload($parsedBody)) {
-            return $this->mappingUploadFiles($parsedBody['operations'], $parsedBody['map'], $files);
+        $payload = $this->normalized($parsedBody);
+        if ($this->isUploadPayload($payload)) {
+            return $this->mappingUploadFiles($payload['operations'], $payload['map'], $files);
         } else {
             return $parsedBody;
         }
+    }
+
+    protected function normalized(array $parsedBody)
+    {
+        foreach (['operations', 'map'] as $key) {
+            if (isset($parsedBody[$key]) && is_string($parsedBody[$key])) {
+                $parsedBody[$key] = json_decode($parsedBody[$key], true);
+            }
+        }
+
+        return $parsedBody;
     }
 }

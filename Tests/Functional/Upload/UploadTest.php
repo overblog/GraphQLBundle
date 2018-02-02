@@ -71,7 +71,9 @@ class UploadTest extends TestCase
                 'query' => 'mutation($file: String!) { oldUpload(file: $file) }',
                 'variables' => ['file' => 'a.txt'],
             ],
-            ['0' => 'a.txt']
+            ['0' => 'a.txt'],
+            '/',
+            false
         );
     }
 
@@ -107,8 +109,13 @@ class UploadTest extends TestCase
         );
     }
 
-    private function assertUpload(array $expected, array $parameters, array $files, $uri = '/')
+    private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true)
     {
+        if ($json) {
+            foreach ($parameters as &$parameter) {
+                $parameter = json_encode($parameter);
+            }
+        }
         $actual = $this->uploadRequest($parameters, $files, $uri);
         $this->assertSame($expected, $actual);
     }
