@@ -31,31 +31,30 @@ class UploadParserTraitTest extends TestCase
      *
      * @dataProvider payloadProvider
      */
-    public function testMappingUploadFiles(array $operations, array $map, array $files, array $expected, $message)
+    public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message)
     {
-        $actual = $this->mappingUploadFiles($operations, $map, $files);
-
+        $actual = $this->handleUploadedFiles(['operations' => json_encode($operations), 'map' => json_encode($map)], $files);
         $this->assertSame($expected, $actual, $message);
     }
 
-    public function testMappingUploadFilesFileNotFound()
+    public function testBindUploadedFilesFileNotFound()
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('File 0 is missing in the request.');
         $operations = ['query' => '', 'variables' => ['file' => null]];
         $map = ['0' => ['variables.file']];
         $files = [];
-        $this->mappingUploadFiles($operations, $map, $files);
+        $this->bindUploadedFiles($operations, $map, $files);
     }
 
-    public function testMappingUploadFilesOperationPathNotFound()
+    public function testBindUploadedFilesOperationPathNotFound()
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Map entry "variables.file" could not be localized in operations.');
         $operations = ['query' => '', 'variables' => []];
         $map = ['0' => ['variables.file']];
         $files = ['0' => new \stdClass()];
-        $this->mappingUploadFiles($operations, $map, $files);
+        $this->bindUploadedFiles($operations, $map, $files);
     }
 
     public function testIsUploadPayload()
@@ -66,6 +65,7 @@ class UploadParserTraitTest extends TestCase
         $this->assertFalse($this->isUploadPayload(['operations' => null, 'map' => []]));
         $this->assertFalse($this->isUploadPayload(['operations' => [], 'map' => null]));
         $this->assertFalse($this->isUploadPayload(['operations' => null, 'map' => null]));
+        $this->assertFalse($this->isUploadPayload(['map' => [], 'operations' => []]), '"operations" must be place before "map".');
         $this->assertTrue($this->isUploadPayload(['operations' => [], 'map' => []]));
     }
 

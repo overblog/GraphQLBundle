@@ -7,14 +7,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 trait UploadParserTrait
 {
-    /**
-     * @param array $operations
-     * @param array $map
-     * @param array $files
-     *
-     * @return array
-     */
-    protected function mappingUploadFiles(array $operations, array $map, array $files)
+    private function handleUploadedFiles(array $parameters, array $files)
+    {
+        $payload = $this->normalized($parameters);
+        if ($this->isUploadPayload($payload)) {
+            return $this->bindUploadedFiles($payload['operations'], $payload['map'], $files);
+        } else {
+            return $parameters;
+        }
+    }
+
+    private function bindUploadedFiles(array $operations, array $map, array $files)
     {
         $accessor = PropertyAccess::createPropertyAccessorBuilder()
             ->enableExceptionOnInvalidIndex()
@@ -38,7 +41,21 @@ trait UploadParserTrait
         return $operations;
     }
 
-    protected function locationToPropertyAccessPath($location)
+    private function isUploadPayload(array $payload)
+    {
+        if (isset($payload['operations']) && isset($payload['map']) && is_array($payload['operations']) && is_array($payload['map'])) {
+            $payloadKeys = array_keys($payload);
+            // the specs says that operations must be place before map
+            $operationsPosition = array_search('operations', $payloadKeys);
+            $mapPosition = array_search('map', $payloadKeys);
+
+            return $operationsPosition < $mapPosition;
+        } else {
+            return false;
+        }
+    }
+
+    private function locationToPropertyAccessPath($location)
     {
         return array_reduce(
             explode('.', $location),
@@ -48,22 +65,7 @@ trait UploadParserTrait
         );
     }
 
-    protected function isUploadPayload(array $payload)
-    {
-        return isset($payload['operations']) && isset($payload['map']) && is_array($payload['operations']) && is_array($payload['map']);
-    }
-
-    protected function treatUploadFiles(array $parsedBody, array $files)
-    {
-        $payload = $this->normalized($parsedBody);
-        if ($this->isUploadPayload($payload)) {
-            return $this->mappingUploadFiles($payload['operations'], $payload['map'], $files);
-        } else {
-            return $parsedBody;
-        }
-    }
-
-    protected function normalized(array $parsedBody)
+    private function normalized(array $parsedBody)
     {
         foreach (['operations', 'map'] as $key) {
             if (isset($parsedBody[$key]) && is_string($parsedBody[$key])) {

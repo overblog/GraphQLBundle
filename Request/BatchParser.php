@@ -51,7 +51,7 @@ class BatchParser implements ParserInterface
      */
     private function getParsedBody(Request $request)
     {
-        $contentType = explode(';', $request->headers->get('content-type'))[0];
+        $contentType = explode(';', $request->headers->get('content-type'), 2)[0];
 
         // JSON object
         switch ($contentType) {
@@ -64,7 +64,7 @@ class BatchParser implements ParserInterface
                 break;
 
             case static::CONTENT_TYPE_FORM_DATA:
-                $parsedBody = $this->treatUploadFiles($request->request->all(), $request->files->all());
+                $parsedBody = $this->handleUploadedFiles($request->request->all(), $request->files->all());
                 break;
 
             default:
