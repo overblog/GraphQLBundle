@@ -27,9 +27,9 @@ class GraphQLUploadType extends ScalarType
      */
     public function parseValue($value)
     {
-        if (!$value instanceof File) {
+        if (null !== $value && !$value instanceof File) {
             throw new InvariantViolation(sprintf(
-                'Upload should be instance of "%s" but %s given.',
+                'Upload should be null or instance of "%s" but %s given.',
                 File::class,
                 is_object($value) ? get_class($value) : gettype($value)
             ));

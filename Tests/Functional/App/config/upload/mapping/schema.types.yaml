@@ -15,9 +15,9 @@ Mutation:
         fields:
             singleUpload:
                 type: String!
-                resolve: '@=args["file"].getBasename()'
+                resolve: '@=null===args["file"] ? "Sorry, No file was uploaded." : args["file"].getBasename()'
                 args:
-                    file: Upload!
+                    file: Upload
             multipleUpload:
                 type: '[String!]'
                 resolve: '@=[args["files"][0].getBasename(), args["files"][1].getBasename()]'

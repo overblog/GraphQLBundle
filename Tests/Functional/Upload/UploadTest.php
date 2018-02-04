@@ -23,6 +23,21 @@ class UploadTest extends TestCase
         );
     }
 
+    public function testOptionalUpload()
+    {
+        $this->assertUpload(
+            ['data' => ['singleUpload' => 'Sorry, No file was uploaded.']],
+            [
+                'operations' => [
+                    'query' => 'mutation($file: Upload) { singleUpload(file: $file) }',
+                    'variables' => ['file' => null],
+                ],
+                'map' => [],
+            ],
+            []
+        );
+    }
+
     public function testMultipleUpload()
     {
         $this->assertUpload(
