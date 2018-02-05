@@ -43,10 +43,7 @@ class CustomScalarType extends BaseCustomScalarType
     private function call($type, $value)
     {
         if (isset($this->config['scalarType'])) {
-            $scalarType = $this->config['scalarType'];
-            $scalarType = is_callable($scalarType) ? $scalarType() : $scalarType;
-
-            return call_user_func([$scalarType, $type], $value);
+            return call_user_func([$this->loadScalarType(), $type], $value);
         } else {
             return parent::$type($value);
         }
@@ -55,10 +52,7 @@ class CustomScalarType extends BaseCustomScalarType
     public function assertValid()
     {
         if (isset($this->config['scalarType'])) {
-            $scalarType = $this->config['scalarType'];
-            if (is_callable($scalarType)) {
-                $scalarType = $scalarType();
-            }
+            $scalarType = $this->loadScalarType();
 
             Utils::invariant(
                 $scalarType instanceof ScalarType,
@@ -71,6 +65,17 @@ class CustomScalarType extends BaseCustomScalarType
             );
         } else {
             parent::assertValid();
+        }
+    }
+
+    private function loadScalarType()
+    {
+        if ($this->config['scalarType'] instanceof ScalarType) {
+            return $this->config['scalarType'];
+        } elseif (is_callable($this->config['scalarType'])) {
+            return $this->config['scalarType'] = $this->config['scalarType']();
+        } else {
+            return $this->config['scalarType'];
         }
     }
 }
