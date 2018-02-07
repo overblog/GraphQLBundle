@@ -32,16 +32,17 @@ class SchemaBuilder
      * @param null|string            $mutationAlias
      * @param null|string            $subscriptionAlias
      * @param ResolverMapInterface[] $resolverMaps
+     * @param string[]               $types
      *
      * @return Schema
      */
-    public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null, array $resolverMaps = [])
+    public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null, array $resolverMaps = [], array $types = [])
     {
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        $schema = new Schema($this->buildSchemaArguments($query, $mutation, $subscription));
+        $schema = new Schema($this->buildSchemaArguments($query, $mutation, $subscription, $types));
         reset($resolverMaps);
         $this->decorator->decorate($schema, 1 === count($resolverMaps) ? current($resolverMaps) : new ResolverMaps($resolverMaps));
 
@@ -52,7 +53,7 @@ class SchemaBuilder
         return $schema;
     }
 
-    private function buildSchemaArguments(Type $query = null, Type $mutation = null, Type $subscription = null)
+    private function buildSchemaArguments(Type $query = null, Type $mutation = null, Type $subscription = null, array $types = [])
     {
         return [
             'query' => $query,
@@ -61,8 +62,8 @@ class SchemaBuilder
             'typeLoader' => function ($name) {
                 return $this->typeResolver->resolve($name);
             },
-            'types' => function () {
-                return $this->typeResolver->getSolutions();
+            'types' => function () use ($types) {
+                return array_map([$this->typeResolver, 'getSolution'], $types);
             },
         ];
     }

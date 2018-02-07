@@ -235,6 +235,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                     array_map(function ($id) {
                         return new Reference($id);
                     }, $schemaConfig['resolver_maps']),
+                    $schemaConfig['types'],
                 ]);
                 $definition->setPublic(false);
                 $container->setDefinition($schemaID, $definition);

@@ -17,6 +17,7 @@ overblog_graphql:
         schema:
             query: Query
             mutation: ~
+            types: [User, Photo]
         mappings:
             auto_discover: true
             types:
