@@ -69,6 +69,10 @@ overblog_graphql:
         schema:
             query: Query
             mutation: ~
+            # the name of extra types that can not be detected
+            # by graphql-php during static schema analysis.
+            # These types names should be explicitly declare here
+            types: []
 ```
 
 ## Batching

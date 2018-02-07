@@ -200,6 +200,10 @@ class Configuration implements ConfigurationInterface
                         ->defaultValue([])
                         ->prototype('scalar')->end()
                     ->end()
+                    ->arrayNode('types')
+                        ->defaultValue([])
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end()
         ->end();

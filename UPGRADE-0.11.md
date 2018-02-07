@@ -8,6 +8,7 @@ UPGRADE FROM 0.10 to 0.11
 - [Promise adapter interface](#promise-adapter-interface)
 - [Expression language](#expression-language)
 - [Type autoMapping and Symfony DI autoconfigure](#type-automapping-and-symfony-di-autoconfigure)
+- [Explicitly declare non detected types](#explicitly-declare-non-detected-types)
 
 ### GraphiQL
 
@@ -166,7 +167,7 @@ UPGRADE FROM 0.10 to 0.11
 
    class DateTimeType extends ScalarType implements AliasedInterface
    {
-       public $name = 'DateTme';
+       public $name = 'DateTime';
 
        /**
         * {@inheritdoc}
@@ -177,4 +178,59 @@ UPGRADE FROM 0.10 to 0.11
        }
        // ...
    }
+   ```
+
+### Explicitly declare non detected types
+
+   **Before 0.11** all types was declare as non detected types, this was not the correct way of declaring types.
+   This could lead to some performances issues or/and wrong types public exposition (in introspection query).
+   [See webonyx/graphql-php documentations for more details](http://webonyx.github.io/graphql-php/type-system/schema/#configuration-options)
+
+   **Since 0.11** Non detect types should be explicitly declare
+
+   here a concrete example:
+   ```yaml
+   Query:
+      type: object
+      config:
+         fields:
+            foo: {type: FooInterface!}
+
+   FooInterface:
+      type: interface
+      config:
+         fields:
+            id: {type: ID!}
+         resolveType: '@=resolver("foo", [value])'
+
+   Bar:
+      type: object
+      config:
+         fields:
+            id: {type: ID!}
+            # ...
+         interfaces: [FooInterface]
+
+   Baz:
+      type: object
+      config:
+         fields:
+            id: {type: ID!}
+            # ...
+         interfaces: [FooInterface]
+   ```
+   In above example `Baz` an `Bar` can not be detected by graphql-php during static schema analysis,
+   an `GraphQL\Error\InvariantViolation` exception will be throw with the following message:
+   ```text
+   Could not find possible implementing types for FooInterface in schema.
+   Check that schema.types is defined and is an array of all possible types in the schema.
+   ```
+   here how this can be fix:
+
+   ```yaml
+   overblog_graphql:
+      definitions:
+         schema:
+            query: Query
+            types: [Bar, Baz]
    ```
