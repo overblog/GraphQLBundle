@@ -7,39 +7,51 @@ abstract class AbstractResolver implements FluentResolverInterface
     /** @var array */
     private $solutions = [];
 
+    private $aliases = [];
+
     /** @var array */
     private $solutionOptions = [];
 
     /** @var array */
     private $fullyLoadedSolutions = [];
 
-    public function addSolution($name, callable $solutionFunc, array $solutionFuncArgs = [], array $options = [])
+    public function addSolution($id, $solutionOrFactory, array $aliases = [], array $options = [])
     {
-        $this->fullyLoadedSolutions[$name] = false;
-        $this->solutions[$name] = function () use ($name, $solutionFunc, $solutionFuncArgs) {
-            $solution = call_user_func_array($solutionFunc, $solutionFuncArgs);
-            $this->checkSolution($name, $solution);
+        $this->fullyLoadedSolutions[$id] = false;
+        $this->addAliases($id, $aliases);
+
+        $this->solutions[$id] = function () use ($id, $solutionOrFactory) {
+            $solution = $solutionOrFactory;
+            if (self::isSolutionFactory($solutionOrFactory)) {
+                if (!isset($solutionOrFactory[1])) {
+                    $solutionOrFactory[1] = [];
+                }
+                $solution = call_user_func_array(...$solutionOrFactory);
+            }
+            $this->checkSolution($id, $solution);
 
             return $solution;
         };
-        $this->solutionOptions[$name] = $options;
+        $this->solutionOptions[$id] = $options;
 
         return $this;
     }
 
-    public function hasSolution($name)
+    public function hasSolution($id)
     {
-        return isset($this->solutions[$name]);
+        $id = $this->resolveAlias($id);
+
+        return isset($this->solutions[$id]);
     }
 
     /**
-     * @param $name
+     * @param $id
      *
      * @return mixed
      */
-    public function getSolution($name)
+    public function getSolution($id)
     {
-        return $this->loadSolution($name);
+        return $this->loadSolution($id);
     }
 
     /**
@@ -50,36 +62,61 @@ abstract class AbstractResolver implements FluentResolverInterface
         return $this->loadSolutions();
     }
 
-    /**
-     * @param $name
-     *
-     * @return mixed
-     */
-    public function getSolutionOptions($name)
+    public function getSolutionAliases($id)
     {
-        return isset($this->solutionOptions[$name]) ? $this->solutionOptions[$name] : [];
+        return array_keys($this->aliases, $id);
     }
 
     /**
-     * @param string $name
+     * @param $id
      *
      * @return mixed
      */
-    private function loadSolution($name)
+    public function getSolutionOptions($id)
     {
-        if (!$this->hasSolution($name)) {
+        $id = $this->resolveAlias($id);
+
+        return isset($this->solutionOptions[$id]) ? $this->solutionOptions[$id] : [];
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return mixed
+     */
+    private function loadSolution($id)
+    {
+        $id = $this->resolveAlias($id);
+        if (!$this->hasSolution($id)) {
             return null;
         }
 
-        if ($this->fullyLoadedSolutions[$name]) {
-            return $this->solutions[$name];
+        if ($this->fullyLoadedSolutions[$id]) {
+            return $this->solutions[$id];
         } else {
-            $loader = $this->solutions[$name];
-            $this->solutions[$name] = $loader();
-            $this->fullyLoadedSolutions[$name] = true;
+            $loader = $this->solutions[$id];
+            $this->solutions[$id] = $loader();
+            $this->fullyLoadedSolutions[$id] = true;
 
-            return $this->solutions[$name];
+            return $this->solutions[$id];
         }
+    }
+
+    private function addAliases($id, $aliases)
+    {
+        foreach ($aliases as $alias) {
+            $this->aliases[$alias] = $id;
+        }
+    }
+
+    private static function isSolutionFactory($solutionOrFactory)
+    {
+        return is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && is_callable($solutionOrFactory[0]);
+    }
+
+    private function resolveAlias($alias)
+    {
+        return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
     }
 
     /**
@@ -106,11 +143,11 @@ abstract class AbstractResolver implements FluentResolverInterface
         return  null === $supportedClass || $solution instanceof $supportedClass;
     }
 
-    protected function checkSolution($name, $solution)
+    protected function checkSolution($id, $solution)
     {
         if (!$this->supportsSolution($solution)) {
             throw new UnsupportedResolverException(
-                sprintf('Resolver "%s" must be "%s" "%s" given.', $name, $this->supportedSolutionClass(), get_class($solution))
+                sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), get_class($solution))
             );
         }
     }
@@ -122,6 +159,6 @@ abstract class AbstractResolver implements FluentResolverInterface
      */
     protected function supportedSolutionClass()
     {
-        return;
+        return null;
     }
 }

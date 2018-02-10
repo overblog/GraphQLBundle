@@ -74,38 +74,34 @@ class DebugCommand extends Command
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};
-
-            $solutions = $this->retrieveSolutions($resolver);
-            $this->renderTable($tableHeaders, $solutions, $io);
+            $this->renderTable($resolver, $tableHeaders, $io);
         }
     }
 
-    private function renderTable(array $tableHeaders, array $solutions, SymfonyStyle $io)
+    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io)
     {
         $tableRows = [];
-        foreach ($solutions as $id => &$options) {
-            ksort($options['aliases']);
-            $tableRows[] = [$id, implode("\n", $options['aliases'])];
+        $solutionIDs = array_keys($resolver->getSolutions());
+        sort($solutionIDs);
+        foreach ($solutionIDs as $solutionID) {
+            $aliases = $resolver->getSolutionAliases($solutionID);
+            $aliases[] = $solutionID;
+            $options = $resolver->getSolutionOptions($solutionID);
+            $tableRows[$options['id']] = [$options['id'], self::serializeAliases($aliases, $options)];
         }
+        ksort($tableRows);
         $io->table($tableHeaders, $tableRows);
         $io->write("\n\n");
     }
 
-    private function retrieveSolutions(FluentResolverInterface $resolver)
+    private static function serializeAliases(array $aliases, array $options)
     {
-        $data = [];
-        foreach ($resolver->getSolutions() as $alias => $solution) {
-            $options = $resolver->getSolutionOptions($alias);
+        ksort($aliases);
+        $aliases = array_map(function ($alias) use ($options) {
+            return $alias.(isset($options['method']) ? ' (method: '.$options['method'].')' : '');
+        }, $aliases);
 
-            $id = $options['id'];
-            if (!isset($data[$id]['aliases'])) {
-                $data[$id]['aliases'] = [];
-            }
-            $data[$id]['aliases'][] = $options['alias'].(isset($options['method']) ? ' (method: '.$options['method'].')' : '');
-        }
-        ksort($data);
-
-        return $data;
+        return implode("\n", $aliases);
     }
 
     public static function getCategories()

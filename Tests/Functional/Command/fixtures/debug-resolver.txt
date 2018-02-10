@@ -5,14 +5,14 @@ GraphQL Resolvers Services
  ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
   id                                                                             aliases                                                                                          
  ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
-  overblog\graphqlbundle\graphql\relay\mutation\mutationfieldresolver            Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldResolver (method: __invoke)           
-                                                                                 relay_mutation_field (method: __invoke)                                                          
-  overblog\graphqlbundle\graphql\relay\node\globalidfieldresolver                Overblog\GraphQLBundle\GraphQL\Relay\Node\GlobalIdFieldResolver (method: __invoke)               
-                                                                                 relay_globalid_field (method: __invoke)                                                          
-  overblog\graphqlbundle\graphql\relay\node\nodefieldresolver                    Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver (method: __invoke)                   
-                                                                                 relay_node_field (method: __invoke)                                                              
-  overblog\graphqlbundle\graphql\relay\node\pluralidentifyingrootfieldresolver   Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver (method: __invoke)  
-                                                                                 relay_plural_identifying_field (method: __invoke)                                                
+  overblog\graphqlbundle\graphql\relay\mutation\mutationfieldresolver            relay_mutation_field (method: __invoke)                                                          
+                                                                                 Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldResolver (method: __invoke)           
+  overblog\graphqlbundle\graphql\relay\node\globalidfieldresolver                relay_globalid_field (method: __invoke)                                                          
+                                                                                 Overblog\GraphQLBundle\GraphQL\Relay\Node\GlobalIdFieldResolver (method: __invoke)               
+  overblog\graphqlbundle\graphql\relay\node\nodefieldresolver                    relay_node_field (method: __invoke)                                                              
+                                                                                 Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver (method: __invoke)                   
+  overblog\graphqlbundle\graphql\relay\node\pluralidentifyingrootfieldresolver   relay_plural_identifying_field (method: __invoke)                                                
+                                                                                 Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver (method: __invoke)  
  ------------------------------------------------------------------------------ ------------------------------------------------------------------------------------------------- 
 
 

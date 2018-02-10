@@ -5,6 +5,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 abstract class TaggedServiceMappingPass implements CompilerPassInterface
@@ -18,23 +19,22 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             $className = $container->findDefinition($id)->getClass();
-            foreach ($tags as $tag) {
-                $this->checkRequirements($id, $tag);
-                $tag = array_merge($tag, ['id' => $id]);
-                if (!$isType) {
-                    $tag['method'] = isset($tag['method']) ? $tag['method'] : '__invoke';
-                }
-                if (isset($tag['alias'])) {
-                    $serviceMapping[$tag['alias']] = $tag;
+            foreach ($tags as $attributes) {
+                $this->checkRequirements($id, $attributes);
+                $attributes = self::resolveAttributes($attributes, $id, !$isType);
+                $solutionID = $className;
+
+                if (!$isType && '__invoke' !== $attributes['method']) {
+                    $solutionID = sprintf('%s::%s', $className, $attributes['method']);
                 }
 
-                // add FQCN alias
-                $alias = $className;
-                if (!$isType && '__invoke' !== $tag['method']) {
-                    $alias .= '::'.$tag['method'];
+                if (!isset($serviceMapping[$solutionID])) {
+                    $serviceMapping[$solutionID] = $attributes;
                 }
-                $tag['alias'] = $alias;
-                $serviceMapping[$tag['alias']] = $tag;
+
+                if (isset($attributes['alias']) && $solutionID !== $attributes['alias']) {
+                    $serviceMapping[$solutionID]['aliases'][] = $attributes['alias'];
+                }
             }
         }
 
@@ -46,35 +46,19 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         $mapping = $this->getTaggedServiceMapping($container, $this->getTagName());
         $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
 
-        foreach ($mapping as $name => $options) {
-            $cleanOptions = $options;
-            $solutionID = $options['id'];
+        foreach ($mapping as $solutionID => $attributes) {
+            $attributes['aliases'] = array_unique($attributes['aliases']);
+            $aliases = $attributes['aliases'];
+            $serviceID = $attributes['id'];
 
-            $solutionDefinition = $container->findDefinition($solutionID);
+            $solutionDefinition = $container->findDefinition($serviceID);
             // make solution service public to improve lazy loading
             $solutionDefinition->setPublic(true);
-
-            $methods = array_map(
-                function ($methodCall) {
-                    return $methodCall[0];
-                },
-                $solutionDefinition->getMethodCalls()
-            );
-            if (
-                empty($options['generated']) // false is consider as empty
-                && is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
-                && !in_array('setContainer', $methods)
-            ) {
-                @trigger_error(
-                    'Autowire custom tagged (type, resolver or mutation) services is deprecated as of 0.9 and will be removed in 1.0. Use AutoMapping or set it manually instead.',
-                    E_USER_DEPRECATED
-                );
-                $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
-            }
+            $this->autowireSolutionImplementingContainerAwareInterface($solutionDefinition, empty($attributes['generated']));
 
             $resolverDefinition->addMethodCall(
                 'addSolution',
-                [$name, [new Reference('service_container'), 'get'], [$solutionID], $cleanOptions]
+                [$solutionID, [[new Reference('service_container'), 'get'], [$serviceID]], $aliases, $attributes]
             );
         }
     }
@@ -85,6 +69,52 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
             throw new \InvalidArgumentException(
                 sprintf('Service tagged "%s" must have valid "alias" argument.', $id)
             );
+        }
+    }
+
+    /**
+     * @param array  $attributes
+     * @param string $id
+     * @param bool   $withMethod
+     *
+     * @return array
+     */
+    private static function resolveAttributes(array $attributes, $id, $withMethod)
+    {
+        $default = ['id' => $id, 'aliases' => []];
+        if ($withMethod) {
+            $default['method'] = '__invoke';
+        }
+        $attributes = array_replace($default, $attributes);
+
+        return $attributes;
+    }
+
+    /**
+     * @param Definition $solutionDefinition
+     * @param bool       $isGenerated
+     */
+    private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, $isGenerated)
+    {
+        $methods = array_map(
+            function ($methodCall) {
+                return $methodCall[0];
+            },
+            $solutionDefinition->getMethodCalls()
+        );
+        if (
+            $isGenerated
+            && is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
+            && !in_array('setContainer', $methods)
+        ) {
+            @trigger_error(
+                sprintf(
+                    'Autowire method "%s::setContainer" for custom tagged (type, resolver or mutation) services is deprecated as of 0.9 and will be removed in 1.0.',
+                    ContainerAwareInterface::class
+                ),
+                E_USER_DEPRECATED
+            );
+            $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
         }
     }
 

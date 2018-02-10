@@ -19,7 +19,7 @@ abstract class AbstractResolverTest extends TestCase
         $this->resolver = $this->createResolver();
 
         foreach ($this->getResolverSolutionsMapping() as $name => $options) {
-            $this->resolver->addSolution($name, $options['solutionFunc'], $options['solutionFuncArgs'], $options);
+            $this->resolver->addSolution($name, $options['factory'], isset($options['aliases']) ? $options['aliases'] : [], $options);
         }
     }
 }
