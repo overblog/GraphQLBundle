@@ -2,12 +2,12 @@
 
 namespace Overblog\GraphQLBundle\Event;
 
-use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Symfony\Component\EventDispatcher\Event;
 
 final class ExecutorArgumentsEvent extends Event
 {
-    /** @var Schema */
+    /** @var ExtensibleSchema */
     private $schema;
 
     /** @var string */
@@ -26,7 +26,7 @@ final class ExecutorArgumentsEvent extends Event
     private $operationName;
 
     public static function create(
-        Schema $schema,
+        ExtensibleSchema $schema,
         $requestString,
         \ArrayObject $contextValue,
         $rootValue = null,
@@ -78,13 +78,13 @@ final class ExecutorArgumentsEvent extends Event
         $this->variableValue = $variableValue;
     }
 
-    public function setSchema(Schema $schema)
+    public function setSchema(ExtensibleSchema $schema)
     {
         $this->schema = $schema;
     }
 
     /**
-     * @return Schema
+     * @return ExtensibleSchema
      */
     public function getSchema()
     {

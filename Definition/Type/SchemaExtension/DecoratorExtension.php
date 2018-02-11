@@ -1,7 +1,8 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Definition\Type;
+namespace Overblog\GraphQLBundle\Definition\Type\SchemaExtension;
 
+use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
@@ -11,23 +12,30 @@ use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 
-class SchemaDecorator
+final class DecoratorExtension implements SchemaExtensionInterface
 {
-    public function decorate(Schema $schema, ResolverMapInterface $resolverMap)
+    private $resolverMap;
+
+    public function __construct(ResolverMapInterface $resolverMap)
     {
-        foreach ($resolverMap->covered() as $typeName) {
+        $this->resolverMap = $resolverMap;
+    }
+
+    public function process(Schema $schema)
+    {
+        foreach ($this->resolverMap->covered() as $typeName) {
             $type = $schema->getType($typeName);
 
             if ($type instanceof ObjectType) {
-                $this->decorateObjectType($type, $resolverMap);
+                $this->decorateObjectType($type);
             } elseif ($type instanceof InterfaceType || $type instanceof UnionType) {
-                $this->decorateInterfaceOrUnionType($type, $resolverMap);
+                $this->decorateInterfaceOrUnionType($type);
             } elseif ($type instanceof EnumType) {
-                $this->decorateEnumType($type, $resolverMap);
+                $this->decorateEnumType($type);
             } elseif ($type instanceof CustomScalarType) {
-                $this->decorateCustomScalarType($type, $resolverMap);
+                $this->decorateCustomScalarType($type);
             } else {
-                $covered = $resolverMap->covered($type->name);
+                $covered = $this->resolverMap->covered($type->name);
                 if (!empty($covered)) {
                     throw new \InvalidArgumentException(
                         sprintf(
@@ -41,31 +49,30 @@ class SchemaDecorator
         }
     }
 
-    private function decorateObjectType(ObjectType $type, ResolverMapInterface $resolverMap)
+    private function decorateObjectType(ObjectType $type)
     {
         $fieldsResolved = [];
-        foreach ($resolverMap->covered($type->name) as $fieldName) {
+        foreach ($this->resolverMap->covered($type->name) as $fieldName) {
             if (ResolverMapInterface::IS_TYPEOF === $fieldName) {
-                $this->configTypeMapping($type, $resolverMap, ResolverMapInterface::IS_TYPEOF);
+                $this->configTypeMapping($type, ResolverMapInterface::IS_TYPEOF);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
-                $resolveFieldFn = Resolver::wrapArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
+                $resolveFieldFn = Resolver::wrapArgs($this->resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
                 $type->config[substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
                 $fieldsResolved[] = $fieldName;
             }
         }
-        $this->decorateObjectTypeFields($type, $resolverMap, $fieldsResolved);
+        $this->decorateObjectTypeFields($type, $fieldsResolved);
     }
 
     /**
      * @param InterfaceType|UnionType $type
-     * @param ResolverMapInterface    $resolverMap
      */
-    private function decorateInterfaceOrUnionType($type, ResolverMapInterface $resolverMap)
+    private function decorateInterfaceOrUnionType($type)
     {
-        $this->configTypeMapping($type, $resolverMap, ResolverMapInterface::RESOLVE_TYPE);
-        $covered = $resolverMap->covered($type->name);
+        $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE);
+        $covered = $this->resolverMap->covered($type->name);
         if (!empty($covered)) {
             $unknownFields = array_diff($covered, [ResolverMapInterface::RESOLVE_TYPE]);
             if (!empty($unknownFields)) {
@@ -81,7 +88,7 @@ class SchemaDecorator
         }
     }
 
-    private function decorateCustomScalarType(CustomScalarType $type, ResolverMapInterface $resolverMap)
+    private function decorateCustomScalarType(CustomScalarType $type)
     {
         static $allowedFields = [
             ResolverMapInterface::SCALAR_TYPE,
@@ -91,10 +98,10 @@ class SchemaDecorator
         ];
 
         foreach ($allowedFields as $fieldName) {
-            $this->configTypeMapping($type, $resolverMap, $fieldName);
+            $this->configTypeMapping($type, $fieldName);
         }
 
-        $unknownFields = array_diff($resolverMap->covered($type->name), $allowedFields);
+        $unknownFields = array_diff($this->resolverMap->covered($type->name), $allowedFields);
         if (!empty($unknownFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -107,17 +114,17 @@ class SchemaDecorator
         }
     }
 
-    private function decorateEnumType(EnumType $type, ResolverMapInterface $resolverMaps)
+    private function decorateEnumType(EnumType $type)
     {
         $fieldNames = [];
         foreach ($type->config['values'] as $key => &$value) {
             $fieldName = isset($value['name']) ? $value['name'] : $key;
-            if ($resolverMaps->isResolvable($type->name, $fieldName)) {
-                $value['value'] = $resolverMaps->resolve($type->name, $fieldName);
+            if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
+                $value['value'] = $this->resolverMap->resolve($type->name, $fieldName);
             }
             $fieldNames[] = $fieldName;
         }
-        $unknownFields = array_diff($resolverMaps->covered($type->name), $fieldNames);
+        $unknownFields = array_diff($this->resolverMap->covered($type->name), $fieldNames);
         if (!empty($unknownFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -129,11 +136,11 @@ class SchemaDecorator
         }
     }
 
-    private function decorateObjectTypeFields(ObjectType $type, ResolverMapInterface $resolverMap, array $fieldsResolved)
+    private function decorateObjectTypeFields(ObjectType $type, array $fieldsResolved)
     {
         $fields = $type->config['fields'];
 
-        $decoratedFields = function () use ($fields, $type, $resolverMap, $fieldsResolved) {
+        $decoratedFields = function () use ($fields, $type, $fieldsResolved) {
             if (is_callable($fields)) {
                 $fields = $fields();
             }
@@ -142,8 +149,8 @@ class SchemaDecorator
             foreach ($fields as $key => &$field) {
                 $fieldName = isset($field['name']) ? $field['name'] : $key;
 
-                if ($resolverMap->isResolvable($type->name, $fieldName)) {
-                    $field['resolve'] = Resolver::wrapArgs($resolverMap->resolve($type->name, $fieldName));
+                if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
+                    $field['resolve'] = Resolver::wrapArgs($this->resolverMap->resolve($type->name, $fieldName));
                 }
 
                 $fieldNames[] = $fieldName;
@@ -162,10 +169,10 @@ class SchemaDecorator
         $type->config['fields'] = is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
-    private function configTypeMapping(Type $type, ResolverMapInterface $resolverMap, $fieldName)
+    private function configTypeMapping(Type $type, $fieldName)
     {
-        if ($resolverMap->isResolvable($type->name, $fieldName)) {
-            $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
+        if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
+            $type->config[substr($fieldName, 2)] = $this->resolverMap->resolve($type->name, $fieldName);
         }
     }
 }

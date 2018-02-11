@@ -131,6 +131,8 @@ class Executor
             isset($request[ParserInterface::PARAM_OPERATION_NAME]) ? $request[ParserInterface::PARAM_OPERATION_NAME] : null
         );
 
+        $executorArgumentsEvent->getSchema()->processExtensions();
+
         $result = $this->executor->execute(
             $executorArgumentsEvent->getSchema(),
             $executorArgumentsEvent->getRequestString(),

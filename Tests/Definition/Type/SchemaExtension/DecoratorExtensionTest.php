@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Definition\Type;
+namespace Overblog\GraphQLBundle\Tests\Definition\Type\SchemaExtension;
 
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -10,13 +10,13 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
-use Overblog\GraphQLBundle\Definition\Type\SchemaDecorator;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
 
-class SchemaDecoratorTest extends TestCase
+class DecoratorExtensionTest extends TestCase
 {
     /**
      * @param string        $fieldName
@@ -284,7 +284,7 @@ class SchemaDecoratorTest extends TestCase
 
     private function decorate(array $types, array $map)
     {
-        (new SchemaDecorator())->decorate($this->createSchemaMock($types), $this->createResolverMapMock($map));
+        (new DecoratorExtension($this->createResolverMapMock($map)))->process($this->createSchemaMock($types));
     }
 
     /**

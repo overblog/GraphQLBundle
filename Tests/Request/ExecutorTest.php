@@ -6,7 +6,7 @@ use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use PHPUnit\Framework\TestCase;
@@ -39,7 +39,7 @@ class ExecutorTest extends TestCase
                 ],
             ],
         ]);
-        $this->executor->addSchema('global', new Schema(['query' => $queryType]));
+        $this->executor->addSchema('global', new ExtensibleSchema(['query' => $queryType]));
     }
 
     /**
