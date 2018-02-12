@@ -216,7 +216,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setSchemaBuilderArguments(array $config, ContainerBuilder $container)
     {
         $container->getDefinition($this->getAlias().'.schema_builder')
-            ->replaceArgument(2, $config['definitions']['config_validation']);
+            ->replaceArgument(1, $config['definitions']['config_validation']);
     }
 
     private function setSchemaArguments(array $config, ContainerBuilder $container)

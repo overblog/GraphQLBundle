@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Definition\Type;
+namespace Overblog\GraphQLBundle\Tests\Definition\Type\SchemaExtension;
 
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -11,12 +11,12 @@ use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
-use Overblog\GraphQLBundle\Definition\Type\SchemaDecorator;
+use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
 
-class SchemaDecoratorTest extends TestCase
+class DecoratorExtensionTest extends TestCase
 {
     /**
      * @param string        $fieldName
@@ -170,7 +170,7 @@ class SchemaDecoratorTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__resolveType" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
 
@@ -186,7 +186,7 @@ class SchemaDecoratorTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__resolveType" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
 
@@ -202,7 +202,7 @@ class SchemaDecoratorTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__scalarType", "__serialize", "__parseValue", "__parseLiteral" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::{SCALAR_TYPE, SERIALIZE, PARSE_VALUE, PARSE_LITERAL}" is allowed.'
         );
     }
 
@@ -284,7 +284,7 @@ class SchemaDecoratorTest extends TestCase
 
     private function decorate(array $types, array $map)
     {
-        (new SchemaDecorator())->decorate($this->createSchemaMock($types), $this->createResolverMapMock($map));
+        (new DecoratorExtension($this->createResolverMapMock($map)))->process($this->createSchemaMock($types));
     }
 
     /**

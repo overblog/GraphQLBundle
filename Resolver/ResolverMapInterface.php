@@ -5,15 +5,15 @@ namespace Overblog\GraphQLBundle\Resolver;
 interface ResolverMapInterface
 {
     // union and interface
-    const RESOLVE_TYPE = '__resolveType';
+    const RESOLVE_TYPE = '%%resolveType';
     // object
-    const RESOLVE_FIELD = '__resolveField';
-    const IS_TYPEOF = '__isTypeOf';
+    const RESOLVE_FIELD = '%%resolveField';
+    const IS_TYPEOF = '%%isTypeOf';
     // custom scalar
-    const SCALAR_TYPE = '__scalarType';
-    const SERIALIZE = '__serialize';
-    const PARSE_VALUE = '__parseValue';
-    const PARSE_LITERAL = '__parseLiteral';
+    const SCALAR_TYPE = '%%scalarType';
+    const SERIALIZE = '%%serialize';
+    const PARSE_VALUE = '%%parseValue';
+    const PARSE_LITERAL = '%%parseLiteral';
 
     /**
      * Returns the resolver for type category if exists.
