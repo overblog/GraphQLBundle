@@ -10,8 +10,8 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
+use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
@@ -170,7 +170,7 @@ class DecoratorExtensionTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__resolveType" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
 
@@ -186,7 +186,7 @@ class DecoratorExtensionTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__resolveType" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
 
@@ -202,7 +202,7 @@ class DecoratorExtensionTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__scalarType", "__serialize", "__parseValue", "__parseLiteral" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::{SCALAR_TYPE, SERIALIZE, PARSE_VALUE, PARSE_LITERAL}" is allowed.'
         );
     }
 

@@ -78,10 +78,10 @@ final class DecoratorExtension implements SchemaExtensionInterface
             if (!empty($unknownFields)) {
                 throw new \InvalidArgumentException(
                     sprintf(
-                        '"%s".{"%s"} defined in resolverMap, but only "%s" is allowed.',
+                        '"%s".{"%s"} defined in resolverMap, but only "%s::RESOLVE_TYPE" is allowed.',
                         $type->name,
                         implode('", "', $unknownFields),
-                        ResolverMapInterface::RESOLVE_TYPE
+                        ResolverMapInterface::class
                     )
                 );
             }
@@ -105,10 +105,11 @@ final class DecoratorExtension implements SchemaExtensionInterface
         if (!empty($unknownFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '"%s".{"%s"} defined in resolverMap, but only "%s" is allowed.',
+                    '"%s".{"%s"} defined in resolverMap, but only "%s::{%s}" is allowed.',
                     $type->name,
                     implode('", "', $unknownFields),
-                    implode('", "', $allowedFields)
+                    ResolverMapInterface::class,
+                    implode(', ', ['SCALAR_TYPE', 'SERIALIZE', 'PARSE_VALUE', 'PARSE_LITERAL'])
                 )
             );
         }
