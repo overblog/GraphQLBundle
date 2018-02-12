@@ -17,8 +17,8 @@ class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping()
     {
         return [
-            'Toto' => ['solutionFunc' => [$this, 'createObjectType'], 'solutionFuncArgs' => [['name' => 'Toto']]],
-            'Tata' => ['solutionFunc' => [$this, 'createObjectType'], 'solutionFuncArgs' => [['name' => 'Tata']]],
+            'Toto' => ['factory' => [[$this, 'createObjectType'], [['name' => 'Toto']]], 'aliases' => ['foo']],
+            'Tata' => ['factory' => [[$this, 'createObjectType'], [['name' => 'Tata']]], 'aliases' => ['bar']],
         ];
     }
 
@@ -45,9 +45,7 @@ class TypeResolverTest extends AbstractResolverTest
      */
     public function testAddNotSupportedSolution()
     {
-        $this->resolver->addSolution('not-supported', function () {
-            return new \stdClass();
-        });
+        $this->resolver->addSolution('not-supported', new \stdClass());
         $this->resolver->getSolution('not-supported');
     }
 
@@ -133,5 +131,25 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertInstanceOf(ListOfType::class, $type);
         $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
+    }
+
+    public function testAliases()
+    {
+        $this->assertSame(
+            $this->resolver->resolve('Tata'),
+            $this->resolver->resolve('bar')
+        );
+        $this->assertSame(
+            $this->resolver->getSolution('Tata'),
+            $this->resolver->getSolution('bar')
+        );
+        $this->assertSame(
+            $this->resolver->resolve('Toto'),
+            $this->resolver->resolve('foo')
+        );
+        $this->assertSame(
+            $this->resolver->getSolution('Toto'),
+            $this->resolver->getSolution('foo')
+        );
     }
 }

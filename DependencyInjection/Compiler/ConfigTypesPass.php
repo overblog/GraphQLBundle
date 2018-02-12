@@ -18,18 +18,16 @@ class ConfigTypesPass implements CompilerPassInterface
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
         foreach ($generatedClasses as $class => $file) {
-            $aliases = [preg_replace('/Type$/', '', substr(strrchr($class, '\\'), 1))];
-            $this->setTypeServiceDefinition($container, $class, $aliases);
+            $alias = preg_replace('/Type$/', '', substr(strrchr($class, '\\'), 1));
+            $this->setTypeServiceDefinition($container, $class, $alias);
         }
     }
 
-    private function setTypeServiceDefinition(ContainerBuilder $container, $class, array $aliases)
+    private function setTypeServiceDefinition(ContainerBuilder $container, $class, $alias)
     {
         $definition = $container->setDefinition($class, new Definition($class));
         $definition->setPublic(false);
         $definition->setArguments([new Reference(ConfigProcessor::class), new Reference(GlobalVariables::class)]);
-        foreach ($aliases as $alias) {
-            $definition->addTag(TypeTaggedServiceMappingPass::TAG_NAME, ['alias' => $alias, 'generated' => true]);
-        }
+        $definition->addTag(TypeTaggedServiceMappingPass::TAG_NAME, ['alias' => $alias, 'generated' => true]);
     }
 }
