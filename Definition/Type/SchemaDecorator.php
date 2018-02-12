@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Definition\Type;
 
-use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
@@ -84,7 +83,12 @@ class SchemaDecorator
 
     private function decorateCustomScalarType(CustomScalarType $type, ResolverMapInterface $resolverMap)
     {
-        static $allowedFields = [ResolverMapInterface::SERIALIZE, ResolverMapInterface::PARSE_VALUE, ResolverMapInterface::PARSE_LITERAL];
+        static $allowedFields = [
+            ResolverMapInterface::SCALAR_TYPE,
+            ResolverMapInterface::SERIALIZE,
+            ResolverMapInterface::PARSE_VALUE,
+            ResolverMapInterface::PARSE_LITERAL,
+        ];
 
         foreach ($allowedFields as $fieldName) {
             $this->configTypeMapping($type, $resolverMap, $fieldName);

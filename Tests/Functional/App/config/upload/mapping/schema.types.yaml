@@ -1,0 +1,35 @@
+Query:
+    type: object
+    config:
+        fields:
+            foo: {type: String!}
+
+Upload:
+    type: custom-scalar
+    config:
+        scalarType: '@=newObject("Overblog\\GraphQLBundle\\Upload\\Type\\GraphQLUploadType")'
+
+Mutation:
+    type: object
+    config:
+        fields:
+            singleUpload:
+                type: String!
+                resolve: '@=null===args["file"] ? "Sorry, No file was uploaded." : args["file"].getBasename()'
+                args:
+                    file: Upload
+            multipleUpload:
+                type: '[String!]'
+                resolve: '@=[args["files"][0].getBasename(), args["files"][1].getBasename()]'
+                args:
+                    files: '[Upload!]!'
+            serializationIsUnsupported:
+                type: Upload!
+                resolve: '@=args["file"]'
+                args:
+                    file: Upload!
+            oldUpload:
+                type: String!
+                resolve: '@=args["file"]'
+                args:
+                    file: String!

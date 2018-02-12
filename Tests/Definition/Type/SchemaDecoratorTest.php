@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Tests\Definition\Type;
 
-use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
@@ -11,6 +10,7 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\SchemaDecorator;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
@@ -202,7 +202,7 @@ class SchemaDecoratorTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"Foo".{"baz"} defined in resolverMap, but only "__serialize", "__parseValue", "__parseLiteral" is allowed.'
+            '"Foo".{"baz"} defined in resolverMap, but only "__scalarType", "__serialize", "__parseValue", "__parseLiteral" is allowed.'
         );
     }
 
@@ -266,6 +266,7 @@ class SchemaDecoratorTest extends TestCase
             [ResolverMapInterface::SERIALIZE, new CustomScalarType(['name' => 'Custom', 'serialize' => null])],
             [ResolverMapInterface::PARSE_VALUE, new CustomScalarType(['name' => 'Custom', 'parseValue' => null])],
             [ResolverMapInterface::PARSE_LITERAL, new CustomScalarType(['name' => 'Custom', 'parseLiteral' => null])],
+            [ResolverMapInterface::SCALAR_TYPE, new CustomScalarType(['name' => 'Custom'])],
         ];
     }
 

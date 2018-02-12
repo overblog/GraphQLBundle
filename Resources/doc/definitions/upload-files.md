@@ -1,5 +1,74 @@
 ### Upload files
 
+Using apollo-upload-client
+--------------------------
+
+The bundle comes of the box with a server compatible with
+[apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client).
+
+1. define upload scalar type using yaml
+
+    ```yaml
+    MyUpload:
+        type: custom-scalar
+        config:
+            scalarType: '@=newObject("Overblog\\GraphQLBundle\\Upload\\Type\\GraphQLUploadType")'
+    ```
+
+    or with GraphQL schema language
+
+    ```graphql
+    scalar MyUpload
+    ```
+
+    ```php
+    <?php
+
+    namespace App\Resolver;
+
+    use Overblog\GraphQLBundle\Resolver\ResolverMap;
+    use Overblog\GraphQLBundle\Upload\Type\GraphQLUploadType;
+
+    class MyResolverMap extends ResolverMap
+    {
+        protected function map()
+        {
+            return [
+                'MyUpload' => [self::SCALAR_TYPE => function () { return new GraphQLUploadType(); }],
+            ];
+        }
+    }
+    ```
+
+    You can name as you want just replace `MyUpload` in above examples.
+
+2. Use it in your Schema
+    Here an example:
+
+    ```yaml
+    Mutation:
+        type: object
+        config:
+            fields:
+                singleUpload:
+                    type: String!
+                    resolve: '@=args["file"].getBasename()'
+                    args:
+                        file: MyUpload!
+                multipleUpload:
+                    type: '[String!]'
+                    resolve: '@=[args["files"][0].getBasename(), args["files"][1].getBasename()]'
+                    args:
+                        files: '[MyUpload!]!'
+    ```
+
+    **Notes:**
+    - Files args are of type `Symfony\Component\HttpFoundation\File\UploadedFile`
+    - Upload scalar type can be use only on inputs fields (args or InputObject)
+
+The classic way
+---------------
+
 here an example of how uploading can be done using this bundle
 
 * First define schema
