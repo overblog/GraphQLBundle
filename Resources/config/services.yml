@@ -126,11 +126,12 @@ services:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
         public: true
         arguments:
+            - "%kernel.root_dir%"
+        calls:
             # "overblog_graphql.request_executor" service must be load lazy since that command service
             # is instanced before ClassLoaderEvent. This issues is fix in Symfony 3.4 introducing lazy commands
             # see https://symfony.com/blog/new-in-symfony-3-4-lazy-commands
-            - '@service_container'
-            - "%kernel.root_dir%"
+            - ['setRequestExecutorFactory', [[['@service_container', 'get'], ['overblog_graphql.request_executor']]]]
         tags:
             - { name: console.command }
 
