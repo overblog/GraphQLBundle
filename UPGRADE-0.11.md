@@ -8,6 +8,7 @@ UPGRADE FROM 0.10 to 0.11
 - [Promise adapter interface](#promise-adapter-interface)
 - [Expression language](#expression-language)
 - [Type autoMapping and Symfony DI autoconfigure](#type-automapping-and-symfony-di-autoconfigure)
+- [Events](#events)
 - [Explicitly declare non detected types](#explicitly-declare-non-detected-types)
 
 ### GraphiQL
@@ -234,3 +235,20 @@ UPGRADE FROM 0.10 to 0.11
             query: Query
             types: [Bar, Baz]
    ```
+
+### Events
+
+  `Overblog\GraphQLBundle\Event\ExecutorContextEvent::setExecutorContext` method has been removed as `context`
+  is now a `ArrayObject`. When using `graphql.executor.context` listener the value will now be accessible only
+  in `context` variables and not in `rootValue`. `context` and `rootValue` has been separate, if you need to
+  use `rootValue` see [event documentation for more details](Resources/doc/events/index.md).
+
+  **Before 0.11**
+  `context` and `rootValue` were of type `array` with same value so `$context === $info->rootValue` and
+  `$context === $value` in root query resolver. That for the reason why uploaded files was accessible in
+  `$context['request_files']` and `$info->rootValue['request_files']`.
+
+  **Since 0.11**
+  `context` is of type `ArrayObject` and `rootValue` has no typeHint (default: `null`) so
+  `$context !== $info->rootValue` and `$context !== $value` in root query resolver.
+  Uploaded files is no more accessible under `$info->rootValue['request_files']` out of the box.
