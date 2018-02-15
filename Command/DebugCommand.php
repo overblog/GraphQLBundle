@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class DebugCommand extends Command
+class DebugCommand extends Command
 {
     private static $categories = ['type', 'mutation', 'resolver'];
 
@@ -53,6 +53,12 @@ final class DebugCommand extends Command
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
                 sprintf('filter by a category (%s).', implode(', ', self::$categories))
             )
+            ->addOption(
+                'with-service-id',
+                null,
+                InputOption::VALUE_NONE,
+                'also display service id'
+            )
             ->setDescription('Display current GraphQL services (types, resolvers and mutations)');
     }
 
@@ -66,28 +72,41 @@ final class DebugCommand extends Command
         }
 
         $categories = empty($categoriesOption) ? self::$categories : $categoriesOption;
+        $withServiceId = $input->getOption('with-service-id');
 
         $io = new SymfonyStyle($input, $output);
-        $tableHeaders = ['id', 'aliases'];
+        $tableHeaders = ['solution id', 'aliases'];
+        if ($withServiceId) {
+            $tableHeaders[] = 'service id';
+        }
+
         foreach ($categories as $category) {
             $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};
-            $this->renderTable($resolver, $tableHeaders, $io);
+            $this->renderTable($resolver, $tableHeaders, $io, $withServiceId);
         }
     }
 
-    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io)
+    /**
+     * @param FluentResolverInterface $resolver
+     * @param array                   $tableHeaders
+     * @param SymfonyStyle            $io
+     * @param bool                    $withServiceId
+     */
+    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io, $withServiceId)
     {
         $tableRows = [];
         $solutionIDs = array_keys($resolver->getSolutions());
         sort($solutionIDs);
         foreach ($solutionIDs as $solutionID) {
             $aliases = $resolver->getSolutionAliases($solutionID);
-            $aliases[] = $solutionID;
             $options = $resolver->getSolutionOptions($solutionID);
-            $tableRows[$options['id']] = [$options['id'], self::serializeAliases($aliases, $options)];
+            $tableRows[$solutionID] = [$solutionID, self::serializeAliases($aliases, $options)];
+            if ($withServiceId) {
+                $tableRows[$solutionID][] = $options['id'];
+            }
         }
         ksort($tableRows);
         $io->table($tableHeaders, $tableRows);

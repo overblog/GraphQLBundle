@@ -26,16 +26,18 @@ class DebugCommandTest extends TestCase
         $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.debug');
         $this->commandTester = new CommandTester($this->command);
 
-        foreach (DebugCommand::getCategories() as $category) {
-            $this->logs[$category] = trim(
-                file_get_contents(
-                    sprintf(
-                        __DIR__.'/fixtures/%sdebug-%s.txt',
-                        version_compare(Kernel::VERSION, '3.3.0') >= 0 ? 'case-sensitive/' : '',
-                        $category
-                    )
+        $categories = DebugCommand::getCategories();
+        $categories[] = 'all';
+
+        foreach ($categories as $category) {
+            $content = file_get_contents(
+                sprintf(
+                    __DIR__.'/fixtures/debug/debug-%s.txt',
+                    $category
                 )
             );
+
+            $this->logs[$category] = 'all' === $category ? $content : trim($content);
         }
     }
 
@@ -58,6 +60,17 @@ class DebugCommandTest extends TestCase
         }
 
         $this->assertEquals($expected, $this->commandTester->getDisplay());
+    }
+
+    public function testProcessWithServiceId()
+    {
+        if (version_compare(Kernel::VERSION, '3.3.0') < 0) {
+            $this->markTestSkipped('Test only for Symfony >= 3.3.0.');
+        }
+
+        $this->commandTester->execute(['--with-service-id' => null]);
+        $this->assertEquals(0, $this->commandTester->getStatusCode());
+        $this->assertEquals($this->logs['all'], $this->commandTester->getDisplay());
     }
 
     /**
