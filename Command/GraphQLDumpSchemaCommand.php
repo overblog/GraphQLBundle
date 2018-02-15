@@ -4,28 +4,22 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
-use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class GraphQLDumpSchemaCommand extends Command
 {
-    /** @var ContainerInterface */
-    private $container;
+    use RequestExecutorLazyLoaderTrait;
 
     /** @var string */
     private $baseExportPath;
 
-    public function __construct(
-        ContainerInterface $container,
-        $baseExportPath
-    ) {
+    public function __construct($baseExportPath)
+    {
         parent::__construct();
-        $this->container = $container;
         $this->baseExportPath = $baseExportPath;
     }
 
@@ -122,13 +116,5 @@ final class GraphQLDumpSchemaCommand extends Command
         }
 
         return true === $modern;
-    }
-
-    /**
-     * @return RequestExecutor
-     */
-    private function getRequestExecutor()
-    {
-        return $this->container->get('overblog_graphql.request_executor');
     }
 }

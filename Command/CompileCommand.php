@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class CompileCommand extends Command
+final class CompileCommand extends Command
 {
     private $typeGenerator;
 
