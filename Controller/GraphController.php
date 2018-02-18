@@ -30,9 +30,9 @@ class GraphController
     private $shouldHandleCORS;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $graphQLBatchingMethod;
+    private $useApolloBatchingMethod;
 
     public function __construct(
         GraphQLRequest\ParserInterface $batchParser,
@@ -45,19 +45,38 @@ class GraphController
         $this->requestExecutor = $requestExecutor;
         $this->requestParser = $requestParser;
         $this->shouldHandleCORS = $shouldHandleCORS;
-        $this->graphQLBatchingMethod = $graphQLBatchingMethod;
+        $this->useApolloBatchingMethod = 'apollo' === $graphQLBatchingMethod;
     }
 
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     *
+     * @return JsonResponse|Response
+     */
     public function endpointAction(Request $request, $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, false);
     }
 
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     *
+     * @return JsonResponse|Response
+     */
     public function batchEndpointAction(Request $request, $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, true);
     }
 
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     * @param bool        $batched
+     *
+     * @return JsonResponse|Response
+     */
     private function createResponse(Request $request, $schemaName, $batched)
     {
         if ('OPTIONS' === $request->getMethod()) {
@@ -66,16 +85,16 @@ class GraphController
             if (!in_array($request->getMethod(), ['POST', 'GET'])) {
                 return new Response('', 405);
             }
-
-            if ($batched) {
-                $payload = $this->processBatchQuery($request, $schemaName);
-            } else {
-                $payload = $this->processNormalQuery($request, $schemaName);
-            }
-
+            $payload = $this->processQuery($request, $schemaName, $batched);
             $response = new JsonResponse($payload, 200);
         }
+        $this->addCORSHeadersIfNeeded($response, $request);
 
+        return $response;
+    }
+
+    private function addCORSHeadersIfNeeded(Response $response, Request $request)
+    {
         if ($this->shouldHandleCORS && $request->headers->has('Origin')) {
             $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'), true);
             $response->headers->set('Access-Control-Allow-Credentials', 'true', true);
@@ -83,26 +102,56 @@ class GraphController
             $response->headers->set('Access-Control-Allow-Methods', 'OPTIONS, GET, POST', true);
             $response->headers->set('Access-Control-Max-Age', 3600, true);
         }
-
-        return $response;
     }
 
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     * @param bool        $batched
+     *
+     * @return array
+     */
+    private function processQuery(Request $request, $schemaName, $batched)
+    {
+        if ($batched) {
+            $payload = $this->processBatchQuery($request, $schemaName);
+        } else {
+            $payload = $this->processNormalQuery($request, $schemaName);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     *
+     * @return array
+     */
     private function processBatchQuery(Request $request, $schemaName = null)
     {
         $queries = $this->batchParser->parse($request);
-        $apolloBatching = 'apollo' === $this->graphQLBatchingMethod;
         $payloads = [];
 
         foreach ($queries as $query) {
-            $payloadResult = $this->requestExecutor->execute(
-                $schemaName, ['query' => $query['query'], 'variables' => $query['variables']]
-            );
-            $payloads[] = $apolloBatching ? $payloadResult->toArray() : ['id' => $query['id'], 'payload' => $payloadResult->toArray()];
+            $payload = $this->requestExecutor
+                ->execute($schemaName, ['query' => $query['query'], 'variables' => $query['variables']])
+                ->toArray();
+            if (!$this->useApolloBatchingMethod) {
+                $payload = ['id' => $query['id'], 'payload' => $payload];
+            }
+            $payloads[] = $payload;
         }
 
         return $payloads;
     }
 
+    /**
+     * @param Request     $request
+     * @param string|null $schemaName
+     *
+     * @return array
+     */
     private function processNormalQuery(Request $request, $schemaName = null)
     {
         $params = $this->requestParser->parse($request);
