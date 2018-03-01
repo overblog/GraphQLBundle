@@ -5,11 +5,6 @@ GraphQL Types Services
  ------------------------------------------------------------------------------------------ -------------------------------------- 
   solution id                                                                                aliases                               
  ------------------------------------------------------------------------------------------ -------------------------------------- 
-  GraphQL\Type\Definition\BooleanType                                                        Boolean                               
-  GraphQL\Type\Definition\FloatType                                                          Float                                 
-  GraphQL\Type\Definition\IDType                                                             ID                                    
-  GraphQL\Type\Definition\IntType                                                            Int                                   
-  GraphQL\Type\Definition\StringType                                                         String                                
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\PageInfoType                               PageInfo                              
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\RootMutationType                           RootMutation                          
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\simpleMutationInputType                    simpleMutationInput                   
@@ -18,6 +13,11 @@ GraphQL Types Services
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\simpleMutationWithThunkFieldsPayloadType   simpleMutationWithThunkFieldsPayload  
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\simplePromiseMutationInputType             simplePromiseMutationInput            
   Overblog\GraphQLBundle\Mutation\__DEFINITIONS__\simplePromiseMutationPayloadType           simplePromiseMutationPayload          
+  overblog_graphql.definition.boolean_type                                                   Boolean                               
+  overblog_graphql.definition.float_type                                                     Float                                 
+  overblog_graphql.definition.id_type                                                        ID                                    
+  overblog_graphql.definition.int_type                                                       Int                                   
+  overblog_graphql.definition.string_type                                                    String                                
  ------------------------------------------------------------------------------------------ -------------------------------------- 
 
 

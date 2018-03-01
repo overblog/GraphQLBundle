@@ -15,8 +15,9 @@ Resolvers can be define 2 different ways
     or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`)
     in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
     Auto map classes method are accessible by:
-    * the class method name (example: `AppBunble\GraphQL\CustomResolver::myMethod`)
-    * the FQCN for callable classes (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method)
+    * double colon (::) to separate service id (class name) and the method names
+    (example: `AppBunble\GraphQL\CustomResolver::myMethod` or `appbunble\graphql\customresolver::myMethod` for Symfony < 3.3)
+    * for callable classes you can use the service id (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method)
     you can also alias a type by implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`
     which returns a map of method/alias. The service created will autowire the `__construct`
     and `Symfony\Component\DependencyInjection\ContainerAwareInterface::setContainer` methods.
@@ -133,7 +134,7 @@ Resolvers can be define 2 different ways
     ```
 
     **Note:**
-    * When using FQCN in yaml definition, backslash must be correctly quotes,
+    * When using service id as FQCN in yaml definition, backslash must be correctly quotes,
       here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args['name']])'`.
     * You can also see the more straight forward way using [resolver map](resolver-map.md)
 
@@ -151,7 +152,7 @@ Resolvers can be define 2 different ways
             #class: App\GraphQL\Resolver\Greetings
             tags:
                 - { name: overblog_graphql.resolver, method: sayHello, alias: say_hello } # add alias say_hello
-                - { name: overblog_graphql.resolver, method: sayHello } # add method full qualified name
+                - { name: overblog_graphql.resolver, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
     ```
 
     `SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
@@ -168,7 +169,7 @@ Resolvers can be define 2 different ways
                 - { name: overblog_graphql.resolver }
     ```
 
-    This way resolver can be accessed with FQCN `App\GraphQL\Resolver\Greetings`.
+    This way resolver can be accessed with service id `App\GraphQL\Resolver\Greetings`.
 
     for mutation:
 

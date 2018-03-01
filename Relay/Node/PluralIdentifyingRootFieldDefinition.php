@@ -3,7 +3,6 @@
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
-use Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldResolver;
 
 final class PluralIdentifyingRootFieldDefinition implements MappingInterface
 {
@@ -26,14 +25,12 @@ final class PluralIdentifyingRootFieldDefinition implements MappingInterface
         }
 
         $argName = $config['argName'];
-        $resolver = addslashes(PluralIdentifyingRootFieldResolver::class);
 
         return [
             'type' => "[${config['outputType']}]",
             'args' => [$argName => ['type' => "[${config['inputType']}!]!"]],
             'resolve' => sprintf(
-                "@=resolver('%s', [args['$argName'], context, info, resolveSingleInputCallback(%s)])",
-                $resolver,
+                "@=resolver('relay_plural_identifying_field', [args['$argName'], context, info, resolveSingleInputCallback(%s)])",
                 $this->cleanResolveSingleInput($config['resolveSingleInput'])
             ),
         ];

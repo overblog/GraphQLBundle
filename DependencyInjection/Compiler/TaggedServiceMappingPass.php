@@ -18,14 +18,13 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         $isType = TypeTaggedServiceMappingPass::TAG_NAME === $tagName;
 
         foreach ($taggedServices as $id => $tags) {
-            $className = $container->findDefinition($id)->getClass();
             foreach ($tags as $attributes) {
                 $this->checkRequirements($id, $attributes);
                 $attributes = self::resolveAttributes($attributes, $id, !$isType);
-                $solutionID = $className;
+                $solutionID = $id;
 
                 if (!$isType && '__invoke' !== $attributes['method']) {
-                    $solutionID = sprintf('%s::%s', $className, $attributes['method']);
+                    $solutionID = sprintf('%s::%s', $id, $attributes['method']);
                 }
 
                 if (!isset($serviceMapping[$solutionID])) {
