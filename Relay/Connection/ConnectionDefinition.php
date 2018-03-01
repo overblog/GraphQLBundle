@@ -16,7 +16,7 @@ final class ConnectionDefinition implements MappingInterface
         $edgeFields = empty($config['edgeFields']) || !is_array($config['edgeFields']) ? [] : $config['edgeFields'];
         $nodeType = empty($config['nodeType']) || !is_string($config['nodeType']) ? null : $config['nodeType'];
         $resolveNode = empty($config['resolveNode']) ? null : $config['resolveNode'];
-        $resolveCursor = empty($config['resolveCursor']) ? null : $config['resolveNode'];
+        $resolveCursor = empty($config['resolveCursor']) ? null : $config['resolveCursor'];
 
         //connection
         $connectionName = $namePrefix.'Connection';
