@@ -37,7 +37,7 @@ abstract class TypeDefinition
             ->ifTrue(function ($name) {
                 return !preg_match('/^[_a-z][_0-9a-z]*$/i', $name);
             })
-                ->thenInvalid('Invalid type name "%s". (see http://facebook.github.io/graphql/October2016/#Name)')
+                ->thenInvalid('Invalid type name "%s". (see https://facebook.github.io/graphql/October2016/#Name)')
         ->end();
 
         return $node;
