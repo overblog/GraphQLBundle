@@ -2,7 +2,7 @@ imports:
     - { resource: ../config.yml }
 
 services:
-    overblog_graphql.test.resolver.node:
+    node_resolver:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NodeResolver
         arguments:
             - "@overblog_graphql.type_resolver"

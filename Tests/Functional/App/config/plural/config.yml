@@ -2,7 +2,7 @@ imports:
     - { resource: ../config.yml }
 
 services:
-    overblog_graphql.test.resolver.plural:
+    plural_resolver:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\PluralResolver
         tags:
             - { name: "overblog_graphql.resolver" }

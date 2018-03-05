@@ -3,7 +3,6 @@
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
-use Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldResolver;
 
 final class NodeFieldDefinition implements MappingInterface
 {
@@ -15,7 +14,6 @@ final class NodeFieldDefinition implements MappingInterface
 
         $idFetcher = $this->cleanIdFetcher($config['idFetcher']);
         $nodeInterfaceType = isset($config['nodeInterfaceType']) && is_string($config['nodeInterfaceType']) ? $config['nodeInterfaceType'] : null;
-        $resolver = addslashes(NodeFieldResolver::class);
 
         return [
             'description' => 'Fetches an object given its ID',
@@ -23,7 +21,7 @@ final class NodeFieldDefinition implements MappingInterface
             'args' => [
                 'id' => ['type' => 'ID!', 'description' => 'The ID of an object'],
             ],
-            'resolve' => "@=resolver('$resolver', [args, context, info, idFetcherCallback($idFetcher)])",
+            'resolve' => "@=resolver('relay_node_field', [args, context, info, idFetcherCallback($idFetcher)])",
         ];
     }
 

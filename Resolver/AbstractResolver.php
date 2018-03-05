@@ -2,6 +2,8 @@
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use Symfony\Component\HttpKernel\Kernel;
+
 abstract class AbstractResolver implements FluentResolverInterface
 {
     /** @var array */
@@ -15,8 +17,17 @@ abstract class AbstractResolver implements FluentResolverInterface
     /** @var array */
     private $fullyLoadedSolutions = [];
 
+    /** @var bool */
+    private $ignoreCase = true;
+
+    public function __construct()
+    {
+        $this->ignoreCase = version_compare(Kernel::VERSION, '3.3.0') < 0;
+    }
+
     public function addSolution($id, $solutionOrFactory, array $aliases = [], array $options = [])
     {
+        $id = $this->cleanIdOrAlias($id);
         $this->fullyLoadedSolutions[$id] = false;
         $this->addAliases($id, $aliases);
 
@@ -105,7 +116,7 @@ abstract class AbstractResolver implements FluentResolverInterface
     private function addAliases($id, $aliases)
     {
         foreach ($aliases as $alias) {
-            $this->aliases[$alias] = $id;
+            $this->aliases[$this->cleanIdOrAlias($alias)] = $id;
         }
     }
 
@@ -116,7 +127,14 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     private function resolveAlias($alias)
     {
+        $alias = $this->cleanIdOrAlias($alias);
+
         return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
+    }
+
+    private function cleanIdOrAlias($idOrAlias)
+    {
+        return $this->ignoreCase ? strtolower($idOrAlias) : $idOrAlias;
     }
 
     /**

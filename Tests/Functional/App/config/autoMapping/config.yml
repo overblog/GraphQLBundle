@@ -9,5 +9,5 @@ overblog_graphql:
             enabled: true
             directories: ["%kernel.root_dir%/IsolatedResolver"]
         schema:
-            query: "Overblog\\GraphQLBundle\\Tests\\Functional\\App\\GraphQL\\HelloWord\\Type\\QueryType"
-            mutation: "Overblog\\GraphQLBundle\\Tests\\Functional\\App\\GraphQL\\HelloWord\\Type\\MutationType"
+            query: "Query"
+            mutation: "Calc"

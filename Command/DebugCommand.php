@@ -53,12 +53,6 @@ class DebugCommand extends Command
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
                 sprintf('filter by a category (%s).', implode(', ', self::$categories))
             )
-            ->addOption(
-                'with-service-id',
-                null,
-                InputOption::VALUE_NONE,
-                'also display service id'
-            )
             ->setDescription('Display current GraphQL services (types, resolvers and mutations)');
     }
 
@@ -72,20 +66,16 @@ class DebugCommand extends Command
         }
 
         $categories = empty($categoriesOption) ? self::$categories : $categoriesOption;
-        $withServiceId = $input->getOption('with-service-id');
 
         $io = new SymfonyStyle($input, $output);
         $tableHeaders = ['solution id', 'aliases'];
-        if ($withServiceId) {
-            $tableHeaders[] = 'service id';
-        }
 
         foreach ($categories as $category) {
             $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};
-            $this->renderTable($resolver, $tableHeaders, $io, $withServiceId);
+            $this->renderTable($resolver, $tableHeaders, $io);
         }
     }
 
@@ -93,32 +83,24 @@ class DebugCommand extends Command
      * @param FluentResolverInterface $resolver
      * @param array                   $tableHeaders
      * @param SymfonyStyle            $io
-     * @param bool                    $withServiceId
      */
-    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io, $withServiceId)
+    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io)
     {
         $tableRows = [];
         $solutionIDs = array_keys($resolver->getSolutions());
         sort($solutionIDs);
         foreach ($solutionIDs as $solutionID) {
             $aliases = $resolver->getSolutionAliases($solutionID);
-            $options = $resolver->getSolutionOptions($solutionID);
-            $tableRows[$solutionID] = [$solutionID, self::serializeAliases($aliases, $options)];
-            if ($withServiceId) {
-                $tableRows[$solutionID][] = $options['id'];
-            }
+            $tableRows[$solutionID] = [$solutionID, self::serializeAliases($aliases)];
         }
         ksort($tableRows);
         $io->table($tableHeaders, $tableRows);
         $io->write("\n\n");
     }
 
-    private static function serializeAliases(array $aliases, array $options)
+    private static function serializeAliases(array $aliases)
     {
         ksort($aliases);
-        $aliases = array_map(function ($alias) use ($options) {
-            return $alias.(isset($options['method']) ? ' (method: '.$options['method'].')' : '');
-        }, $aliases);
 
         return implode("\n", $aliases);
     }

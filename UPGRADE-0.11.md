@@ -10,6 +10,7 @@ UPGRADE FROM 0.10 to 0.11
 - [Type autoMapping and Symfony DI autoconfigure](#type-automapping-and-symfony-di-autoconfigure)
 - [Events](#events)
 - [Explicitly declare non detected types](#explicitly-declare-non-detected-types)
+- [Change fluent resolvers id](#change-fluent-resolvers-id)
 
 ### GraphiQL
 
@@ -154,6 +155,7 @@ UPGRADE FROM 0.10 to 0.11
    }
    ```
    **Before 0.11**: DateTimeType could be accessed by FQCN `App\GraphQL\Type\DateTimeType` and the real `DateTimeType`.
+
    **Since 0.11**: Only FQCN `App\GraphQL\Type\DateTimeType` is accessible
 
    here how this can be done in 0.11:
@@ -252,3 +254,23 @@ UPGRADE FROM 0.10 to 0.11
   `context` is of type `ArrayObject` and `rootValue` has no typeHint (default: `null`) so
   `$context !== $info->rootValue` and `$context !== $value` in root query resolver.
   Uploaded files is no more accessible under `$info->rootValue['request_files']` out of the box.
+
+### Change fluent resolvers id
+
+  The use of class name as prefix of fluent resolver id remove the possibility to use same class as 2 different services.
+  See issue [#296](https://github.com/overblog/GraphQLBundle/issues/296) for more detail
+  That's the reason why starting v0.11 we are using service id as prefix (like in Symfony 4.1)...
+
+  Example:
+  ```yaml
+  services:
+      app.resolver.greetings:
+          class: App\GraphQL\Resolver\Greetings
+          tags:
+              - { name: overblog_graphql.resolver, method: __invoke, alias: say_hello }
+              - { name: overblog_graphql.resolver }
+  ```
+
+  **Before 0.11**: `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args['name']])'`
+
+  **Since 0.11**: `'@=resolver("app.resolver.greetings", [args['name']])'`

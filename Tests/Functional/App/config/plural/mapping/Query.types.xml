@@ -15,7 +15,7 @@
               <description>Map from a username to the user</description>
               <inputType>String</inputType>
               <outputType>User</outputType>
-              <resolveSingleInput>@=resolver("Overblog\\GraphQLBundle\\Tests\\Functional\\App\\Resolver\\PluralResolver", [value, info])</resolveSingleInput>
+              <resolveSingleInput>@=resolver("plural_resolver", [value, info])</resolveSingleInput>
             </builderConfig>
           </usernames>
         </fields>
