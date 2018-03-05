@@ -15,8 +15,8 @@ Resolvers can be define 2 different ways
     or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`)
     in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
     Auto map classes method are accessible by:
-    * double colon (::) to separate service id (class name) and the method names
-    (example: `AppBunble\GraphQL\CustomResolver::myMethod` or `appbunble\graphql\customresolver::myMethod` for Symfony < 3.3)
+    * double-colon (::) to separate service id (class name) and the method names
+    (example: `AppBunble\GraphQL\CustomResolver::myMethod`)
     * for callable classes you can use the service id (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method)
     you can also alias a type by implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`
     which returns a map of method/alias. The service created will autowire the `__construct`
@@ -134,7 +134,7 @@ Resolvers can be define 2 different ways
     ```
 
     **Note:**
-    * When using service id as FQCN in yaml definition, backslash must be correctly quotes,
+    * When using service id as FQCN in yaml definition, backslashes must be correctly escaped,
       here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args['name']])'`.
     * You can also see the more straight forward way using [resolver map](resolver-map.md)
 

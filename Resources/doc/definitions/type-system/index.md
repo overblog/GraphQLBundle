@@ -102,7 +102,7 @@ Types can be define 3 different ways:
     **Note:**
     * Types are lazy loaded so when using Symfony DI `autoconfigure` or this bundle auto mapping, the
     only access to type is FQCN (or aliases if implements the aliases interface).
-    * When using service id as FQCN in yaml definition, backslash must be correctly quotes,
+    * When using service id as FQCN in yaml definition, backslashes must be correctly escaped,
 
 3. **The service way**
 

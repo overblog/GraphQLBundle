@@ -38,8 +38,6 @@ services:
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         public: true
-        arguments:
-            -
         tags:
             - { name: overblog_graphql.global_variable, alias: typeResolver }
 

@@ -258,8 +258,8 @@ UPGRADE FROM 0.10 to 0.11
 ### Change fluent resolvers id
 
   The use of class name as prefix of fluent resolver id remove the possibility to use same class as 2 different services.
-  see this [issue for more detail](https://github.com/overblog/GraphQLBundle/issues/296)
-  That the reason from 0.11 we using service id as prefix (like in Symfony 4.1)...
+  See issue [#296](https://github.com/overblog/GraphQLBundle/issues/296) for more detail
+  That's the reason why starting v0.11 we are using service id as prefix (like in Symfony 4.1)...
 
   Example:
   ```yaml
