@@ -20,7 +20,7 @@ Browse your version documentation:
 * [0.8](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
 * [0.9](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
 * [0.10](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
-* [0.11-dev](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.11](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
 
 Documentation
 -------------
