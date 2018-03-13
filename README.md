@@ -17,10 +17,11 @@ It also supports:
 
 Browse your version documentation:
 
-* [0.8](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
-* [0.9](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
-* [0.10](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
-* [0.11](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.8  (DEPRECATED)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
+* [0.9  (DEPRECATED)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
+* [0.10 (DEPRECATED)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
+* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.12 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
 
 Documentation
 -------------
