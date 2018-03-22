@@ -4,6 +4,7 @@
 <classDocBlock>
 <classType>class <className> extends <parentClassName><implements>
 {<traits>
+<spaces>const NAME = <typeName>;
 
 <spaces>public function __construct(ConfigProcessor $configProcessor, GlobalVariables $globalVariables = null)
 <spaces>{

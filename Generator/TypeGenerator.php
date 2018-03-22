@@ -161,6 +161,11 @@ CODE;
         }
     }
 
+    protected function generateTypeName(array $config)
+    {
+        return $this->varExport($config['config']['name']);
+    }
+
     public function compile($mode)
     {
         $cacheDir = $this->getCacheDir();
