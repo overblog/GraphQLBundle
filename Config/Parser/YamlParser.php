@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Yaml;
 
 class YamlParser implements ParserInterface
 {
@@ -24,7 +25,7 @@ class YamlParser implements ParserInterface
         $container->addResource(new FileResource($file->getRealPath()));
 
         try {
-            $typesConfig = self::$yamlParser->parse(file_get_contents($file->getPathname()));
+            $typesConfig = self::$yamlParser->parse(file_get_contents($file->getPathname()), Yaml::PARSE_CONSTANT);
         } catch (ParseException $e) {
             throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
         }
