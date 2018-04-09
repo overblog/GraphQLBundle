@@ -60,6 +60,12 @@ final class GraphQLDumpSchemaCommand extends Command
                 InputOption::VALUE_NONE,
                 'Enabled classic json format: { "__schema": {...} }.'
             )
+            ->addOption(
+                'with-descriptions',
+                null,
+                InputOption::VALUE_NONE,
+                'Dump schema including descriptions.'
+            )
         ;
     }
 
@@ -74,13 +80,14 @@ final class GraphQLDumpSchemaCommand extends Command
     {
         $format = strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
+        $includeDescription = $input->getOption('with-descriptions');
 
         $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
                 $request = [
-                    'query' => Introspection::getIntrospectionQuery(false),
+                    'query' => Introspection::getIntrospectionQuery($includeDescription),
                     'variables' => [],
                     'operationName' => null,
                 ];
