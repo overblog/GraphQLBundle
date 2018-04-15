@@ -95,7 +95,7 @@ define a custom exception mapping:
 ```yaml
 overblog_graphql:
     #... 
-    definitions:
+    errors_handler:
         #...
         # change to true to try to map an exception to a parent exception if the exact exception is not in 
         # the mapping

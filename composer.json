@@ -29,16 +29,16 @@
         "sort-packages": true
     },
     "require": {
-        "php": ">=5.6",
+        "php": ">=7.1",
         "overblog/graphql-php-generator": "^0.7.0",
         "psr/log": "^1.0",
-        "symfony/config": "^3.1 || ^4.0",
-        "symfony/dependency-injection": "^3.1 || ^4.0",
-        "symfony/event-dispatcher": "^3.1 || ^4.0",
-        "symfony/expression-language": "^3.1 || ^4.0",
-        "symfony/framework-bundle": "^3.1 || ^4.0",
-        "symfony/options-resolver": "^3.1 || ^4.0",
-        "symfony/property-access": "^3.1 || ^4.0",
+        "symfony/config": "^3.4 || ^4.0",
+        "symfony/dependency-injection": "^3.4 || ^4.0",
+        "symfony/event-dispatcher": "^3.4 || ^4.0",
+        "symfony/expression-language": "^3.4 || ^4.0",
+        "symfony/framework-bundle": "^3.4 || ^4.0",
+        "symfony/options-resolver": "^3.4 || ^4.0",
+        "symfony/property-access": "^3.4 || ^4.0",
         "webonyx/graphql-php": "^0.11.2"
     },
     "suggest": {
@@ -50,21 +50,21 @@
         "phpunit/phpunit": "^5.7.26 || ^6.0",
         "react/promise": "^2.5",
         "sensio/framework-extra-bundle": "^3.0",
-        "symfony/asset": "^3.1 || ^4.0",
-        "symfony/browser-kit": "^3.1 || ^4.0",
-        "symfony/console": "^3.1 || ^4.0",
-        "symfony/css-selector": "^3.1 || ^4.0",
-        "symfony/phpunit-bridge": "^3.1 || ^4.0",
-        "symfony/process": "^3.1 || ^4.0",
-        "symfony/security-bundle": "^3.1 || ^4.0",
-        "symfony/templating": "^3.1 || ^4.0",
-        "symfony/twig-bundle": "^3.1 || ^4.0",
-        "symfony/web-profiler-bundle": "^3.1 || ^4.0",
-        "symfony/yaml": "^3.1 || ^4.0"
+        "symfony/asset": "^3.4 || ^4.0",
+        "symfony/browser-kit": "^3.4 || ^4.0",
+        "symfony/console": "^3.4 || ^4.0",
+        "symfony/css-selector": "^3.4 || ^4.0",
+        "symfony/phpunit-bridge": "^3.4 || ^4.0",
+        "symfony/process": "^3.4 || ^4.0",
+        "symfony/security-bundle": "^3.4 || ^4.0",
+        "symfony/templating": "^3.4 || ^4.0",
+        "symfony/twig-bundle": "^3.4 || ^4.0",
+        "symfony/web-profiler-bundle": "^3.4 || ^4.0",
+        "symfony/yaml": "^3.4 || ^4.0"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.11-dev"
+            "dev-master": "0.12-dev"
         }
     }
 }
