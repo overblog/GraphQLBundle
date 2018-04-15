@@ -135,7 +135,7 @@ Resolvers can be define 2 different ways
 
     **Note:**
     * When using service id as FQCN in yaml definition, backslashes must be correctly escaped,
-      here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args['name']])'`.
+      here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
     * You can also see the more straight forward way using [resolver map](resolver-map.md)
 
 2. **The service way**
