@@ -5,7 +5,7 @@ Enum
 # MyBundle/Resources/config/graphql/Episode.types.yml
 # The original trilogy consists of three movies.
 # This implements the following type system shorthand:
-# enum Episode { NEWHOPE, EMPIRE, JEDI }
+# enum Episode { NEWHOPE, EMPIRE, JEDI, FORCEAWAKENS }
 Episode:
     type: enum
     config:
