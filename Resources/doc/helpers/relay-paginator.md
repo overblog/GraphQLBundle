@@ -174,6 +174,11 @@ class DataBackend
     {
         return count($array);
     }
+    
+    public function countAll()
+    {
+        return count($this->data);
+    }
 }
 
 $backend = new DataBackend();
@@ -194,6 +199,50 @@ $result = $paginator->backward(
 ```
 
 You should get the 4 last items of the _data set_.
+
+#### Within a resolver
+
+````yaml
+resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args])'
+````
+
+````
+sayHello(first: 1, after: "YXJyYXljb25uZWN0aW9uOjI="){ # after: base64_encode('arrayconnection:2')
+    edges {
+        cursor # YXJyYXljb25uZWN0aW9uOjM=
+        node # D
+    }
+    pageInfo {
+        hasNextPage # true
+    }
+}
+````
+
+````php
+<?php
+
+namespace App\GraphQL\Resolver;
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+
+class Greetings implements ResolverInterface
+{
+    public function sayHello(Argument $args)
+    {
+        $backend = new DataBackend();
+        
+        $paginator = new Paginator(function ($offset, $limit) use ($backend) {
+            return $backend->getData($offset, $limit);
+        });
+        
+        return $paginator->auto($args, function() use ($backend) {
+            return $backend->countAll();
+        });
+    }
+}
+````
 
 #### Promise handling
 
