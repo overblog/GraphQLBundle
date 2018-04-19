@@ -1,3 +1,5 @@
+
+
 # Resolver
 
 To ease development we named 2 types of resolver:
@@ -7,181 +9,207 @@ To ease development we named 2 types of resolver:
 
 This is just a recommendation.
 
-Resolvers can be define 2 different ways
+Resolvers can be define 2 different ways:
 
-1. **The PHP way**
+## The PHP way
 
-    You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface`
-    or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`)
-    in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
-    Auto map classes method are accessible by:
-    * double-colon (::) to separate service id (class name) and the method names
-    (example: `AppBunble\GraphQL\CustomResolver::myMethod`)
-    * for callable classes you can use the service id (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method)
-    you can also alias a type by implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`
-    which returns a map of method/alias. The service created will autowire the `__construct`
-    and `Symfony\Component\DependencyInjection\ContainerAwareInterface::setContainer` methods.
 
-    Here an example:
-    ```php
-    <?php
+You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`) in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
+Auto map classes method are accessible by:
+* double-colon (::) to separate service id (class name) and the method names
+(example: `AppBunble\GraphQL\CustomResolver::myMethod`)
+* for callable classes you can use the service id (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method) you can also alias a type by implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface` which returns a map of method/alias. The service created will autowire the `__construct` and `Symfony\Component\DependencyInjection\ContainerAwareInterface::setContainer` methods.
 
-    namespace App\GraphQL\Resolver;
+**Note:**
+* When using service id as FQCN in yaml definition, backslashes must be correctly escaped, here an example:
+`'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
+* You can also see the more straight forward way using [resolver map](resolver-map.md).
 
-    use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-    use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+### Resolver
 
-    class Greetings implements ResolverInterface, AliasedInterface
-    {
-        public function sayHello($name)
-        {
-            return sprintf('hello %s!!!', $name);
-        }
+Example using an alias:
+````yaml
+resolve: '@=resolver("say_hello", [args["name"]])'
+````
 
-        /**
-         * {@inheritdoc}
-         */
-        public static function getAliases()
-        {
-            return ['sayHello' => 'say_hello'];
-        }
-    }
-    ```
+```php
+<?php
+# src/GraphQL/Resolver/Greetings.php
+namespace App\GraphQL\Resolver;
 
-    `SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
-    `say_hello` alias.
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-    we can also use class invoker:
-    ```php
-    <?php
+class Greetings implements ResolverInterface, AliasedInterface
+{
+	public function sayHello($name)
+	{
+			return sprintf('hello %s!!!', $name);
+	}
 
-    namespace App\GraphQL\Resolver;
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function getAliases()
+	{
+		return ['sayHello' => 'say_hello'];
+	}
+}
+````
 
-    use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+Example using a fully qualified method name:
+````yaml
+resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+````
 
-    class Greetings implements ResolverInterface
-    {
-        public function __invoke($name)
-        {
-            return sprintf('hello %s!!!', $name);
-        }
-    }
-    ```
+Note: backslashes must be correctly escaped and respect the use of single and double quotes.
 
-    This way `SayHello` resolver can be accessed with `App\GraphQL\Resolver\Greetings`.
+```php
+<?php
+# src/GraphQL/Resolver/Greetings.php
+namespace App\GraphQL\Resolver;
 
-    for mutation:
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-    ```php
-    <?php
+class Greetings implements ResolverInterface
+{
+	public function sayHello($name)
+	{
+		return sprintf('hello %s!!!', $name);
+	}
+}
+```
 
-    namespace App\GraphQL\Mutation;
+Example using the class invoker:
+````yaml
+resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+````
 
-    use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-    use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+```php
+<?php
+# src/GraphQL/Resolver/Greetings.php
+namespace App\GraphQL\Resolver;
 
-    class CalcMutation implements MutationInterface, AliasedInterface
-    {
-        private $value;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 
-        public function addition($number)
-        {
-            $this->value += $number;
-        }
+class Greetings implements ResolverInterface
+{
+	public function __invoke($name)
+	{
+		return sprintf('hello %s!!!', $name);
+	}
+}
+```
 
-        /**
-         * {@inheritdoc}
-         */
-        public static function getAliases()
-        {
-            return ['addition' => 'add'];
-        }
-    }
-    ```
-    `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
-    `add` alias.
+This way `SayHello` resolver can be accessed with `App\GraphQL\Resolver\Greetings`.
 
-    You can also define custom dirs using the config (Symfony <3.3):
-    ```yaml
-    overblog_graphql:
-        definitions:
-            auto_mapping:
-                directories:
-                    - "%kernel.root_dir%/src/*Bundle/CustomDir"
-                    - "%kernel.root_dir%/src/AppBundle/{foo,bar}"
-    ```
+### Mutation
 
-    If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
-    DI `autoconfigure`:
+```php
+<?php
+# src/GraphQL/Mutation/CalcMutation.php
+namespace App\GraphQL\Mutation;
 
-    ```yaml
-    overblog_graphql:
-        definitions:
-            auto_mapping: false
-    ```
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 
-    Here an example of how this can be done with DI `autoconfigure`:
+class CalcMutation implements MutationInterface, AliasedInterface
+{
+	private $value;
 
-    ```yaml
-    services:
-        App\Mutation\:
-            resource: '../src/Mutation'
-            tags: ['overblog_graphql.mutation']
+	public function addition($number)
+	{
+		$this->value += $number;
+	}
 
-        App\Resolver\:
-            resource: '../src/Resolver'
-            tags: ['overblog_graphql.resolver']
-    ```
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function getAliases()
+	{
+		return ['addition' => 'add'];
+	}
+}
+```
+`addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
+`add` alias.
 
-    **Note:**
-    * When using service id as FQCN in yaml definition, backslashes must be correctly escaped,
-      here an example `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
-    * You can also see the more straight forward way using [resolver map](resolver-map.md)
+You can also define custom dirs using the config (Symfony <3.3):
+```yaml
+overblog_graphql:
+definitions:
+	auto_mapping:
+		directories:
+			- "%kernel.root_dir%/src/*Bundle/CustomDir"
+			- "%kernel.root_dir%/src/AppBundle/{foo,bar}"
+```
 
-2. **The service way**
+If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
+DI `autoconfigure`:
 
-    Creating a service tagged `overblog_graphql.resolver` for resolvers
-    or `overblog_graphql.mutation` for mutations.
+```yaml
+overblog_graphql:
+definitions:
+	auto_mapping: false
+```
 
-    Using the php way examples:
+Here an example of how this can be done with DI `autoconfigure`:
 
-    ```yaml
-    services:
-        App\GraphQL\Resolver\Greetings:
-            # only for sf < 3.3
-            #class: App\GraphQL\Resolver\Greetings
-            tags:
-                - { name: overblog_graphql.resolver, method: sayHello, alias: say_hello } # add alias say_hello
-                - { name: overblog_graphql.resolver, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
-    ```
+```yaml
+services:
+App\Mutation\:
+	resource: '../src/Mutation'
+	tags: ['overblog_graphql.mutation']
 
-    `SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
-    `say_hello` alias.
+App\Resolver\:
+	resource: '../src/Resolver'
+	tags: ['overblog_graphql.resolver']
+```
 
-    for invokable classes no need to use `alias` and `method` attributes:
+## The service way
 
-    ```yaml
-    services:
-        App\GraphQL\Resolver\Greetings:
-            # only for sf < 3.3
-            #class: App\GraphQL\Resolver\Greetings
-            tags:
-                - { name: overblog_graphql.resolver }
-    ```
+Creating a service tagged `overblog_graphql.resolver` for resolvers
+or `overblog_graphql.mutation` for mutations.
 
-    This way resolver can be accessed with service id `App\GraphQL\Resolver\Greetings`.
+Using the php way examples:
 
-    for mutation:
+```yaml
+services:
+App\GraphQL\Resolver\Greetings:
+	# only for sf < 3.3
+	#class: App\GraphQL\Resolver\Greetings
+	tags:
+		- { name: overblog_graphql.resolver, method: sayHello, alias: say_hello } # add alias say_hello
+		- { name: overblog_graphql.resolver, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
+```
 
-    ```yaml
-    services:
-        App\GraphQL\Mutation\CalcMutation:
-            # only for sf < 3.3
-            #class: App\GraphQL\Mutation\CalcMutation
-            tags:
-                - { name: overblog_graphql.mutation, method: addition, alias: add }
-    ```
-    `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
-    `add` alias.
+`SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
+`say_hello` alias.
+
+for invokable classes no need to use `alias` and `method` attributes:
+
+```yaml
+services:
+App\GraphQL\Resolver\Greetings:
+	# only for sf < 3.3
+	#class: App\GraphQL\Resolver\Greetings
+	tags:
+		- { name: overblog_graphql.resolver }
+```
+
+This way resolver can be accessed with service id `App\GraphQL\Resolver\Greetings`.
+
+for mutation:
+
+```yaml
+services:
+App\GraphQL\Mutation\CalcMutation:
+	# only for sf < 3.3
+	#class: App\GraphQL\Mutation\CalcMutation
+	tags:
+		- { name: overblog_graphql.mutation, method: addition, alias: add }
+```
+`addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
+`add` alias.
 
 Next step [solving N+1 problem](solving-n-plus-1-problem.md)
