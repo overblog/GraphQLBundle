@@ -44,7 +44,7 @@ class Greetings implements ResolverInterface, AliasedInterface
 {
 	public function sayHello($name)
 	{
-			return sprintf('hello %s!!!', $name);
+		return sprintf('hello %s!!!', $name);
 	}
 
 	/**
