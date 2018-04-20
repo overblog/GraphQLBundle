@@ -5,7 +5,7 @@ Input object
 # src/MyBundle/Resources/config/graphql/HumanAndDroid.types.yml
 #
 #  This implements the following type system shorthand:
-#    type HeroInput {
+#    input HeroInput {
 #      name: Episode!
 #   }
 HeroInput:
