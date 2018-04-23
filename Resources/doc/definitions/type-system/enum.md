@@ -5,7 +5,7 @@ Enum
 # MyBundle/Resources/config/graphql/Episode.types.yml
 # The original trilogy consists of three movies.
 # This implements the following type system shorthand:
-# enum Episode { NEWHOPE, EMPIRE, JEDI }
+# enum Episode { NEWHOPE, EMPIRE, JEDI, FORCEAWAKENS }
 Episode:
     type: enum
     config:
@@ -20,7 +20,6 @@ Episode:
                 value: 5
                 description: "Released in 1980."
             JEDI: 6 # using the short syntax (JEDI value equal to 6)
-#           in this case FORCEAWAKENS value = FORCEAWAKENS
-#            FORCEAWAKENS:
-#                description: "Released in 2015."
+            FORCEAWAKENS: # in this case FORCEAWAKENS value = FORCEAWAKENS
+                description: "Released in 2015."
 ```
