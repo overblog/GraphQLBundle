@@ -16,9 +16,11 @@ use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 
-final class TestKernel extends Kernel
+final class TestKernel extends Kernel implements CompilerPassInterface
 {
     private $testCase;
 
@@ -70,6 +72,21 @@ final class TestKernel extends Kernel
             $loader->load(sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
         } else {
             $loader->load(__DIR__.'/config/config.yml');
+        }
+
+        $loader->load(function (ContainerBuilder $container) {
+            $container->addCompilerPass($this);
+        });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container)
+    {
+        // disabled http_exception_listener because it flatten exception to html response
+        if ($container->has('http_exception_listener')) {
+            $container->removeDefinition('http_exception_listener');
         }
     }
 }
