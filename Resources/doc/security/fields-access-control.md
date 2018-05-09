@@ -1,7 +1,7 @@
 Fields access Control
 ======================
 
-An access control can be add on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
+An access control can be added on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
 Act like access is`true` if not set.
 
