@@ -66,6 +66,7 @@ Documentation
   - [Promise](Resources/doc/data-fetching/promise.md)
 - [Security](Resources/doc/security/index.md)
   - [Handle CORS](Resources/doc/security/handle-cors.md)
+  - [Object access control](Resources/doc/security/object-access-control.md)
   - [Fields access control](Resources/doc/security/fields-access-control.md)
   - [Fields public control](Resources/doc/security/fields-public-control.md)
   - [Limiting query depth](Resources/doc/security/limiting-query-depth.md)
