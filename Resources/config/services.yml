@@ -119,6 +119,10 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
+            
+    Overblog\GraphQLBundle\Controller\GraphController:
+        public: true
+        alias: 'overblog_graphql.controller.graphql'
 
     overblog_graphql.command.dump_schema:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
