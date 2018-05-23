@@ -17,7 +17,8 @@ Episode:
                 # to deprecate a value, only set the deprecation reason
                 #deprecationReason: "Just because"
             EMPIRE:
-                value: 5
+                # We can use a PHP constant to avoid a magic number
+                value: '@=constant("App\\StarWars\\Movies::MOVIE_EMPIRE")'
                 description: "Released in 1980."
             JEDI: 6 # using the short syntax (JEDI value equal to 6)
             FORCEAWAKENS: # in this case FORCEAWAKENS value = FORCEAWAKENS
