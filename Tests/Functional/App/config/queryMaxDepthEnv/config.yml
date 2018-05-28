@@ -3,7 +3,7 @@ imports:
     - { resource: ../connection/services.yml }
 
 parameters:
-    env(GRAPHQL_QUERY_MAX_DEPTH): 3
+    env(GRAPHQL_QUERY_MAX_DEPTH): "3"
 
 overblog_graphql:
     security:

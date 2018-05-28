@@ -41,44 +41,57 @@ class OverblogGraphQLTypesExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container)
     {
-        $this->checkTypesDuplication($configs);
-        // flatten config is a requirement to support inheritance
-        $flattenConfig = [call_user_func_array('array_merge', $configs)];
-        $configuration = $this->getConfiguration($flattenConfig, $container);
-        $config = $this->processConfiguration($configuration, $flattenConfig);
+        $configs = array_filter($configs);
+        //$configs = array_filter($configs);
+        if (count($configs) > 1) {
+            throw new \InvalidArgumentException('Configs type should never contain more than one config to deal with inheritance.');
+        }
+        $configuration = $this->getConfiguration($configs, $container);
+        $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter($this->getAlias().'.config', $config);
     }
 
-    public function containerPrependExtensionConfig(array $config, ContainerBuilder $container)
+    public function containerPrependExtensionConfig(array $configs, ContainerBuilder $container)
     {
-        $typesMappings = $this->mappingConfig($config, $container);
+        $typesMappings = $this->mappingConfig($configs, $container);
         // reset treated files
         $this->treatedFiles = [];
         $typesMappings = call_user_func_array('array_merge', $typesMappings);
+        $typeConfigs = [];
         // treats mappings
         foreach ($typesMappings as $params) {
-            $this->prependExtensionConfigFromFiles($params['type'], $params['files'], $container);
+            $typeConfigs = array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container));
         }
+
+        $this->checkTypesDuplication($typeConfigs);
+        // flatten config is a requirement to support inheritance
+        $flattenTypeConfig = call_user_func_array('array_merge', $typeConfigs);
+
+        $container->prependExtensionConfig($this->getAlias(), $flattenTypeConfig);
     }
 
     /**
      * @param $type
      * @param SplFileInfo[]    $files
      * @param ContainerBuilder $container
+     *
+     * @return array
      */
-    private function prependExtensionConfigFromFiles($type, $files, ContainerBuilder $container)
+    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container)
     {
+        $config = [];
         foreach ($files as $file) {
             $fileRealPath = $file->getRealPath();
             if (isset($this->treatedFiles[$fileRealPath])) {
                 continue;
             }
 
-            $typeConfig = call_user_func(self::PARSERS[$type].'::parse', $file, $container);
-            $container->prependExtensionConfig($this->getAlias(), $typeConfig);
+            $config[] = call_user_func(self::PARSERS[$type].'::parse', $file, $container);
             $this->treatedFiles[$file->getRealPath()] = true;
         }
+
+        return $config;
     }
 
     private function checkTypesDuplication(array $typeConfigs)
