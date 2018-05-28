@@ -35,12 +35,12 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Configs type should never contain more than one config to deal with inheritance.
      */
-    public function testDuplicatedType()
+    public function testMultipleConfigNotAllowed()
     {
-        $type = ['foo' => []];
-        $configs = [$type, $type];
+        $configs = [['foo' => []], ['bar' => []]];
         $this->extension->load($configs, $this->container);
     }
 

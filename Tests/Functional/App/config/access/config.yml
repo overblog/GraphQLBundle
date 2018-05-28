@@ -1,6 +1,5 @@
 imports:
     - { resource: ../config.yml }
-    - { resource: ../security.yml }
     - { resource: ../connection/services.yml }
     - { resource: ../mutation/services.yml }
 
