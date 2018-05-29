@@ -11,6 +11,7 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
+use GraphQL\Error\Debug;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLGenerator\Tests\Generator\AbstractTypeGeneratorTest;
@@ -45,7 +46,8 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
      */
     protected function assertValidQuery($query, $expected, $variables = null)
     {
-        $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)->toArray();
+        $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)
+            ->toArray(Debug::INCLUDE_DEBUG_MESSAGE|Debug::INCLUDE_TRACE);
         $expected = ['data' => $expected];
         $this->assertEquals($expected, $actual, json_encode($actual));
     }
