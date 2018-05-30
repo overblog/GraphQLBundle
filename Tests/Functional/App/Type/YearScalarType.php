@@ -5,7 +5,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Type;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
-use GraphQL\Utils;
 
 class YearScalarType extends ScalarType
 {
@@ -22,17 +21,13 @@ class YearScalarType extends ScalarType
      */
     public function parseValue($value)
     {
-        if (!is_string($value)) {
-            throw new Error(sprintf('Cannot represent following value as a valid year: %s.', Utils::printSafeJson($value)));
-        }
-
         return (int) str_replace(' AC', '', $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral($valueNode)
+    public function parseLiteral($valueNode, array $variables = null)
     {
         if (!$valueNode instanceof StringValueNode) {
             throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, [$valueNode]);

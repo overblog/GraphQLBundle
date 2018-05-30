@@ -49,7 +49,7 @@ class GraphQLUploadType extends ScalarType
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral($valueNode)
+    public function parseLiteral($valueNode, array $variables = null)
     {
         throw new InvariantViolation(sprintf('%s scalar literal unsupported.', $this->name));
     }
