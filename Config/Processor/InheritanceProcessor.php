@@ -121,7 +121,7 @@ final class InheritanceProcessor implements ProcessorInterface
     {
         if (!isset($configs[$name])) {
             throw new \InvalidArgumentException(sprintf(
-                'Type %s inherits by %s not found.',
+                'Type %s inherited by %s not found.',
                 json_encode($name),
                 json_encode($child)
             ));
