@@ -142,9 +142,9 @@ final class InheritanceProcessor implements ProcessorInterface
     {
         if (empty($config['decorator']) && isset($config['type']) && !in_array($config['type'], $allowedTypes)) {
             throw new \InvalidArgumentException(sprintf(
-                'Type %s can\'t inherits %s because %s is not allowed type (%s).',
-                json_encode($name),
+                'Type %s can\'t inherit %s because its type (%s) is not allowed type (%s).',
                 json_encode($child),
+                json_encode($name),
                 json_encode($config['type']),
                 json_encode($allowedTypes)
             ));
