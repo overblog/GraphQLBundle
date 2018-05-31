@@ -98,6 +98,7 @@ services:
             - "%overblog_graphql.default_resolver%"
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
+            - "%kernel.cache_dir%"
         calls:
             - ["addUseStatement", ["Symfony\\Component\\DependencyInjection\\ContainerInterface"]]
             - ["addUseStatement", ["Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface"]]
