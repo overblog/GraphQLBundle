@@ -17,7 +17,7 @@ class InheritanceProcessorTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type "toto" inherits by "bar" not found.
+     * @expectedExceptionMessage Type "toto" inherited by "bar" not found.
      */
     public function testExtendsUnknownType()
     {
@@ -53,7 +53,7 @@ class InheritanceProcessorTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type "toto" can't inherits "bar" because "enum" is not allowed type (["object","interface"]).
+     * @expectedExceptionMessage Type "bar" can't inherit "toto" because its type ("enum") is not allowed type (["object","interface"]).
      */
     public function testNotAllowedType()
     {
