@@ -35,8 +35,7 @@ class TypeGenerator extends BaseTypeGenerator
         $useClassMap = true,
         callable $configProcessor = null,
         $baseCacheDir = null
-    )
-    {
+    ) {
         $this->setCacheDir($cacheDir);
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
         $this->configs = $configs;
