@@ -111,7 +111,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->variableNode('default_resolver')->defaultValue([Resolver::class, 'defaultResolveFn'])->end()
                 ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
-                ->scalarNode('cache_dir')->defaultValue($this->cacheDir.'/overblog/graphql-bundle/__definitions__')->end()
+                ->scalarNode('cache_dir')->defaultNull()->end()
                 ->booleanNode('use_classloader_listener')->defaultTrue()->end()
                 ->booleanNode('auto_compile')->defaultTrue()->end()
                 ->booleanNode('show_debug_info')->info('Show some performance stats in extensions')->defaultFalse()->end()
