@@ -23,6 +23,8 @@ class TypeGenerator extends BaseTypeGenerator
 
     private $useClassMap;
 
+    private $baseCacheDir;
+
     private static $classMapLoaded = false;
 
     public function __construct(
@@ -31,25 +33,49 @@ class TypeGenerator extends BaseTypeGenerator
         $cacheDir,
         array $configs,
         $useClassMap = true,
-        callable $configProcessor = null)
-    {
+        callable $configProcessor = null,
+        $baseCacheDir = null
+    ) {
         $this->setCacheDir($cacheDir);
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
+        $this->baseCacheDir = $baseCacheDir;
+
         parent::__construct($classNamespace, $skeletonDirs);
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCacheDir()
+    public function getBaseCacheDir()
     {
-        return $this->cacheDir;
+        return $this->baseCacheDir;
     }
 
     /**
-     * @param string $cacheDir
+     * @param string|null $baseCacheDir
+     */
+    public function setBaseCacheDir($baseCacheDir)
+    {
+        $this->baseCacheDir = $baseCacheDir;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCacheDir(/*bool $useDefault = true*/)
+    {
+        $useDefault = func_num_args() > 0 ? func_get_arg(0) : true;
+        if ($useDefault) {
+            return $this->cacheDir ?: $this->baseCacheDir.'/overblog/graphql-bundle/__definitions__';
+        } else {
+            return $this->cacheDir;
+        }
+    }
+
+    /**
+     * @param string|null $cacheDir
      *
      * @return $this
      */
