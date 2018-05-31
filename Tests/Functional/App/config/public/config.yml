@@ -1,6 +1,5 @@
 imports:
     - { resource: ../config.yml }
-    - { resource: ../security.yml }
 
 overblog_graphql:
     definitions:

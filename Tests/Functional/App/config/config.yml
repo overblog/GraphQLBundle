@@ -8,6 +8,27 @@ framework:
     profiler:
         enabled: false
 
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    ryan:
+                        password: 123
+                        roles: 'ROLE_USER'
+                    admin:
+                        password: 123
+                        roles: 'ROLE_ADMIN'
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+    firewalls:
+        graph:
+            pattern: ^/
+            http_basic: ~
+            stateless: true
+            anonymous: true
+
+
 overblog_graphql:
     definitions:
         config_validation: true
