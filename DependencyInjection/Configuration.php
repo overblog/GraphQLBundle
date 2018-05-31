@@ -149,9 +149,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('expression_language')
                     ->defaultValue(self::NAME.'.expression_language.default')
                 ->end()
-                ->scalarNode('cache_expression_language_parser')
-                    ->defaultValue(self::NAME.'.cache_expression_language_parser.default')
-                ->end()
+                ->scalarNode('cache_expression_language_parser')->end()
             ->end()
         ->end();
 

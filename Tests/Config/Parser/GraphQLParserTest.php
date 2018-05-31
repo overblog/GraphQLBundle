@@ -19,12 +19,15 @@ class GraphQLParserTest extends TestCase
 
     public function testParse()
     {
-        $fileName = __DIR__.'/fixtures/graphql/schema.graphql';
+        $fileName = sprintf(
+            __DIR__.'/fixtures/graphql/schema%s.graphql',
+            isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION'] ? '-0.11' : ''
+        );
         $expected = include __DIR__.'/fixtures/graphql/schema.php';
 
         $this->assertContainerAddFileToResources($fileName);
         $config = GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
-        $this->assertEquals($expected, $config);
+        $this->assertEquals($expected, self::cleanConfig($config));
     }
 
     public function testParseEmptyFile()
@@ -64,5 +67,18 @@ class GraphQLParserTest extends TestCase
         $this->containerBuilder->expects($this->once())
             ->method('addResource')
             ->with($fileName);
+    }
+
+    private static function cleanConfig($config)
+    {
+        foreach ($config as $key => &$value) {
+            if (is_array($value)) {
+                $value = self::cleanConfig($value);
+            }
+        }
+
+        return array_filter($config, function ($item) {
+            return !is_array($item) || !empty($item);
+        });
     }
 }

@@ -1,10 +1,10 @@
-"""Root Query"""
+# Root Query
 type Query {
   hero(
-    """Episode list to use to filter"""
+    # Episode list to use to filter
     episodes: [Episode!]! = [NEWHOPE, EMPIRE]
   ): Character
-  """search for a droid"""
+  # search for a droid
   droid(id: ID!): Droid
 }
 
