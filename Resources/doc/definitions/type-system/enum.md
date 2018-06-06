@@ -12,7 +12,8 @@ Episode:
         description: "One of the films in the Star Wars Trilogy"
         values:
             NEWHOPE:
-                value: 4
+                # We can use a PHP constant
+                value: !php/const App\StarWars\Movies::MOVIE_NEWHOPE
                 description: "Released in 1977."
                 # to deprecate a value, only set the deprecation reason
                 #deprecationReason: "Just because"

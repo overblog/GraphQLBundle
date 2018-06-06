@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class YamlParserTest extends TestCase
 {
-
     /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject */
     private $containerBuilder;
 
@@ -39,7 +38,7 @@ class YamlParserTest extends TestCase
 
     public function testParseConstant()
     {
-        $expected = ["values" => ["constant" => Constant::CONSTANT ]];
+        $expected = ['values' => ['constant' => Constant::CONSTANT]];
         $actual = YamlParser::parse(new \SplFileInfo(__DIR__.'/fixtures/yml/constant.yml'), $this->containerBuilder);
         $this->assertEquals($expected, $actual);
     }
