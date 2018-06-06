@@ -1,0 +1,2 @@
+values:
+    constant: !php/const Overblog\GraphQLBundle\Tests\Config\Parser\Constant::CONSTANT
