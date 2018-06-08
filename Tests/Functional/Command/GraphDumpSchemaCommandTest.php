@@ -51,6 +51,20 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
+    public function testDumpWithDescriptions()
+    {
+        $file = $this->cacheDir.'/schema.json';
+        $this->assertCommandExecution(
+            [
+                '--file' => $file,
+                '--with-descriptions' => true,
+            ],
+            __DIR__.'/fixtures/schema.descriptions.json',
+            $file,
+            'json'
+        );
+    }
+
     public function testClassicJsonFormat()
     {
         $file = $this->cacheDir.'/schema.json';
@@ -126,6 +140,8 @@ class GraphDumpSchemaCommandTest extends TestCase
             $actual = json_decode($actual, true);
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
+        } elseif ('graphql' === $format && isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION']) {
+            $expected = preg_replace('@"""(.*)"""@', '# $1', $expected);
         }
 
         $this->assertEquals($expected, $actual);

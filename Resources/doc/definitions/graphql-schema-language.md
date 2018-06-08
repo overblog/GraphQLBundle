@@ -8,31 +8,116 @@ or this [cheat sheet](https://github.com/sogko/graphql-shorthand-notation-cheat-
 
 #### Usage
 
+##### Define Types
+
+> [GraphQL documentation about types and fields](https://graphql.github.io/learn/schema/#object-types-and-fields).
+
+
 ```graphql
 # config/graphql/schema.types.graphql
 
-type Query {
-  bar: Foo!
-  baz(id: ID!): Baz
-}
-
-scalar Baz
-
-interface Foo {
-  # Description of my is_foo field
-  is_foo: Boolean
-}
-type Bar implements Foo {
-  is_foo: Boolean
-  user: User!
-}
-
-enum User {
-  TATA
-  TITI
-  TOTO
+type Character {
+  # Name of the character
+  name: String! 
+  # This character appears in those episodes
+  appearsIn: [Episode]!
 }
 ```
+
+##### Define Enumeration types
+
+> [GraphQL documentation about Enumerations types](https://graphql.github.io/learn/schema/#enumeration-types).
+
+```graphql
+# Enumeration of episodes
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
+```
+
+##### Define Interfaces
+
+> [GraphQL documentation about Interfaces](https://graphql.github.io/learn/schema/#interfaces).
+
+```graphql
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+}
+```
+
+```graphql
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  starships: [Starship]
+  totalCredits: Int
+}
+
+type Droid implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  primaryFunction: String
+}
+```
+
+##### Define queries
+
+> [GraphQL documentation about Query type](https://graphql.github.io/learn/schema/#the-query-and-mutation-types).
+ 
+```graphql
+type RootQuery {
+  # Access all characters
+  characters: [Character]!
+}
+```
+
+Do not forget to configure your schema **query** type, as described in the [schema documentation](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/schema.md).
+
+```yml
+overblog_graphql:
+    definitions:
+        schema:
+            query: RootQuery
+```
+
+##### Define mutations
+
+> [GraphQL documentation about Mutation type](https://graphql.github.io/learn/schema/#the-query-and-mutation-types).
+
+```graphql
+input CreateCharacter {
+  name: String!
+}
+
+input UpdateCharacter {
+  name: String!
+}
+
+type RootMutation {
+  createCharacter(character: CreateCharacter!): Character!
+  updateCharacter(characterId: ID!, character: UpdateCharacter!): Character!
+}
+```
+
+Do not forget to configure your schema **mutation** type, as described in the [schema documentation](https://github.com/overblog/GraphQLBundle/blob/master/Resources/doc/definitions/schema.md).
+
+```yml
+overblog_graphql:
+    definitions:
+        schema:
+            mutation: RootMutation
+```
+
+---
 
 When using this shorthand syntax, you define your field resolvers (and some more configuration) separately
 from the schema. Since the schema already describes all of the fields, arguments, and result types, the only

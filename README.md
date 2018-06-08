@@ -66,6 +66,7 @@ Documentation
   - [Promise](Resources/doc/data-fetching/promise.md)
 - [Security](Resources/doc/security/index.md)
   - [Handle CORS](Resources/doc/security/handle-cors.md)
+  - [Object access control](Resources/doc/security/object-access-control.md)
   - [Fields access control](Resources/doc/security/fields-access-control.md)
   - [Fields public control](Resources/doc/security/fields-public-control.md)
   - [Limiting query depth](Resources/doc/security/limiting-query-depth.md)
@@ -76,6 +77,8 @@ Documentation
 Talks and slides to help you start
 ----------------------------------
 
+* GraphQL in Symfony *by Bernd Alter* - [Twitter](https://twitter.com/bazoo0815)
+  - [Talk about GraphQL and its implementation with Symfony (26.04.2017)](https://www.slideshare.net/berndalter7/graphql-in-symfony) `English`
 * GraphQL is right in front of us, let's to it! *by Renato Mendes Figueiredo* - [Twitter](https://twitter.com/renatomefi), [GitHub](https://github.com/renatomefi)
   - [Slides at http://talks.mefi.in/graphql-scotphp17](http://talks.mefi.in/graphql-scotphp17/) `English`
   - [Video at SymfonyCamp UA 2017](https://www.youtube.com/watch?v=jyoYlnCPNgk) `English`

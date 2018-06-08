@@ -294,6 +294,9 @@ class GraphQLParser implements ParserInterface
 
     private function cleanAstDescription($description)
     {
+        if (property_exists($description, 'value')) {
+            $description = $description->value;
+        }
         $description = trim($description);
 
         return empty($description) ? null : $description;

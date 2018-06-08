@@ -13,7 +13,6 @@ use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,9 +20,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\ExpressionLanguage\ParserCache\ArrayParserCache;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\HttpKernel\Kernel;
 
 class OverblogGraphQLExtension extends Extension implements PrependExtensionInterface
 {
@@ -33,7 +30,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $config = $this->treatConfigs($configs, $container);
 
         $this->setBatchingMethod($config, $container);
-        $this->setExpressionLanguageDefaultParser($container);
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
         $this->setSchemaArguments($config, $container);
@@ -122,14 +118,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function setBatchingMethod(array $config, ContainerBuilder $container)
     {
         $container->setParameter($this->getAlias().'.batching_method', $config['batching_method']);
-    }
-
-    private function setExpressionLanguageDefaultParser(ContainerBuilder $container)
-    {
-        $class = version_compare(Kernel::VERSION, '3.2.0', '>=') ? ArrayAdapter::class : ArrayParserCache::class;
-        $definition = new Definition($class);
-        $definition->setPublic(false);
-        $container->setDefinition($this->getAlias().'.cache_expression_language_parser.default', $definition);
     }
 
     private function setDebugListener(array $config, ContainerBuilder $container)

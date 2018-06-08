@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Security;
+namespace Overblog\GraphQLBundle\Tests\Functional\Upload;
 
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -95,7 +95,6 @@ class UploadTest extends TestCase
     public function testSerializationIsUnsupported()
     {
         $this->expectException(InvariantViolation::class);
-        $this->expectExceptionMessage('Upload scalar serialization unsupported.');
         $this->uploadRequest(
             [
                 'operations' => [

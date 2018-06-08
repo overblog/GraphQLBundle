@@ -75,7 +75,7 @@ services:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
         public: false
         arguments:
-            - '@overblog_graphql.cache_expression_language_parser'
+            - '@?overblog_graphql.cache_expression_language_parser'
 
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
@@ -86,6 +86,8 @@ services:
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql_types.config%"
             - "%overblog_graphql.use_classloader_listener%"
+            - ~
+            - "%kernel.cache_dir%"
         calls:
             - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
             - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\LazyConfig']]
@@ -119,6 +121,10 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
+            
+    Overblog\GraphQLBundle\Controller\GraphController:
+        public: true
+        alias: 'overblog_graphql.controller.graphql'
 
     overblog_graphql.command.dump_schema:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand

@@ -5,7 +5,7 @@ Enum
 # MyBundle/Resources/config/graphql/Episode.types.yml
 # The original trilogy consists of three movies.
 # This implements the following type system shorthand:
-# enum Episode { NEWHOPE, EMPIRE, JEDI }
+# enum Episode { NEWHOPE, EMPIRE, JEDI, FORCEAWAKENS }
 Episode:
     type: enum
     config:
@@ -18,10 +18,10 @@ Episode:
                 # to deprecate a value, only set the deprecation reason
                 #deprecationReason: "Just because"
             EMPIRE:
-                value: 5
+                # We can use a PHP constant to avoid a magic number
+                value: '@=constant("App\\StarWars\\Movies::MOVIE_EMPIRE")'
                 description: "Released in 1980."
             JEDI: 6 # using the short syntax (JEDI value equal to 6)
-#           in this case FORCEAWAKENS value = FORCEAWAKENS
-#            FORCEAWAKENS:
-#                description: "Released in 2015."
+            FORCEAWAKENS: # in this case FORCEAWAKENS value = FORCEAWAKENS
+                description: "Released in 2015."
 ```
