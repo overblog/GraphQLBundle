@@ -1,0 +1,15 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: ../exception/services.yml }
+
+overblog_graphql:
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\MultipleQueries\\__DEFINITIONS__"
+        schema:
+            query: RootQuery
+            mutation: RootQuery
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/multipleQueries/mapping"
