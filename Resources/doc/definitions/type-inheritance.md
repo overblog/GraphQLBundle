@@ -17,7 +17,7 @@ Character:
     heirs: # the opposite of « inherits »
            # optional if « inherits » already exists on daughters classes
       - CharacterWarrior
-      - WizardWarrior
+      - CharacterWizard
     config:
         fields:
             id: {type: Int!}
