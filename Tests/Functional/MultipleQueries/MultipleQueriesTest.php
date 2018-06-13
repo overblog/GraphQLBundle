@@ -1,0 +1,104 @@
+<?php
+
+namespace Overblog\GraphQLBundle\Tests\Functional\MultipleQueries;
+
+use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+
+class MultipleQueriesTest extends TestCase
+{
+    const REQUIRED_FAILS = [
+        'data' => [],
+        'errors' => [
+            [
+                'message' => 'Internal server Error',
+                'category' => 'internal',
+                'locations' => [
+                    [
+                        'line' => 2,
+                        'column' => 3,
+                    ],
+                ],
+                'path' => [
+                    'fail',
+                ],
+            ],
+        ],
+    ];
+
+    const OPTIONAL_FAILS = [
+        'data' => [
+            'fail' => null,
+            'success' => 'foo',
+        ],
+        'errors' => [
+            [
+                'message' => 'Internal server Error',
+                'category' => 'internal',
+                'locations' => [
+                    [
+                        'line' => 2,
+                        'column' => 3,
+                    ],
+                ],
+                'path' => [
+                    'fail',
+                ],
+            ],
+        ],
+    ];
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        static::bootKernel(['test_case' => 'multipleQueries']);
+    }
+
+    public function testRequiredFails()
+    {
+        $query = <<<'EOF'
+{
+  fail: failRequire
+  success: success
+}
+EOF;
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertEquals(self::REQUIRED_FAILS, $result);
+    }
+
+    public function testOptionalFails()
+    {
+        $query = <<<'EOF'
+{
+  fail: failOptional
+  success: success
+}
+EOF;
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertEquals(self::OPTIONAL_FAILS, $result);
+    }
+
+    public function testMutationRequiredFails()
+    {
+        $query = <<<'EOF'
+mutation {
+  fail: failRequire
+  success: success
+}
+EOF;
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertEquals(self::REQUIRED_FAILS, $result);
+    }
+
+    public function testMutationOptionalFails()
+    {
+        $query = <<<'EOF'
+mutation {
+  fail: failOptional
+  success: success
+}
+EOF;
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertEquals(self::OPTIONAL_FAILS, $result);
+    }
+}
