@@ -63,6 +63,47 @@ Query:
                 resolve: "@=resolver('character_droid', [args])"
 ```
 
+Or using annotation:
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * Class RootQuery
+ *
+ * @GQL\GraphQLType(type="object")
+ * @GQL\GraphQLDescription(description="A humanoid creature in the Star Wars universe.")
+ */
+class RootQuery
+{
+    /**
+     * @GQL\GraphQLColumn(type="Character")
+     * @GQL\GraphQLQuery(
+     *     method="character_hero",
+     *     args={
+     *         "args['episode'].getId()"
+     *     }
+     * )
+     */
+    public $hero;
+
+    /**
+     * @GQL\GraphQLColumn(type="Human")
+     * @GQL\GraphQLQuery(method="character_human", args={"args['id']"})
+     */
+    public $human;
+    
+    /**
+     * @GQL\GraphQLColumn(type="Droid")
+     * @GQL\GraphQLQuery(method="character_human", args={"args"})
+     */
+    public $droid;
+}
+```
+
+
 ```yaml
 overblog_graphql:
     definitions:

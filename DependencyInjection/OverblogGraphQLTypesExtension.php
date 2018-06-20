@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
@@ -15,12 +16,18 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLTypesExtension extends Extension
 {
-    const SUPPORTED_TYPES_EXTENSIONS = ['yaml' => '{yaml,yml}', 'xml' => 'xml', 'graphql' => '{graphql,graphqls}'];
+    const SUPPORTED_TYPES_EXTENSIONS = [
+        'yaml' => '{yaml,yml}',
+        'xml' => 'xml',
+        'graphql' => '{graphql,graphqls}',
+        'annotation' => 'php',
+    ];
 
     const PARSERS = [
         'yaml' => YamlParser::class,
         'xml' => XmlParser::class,
         'graphql' => GraphQLParser::class,
+        'annotation' => AnnotationParser::class,
     ];
 
     private static $defaultDefaultConfig = [

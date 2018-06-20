@@ -20,6 +20,35 @@ AnObject:
 
 ```
 
+Or using annotation:
+
+```php
+<?php
+
+namespace App\Entity\GraphQLType;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * Class FormErrorType
+ *
+ * @GQL\GraphQLType(type="object")
+ */
+class AnObject
+{
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     */
+    public $id;
+
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLPublicControl(method="service('security.authorization_checker').isGranted('ROLE_ADMIN')")
+     */
+    public $privateData;
+}
+```
+
 You can also use `config.fieldsDefaultPublic` to handle the setting globally on an object :
 
 ```yaml

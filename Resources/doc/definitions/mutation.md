@@ -1,6 +1,6 @@
 # Mutation
 
-Here an example without using relay:
+Here an example without using relay in yaml:
 
 ```yaml
 Mutation:
@@ -32,6 +32,12 @@ IntroduceShipInput:
                 type: "String!"
             factionId:
                 type: "String!"
+```
+
+The same example with annotation: @TODO
+
+```php
+
 ```
 
 Here the same example [using relay mutation](relay/mutation.md).
