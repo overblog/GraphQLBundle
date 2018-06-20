@@ -1,5 +1,6 @@
 # Mutation
 
+<<<<<<< HEAD
 Here an example of mutation without using [relay](https://facebook.github.io/relay/):
 
 ```yaml
@@ -32,6 +33,12 @@ IntroduceShipInput:
                 type: "String!"
             factionId:
                 type: "String!"
+```
+
+The same example with annotation: @TODO
+
+```php
+@TODO
 ```
 
 To implement the logic behind your mutation, you should create a new class that

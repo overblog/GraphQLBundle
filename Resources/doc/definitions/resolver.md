@@ -19,7 +19,7 @@ Auto map classes method are accessible by:
 * for callable classes you can use the service id (example: `AppBunble\GraphQL\InvokeResolver` for a resolver implementing the `__invoke` method) you can also alias a type by implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface` which returns a map of method/alias. The service created will autowire the `__construct` and `Symfony\Component\DependencyInjection\ContainerAwareInterface::setContainer` methods.
 
 **Note:**
-* When using service id as FQCN in yaml definition, backslashes must be correctly escaped, here an example:
+* When using service id as FQCN in yaml or annotation definition, backslashes must be correctly escaped, here an example:
 `'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
 * You can also see the more straight forward way using [resolver map](resolver-map.md).
 
