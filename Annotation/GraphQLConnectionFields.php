@@ -13,30 +13,17 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("PROPERTY")
  */
-class GraphQLQuery
+final class GraphQLConnectionFields
 {
     /**
-     * @var string
-     */
-    public $method;
-
-    /**
-     * @var array
-     */
-    public $args;
-
-    /**
+     * Type
+     *
      * @var string
      */
     public $type;
 
     /**
-     * @var array
-     */
-    public $input;
-
-    /**
      * @var string
      */
-    public $argsBuilder;
+    public $resolve;
 }
