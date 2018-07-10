@@ -6,6 +6,7 @@ use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Zend\Code\Reflection\PropertyReflection;
 
 class AnnotationParser implements ParserInterface
 {
@@ -55,6 +56,8 @@ class AnnotationParser implements ParserInterface
             $type = self::getGraphQLType($annotations);
 
             switch ($type) {
+                case 'relay-connection':
+                    return self::formatRelay($type, $alias, $annotations, $reflexionEntity->getProperties());
                 case 'enum':
                     return self::formatEnumType($alias, $entityName, $reflexionEntity->getProperties());
                 case 'custom-scalar':
@@ -97,6 +100,63 @@ class AnnotationParser implements ParserInterface
         }
 
         return 'object';
+    }
+
+    /**
+     * @param string               $type
+     * @param string               $alias
+     * @param array                $classAnnotations
+     * @param PropertyReflection[] $properties
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected static function formatRelay($type, $alias, $classAnnotations, $properties)
+    {
+        $reader = self::getAnnotationReader();
+
+        $typesConfig = [
+            $alias => [
+                'type' => $type,
+                'config' => [],
+            ]
+        ];
+
+        if (!empty($classAnnotations['GraphQLNode'])) {
+            $typesConfig[$alias]['config']['nodeType'] = $classAnnotations['GraphQLNode']['type'];
+            $typesConfig[$alias]['config']['resolveNode'] = $classAnnotations['GraphQLNode']['resolve'];
+        }
+
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            $propertyAnnotation = $reader->getPropertyAnnotations($property);
+            $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
+
+            if (!empty($propertyAnnotation['GraphQLEdgeFields'])) {
+                if (empty($typesConfig[$alias]['config']['edgeFields'])) {
+                    $typesConfig[$alias]['config']['edgeFields'] = [];
+                }
+
+                $typesConfig[$alias]['config']['edgeFields'][$propertyName] = [
+                    'type' => $propertyAnnotation['GraphQLEdgeFields']['type'],
+                    'resolve' => $propertyAnnotation['GraphQLEdgeFields']['resolve'],
+                ];
+            } elseif (!empty($propertyAnnotation['GraphQLConnectionFields'])) {
+                if (empty($typesConfig[$alias]['config']['connectionFields'])) {
+                    $typesConfig[$alias]['config']['connectionFields'] = [];
+                }
+
+                $typesConfig[$alias]['config']['connectionFields'][$propertyName] = [
+                    'type' => $propertyAnnotation['GraphQLConnectionFields']['type'],
+                    'resolve' => $propertyAnnotation['GraphQLConnectionFields']['resolve'],
+                ];
+            }
+        }
+
+        return empty($typesConfig[$alias]['config'])
+            ? []
+            : $typesConfig;
     }
 
     /**
@@ -355,25 +415,29 @@ class AnnotationParser implements ParserInterface
 
         $method = $annotationQuery['method'];
         $args = $queryArgs = [];
-        if (array_key_exists('GraphQLInputArgs', $annotation)) {
-            $annotationArgs = $annotation['GraphQLInputArgs'];
+        if (!empty($annotationQuery['input'])) {
+            $annotationArgs = $annotationQuery['input'];
             if (!array_key_exists(0, $annotationArgs)) {
                 $annotationArgs = [$annotationArgs];
             }
 
             foreach ($annotationArgs as $arg) {
-                $args[$arg['name']] = [
-                    'type' => $arg['type'],
-                ];
+                if (!empty($arg['name'])) {
+                    $args[$arg['name']] = [
+                        'type' => $arg['type'],
+                    ];
 
-                if (!empty($arg['description'])) {
-                    $args[$arg['name']]['description'] = $arg['description'];
+                    if (!empty($arg['description'])) {
+                        $args[$arg['name']]['description'] = $arg['description'];
+                    }
                 }
 
                 $queryArgs[] = $arg['target'];
             }
 
-            $ret['args'] = $args;
+            if (!empty($args)) {
+                $ret['args'] = $args;
+            }
         }
 
         if (!empty($queryArgs)) {
@@ -383,6 +447,11 @@ class AnnotationParser implements ParserInterface
         }
 
         $ret['resolve'] = "@=resolver(".$query.")";
+
+        if (!empty($annotationQuery['argsBuilder'])) {
+            $ret['argsBuilder'] = $annotationQuery['argsBuilder'];
+
+        }
 
         return $ret;
     }
@@ -484,11 +553,6 @@ class AnnotationParser implements ParserInterface
             $returnAnnotation[$index] = [];
 
             foreach ($annotation as $indexAnnotation => $value) {
-                if (is_string($value) && strpos($value, '\\')) {
-                    $value = explode('\\', $value);
-                    $value = $value[count($value) - 1];
-                }
-
                 $returnAnnotation[$index][$indexAnnotation] = $value;
             }
         }

@@ -11,32 +11,19 @@ namespace Overblog\GraphQLBundle\Annotation;
  * Use it if you don't use Doctrine ORM annotation
  *
  * @Annotation
- * @Target("PROPERTY")
+ * @Target("CLASS")
  */
-class GraphQLQuery
+final class GraphQLNode
 {
     /**
-     * @var string
-     */
-    public $method;
-
-    /**
-     * @var array
-     */
-    public $args;
-
-    /**
+     * Type
+     *
      * @var string
      */
     public $type;
 
     /**
-     * @var array
-     */
-    public $input;
-
-    /**
      * @var string
      */
-    public $argsBuilder;
+    public $resolve;
 }
