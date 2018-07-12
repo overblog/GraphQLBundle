@@ -1,0 +1,13 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            failRequire:
+                type: String!
+                resolve: '@=resolver("example_exception")'
+            failOptional:
+                type: String
+                resolve: '@=resolver("example_exception")'
+            success:
+                type: String
+                resolve: 'foo'
