@@ -13,3 +13,16 @@ overblog_graphql:
                 -
                     type: yaml
                     dir: "%kernel.root_dir%/config/argumentWrapper/mapping"
+services:
+    expression_function_instance_of:
+        class: Symfony\Component\ExpressionLanguage\ExpressionFunction
+        factory: Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp
+        arguments:
+            - 'is_a'
+        tags: ['overblog_graphql.expression_function']
+    expression_function_json_encode:
+        class: Symfony\Component\ExpressionLanguage\ExpressionFunction
+        factory: Symfony\Component\ExpressionLanguage\ExpressionFunction::fromPhp
+        arguments:
+            - 'json_encode'
+        tags: ['overblog_graphql.expression_function']
