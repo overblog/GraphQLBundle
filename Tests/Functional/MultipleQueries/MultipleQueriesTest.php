@@ -6,21 +6,18 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class MultipleQueriesTest extends TestCase
 {
-    const REQUIRED_FAILS = [
-        'data' => [],
-        'errors' => [
-            [
-                'message' => 'Internal server Error',
-                'category' => 'internal',
-                'locations' => [
-                    [
-                        'line' => 2,
-                        'column' => 3,
-                    ],
+    const REQUIRED_FAILS_ERRORS = [
+        [
+            'message' => 'Internal server Error',
+            'category' => 'internal',
+            'locations' => [
+                [
+                    'line' => 2,
+                    'column' => 3,
                 ],
-                'path' => [
-                    'fail',
-                ],
+            ],
+            'path' => [
+                'fail',
             ],
         ],
     ];
@@ -63,7 +60,8 @@ class MultipleQueriesTest extends TestCase
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::REQUIRED_FAILS, $result);
+        $this->assertEquals(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertTrue(empty($result['data']));
     }
 
     public function testOptionalFails()
@@ -87,7 +85,8 @@ mutation {
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::REQUIRED_FAILS, $result);
+        $this->assertEquals(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertTrue(empty($result['data']));
     }
 
     public function testMutationOptionalFails()
