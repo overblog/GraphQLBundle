@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional;
 
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -131,5 +132,16 @@ abstract class TestCase extends WebTestCase
         $result = $client->getResponse()->getContent();
 
         return $isDecoded ? json_decode($result, true) : $result;
+    }
+
+    public static function expressionFunctionFromPhp($phpFunctionName)
+    {
+        if (is_callable([ExpressionFunction::class, 'fromPhp'])) {
+            return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
+        }
+
+        return new ExpressionFunction($phpFunctionName, function () use ($phpFunctionName) {
+            return sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args()));
+        });
     }
 }
