@@ -1,16 +1,19 @@
 RootQuery:
     type: object
     config:
-        resolveField: '@="Arguments: " ~ args["unknown"] ~ args["name"]'
+        resolveField: '@="Arguments: " ~ json_encode(args.getRawArguments()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
         fields:
             fieldWithResolverAndArgument:
                 type: String!
                 args:
                     name: {type: String!}
-                resolve: '@="Arguments: " ~ args["unknown"] ~ args["name"]'
+                resolve: '@="Field resolver Arguments: " ~ json_encode(args.getRawArguments()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
             fieldWithDefaultResolverAndArgument:
                 type: String!
                 args:
                     name: {type: String!}
+            fieldWithAccess:
+                type: String!
+                access: "@=true"
             field:
                 type: String!

@@ -49,7 +49,7 @@ class Resolver
     {
         return static function () use ($resolver) {
             $args = func_get_args();
-            if (count($args) > 1) {
+            if (count($args) > 1 && !$args[1] instanceof Argument) {
                 $args[1] = new Argument($args[1]);
             }
 
