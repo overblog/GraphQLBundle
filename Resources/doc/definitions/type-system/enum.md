@@ -24,3 +24,33 @@ Episode:
             FORCEAWAKENS: # in this case FORCEAWAKENS value = FORCEAWAKENS
                 description: "Released in 2015."
 ```
+
+Or with annotation:
+
+```php
+<?php
+
+/**
+ * @\Overblog\GraphQLBundle\Annotation\GraphQLType(type="enum")
+ * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="One of the films in the Star Wars Trilogy")
+ */
+class Episode
+{
+    /**
+     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 1977.")
+     */
+    const NEWHOPE = 4;
+    
+    /**
+     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 1980.")
+     */
+    const EMPIRE = 'constant("App\\StarWars\\Movies::MOVIE_EMPIRE")';
+    
+    const JEDI = 6;
+    
+    /**
+     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 2015.")
+     */
+    const FORCEAWAKENS = 'FORCEAWAKENS';
+}
+```

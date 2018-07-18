@@ -15,3 +15,21 @@ HeroInput:
             name:
                 type: "Episode!"
 ```
+
+Or with annotation:
+
+```php
+<?php
+
+/**
+ * @\Overblog\GraphQLBundle\Annotation\GraphQLType(type="input-object")
+ * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="One of the films in the Star Wars Trilogy")
+ */
+class HeroInput
+{
+    /**
+     * @\Overblog\GraphQLBundle\Annotation\GraphQLToOne(target="Episode", nullable=false)
+     */
+    public $episode;
+}
+```
