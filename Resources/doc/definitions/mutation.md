@@ -34,4 +34,56 @@ IntroduceShipInput:
                 type: "String!"
 ```
 
+To implement the logic behind your mutation, you should create a new class that
+implements `MutationInterface` and `AliasedInterface` interfaces.
+
+```php
+<?php
+# src/GraphQL/Mutation/ShipMutation.php
+namespace App\GraphQL\Mutation;
+
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+
+class ShipMutation implements MutationInterface, AliasedInterface
+{
+    private $factionRepository;
+    
+    public function __construct(FactionRepository $factionRepository) {
+        $this->factionRepository = $factionRepository;
+    }
+    
+    public function createShip(string $shipName, int $factionId): array
+    {
+        // `$shipName` has the value of `args['input']['shipName']`
+        // `$factionId` has the value of `args['input']['factionId']`
+        
+        // Do something with `$shipName` and `$factionId` ...
+        $ship    = new Ship($shipName);
+        $faction = $this->factionRepository->find($factionId);
+        $faction->addShip($ship);
+        // ...
+        
+
+        // Then returns our payload, it should fits `IntroduceShipPayload` type
+        return [
+            'ship'    => $ship,
+            'faction' => $faction,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getAliases()
+    {
+        return [
+            // `create_ship` is the name of the mutation that you SHOULD use inside of your types definition
+            // `createShip` is the method that will be executed when you call `@=resolver('create_ship')`
+            'createShip' => 'create_ship'
+        ];
+    }
+}
+```
+
 Here the same example [using relay mutation](relay/mutation.md).
