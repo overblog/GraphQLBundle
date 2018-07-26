@@ -1,6 +1,6 @@
 # Mutation
 
-Here an example without using relay:
+Here an example of mutation without using [relay](https://facebook.github.io/relay/):
 
 ```yaml
 Mutation:
