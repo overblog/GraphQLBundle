@@ -61,7 +61,7 @@ class AnnotationParser implements ParserInterface
                 case 'enum':
                     return self::formatEnumType($alias, $entityName, $reflexionEntity->getProperties());
                 case 'custom-scalar':
-                    return self::formatCustomScalarType($alias, $type, $className);
+                    return self::formatCustomScalarType($alias, $type, $className, $annotations);
                 default:
                     return self::formatScalarType($alias, $type, $entityName, $reflexionEntity->getProperties());
             }
@@ -97,6 +97,10 @@ class AnnotationParser implements ParserInterface
     {
         if (array_key_exists('GraphQLType', $annotation) && !empty($annotation['GraphQLType']['type'])) {
             return $annotation['GraphQLType']['type'];
+        }
+
+        if (array_key_exists('GraphQLScalarType', $annotation) && !empty($annotation['GraphQLScalarType']['type'])) {
+            return 'custom-scalar';
         }
 
         return 'object';
@@ -209,11 +213,23 @@ class AnnotationParser implements ParserInterface
      * @param string $alias
      * @param string $type
      * @param string $className
+     * @param array  $annotations
      *
      * @return array
      */
-    protected static function formatCustomScalarType($alias, $type, $className)
+    protected static function formatCustomScalarType($alias, $type, $className, $annotations)
     {
+        if (array_key_exists('GraphQLScalarType', $annotations) && !empty($annotations['GraphQLScalarType']['type'])) {
+            return [
+                $alias => [
+                    'type' => $type,
+                    'config' => [
+                        'scalarType' => $annotations['GraphQLScalarType']['type'],
+                    ],
+                ],
+            ];
+        }
+
         $config = [
             'serialize' => [$className, 'serialize'],
             'parseValue' => [$className, 'parseValue'],
@@ -375,6 +391,7 @@ class AnnotationParser implements ParserInterface
                     $graphQLType = 'Boolean';
                     break;
                 case 'float':
+                case 'decimal':
                     $graphQLType = 'Float';
                     break;
                 default:
@@ -469,7 +486,18 @@ class AnnotationParser implements ParserInterface
             return self::getGraphQLRelayMutationField($annotation);
         }
 
-        // @TODO
+        $annotation = $annotation['GraphQLMutation'];
+        if (array_key_exists('args', $annotation)) {
+            $mutate = "@=mutation('".$annotation['method']."', [".implode(', ', $annotation['args'])."])";
+        } else {
+            $mutate = "'".$annotation['method']."'";
+        }
+
+        return [
+            "type" => $annotation['payload'],
+            "resolve" => $mutate,
+            "args" => $annotation['input'],
+        ];
     }
 
     /**
@@ -495,7 +523,7 @@ class AnnotationParser implements ParserInterface
         return [
             "builder" => "Relay::Mutation",
             "builderConfig" => [
-                "inputType" => $annotation['input'],
+                "inputType" => $annotation['input'][0],
                 "payloadType" => $annotation['payload'],
                 "mutateAndGetPayload" => "@=mutation(".$mutate.")",
             ],

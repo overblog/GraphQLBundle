@@ -14,13 +14,5 @@ namespace Overblog\GraphQLBundle\Annotation;
  */
 final class GraphQLRelayMutation extends GraphQLMutation
 {
-    /**
-     * @var string The input graphql related type
-     */
-    public $input;
 
-    /**
-     * @var string The payload graphql related type
-     */
-    public $payload;
 }

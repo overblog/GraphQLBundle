@@ -11,27 +11,14 @@ namespace Overblog\GraphQLBundle\Annotation;
  * Use it if you don't use Doctrine ORM annotation
  *
  * @Annotation
- * @Target("PROPERTY")
+ * @Target("CLASS")
  */
-class GraphQLMutation
+final class GraphQLScalarType
 {
     /**
+     * Type
+     *
      * @var string
      */
-    public $method;
-
-    /**
-     * @var array
-     */
-    public $args;
-
-    /**
-     * @var array The input graphql related type
-     */
-    public $input;
-
-    /**
-     * @var string The payload graphql related type
-     */
-    public $payload;
+    public $type;
 }
