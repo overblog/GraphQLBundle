@@ -2,7 +2,6 @@
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
-use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -18,7 +17,7 @@ class AnnotationParser implements ParserInterface
             throw new \Exception('In order to use annotation, you need to require doctrine ORM');
         }
 
-        $loader = require __DIR__ . '/../../../../autoload.php';
+        $loader = require __DIR__.'/../../../../autoload.php';
 
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
         \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(__DIR__.'/../../Annotation/GraphQLAnnotation.php');
@@ -42,7 +41,7 @@ class AnnotationParser implements ParserInterface
 
             $entityName = substr($file->getFilename(), 0, -4);
             if (preg_match('#namespace (.+);#', $fileContent, $namespace)) {
-                $className = $namespace[1] . '\\' . $entityName;
+                $className = $namespace[1].'\\'.$entityName;
             } else {
                 $className = $entityName;
             }
@@ -71,7 +70,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the graphQL alias
+     * Get the graphQL alias.
      *
      * @param $annotation
      *
@@ -87,7 +86,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the graphQL type
+     * Get the graphQL type.
      *
      * @param $annotation
      *
@@ -124,7 +123,7 @@ class AnnotationParser implements ParserInterface
             $alias => [
                 'type' => $type,
                 'config' => [],
-            ]
+            ],
         ];
 
         if (!empty($classAnnotations['GraphQLNode'])) {
@@ -164,11 +163,11 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Format enum type
+     * Format enum type.
      *
-     * @param string                     $alias
-     * @param string                     $entityName
-     * @param \ReflectionProperty[]      $properties
+     * @param string                $alias
+     * @param string                $entityName
+     * @param \ReflectionProperty[] $properties
      *
      * @return array
      */
@@ -180,9 +179,9 @@ class AnnotationParser implements ParserInterface
             $alias => [
                 'type' => 'enum',
                 'config' => [
-                    'description' => $entityName . ' type',
+                    'description' => $entityName.' type',
                 ],
-            ]
+            ],
         ];
 
         $values = [];
@@ -208,7 +207,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Format custom scalar type
+     * Format custom scalar type.
      *
      * @param string $alias
      * @param string $type
@@ -240,12 +239,12 @@ class AnnotationParser implements ParserInterface
             $alias => [
                 'type' => $type,
                 'config' => $config,
-            ]
+            ],
         ];
     }
 
     /**
-     * Format scalar type
+     * Format scalar type.
      *
      * @param string                $alias
      * @param string                $type
@@ -262,10 +261,10 @@ class AnnotationParser implements ParserInterface
             $alias => [
                 'type' => $type,
                 'config' => [
-                    'description' => $entityName . ' type',
+                    'description' => $entityName.' type',
                     'fields' => [],
                 ],
-            ]
+            ],
         ];
 
         foreach ($properties as $property) {
@@ -294,7 +293,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Return the graphQL type for the named field
+     * Return the graphQL type for the named field.
      *
      * @param string $name
      * @param array  $annotation
@@ -315,7 +314,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Return the common field type, like ID, Int, String, and other user-created type
+     * Return the common field type, like ID, Int, String, and other user-created type.
      *
      * @param string $name
      * @param array  $annotation
@@ -364,22 +363,22 @@ class AnnotationParser implements ParserInterface
         }
 
         if (array_key_exists('nullable', $annotation)) {
-            $nullable = $annotation['nullable'] == 'true'
+            $nullable = 'true' == $annotation['nullable']
                 ? true
                 : false;
         }
 
         $type = explode('\\', $type);
-        $type = $type[count($type)-1];
+        $type = $type[count($type) - 1];
 
         // Get the graphQL type representation
         // Specific case for ID and relation
-        if ($name === 'id' && $type === 'integer') {
+        if ('id' === $name && 'integer' === $type) {
             $graphQLType = 'ID';
         } else {
             // Make the relation between doctrine Column type and graphQL type
             switch ($type) {
-                case 'integer';
+                case 'integer':
                     $graphQLType = 'Int';
                     break;
                 case 'string':
@@ -412,7 +411,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the graphql query formatted field
+     * Get the graphql query formatted field.
      *
      * @param array $annotation
      *
@@ -458,23 +457,22 @@ class AnnotationParser implements ParserInterface
         }
 
         if (!empty($queryArgs)) {
-            $query = "'".$method."', [".implode(', ', $queryArgs)."]";
+            $query = "'".$method."', [".implode(', ', $queryArgs).']';
         } else {
             $query = "'".$method."'";
         }
 
-        $ret['resolve'] = "@=resolver(".$query.")";
+        $ret['resolve'] = '@=resolver('.$query.')';
 
         if (!empty($annotationQuery['argsBuilder'])) {
             $ret['argsBuilder'] = $annotationQuery['argsBuilder'];
-
         }
 
         return $ret;
     }
 
     /**
-     * Get the formatted graphQL mutation field
+     * Get the formatted graphQL mutation field.
      *
      * @param array $annotation
      *
@@ -488,20 +486,20 @@ class AnnotationParser implements ParserInterface
 
         $annotation = $annotation['GraphQLMutation'];
         if (array_key_exists('args', $annotation)) {
-            $mutate = "@=mutation('".$annotation['method']."', [".implode(', ', $annotation['args'])."])";
+            $mutate = "@=mutation('".$annotation['method']."', [".implode(', ', $annotation['args']).'])';
         } else {
             $mutate = "'".$annotation['method']."'";
         }
 
         return [
-            "type" => $annotation['payload'],
-            "resolve" => $mutate,
-            "args" => $annotation['input'],
+            'type' => $annotation['payload'],
+            'resolve' => $mutate,
+            'args' => $annotation['input'],
         ];
     }
 
     /**
-     * Get the formatted graphQL relay mutation field
+     * Get the formatted graphQL relay mutation field.
      *
      * @param array $annotation
      *
@@ -515,23 +513,23 @@ class AnnotationParser implements ParserInterface
 
         $annotation = $annotation['GraphQLRelayMutation'];
         if (array_key_exists('args', $annotation)) {
-            $mutate = "'".$annotation['method']."', [".implode(', ', $annotation['args'])."]";
+            $mutate = "'".$annotation['method']."', [".implode(', ', $annotation['args']).']';
         } else {
             $mutate = "'".$annotation['method']."'";
         }
 
         return [
-            "builder" => "Relay::Mutation",
-            "builderConfig" => [
-                "inputType" => $annotation['input'][0],
-                "payloadType" => $annotation['payload'],
-                "mutateAndGetPayload" => "@=mutation(".$mutate.")",
+            'builder' => 'Relay::Mutation',
+            'builderConfig' => [
+                'inputType' => $annotation['input'][0],
+                'payloadType' => $annotation['payload'],
+                'mutateAndGetPayload' => '@=mutation('.$mutate.')',
             ],
         ];
     }
 
     /**
-     * Get graphql access control annotation
+     * Get graphql access control annotation.
      *
      * @param $annotation
      *
@@ -547,7 +545,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get graphql public control
+     * Get graphql public control.
      *
      * @param $annotation
      *
@@ -563,7 +561,7 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Parse annotation
+     * Parse annotation.
      *
      * @param mixed $annotation
      *

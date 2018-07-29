@@ -3,7 +3,6 @@
  * @author Thibault Colette <thibaultcolette06@hotmail.fr>
  * @copyright 2018 Thibault Colette
  */
-
 require_once __DIR__.'/GraphQLAccessControl.php';
 require_once __DIR__.'/GraphQLAlias.php';
 require_once __DIR__.'/GraphQLColumn.php';

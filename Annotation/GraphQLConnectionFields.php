@@ -8,7 +8,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 
 /**
  * Annotation for graphql type
- * Use it if you don't use Doctrine ORM annotation
+ * Use it if you don't use Doctrine ORM annotation.
  *
  * @Annotation
  * @Target("PROPERTY")
@@ -16,7 +16,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class GraphQLConnectionFields
 {
     /**
-     * Type
+     * Type.
      *
      * @var string
      */

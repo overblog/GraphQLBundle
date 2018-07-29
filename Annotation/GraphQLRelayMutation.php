@@ -7,12 +7,11 @@
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for graphql access control
+ * Annotation for graphql access control.
  *
  * @Annotation
  * @Target("PROPERTY")
  */
 final class GraphQLRelayMutation extends GraphQLMutation
 {
-
 }

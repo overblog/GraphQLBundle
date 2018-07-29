@@ -7,7 +7,7 @@
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for graphql control
+ * Annotation for graphql control.
  *
  * @Annotation
  * @Target("PROPERTY")
@@ -15,7 +15,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 abstract class AbstractGraphQLControl
 {
     /**
-     * Access control access name
+     * Access control access name.
      *
      * @var string
      */

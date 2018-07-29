@@ -7,7 +7,7 @@
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for graphql type relation
+ * Annotation for graphql type relation.
  *
  * @Annotation
  * @Target("PROPERTY")
@@ -15,7 +15,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 abstract class AbstractGraphQLRelation
 {
     /**
-     * Type
+     * Type.
      *
      * @var string
      */

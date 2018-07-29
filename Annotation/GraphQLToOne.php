@@ -8,7 +8,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 
 /**
  * Annotation for graphql type.
- * Use it if you don't use Doctrine ORM
+ * Use it if you don't use Doctrine ORM.
  *
  * @Annotation
  * @Target("PROPERTY")
