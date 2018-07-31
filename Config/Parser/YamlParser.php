@@ -25,7 +25,6 @@ class YamlParser implements ParserInterface
 
         try {
             $typesConfig = self::$yamlParser->parse(file_get_contents($file->getPathname()));
-//            var_dump($typesConfig);
         } catch (ParseException $e) {
             throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
         }

@@ -1,6 +1,5 @@
 # Mutation
 
-<<<<<<< HEAD
 Here an example of mutation without using [relay](https://facebook.github.io/relay/):
 
 ```yaml

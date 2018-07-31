@@ -373,7 +373,7 @@ class AnnotationParser implements ParserInterface
 
         // Get the graphQL type representation
         // Specific case for ID and relation
-        if ('id' === $name && 'integer' === $type) {
+        if ('id' === $name && ('integer' === $type || array_key_exists('Id', $annotation))) {
             $graphQLType = 'ID';
         } else {
             // Make the relation between doctrine Column type and graphQL type
