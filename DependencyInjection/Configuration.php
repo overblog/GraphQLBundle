@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
@@ -166,6 +167,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->append($this->securityQuerySection('query_max_depth', QueryDepth::DISABLED))
                 ->append($this->securityQuerySection('query_max_complexity', QueryComplexity::DISABLED))
+                ->append($this->securityQuerySection('disable_introspection', DisableIntrospection::DISABLED))
                 ->booleanNode('handle_cors')->defaultFalse()->end()
             ->end()
         ->end();
