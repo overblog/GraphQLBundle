@@ -4,7 +4,7 @@ imports:
 
 overblog_graphql:
     security:
-        disable_introspection: true
+        enable_introspection: false
     definitions:
         class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
         schema:
