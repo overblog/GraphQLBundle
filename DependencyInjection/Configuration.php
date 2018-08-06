@@ -166,6 +166,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->append($this->securityQuerySection('query_max_depth', QueryDepth::DISABLED))
                 ->append($this->securityQuerySection('query_max_complexity', QueryComplexity::DISABLED))
+                ->booleanNode('enable_introspection')->defaultTrue()->end()
                 ->booleanNode('handle_cors')->defaultFalse()->end()
             ->end()
         ->end();
