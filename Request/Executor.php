@@ -7,6 +7,7 @@ use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
+use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Event\Events;
@@ -111,6 +112,11 @@ class Executor
         /** @var QueryComplexity $queryComplexity */
         $queryComplexity = DocumentValidator::getRule('QueryComplexity');
         $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
+    }
+
+    public function disableIntrospectionQuery()
+    {
+        DocumentValidator::addRule(new DisableIntrospection());
     }
 
     /**
