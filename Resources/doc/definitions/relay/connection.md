@@ -22,7 +22,7 @@ User:
                 resolve: '@=resolver("friends", [value, args])'
             friendsForward:
                 type: userConnection
-                argsBuilder: "Relay::ForwardConnection
+                argsBuilder: "Relay::ForwardConnection"
                 resolve: '@=resolver("friends", [value, args])'
             friendsBackward:
                 type: userConnection

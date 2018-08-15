@@ -13,11 +13,12 @@ class ArgumentWrapperTest extends TestCase
 
     public function testQuery()
     {
-        $query = '{ fieldWithResolverAndArgument(name: "foo") fieldWithDefaultResolverAndArgument(name: "bar") field }';
+        $query = '{ fieldWithResolverAndArgument(name: "foo") fieldWithDefaultResolverAndArgument(name: "bar") field fieldWithAccess}';
         $expectedData = [
-            'fieldWithResolverAndArgument' => 'Arguments: foo',
-            'fieldWithDefaultResolverAndArgument' => 'Arguments: bar',
-            'field' => 'Arguments: ',
+            'fieldWithResolverAndArgument' => 'Field resolver Arguments: {"name":"foo"} | InstanceOf: true',
+            'fieldWithDefaultResolverAndArgument' => 'Arguments: {"name":"bar"} | InstanceOf: true',
+            'field' => 'Arguments: [] | InstanceOf: true',
+            'fieldWithAccess' => 'Arguments: [] | InstanceOf: true',
         ];
 
         $this->assertGraphQL($query, $expectedData);

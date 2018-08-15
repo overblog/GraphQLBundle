@@ -17,7 +17,7 @@ Character:
     heirs: # the opposite of « inherits »
            # optional if « inherits » already exists on daughters classes
       - CharacterWarrior
-      - WizardWarrior
+      - CharacterWizard
     config:
         fields:
             id: {type: Int!}
@@ -138,6 +138,8 @@ CharacterWizard:
    for example `CharacterWizard` config is the result of
    `array_replace_recursive(CharacterConfig, CharacterWizardConfig)`
 
+**Decorators:**
+
 You can also create decorator types to be used as reusable templates.
 Decorators are only virtual and will not exists in final schema.
 That is the reason why decorator should never be reference as type in schema definition.
@@ -150,4 +152,47 @@ ObjectA:
     config:
         fields:
             bar: {type: String!}
+```
+
+You can use interfaces with decorators. Because they are only virtual, you do not have to implement the interface on the decorator itself.
+But you have to implement it on the type you decorate.
+
+Imagine the following situation:
+
+```yaml
+Node:
+    type: 'interface'
+    config:
+        # [...] resolveType logic unimportant here
+        fields:
+            id:
+                type: 'ID!'
+                # [...] resolve logic unimportant here
+
+NodeEditPermission:
+    type: 'object'
+    decorator: true
+    config:
+        # This interface must be implemented by type which inherits from this decorator
+        interfaces: ["Node"]
+        fields:
+            canEdit: 
+                type: 'Boolean!'
+                # The `value` is enforced to implement "Node" no matter which type uses this decorator.
+                # The resolver could be for example a (cached) user of symfony/security authorization checker
+                # which does ->isGranted([attribute] $attribute, [subject] $value)
+                resolve: '@=resolver("Permission.nodeAttribute", ["edit", value])'
+
+Product:
+    type: 'object'
+    inherits: 
+      - 'NodeEditPermission'
+      # - 'NodeRemovePermission' 
+      # - [...]
+    config:
+        fields:
+            # Must implement "Node" interface because "NodeEditPermission" decorator requires it
+            # Not implementing would raise an graphql error
+            id:
+                type: 'ID!'
 ```

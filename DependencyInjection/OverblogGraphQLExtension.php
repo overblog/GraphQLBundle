@@ -162,6 +162,11 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setSecurity(array $config, ContainerBuilder $container)
     {
+        if (false === $config['security']['enable_introspection']) {
+            $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
+            $executorDefinition->addMethodCall('disableIntrospectionQuery');
+        }
+
         foreach ($config['security'] as $key => $value) {
             $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
         }

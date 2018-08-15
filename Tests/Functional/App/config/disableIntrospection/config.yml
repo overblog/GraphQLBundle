@@ -1,0 +1,17 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: ../connection/services.yml }
+
+overblog_graphql:
+    security:
+        enable_introspection: false
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/queryComplexity/mapping"
