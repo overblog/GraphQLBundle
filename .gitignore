@@ -6,3 +6,8 @@ composer.lock
 composer.phar
 .php_cs.cache
 .php_cs
+
+phpbench.phar
+phpbench.phar.pubkey
+/.phpbench_storage
+php-cs-fixer.phar
