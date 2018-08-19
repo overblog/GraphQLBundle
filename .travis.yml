@@ -11,32 +11,6 @@ branches:
         - master
         - /^\d+\.\d+$/
 
-matrix:
-    fast_finish: true
-    include:
-        - php: 5.6
-          env: COMPOSER_UPDATE_FLAGS=--prefer-lowest SYMFONY_DEPRECATIONS_HELPER=disabled GRAPHQLPHP_VERSION=^0.11.2
-        - php: 5.6
-          env: SYMFONY_VERSION=3.1.* SYMFONY_DEPRECATIONS_HELPER=disabled GRAPHQLPHP_VERSION=0.12
-        - php: 7.0
-          env: SYMFONY_VERSION=3.2.* PHPUNIT_VERSION=^5.7.26
-        - php: 7.1
-        - php: 7.2
-          env: PHP_CS_FIXER=true
-        - php: 7.2
-          env: SYMFONY_VERSION=3.3.*
-        - php: 7.2
-          env: SYMFONY_VERSION=3.4.*
-        - php: 7.2
-          env: SYMFONY_VERSION=4.0.* TEST_COVERAGE=true
-        - php: 7.2
-          env: SYMFONY_VERSION=4.1.* STABILITY=beta
-        - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
-    allow_failures:
-        - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
-
 cache:
     directories:
         - $HOME/.composer/cache
@@ -47,17 +21,58 @@ before_install:
     - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
     - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
-    - if [ ${TEST_COVERAGE} != true ]; then phpenv config-rm xdebug.ini || true; fi
+    - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
-install: composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
+install: travis_retry composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 
-script:
-    - composer validate --no-check-lock --strict
-    - bin/phpunit --debug $( if [ $TEST_COVERAGE = true ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
-    - if [ ${PHP_CS_FIXER} = true ]; then composer require --dev 'friendsofphp/php-cs-fixer:^2.0' && bin/php-cs-fixer fix --diff --dry-run -v; fi;
+script: composer test
 
-after_script:
-    - if [ ${TEST_COVERAGE} = true ]; then wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml; fi
-    - if [ ${TEST_COVERAGE} = true ]; then composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v; fi
+jobs:
+    include:
+        - stage: Test
+          php: 5.6
+          env: COMPOSER_UPDATE_FLAGS=--prefer-lowest SYMFONY_DEPRECATIONS_HELPER=disabled GRAPHQLPHP_VERSION=^0.11.2
+        - php: 5.6
+          env: SYMFONY_VERSION=3.1.* SYMFONY_DEPRECATIONS_HELPER=disabled GRAPHQLPHP_VERSION=0.12
+        - php: 7.0
+          env: SYMFONY_VERSION=3.2.* PHPUNIT_VERSION=^5.7.26
+        - php: 7.1
+        - php: 7.2
+          env: SYMFONY_VERSION=3.3.*
+        - php: 7.2
+          env: SYMFONY_VERSION=3.4.*
+        - php: 7.2
+          env: SYMFONY_VERSION=4.1.* STABILITY=beta
+        - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
+        - php: 7.2
+          env: COVERAGE
+          before_script:
+            - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
+            - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
+          script: bin/phpunit --color=always -v --debug -d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml
+          after_script:
+            - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+            - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
+
+        - stage: Code Quality
+          php: 7.2
+          env: STATIC_ANALYSIS
+          install: travis_retry composer install --prefer-dist
+          script: composer static-analysis
+
+        - stage: Code Quality
+          php: 7.2
+          env: CODING_STANDARDS
+          script: composer check-cs
+
+        - stage: Code Quality
+          php: 7.2
+          env: BENCHMARK
+          script: composer bench
+
+    allow_failures:
+        - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
