@@ -12,7 +12,7 @@ Versions requirements
 |----------------------------------------------------------------:|------------:|------------------:|--------------------:|
 | [`0.12`](https://github.com/overblog/GraphQLBundle/tree/master) |  `>= 7.1`   |  `>= 3.1`         | DEV                 |
 | [`0.11`](https://github.com/overblog/GraphQLBundle/tree/0.11)   |  `>= 5.6`   |  `>= 3.1, <= 4.0` | Active support      |
-| [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | Active support      |
+| [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
 | [`0.9`](https://github.com/overblog/GraphQLBundle/tree/0.9)     |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
 | [`0.8`](https://github.com/overblog/GraphQLBundle/tree/0.8)     |  `>= 5.4 `  |  `>= 2.7, <= 3.1` | End of life         |
 
