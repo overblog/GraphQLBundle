@@ -17,6 +17,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks",
             "Overblog\\GraphQLBundle\\Tests\\": "tests"
         },
         "files": [
@@ -65,5 +66,33 @@
         "branch-alias": {
             "dev-master": "0.12-dev"
         }
+    },
+    "scripts": {
+        "test": "bin/phpunit --color=always -v --debug",
+        "static-analysis": [
+            "@composer req --ansi --dev phpstan/phpstan-shim",
+            "bin/phpstan.phar analyse --ansi -l 1 -c phpstan.neon src",
+            "@composer rem --ansi --dev phpstan/phpstan-shim"
+        ],
+        "bench":  [
+            "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
+            "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
+        ],
+        "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
+        "fix-cs": [
+            "@install-cs",
+            "@php php-cs-fixer.phar fix --diff -v --ansi"
+        ],
+        "check-cs": [
+            "@install-cs",
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --ansi"
+        ],
+        "code-quality": [
+            "rm composer.lock",
+            "@composer install --ansi",
+            "@static-analysis",
+            "@bench",
+            "@check-cs"
+        ]
     }
 }

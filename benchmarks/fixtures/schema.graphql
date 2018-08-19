@@ -1,0 +1,54 @@
+"""Root Query"""
+type Query {
+  hero(
+    """Episode list to use to filter"""
+    episodes: [Episode!]! = [NEWHOPE, EMPIRE]
+  ): Character
+  """search for a droid"""
+  droid(id: ID!): Droid
+}
+
+type Starship {
+  id: ID!
+  name: String!
+  length(unit: LengthUnit = METER): Float
+}
+
+enum Episode {
+  NEWHOPE
+  EMPIRE
+  JEDI
+}
+
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+}
+
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  starships: [Starship]
+  totalCredits: Int
+}
+
+type Droid implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  primaryFunction: String
+}
+
+union SearchResult = Human | Droid | Starship
+
+input ReviewInput {
+  stars: Int! = 5
+  commentary: String = null
+}
+
+scalar Year
