@@ -1,7 +1,7 @@
 Expression language
 ===================
 
-All definitions configs entries can use expression language but it must be explicitly triggered using "@=" like prefix.
+All definition config entries can use expression language but it must be explicitly triggered using "@=" like prefix.
 
 **Functions description:**
 
@@ -43,11 +43,11 @@ Expression | Description | Scope
 Custom expression function
 --------------------------
 
-Custom expression function is easy as creating a tagged service.
-Adding useful expression function can help user create simple resolver without having to leave config file,
-this also improve performance by removing a useless external resolver call.
+Adding custom expression function is easy since all you need to do is create a tagged service.
+Expression functions can help user create simple resolver without having to leave config file,
+this also improves performance by removing a useless external resolver call.
 
-Here an example to add an custom expression equivalent to php `json_decode`:
+Here is an example to add a custom expression equivalent to php `json_decode`:
 
 ```php
 <?php
@@ -77,7 +77,7 @@ App\ExpressionLanguage\JsonDecode:
     tags: ['overblog_graphql.expression_function']
 ```
 
-Now `json_decode` can be use in schema:
+Now `json_decode` can be used in schema:
 
 ```yaml
 Object:
@@ -89,5 +89,5 @@ Object:
             resolve: "@=json_decode(value.json_data, true)['name']"
 ```
 
-**Tips**: At last if this is till no answer to all your needs, the expression language service can be custom
+**Tips**: At last if this is not an answer to all your needs, the expression language service can be customized
 using bundle configuration.

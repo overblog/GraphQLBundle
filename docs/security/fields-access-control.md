@@ -1,9 +1,13 @@
 Fields access Control
 ======================
 
-An access control can be add on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
+An access control can be added on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
 Act like access is`true` if not set.
+
+Note: 
+- in query mode: execute resolver -> execute access -> manage result in function of access
+- in mutation mode: execute access -> execute resolver if access result is true
 
 In the example below the Human name is available only for authenticated users.
 
@@ -32,3 +36,9 @@ Human:
                 description: "The home planet of the human, or null if unknown."
         interfaces: [Character]
 ```
+
+Performance
+-----------
+Checking access on each field can be a performance issue and may be dealt with using:
+- using a custom cache to do the check only once
+- using [Object access control](object-access-control.md)

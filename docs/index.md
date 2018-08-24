@@ -5,14 +5,16 @@ This Symfony bundle provides integration of [GraphQL](https://facebook.github.io
 and [GraphQL Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html).
 It also supports batching using libs like [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer) or [Apollo GraphQL](http://dev.apollodata.com/core/network.html#query-batching).
 
-Requirements
-------------
+Versions requirements
+----------------------
 
-| Version                                                     | PHP         | Symfony           |
-|------------------------------------------------------------:|------------:|------------------:|
-| `>= 0.10`                                                   |  `>= 5.6`   |  `>= 3.1`         |
-| [`0.9`](https://github.com/overblog/GraphQLBundle/tree/0.9) |  `>= 5.5.9` |  `>= 2.8, <= 3.1` |
-| [`0.8`](https://github.com/overblog/GraphQLBundle/tree/0.8) |  `>= 5.4 `  |  `>= 2.7, <= 3.1` |
+| Version                                                         | PHP         | Symfony           | Support             |
+|----------------------------------------------------------------:|------------:|------------------:|--------------------:|
+| [`0.12`](https://github.com/overblog/GraphQLBundle/tree/master) |  `>= 7.1`   |  `>= 3.1`         | DEV                 |
+| [`0.11`](https://github.com/overblog/GraphQLBundle/tree/0.11)   |  `>= 5.6`   |  `>= 3.1, <= 4.0` | Active support      |
+| [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
+| [`0.9`](https://github.com/overblog/GraphQLBundle/tree/0.9)     |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
+| [`0.8`](https://github.com/overblog/GraphQLBundle/tree/0.8)     |  `>= 5.4 `  |  `>= 2.7, <= 3.1` | End of life         |
 
 After installation
 ------------

@@ -51,6 +51,20 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
+    public function testDumpWithDescriptions()
+    {
+        $file = $this->cacheDir.'/schema.json';
+        $this->assertCommandExecution(
+            [
+                '--file' => $file,
+                '--with-descriptions' => true,
+            ],
+            __DIR__.'/fixtures/schema.descriptions.json',
+            $file,
+            'json'
+        );
+    }
+
     public function testClassicJsonFormat()
     {
         $file = $this->cacheDir.'/schema.json';

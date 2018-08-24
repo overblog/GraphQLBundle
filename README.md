@@ -17,10 +17,13 @@ It also supports:
 
 Browse your version documentation:
 
-* [0.8](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
-* [0.9](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
-* [0.10](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
-* [0.11](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
+* [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
+* [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
+* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.12 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+
+[Versions requirements](docs/index.md#versions-requirements)
 
 Documentation
 -------------
@@ -63,6 +66,7 @@ Documentation
   - [Promise](docs/data-fetching/promise.md)
 - [Security](docs/security/index.md)
   - [Handle CORS](docs/security/handle-cors.md)
+  - [Object access control](docs/security/object-access-control.md)
   - [Fields access control](docs/security/fields-access-control.md)
   - [Fields public control](docs/security/fields-public-control.md)
   - [Limiting query depth](docs/security/limiting-query-depth.md)
@@ -74,6 +78,8 @@ Documentation
 Talks and slides to help you start
 ----------------------------------
 
+* GraphQL in Symfony *by Bernd Alter* - [Twitter](https://twitter.com/bazoo0815)
+  - [Talk about GraphQL and its implementation with Symfony (26.04.2017)](https://www.slideshare.net/berndalter7/graphql-in-symfony) `English`
 * GraphQL is right in front of us, let's to it! *by Renato Mendes Figueiredo* - [Twitter](https://twitter.com/renatomefi), [GitHub](https://github.com/renatomefi)
   - [Slides at http://talks.mefi.in/graphql-scotphp17](http://talks.mefi.in/graphql-scotphp17/) `English`
   - [Video at SymfonyCamp UA 2017](https://www.youtube.com/watch?v=jyoYlnCPNgk) `English`
