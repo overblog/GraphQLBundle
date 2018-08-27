@@ -5,7 +5,6 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Zend\Code\Reflection\PropertyReflection;
 
 class AnnotationParser implements ParserInterface
 {
@@ -106,10 +105,10 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * @param string               $type
-     * @param string               $alias
-     * @param array                $classAnnotations
-     * @param PropertyReflection[] $properties
+     * @param string                $type
+     * @param string                $alias
+     * @param array                 $classAnnotations
+     * @param \ReflectionProperty[] $properties
      *
      * @return array
      *
