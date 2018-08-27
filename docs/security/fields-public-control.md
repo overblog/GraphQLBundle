@@ -1,7 +1,7 @@
 Fields public Control
 =====================
 
-You can use `config.fields.*.public` to control if a field needs to be removed the results.
+You can use `config.fields.*.public` to control if a field needs to be removed from the results.
 If `config.fields.*.public` value is true or is not set, the field will be visible.
 If value is false, then the field will be removed (in any query, including inspection queries).
 
@@ -49,7 +49,7 @@ class AnObject
 }
 ```
 
-You can also use `config.fieldsDefaultPublic` to handle the setting globally on an object :
+You can also use `config.fieldsDefaultPublic` to handle the setting globally on an object:
 
 ```yaml
 AnObject:
@@ -63,6 +63,6 @@ AnObject:
                 type: "String"
 ```
 
-Have you noticed `typeName` and `fieldName` here ? This variables are always set to the current
+Have you noticed `typeName` and `fieldName` here? These variables are always set to the current
 type name and current field name, meaning you can apply a per field `public` setting on all the
 fields with one line of yaml.

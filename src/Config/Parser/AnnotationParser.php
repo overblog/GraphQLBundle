@@ -21,7 +21,7 @@ class AnnotationParser implements ParserInterface
         $loader = require __DIR__ . '/../../../../autoload.php';
 
         \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
-        \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(__DIR__.'/../../Annotation/GraphQLAnnotation.php');
+        \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(__DIR__ . '/../../Annotation/GraphQLAnnotation.php');
         $reader = new \Doctrine\Common\Annotations\AnnotationReader();
 
         return $reader;
