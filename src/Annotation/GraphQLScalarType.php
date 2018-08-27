@@ -3,7 +3,7 @@
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type
+ * Annotation for GraphQL type.
  *
  * @Annotation
  * @Target("CLASS")
