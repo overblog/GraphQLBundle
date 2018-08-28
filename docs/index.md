@@ -131,3 +131,7 @@ Finish by dumping the new autoloader.
 ```bash
 composer dump-autoload
 ```
+
+## Example
+
+You can found complete example using React Apollo and OverblogGraphQLBundle with symfony flex and annotation type here: [https://github.com/CocoJr/sf4-react-graphql-example]()

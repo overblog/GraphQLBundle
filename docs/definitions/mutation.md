@@ -34,6 +34,12 @@ IntroduceShipInput:
                 type: "String!"
 ```
 
+The same example with annotation: @TODO
+
+```php
+@TODO
+```
+
 To implement the logic behind your mutation, you should create a new class that
 implements `MutationInterface` and `AliasedInterface` interfaces.
 

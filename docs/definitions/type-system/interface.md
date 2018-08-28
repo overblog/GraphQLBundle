@@ -33,6 +33,44 @@ Character:
         resolveType: "@=resolver('character_type', [value])"
 ```
 
+
+Or with annotation:
+
+```php
+<?php
+
+/**
+ * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="A character in the Star Wars Trilogy")
+ */
+abstract class Character
+{
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLDescription(description="The id of the character.")
+     */
+    public $id;
+
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLDescription(description="The name of the character.")
+     * @GQL\GraphQLAccessControl(method="isAuthenticated()")
+     */
+    public $name;
+    
+    /**
+     * @GQL\GraphQLToMany(target="Character")
+     * @GQL\GraphQLDescription(description="The friends of the character.")
+     */
+    public $friends;
+    
+    /**
+     * @GQL\GraphQLToMany(target="Episode")
+     * @GQL\GraphQLDescription(description="Which movies they appear in.")
+     */
+    public $appearsIn;
+}
+```
+
 ```yaml
 # src/MyBundle/Resources/config/services.yml
 services:
@@ -49,6 +87,7 @@ services:
 ```
 
 ```php
+<?php
 // src/MyBundle/GraphQL/Resolver
 namespace MyBundle\GraphQL\Resolver;
 

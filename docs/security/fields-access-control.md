@@ -37,6 +37,60 @@ Human:
         interfaces: [Character]
 ```
 
+Or using annotation:
+
+```php
+<?php
+/**
+ * @author Thibault Colette <thibaultcolette06@hotmail.fr>
+ * @copyright 2018 Thibault Colette
+ */
+
+namespace App\Entity\GraphQLType;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * Class FormErrorType
+ *
+ * @GQL\GraphQLDescription(description="A humanoid creature in the Star Wars universe.")
+ */
+class Human implements Character
+{
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLDescription(description="The id of the character.")
+     */
+    public $id;
+
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLDescription(description="The name of the character.")
+     * @GQL\GraphQLAccessControl(method="isAuthenticated()")
+     */
+    public $name;
+    
+    /**
+     * @GQL\GraphQLToMany(target="Character")
+     * @GQL\GraphQLDescription(description="The friends of the character.")
+     */
+    public $friends;
+    
+    /**
+     * @GQL\GraphQLToMany(target="Episode")
+     * @GQL\GraphQLDescription(description="Which movies they appear in.")
+     */
+    public $appearsIn;
+    
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLDescription(description="The home planet of the human, or null if unknown.")
+     */
+    public $homePlanet;
+}
+```
+
+
 Performance
 -----------
 Checking access on each field can be a performance issue and may be dealt with using:
