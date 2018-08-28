@@ -6,7 +6,7 @@ use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 
 class AnnotationParserTest extends TestCase
 {
-    public function testParse()
+    public function testQueryParse()
     {
         $expected = [
             'RootQuery' => [
@@ -27,10 +27,8 @@ class AnnotationParserTest extends TestCase
             ],
         ];
         $fileName = __DIR__.'/fixtures/Entity/GraphQL/RootQuery.php';
-
         $this->assertContainerAddFileToResources($fileName);
         $config = AnnotationParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
         $this->assertEquals($expected, self::cleanConfig($config));
     }
-
 }

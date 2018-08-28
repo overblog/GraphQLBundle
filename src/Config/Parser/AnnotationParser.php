@@ -2,28 +2,16 @@
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
+use Composer\Autoload\ClassLoader;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class AnnotationParser implements ParserInterface
 {
-    public static function getAnnotationReader()
-    {
-        if (!class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
-            !class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')
-        ) {
-            throw new \Exception('In order to use annotation, you need to require doctrine ORM');
-        }
-
-        $loader = require __DIR__.'/../../../../autoload.php';
-
-        \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
-        \Doctrine\Common\Annotations\AnnotationRegistry::registerFile(__DIR__.'/../../Annotation/GraphQLAnnotation.php');
-        $reader = new \Doctrine\Common\Annotations\AnnotationReader();
-
-        return $reader;
-    }
+    private static $annotationReader = null;
 
     /**
      * {@inheritdoc}
@@ -33,7 +21,6 @@ class AnnotationParser implements ParserInterface
      */
     public static function parse(\SplFileInfo $file, ContainerBuilder $container)
     {
-        $reader = self::getAnnotationReader();
         $container->addResource(new FileResource($file->getRealPath()));
         try {
             $fileContent = file_get_contents($file->getRealPath());
@@ -47,7 +34,7 @@ class AnnotationParser implements ParserInterface
 
             $reflexionEntity = new \ReflectionClass($className);
 
-            $annotations = $reader->getClassAnnotations($reflexionEntity);
+            $annotations = self::getAnnotationReader()->getClassAnnotations($reflexionEntity);
             $annotations = self::parseAnnotation($annotations);
 
             $alias = self::getGraphQLAlias($annotations) ?: $entityName;
@@ -68,6 +55,26 @@ class AnnotationParser implements ParserInterface
         }
     }
 
+    private static function getAnnotationReader()
+    {
+        if (null === self::$annotationReader) {
+            if (!class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
+                !class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')
+            ) {
+                throw new \Exception('In order to use annotation, you need to require doctrine ORM');
+            }
+
+            $loader = new ClassLoader();
+            $loader->setClassMapAuthoritative(true);
+
+            AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+            AnnotationRegistry::registerFile(__DIR__.'/../../Annotation/GraphQLAnnotation.php');
+            self::$annotationReader = new AnnotationReader();
+        }
+
+        return self::$annotationReader;
+    }
+
     /**
      * Get the graphQL alias.
      *
@@ -75,9 +82,9 @@ class AnnotationParser implements ParserInterface
      *
      * @return string|null
      */
-    protected static function getGraphQLAlias($annotation)
+    private static function getGraphQLAlias($annotation)
     {
-        if (array_key_exists('GraphQLAlias', $annotation) && !empty($annotation['GraphQLAlias']['name'])) {
+        if (!empty($annotation['GraphQLAlias']['name'])) {
             return $annotation['GraphQLAlias']['name'];
         }
 
@@ -91,13 +98,13 @@ class AnnotationParser implements ParserInterface
      *
      * @return string
      */
-    protected static function getGraphQLType($annotation)
+    private static function getGraphQLType($annotation)
     {
-        if (array_key_exists('GraphQLType', $annotation) && !empty($annotation['GraphQLType']['type'])) {
+        if (!empty($annotation['GraphQLType']['type'])) {
             return $annotation['GraphQLType']['type'];
         }
 
-        if (array_key_exists('GraphQLScalarType', $annotation) && !empty($annotation['GraphQLScalarType']['type'])) {
+        if (!empty($annotation['GraphQLScalarType']['type'])) {
             return 'custom-scalar';
         }
 
@@ -114,10 +121,8 @@ class AnnotationParser implements ParserInterface
      *
      * @throws \Exception
      */
-    protected static function formatRelay($type, $alias, $classAnnotations, $properties)
+    private static function formatRelay($type, $alias, $classAnnotations, $properties)
     {
-        $reader = self::getAnnotationReader();
-
         $typesConfig = [
             $alias => [
                 'type' => $type,
@@ -132,7 +137,7 @@ class AnnotationParser implements ParserInterface
 
         foreach ($properties as $property) {
             $propertyName = $property->getName();
-            $propertyAnnotation = $reader->getPropertyAnnotations($property);
+            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
             $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
 
             if (!empty($propertyAnnotation['GraphQLEdgeFields'])) {
@@ -156,9 +161,7 @@ class AnnotationParser implements ParserInterface
             }
         }
 
-        return empty($typesConfig[$alias]['config'])
-            ? []
-            : $typesConfig;
+        return empty($typesConfig[$alias]['config']) ? [] : $typesConfig;
     }
 
     /**
@@ -170,10 +173,8 @@ class AnnotationParser implements ParserInterface
      *
      * @return array
      */
-    protected static function formatEnumType($alias, $entityName, $properties)
+    private static function formatEnumType($alias, $entityName, $properties)
     {
-        $reader = self::getAnnotationReader();
-
         $typesConfig = [
             $alias => [
                 'type' => 'enum',
@@ -188,14 +189,14 @@ class AnnotationParser implements ParserInterface
         foreach ($properties as $property) {
             $propertyName = $property->getName();
 
-            $propertyAnnotation = $reader->getPropertyAnnotations($property);
+            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
             $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
 
             $values[$propertyName] = [
                 'value' => $propertyAnnotation,
             ];
 
-            if (array_key_exists('GraphQLDescription', $propertyAnnotation) && !empty($test['GraphQLDescription']['description'])) {
+            if (!empty($test['GraphQLDescription']['description'])) {
                 $values[$propertyName]['description'] = $test['GraphQLDescription']['description'];
             }
         }
@@ -215,9 +216,9 @@ class AnnotationParser implements ParserInterface
      *
      * @return array
      */
-    protected static function formatCustomScalarType($alias, $type, $className, $annotations)
+    private static function formatCustomScalarType($alias, $type, $className, $annotations)
     {
-        if (array_key_exists('GraphQLScalarType', $annotations) && !empty($annotations['GraphQLScalarType']['type'])) {
+        if (!empty($annotations['GraphQLScalarType']['type'])) {
             return [
                 $alias => [
                     'type' => $type,
@@ -252,10 +253,8 @@ class AnnotationParser implements ParserInterface
      *
      * @return array
      */
-    protected static function formatScalarType($alias, $type, $entityName, $properties)
+    private static function formatScalarType($alias, $type, $entityName, $properties)
     {
-        $reader = self::getAnnotationReader();
-
         $typesConfig = [
             $alias => [
                 'type' => $type,
@@ -268,7 +267,7 @@ class AnnotationParser implements ParserInterface
 
         foreach ($properties as $property) {
             $propertyName = $property->getName();
-            $propertyAnnotation = $reader->getPropertyAnnotations($property);
+            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
             $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
 
             if (!$graphQlType = self::getGraphQLFieldType($propertyName, $propertyAnnotation)) {
@@ -299,7 +298,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return array|null
      */
-    protected static function getGraphQLFieldType($name, $annotation)
+    private static function getGraphQLFieldType($name, $annotation)
     {
         if (!$type = self::getGraphQLScalarFieldType($name, $annotation)) {
             if (!$type = self::getGraphQLQueryField($annotation)) {
@@ -320,7 +319,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return array|null
      */
-    protected static function getGraphQLScalarFieldType($name, $annotation)
+    private static function getGraphQLScalarFieldType($name, $annotation)
     {
         // Get the current type, depending on current annotation
         $type = $graphQLType = null;
@@ -416,7 +415,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return array|null
      */
-    protected static function getGraphQLQueryField($annotation)
+    private static function getGraphQLQueryField($annotation)
     {
         if (!array_key_exists('GraphQLQuery', $annotation)) {
             return null;
@@ -481,7 +480,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return array
      */
-    protected static function getGraphQLMutationField($annotation)
+    private static function getGraphQLMutationField($annotation)
     {
         if (!array_key_exists('GraphQLMutation', $annotation)) {
             return self::getGraphQLRelayMutationField($annotation);
@@ -508,7 +507,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return array|null
      */
-    protected static function getGraphQLRelayMutationField($annotation)
+    private static function getGraphQLRelayMutationField($annotation)
     {
         if (!array_key_exists('GraphQLRelayMutation', $annotation)) {
             return null;
@@ -538,7 +537,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return null|string
      */
-    protected static function getGraphQLAccessControl($annotation)
+    private static function getGraphQLAccessControl($annotation)
     {
         if (array_key_exists('GraphQLAccessControl', $annotation) && array_key_exists('method', $annotation['GraphQLAccessControl'])) {
             return '@='.$annotation['GraphQLAccessControl']['method'];
@@ -554,7 +553,7 @@ class AnnotationParser implements ParserInterface
      *
      * @return null|string
      */
-    protected static function getGraphQLPublicControl($annotation)
+    private static function getGraphQLPublicControl($annotation)
     {
         if (array_key_exists('GraphQLPublicControl', $annotation) && array_key_exists('method', $annotation['GraphQLPublicControl'])) {
             return '@='.$annotation['GraphQLPublicControl']['method'];
@@ -566,11 +565,11 @@ class AnnotationParser implements ParserInterface
     /**
      * Parse annotation.
      *
-     * @param mixed $annotation
+     * @param array $annotations
      *
      * @return array
      */
-    protected static function parseAnnotation($annotations)
+    private static function parseAnnotation($annotations)
     {
         $returnAnnotation = [];
         foreach ($annotations as $index => $annotation) {
