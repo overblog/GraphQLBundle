@@ -33,11 +33,11 @@ use GraphQL\Language\AST\Node;
 class DateTimeType
 {
     /**
-     * @param \DateTime $value
+     * @param \DateTimeInterface $value
      *
      * @return string
      */
-    public static function serialize(\DateTime $value)
+    public static function serialize(\DateTimeInterface $value)
     {
         return $value->format('Y-m-d H:i:s');
     }
@@ -45,21 +45,21 @@ class DateTimeType
     /**
      * @param mixed $value
      *
-     * @return mixed
+     * @return \DateTimeInterface
      */
     public static function parseValue($value)
     {
-        return new \DateTime($value);
+        return new \DateTimeImmutable($value);
     }
  
     /**
      * @param Node $valueNode
      *
-     * @return string
+     * @return \DateTimeInterface
      */
-    public static function parseLiteral($valueNode)
+    public static function parseLiteral(Node $valueNode)
     {
-        return new \DateTime($valueNode->value);
+        return new \DateTimeImmutable($valueNode->value);
     }
 }
 ```
