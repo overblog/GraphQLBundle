@@ -30,7 +30,7 @@ class ConnectionBuilder
             $args,
             [
                 'sliceStart' => 0,
-                'arrayLength' => count($data),
+                'arrayLength' => \count($data),
             ]
         );
     }
@@ -87,7 +87,7 @@ class ConnectionBuilder
             ]
         );
 
-        $arraySliceLength = count($arraySlice);
+        $arraySliceLength = \count($arraySlice);
         $after = $connectionArguments['after'];
         $before = $connectionArguments['before'];
         $first = $connectionArguments['first'];
@@ -98,29 +98,29 @@ class ConnectionBuilder
         $beforeOffset = static::getOffsetWithDefault($before, $arrayLength);
         $afterOffset = static::getOffsetWithDefault($after, -1);
 
-        $startOffset = max($sliceStart - 1, $afterOffset, -1) + 1;
-        $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
+        $startOffset = \max($sliceStart - 1, $afterOffset, -1) + 1;
+        $endOffset = \min($sliceEnd, $beforeOffset, $arrayLength);
 
-        if (is_numeric($first)) {
+        if (\is_numeric($first)) {
             if ($first < 0) {
                 throw new \InvalidArgumentException('Argument "first" must be a non-negative integer');
             }
-            $endOffset = min($endOffset, $startOffset + $first);
+            $endOffset = \min($endOffset, $startOffset + $first);
         }
 
-        if (is_numeric($last)) {
+        if (\is_numeric($last)) {
             if ($last < 0) {
                 throw new \InvalidArgumentException('Argument "last" must be a non-negative integer');
             }
 
-            $startOffset = max($startOffset, $endOffset - $last);
+            $startOffset = \max($startOffset, $endOffset - $last);
         }
 
         // If supplied slice is too large, trim it down before mapping over it.
-        $offset = max($startOffset - $sliceStart, 0);
+        $offset = \max($startOffset - $sliceStart, 0);
         $length = ($arraySliceLength - ($sliceEnd - $endOffset)) - $offset;
 
-        $slice = array_slice(
+        $slice = \array_slice(
             $arraySlice,
             $offset,
             $length
@@ -133,7 +133,7 @@ class ConnectionBuilder
         }
 
         $firstEdge = isset($edges[0]) ? $edges[0] : null;
-        $lastEdge = end($edges);
+        $lastEdge = \end($edges);
         $lowerBound = $after ? ($afterOffset + 1) : 0;
         $upperBound = $before ? $beforeOffset : $arrayLength;
 
@@ -213,7 +213,7 @@ class ConnectionBuilder
         }
         $offset = static::cursorToOffset($cursor);
 
-        return !is_numeric($offset) ? $defaultOffset : (int) $offset;
+        return !\is_numeric($offset) ? $defaultOffset : (int) $offset;
     }
 
     /**
@@ -225,7 +225,7 @@ class ConnectionBuilder
      */
     public static function offsetToCursor($offset)
     {
-        return base64_encode(static::PREFIX.$offset);
+        return \base64_encode(static::PREFIX.$offset);
     }
 
     /**
@@ -237,7 +237,7 @@ class ConnectionBuilder
      */
     public static function cursorToOffset($cursor)
     {
-        return str_replace(static::PREFIX, '', base64_decode($cursor, true));
+        return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
     }
 
     private static function getOptionsWithDefaults(array $options, array $defaults)
@@ -247,7 +247,7 @@ class ConnectionBuilder
 
     private static function checkPromise($value)
     {
-        if (!is_callable([$value, 'then'])) {
+        if (!\is_callable([$value, 'then'])) {
             throw new \InvalidArgumentException('This is not a valid promise.');
         }
     }

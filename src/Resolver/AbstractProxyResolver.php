@@ -13,7 +13,7 @@ abstract class AbstractProxyResolver extends AbstractResolver
      */
     public function resolve($input)
     {
-        if (!is_array($input)) {
+        if (!\is_array($input)) {
             $input = [$input];
         }
 
@@ -35,7 +35,7 @@ abstract class AbstractProxyResolver extends AbstractResolver
         $options = $this->getSolutionOptions($alias);
         $func = [$solution, $options['method']];
 
-        return call_user_func_array($func, $funcArgs);
+        return \call_user_func_array($func, $funcArgs);
     }
 
     abstract protected function unresolvableMessage($alias);

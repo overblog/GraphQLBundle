@@ -81,11 +81,11 @@
         "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar fix --diff -v --ansi"
+            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar fix --dry-run --diff -v --ansi"
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",

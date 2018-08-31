@@ -11,7 +11,7 @@ final class GetUser extends ExpressionFunction
         parent::__construct(
             'getUser',
             function () {
-                return sprintf('\%s::getUser($globalVariable)', Helper::class);
+                return \sprintf('\%s::getUser($globalVariable)', Helper::class);
             }
         );
     }

@@ -260,7 +260,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAJustRightArraySlice()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 1, 2), // equals to letters.slice(1,3) in JS
+            \array_slice($this->letters, 1, 2), // equals to letters.slice(1,3) in JS
             ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
@@ -276,7 +276,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAnOversizedArraySliceLeftSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 0, 3), // equals to letters.slice(0,3) in JS
+            \array_slice($this->letters, 0, 3), // equals to letters.slice(0,3) in JS
             ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
             ['sliceStart' => 0, 'arrayLength' => 5]
         );
@@ -292,7 +292,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAnOversizedArraySliceRightSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
+            \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
             ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
@@ -308,7 +308,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAnOversizedArraySliceBothSides()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 1, 3), // equals to letters.slice(1,4) in JS
+            \array_slice($this->letters, 1, 3), // equals to letters.slice(1,4) in JS
             ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
@@ -324,7 +324,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAnUndersizedArraySliceLeftSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 3, 2), // equals to letters.slice(3,5) in JS
+            \array_slice($this->letters, 3, 2), // equals to letters.slice(3,5) in JS
             ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
             ['sliceStart' => 3, 'arrayLength' => 5]
         );
@@ -340,7 +340,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function testWorksWithAnUndersizedArraySliceRightSide()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
+            \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
             ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
@@ -356,7 +356,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     public function worksWithAnUndersizedArraySliceBothSides()
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
-            array_slice($this->letters, 3, 1), // equals to letters.slice(3,4) in JS
+            \array_slice($this->letters, 3, 1), // equals to letters.slice(3,4) in JS
             ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
             ['sliceStart' => 3, 'arrayLength' => 5]
         );

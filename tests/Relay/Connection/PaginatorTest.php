@@ -21,7 +21,7 @@ class PaginatorTest extends TestCase
      */
     public function getData($offset = 0)
     {
-        return array_slice($this->data, $offset);
+        return \array_slice($this->data, $offset);
     }
 
     public function testGetData()
@@ -40,7 +40,7 @@ class PaginatorTest extends TestCase
      */
     protected function assertSameEdgeNodeValue($expected, Connection $result)
     {
-        $this->assertEquals(count($expected), count($result->edges));
+        $this->assertEquals(\count($expected), \count($result->edges));
         foreach ($expected as $key => $value) {
             $this->assertEquals($value, $result->edges[$key]->node);
         }
@@ -71,7 +71,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->forward(new Argument(['first' => 1, 'after' => base64_encode('arrayconnection:2')]));
+        $result = $paginator->forward(new Argument(['first' => 1, 'after' => \base64_encode('arrayconnection:2')]));
 
         $this->assertCount(1, $result->edges);
         $this->assertSameEdgeNodeValue(['D'], $result);
@@ -87,7 +87,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->forward(new Argument(['first' => 2, 'after' => base64_encode('arrayconnection:2')]));
+        $result = $paginator->forward(new Argument(['first' => 2, 'after' => \base64_encode('arrayconnection:2')]));
 
         $this->assertCount(2, $result->edges);
         $this->assertSameEdgeNodeValue(['D', 'E'], $result);
@@ -103,7 +103,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->forward(new Argument(['first' => 5, 'after' => base64_encode('arrayconnection:4')]));
+        $result = $paginator->forward(new Argument(['first' => 5, 'after' => \base64_encode('arrayconnection:4')]));
 
         $this->assertCount(0, $result->edges);
         $this->assertSameEdgeNodeValue([], $result);
@@ -119,7 +119,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->forward(new Argument(['first' => 4, 'after' => base64_encode('badcursor:aze')]));
+        $result = $paginator->forward(new Argument(['first' => 4, 'after' => \base64_encode('badcursor:aze')]));
 
         $this->assertCount(4, $result->edges);
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
@@ -169,7 +169,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->backward(new Argument(['last' => 4, 'before' => base64_encode('arrayconnection:4')]), 5);
+        $result = $paginator->backward(new Argument(['last' => 4, 'before' => \base64_encode('arrayconnection:4')]), 5);
 
         $this->assertCount(4, $result->edges);
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
@@ -185,7 +185,7 @@ class PaginatorTest extends TestCase
             return $this->getData($offset);
         });
 
-        $result = $paginator->backward(new Argument(['last' => 2, 'before' => base64_encode('arrayconnection:3')]), 5);
+        $result = $paginator->backward(new Argument(['last' => 2, 'before' => \base64_encode('arrayconnection:3')]), 5);
 
         $this->assertCount(2, $result->edges);
         $this->assertSameEdgeNodeValue(['B', 'C'], $result);
@@ -256,7 +256,7 @@ class PaginatorTest extends TestCase
             'count',
         ];
 
-        $this->assertSame(5, call_user_func_array($callable, ['array' => $this->data]));
+        $this->assertSame(5, \call_user_func_array($callable, ['array' => $this->data]));
 
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(1, $offset);
@@ -271,7 +271,7 @@ class PaginatorTest extends TestCase
             ['array' => $this->data]
         );
 
-        $this->assertSame(count($this->data), $result->totalCount);
+        $this->assertSame(\count($this->data), $result->totalCount);
 
         $this->assertCount(4, $result->edges);
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);

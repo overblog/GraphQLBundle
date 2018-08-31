@@ -63,9 +63,9 @@ final class ErrorLoggerListener
      */
     private static function serializeThrowableObject($throwable)
     {
-        $message = sprintf(
+        $message = \sprintf(
             '[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.',
-            get_class($throwable),
+            \get_class($throwable),
             $throwable->getMessage(),
             $throwable->getCode(),
             $throwable->getFile(),

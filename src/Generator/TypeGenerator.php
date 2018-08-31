@@ -66,7 +66,7 @@ class TypeGenerator extends BaseTypeGenerator
      */
     public function getCacheDir(/*bool $useDefault = true*/)
     {
-        $useDefault = func_num_args() > 0 ? func_get_arg(0) : true;
+        $useDefault = \func_num_args() > 0 ? \func_get_arg(0) : true;
         if ($useDefault) {
             return $this->cacheDir ?: $this->baseCacheDir.'/overblog/graphql-bundle/__definitions__';
         } else {
@@ -98,12 +98,12 @@ EOF;
 
     protected function generateClosureUseStatements(array $config)
     {
-        return sprintf('use (%s) ', static::USE_FOR_CLOSURES);
+        return \sprintf('use (%s) ', static::USE_FOR_CLOSURES);
     }
 
     protected function resolveTypeCode($alias)
     {
-        return  sprintf('$globalVariable->get(\'typeResolver\')->resolve(%s)', var_export($alias, true));
+        return  \sprintf('$globalVariable->get(\'typeResolver\')->resolve(%s)', \var_export($alias, true));
     }
 
     protected function generatePublic(array $value)
@@ -121,7 +121,7 @@ function ($fieldName) <closureUseStatements> {
 <spaces>}
 CODE;
 
-        $code = sprintf($code, $publicCallback);
+        $code = \sprintf($code, $publicCallback);
 
         return $code;
     }
@@ -132,7 +132,7 @@ CODE;
             return 'null';
         }
 
-        if (is_bool($value['access'])) {
+        if (\is_bool($value['access'])) {
             return $this->varExport($value['access']);
         }
 
@@ -147,7 +147,7 @@ CODE;
     protected function generateComplexity(array $value)
     {
         $resolveComplexity = parent::generateComplexity($value);
-        $resolveComplexity = ltrim($this->prefixCodeWithSpaces($resolveComplexity));
+        $resolveComplexity = \ltrim($this->prefixCodeWithSpaces($resolveComplexity));
 
         if ('null' === $resolveComplexity) {
             return $resolveComplexity;
@@ -163,7 +163,7 @@ function ($childrenComplexity, $args = []) <closureUseStatements>{
 <spaces>}
 CODE;
 
-        $code = sprintf($code, $resolveComplexity, $argumentClass);
+        $code = \sprintf($code, $resolveComplexity, $argumentClass);
 
         return $code;
     }
@@ -191,19 +191,19 @@ CODE;
     {
         $cacheDir = $this->getCacheDir();
         $writeMode = $mode & self::MODE_WRITE;
-        if ($writeMode && file_exists($cacheDir)) {
+        if ($writeMode && \file_exists($cacheDir)) {
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
-        $configs = call_user_func($this->configProcessor, $this->configs);
+        $configs = \call_user_func($this->configProcessor, $this->configs);
         $classes = $this->generateClasses($configs, $cacheDir, $mode);
 
         if ($writeMode && $this->useClassMap) {
-            $content = "<?php\nreturn ".var_export($classes, true).';';
+            $content = "<?php\nreturn ".\var_export($classes, true).';';
             // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
-            $content = str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
+            $content = \str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
 
-            file_put_contents($this->getClassesMap(), $content);
+            \file_put_contents($this->getClassesMap(), $content);
 
             $this->loadClasses(true);
         }
@@ -215,7 +215,7 @@ CODE;
     {
         if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
             $classMapFile = $this->getClassesMap();
-            $classes = file_exists($classMapFile) ? require $classMapFile : [];
+            $classes = \file_exists($classMapFile) ? require $classMapFile : [];
             /** @var ClassLoader $mapClassLoader */
             static $mapClassLoader = null;
             if (null === $mapClassLoader) {

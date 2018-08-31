@@ -33,10 +33,10 @@ class UserErrors extends \RuntimeException
      */
     public function addError($error)
     {
-        if (is_string($error)) {
+        if (\is_string($error)) {
             $error = new UserError($error);
-        } elseif (!is_object($error) || !$error instanceof \GraphQL\Error\UserError) {
-            throw new \InvalidArgumentException(sprintf('Error must be string or instance of %s.', \GraphQL\Error\UserError::class));
+        } elseif (!\is_object($error) || !$error instanceof \GraphQL\Error\UserError) {
+            throw new \InvalidArgumentException(\sprintf('Error must be string or instance of %s.', \GraphQL\Error\UserError::class));
         }
 
         $this->errors[] = $error;

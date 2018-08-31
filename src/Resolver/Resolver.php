@@ -23,11 +23,11 @@ class Resolver
     public static function valueFromObjectOrArray($objectOrArray, $fieldName)
     {
         $value = null;
-        $index = sprintf('[%s]', $fieldName);
+        $index = \sprintf('[%s]', $fieldName);
 
         if (self::isReadable($objectOrArray, $index)) {
             $value = self::getAccessor()->getValue($objectOrArray, $index);
-        } elseif (is_object($objectOrArray) && self::isReadable($objectOrArray, $fieldName)) {
+        } elseif (\is_object($objectOrArray) && self::isReadable($objectOrArray, $fieldName)) {
             $value = self::getAccessor()->getValue($objectOrArray, $fieldName);
         }
 
@@ -36,11 +36,11 @@ class Resolver
 
     public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value)
     {
-        $index = sprintf('[%s]', $fieldName);
+        $index = \sprintf('[%s]', $fieldName);
 
         if (self::isWritable($objectOrArray, $index)) {
             self::getAccessor()->setValue($objectOrArray, $index, $value);
-        } elseif (is_object($objectOrArray) && self::isWritable($objectOrArray, $fieldName)) {
+        } elseif (\is_object($objectOrArray) && self::isWritable($objectOrArray, $fieldName)) {
             self::getAccessor()->setValue($objectOrArray, $fieldName, $value);
         }
     }
@@ -48,8 +48,8 @@ class Resolver
     public static function wrapArgs(callable $resolver)
     {
         return static function () use ($resolver) {
-            $args = func_get_args();
-            if (count($args) > 1 && !$args[1] instanceof Argument) {
+            $args = \func_get_args();
+            if (\count($args) > 1 && !$args[1] instanceof Argument) {
                 $args[1] = new Argument($args[1]);
             }
 

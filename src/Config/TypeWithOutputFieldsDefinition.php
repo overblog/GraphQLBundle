@@ -33,7 +33,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
                         ->beforeNormalization()
                             ->ifTrue(function ($options) {
-                                return is_string($options);
+                                return \is_string($options);
                             })
                             ->then(function ($options) {
                                 return ['type' => $options];

@@ -32,8 +32,8 @@ final class RelayProcessor implements ProcessorInterface
     private static function processRelayConfigs($typeName, $definitionBuilderClass, array $configs)
     {
         foreach ($configs as $name => $config) {
-            if (isset($config['type']) && is_string($config['type']) && $typeName === $config['type']) {
-                $config = isset($config['config']) && is_array($config['config']) ? $config['config'] : [];
+            if (isset($config['type']) && \is_string($config['type']) && $typeName === $config['type']) {
+                $config = isset($config['config']) && \is_array($config['config']) ? $config['config'] : [];
                 $config['name'] = $name;
 
                 /** @var MappingInterface $builder */
@@ -41,7 +41,7 @@ final class RelayProcessor implements ProcessorInterface
 
                 $connectionDefinition = $builder->toMappingDefinition($config);
 
-                $configs = array_replace($configs, $connectionDefinition);
+                $configs = \array_replace($configs, $connectionDefinition);
             }
         }
 

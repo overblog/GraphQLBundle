@@ -57,7 +57,7 @@ class CompileCommandTest extends TestCase
         $this->assertEquals(0, $this->commandTester->getStatusCode());
         $this->assertRegExp(
             '@'.$this->displayExpected(true).'@',
-            preg_replace('@\.php[^\n]*\n@', ".php\n", $this->commandTester->getDisplay())
+            \preg_replace('@\.php[^\n]*\n@', ".php\n", $this->commandTester->getDisplay())
         );
     }
 
@@ -89,7 +89,7 @@ Summary
 
 
 OUTPUT;
-            $display = str_replace('{{PATH}}', $this->cacheDir, $display);
+            $display = \str_replace('{{PATH}}', $this->cacheDir, $display);
         }
 
         return $display;

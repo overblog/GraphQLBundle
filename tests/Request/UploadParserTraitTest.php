@@ -33,7 +33,7 @@ class UploadParserTraitTest extends TestCase
      */
     public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message)
     {
-        $actual = $this->handleUploadedFiles(['operations' => json_encode($operations), 'map' => json_encode($map)], $files);
+        $actual = $this->handleUploadedFiles(['operations' => \json_encode($operations), 'map' => \json_encode($map)], $files);
         $this->assertSame($expected, $actual, $message);
     }
 

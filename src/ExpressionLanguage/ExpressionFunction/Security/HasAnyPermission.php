@@ -12,7 +12,7 @@ final class HasAnyPermission extends ExpressionFunction
         parent::__construct(
             $name,
             function ($object, $permissions) {
-                $code = sprintf('array_reduce(%s, function ($isGranted, $permission) use (%s, $object) { return $isGranted || $globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, TypeGenerator::USE_FOR_CLOSURES, $object);
+                $code = \sprintf('array_reduce(%s, function ($isGranted, $permission) use (%s, $object) { return $isGranted || $globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, TypeGenerator::USE_FOR_CLOSURES, $object);
 
                 return $code;
             }

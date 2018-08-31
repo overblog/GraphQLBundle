@@ -28,7 +28,7 @@ class AccessResolver
                 throw new UserError('Access denied to this field.');
             }
 
-            $result = call_user_func_array($resolveCallback, $resolveArgs);
+            $result = \call_user_func_array($resolveCallback, $resolveArgs);
         } else {
             $result = $this->filterResultUsingAccess($accessChecker, $resolveCallback, $resolveArgs);
         }
@@ -38,7 +38,7 @@ class AccessResolver
 
     private function filterResultUsingAccess(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
     {
-        $result = call_user_func_array($resolveCallback, $resolveArgs);
+        $result = \call_user_func_array($resolveCallback, $resolveArgs);
         if ($result instanceof Promise) {
             $result = $result->adoptedPromise;
         }
@@ -57,15 +57,15 @@ class AccessResolver
 
     private function processFilter($result, $accessChecker, $resolveArgs)
     {
-        if (is_array($result)) {
-            $result = array_map(
+        if (\is_array($result)) {
+            $result = \array_map(
                 function ($object) use ($accessChecker, $resolveArgs) {
                     return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
                 },
                 $result
             );
         } elseif ($result instanceof Connection) {
-            $result->edges = array_map(
+            $result->edges = \array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
                     $edge->node = $this->hasAccess($accessChecker, $edge->node, $resolveArgs) ? $edge->node : null;
 
@@ -83,7 +83,7 @@ class AccessResolver
     private function hasAccess(callable $accessChecker, $object, array $resolveArgs = [])
     {
         $resolveArgs[] = $object;
-        $access = (bool) call_user_func_array($accessChecker, $resolveArgs);
+        $access = (bool) \call_user_func_array($accessChecker, $resolveArgs);
 
         return $access;
     }

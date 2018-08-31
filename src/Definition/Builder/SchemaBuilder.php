@@ -40,7 +40,7 @@ class SchemaBuilder
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
         $schema = new ExtensibleSchema($this->buildSchemaArguments($query, $mutation, $subscription, $types));
-        $extensions = [new DecoratorExtension(1 === count($resolverMaps) ? current($resolverMaps) : new ResolverMaps($resolverMaps))];
+        $extensions = [new DecoratorExtension(1 === \count($resolverMaps) ? \current($resolverMaps) : new ResolverMaps($resolverMaps))];
 
         if ($this->enableValidation) {
             $extensions[] = new ValidatorExtension();
@@ -60,7 +60,7 @@ class SchemaBuilder
                 return $this->typeResolver->resolve($name);
             },
             'types' => function () use ($types) {
-                return array_map([$this->typeResolver, 'getSolution'], $types);
+                return \array_map([$this->typeResolver, 'getSolution'], $types);
             },
         ];
     }
