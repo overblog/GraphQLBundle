@@ -15,7 +15,7 @@ class GraphQLUploadType extends ScalarType
     {
         parent::__construct([
             'name' => $name,
-            'description' => sprintf(
+            'description' => \sprintf(
                 'The `%s` scalar type represents a file upload object that resolves an object containing `stream`, `filename`, `mimetype` and `encoding`.',
                 $name
             ),
@@ -28,10 +28,10 @@ class GraphQLUploadType extends ScalarType
     public function parseValue($value)
     {
         if (null !== $value && !$value instanceof File) {
-            throw new InvariantViolation(sprintf(
+            throw new InvariantViolation(\sprintf(
                 'Upload should be null or instance of "%s" but %s given.',
                 File::class,
-                is_object($value) ? get_class($value) : gettype($value)
+                \is_object($value) ? \get_class($value) : \gettype($value)
             ));
         }
 
@@ -43,7 +43,7 @@ class GraphQLUploadType extends ScalarType
      */
     public function serialize($value)
     {
-        throw new InvariantViolation(sprintf('%s scalar serialization unsupported.', $this->name));
+        throw new InvariantViolation(\sprintf('%s scalar serialization unsupported.', $this->name));
     }
 
     /**
@@ -51,6 +51,6 @@ class GraphQLUploadType extends ScalarType
      */
     public function parseLiteral($valueNode, array $variables = null)
     {
-        throw new InvariantViolation(sprintf('%s scalar literal unsupported.', $this->name));
+        throw new InvariantViolation(\sprintf('%s scalar literal unsupported.', $this->name));
     }
 }

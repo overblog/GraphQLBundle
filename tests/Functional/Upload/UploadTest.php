@@ -127,7 +127,7 @@ class UploadTest extends TestCase
     {
         if ($json) {
             foreach ($parameters as &$parameter) {
-                $parameter = json_encode($parameter);
+                $parameter = \json_encode($parameter);
             }
         }
         $actual = $this->uploadRequest($parameters, $files, $uri);
@@ -145,7 +145,7 @@ class UploadTest extends TestCase
             ['CONTENT_TYPE' => 'multipart/form-data']
         );
 
-        return json_decode($client->getResponse()->getContent(), true);
+        return \json_decode($client->getResponse()->getContent(), true);
     }
 
     private function createUploadedFiles(array $fileNames)

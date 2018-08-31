@@ -65,7 +65,7 @@ EOF;
 
         $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql', 'HTTP_Origin' => 'http://example.com']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
         $this->assertCORSHeadersExists($client);
     }
 
@@ -130,7 +130,7 @@ query FriendsQuery($firstFriends: Int) {
 }
 EOF;
 
-        $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']));
+        $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], \json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
@@ -177,7 +177,7 @@ EOF;
 
         $client->request('POST', '/', ['query' => $query, 'operationName' => 'FriendsQuery'], [], ['CONTENT_TYPE' => 'application/x-www-form-urlencoded']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
     }
 
     /**
@@ -199,14 +199,14 @@ EOF;
             ],
         ];
 
-        $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
+        $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], \json_encode($data));
         $result = $client->getResponse()->getContent();
 
         $expected = [
             ['id' => 'friends', 'payload' => ['data' => $this->expectedData]],
             ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];
-        $this->assertEquals($expected, json_decode($result, true), $result);
+        $this->assertEquals($expected, \json_decode($result, true), $result);
     }
 
     public function graphQLBatchEndpointUriProvider()
@@ -290,7 +290,7 @@ EOF;
 
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], json_decode($result, true), $result);
+        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
         $this->assertCORSHeadersNotExists($client);
     }
 

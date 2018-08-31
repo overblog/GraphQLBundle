@@ -51,7 +51,7 @@ class ErrorLoggerListenerTest extends TestCase
         } catch (\Exception $exception) {
         }
         $with = [
-            sprintf('[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.', \Exception::class, 'Ko!', 0, __FILE__, $exception->getLine()),
+            \sprintf('[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.', \Exception::class, 'Ko!', 0, __FILE__, $exception->getLine()),
             ['throwable' => $exception],
         ];
 

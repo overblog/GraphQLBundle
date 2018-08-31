@@ -21,13 +21,13 @@ abstract class AbstractConnectionBuilderTest extends TestCase
             'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
         ];
 
-        $expectedEdges = array_values(array_intersect_key($edges, array_flip($wantedEdges)));
+        $expectedEdges = \array_values(\array_intersect_key($edges, \array_flip($wantedEdges)));
 
         return new Connection(
             $expectedEdges,
             new PageInfo(
                 isset($expectedEdges[0]) ? $expectedEdges[0]->cursor : null,
-                end($expectedEdges) ? end($expectedEdges)->cursor : null,
+                \end($expectedEdges) ? \end($expectedEdges)->cursor : null,
                 $hasPreviousPage,
                 $hasNextPage
             )

@@ -18,7 +18,7 @@ class ConfigTypesPass implements CompilerPassInterface
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
         foreach ($generatedClasses as $class => $file) {
-            $alias = preg_replace('/Type$/', '', substr(strrchr($class, '\\'), 1));
+            $alias = \preg_replace('/Type$/', '', \substr(\strrchr($class, '\\'), 1));
             $this->setTypeServiceDefinition($container, $class, $alias);
         }
     }

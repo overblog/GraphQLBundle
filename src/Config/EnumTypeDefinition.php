@@ -18,17 +18,17 @@ class EnumTypeDefinition extends TypeDefinition
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()
                         ->ifTrue(function ($v) {
-                            return is_array($v);
+                            return \is_array($v);
                         })
                         ->then(function ($v) {
                             foreach ($v as $name => &$options) {
                                 // short syntax NAME: VALUE
-                                if (!is_null($options) && !is_array($options)) {
+                                if (!\is_null($options) && !\is_array($options)) {
                                     $options = ['value' => $options];
                                 }
 
                                 // use name as value if no value given
-                                if (!array_key_exists('value', $options)) {
+                                if (!\array_key_exists('value', $options)) {
                                     $options['value'] = $name;
                                 }
                             }

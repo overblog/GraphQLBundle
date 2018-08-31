@@ -31,7 +31,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 $accessChecker = $field['access'];
                 if (false === $accessChecker) {
                     $field['resolve'] = $deniedAccess;
-                } elseif (is_callable($accessChecker)) {
+                } elseif (\is_callable($accessChecker)) {
                     $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver) {
                         $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
                         $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
@@ -48,7 +48,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
     public function process(LazyConfig $lazyConfig)
     {
         $lazyConfig->addPostLoader(function ($config) {
-            if (isset($config['fields']) && is_callable($config['fields'])) {
+            if (isset($config['fields']) && \is_callable($config['fields'])) {
                 $config['fields'] = function () use ($config) {
                     $fields = $config['fields']();
 

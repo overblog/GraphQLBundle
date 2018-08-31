@@ -17,7 +17,7 @@ class GraphQLUploadTypeTest extends TestCase
     public function testInvalidParseValue($invalidValue, $type)
     {
         $this->expectException(InvariantViolation::class);
-        $this->expectExceptionMessage(sprintf('Upload should be null or instance of "Symfony\Component\HttpFoundation\File\File" but %s given.', $type));
+        $this->expectExceptionMessage(\sprintf('Upload should be null or instance of "Symfony\Component\HttpFoundation\File\File" but %s given.', $type));
         (new GraphQLUploadType('Upload'))->parseValue($invalidValue);
     }
 

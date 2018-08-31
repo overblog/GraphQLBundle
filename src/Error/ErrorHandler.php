@@ -50,7 +50,7 @@ class ErrorHandler
         $exceptions = $this->treatExceptions($executionResult->errors, $throwRawException);
         $executionResult->errors = $exceptions['errors'];
         if (!empty($exceptions['extensions']['warnings'])) {
-            $executionResult->extensions['warnings'] = array_map($errorFormatter, $exceptions['extensions']['warnings']);
+            $executionResult->extensions['warnings'] = \array_map($errorFormatter, $exceptions['extensions']['warnings']);
         }
     }
 
@@ -183,7 +183,7 @@ class ErrorHandler
      */
     private function findErrorClass($rawException)
     {
-        $rawExceptionClass = get_class($rawException);
+        $rawExceptionClass = \get_class($rawException);
         if (isset($this->exceptionMap[$rawExceptionClass])) {
             return $this->exceptionMap[$rawExceptionClass];
         }

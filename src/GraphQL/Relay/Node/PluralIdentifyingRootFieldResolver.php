@@ -21,7 +21,7 @@ final class PluralIdentifyingRootFieldResolver implements ResolverInterface, Ali
         $data = [];
 
         foreach ($inputs as $input) {
-            $data[$input] = $this->promiseAdapter->createFulfilled(call_user_func_array($resolveSingleInput, [$input, $context, $info]));
+            $data[$input] = $this->promiseAdapter->createFulfilled(\call_user_func_array($resolveSingleInput, [$input, $context, $info]));
         }
 
         return $this->promiseAdapter->all($data);

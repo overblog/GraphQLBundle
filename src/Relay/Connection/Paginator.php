@@ -43,9 +43,9 @@ class Paginator
 
         $args = $this->protectArgs($args);
         $limit = $args['last'];
-        $offset = max(0, ConnectionBuilder::getOffsetWithDefault($args['before'], $total) - $limit);
+        $offset = \max(0, ConnectionBuilder::getOffsetWithDefault($args['before'], $total) - $limit);
 
-        $entities = call_user_func($this->fetcher, $offset, $limit);
+        $entities = \call_user_func($this->fetcher, $offset, $limit);
 
         return $this->handleEntities($entities, function ($entities) use ($args, $offset, $total) {
             return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
@@ -67,19 +67,19 @@ class Paginator
         $offset = ConnectionBuilder::getOffsetWithDefault($args['after'], 0);
 
         // If we don't have a cursor or if it's not valid, then we must not use the slice method
-        if (!is_numeric(ConnectionBuilder::cursorToOffset($args['after'])) || !$args['after']) {
-            $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
+        if (!\is_numeric(ConnectionBuilder::cursorToOffset($args['after'])) || !$args['after']) {
+            $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
 
             return $this->handleEntities($entities, function ($entities) use ($args) {
                 return ConnectionBuilder::connectionFromArray($entities, $args);
             });
         } else {
-            $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
+            $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
 
             return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
                 return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
                     'sliceStart' => $offset,
-                    'arrayLength' => $offset + count($entities),
+                    'arrayLength' => $offset + \count($entities),
                 ]);
             });
         }
@@ -127,7 +127,7 @@ class Paginator
             return $entities->then($callback);
         }
 
-        return call_user_func($callback, $entities);
+        return \call_user_func($callback, $entities);
     }
 
     /**
@@ -152,7 +152,7 @@ class Paginator
             return $this->totalCount;
         }
 
-        $this->totalCount = is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
+        $this->totalCount = \is_callable($total) ? \call_user_func_array($total, $callableArgs) : $total;
 
         return $this->totalCount;
     }

@@ -16,6 +16,8 @@ return PhpCsFixer\Config::create()
             'phpdoc_no_alias_tag' => ['type' => 'var'],
             'no_mixed_echo_print' => ['use' => 'echo'],
             'binary_operator_spaces' => ['align_double_arrow' => false, 'align_equals' => false],
+            'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],
+            'native_function_invocation' => true,
         ]
     )
     ->setFinder($finder)

@@ -89,10 +89,10 @@ class Executor
         }
 
         if (null === $name) {
-            $schema = array_values($this->schemas)[0];
+            $schema = \array_values($this->schemas)[0];
         } else {
             if (!isset($this->schemas[$name])) {
-                throw new NotFoundHttpException(sprintf('Could not found "%s" schema.', $name));
+                throw new NotFoundHttpException(\sprintf('Could not found "%s" schema.', $name));
             }
             $schema = $this->schemas[$name];
         }
@@ -204,9 +204,9 @@ class Executor
 
     private function checkPromiseAdapter()
     {
-        if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !is_callable([$this->promiseAdapter, 'wait'])) {
+        if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !\is_callable([$this->promiseAdapter, 'wait'])) {
             throw new \RuntimeException(
-                sprintf(
+                \sprintf(
                     'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
                     PromiseAdapterInterface::class,
                     PromiseAdapter::class
@@ -217,9 +217,9 @@ class Executor
 
     private function checkExecutionResult($result)
     {
-        if (!is_object($result) || !$result instanceof ExecutionResult) {
+        if (!\is_object($result) || !$result instanceof ExecutionResult) {
             throw new \RuntimeException(
-                sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
+                \sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
             );
         }
     }

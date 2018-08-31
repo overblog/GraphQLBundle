@@ -23,12 +23,12 @@ class XmlParser implements ParserInterface
                     continue;
                 }
                 $values = XmlUtils::convertDomElementToArray($node);
-                if (is_array($values)) {
-                    $typesConfig = array_merge($typesConfig, $values);
+                if (\is_array($values)) {
+                    $typesConfig = \array_merge($typesConfig, $values);
                 }
             }
         } catch (\InvalidArgumentException $e) {
-            throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
         }
 
         return $typesConfig;

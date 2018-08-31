@@ -31,14 +31,14 @@ abstract class TestCase extends BaseTestCase
 
     protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
     {
-        $code = $this->expressionLanguage->compile($expression, array_keys($vars));
+        $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
         $globalVariable = new GlobalVariables([
             'container' => $this->getDIContainerMock(
                 ['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]
             ),
         ]);
         $globalVariable->get('container');
-        extract($vars);
+        \extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
     }
@@ -60,7 +60,7 @@ abstract class TestCase extends BaseTestCase
             ->expects($expects)
             ->method('isGranted');
 
-        call_user_func_array([$methodExpectation, 'with'], is_array($with) ? $with : [$with]);
+        \call_user_func_array([$methodExpectation, 'with'], \is_array($with) ? $with : [$with]);
 
         $methodExpectation->will($returnValue);
 

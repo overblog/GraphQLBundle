@@ -43,7 +43,7 @@ final class BuilderProcessor implements ProcessorInterface
     public static function process(array $configs)
     {
         foreach ($configs as &$config) {
-            if (isset($config['config']['fields']) && is_array($config['config']['fields'])) {
+            if (isset($config['config']['fields']) && \is_array($config['config']['fields'])) {
                 $config['config']['fields'] = self::processFieldBuilders($config['config']['fields']);
             }
         }
@@ -65,23 +65,23 @@ final class BuilderProcessor implements ProcessorInterface
     {
         $interface = MappingInterface::class;
 
-        if (!is_string($builderClass)) {
+        if (!\is_string($builderClass)) {
             throw new \InvalidArgumentException(
-                sprintf('%s builder class should be string, but %s given.', ucfirst($type), gettype($builderClass))
+                \sprintf('%s builder class should be string, but %s given.', \ucfirst($type), \gettype($builderClass))
             );
         }
 
-        if (!class_exists($builderClass)) {
+        if (!\class_exists($builderClass)) {
             throw new \InvalidArgumentException(
-                sprintf('%s builder class "%s" not found.', ucfirst($type), $builderClass)
+                \sprintf('%s builder class "%s" not found.', \ucfirst($type), $builderClass)
             );
         }
 
-        if (!is_subclass_of($builderClass, $interface)) {
+        if (!\is_subclass_of($builderClass, $interface)) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     '%s builder class should implement "%s", but "%s" given.',
-                    ucfirst($type),
+                    \ucfirst($type),
                     $interface,
                     $builderClass
                 )
@@ -94,11 +94,11 @@ final class BuilderProcessor implements ProcessorInterface
         foreach ($fields as &$field) {
             $fieldBuilderName = null;
 
-            if (isset($field['builder']) && is_string($field['builder'])) {
+            if (isset($field['builder']) && \is_string($field['builder'])) {
                 $fieldBuilderName = $field['builder'];
                 unset($field['builder']);
-            } elseif (is_string($field)) {
-                @trigger_error(
+            } elseif (\is_string($field)) {
+                @\trigger_error(
                     'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.12. '.
                     'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
                     E_USER_DEPRECATED
@@ -108,7 +108,7 @@ final class BuilderProcessor implements ProcessorInterface
 
             $builderConfig = [];
             if (isset($field['builderConfig'])) {
-                if (is_array($field['builderConfig'])) {
+                if (\is_array($field['builderConfig'])) {
                     $builderConfig = $field['builderConfig'];
                 }
                 unset($field['builderConfig']);
@@ -116,7 +116,7 @@ final class BuilderProcessor implements ProcessorInterface
 
             if ($fieldBuilderName) {
                 $buildField = self::getBuilder($fieldBuilderName, self::BUILDER_FIELD_TYPE)->toMappingDefinition($builderConfig);
-                $field = is_array($field) ? array_merge($buildField, $field) : $buildField;
+                $field = \is_array($field) ? \array_merge($buildField, $field) : $buildField;
             }
             if (isset($field['argsBuilder'])) {
                 $field = self::processFieldArgumentsBuilders($field);
@@ -147,37 +147,37 @@ final class BuilderProcessor implements ProcessorInterface
             return $builders[$type][$name] = new $builderClassMap[$name]();
         }
         // deprecated relay builder name ?
-        $newName = 'Relay::'.rtrim($name, 'Args');
+        $newName = 'Relay::'.\rtrim($name, 'Args');
         if (isset($builderClassMap[$newName])) {
-            @trigger_error(
-                sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.12. Use "%s" instead.', $name, $type, $newName),
+            @\trigger_error(
+                \sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.12. Use "%s" instead.', $name, $type, $newName),
                 E_USER_DEPRECATED
             );
 
             return $builders[$type][$newName] = new $builderClassMap[$newName]();
         }
 
-        throw new InvalidConfigurationException(sprintf('%s builder "%s" not found.', ucfirst($type), $name));
+        throw new InvalidConfigurationException(\sprintf('%s builder "%s" not found.', \ucfirst($type), $name));
     }
 
     private static function processFieldArgumentsBuilders(array $field)
     {
         $argsBuilderName = null;
 
-        if (is_string($field['argsBuilder'])) {
+        if (\is_string($field['argsBuilder'])) {
             $argsBuilderName = $field['argsBuilder'];
-        } elseif (isset($field['argsBuilder']['builder']) && is_string($field['argsBuilder']['builder'])) {
+        } elseif (isset($field['argsBuilder']['builder']) && \is_string($field['argsBuilder']['builder'])) {
             $argsBuilderName = $field['argsBuilder']['builder'];
         }
 
         $builderConfig = [];
-        if (isset($field['argsBuilder']['config']) && is_array($field['argsBuilder']['config'])) {
+        if (isset($field['argsBuilder']['config']) && \is_array($field['argsBuilder']['config'])) {
             $builderConfig = $field['argsBuilder']['config'];
         }
 
         if ($argsBuilderName) {
             $args = self::getBuilder($argsBuilderName, self::BUILDER_ARGS_TYPE)->toMappingDefinition($builderConfig);
-            $field['args'] = isset($field['args']) && is_array($field['args']) ? array_merge($args, $field['args']) : $args;
+            $field['args'] = isset($field['args']) && \is_array($field['args']) ? \array_merge($args, $field['args']) : $args;
         }
 
         unset($field['argsBuilder']);

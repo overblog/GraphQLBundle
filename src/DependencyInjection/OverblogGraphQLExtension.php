@@ -41,7 +41,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
 
-        $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
+        $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
     }
 
     public function prepend(ContainerBuilder $container)
@@ -134,7 +134,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setConfigBuilders(array $config, ContainerBuilder $container)
     {
-        $useObjectToAddResource = method_exists($container, 'addObjectResource');
+        $useObjectToAddResource = \method_exists($container, 'addObjectResource');
         $objectToAddResourceMethod = $useObjectToAddResource ? 'addObjectResource' : 'addClassResource';
 
         foreach (BuilderProcessor::BUILDER_TYPES as $type) {
@@ -168,7 +168,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
 
         foreach ($config['security'] as $key => $value) {
-            $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
+            $container->setParameter(\sprintf('%s.%s', $this->getAlias(), $key), $value);
         }
     }
 
@@ -218,14 +218,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
             $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
 
             foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
-                $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+                $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
                 $definition = new Definition(Schema::class);
                 $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
                 $definition->setArguments([
                     $schemaConfig['query'],
                     $schemaConfig['mutation'],
                     $schemaConfig['subscription'],
-                    array_map(function ($id) {
+                    \array_map(function ($id) {
                         return new Reference($id);
                     }, $schemaConfig['resolver_maps']),
                     $schemaConfig['types'],
@@ -242,7 +242,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     {
         if (isset($config['services'])) {
             foreach ($config['services'] as $name => $id) {
-                $alias = sprintf('%s.%s', $this->getAlias(), $name);
+                $alias = \sprintf('%s.%s', $this->getAlias(), $name);
                 $container->setAlias($alias, $id);
             }
         }

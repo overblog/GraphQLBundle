@@ -51,7 +51,7 @@ class DebugCommand extends Command
                 'category',
                 null,
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                sprintf('filter by a category (%s).', implode(', ', self::$categories))
+                \sprintf('filter by a category (%s).', \implode(', ', self::$categories))
             )
             ->setDescription('Display current GraphQL services (types, resolvers and mutations)');
     }
@@ -59,10 +59,10 @@ class DebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $categoriesOption = $input->getOption('category');
-        $categoriesOption = is_array($categoriesOption) ? $categoriesOption : [$categoriesOption];
-        $notAllowed = array_diff($categoriesOption, self::$categories);
+        $categoriesOption = \is_array($categoriesOption) ? $categoriesOption : [$categoriesOption];
+        $notAllowed = \array_diff($categoriesOption, self::$categories);
         if (!empty($notAllowed)) {
-            throw new \InvalidArgumentException(sprintf('Invalid category (%s)', implode(',', $notAllowed)));
+            throw new \InvalidArgumentException(\sprintf('Invalid category (%s)', \implode(',', $notAllowed)));
         }
 
         $categories = empty($categoriesOption) ? self::$categories : $categoriesOption;
@@ -71,7 +71,7 @@ class DebugCommand extends Command
         $tableHeaders = ['solution id', 'aliases'];
 
         foreach ($categories as $category) {
-            $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
+            $io->title(\sprintf('GraphQL %ss Services', \ucfirst($category)));
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};
@@ -87,22 +87,22 @@ class DebugCommand extends Command
     private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io)
     {
         $tableRows = [];
-        $solutionIDs = array_keys($resolver->getSolutions());
-        sort($solutionIDs);
+        $solutionIDs = \array_keys($resolver->getSolutions());
+        \sort($solutionIDs);
         foreach ($solutionIDs as $solutionID) {
             $aliases = $resolver->getSolutionAliases($solutionID);
             $tableRows[$solutionID] = [$solutionID, self::serializeAliases($aliases)];
         }
-        ksort($tableRows);
+        \ksort($tableRows);
         $io->table($tableHeaders, $tableRows);
         $io->write("\n\n");
     }
 
     private static function serializeAliases(array $aliases)
     {
-        ksort($aliases);
+        \ksort($aliases);
 
-        return implode("\n", $aliases);
+        return \implode("\n", $aliases);
     }
 
     public static function getCategories()

@@ -20,9 +20,9 @@ final class GlobalVariablesPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                if (empty($attributes['alias']) || !is_string($attributes['alias'])) {
+                if (empty($attributes['alias']) || !\is_string($attributes['alias'])) {
                     throw new \InvalidArgumentException(
-                        sprintf('Service "%s" tagged "overblog_graphql.global_variable" should have a valid "alias" attribute.', $id)
+                        \sprintf('Service "%s" tagged "overblog_graphql.global_variable" should have a valid "alias" attribute.', $id)
                     );
                 }
                 $globalVariables[$attributes['alias']] = new Reference($id);
@@ -32,7 +32,7 @@ final class GlobalVariablesPass implements CompilerPassInterface
                     $expressionLanguageDefinition->addMethodCall(
                         'addGlobalName',
                         [
-                            sprintf('globalVariables->get(\'%s\')', $attributes['alias']),
+                            \sprintf('globalVariables->get(\'%s\')', $attributes['alias']),
                             $attributes['alias'],
                         ]
                     );
