@@ -9,6 +9,6 @@ class PaginatorBackend
 {
     public function count($array)
     {
-        return count($array);
+        return \count($array);
     }
 }

@@ -11,7 +11,7 @@ final class IsTypeOf extends ExpressionFunction
         parent::__construct(
             $name,
             function ($className) {
-                return sprintf('(($className = %s) && $value instanceof $className)', $className);
+                return \sprintf('(($className = %s) && $value instanceof $className)', $className);
             }
         );
     }

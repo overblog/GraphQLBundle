@@ -13,7 +13,7 @@ class YearScalarType extends ScalarType
      */
     public function serialize($value)
     {
-        return sprintf('%s AC', $value);
+        return \sprintf('%s AC', $value);
     }
 
     /**
@@ -21,7 +21,7 @@ class YearScalarType extends ScalarType
      */
     public function parseValue($value)
     {
-        return (int) str_replace(' AC', '', $value);
+        return (int) \str_replace(' AC', '', $value);
     }
 
     /**
@@ -33,6 +33,6 @@ class YearScalarType extends ScalarType
             throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, [$valueNode]);
         }
 
-        return (int) str_replace(' AC', '', $valueNode->value);
+        return (int) \str_replace(' AC', '', $valueNode->value);
     }
 }

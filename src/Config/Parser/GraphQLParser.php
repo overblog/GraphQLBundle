@@ -35,7 +35,7 @@ class GraphQLParser implements ParserInterface
     public static function parse(\SplFileInfo $file, ContainerBuilder $container)
     {
         $container->addResource(new FileResource($file->getRealPath()));
-        $content = trim(file_get_contents($file->getPathname()));
+        $content = \trim(\file_get_contents($file->getPathname()));
         $typesConfig = [];
 
         // allow empty files
@@ -48,7 +48,7 @@ class GraphQLParser implements ParserInterface
         try {
             $ast = Parser::parse($content);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException(sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
         }
 
         foreach ($ast->definitions as $typeDef) {
@@ -114,11 +114,11 @@ class GraphQLParser implements ParserInterface
 
     private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef)
     {
-        $path = explode('\\', get_class($typeDef));
+        $path = \explode('\\', \get_class($typeDef));
         throw new InvalidArgumentException(
-            sprintf(
+            \sprintf(
                 '%s definition is not supported right now.',
-                preg_replace('@DefinitionNode$@', '', array_pop($path))
+                \preg_replace('@DefinitionNode$@', '', \array_pop($path))
             )
         );
     }
@@ -294,10 +294,10 @@ class GraphQLParser implements ParserInterface
 
     private function cleanAstDescription($description)
     {
-        if (property_exists($description, 'value')) {
+        if (\property_exists($description, 'value')) {
             $description = $description->value;
         }
-        $description = trim($description);
+        $description = \trim($description);
 
         return empty($description) ? null : $description;
     }

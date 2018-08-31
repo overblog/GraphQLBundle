@@ -10,7 +10,7 @@ class CustomScalarType extends BaseCustomScalarType
 {
     public function __construct(array $config = [])
     {
-        $config['name'] = isset($config['name']) ? $config['name'] : uniqid('CustomScalar');
+        $config['name'] = isset($config['name']) ? $config['name'] : \uniqid('CustomScalar');
         parent::__construct($config);
 
         $this->config['scalarType'] = isset($this->config['scalarType']) ? $this->config['scalarType'] : null;
@@ -43,7 +43,7 @@ class CustomScalarType extends BaseCustomScalarType
     private function call($type, $value)
     {
         if (isset($this->config['scalarType'])) {
-            return call_user_func([$this->loadScalarType(), $type], $value);
+            return \call_user_func([$this->loadScalarType(), $type], $value);
         } else {
             return parent::$type($value);
         }
@@ -56,7 +56,7 @@ class CustomScalarType extends BaseCustomScalarType
 
             Utils::invariant(
                 $scalarType instanceof ScalarType,
-                sprintf(
+                \sprintf(
                     '%s must provide a valid "scalarType" instance of %s but got: %s',
                     $this->name,
                     ScalarType::class,
@@ -72,7 +72,7 @@ class CustomScalarType extends BaseCustomScalarType
     {
         if ($this->config['scalarType'] instanceof ScalarType) {
             return $this->config['scalarType'];
-        } elseif (is_callable($this->config['scalarType'])) {
+        } elseif (\is_callable($this->config['scalarType'])) {
             return $this->config['scalarType'] = $this->config['scalarType']();
         } else {
             return $this->config['scalarType'];

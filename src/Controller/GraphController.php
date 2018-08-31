@@ -82,7 +82,7 @@ class GraphController
         if ('OPTIONS' === $request->getMethod()) {
             $response = new Response('', 200);
         } else {
-            if (!in_array($request->getMethod(), ['POST', 'GET'])) {
+            if (!\in_array($request->getMethod(), ['POST', 'GET'])) {
                 return new Response('', 405);
             }
             $payload = $this->processQuery($request, $schemaName, $batched);

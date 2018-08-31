@@ -67,15 +67,15 @@ final class GraphQLDumpSchemaCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $file = $this->createFile($input);
-        $io->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
+        $io->success(\sprintf('GraphQL schema "%s" was successfully dumped.', \realpath($file)));
     }
 
     private function createFile(InputInterface $input)
     {
-        $format = strtolower($input->getOption('format'));
+        $format = \strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
 
-        $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
@@ -92,7 +92,7 @@ final class GraphQLDumpSchemaCommand extends Command
                     ->execute($schemaName, $request)
                     ->toArray();
 
-                $content = json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);
+                $content = \json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);
                 break;
 
             case 'graphql':
@@ -100,10 +100,10 @@ final class GraphQLDumpSchemaCommand extends Command
                 break;
 
             default:
-                throw new \InvalidArgumentException(sprintf('Unknown format %s.', json_encode($format)));
+                throw new \InvalidArgumentException(\sprintf('Unknown format %s.', \json_encode($format)));
         }
 
-        file_put_contents($file, $content);
+        \file_put_contents($file, $content);
 
         return $file;
     }

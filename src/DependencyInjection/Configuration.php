@@ -182,7 +182,7 @@ class Configuration implements ConfigurationInterface
         $node
             ->beforeNormalization()
                 ->ifTrue(function ($v) {
-                    return isset($v['query']) && is_string($v['query']) || isset($v['mutation']) && is_string($v['mutation']);
+                    return isset($v['query']) && \is_string($v['query']) || isset($v['mutation']) && \is_string($v['mutation']);
                 })
                 ->then(function ($v) {
                     return ['default' => $v];
@@ -253,7 +253,7 @@ class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->beforeNormalization()
                             ->ifTrue(function ($v) {
-                                return isset($v['type']) && is_string($v['type']);
+                                return isset($v['type']) && \is_string($v['type']);
                             })
                             ->then(function ($v) {
                                 if ('yml' === $v['type']) {
@@ -268,7 +268,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->children()
                             ->arrayNode('types')
-                                ->prototype('enum')->values(array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
+                                ->prototype('enum')->values(\array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
                             ->end()
                             ->scalarNode('dir')->defaultNull()->end()
                             ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
@@ -293,11 +293,11 @@ class Configuration implements ConfigurationInterface
         $node = $builder->root($name);
         $node->beforeNormalization()
             ->ifTrue(function ($v) {
-                return is_array($v) && !empty($v);
+                return \is_array($v) && !empty($v);
             })
             ->then(function ($v) {
                 foreach ($v as $key => &$config) {
-                    if (is_string($config)) {
+                    if (\is_string($config)) {
                         $config = [
                             'alias' => $key,
                             'class' => $config,
@@ -333,7 +333,7 @@ class Configuration implements ConfigurationInterface
         $node = $builder->root($name, 'scalar');
         $node->beforeNormalization()
                 ->ifTrue(function ($v) {
-                    return is_string($v) && is_numeric($v);
+                    return \is_string($v) && \is_numeric($v);
                 })
                 ->then(function ($v) {
                     return (int) $v;
@@ -353,9 +353,9 @@ class Configuration implements ConfigurationInterface
             ->defaultFalse()
             ->validate()
                 ->ifTrue(function ($v) {
-                    return is_int($v) && $v < 0;
+                    return \is_int($v) && $v < 0;
                 })
-                ->thenInvalid(sprintf('"%s.security.%s" must be greater or equal to 0.', self::NAME, $name))
+                ->thenInvalid(\sprintf('"%s.security.%s" must be greater or equal to 0.', self::NAME, $name))
             ->end()
         ;
 

@@ -20,7 +20,7 @@ class ResolverMap implements ResolverMapInterface
      */
     protected function map()
     {
-        throw new \LogicException(sprintf('You must override the %s::map() method.', get_class($this)));
+        throw new \LogicException(\sprintf('You must override the %s::map() method.', \get_class($this)));
     }
 
     private function getLoadedMap()
@@ -42,7 +42,7 @@ class ResolverMap implements ResolverMapInterface
         $loadedMap = $this->getLoadedMap();
 
         if (!$this->isResolvable($typeName, $fieldName)) {
-            throw new UnresolvableException(sprintf('Field "%s.%s" could not be resolved.', $typeName, $fieldName));
+            throw new UnresolvableException(\sprintf('Field "%s.%s" could not be resolved.', $typeName, $fieldName));
         }
 
         return $loadedMap[$typeName][$fieldName];
@@ -56,7 +56,7 @@ class ResolverMap implements ResolverMapInterface
         $key = $typeName.'.'.$fieldName;
         if (!isset($this->memorized[$key])) {
             $loadedMap = $this->getLoadedMap();
-            $this->memorized[$key] = isset($loadedMap[$typeName]) && array_key_exists($fieldName, $loadedMap[$typeName]);
+            $this->memorized[$key] = isset($loadedMap[$typeName]) && \array_key_exists($fieldName, $loadedMap[$typeName]);
         }
 
         return $this->memorized[$key];
@@ -85,11 +85,11 @@ class ResolverMap implements ResolverMapInterface
 
     private function checkMap($map)
     {
-        if (!is_array($map) && !($map instanceof \ArrayAccess && $map instanceof \Traversable)) {
-            throw new \RuntimeException(sprintf(
+        if (!\is_array($map) && !($map instanceof \ArrayAccess && $map instanceof \Traversable)) {
+            throw new \RuntimeException(\sprintf(
                 '%s::map() should return an array or an instance of \ArrayAccess and \Traversable but got "%s".',
-                get_class($this),
-                is_object($map) ? get_class($map) : gettype($map)
+                \get_class($this),
+                \is_object($map) ? \get_class($map) : \gettype($map)
             ));
         }
     }

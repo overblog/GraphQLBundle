@@ -24,11 +24,11 @@ class YamlParser implements ParserInterface
         $container->addResource(new FileResource($file->getRealPath()));
 
         try {
-            $typesConfig = self::$yamlParser->parse(file_get_contents($file->getPathname()));
+            $typesConfig = self::$yamlParser->parse(\file_get_contents($file->getPathname()));
         } catch (ParseException $e) {
-            throw new InvalidArgumentException(sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
+            throw new InvalidArgumentException(\sprintf('The file "%s" does not contain valid YAML.', $file), 0, $e);
         }
 
-        return is_array($typesConfig) ? $typesConfig : [];
+        return \is_array($typesConfig) ? $typesConfig : [];
     }
 }

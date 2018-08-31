@@ -11,7 +11,7 @@ final class Mutation extends ExpressionFunction
         parent::__construct(
             $name,
             function ($alias, $args = '[]') {
-                return sprintf('$globalVariable->get(\'mutationResolver\')->resolve([%s, %s])', $alias, $args);
+                return \sprintf('$globalVariable->get(\'mutationResolver\')->resolve([%s, %s])', $alias, $args);
             }
         );
     }

@@ -30,8 +30,8 @@ class AutoMappingPass implements CompilerPassInterface
         if ($enabled) {
             $directories = $container->getParameter('overblog_graphql.auto_mapping.directories');
             $bundles = $container->getParameter('kernel.bundles');
-            $directories = array_merge(
-                array_map(
+            $directories = \array_merge(
+                \array_map(
                     function ($class) {
                         $bundleDir = $this->bundleDir($class);
 
@@ -53,12 +53,12 @@ class AutoMappingPass implements CompilerPassInterface
 
         foreach ($directories as $directory) {
             list($reflectionClasses, $directories) = $this->reflectionClassesFromDirectory($directory);
-            $directoryList = array_merge($directoryList, $directories);
+            $directoryList = \array_merge($directoryList, $directories);
             $this->addServicesDefinitions($container, $reflectionClasses);
         }
 
         foreach ($directoryList as $directory => $v) {
-            $directory = realpath($directory);
+            $directory = \realpath($directory);
             $container->addResource(new DirectoryResource($directory, '/\.php$/'));
         }
     }
@@ -80,7 +80,7 @@ class AutoMappingPass implements CompilerPassInterface
         $definition = $container->setDefinition($className, new Definition($className));
         $definition->setPublic(false);
         $definition->setAutowired(true);
-        if (is_subclass_of($definition->getClass(), ContainerAwareInterface::class)) {
+        if (\is_subclass_of($definition->getClass(), ContainerAwareInterface::class)) {
             $definition->addMethodCall('setContainer', [new Reference('service_container')]);
         }
         $this->addDefinitionTags($definition, $reflectionClass);
@@ -110,10 +110,10 @@ class AutoMappingPass implements CompilerPassInterface
 
     private function subclass($class)
     {
-        $interfaces = array_keys(self::SERVICE_SUBCLASS_TAG_MAPPING);
+        $interfaces = \array_keys(self::SERVICE_SUBCLASS_TAG_MAPPING);
 
         foreach ($interfaces as $interface) {
-            if (is_a($class, $interface, true)) {
+            if (\is_a($class, $interface, true)) {
                 return $interface;
             }
         }
@@ -145,15 +145,15 @@ class AutoMappingPass implements CompilerPassInterface
         foreach ($finder as $file) {
             $directoryList[$file->getPath()] = true;
             $sourceFile = $file->getRealpath();
-            if (!preg_match('(^phar:)i', $sourceFile)) {
-                $sourceFile = realpath($sourceFile);
+            if (!\preg_match('(^phar:)i', $sourceFile)) {
+                $sourceFile = \realpath($sourceFile);
             }
 
             require_once $sourceFile;
             $includedFiles[$sourceFile] = true;
         }
 
-        $declared = get_declared_classes();
+        $declared = \get_declared_classes();
         foreach ($declared as $className) {
             $subclass = $this->subclass($className);
             if (false === $subclass) {
@@ -172,13 +172,13 @@ class AutoMappingPass implements CompilerPassInterface
             }
         }
 
-        return [array_intersect_key($reflectionClasses, $classes), $directoryList];
+        return [\array_intersect_key($reflectionClasses, $classes), $directoryList];
     }
 
     private function bundleDir($bundleClass)
     {
         $bundle = new \ReflectionClass($bundleClass);
-        $bundleDir = dirname($bundle->getFileName());
+        $bundleDir = \dirname($bundle->getFileName());
 
         return $bundleDir;
     }

@@ -20,7 +20,7 @@ final class GlobalVariables
     public function get($name)
     {
         if (!isset($this->services[$name])) {
-            throw new \LogicException(sprintf('Global variable %s could not be located. You should define it.', json_encode($name)));
+            throw new \LogicException(\sprintf('Global variable %s could not be located. You should define it.', \json_encode($name)));
         }
 
         return $this->services[$name];

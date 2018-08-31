@@ -45,8 +45,8 @@ class CustomScalarTypeTest extends TestCase
     public function testAssertValidWithInvalidScalarType($scalarType, $got)
     {
         $this->expectException(InvariantViolation::class);
-        $name = uniqid('custom');
-        $this->expectExceptionMessage(sprintf(
+        $name = \uniqid('custom');
+        $this->expectExceptionMessage(\sprintf(
             '%s must provide a valid "scalarType" instance of %s but got: %s',
             $name,
             ScalarType::class,
@@ -59,7 +59,7 @@ class CustomScalarTypeTest extends TestCase
     public function testAssertValidSerializeFunctionIsRequired()
     {
         $this->expectException(InvariantViolation::class);
-        $name = uniqid('custom');
+        $name = \uniqid('custom');
         $this->expectExceptionMessage($name.' must provide "serialize" function. If this custom Scalar is also used as an input type, ensure "parseValue" and "parseLiteral" functions are also provided.');
         $type = new CustomScalarType(['name' => $name]);
         $type->assertValid();

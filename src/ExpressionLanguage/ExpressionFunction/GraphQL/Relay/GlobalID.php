@@ -13,10 +13,10 @@ final class GlobalID extends ExpressionFunction
             function ($id, $typeName = null) {
                 $typeNameEmpty = null === $typeName || '""' === $typeName || 'null' === $typeName || 'false' === $typeName;
 
-                return sprintf(
+                return \sprintf(
                     '\%s::toGlobalId(%s, %s)',
                     \Overblog\GraphQLBundle\Relay\Node\GlobalId::class,
-                    sprintf($typeNameEmpty ? '$info->parentType->name' : '%s', $typeName),
+                    \sprintf($typeNameEmpty ? '$info->parentType->name' : '%s', $typeName),
                     $id
                 );
             }

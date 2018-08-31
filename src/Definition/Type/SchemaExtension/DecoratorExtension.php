@@ -38,10 +38,10 @@ final class DecoratorExtension implements SchemaExtensionInterface
                 $covered = $this->resolverMap->covered($type->name);
                 if (!empty($covered)) {
                     throw new \InvalidArgumentException(
-                        sprintf(
+                        \sprintf(
                             '"%s".{"%s"} defined in resolverMap, but type is not managed by SchemaDecorator.',
                             $type->name,
-                            implode('", "', $covered)
+                            \implode('", "', $covered)
                         )
                     );
                 }
@@ -57,7 +57,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
                 $this->configTypeMapping($type, ResolverMapInterface::IS_TYPEOF);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
                 $resolveFieldFn = Resolver::wrapArgs($this->resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
-                $type->config[substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
+                $type->config[\substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
                 $fieldsResolved[] = $fieldName;
@@ -74,13 +74,13 @@ final class DecoratorExtension implements SchemaExtensionInterface
         $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE);
         $covered = $this->resolverMap->covered($type->name);
         if (!empty($covered)) {
-            $unknownFields = array_diff($covered, [ResolverMapInterface::RESOLVE_TYPE]);
+            $unknownFields = \array_diff($covered, [ResolverMapInterface::RESOLVE_TYPE]);
             if (!empty($unknownFields)) {
                 throw new \InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         '"%s".{"%s"} defined in resolverMap, but only "%s::RESOLVE_TYPE" is allowed.',
                         $type->name,
-                        implode('", "', $unknownFields),
+                        \implode('", "', $unknownFields),
                         ResolverMapInterface::class
                     )
                 );
@@ -101,15 +101,15 @@ final class DecoratorExtension implements SchemaExtensionInterface
             $this->configTypeMapping($type, $fieldName);
         }
 
-        $unknownFields = array_diff($this->resolverMap->covered($type->name), $allowedFields);
+        $unknownFields = \array_diff($this->resolverMap->covered($type->name), $allowedFields);
         if (!empty($unknownFields)) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     '"%s".{"%s"} defined in resolverMap, but only "%s::{%s}" is allowed.',
                     $type->name,
-                    implode('", "', $unknownFields),
+                    \implode('", "', $unknownFields),
                     ResolverMapInterface::class,
-                    implode(', ', ['SCALAR_TYPE', 'SERIALIZE', 'PARSE_VALUE', 'PARSE_LITERAL'])
+                    \implode(', ', ['SCALAR_TYPE', 'SERIALIZE', 'PARSE_VALUE', 'PARSE_LITERAL'])
                 )
             );
         }
@@ -125,13 +125,13 @@ final class DecoratorExtension implements SchemaExtensionInterface
             }
             $fieldNames[] = $fieldName;
         }
-        $unknownFields = array_diff($this->resolverMap->covered($type->name), $fieldNames);
+        $unknownFields = \array_diff($this->resolverMap->covered($type->name), $fieldNames);
         if (!empty($unknownFields)) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     '"%s".{"%s"} defined in resolverMap, was defined in resolvers, but enum is not in schema.',
                     $type->name,
-                    implode('", "', $unknownFields)
+                    \implode('", "', $unknownFields)
                 )
             );
         }
@@ -142,7 +142,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         $fields = $type->config['fields'];
 
         $decoratedFields = function () use ($fields, $type, $fieldsResolved) {
-            if (is_callable($fields)) {
+            if (\is_callable($fields)) {
                 $fields = $fields();
             }
 
@@ -157,23 +157,23 @@ final class DecoratorExtension implements SchemaExtensionInterface
                 $fieldNames[] = $fieldName;
             }
 
-            $unknownFields = array_diff($fieldsResolved, $fieldNames);
+            $unknownFields = \array_diff($fieldsResolved, $fieldNames);
             if (!empty($unknownFields)) {
                 throw new \InvalidArgumentException(
-                    sprintf('"%s".{"%s"} defined in resolverMap, but not in schema.', $type->name, implode('", "', $unknownFields))
+                    \sprintf('"%s".{"%s"} defined in resolverMap, but not in schema.', $type->name, \implode('", "', $unknownFields))
                 );
             }
 
             return $fields;
         };
 
-        $type->config['fields'] = is_callable($fields) ? $decoratedFields : $decoratedFields();
+        $type->config['fields'] = \is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
     private function configTypeMapping(Type $type, $fieldName)
     {
         if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
-            $type->config[substr($fieldName, 2)] = $this->resolverMap->resolve($type->name, $fieldName);
+            $type->config[\substr($fieldName, 2)] = $this->resolverMap->resolve($type->name, $fieldName);
         }
     }
 }

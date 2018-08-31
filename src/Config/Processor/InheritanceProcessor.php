@@ -21,7 +21,7 @@ final class InheritanceProcessor implements ProcessorInterface
 
     private static function removedDecorators(array $configs)
     {
-        return array_filter($configs, function ($config) {
+        return \array_filter($configs, function ($config) {
             return !isset($config['decorator']) || true !== $config['decorator'];
         });
     }
@@ -31,15 +31,15 @@ final class InheritanceProcessor implements ProcessorInterface
         foreach ($configs as $parentName => &$config) {
             if (!empty($config[self::HEIRS_KEY])) {
                 // allows shorthand configuration `heirs: QueryFooDecorator` is equivalent to `heirs: [QueryFooDecorator]`
-                if (!is_array($config[self::HEIRS_KEY])) {
+                if (!\is_array($config[self::HEIRS_KEY])) {
                     $config[self::HEIRS_KEY] = [$config[self::HEIRS_KEY]];
                 }
                 foreach ($config[self::HEIRS_KEY] as $heirs) {
                     if (!isset($configs[$heirs])) {
-                        throw new \InvalidArgumentException(sprintf(
+                        throw new \InvalidArgumentException(\sprintf(
                             'Type %s child of %s not found.',
-                            json_encode($heirs),
-                            json_encode($parentName)
+                            \json_encode($heirs),
+                            \json_encode($parentName)
                         ));
                     }
 
@@ -79,16 +79,16 @@ final class InheritanceProcessor implements ProcessorInterface
 
     private static function inheritsTypeConfig($child, array $parents, array $configs)
     {
-        $parentTypes = array_intersect_key($configs, array_flip($parents));
-        $parentTypes = array_reverse($parentTypes);
-        $mergedParentsConfig = call_user_func_array('array_replace_recursive', array_column($parentTypes, 'config'));
+        $parentTypes = \array_intersect_key($configs, \array_flip($parents));
+        $parentTypes = \array_reverse($parentTypes);
+        $mergedParentsConfig = \call_user_func_array('array_replace_recursive', \array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
         if ('object' === $childType['type']) {
             unset($mergedParentsConfig['resolveType']);
         }
 
-        $configs = array_replace_recursive(['config' => $mergedParentsConfig], $childType);
+        $configs = \array_replace_recursive(['config' => $mergedParentsConfig], $childType);
 
         return $configs;
     }
@@ -101,14 +101,14 @@ final class InheritanceProcessor implements ProcessorInterface
 
         // flatten
         $config = $configs[$name];
-        if (empty($config[self::INHERITS_KEY]) || !is_array($config[self::INHERITS_KEY])) {
+        if (empty($config[self::INHERITS_KEY]) || !\is_array($config[self::INHERITS_KEY])) {
             return [];
         }
         $typesTreated[$name] = true;
         $flattenInheritsTypes = [];
         foreach ($config[self::INHERITS_KEY] as $typeToInherit) {
             $flattenInheritsTypes[] = $typeToInherit;
-            $flattenInheritsTypes = array_merge(
+            $flattenInheritsTypes = \array_merge(
                 $flattenInheritsTypes,
                 self::flattenInherits($typeToInherit, $configs, $allowedTypes, $name, $typesTreated)
             );
@@ -120,10 +120,10 @@ final class InheritanceProcessor implements ProcessorInterface
     private static function checkTypeExists($name, array $configs, $child)
     {
         if (!isset($configs[$name])) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'Type %s inherits by %s not found.',
-                json_encode($name),
-                json_encode($child)
+                \json_encode($name),
+                \json_encode($child)
             ));
         }
     }
@@ -131,22 +131,22 @@ final class InheritanceProcessor implements ProcessorInterface
     private static function checkCircularReferenceInheritsTypes($name, array $typesTreated)
     {
         if (isset($typesTreated[$name])) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'Type circular inheritance detected (%s).',
-                implode('->', array_merge(array_keys($typesTreated), [$name]))
+                \implode('->', \array_merge(\array_keys($typesTreated), [$name]))
             ));
         }
     }
 
     private static function checkAllowedInheritsTypes($name, array $config, array $allowedTypes, $child)
     {
-        if (empty($config['decorator']) && isset($config['type']) && !in_array($config['type'], $allowedTypes)) {
-            throw new \InvalidArgumentException(sprintf(
+        if (empty($config['decorator']) && isset($config['type']) && !\in_array($config['type'], $allowedTypes)) {
+            throw new \InvalidArgumentException(\sprintf(
                 'Type %s can\'t inherits %s because %s is not allowed type (%s).',
-                json_encode($name),
-                json_encode($child),
-                json_encode($config['type']),
-                json_encode($allowedTypes)
+                \json_encode($name),
+                \json_encode($child),
+                \json_encode($config['type']),
+                \json_encode($allowedTypes)
             ));
         }
     }

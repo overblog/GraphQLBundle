@@ -62,7 +62,7 @@ class ConnectionResolver
     public function resolveConnection()
     {
         return $this->promiseAdapter->create(function (callable $resolve) {
-            return $resolve(count($this->allUsers) - 1);
+            return $resolve(\count($this->allUsers) - 1);
         });
     }
 

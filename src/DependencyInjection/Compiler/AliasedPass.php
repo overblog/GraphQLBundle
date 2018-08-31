@@ -27,10 +27,10 @@ final class AliasedPass implements CompilerPassInterface
      */
     private function filterDefinitions($definitions)
     {
-        return array_filter($definitions, function (Definition $definition) {
+        return \array_filter($definitions, function (Definition $definition) {
             foreach (AutoMappingPass::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
                 if ($definition->hasTag($tagName)) {
-                    return is_subclass_of($definition->getClass(), AliasedInterface::class);
+                    return \is_subclass_of($definition->getClass(), AliasedInterface::class);
                 }
             }
 
@@ -43,7 +43,7 @@ final class AliasedPass implements CompilerPassInterface
      */
     private function addDefinitionTagsFromAliases(Definition $definition)
     {
-        $aliases = call_user_func([$definition->getClass(), 'getAliases']);
+        $aliases = \call_user_func([$definition->getClass(), 'getAliases']);
         $tagName = $this->guessTagName($definition);
         $withMethod = TypeTaggedServiceMappingPass::TAG_NAME !== $tagName;
 
@@ -56,7 +56,7 @@ final class AliasedPass implements CompilerPassInterface
     {
         $tagName = null;
         foreach (AutoMappingPass::SERVICE_SUBCLASS_TAG_MAPPING as $refClassName => $tag) {
-            if (is_subclass_of($definition->getClass(), $refClassName)) {
+            if (\is_subclass_of($definition->getClass(), $refClassName)) {
                 $tagName = $tag;
                 break;
             }

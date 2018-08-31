@@ -33,7 +33,7 @@ class Parser implements ParserInterface
     private function getParsedBody(Request $request)
     {
         $body = $request->getContent();
-        $type = explode(';', $request->headers->get('content-type'), 2)[0];
+        $type = \explode(';', $request->headers->get('content-type'), 2)[0];
 
         switch ($type) {
             // Plain string
@@ -47,9 +47,9 @@ class Parser implements ParserInterface
                     throw new BadRequestHttpException('The request content body must not be empty when using json content type request.');
                 }
 
-                $parsedBody = json_decode($body, true);
+                $parsedBody = \json_decode($body, true);
 
-                if (JSON_ERROR_NONE !== json_last_error()) {
+                if (JSON_ERROR_NONE !== \json_last_error()) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 break;
@@ -82,7 +82,7 @@ class Parser implements ParserInterface
     private function getParams(Request $request, array $data = [])
     {
         // Add default request parameters
-        $data = array_filter($data) + [
+        $data = \array_filter($data) + [
                 static::PARAM_QUERY => null,
                 static::PARAM_VARIABLES => null,
                 static::PARAM_OPERATION_NAME => null,
@@ -103,10 +103,10 @@ class Parser implements ParserInterface
 
         // Variables can be defined using a JSON-encoded object.
         // If the parsing fails, an exception will be thrown.
-        if (is_string($variables)) {
-            $variables = json_decode($variables, true);
+        if (\is_string($variables)) {
+            $variables = \json_decode($variables, true);
 
-            if (JSON_ERROR_NONE !== json_last_error()) {
+            if (JSON_ERROR_NONE !== \json_last_error()) {
                 throw new BadRequestHttpException('Variables are invalid JSON');
             }
         }

@@ -19,7 +19,7 @@ class GraphQLParserTest extends TestCase
 
     public function testParse()
     {
-        $fileName = sprintf(
+        $fileName = \sprintf(
             __DIR__.'/fixtures/graphql/schema%s.graphql',
             isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION'] ? '-0.11' : ''
         );
@@ -44,7 +44,7 @@ class GraphQLParserTest extends TestCase
     {
         $fileName = __DIR__.'/fixtures/graphql/invalid.graphql';
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf('An error occurred while parsing the file "%s"', $fileName));
+        $this->expectExceptionMessage(\sprintf('An error occurred while parsing the file "%s"', $fileName));
         GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
     }
 
@@ -72,13 +72,13 @@ class GraphQLParserTest extends TestCase
     private static function cleanConfig($config)
     {
         foreach ($config as $key => &$value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $value = self::cleanConfig($value);
             }
         }
 
-        return array_filter($config, function ($item) {
-            return !is_array($item) || !empty($item);
+        return \array_filter($config, function ($item) {
+            return !\is_array($item) || !empty($item);
         });
     }
 }
