@@ -34,10 +34,16 @@ final class ConfigProcessor implements ConfigProcessorInterface
         $this->processors[] = ['processor' => $configProcessor, 'priority' => $priority];
     }
 
-    public function process(LazyConfig $lazyConfig)
+    public function getOrderedProcessors()
     {
         $this->initialize();
-        foreach ($this->orderedProcessors as $processor) {
+
+        return $this->orderedProcessors;
+    }
+
+    public function process(LazyConfig $lazyConfig)
+    {
+        foreach ($this->getOrderedProcessors() as $processor) {
             $lazyConfig = $processor->process($lazyConfig);
         }
 

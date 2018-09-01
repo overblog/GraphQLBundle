@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Error;
+namespace Overblog\GraphQLBundle\Tests\Executor\Promise\Adapter;
 
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
