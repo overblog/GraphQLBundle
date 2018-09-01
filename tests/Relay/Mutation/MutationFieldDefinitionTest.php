@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Relay\Node;
+namespace Overblog\GraphQLBundle\Tests\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
 use PHPUnit\Framework\TestCase;

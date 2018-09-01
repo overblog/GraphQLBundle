@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\AutoMapping;
+namespace Overblog\GraphQLBundle\Tests\Functional\ArgumentWrapper;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 

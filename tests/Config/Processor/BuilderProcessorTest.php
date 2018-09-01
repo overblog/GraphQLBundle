@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Config;
+namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use PHPUnit\Framework\TestCase;
