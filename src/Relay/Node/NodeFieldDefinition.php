@@ -8,12 +8,12 @@ final class NodeFieldDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {
-        if (!isset($config['idFetcher']) || !is_string($config['idFetcher'])) {
+        if (!isset($config['idFetcher']) || !\is_string($config['idFetcher'])) {
             throw new \InvalidArgumentException('Node "idFetcher" config is invalid.');
         }
 
         $idFetcher = $this->cleanIdFetcher($config['idFetcher']);
-        $nodeInterfaceType = isset($config['nodeInterfaceType']) && is_string($config['nodeInterfaceType']) ? $config['nodeInterfaceType'] : null;
+        $nodeInterfaceType = isset($config['nodeInterfaceType']) && \is_string($config['nodeInterfaceType']) ? $config['nodeInterfaceType'] : null;
 
         return [
             'description' => 'Fetches an object given its ID',
@@ -29,8 +29,8 @@ final class NodeFieldDefinition implements MappingInterface
     {
         $cleanIdFetcher = $idFetcher;
 
-        if (0 === strpos($idFetcher, '@=')) {
-            $cleanIdFetcher = substr($idFetcher, 2);
+        if (0 === \strpos($idFetcher, '@=')) {
+            $cleanIdFetcher = \substr($idFetcher, 2);
         }
 
         return $cleanIdFetcher;

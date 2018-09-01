@@ -28,7 +28,7 @@ final class Helper
         }
 
         $user = $token->getUser();
-        if (!is_object($user)) {
+        if (!\is_object($user)) {
             return;
         }
 

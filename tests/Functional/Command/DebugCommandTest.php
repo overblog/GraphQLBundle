@@ -27,14 +27,14 @@ class DebugCommandTest extends TestCase
         $this->commandTester = new CommandTester($this->command);
 
         foreach (DebugCommand::getCategories() as $category) {
-            $content = file_get_contents(
-                sprintf(
+            $content = \file_get_contents(
+                \sprintf(
                     __DIR__.'/fixtures/debug/debug-%s.txt',
                     $category
                 )
             );
 
-            $this->logs[$category] = trim($content);
+            $this->logs[$category] = \trim($content);
         }
     }
 
@@ -56,7 +56,7 @@ class DebugCommandTest extends TestCase
             $expected .= $this->logs[$category]." \n\n\n\n";
         }
 
-        $this->assertContains($expected, $this->commandTester->getDisplay(), '', version_compare(Kernel::VERSION, '3.3.0') < 0);
+        $this->assertContains($expected, $this->commandTester->getDisplay(), '', \version_compare(Kernel::VERSION, '3.3.0') < 0);
     }
 
     /**

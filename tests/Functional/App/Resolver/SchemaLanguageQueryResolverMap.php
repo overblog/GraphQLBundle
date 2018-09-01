@@ -27,8 +27,8 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
                 'findHumansByDateOfBirth' => function ($value, Argument $args) {
                     $years = $args['years'];
 
-                    return array_filter(Characters::getHumans(), function ($human) use ($years) {
-                        return in_array($human['dateOfBirth'], $years);
+                    return \array_filter(Characters::getHumans(), function ($human) use ($years) {
+                        return \in_array($human['dateOfBirth'], $years);
                     });
                 },
                 'humans' => [Characters::class, 'getHumans'],

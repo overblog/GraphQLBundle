@@ -26,7 +26,7 @@ class ResolverMapsTest extends TestCase
     public function testInvalidResolverMap(array $resolverMaps, $type)
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectExceptionMessage(\sprintf(
             'ResolverMap should be instance of "%s" but got "%s".',
             ResolverMapInterface::class,
             $type

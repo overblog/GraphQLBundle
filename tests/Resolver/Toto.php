@@ -38,6 +38,6 @@ class Toto
 
     public function resolve()
     {
-        return func_get_args();
+        return \func_get_args();
     }
 }

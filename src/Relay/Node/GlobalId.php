@@ -8,12 +8,12 @@ class GlobalId
 
     public static function toGlobalId($type, $id)
     {
-        return base64_encode(sprintf('%s%s%s', $type, static::SEPARATOR, $id));
+        return \base64_encode(\sprintf('%s%s%s', $type, static::SEPARATOR, $id));
     }
 
     public static function fromGlobalId($globalId)
     {
-        $unBasedGlobalId = base64_decode($globalId, true);
+        $unBasedGlobalId = \base64_decode($globalId, true);
 
         $decodeGlobalId = [
             'type' => null,
@@ -24,7 +24,7 @@ class GlobalId
             return $decodeGlobalId;
         }
 
-        list($decodeGlobalId['type'], $decodeGlobalId['id']) = array_pad(explode(static::SEPARATOR, $unBasedGlobalId), 2, null);
+        list($decodeGlobalId['type'], $decodeGlobalId['id']) = \array_pad(\explode(static::SEPARATOR, $unBasedGlobalId), 2, null);
 
         return $decodeGlobalId;
     }

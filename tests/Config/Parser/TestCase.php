@@ -25,13 +25,13 @@ abstract class TestCase extends BaseTestCase
     protected static function cleanConfig($config)
     {
         foreach ($config as $key => &$value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $value = self::cleanConfig($value);
             }
         }
 
-        return array_filter($config, function ($item) {
-            return !is_array($item) || !empty($item);
+        return \array_filter($config, function ($item) {
+            return !\is_array($item) || !empty($item);
         });
     }
 }

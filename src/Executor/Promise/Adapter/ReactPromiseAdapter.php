@@ -42,7 +42,7 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     public function wait(Promise $promise, callable $onProgress = null)
     {
         if (!$this->isThenable($promise)) {
-            throw new \InvalidArgumentException(sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
+            throw new \InvalidArgumentException(\sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
         }
         $wait = true;
         $resolvedValue = null;
@@ -64,7 +64,7 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
                 $onProgress();
             }
             // less CPU intensive without sacrificing the performance
-            usleep(5);
+            \usleep(5);
         }
 
         /** @var \Exception|null $exception */

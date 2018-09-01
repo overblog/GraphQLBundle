@@ -16,7 +16,7 @@ class ExpressionFunctionTest extends BaseTestCase
         });
         $evaluator = $expressionFunction->getEvaluator();
 
-        $this->assertTrue(is_callable($evaluator));
+        $this->assertTrue(\is_callable($evaluator));
 
         $evaluator();
     }

@@ -24,7 +24,7 @@ class TypesConfiguration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('overblog_graphql_types');
 
-        $configTypeKeys = array_map(
+        $configTypeKeys = \array_map(
             function ($type) {
                 return $this->normalizedConfigTypeKey($type);
             },
@@ -39,10 +39,10 @@ class TypesConfiguration implements ConfigurationInterface
                 // config is the unique config entry allowed
                 ->beforeNormalization()
                     ->ifTrue(function ($v) use ($configTypeKeys) {
-                        if (!empty($v) && is_array($v)) {
-                            $keys = array_keys($v);
+                        if (!empty($v) && \is_array($v)) {
+                            $keys = \array_keys($v);
                             foreach ($configTypeKeys as $configTypeKey) {
-                                if (in_array($configTypeKey, $keys)) {
+                                if (\in_array($configTypeKey, $keys)) {
                                     return true;
                                 }
                             }
@@ -51,16 +51,16 @@ class TypesConfiguration implements ConfigurationInterface
                         return  false;
                     })
                         ->thenInvalid(
-                            sprintf(
+                            \sprintf(
                                 'Don\'t use internal config keys %s, replace it by "config" instead.',
-                                implode(', ', $configTypeKeys)
+                                \implode(', ', $configTypeKeys)
                             )
                         )
                 ->end()
                 // config is renamed _{TYPE}_config
                 ->beforeNormalization()
                     ->ifTrue(function ($v) {
-                        return isset($v['type']) && is_string($v['type']);
+                        return isset($v['type']) && \is_string($v['type']);
                     })
                     ->then(function ($v) {
                         $key = $this->normalizedConfigTypeKey($v['type']);
@@ -113,7 +113,7 @@ class TypesConfiguration implements ConfigurationInterface
             // process beforeNormalization (should be execute after relay normalization)
             ->beforeNormalization()
                 ->ifTrue(function ($types) {
-                    return !empty($types) && is_array($types);
+                    return !empty($types) && \is_array($types);
                 })
                 ->then(function ($types) {
                     return Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION);
@@ -124,6 +124,6 @@ class TypesConfiguration implements ConfigurationInterface
 
     private function normalizedConfigTypeKey($type)
     {
-        return '_'.str_replace('-', '_', $type).'_config';
+        return '_'.\str_replace('-', '_', $type).'_config';
     }
 }

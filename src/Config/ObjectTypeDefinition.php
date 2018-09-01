@@ -45,11 +45,11 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     {
         $node->validate()
             ->ifTrue(function ($v) {
-                return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
+                return \array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
             })
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
-                    if (array_key_exists('access', $field) && null !== $field['access']) {
+                    if (\array_key_exists('access', $field) && null !== $field['access']) {
                         continue;
                     }
 
@@ -70,11 +70,11 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     {
         $node->validate()
             ->ifTrue(function ($v) {
-                return array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
+                return \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
             })
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
-                    if (array_key_exists('public', $field) && null !== $field['public']) {
+                    if (\array_key_exists('public', $field) && null !== $field['public']) {
                         continue;
                     }
 

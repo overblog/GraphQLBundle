@@ -23,7 +23,7 @@ trait RequestExecutorLazyLoaderTrait
     protected function getRequestExecutor()
     {
         if (null === $this->requestExecutor && null !== $this->requestExecutorFactory) {
-            $this->requestExecutor = call_user_func_array(...$this->requestExecutorFactory);
+            $this->requestExecutor = \call_user_func_array(...$this->requestExecutorFactory);
         }
 
         return $this->requestExecutor;

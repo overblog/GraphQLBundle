@@ -35,7 +35,7 @@ class DecoratorExtensionTest extends TestCase
         }
         $expected = static function () {
         };
-        $realFieldName = substr($fieldName, 2);
+        $realFieldName = \substr($fieldName, 2);
 
         $this->decorate(
             [$typeWithSpecialField->name => $typeWithSpecialField],
@@ -298,7 +298,7 @@ class DecoratorExtensionTest extends TestCase
 
         $schema->expects($this->any())->method('getType')->willReturnCallback(function ($name) use ($types) {
             if (!isset($types[$name])) {
-                throw new \Exception(sprintf('Type "%s" not found.', $name));
+                throw new \Exception(\sprintf('Type "%s" not found.', $name));
             }
 
             return $types[$name];

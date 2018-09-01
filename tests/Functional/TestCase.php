@@ -38,7 +38,7 @@ abstract class TestCase extends WebTestCase
 
         $options['test_case'] = isset($options['test_case']) ? $options['test_case'] : null;
 
-        $env = isset($options['environment']) ? $options['environment'] : 'test'.strtolower($options['test_case']);
+        $env = isset($options['environment']) ? $options['environment'] : 'test'.\strtolower($options['test_case']);
         $debug = isset($options['debug']) ? $options['debug'] : true;
 
         return new static::$class($env, $debug, $options['test_case']);
@@ -50,7 +50,7 @@ abstract class TestCase extends WebTestCase
     public static function setUpBeforeClass()
     {
         $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir().'/OverblogGraphQLBundle/');
+        $fs->remove(\sys_get_temp_dir().'/OverblogGraphQLBundle/');
     }
 
     /**
@@ -86,7 +86,7 @@ abstract class TestCase extends WebTestCase
             $expected['errors'] = $expectedErrors;
         }
 
-        static::assertEquals($expected, $result, json_encode($result));
+        static::assertEquals($expected, $result, \json_encode($result));
     }
 
     protected static function getContainer()
@@ -121,27 +121,27 @@ abstract class TestCase extends WebTestCase
         $client = self::createClientAuthenticated($username, $testCase, $password);
         $result = self::sendRequest($client, $query, false, $variables);
 
-        static::assertEquals($expected, json_decode($result, true), $result);
+        static::assertEquals($expected, \json_decode($result, true), $result);
 
         return $client;
     }
 
     protected static function sendRequest(Client $client, $query, $isDecoded = false, array $variables = null)
     {
-        $client->request('GET', '/', ['query' => $query, 'variables' => json_encode($variables)]);
+        $client->request('GET', '/', ['query' => $query, 'variables' => \json_encode($variables)]);
         $result = $client->getResponse()->getContent();
 
-        return $isDecoded ? json_decode($result, true) : $result;
+        return $isDecoded ? \json_decode($result, true) : $result;
     }
 
     public static function expressionFunctionFromPhp($phpFunctionName)
     {
-        if (is_callable([ExpressionFunction::class, 'fromPhp'])) {
-            return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
+        if (\is_callable([ExpressionFunction::class, 'fromPhp'])) {
+            return \call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
         }
 
         return new ExpressionFunction($phpFunctionName, function () use ($phpFunctionName) {
-            return sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args()));
+            return \sprintf('\%s(%s)', $phpFunctionName, \implode(', ', \func_get_args()));
         });
     }
 }

@@ -8,13 +8,13 @@ final class MutationFieldDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config)
     {
-        if (!array_key_exists('mutateAndGetPayload', $config)) {
+        if (!\array_key_exists('mutateAndGetPayload', $config)) {
             throw new \InvalidArgumentException('Mutation "mutateAndGetPayload" config is required.');
         }
 
         $mutateAndGetPayload = $this->cleanMutateAndGetPayload($config['mutateAndGetPayload']);
-        $payloadType = isset($config['payloadType']) && is_string($config['payloadType']) ? $config['payloadType'] : null;
-        $inputType = isset($config['inputType']) && is_string($config['inputType']) ? $config['inputType'].'!' : null;
+        $payloadType = isset($config['payloadType']) && \is_string($config['payloadType']) ? $config['payloadType'] : null;
+        $inputType = isset($config['inputType']) && \is_string($config['inputType']) ? $config['inputType'].'!' : null;
 
         return [
             'type' => $payloadType,
@@ -27,10 +27,10 @@ final class MutationFieldDefinition implements MappingInterface
 
     private function cleanMutateAndGetPayload($mutateAndGetPayload)
     {
-        if (is_string($mutateAndGetPayload) && 0 === strpos($mutateAndGetPayload, '@=')) {
-            $cleanMutateAndGetPayload = substr($mutateAndGetPayload, 2);
+        if (\is_string($mutateAndGetPayload) && 0 === \strpos($mutateAndGetPayload, '@=')) {
+            $cleanMutateAndGetPayload = \substr($mutateAndGetPayload, 2);
         } else {
-            $cleanMutateAndGetPayload = json_encode($mutateAndGetPayload);
+            $cleanMutateAndGetPayload = \json_encode($mutateAndGetPayload);
         }
 
         return $cleanMutateAndGetPayload;

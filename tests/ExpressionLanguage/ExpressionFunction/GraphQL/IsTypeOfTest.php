@@ -14,6 +14,6 @@ class IsTypeOfTest extends TestCase
 
     public function testIsTypeOf()
     {
-        $this->assertTrue(eval('$value = new \stdClass(); return '.$this->expressionLanguage->compile(sprintf('isTypeOf("%s")', 'stdClass'), ['value']).';'));
+        $this->assertTrue(eval('$value = new \stdClass(); return '.$this->expressionLanguage->compile(\sprintf('isTypeOf("%s")', 'stdClass'), ['value']).';'));
     }
 }

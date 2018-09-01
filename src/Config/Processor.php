@@ -28,7 +28,7 @@ class Processor implements ProcessorInterface
     {
         /** @var ProcessorInterface $processor */
         foreach (static::PROCESSORS[$type] as $processor) {
-            $configs = call_user_func([$processor, 'process'], $configs);
+            $configs = \call_user_func([$processor, 'process'], $configs);
         }
 
         return $configs;

@@ -23,10 +23,10 @@ class AnnotationParser implements ParserInterface
     {
         $container->addResource(new FileResource($file->getRealPath()));
         try {
-            $fileContent = file_get_contents($file->getRealPath());
+            $fileContent = \file_get_contents($file->getRealPath());
 
-            $entityName = substr($file->getFilename(), 0, -4);
-            if (preg_match('#namespace (.+);#', $fileContent, $namespace)) {
+            $entityName = \substr($file->getFilename(), 0, -4);
+            if (\preg_match('#namespace (.+);#', $fileContent, $namespace)) {
                 $className = $namespace[1].'\\'.$entityName;
             } else {
                 $className = $entityName;
@@ -51,15 +51,15 @@ class AnnotationParser implements ParserInterface
                     return self::formatScalarType($alias, $type, $entityName, $reflexionEntity->getProperties());
             }
         } catch (\InvalidArgumentException $e) {
-            throw new InvalidArgumentException(sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
         }
     }
 
     private static function getAnnotationReader()
     {
         if (null === self::$annotationReader) {
-            if (!class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
-                !class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')
+            if (!\class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
+                !\class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')
             ) {
                 throw new \Exception('In order to use annotation, you need to require doctrine ORM');
             }
@@ -324,34 +324,34 @@ class AnnotationParser implements ParserInterface
         // Get the current type, depending on current annotation
         $type = $graphQLType = null;
         $nullable = $isMultiple = false;
-        if (array_key_exists('GraphQLColumn', $annotation) && array_key_exists('type', $annotation['GraphQLColumn'])) {
+        if (\array_key_exists('GraphQLColumn', $annotation) && \array_key_exists('type', $annotation['GraphQLColumn'])) {
             $annotation = $annotation['GraphQLColumn'];
             $type = $annotation['type'];
-        } elseif (array_key_exists('GraphQLToMany', $annotation) && array_key_exists('target', $annotation['GraphQLToMany'])) {
+        } elseif (\array_key_exists('GraphQLToMany', $annotation) && \array_key_exists('target', $annotation['GraphQLToMany'])) {
             $annotation = $annotation['GraphQLToMany'];
             $type = $annotation['target'];
             $isMultiple = $nullable = true;
-        } elseif (array_key_exists('GraphQLToOne', $annotation) && array_key_exists('target', $annotation['GraphQLToOne'])) {
+        } elseif (\array_key_exists('GraphQLToOne', $annotation) && \array_key_exists('target', $annotation['GraphQLToOne'])) {
             $annotation = $annotation['GraphQLToOne'];
             $type = $annotation['target'];
             $nullable = true;
-        } elseif (array_key_exists('OneToMany', $annotation) && array_key_exists('targetEntity', $annotation['OneToMany'])) {
+        } elseif (\array_key_exists('OneToMany', $annotation) && \array_key_exists('targetEntity', $annotation['OneToMany'])) {
             $annotation = $annotation['OneToMany'];
             $type = $annotation['targetEntity'];
             $isMultiple = $nullable = true;
-        } elseif (array_key_exists('OneToOne', $annotation) && array_key_exists('targetEntity', $annotation['OneToOne'])) {
+        } elseif (\array_key_exists('OneToOne', $annotation) && \array_key_exists('targetEntity', $annotation['OneToOne'])) {
             $annotation = $annotation['OneToOne'];
             $type = $annotation['targetEntity'];
             $nullable = true;
-        } elseif (array_key_exists('ManyToMany', $annotation) && array_key_exists('targetEntity', $annotation['ManyToMany'])) {
+        } elseif (\array_key_exists('ManyToMany', $annotation) && \array_key_exists('targetEntity', $annotation['ManyToMany'])) {
             $annotation = $annotation['ManyToMany'];
             $type = $annotation['targetEntity'];
             $isMultiple = $nullable = true;
-        } elseif (array_key_exists('ManyToOne', $annotation) && array_key_exists('targetEntity', $annotation['ManyToOne'])) {
+        } elseif (\array_key_exists('ManyToOne', $annotation) && \array_key_exists('targetEntity', $annotation['ManyToOne'])) {
             $annotation = $annotation['ManyToOne'];
             $type = $annotation['targetEntity'];
             $nullable = true;
-        } elseif (array_key_exists('Column', $annotation) && array_key_exists('type', $annotation['Column'])) {
+        } elseif (\array_key_exists('Column', $annotation) && \array_key_exists('type', $annotation['Column'])) {
             $annotation = $annotation['Column'];
             $type = $annotation['type'];
         }
@@ -360,14 +360,14 @@ class AnnotationParser implements ParserInterface
             return null;
         }
 
-        if (array_key_exists('nullable', $annotation)) {
+        if (\array_key_exists('nullable', $annotation)) {
             $nullable = 'true' == $annotation['nullable']
                 ? true
                 : false;
         }
 
-        $type = explode('\\', $type);
-        $type = $type[count($type) - 1];
+        $type = \explode('\\', $type);
+        $type = $type[\count($type) - 1];
 
         // Get the graphQL type representation
         // Specific case for ID and relation
@@ -417,7 +417,7 @@ class AnnotationParser implements ParserInterface
      */
     private static function getGraphQLQueryField($annotation)
     {
-        if (!array_key_exists('GraphQLQuery', $annotation)) {
+        if (!\array_key_exists('GraphQLQuery', $annotation)) {
             return null;
         }
 
@@ -431,7 +431,7 @@ class AnnotationParser implements ParserInterface
         $args = $queryArgs = [];
         if (!empty($annotationQuery['input'])) {
             $annotationArgs = $annotationQuery['input'];
-            if (!array_key_exists(0, $annotationArgs)) {
+            if (!\array_key_exists(0, $annotationArgs)) {
                 $annotationArgs = [$annotationArgs];
             }
 
@@ -459,7 +459,7 @@ class AnnotationParser implements ParserInterface
         }
 
         if (!empty($queryArgs)) {
-            $query = "'".$method."', [".implode(', ', $queryArgs).']';
+            $query = "'".$method."', [".\implode(', ', $queryArgs).']';
         } else {
             $query = "'".$method."'";
         }
@@ -482,13 +482,13 @@ class AnnotationParser implements ParserInterface
      */
     private static function getGraphQLMutationField($annotation)
     {
-        if (!array_key_exists('GraphQLMutation', $annotation)) {
+        if (!\array_key_exists('GraphQLMutation', $annotation)) {
             return self::getGraphQLRelayMutationField($annotation);
         }
 
         $annotation = $annotation['GraphQLMutation'];
-        if (array_key_exists('args', $annotation)) {
-            $mutate = "@=mutation('".$annotation['method']."', [".implode(', ', $annotation['args']).'])';
+        if (\array_key_exists('args', $annotation)) {
+            $mutate = "@=mutation('".$annotation['method']."', [".\implode(', ', $annotation['args']).'])';
         } else {
             $mutate = "'".$annotation['method']."'";
         }
@@ -509,13 +509,13 @@ class AnnotationParser implements ParserInterface
      */
     private static function getGraphQLRelayMutationField($annotation)
     {
-        if (!array_key_exists('GraphQLRelayMutation', $annotation)) {
+        if (!\array_key_exists('GraphQLRelayMutation', $annotation)) {
             return null;
         }
 
         $annotation = $annotation['GraphQLRelayMutation'];
-        if (array_key_exists('args', $annotation)) {
-            $mutate = "'".$annotation['method']."', [".implode(', ', $annotation['args']).']';
+        if (\array_key_exists('args', $annotation)) {
+            $mutate = "'".$annotation['method']."', [".\implode(', ', $annotation['args']).']';
         } else {
             $mutate = "'".$annotation['method']."'";
         }
@@ -539,7 +539,7 @@ class AnnotationParser implements ParserInterface
      */
     private static function getGraphQLAccessControl($annotation)
     {
-        if (array_key_exists('GraphQLAccessControl', $annotation) && array_key_exists('method', $annotation['GraphQLAccessControl'])) {
+        if (\array_key_exists('GraphQLAccessControl', $annotation) && \array_key_exists('method', $annotation['GraphQLAccessControl'])) {
             return '@='.$annotation['GraphQLAccessControl']['method'];
         }
 
@@ -555,7 +555,7 @@ class AnnotationParser implements ParserInterface
      */
     private static function getGraphQLPublicControl($annotation)
     {
-        if (array_key_exists('GraphQLPublicControl', $annotation) && array_key_exists('method', $annotation['GraphQLPublicControl'])) {
+        if (\array_key_exists('GraphQLPublicControl', $annotation) && \array_key_exists('method', $annotation['GraphQLPublicControl'])) {
             return '@='.$annotation['GraphQLPublicControl']['method'];
         }
 
@@ -573,9 +573,9 @@ class AnnotationParser implements ParserInterface
     {
         $returnAnnotation = [];
         foreach ($annotations as $index => $annotation) {
-            if (!is_array($annotation)) {
-                $index = explode('\\', get_class($annotation));
-                $index = $index[count($index) - 1];
+            if (!\is_array($annotation)) {
+                $index = \explode('\\', \get_class($annotation));
+                $index = $index[\count($index) - 1];
             }
 
             $returnAnnotation[$index] = [];

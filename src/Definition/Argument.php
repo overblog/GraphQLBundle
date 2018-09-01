@@ -39,6 +39,6 @@ class Argument implements \ArrayAccess, \Countable
 
     public function count()
     {
-        return count($this->arguments);
+        return \count($this->arguments);
     }
 }

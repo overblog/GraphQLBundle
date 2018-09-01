@@ -28,9 +28,9 @@ class ResolverMapTest extends TestCase
         /** @var ResolverMap|\PHPUnit_Framework_MockObject_MockObject $resolverMap */
         $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(null)->getMock();
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectExceptionMessage(\sprintf(
             'You must override the %s::map() method.',
-            get_class($resolverMap)
+            \get_class($resolverMap)
         ));
 
         $resolverMap->resolve('Foo', 'bar');
@@ -46,9 +46,9 @@ class ResolverMapTest extends TestCase
     {
         $resolverMap = $this->createResolverMapMock($invalidMap);
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectExceptionMessage(\sprintf(
             '%s::map() should return an array or an instance of \ArrayAccess and \Traversable but got "%s".',
-            get_class($resolverMap),
+            \get_class($resolverMap),
             $invalidType
         ));
         $resolverMap->resolve('Foo', 'bar');
@@ -86,7 +86,7 @@ class ResolverMapTest extends TestCase
         $validMap = [];
 
         foreach ([$arrayMap, $objectMap] as $map) {
-            $validMap = array_merge($validMap, [
+            $validMap = \array_merge($validMap, [
                 [$map, 'Query', ResolverMap::RESOLVE_FIELD, $map['Query'][ResolverMap::RESOLVE_FIELD]],
                 [$map, 'Query', 'foo', $map['Query']['foo']],
                 [$map, 'Query', 'bar', $map['Query']['bar']],

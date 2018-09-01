@@ -121,7 +121,7 @@ class Characters
 
     private static function findByType($type)
     {
-        return array_filter(self::$characters, function ($character) use ($type) {
+        return \array_filter(self::$characters, function ($character) use ($type) {
             return $type === $character['type'];
         });
     }

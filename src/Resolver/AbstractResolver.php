@@ -22,7 +22,7 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     public function __construct()
     {
-        $this->ignoreCase = version_compare(Kernel::VERSION, '3.3.0') < 0;
+        $this->ignoreCase = \version_compare(Kernel::VERSION, '3.3.0') < 0;
     }
 
     public function addSolution($id, $solutionOrFactory, array $aliases = [], array $options = [])
@@ -37,7 +37,7 @@ abstract class AbstractResolver implements FluentResolverInterface
                 if (!isset($solutionOrFactory[1])) {
                     $solutionOrFactory[1] = [];
                 }
-                $solution = call_user_func_array(...$solutionOrFactory);
+                $solution = \call_user_func_array(...$solutionOrFactory);
             }
             $this->checkSolution($id, $solution);
 
@@ -75,7 +75,7 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     public function getSolutionAliases($id)
     {
-        return array_keys($this->aliases, $id);
+        return \array_keys($this->aliases, $id);
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     private static function isSolutionFactory($solutionOrFactory)
     {
-        return is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && is_callable($solutionOrFactory[0]);
+        return \is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && \is_callable($solutionOrFactory[0]);
     }
 
     private function resolveAlias($alias)
@@ -134,7 +134,7 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     private function cleanIdOrAlias($idOrAlias)
     {
-        return $this->ignoreCase ? strtolower($idOrAlias) : $idOrAlias;
+        return $this->ignoreCase ? \strtolower($idOrAlias) : $idOrAlias;
     }
 
     /**
@@ -165,7 +165,7 @@ abstract class AbstractResolver implements FluentResolverInterface
     {
         if (!$this->supportsSolution($solution)) {
             throw new UnsupportedResolverException(
-                sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), get_class($solution))
+                \sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), \get_class($solution))
             );
         }
     }

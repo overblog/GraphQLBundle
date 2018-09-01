@@ -133,15 +133,15 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->commandTester->execute($input);
 
         $this->assertEquals($expectedStatusCode, $this->commandTester->getStatusCode());
-        $expected = trim(file_get_contents($expectedFile));
-        $actual = trim(file_get_contents($actualFile));
+        $expected = \trim(\file_get_contents($expectedFile));
+        $actual = \trim(\file_get_contents($actualFile));
         if ('json' === $format) {
-            $expected = json_decode($expected, true);
-            $actual = json_decode($actual, true);
+            $expected = \json_decode($expected, true);
+            $actual = \json_decode($actual, true);
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
         } elseif ('graphql' === $format && isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION']) {
-            $expected = preg_replace('@"""(.*)"""@', '# $1', $expected);
+            $expected = \preg_replace('@"""(.*)"""@', '# $1', $expected);
         }
 
         $this->assertEquals($expected, $actual);
@@ -155,8 +155,8 @@ class GraphDumpSchemaCommandTest extends TestCase
             $data = &$entries['__schema'][$entryKey];
         }
 
-        usort($data, function ($data1, $data2) use ($sortBy) {
-            return strcmp($data1[$sortBy], $data2[$sortBy]);
+        \usort($data, function ($data1, $data2) use ($sortBy) {
+            return \strcmp($data1[$sortBy], $data2[$sortBy]);
         });
     }
 }

@@ -96,7 +96,7 @@ class ExecutorTest extends TestCase
     {
         /** @var PromiseAdapter|\PHPUnit_Framework_MockObject_MockObject $promiseAdapter */
         $promiseAdapter = $this->getMockBuilder(PromiseAdapter::class)
-            ->setMethods(array_merge(['wait'], get_class_methods(PromiseAdapter::class)))
+            ->setMethods(\array_merge(['wait'], \get_class_methods(PromiseAdapter::class)))
             ->getMock();
 
         return new RequestExecutor(new Executor(), $this->dispatcher, $promiseAdapter);

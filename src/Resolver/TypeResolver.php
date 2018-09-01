@@ -51,19 +51,19 @@ class TypeResolver extends AbstractResolver
         }
 
         throw new UnresolvableException(
-            sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
+            \sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
         );
     }
 
     private function wrapTypeIfNeeded($alias)
     {
         // Non-Null
-        if ('!' === $alias[strlen($alias) - 1]) {
-            return Type::nonNull($this->string2Type(substr($alias, 0, -1)));
+        if ('!' === $alias[\strlen($alias) - 1]) {
+            return Type::nonNull($this->string2Type(\substr($alias, 0, -1)));
         }
         // List
         if ($this->hasNeedListOfWrapper($alias)) {
-            return Type::listOf($this->string2Type(substr($alias, 1, -1)));
+            return Type::listOf($this->string2Type(\substr($alias, 1, -1)));
         }
 
         return false;
@@ -72,10 +72,10 @@ class TypeResolver extends AbstractResolver
     private function hasNeedListOfWrapper($alias)
     {
         if ('[' === $alias[0]) {
-            $got = $alias[strlen($alias) - 1];
+            $got = $alias[\strlen($alias) - 1];
             if (']' !== $got) {
                 throw new UnresolvableException(
-                    sprintf('Malformed ListOf wrapper type "%s" expected "]" but got "%s".', $alias, json_encode($got))
+                    \sprintf('Malformed ListOf wrapper type "%s" expected "]" but got "%s".', $alias, \json_encode($got))
                 );
             }
 
@@ -94,9 +94,9 @@ class TypeResolver extends AbstractResolver
     private static function createTypeLoadingException($alias, $errorOrException)
     {
         return new \RuntimeException(
-            sprintf(
+            \sprintf(
                 'Type class for alias %s could not be load. If you are using your own classLoader verify the path and the namespace please.',
-                json_encode($alias)
+                \json_encode($alias)
             ),
             0,
             $errorOrException

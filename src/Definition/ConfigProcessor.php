@@ -49,7 +49,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
         if (!$this->isInitialized) {
             // order processors by DESC priority
             $processors = $this->processors;
-            usort($processors, function ($processorA, $processorB) {
+            \usort($processors, function ($processorA, $processorB) {
                 if ($processorA['priority'] === $processorB['priority']) {
                     return 0;
                 }
@@ -57,7 +57,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
                 return ($processorA['priority'] < $processorB['priority']) ? 1 : -1;
             });
 
-            $this->orderedProcessors = array_column($processors, 'processor');
+            $this->orderedProcessors = \array_column($processors, 'processor');
             $this->isInitialized = true;
         }
     }

@@ -44,7 +44,7 @@ class ConfigProcessorTest extends TestCase
                 return $this->orderedProcessors;
             },
             $configProcessor,
-            get_class($configProcessor)
+            \get_class($configProcessor)
         );
 
         $processors = $getOrderedProcessors();

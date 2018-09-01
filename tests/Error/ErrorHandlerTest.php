@@ -105,7 +105,7 @@ class ErrorHandlerTest extends TestCase
     public function testInvalidUserErrorsItem()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf('Error must be string or instance of %s', GraphQLUserError::class));
+        $this->expectExceptionMessage(\sprintf('Error must be string or instance of %s', GraphQLUserError::class));
 
         new UserErrors([
             'Some Error',
@@ -234,12 +234,12 @@ class ErrorHandlerTest extends TestCase
             ]
         );
 
-        if (is_string($expectedUserError)) {
+        if (\is_string($expectedUserError)) {
             self::expectException($expectedUserError);
         }
         $errorHandler->handleErrors($executionResult, true);
 
-        if (is_array($expectedUserError)) {
+        if (\is_array($expectedUserError)) {
             $this->assertEquals($expectedUserError, $executionResult->toArray());
         }
     }
