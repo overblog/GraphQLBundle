@@ -5,6 +5,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -50,7 +51,7 @@ abstract class TestCase extends BaseTestCase
         }
         $authChecker = $this->getAuthorizationCheckerMock();
 
-        if ($return instanceof \PHPUnit_Framework_MockObject_Stub_Return) {
+        if ($return instanceof Stub) {
             $returnValue = $return;
         } else {
             $returnValue = $this->returnValue($return);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\Security;
+namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
