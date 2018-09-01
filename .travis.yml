@@ -40,7 +40,7 @@ jobs:
           env: SYMFONY_VERSION=3.2.* PHPUNIT_VERSION=^5.7.26
         - php: 7.1
         - php: 7.2
-          env: SYMFONY_VERSION=3.3.*
+          env: SYMFONY_VERSION=3.3.* PHPUNIT_VERSION=^6.0
         - php: 7.2
           env: SYMFONY_VERSION=3.4.*
         - php: 7.2
