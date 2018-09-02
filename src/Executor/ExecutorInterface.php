@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Executor;
 
 use GraphQL\Executor\ExecutionResult;
@@ -19,7 +21,7 @@ interface ExecutorInterface
      *
      * @return ExecutionResult|Promise
      */
-    public function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null);
+    public function execute(Schema $schema, string $requestString, array $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null);
 
     /**
      * @param PromiseAdapter|null $promiseAdapter

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\CacheWarmer;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
@@ -26,7 +28,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir): void
     {
         // use warm up cache dir if type generator cache dir not already explicitly declare
         $baseCacheDir = $this->typeGenerator->getBaseCacheDir();

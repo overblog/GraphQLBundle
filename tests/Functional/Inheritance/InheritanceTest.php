@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Inheritance;
 
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
@@ -10,7 +12,7 @@ class InheritanceTest extends TestCase
     /** @var array */
     private $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -18,7 +20,7 @@ class InheritanceTest extends TestCase
         $this->config = (array) static::$kernel->getContainer()->getParameter('overblog_graphql_types.config');
     }
 
-    public function testObjectInheritance()
+    public function testObjectInheritance(): void
     {
         $this->assertArrayHasKey('Query', $this->config);
         $this->assertEquals(
@@ -49,7 +51,7 @@ class InheritanceTest extends TestCase
         );
     }
 
-    public function testEnumInheritance()
+    public function testEnumInheritance(): void
     {
         $this->assertArrayHasKey('Period', $this->config);
         $this->assertEquals(
@@ -70,7 +72,7 @@ class InheritanceTest extends TestCase
         );
     }
 
-    public function testDecoratorTypeShouldRemovedFromFinalConfig()
+    public function testDecoratorTypeShouldRemovedFromFinalConfig(): void
     {
         $this->assertArrayNotHasKey('QueryBarDecorator', $this->config);
         $this->assertArrayNotHasKey('QueryFooDecorator', $this->config);

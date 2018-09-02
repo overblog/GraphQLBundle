@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Symfony\Component\Config\Resource\FileResource;
@@ -12,7 +14,7 @@ class XmlParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container)
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         $typesConfig = [];
         $container->addResource(new FileResource($file->getRealPath()));

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Connection;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -11,14 +13,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  */
 class ConnectionTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'connection']);
     }
 
-    public function testIncludesConnectionAndEdgeFields()
+    public function testIncludesConnectionAndEdgeFields(): void
     {
         $query = <<<'EOF'
 query FriendsQuery {
@@ -61,7 +63,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testWorksWithForwardConnectionArgs()
+    public function testWorksWithForwardConnectionArgs(): void
     {
         $query = <<<'EOF'
 query FriendsQuery {
@@ -99,7 +101,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testWorksWithBackwardConnectionArgs()
+    public function testWorksWithBackwardConnectionArgs(): void
     {
         $query = <<<'EOF'
       query FriendsQuery {

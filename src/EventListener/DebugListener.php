@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\EventListener;
 
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
@@ -12,13 +14,13 @@ final class DebugListener
     /** @var int */
     private $startMemoryUsage;
 
-    public function onPreExecutor()
+    public function onPreExecutor(): void
     {
         $this->startTime = \microtime(true);
         $this->startMemoryUsage = \memory_get_usage(true);
     }
 
-    public function onPostExecutor(ExecutorResultEvent $executorResultEvent)
+    public function onPostExecutor(ExecutorResultEvent $executorResultEvent): void
     {
         $executorResultEvent->getResult()->extensions['debug'] = [
             'executionTime' => \sprintf('%d ms', \round(\microtime(true) - $this->startTime, 3) * 1000),

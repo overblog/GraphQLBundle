@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Request;
 
 use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter;
@@ -22,7 +24,7 @@ class ExecutorTest extends TestCase
 
     private $request = ['query' => 'query debug{ myField }', 'variables' => [], 'operationName' => null];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
         $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
@@ -46,7 +48,7 @@ class ExecutorTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
      */
-    public function testInvalidExecutorReturnNotObject()
+    public function testInvalidExecutorReturnNotObject(): void
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(false));
         $this->executor->execute(null, $this->request);
@@ -56,7 +58,7 @@ class ExecutorTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Execution result should be an object instantiating "GraphQL\Executor\ExecutionResult".
      */
-    public function testInvalidExecutorReturnInvalidObject()
+    public function testInvalidExecutorReturnInvalidObject(): void
     {
         $this->executor->setExecutor($this->createExecutorExecuteMock(new \stdClass()));
         $this->executor->execute(null, $this->request);
@@ -66,7 +68,7 @@ class ExecutorTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage PromiseAdapter should be an object instantiating "Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface" or "GraphQL\Executor\Promise\PromiseAdapter" with a "wait" method.
      */
-    public function testInvalidExecutorAdapterPromise()
+    public function testInvalidExecutorAdapterPromise(): void
     {
         $this->executor->setPromiseAdapter(new ReactPromiseAdapter());
         $this->executor->execute(null, $this->request);
@@ -76,7 +78,7 @@ class ExecutorTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage At least one schema should be declare.
      */
-    public function testGetSchemaNoSchemaFound()
+    public function testGetSchemaNoSchemaFound(): void
     {
         $this->createRequestExecutor()->getSchema('fake');
     }

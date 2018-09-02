@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 interface ResolverMapInterface
 {
     // union and interface
-    const RESOLVE_TYPE = '%%resolveType';
+    public const RESOLVE_TYPE = '%%resolveType';
     // object
-    const RESOLVE_FIELD = '%%resolveField';
-    const IS_TYPEOF = '%%isTypeOf';
+    public const RESOLVE_FIELD = '%%resolveField';
+    public const IS_TYPEOF = '%%isTypeOf';
     // custom scalar
-    const SCALAR_TYPE = '%%scalarType';
-    const SERIALIZE = '%%serialize';
-    const PARSE_VALUE = '%%parseValue';
-    const PARSE_LITERAL = '%%parseLiteral';
+    public const SCALAR_TYPE = '%%scalarType';
+    public const SERIALIZE = '%%serialize';
+    public const PARSE_VALUE = '%%parseValue';
+    public const PARSE_LITERAL = '%%parseLiteral';
 
     /**
      * Returns the resolver for type category if exists.
@@ -25,7 +27,7 @@ interface ResolverMapInterface
      *
      * @throws UnresolvableException if no resolver found
      */
-    public function resolve($typeName, $fieldName);
+    public function resolve(string $typeName, string $fieldName);
 
     /**
      * Is the entry mapped?
@@ -35,7 +37,7 @@ interface ResolverMapInterface
      *
      * @return bool
      */
-    public function isResolvable($typeName, $fieldName);
+    public function isResolvable(string $typeName, string $fieldName): bool;
 
     /**
      * Returns the names of the types covered
@@ -44,7 +46,7 @@ interface ResolverMapInterface
      *
      * @param null|string $typeName
      *
-     * @return string[]
+     * @return array
      */
-    public function covered($typeName = null);
+    public function covered(?string $typeName = null);
 }

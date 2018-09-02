@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Benchmarks\Mock;
 
 use Symfony\Component\Config\Resource\ResourceInterface;

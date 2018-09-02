@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
@@ -10,7 +12,7 @@ class NodeFieldDefinitionTest extends TestCase
     /** @var NodeFieldDefinition */
     private $definition;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->definition = new NodeFieldDefinition();
     }
@@ -19,7 +21,7 @@ class NodeFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Node "idFetcher" config is invalid.
      */
-    public function testUndefinedIdFetcherConfig()
+    public function testUndefinedIdFetcherConfig(): void
     {
         $this->definition->toMappingDefinition([]);
     }
@@ -28,7 +30,7 @@ class NodeFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Node "idFetcher" config is invalid.
      */
-    public function testIdFetcherConfigSetButIsNotString()
+    public function testIdFetcherConfigSetButIsNotString(): void
     {
         $this->definition->toMappingDefinition(['idFetcher' => 45]);
     }
@@ -40,7 +42,7 @@ class NodeFieldDefinitionTest extends TestCase
      * @param $idFetcherCallbackArg
      * @param $nodeInterfaceType
      */
-    public function testValidConfig($idFetcher, $idFetcherCallbackArg, $nodeInterfaceType = 'node')
+    public function testValidConfig($idFetcher, $idFetcherCallbackArg, $nodeInterfaceType = 'node'): void
     {
         $config = [
             'idFetcher' => $idFetcher,

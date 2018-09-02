@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +16,7 @@ class Parser implements ParserInterface
      *
      * @return array
      */
-    public function parse(Request $request)
+    public function parse(Request $request): array
     {
         // Extracts the GraphQL request parameters
         $parsedBody = $this->getParsedBody($request);
@@ -30,12 +32,12 @@ class Parser implements ParserInterface
      *
      * @return array
      */
-    private function getParsedBody(Request $request)
+    private function getParsedBody(Request $request): array
     {
         $body = $request->getContent();
-        $type = \explode(';', $request->headers->get('content-type'), 2)[0];
+        $contentType = \explode(';', (string) $request->headers->get('content-type'), 2)[0];
 
-        switch ($type) {
+        switch ($contentType) {
             // Plain string
             case static::CONTENT_TYPE_GRAPHQL:
                 $parsedBody = [static::PARAM_QUERY => $body];
@@ -79,7 +81,7 @@ class Parser implements ParserInterface
      *
      * @return array
      */
-    private function getParams(Request $request, array $data = [])
+    private function getParams(Request $request, array $data = []): array
     {
         // Add default request parameters
         $data = \array_filter($data) + [

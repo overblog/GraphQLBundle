@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 class GlobalId
 {
-    const SEPARATOR = ':';
+    public const SEPARATOR = ':';
 
     public static function toGlobalId($type, $id)
     {
@@ -13,14 +15,14 @@ class GlobalId
 
     public static function fromGlobalId($globalId)
     {
-        $unBasedGlobalId = \base64_decode($globalId, true);
+        $unBasedGlobalId = \is_string($globalId) ? \base64_decode($globalId, true) : false;
 
         $decodeGlobalId = [
             'type' => null,
             'id' => null,
         ];
 
-        if (!$unBasedGlobalId) {
+        if (false === $unBasedGlobalId) {
             return $decodeGlobalId;
         }
 

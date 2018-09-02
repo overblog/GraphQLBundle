@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
@@ -16,14 +18,14 @@ class ResolverMapTest extends TestCase
      *
      * @dataProvider validMapDataProvider
      */
-    public function testResolve($map, $typeName, $fieldName, $expectedResolver)
+    public function testResolve($map, $typeName, $fieldName, $expectedResolver): void
     {
         $resolverMap = $this->createResolverMapMock($map);
         $resolver = $resolverMap->resolve($typeName, $fieldName);
         $this->assertSame($expectedResolver, $resolver);
     }
 
-    public function testMapMustBeOverride()
+    public function testMapMustBeOverride(): void
     {
         /** @var ResolverMap|\PHPUnit_Framework_MockObject_MockObject $resolverMap */
         $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(null)->getMock();
@@ -42,7 +44,7 @@ class ResolverMapTest extends TestCase
      * @param mixed  $invalidMap
      * @param string $invalidType
      */
-    public function testInvalidMap($invalidMap, $invalidType)
+    public function testInvalidMap($invalidMap, $invalidType): void
     {
         $resolverMap = $this->createResolverMapMock($invalidMap);
         $this->expectException(\RuntimeException::class);
@@ -54,11 +56,11 @@ class ResolverMapTest extends TestCase
         $resolverMap->resolve('Foo', 'bar');
     }
 
-    public function testUnresolvable()
+    public function testUnresolvable(): void
     {
         $resolverMap = $this->createResolverMapMock([
             'Query' => [
-                ResolverMap::RESOLVE_FIELD => function () {
+                ResolverMap::RESOLVE_FIELD => function (): void {
                 },
             ],
         ]);
@@ -116,16 +118,16 @@ class ResolverMapTest extends TestCase
     {
         return [
             'Query' => [
-                ResolverMap::RESOLVE_FIELD => function () {
+                ResolverMap::RESOLVE_FIELD => function (): void {
                 },
-                'foo' => function () {
+                'foo' => function (): void {
                 },
-                'bar' => function () {
+                'bar' => function (): void {
                 },
                 'baz' => null,
             ],
             'FooInterface' => [
-                ResolverMap::RESOLVE_TYPE => function () {
+                ResolverMap::RESOLVE_TYPE => function (): void {
                 },
             ],
         ];

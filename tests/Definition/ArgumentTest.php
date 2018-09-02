@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Definition;
 
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -13,42 +15,42 @@ class ArgumentTest extends TestCase
     /** @var Argument */
     private $argument;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->rawArgs = ['toto' => 'tata'];
 
         $this->argument = new Argument($this->rawArgs);
     }
 
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         $this->assertEquals($this->argument['toto'], 'tata');
         $this->assertNull($this->argument['fake']);
     }
 
-    public function testOffsetSet()
+    public function testOffsetSet(): void
     {
         $this->argument['foo'] = 'bar';
         $this->assertEquals($this->argument['foo'], 'bar');
     }
 
-    public function testOffsetExists()
+    public function testOffsetExists(): void
     {
         unset($this->argument['toto']);
         $this->assertNull($this->argument['toto']);
     }
 
-    public function testOffsetUnset()
+    public function testOffsetUnset(): void
     {
         $this->assertTrue(isset($this->argument['toto']));
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $this->assertCount(1, $this->argument);
     }
 
-    public function testGetRawArgs()
+    public function testGetRawArgs(): void
     {
         $this->assertEquals($this->rawArgs, $this->argument->getRawArguments());
     }

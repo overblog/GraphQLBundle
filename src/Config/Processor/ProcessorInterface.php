@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 interface ProcessorInterface
@@ -9,5 +11,5 @@ interface ProcessorInterface
      *
      * @return array
      */
-    public static function process(array $configs);
+    public static function process(array $configs): array;
 }

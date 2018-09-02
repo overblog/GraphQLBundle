@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
@@ -7,14 +9,14 @@ use React\Promise\FulfilledPromise;
 
 class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
-    public function testReturnsAllElementsWithoutFilters()
+    public function testReturnsAllElementsWithoutFilters(): void
     {
         $promise = ConnectionBuilder::connectionFromPromisedArray($this->promisedLetters(), []);
         $expected = $this->getExpectedConnection($this->letters, false, false);
         $this->assertEqualsFromPromised($expected, $promise);
     }
 
-    public function testRespectsASmallerFirst()
+    public function testRespectsASmallerFirst(): void
     {
         $promise = ConnectionBuilder::connectionFromPromisedArray($this->promisedLetters(), ['first' => 2]);
         $expected = $this->getExpectedConnection(['A', 'B'], false, true);
@@ -28,7 +30,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage This is not a valid promise.
      */
-    public function testInvalidPromise($invalidPromise)
+    public function testInvalidPromise($invalidPromise): void
     {
         ConnectionBuilder::connectionFromPromisedArray($invalidPromise, []);
     }
@@ -44,7 +46,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
         ];
     }
 
-    public function testRespectsASmallerFirstWhenSlicing()
+    public function testRespectsASmallerFirstWhenSlicing(): void
     {
         $promise = ConnectionBuilder::connectionFromPromisedArraySlice(
             $this->promisedLetters(['A', 'B', 'C']),
@@ -65,7 +67,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage This is not a valid promise.
      */
-    public function testInvalidPromiseWhenSlicing($invalidPromise)
+    public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
         ConnectionBuilder::connectionFromPromisedArraySlice($invalidPromise, [], []);
     }
@@ -75,7 +77,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
         return \React\Promise\resolve($letters ?: $this->letters);
     }
 
-    private function assertEqualsFromPromised($expected, FulfilledPromise $promise)
+    private function assertEqualsFromPromised($expected, FulfilledPromise $promise): void
     {
         $this->assertEquals($expected, self::await($promise));
     }
@@ -85,10 +87,10 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
         $resolvedValue = null;
         $rejectedReason = null;
         $promise->then(
-            function ($value) use (&$resolvedValue) {
+            function ($value) use (&$resolvedValue): void {
                 $resolvedValue = $value;
             },
-            function ($reason) use (&$rejectedReason) {
+            function ($reason) use (&$rejectedReason): void {
                 $rejectedReason = $reason;
             }
         );

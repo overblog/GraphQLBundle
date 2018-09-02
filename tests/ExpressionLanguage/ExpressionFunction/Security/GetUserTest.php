@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
@@ -16,14 +18,14 @@ class GetUserTest extends TestCase
         return [new GetUser()];
     }
 
-    public function testGetUserNoTokenStorage()
+    public function testGetUserNoTokenStorage(): void
     {
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock()]);
         $globalVariable->has('container');
         $this->assertNull(eval($this->getCompileCode()));
     }
 
-    public function testGetUserNoToken()
+    public function testGetUserNoToken(): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['security.token_storage' => $tokenStorage])]);
@@ -39,7 +41,7 @@ class GetUserTest extends TestCase
      * @param $user
      * @param $expectedUser
      */
-    public function testGetUser($user, $expectedUser)
+    public function testGetUser($user, $expectedUser): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Type\SchemaExtension;
 
 use GraphQL\Type\Definition\CustomScalarType;
@@ -21,7 +23,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         $this->resolverMap = $resolverMap;
     }
 
-    public function process(Schema $schema)
+    public function process(Schema $schema): void
     {
         foreach ($this->resolverMap->covered() as $typeName) {
             $type = $schema->getType($typeName);
@@ -49,7 +51,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         }
     }
 
-    private function decorateObjectType(ObjectType $type)
+    private function decorateObjectType(ObjectType $type): void
     {
         $fieldsResolved = [];
         foreach ($this->resolverMap->covered($type->name) as $fieldName) {
@@ -69,7 +71,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
     /**
      * @param InterfaceType|UnionType $type
      */
-    private function decorateInterfaceOrUnionType($type)
+    private function decorateInterfaceOrUnionType($type): void
     {
         $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE);
         $covered = $this->resolverMap->covered($type->name);
@@ -88,7 +90,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         }
     }
 
-    private function decorateCustomScalarType(CustomScalarType $type)
+    private function decorateCustomScalarType(CustomScalarType $type): void
     {
         static $allowedFields = [
             ResolverMapInterface::SCALAR_TYPE,
@@ -115,11 +117,11 @@ final class DecoratorExtension implements SchemaExtensionInterface
         }
     }
 
-    private function decorateEnumType(EnumType $type)
+    private function decorateEnumType(EnumType $type): void
     {
         $fieldNames = [];
         foreach ($type->config['values'] as $key => &$value) {
-            $fieldName = isset($value['name']) ? $value['name'] : $key;
+            $fieldName = $value['name'] ?? $key;
             if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
                 $value['value'] = $this->resolverMap->resolve($type->name, $fieldName);
             }
@@ -137,7 +139,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         }
     }
 
-    private function decorateObjectTypeFields(ObjectType $type, array $fieldsResolved)
+    private function decorateObjectTypeFields(ObjectType $type, array $fieldsResolved): void
     {
         $fields = $type->config['fields'];
 
@@ -148,7 +150,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
 
             $fieldNames = [];
             foreach ($fields as $key => &$field) {
-                $fieldName = isset($field['name']) ? $field['name'] : $key;
+                $fieldName = $field['name'] ?? $key;
 
                 if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
                     $field['resolve'] = Resolver::wrapArgs($this->resolverMap->resolve($type->name, $fieldName));
@@ -170,7 +172,7 @@ final class DecoratorExtension implements SchemaExtensionInterface
         $type->config['fields'] = \is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
-    private function configTypeMapping(Type $type, $fieldName)
+    private function configTypeMapping(Type $type, $fieldName): void
     {
         if ($this->resolverMap->isResolvable($type->name, $fieldName)) {
             $type->config[\substr($fieldName, 2)] = $this->resolverMap->resolve($type->name, $fieldName);

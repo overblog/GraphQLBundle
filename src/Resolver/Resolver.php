@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
@@ -34,7 +36,7 @@ class Resolver
         return $value;
     }
 
-    public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value)
+    public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value): void
     {
         $index = \sprintf('[%s]', $fieldName);
 

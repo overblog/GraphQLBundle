@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
@@ -11,9 +13,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
 {
-    const USE_FOR_CLOSURES = '$globalVariable';
+    public const USE_FOR_CLOSURES = '$globalVariable';
 
-    const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
+    public const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
 
     private $cacheDir;
 
@@ -56,7 +58,7 @@ class TypeGenerator extends BaseTypeGenerator
     /**
      * @param string|null $baseCacheDir
      */
-    public function setBaseCacheDir($baseCacheDir)
+    public function setBaseCacheDir($baseCacheDir): void
     {
         $this->baseCacheDir = $baseCacheDir;
     }
@@ -216,7 +218,7 @@ CODE;
         return $classes;
     }
 
-    public function loadClasses($forceReload = false)
+    public function loadClasses($forceReload = false): void
     {
         if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
             $classMapFile = $this->getClassesMap();

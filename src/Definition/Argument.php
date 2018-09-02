@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition;
 
 class Argument implements \ArrayAccess, \Countable
@@ -22,12 +24,12 @@ class Argument implements \ArrayAccess, \Countable
         return isset($this->arguments[$offset]) ? $this->arguments[$offset] : null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->arguments[$offset] = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->arguments[$offset]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Command;
 
 use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
@@ -42,7 +44,7 @@ class DebugCommand extends Command
         $this->resolverResolver = $resolverResolver;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('graphql:debug')
@@ -56,7 +58,7 @@ class DebugCommand extends Command
             ->setDescription('Display current GraphQL services (types, resolvers and mutations)');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $categoriesOption = $input->getOption('category');
         $categoriesOption = \is_array($categoriesOption) ? $categoriesOption : [$categoriesOption];
@@ -84,7 +86,7 @@ class DebugCommand extends Command
      * @param array                   $tableHeaders
      * @param SymfonyStyle            $io
      */
-    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io)
+    private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io): void
     {
         $tableRows = [];
         $solutionIDs = \array_keys($resolver->getSolutions());

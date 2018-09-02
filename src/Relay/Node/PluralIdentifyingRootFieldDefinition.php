@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class PluralIdentifyingRootFieldDefinition implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         if (!isset($config['argName']) || !\is_string($config['argName'])) {
             throw new \InvalidArgumentException('A valid pluralIdentifyingRoot "argName" config is required.');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;

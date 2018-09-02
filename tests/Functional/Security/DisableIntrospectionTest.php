@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -17,7 +19,7 @@ query {
 }
 EOF;
 
-    public function testIntrospectionDisabled()
+    public function testIntrospectionDisabled(): void
     {
         $expected = [
             'errors' => [

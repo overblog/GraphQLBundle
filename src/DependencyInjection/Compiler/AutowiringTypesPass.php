@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -14,7 +16,7 @@ class AutowiringTypesPass implements CompilerPassInterface
      *
      * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         \version_compare(Kernel::VERSION, '3.3.0', '>=') ?
             $container->setAlias(PromiseAdapter::class, 'overblog_graphql.promise_adapter') : $container->findDefinition('overblog_graphql.promise_adapter')->setAutowiringTypes([PromiseAdapter::class])

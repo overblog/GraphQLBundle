@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition;
 
 use Overblog\GraphQLBundle\Definition\ConfigProcessor\ConfigProcessorInterface;
@@ -21,12 +23,12 @@ final class ConfigProcessor implements ConfigProcessorInterface
      */
     private $isInitialized = false;
 
-    public function addConfigProcessor(ConfigProcessorInterface $configProcessor, $priority = 0)
+    public function addConfigProcessor(ConfigProcessorInterface $configProcessor, $priority = 0): void
     {
         $this->register($configProcessor, $priority);
     }
 
-    public function register(ConfigProcessorInterface $configProcessor, $priority = 0)
+    public function register(ConfigProcessorInterface $configProcessor, $priority = 0): void
     {
         if ($this->isInitialized) {
             throw new \LogicException('Registering config processor after calling process() is not supported.');
@@ -41,7 +43,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
         return $this->orderedProcessors;
     }
 
-    public function process(LazyConfig $lazyConfig)
+    public function process(LazyConfig $lazyConfig): LazyConfig
     {
         foreach ($this->getOrderedProcessors() as $processor) {
             $lazyConfig = $processor->process($lazyConfig);
@@ -50,7 +52,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
         return $lazyConfig;
     }
 
-    private function initialize()
+    private function initialize(): void
     {
         if (!$this->isInitialized) {
             // order processors by DESC priority

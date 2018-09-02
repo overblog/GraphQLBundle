@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
@@ -12,7 +14,7 @@ final class DefinitionConfigProcessorPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->findDefinition(ConfigProcessor::class);
         $taggedServices = $container->findTaggedServiceIds('overblog_graphql.definition_config_processor', true);
@@ -23,7 +25,7 @@ final class DefinitionConfigProcessorPass implements CompilerPassInterface
                     'addConfigProcessor',
                     [
                         new Reference($id),
-                        isset($attributes['priority']) ? $attributes['priority'] : 0,
+                        $attributes['priority'] ?? 0,
                     ]
                 );
             }

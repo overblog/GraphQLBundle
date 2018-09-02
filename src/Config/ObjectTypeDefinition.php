@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -41,7 +43,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
      *
      * @param ArrayNodeDefinition $node
      */
-    private function treatFieldsDefaultAccess(ArrayNodeDefinition $node)
+    private function treatFieldsDefaultAccess(ArrayNodeDefinition $node): void
     {
         $node->validate()
             ->ifTrue(function ($v) {
@@ -66,7 +68,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
      *
      * @param ArrayNodeDefinition $node
      */
-    private function treatFieldsDefaultPublic(ArrayNodeDefinition $node)
+    private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
     {
         $node->validate()
             ->ifTrue(function ($v) {

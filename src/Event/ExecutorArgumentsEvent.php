@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Event;
 
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
@@ -47,12 +49,12 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @param null|string $operationName
      */
-    public function setOperationName($operationName = null)
+    public function setOperationName($operationName = null): void
     {
         $this->operationName = $operationName;
     }
 
-    public function setContextValue(\ArrayObject $contextValue = null)
+    public function setContextValue(\ArrayObject $contextValue = null): void
     {
         $this->contextValue = $contextValue;
     }
@@ -60,7 +62,7 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @param mixed $rootValue
      */
-    public function setRootValue($rootValue = null)
+    public function setRootValue($rootValue = null): void
     {
         $this->rootValue = $rootValue;
     }
@@ -68,17 +70,17 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @param string $requestString
      */
-    public function setRequestString($requestString)
+    public function setRequestString($requestString): void
     {
         $this->requestString = $requestString;
     }
 
-    public function setVariableValue(array $variableValue = null)
+    public function setVariableValue(array $variableValue = null): void
     {
         $this->variableValue = $variableValue;
     }
 
-    public function setSchema(ExtensibleSchema $schema)
+    public function setSchema(ExtensibleSchema $schema): void
     {
         $this->schema = $schema;
     }
@@ -86,7 +88,7 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @return ExtensibleSchema
      */
-    public function getSchema()
+    public function getSchema(): ExtensibleSchema
     {
         return $this->schema;
     }
@@ -94,7 +96,7 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @return string
      */
-    public function getRequestString()
+    public function getRequestString(): string
     {
         return $this->requestString;
     }
@@ -110,7 +112,7 @@ final class ExecutorArgumentsEvent extends Event
     /**
      * @return \ArrayObject
      */
-    public function getContextValue()
+    public function getContextValue(): \ArrayObject
     {
         return $this->contextValue;
     }

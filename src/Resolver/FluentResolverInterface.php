@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 interface FluentResolverInterface
@@ -16,13 +18,13 @@ interface FluentResolverInterface
      *
      * @return $this
      */
-    public function addSolution($id, $solutionOrFactory, array $aliases = [], array $options = []);
+    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = []);
 
-    public function getSolution($id);
+    public function getSolution(string $id);
 
     public function getSolutions();
 
-    public function getSolutionAliases($id);
+    public function getSolutionAliases(string $id);
 
-    public function getSolutionOptions($id);
+    public function getSolutionOptions(string $id);
 }

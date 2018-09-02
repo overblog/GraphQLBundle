@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AliasedPass;
@@ -24,7 +26,7 @@ class OverblogGraphQLBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

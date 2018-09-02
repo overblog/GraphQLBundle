@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Request;
 
 use Overblog\GraphQLBundle\Request\UploadParserTrait;
@@ -16,7 +18,7 @@ class UploadParserTraitTest extends TestCase
      *
      * @dataProvider locationsProvider
      */
-    public function testLocationToPropertyAccessPath($location, $expected)
+    public function testLocationToPropertyAccessPath($location, $expected): void
     {
         $actual = $this->locationToPropertyAccessPath($location);
         $this->assertSame($expected, $actual);
@@ -31,13 +33,13 @@ class UploadParserTraitTest extends TestCase
      *
      * @dataProvider payloadProvider
      */
-    public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message)
+    public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message): void
     {
         $actual = $this->handleUploadedFiles(['operations' => \json_encode($operations), 'map' => \json_encode($map)], $files);
         $this->assertSame($expected, $actual, $message);
     }
 
-    public function testBindUploadedFilesFileNotFound()
+    public function testBindUploadedFilesFileNotFound(): void
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('File 0 is missing in the request.');
@@ -47,7 +49,7 @@ class UploadParserTraitTest extends TestCase
         $this->bindUploadedFiles($operations, $map, $files);
     }
 
-    public function testBindUploadedFilesOperationPathNotFound()
+    public function testBindUploadedFilesOperationPathNotFound(): void
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Map entry "variables.file" could not be localized in operations.');
@@ -57,7 +59,7 @@ class UploadParserTraitTest extends TestCase
         $this->bindUploadedFiles($operations, $map, $files);
     }
 
-    public function testIsUploadPayload()
+    public function testIsUploadPayload(): void
     {
         $this->assertFalse($this->isUploadPayload([]));
         $this->assertFalse($this->isUploadPayload(['operations' => []]));

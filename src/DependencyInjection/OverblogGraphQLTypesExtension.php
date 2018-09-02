@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
@@ -15,9 +17,9 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLTypesExtension extends Extension
 {
-    const SUPPORTED_TYPES_EXTENSIONS = ['yaml' => '{yaml,yml}', 'xml' => 'xml', 'graphql' => '{graphql,graphqls}'];
+    public const SUPPORTED_TYPES_EXTENSIONS = ['yaml' => '{yaml,yml}', 'xml' => 'xml', 'graphql' => '{graphql,graphqls}'];
 
-    const PARSERS = [
+    public const PARSERS = [
         'yaml' => YamlParser::class,
         'xml' => XmlParser::class,
         'graphql' => GraphQLParser::class,
@@ -37,9 +39,9 @@ class OverblogGraphQLTypesExtension extends Extension
 
     private $treatedFiles = [];
 
-    const DEFAULT_TYPES_SUFFIX = '.types';
+    public const DEFAULT_TYPES_SUFFIX = '.types';
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configs = \array_filter($configs);
         //$configs = array_filter($configs);
@@ -52,7 +54,7 @@ class OverblogGraphQLTypesExtension extends Extension
         $container->setParameter($this->getAlias().'.config', $config);
     }
 
-    public function containerPrependExtensionConfig(array $configs, ContainerBuilder $container)
+    public function containerPrependExtensionConfig(array $configs, ContainerBuilder $container): void
     {
         $typesMappings = $this->mappingConfig($configs, $container);
         // reset treated files
@@ -94,7 +96,7 @@ class OverblogGraphQLTypesExtension extends Extension
         return $config;
     }
 
-    private function checkTypesDuplication(array $typeConfigs)
+    private function checkTypesDuplication(array $typeConfigs): void
     {
         $types = \call_user_func_array('array_merge', \array_map('array_keys', $typeConfigs));
         $duplications = \array_keys(\array_filter(\array_count_values($types), function ($count) {
@@ -141,8 +143,8 @@ class OverblogGraphQLTypesExtension extends Extension
     {
         return \array_filter(\array_map(
             function (array $typeMapping) use ($container) {
-                $suffix = isset($typeMapping['suffix']) ? $typeMapping['suffix'] : '';
-                $types = isset($typeMapping['types']) ? $typeMapping['types'] : null;
+                $suffix = $typeMapping['suffix'] ?? '';
+                $types = $typeMapping['types'] ?? null;
                 $params = $this->detectFilesByTypes($container, $typeMapping['dir'], $suffix, $types);
 
                 return $params;

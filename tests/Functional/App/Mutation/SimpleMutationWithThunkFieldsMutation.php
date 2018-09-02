@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
 class SimpleMutationWithThunkFieldsMutation
@@ -17,7 +19,7 @@ class SimpleMutationWithThunkFieldsMutation
         return $hasMutate;
     }
 
-    public static function resetHasMutate()
+    public static function resetHasMutate(): void
     {
         self::$hasMutate = false;
     }

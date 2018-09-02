@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\EventListener;
 
 use GraphQL\Error\UserError;
@@ -11,7 +13,7 @@ use Psr\Log\NullLogger;
 
 final class ErrorLoggerListener
 {
-    const DEFAULT_LOGGER_SERVICE = 'logger';
+    public const DEFAULT_LOGGER_SERVICE = 'logger';
 
     /** @var LoggerInterface */
     private $logger;
@@ -22,7 +24,7 @@ final class ErrorLoggerListener
         $this->logger = null === $logger ? new NullLogger() : $logger;
     }
 
-    public function onErrorFormatting(ErrorFormattingEvent $event)
+    public function onErrorFormatting(ErrorFormattingEvent $event): void
     {
         $error = $event->getError();
 
@@ -51,7 +53,7 @@ final class ErrorLoggerListener
      * @param \Throwable $throwable
      * @param string     $errorLevel
      */
-    public function log($throwable, $errorLevel = LogLevel::ERROR)
+    public function log(\Throwable $throwable, string $errorLevel = LogLevel::ERROR): void
     {
         $this->logger->$errorLevel(self::serializeThrowableObject($throwable), ['throwable' => $throwable]);
     }
@@ -61,7 +63,7 @@ final class ErrorLoggerListener
      *
      * @return string
      */
-    private static function serializeThrowableObject($throwable)
+    private static function serializeThrowableObject($throwable): string
     {
         $message = \sprintf(
             '[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.',

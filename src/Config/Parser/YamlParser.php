@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Symfony\Component\Config\Resource\FileResource;
@@ -16,7 +18,7 @@ class YamlParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container)
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         if (null === self::$yamlParser) {
             self::$yamlParser = new Parser();

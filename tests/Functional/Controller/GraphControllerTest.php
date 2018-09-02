@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -59,11 +61,11 @@ EOF;
      * @param $uri
      * @dataProvider graphQLEndpointUriProvider
      */
-    public function testEndpointAction($uri)
+    public function testEndpointAction($uri): void
     {
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
 
-        $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql', 'HTTP_Origin' => 'http://example.com']);
+        $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
         $result = $client->getResponse()->getContent();
         $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
         $this->assertCORSHeadersExists($client);
@@ -81,7 +83,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage Must provide query parameter
      */
-    public function testEndpointWithEmptyQuery()
+    public function testEndpointWithEmptyQuery(): void
     {
         $client = static::createClient();
         $client->request('GET', '/', []);
@@ -92,7 +94,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage The request content body must not be empty when using json content type request.
      */
-    public function testEndpointWithEmptyJsonBodyQuery()
+    public function testEndpointWithEmptyJsonBodyQuery(): void
     {
         $client = static::createClient();
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json']);
@@ -103,14 +105,14 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage POST body sent invalid JSON
      */
-    public function testEndpointWithInvalidBodyQuery()
+    public function testEndpointWithInvalidBodyQuery(): void
     {
         $client = static::createClient();
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
     }
 
-    public function testEndpointActionWithVariables()
+    public function testEndpointActionWithVariables(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -139,7 +141,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage Variables are invalid JSON
      */
-    public function testEndpointActionWithInvalidVariables()
+    public function testEndpointActionWithInvalidVariables(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -156,7 +158,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @expectedExceptionMessage Could not found "fake" schema.
      */
-    public function testMultipleEndpointActionWithUnknownSchemaName()
+    public function testMultipleEndpointActionWithUnknownSchemaName(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -169,7 +171,7 @@ EOF;
         $client->request('GET', '/graphql/fake', ['query' => $query]);
     }
 
-    public function testEndpointActionWithOperationName()
+    public function testEndpointActionWithOperationName(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -184,7 +186,7 @@ EOF;
      * @param $uri
      * @dataProvider graphQLBatchEndpointUriProvider
      */
-    public function testBatchEndpointAction($uri)
+    public function testBatchEndpointAction($uri): void
     {
         $client = static::createClient(['test_case' => 'connection']);
 
@@ -221,7 +223,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage Must provide at least one valid query.
      */
-    public function testBatchEndpointWithEmptyQuery()
+    public function testBatchEndpointWithEmptyQuery(): void
     {
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
@@ -232,7 +234,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage Batching parser only accepts "application/json" or "multipart/form-data" content-type but got "".
      */
-    public function testBatchEndpointWrongContentType()
+    public function testBatchEndpointWrongContentType(): void
     {
         $client = static::createClient();
         $client->request('GET', '/batch');
@@ -243,7 +245,7 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage POST body sent invalid JSON
      */
-    public function testBatchEndpointWithInvalidJson()
+    public function testBatchEndpointWithInvalidJson(): void
     {
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
@@ -254,14 +256,14 @@ EOF;
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @expectedExceptionMessage 1 is not a valid query
      */
-    public function testBatchEndpointWithInvalidQuery()
+    public function testBatchEndpointWithInvalidQuery(): void
     {
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();
     }
 
-    public function testPreflightedRequestWhenDisabled()
+    public function testPreflightedRequestWhenDisabled(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
         $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
@@ -270,21 +272,21 @@ EOF;
         $this->assertCORSHeadersNotExists($client);
     }
 
-    public function testUnAuthorizedMethod()
+    public function testUnAuthorizedMethod(): void
     {
         $client = static::createClient(['test_case' => 'connection']);
         $client->request('PUT', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
         $this->assertEquals(405, $client->getResponse()->getStatusCode());
     }
 
-    public function testPreflightedRequestWhenEnabled()
+    public function testPreflightedRequestWhenEnabled(): void
     {
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
         $client->request('OPTIONS', '/batch', [], [], ['HTTP_Origin' => 'http://example.com']);
         $this->assertCORSHeadersExists($client);
     }
 
-    public function testNoCORSHeadersIfOriginHeaderNotExists()
+    public function testNoCORSHeadersIfOriginHeaderNotExists(): void
     {
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
 
@@ -294,7 +296,7 @@ EOF;
         $this->assertCORSHeadersNotExists($client);
     }
 
-    private function assertCORSHeadersNotExists(Client $client)
+    private function assertCORSHeadersNotExists(Client $client): void
     {
         $headers = $client->getResponse()->headers->all();
         $this->assertArrayNotHasKey('access-control-allow-origin', $headers);
@@ -304,7 +306,7 @@ EOF;
         $this->assertArrayNotHasKey('access-control-max-age', $headers);
     }
 
-    private function assertCORSHeadersExists(Client $client)
+    private function assertCORSHeadersExists(Client $client): void
     {
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());

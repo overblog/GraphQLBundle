@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
@@ -13,7 +15,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
     /** @var ContainerBuilder */
     private $container;
 
-    public function setUp()
+    public function setUp(): void
     {
         $container = new ContainerBuilder();
         $container->setDefinition('injected_service', new Definition(FakeInjectedService::class));
@@ -23,14 +25,14 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
         $this->container = $container;
     }
 
-    private function addCompilerPassesAndCompile()
+    private function addCompilerPassesAndCompile(): void
     {
         $this->container->addCompilerPass(new ResolverTaggedServiceMappingPass());
         $this->container->addCompilerPass(new FakeCompilerPass());
         $this->container->compile();
     }
 
-    public function testCompilationWorksPassConfigDirective()
+    public function testCompilationWorksPassConfigDirective(): void
     {
         $testResolver = new Definition(ResolverTestService::class);
         $testResolver
@@ -45,7 +47,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
         $this->assertTrue($this->container->has('test_resolver'));
     }
 
-    public function testTagAliasIsValid()
+    public function testTagAliasIsValid(): void
     {
         $testResolver = new Definition(ResolverTestService::class);
         $testResolver
@@ -61,7 +63,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
         $this->addCompilerPassesAndCompile();
     }
 
-    public function testTagMethodIsValid()
+    public function testTagMethodIsValid(): void
     {
         $testResolver = new Definition(ResolverTestService::class);
         $testResolver

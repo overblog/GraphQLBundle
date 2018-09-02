@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\SchemaLanguage;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class SchemaLanguageTest extends TestCase
 {
-    public function testQueryHumans()
+    public function testQueryHumans(): void
     {
         $query = <<<'QUERY'
 { humans {id name direwolf {id name} } }
@@ -52,7 +54,7 @@ QUERY;
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'schemaLanguage');
     }
 
-    public function testQueryDirewolves()
+    public function testQueryDirewolves(): void
     {
         $query = <<<'QUERY'
 { direwolves {name status} }
@@ -74,7 +76,7 @@ QUERY;
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'schemaLanguage');
     }
 
-    public function testQueryACharacter()
+    public function testQueryACharacter(): void
     {
         $query = <<<'QUERY'
 {
@@ -99,7 +101,7 @@ QUERY;
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'schemaLanguage');
     }
 
-    public function testQueryHumanByDateOfBirth()
+    public function testQueryHumanByDateOfBirth(): void
     {
         $query = <<<'QUERY'
 {
@@ -132,7 +134,7 @@ QUERY;
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'schemaLanguage');
     }
 
-    public function testQueryHumanByDateOfBirthUsingVariables()
+    public function testQueryHumanByDateOfBirthUsingVariables(): void
     {
         $query = <<<'QUERY'
 query ($years: [Year!]!) {
@@ -157,7 +159,7 @@ QUERY;
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'schemaLanguage', null, ['years' => ['288 AC']]);
     }
 
-    public function testMutation()
+    public function testMutation(): void
     {
         $query = <<<'QUERY'
 mutation { resurrectZigZag {name status} }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Definition;
 
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
@@ -13,7 +15,7 @@ class ConfigProcessorTest extends TestCase
      * @expectedException \LogicException
      * @expectedExceptionMessage Registering config processor after calling process() is not supported.
      */
-    public function testThrowExceptionWhenAddingAConfigProcessorAfterInitialization()
+    public function testThrowExceptionWhenAddingAConfigProcessorAfterInitialization(): void
     {
         $configProcessor = new ConfigProcessor();
         $configProcessor->addConfigProcessor(new NullConfigProcessor());
@@ -25,7 +27,7 @@ class ConfigProcessorTest extends TestCase
         $configProcessor->addConfigProcessor(new NullConfigProcessor());
     }
 
-    public function testOrderByPriorityDesc()
+    public function testOrderByPriorityDesc(): void
     {
         $configProcessor = new ConfigProcessor();
 

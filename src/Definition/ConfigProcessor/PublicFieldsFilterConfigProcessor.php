@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use Overblog\GraphQLBundle\Definition\LazyConfig;
@@ -26,7 +28,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
     /**
      * {@inheritdoc}
      */
-    public function process(LazyConfig $lazyConfig)
+    public function process(LazyConfig $lazyConfig): LazyConfig
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['fields']) && \is_callable($config['fields'])) {

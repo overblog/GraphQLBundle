@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

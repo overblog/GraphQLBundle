@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -20,7 +22,7 @@ final class ExecutorContextEvent extends Event
     /**
      * @return \ArrayObject
      */
-    public function getExecutorContext()
+    public function getExecutorContext(): \ArrayObject
     {
         return $this->executorContext;
     }

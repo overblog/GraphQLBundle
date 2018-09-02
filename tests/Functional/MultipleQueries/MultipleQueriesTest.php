@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\MultipleQueries;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class MultipleQueriesTest extends TestCase
 {
-    const REQUIRED_FAILS_ERRORS = [
+    public const REQUIRED_FAILS_ERRORS = [
         [
             'message' => 'Internal server Error',
             'category' => 'internal',
@@ -22,7 +24,7 @@ class MultipleQueriesTest extends TestCase
         ],
     ];
 
-    const OPTIONAL_FAILS = [
+    public const OPTIONAL_FAILS = [
         'data' => [
             'fail' => null,
             'success' => 'foo',
@@ -44,14 +46,14 @@ class MultipleQueriesTest extends TestCase
         ],
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'multipleQueries']);
     }
 
-    public function testRequiredFails()
+    public function testRequiredFails(): void
     {
         $query = <<<'EOF'
 {
@@ -64,7 +66,7 @@ EOF;
         $this->assertTrue(empty($result['data']));
     }
 
-    public function testOptionalFails()
+    public function testOptionalFails(): void
     {
         $query = <<<'EOF'
 {
@@ -76,7 +78,7 @@ EOF;
         $this->assertEquals(self::OPTIONAL_FAILS, $result);
     }
 
-    public function testMutationRequiredFails()
+    public function testMutationRequiredFails(): void
     {
         $query = <<<'EOF'
 mutation {
@@ -89,7 +91,7 @@ EOF;
         $this->assertTrue(empty($result['data']));
     }
 
-    public function testMutationOptionalFails()
+    public function testMutationOptionalFails(): void
     {
         $query = <<<'EOF'
 mutation {

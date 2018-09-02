@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -11,14 +13,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  */
 class NodeTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'node']);
     }
 
-    public function testNodeInterfaceAndFields()
+    public function testNodeInterfaceAndFields(): void
     {
         $query = <<<'EOF'
 {
@@ -37,7 +39,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testGetsTheCorrectIdForPhotos()
+    public function testGetsTheCorrectIdForPhotos(): void
     {
         $query = <<<'EOF'
 {
@@ -56,7 +58,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testGetsTheCorrectWidthForPhotos()
+    public function testGetsTheCorrectWidthForPhotos(): void
     {
         $query = <<<'EOF'
 {
@@ -79,7 +81,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testGetsTheCorrectTypeNameForUsers()
+    public function testGetsTheCorrectTypeNameForUsers(): void
     {
         $query = <<<'EOF'
 {
@@ -100,7 +102,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testGetsTheCorrectTypeNameForPhotos()
+    public function testGetsTheCorrectTypeNameForPhotos(): void
     {
         $query = <<<'EOF'
 {
@@ -121,7 +123,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testIgnoresPhotoFragmentsOnUser()
+    public function testIgnoresPhotoFragmentsOnUser(): void
     {
         $query = <<<'EOF'
 {
@@ -143,7 +145,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testReturnsNullForBadIds()
+    public function testReturnsNullForBadIds(): void
     {
         $query = <<<'EOF'
 {
@@ -160,7 +162,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testHasCorrectNodeInterface()
+    public function testHasCorrectNodeInterface(): void
     {
         $query = <<<'EOF'
 {
@@ -203,7 +205,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testHasCorrectNodeRootField()
+    public function testHasCorrectNodeRootField(): void
     {
         $query = <<<'EOF'
 {

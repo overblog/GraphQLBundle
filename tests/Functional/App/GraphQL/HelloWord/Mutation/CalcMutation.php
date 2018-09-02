@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\HelloWord\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
@@ -15,7 +17,7 @@ final class CalcMutation implements MutationInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['add' => 'sum'];
     }

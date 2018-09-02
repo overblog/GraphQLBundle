@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Benchmarks\Request;
 
 use Overblog\GraphQLBundle\Benchmarks\Benchmark;
@@ -15,7 +17,7 @@ final class ParserBench extends Benchmark
     /** @var Parser */
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->parser = new Parser();
     }
@@ -25,7 +27,7 @@ final class ParserBench extends Benchmark
      *
      * @param array $args
      */
-    public function benchParse(array $args)
+    public function benchParse(array $args): void
     {
         $this->parser->parse(new Request(...$args));
     }

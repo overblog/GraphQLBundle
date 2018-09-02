@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
@@ -21,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Executor
 {
-    const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
+    public const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
     /** @var Schema[] */
     private $schemas = [];
@@ -70,7 +72,7 @@ class Executor
      *
      * @return $this
      */
-    public function addSchema($name, Schema $schema)
+    public function addSchema(string $name, Schema $schema)
     {
         $this->schemas[$name] = $schema;
 
@@ -82,7 +84,7 @@ class Executor
      *
      * @return Schema
      */
-    public function getSchema($name = null)
+    public function getSchema(string $name = null): Schema
     {
         if (empty($this->schemas)) {
             throw new \RuntimeException('At least one schema should be declare.');
@@ -100,21 +102,21 @@ class Executor
         return $schema;
     }
 
-    public function setMaxQueryDepth($maxQueryDepth)
+    public function setMaxQueryDepth($maxQueryDepth): void
     {
         /** @var QueryDepth $queryDepth */
         $queryDepth = DocumentValidator::getRule('QueryDepth');
         $queryDepth->setMaxQueryDepth($maxQueryDepth);
     }
 
-    public function setMaxQueryComplexity($maxQueryComplexity)
+    public function setMaxQueryComplexity($maxQueryComplexity): void
     {
         /** @var QueryComplexity $queryComplexity */
         $queryComplexity = DocumentValidator::getRule('QueryComplexity');
         $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
     }
 
-    public function disableIntrospectionQuery()
+    public function disableIntrospectionQuery(): void
     {
         DocumentValidator::addRule(new DisableIntrospection());
     }
@@ -126,7 +128,7 @@ class Executor
      *
      * @return ExecutionResult
      */
-    public function execute($schemaName, array $request, $rootValue = null)
+    public function execute(string $schemaName = null, array $request, $rootValue = null): ExecutionResult
     {
         $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
@@ -165,12 +167,12 @@ class Executor
      */
     private function preExecute(
         Schema $schema,
-        $requestString,
+        string $requestString,
         \ArrayObject $contextValue,
         $rootValue = null,
         array $variableValue = null,
         $operationName = null
-    ) {
+    ): ExecutorArgumentsEvent {
         $this->checkPromiseAdapter();
 
         $this->executor->setPromiseAdapter($this->promiseAdapter);
@@ -191,7 +193,7 @@ class Executor
      *
      * @return ExecutionResult
      */
-    private function postExecute($result)
+    private function postExecute($result): ExecutionResult
     {
         if ($result instanceof Promise) {
             $result = $this->promiseAdapter->wait($result);
@@ -202,7 +204,7 @@ class Executor
         return  $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
     }
 
-    private function checkPromiseAdapter()
+    private function checkPromiseAdapter(): void
     {
         if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !\is_callable([$this->promiseAdapter, 'wait'])) {
             throw new \RuntimeException(
@@ -215,7 +217,7 @@ class Executor
         }
     }
 
-    private function checkExecutionResult($result)
+    private function checkExecutionResult($result): void
     {
         if (!\is_object($result) || !$result instanceof ExecutionResult) {
             throw new \RuntimeException(

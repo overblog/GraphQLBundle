@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Executor\Promise;
 
 use GraphQL\Executor\ExecutionResult;
@@ -13,7 +15,7 @@ interface PromiseAdapterInterface extends PromiseAdapter
      *
      * @param Promise $promise
      *
-     * @return ExecutionResult
+     * @return ExecutionResult|null
      */
-    public function wait(Promise $promise);
+    public function wait(Promise $promise): ?ExecutionResult;
 }

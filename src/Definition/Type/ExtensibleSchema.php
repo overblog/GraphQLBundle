@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Type;
 
 use GraphQL\Type\Schema;
@@ -28,7 +30,7 @@ class ExtensibleSchema extends Schema
     /**
      * @param SchemaExtensionInterface $extension
      */
-    public function addExtension(SchemaExtensionInterface $extension)
+    public function addExtension(SchemaExtensionInterface $extension): void
     {
         $this->extensions[] = $extension;
     }

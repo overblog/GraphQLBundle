@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -12,7 +14,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
      *
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
-    protected function outputFieldsSelection($name = 'fields')
+    protected function outputFieldsSelection(string $name = 'fields')
     {
         $builder = new TreeBuilder();
         $node = $builder->root($name);

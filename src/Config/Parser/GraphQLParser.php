@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use GraphQL\Language\AST\DefinitionNode;
@@ -20,7 +22,7 @@ class GraphQLParser implements ParserInterface
     /** @var self */
     private static $parser;
 
-    const DEFINITION_TYPE_MAPPING = [
+    public const DEFINITION_TYPE_MAPPING = [
         NodeKind::OBJECT_TYPE_DEFINITION => 'object',
         NodeKind::INTERFACE_TYPE_DEFINITION => 'interface',
         NodeKind::ENUM_TYPE_DEFINITION => 'enum',
@@ -32,7 +34,7 @@ class GraphQLParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container)
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
         $content = \trim(\file_get_contents($file->getPathname()));
@@ -63,7 +65,7 @@ class GraphQLParser implements ParserInterface
         return $typesConfig;
     }
 
-    public static function mustOverrideConfig()
+    public static function mustOverrideConfig(): void
     {
         throw new \RuntimeException('Config entry must be override with ResolverMap to be used.');
     }
@@ -112,7 +114,7 @@ class GraphQLParser implements ParserInterface
         self::throwUnsupportedDefinitionNode($typeDef);
     }
 
-    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef)
+    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef): void
     {
         $path = \explode('\\', \get_class($typeDef));
         throw new InvalidArgumentException(
@@ -127,7 +129,7 @@ class GraphQLParser implements ParserInterface
      * @param DefinitionNode $typeDef
      * @param array          $config
      */
-    private function addTypeFields(DefinitionNode $typeDef, array &$config)
+    private function addTypeFields(DefinitionNode $typeDef, array &$config): void
     {
         if (!empty($typeDef->fields)) {
             $fields = [];
@@ -148,7 +150,7 @@ class GraphQLParser implements ParserInterface
      * @param Node  $fieldDef
      * @param array $fieldConf
      */
-    private function addFieldArguments(Node $fieldDef, array &$fieldConf)
+    private function addFieldArguments(Node $fieldDef, array &$fieldConf): void
     {
         if (!empty($fieldDef->arguments)) {
             $arguments = [];
@@ -167,7 +169,7 @@ class GraphQLParser implements ParserInterface
      * @param DefinitionNode $typeDef
      * @param array          $config
      */
-    private function addInterfaces(DefinitionNode $typeDef, array &$config)
+    private function addInterfaces(DefinitionNode $typeDef, array &$config): void
     {
         if (!empty($typeDef->interfaces)) {
             $interfaces = [];
@@ -182,7 +184,7 @@ class GraphQLParser implements ParserInterface
      * @param DefinitionNode $typeDef
      * @param array          $config
      */
-    private function addTypes(DefinitionNode $typeDef, array &$config)
+    private function addTypes(DefinitionNode $typeDef, array &$config): void
     {
         if (!empty($typeDef->types)) {
             $types = [];
@@ -197,7 +199,7 @@ class GraphQLParser implements ParserInterface
      * @param DefinitionNode $typeDef
      * @param array          $config
      */
-    private function addValues(DefinitionNode $typeDef, array &$config)
+    private function addValues(DefinitionNode $typeDef, array &$config): void
     {
         if (!empty($typeDef->values)) {
             $values = [];
@@ -213,7 +215,7 @@ class GraphQLParser implements ParserInterface
      * @param Node  $definition
      * @param array $config
      */
-    private function addType(Node $definition, array &$config)
+    private function addType(Node $definition, array &$config): void
     {
         if (!empty($definition->type)) {
             $config['type'] = $this->astTypeNodeToString($definition->type);
@@ -224,7 +226,7 @@ class GraphQLParser implements ParserInterface
      * @param Node  $definition
      * @param array $config
      */
-    private function addDescription(Node $definition, array &$config)
+    private function addDescription(Node $definition, array &$config): void
     {
         if (
             !empty($definition->description)
@@ -238,7 +240,7 @@ class GraphQLParser implements ParserInterface
      * @param Node  $definition
      * @param array $config
      */
-    private function addDefaultValue(Node $definition, array &$config)
+    private function addDefaultValue(Node $definition, array &$config): void
     {
         if (!empty($definition->defaultValue)) {
             $config['defaultValue'] = $this->astValueNodeToConfig($definition->defaultValue);
