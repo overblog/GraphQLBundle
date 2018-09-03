@@ -49,7 +49,7 @@ class Parser implements ParserInterface
 
                 $parsedBody = \json_decode($body, true);
 
-                if (JSON_ERROR_NONE !== \json_last_error()) {
+                if (\JSON_ERROR_NONE !== \json_last_error()) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 break;
@@ -106,7 +106,7 @@ class Parser implements ParserInterface
         if (\is_string($variables)) {
             $variables = \json_decode($variables, true);
 
-            if (JSON_ERROR_NONE !== \json_last_error()) {
+            if (\JSON_ERROR_NONE !== \json_last_error()) {
                 throw new BadRequestHttpException('Variables are invalid JSON');
             }
         }

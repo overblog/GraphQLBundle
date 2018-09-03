@@ -19,7 +19,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
 
                 return $exposed;
             },
-            ARRAY_FILTER_USE_BOTH
+            \ARRAY_FILTER_USE_BOTH
         );
     }
 

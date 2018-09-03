@@ -111,7 +111,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
                     'Autowire method "%s::setContainer" for custom tagged (type, resolver or mutation) services is deprecated as of 0.9 and will be removed in 1.0.',
                     ContainerAwareInterface::class
                 ),
-                E_USER_DEPRECATED
+                \E_USER_DEPRECATED
             );
             $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
         }

@@ -18,6 +18,8 @@ return PhpCsFixer\Config::create()
             'binary_operator_spaces' => ['align_double_arrow' => false, 'align_equals' => false],
             'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],
             'native_function_invocation' => true,
+            'fully_qualified_strict_types' => true,
+            'native_constant_invocation' => true,
         ]
     )
     ->setFinder($finder)
