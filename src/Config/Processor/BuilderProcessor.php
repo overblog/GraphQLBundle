@@ -101,7 +101,7 @@ final class BuilderProcessor implements ProcessorInterface
                 @\trigger_error(
                     'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.12. '.
                     'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
-                    E_USER_DEPRECATED
+                    \E_USER_DEPRECATED
                 );
                 $fieldBuilderName = $field;
             }
@@ -151,7 +151,7 @@ final class BuilderProcessor implements ProcessorInterface
         if (isset($builderClassMap[$newName])) {
             @\trigger_error(
                 \sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.12. Use "%s" instead.', $name, $type, $newName),
-                E_USER_DEPRECATED
+                \E_USER_DEPRECATED
             );
 
             return $builders[$type][$newName] = new $builderClassMap[$newName]();
