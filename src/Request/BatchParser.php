@@ -58,7 +58,7 @@ class BatchParser implements ParserInterface
             case static::CONTENT_TYPE_JSON:
                 $parsedBody = \json_decode($request->getContent(), true);
 
-                if (JSON_ERROR_NONE !== \json_last_error()) {
+                if (\JSON_ERROR_NONE !== \json_last_error()) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 break;
