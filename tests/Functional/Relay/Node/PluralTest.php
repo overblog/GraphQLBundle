@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -11,14 +13,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  */
 class PluralTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'plural']);
     }
 
-    public function testNodeInterfaceAndFields()
+    public function testNodeInterfaceAndFields(): void
     {
         $query = <<<'EOF'
 {
@@ -49,7 +51,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData, null, ['lang' => 'en']);
     }
 
-    public function testCorrectlyIntrospects()
+    public function testCorrectlyIntrospects(): void
     {
         $query = <<<'EOF'
 {

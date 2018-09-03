@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\DependencyInjection;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
@@ -17,7 +19,7 @@ class ParameterTest extends TestCase
      * @param string $name
      * @dataProvider getNames
      */
-    public function testParameter($name)
+    public function testParameter($name): void
     {
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
         $globalVariable->get('container');

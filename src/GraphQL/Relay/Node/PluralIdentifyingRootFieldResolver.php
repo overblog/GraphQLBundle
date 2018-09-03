@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\GraphQL\Relay\Node;
 
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -30,7 +32,7 @@ final class PluralIdentifyingRootFieldResolver implements ResolverInterface, Ali
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['__invoke' => 'relay_plural_identifying_field'];
     }

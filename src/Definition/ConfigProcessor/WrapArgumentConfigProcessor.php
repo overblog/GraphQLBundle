@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use Overblog\GraphQLBundle\Definition\LazyConfig;
@@ -7,7 +9,7 @@ use Overblog\GraphQLBundle\Resolver\Resolver;
 
 final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
 {
-    public function process(LazyConfig $lazyConfig)
+    public function process(LazyConfig $lazyConfig): LazyConfig
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['resolveField']) && \is_callable($config['resolveField'])) {

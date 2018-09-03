@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 final class NamedConfigProcessor implements ProcessorInterface
@@ -7,7 +9,7 @@ final class NamedConfigProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public static function process(array $configs)
+    public static function process(array $configs): array
     {
         foreach ($configs as $name => &$config) {
             if (empty($config['config']['name'])) {

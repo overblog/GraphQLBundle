@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -40,7 +42,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         return $serviceMapping;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $mapping = $this->getTaggedServiceMapping($container, $this->getTagName());
         $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
@@ -62,7 +64,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         }
     }
 
-    protected function checkRequirements($id, array $tag)
+    protected function checkRequirements($id, array $tag): void
     {
         if (isset($tag['alias']) && !\is_string($tag['alias'])) {
             throw new \InvalidArgumentException(
@@ -78,7 +80,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
      *
      * @return array
      */
-    private static function resolveAttributes(array $attributes, $id, $withMethod)
+    private static function resolveAttributes(array $attributes, string $id, bool $withMethod): array
     {
         $default = ['id' => $id, 'aliases' => []];
         if ($withMethod) {
@@ -93,7 +95,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
      * @param Definition $solutionDefinition
      * @param bool       $isGenerated
      */
-    private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, $isGenerated)
+    private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, bool $isGenerated): void
     {
         $methods = \array_map(
             function ($methodCall) {

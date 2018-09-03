@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class InputDefinition implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         $name = $config['name'];
         $name = \preg_replace('/(.*)?Input$/', '$1', $name).'Input';

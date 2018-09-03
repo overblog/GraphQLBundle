@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Upload;
 
 use GraphQL\Error\InvariantViolation;
@@ -8,7 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadTest extends TestCase
 {
-    public function testSingleUpload()
+    public function testSingleUpload(): void
     {
         $this->assertUpload(
             ['data' => ['singleUpload' => 'a.txt']],
@@ -23,7 +25,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testOptionalUpload()
+    public function testOptionalUpload(): void
     {
         $this->assertUpload(
             ['data' => ['singleUpload' => 'Sorry, No file was uploaded.']],
@@ -38,7 +40,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testMultipleUpload()
+    public function testMultipleUpload(): void
     {
         $this->assertUpload(
             ['data' => ['multipleUpload' => ['b.txt', 'c.txt']]],
@@ -53,7 +55,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testBatching()
+    public function testBatching(): void
     {
         $this->assertUpload(
             [
@@ -78,7 +80,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testOldUpload()
+    public function testOldUpload(): void
     {
         $this->assertUpload(
             ['data' => ['oldUpload' => 'a.txt']],
@@ -92,7 +94,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testSerializationIsUnsupported()
+    public function testSerializationIsUnsupported(): void
     {
         $this->expectException(InvariantViolation::class);
         $this->uploadRequest(
@@ -107,7 +109,7 @@ class UploadTest extends TestCase
         );
     }
 
-    public function testParseLiteralIsUnsupported()
+    public function testParseLiteralIsUnsupported(): void
     {
         $this->expectException(InvariantViolation::class);
         $this->expectExceptionMessage('Upload scalar literal unsupported.');
@@ -123,7 +125,7 @@ class UploadTest extends TestCase
         );
     }
 
-    private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true)
+    private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true): void
     {
         if ($json) {
             foreach ($parameters as &$parameter) {

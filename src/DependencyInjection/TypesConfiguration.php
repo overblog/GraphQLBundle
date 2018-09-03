@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config;
@@ -66,7 +68,7 @@ class TypesConfiguration implements ConfigurationInterface
                         $key = $this->normalizedConfigTypeKey($v['type']);
 
                         if (empty($v[$key])) {
-                            $v[$key] = isset($v['config']) ? $v['config'] : [];
+                            $v[$key] = $v['config'] ?? [];
                         }
                         unset($v['config']);
 
@@ -107,7 +109,7 @@ class TypesConfiguration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addBeforeNormalization(ArrayNodeDefinition $node)
+    private function addBeforeNormalization(ArrayNodeDefinition $node): void
     {
         $node
             // process beforeNormalization (should be execute after relay normalization)

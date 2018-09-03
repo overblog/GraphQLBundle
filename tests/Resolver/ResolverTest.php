@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
@@ -15,14 +17,14 @@ class ResolverTest extends TestCase
      *
      * @dataProvider resolverProvider
      */
-    public function testDefaultResolveFn($fieldName, $source, $expected)
+    public function testDefaultResolveFn($fieldName, $source, $expected): void
     {
         $info = new ResolveInfo(['fieldName' => $fieldName]);
 
         $this->assertEquals($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
 
-    public function testSetObjectOrArrayValue()
+    public function testSetObjectOrArrayValue(): void
     {
         $object = new \stdClass();
         $object->foo = null;

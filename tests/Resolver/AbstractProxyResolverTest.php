@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 abstract class AbstractProxyResolverTest extends AbstractResolverTest
@@ -16,7 +18,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
         return new Toto();
     }
 
-    public function testResolveKnownMutation()
+    public function testResolveKnownMutation(): void
     {
         $result = $this->resolver->resolve(['Toto', ['my', 'resolve', 'test']]);
 
@@ -28,7 +30,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
      *
      * @dataProvider aliasProvider
      */
-    public function testResolveAliasesMutation($alias)
+    public function testResolveAliasesMutation($alias): void
     {
         $result = $this->resolver->resolve([$alias, ['my', 'resolve', 'test']]);
         $this->assertSame(
@@ -42,7 +44,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
     /**
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      */
-    public function testResolveUnknownMutation()
+    public function testResolveUnknownMutation(): void
     {
         $this->resolver->resolve('Fake');
     }

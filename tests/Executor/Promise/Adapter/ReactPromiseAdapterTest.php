@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Executor\Promise\Adapter;
 
+use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +16,7 @@ class ReactPromiseAdapterTest extends TestCase
     /** @var ReactPromiseAdapter */
     private $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->adapter = new ReactPromiseAdapter();
     }
@@ -22,7 +25,7 @@ class ReactPromiseAdapterTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The "Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter::wait" method must be call with compatible a Promise.
      */
-    public function testWaitWithNotSupportedPromise()
+    public function testWaitWithNotSupportedPromise(): void
     {
         $noSupportedPromise = new Promise(new \stdClass(), $this->adapter);
         $this->adapter->wait($noSupportedPromise);
@@ -32,13 +35,13 @@ class ReactPromiseAdapterTest extends TestCase
      * @expectedException \Exception
      * @expectedExceptionMessage Promise has been rejected!
      */
-    public function testWaitRejectedPromise()
+    public function testWaitRejectedPromise(): void
     {
         $rejected = $this->adapter->createRejected(new \Exception('Promise has been rejected!'));
         $this->adapter->wait($rejected);
     }
 
-    public function testWaitAsyncPromise()
+    public function testWaitAsyncPromise(): void
     {
         $output = 'OK!';
         $process = new PhpProcess(<<<EOF
@@ -48,22 +51,22 @@ echo '$output';
 EOF
         );
 
-        $promise = $this->adapter->create(function (callable $resolve) use (&$process) {
-            $process->start(function () use ($resolve, &$process) {
+        $promise = $this->adapter->create(function (callable $resolve) use (&$process): void {
+            $process->start(function () use ($resolve, &$process): void {
                 $output = $process->getOutput();
-                $resolve($output);
+                $resolve(new ExecutionResult(['output' => $output]));
             });
         });
 
         $this->assertEquals(
-            $output,
-            $this->adapter->wait($promise, function () use (&$process) {
+            new ExecutionResult(['output' => $output]),
+            $this->adapter->wait($promise, function () use (&$process): void {
                 $process->wait();
             })
         );
     }
 
-    public function testSkipsConversionWhenPromiseIsAGraphQlOne()
+    public function testSkipsConversionWhenPromiseIsAGraphQlOne(): void
     {
         $reactAdapter = new ReactPromiseAdapter();
         $reactPromise = new FulfilledPromise(1);

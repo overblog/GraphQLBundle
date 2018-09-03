@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Symfony\Component\ExpressionLanguage\Expression;
 
 final class ExpressionProcessor implements ProcessorInterface
 {
-    const DEFAULT_EXPRESSION_LANGUAGE_TRIGGER = '@=';
+    public const DEFAULT_EXPRESSION_LANGUAGE_TRIGGER = '@=';
 
     /**
      * {@inheritdoc}
      */
-    public static function process(array $configs, $expressionLanguageTrigger = self::DEFAULT_EXPRESSION_LANGUAGE_TRIGGER)
+    public static function process(array $configs, $expressionLanguageTrigger = self::DEFAULT_EXPRESSION_LANGUAGE_TRIGGER): array
     {
         return \array_map(function ($v) use ($expressionLanguageTrigger) {
             if (\is_array($v)) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Event;
 
 use GraphQL\Error\Error;
@@ -27,7 +29,7 @@ final class ErrorFormattingEvent extends Event
     /**
      * @return \ArrayObject
      */
-    public function getFormattedError()
+    public function getFormattedError(): \ArrayObject
     {
         return $this->formattedError;
     }

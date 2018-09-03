@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Benchmarks;
 
 /**
@@ -8,11 +10,11 @@ namespace Overblog\GraphQLBundle\Benchmarks;
  */
 abstract class Benchmark
 {
-    public function setUp()
+    public function setUp(): void
     {
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 }

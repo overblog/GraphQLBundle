@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\GraphQL\Relay\Mutation;
 
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -33,7 +35,7 @@ final class MutationFieldResolver implements ResolverInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['__invoke' => 'relay_mutation_field'];
     }

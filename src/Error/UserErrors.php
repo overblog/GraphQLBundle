@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Error;
 
 /**
@@ -19,7 +21,7 @@ class UserErrors extends \RuntimeException
     /**
      * @param UserError[]|string[] $errors
      */
-    public function setErrors(array $errors)
+    public function setErrors(array $errors): void
     {
         foreach ($errors as $error) {
             $this->addError($error);

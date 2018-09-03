@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Exception;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class ExceptionTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'exception']);
     }
 
-    public function testExceptionIsMappedToAWarning()
+    public function testExceptionIsMappedToAWarning(): void
     {
         $query = <<<'EOF'
 query ExceptionQuery {

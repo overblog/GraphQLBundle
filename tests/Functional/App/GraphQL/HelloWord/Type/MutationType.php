@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\HelloWord\Type;
 
 use GraphQL\Type\Definition\ObjectType;
@@ -34,7 +36,7 @@ final class MutationType extends ObjectType implements AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['Calc'];
     }

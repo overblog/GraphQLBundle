@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated;
@@ -12,7 +14,7 @@ class IsFullyAuthenticatedTest extends TestCase
         return [new IsFullyAuthenticated()];
     }
 
-    public function testIsFullyAuthenticated()
+    public function testIsFullyAuthenticated(): void
     {
         $this->assertExpressionCompile('isFullyAuthenticated()', 'IS_AUTHENTICATED_FULLY');
     }

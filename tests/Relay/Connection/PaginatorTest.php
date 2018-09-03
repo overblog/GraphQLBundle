@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
 use GraphQL\Executor\Promise\Promise;
@@ -24,7 +26,7 @@ class PaginatorTest extends TestCase
         return \array_slice($this->data, $offset);
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $this->assertSame($this->data, $this->getData());
         $this->assertSame(['C', 'D', 'E'], $this->getData(2));
@@ -38,7 +40,7 @@ class PaginatorTest extends TestCase
      * @param $expected
      * @param $result
      */
-    protected function assertSameEdgeNodeValue($expected, Connection $result)
+    protected function assertSameEdgeNodeValue($expected, Connection $result): void
     {
         $this->assertEquals(\count($expected), \count($result->edges));
         foreach ($expected as $key => $value) {
@@ -46,7 +48,7 @@ class PaginatorTest extends TestCase
         }
     }
 
-    public function testForward()
+    public function testForward(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(0, $offset);
@@ -62,7 +64,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasNextPage);
     }
 
-    public function testForwardAfterInMiddle()
+    public function testForwardAfterInMiddle(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(2, $offset);
@@ -78,7 +80,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasNextPage);
     }
 
-    public function testForwardAfterAtTheEnd()
+    public function testForwardAfterAtTheEnd(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(2, $offset);
@@ -94,7 +96,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasNextPage);
     }
 
-    public function testForwardAfterLast()
+    public function testForwardAfterLast(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(4, $offset);
@@ -110,7 +112,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasNextPage);
     }
 
-    public function testForwardAfterWithUnvalidCursorAndSlice()
+    public function testForwardAfterWithUnvalidCursorAndSlice(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(0, $offset);
@@ -127,7 +129,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasPreviousPage);
     }
 
-    public function testBackward()
+    public function testBackward(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(2, $offset);
@@ -144,7 +146,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasNextPage);
     }
 
-    public function testBackwardWithLimitEqualsToTotal()
+    public function testBackwardWithLimitEqualsToTotal(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(0, $offset);
@@ -161,7 +163,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasNextPage);
     }
 
-    public function testBackwardBeforeLast()
+    public function testBackwardBeforeLast(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(4, $limit);
@@ -176,7 +178,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasPreviousPage);
     }
 
-    public function testBackwardPartialBeforeInMiddle()
+    public function testBackwardPartialBeforeInMiddle(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(1, $offset);
@@ -192,7 +194,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasPreviousPage);
     }
 
-    public function testAutoBackward()
+    public function testAutoBackward(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(1, $offset);
@@ -209,7 +211,7 @@ class PaginatorTest extends TestCase
         $this->assertFalse($result->pageInfo->hasNextPage);
     }
 
-    public function testAutoForward()
+    public function testAutoForward(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(0, $offset);
@@ -225,7 +227,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasNextPage);
     }
 
-    public function testAutoBackwardWithCallable()
+    public function testAutoBackwardWithCallable(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(1, $offset);
@@ -247,7 +249,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasPreviousPage);
     }
 
-    public function testTotalCallableWithArguments()
+    public function testTotalCallableWithArguments(): void
     {
         $paginatorBackend = new PaginatorBackend();
 
@@ -278,7 +280,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->pageInfo->hasPreviousPage);
     }
 
-    public function testPromiseMode()
+    public function testPromiseMode(): void
     {
         $promise = $this->getMockBuilder(Promise::class)
             ->disableOriginalConstructor()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Validator\Rules\QueryComplexity;
@@ -15,7 +17,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const NAME = 'overblog_graphql';
+    public const NAME = 'overblog_graphql';
 
     /** bool */
     private $debug;
@@ -29,7 +31,7 @@ class Configuration implements ConfigurationInterface
      * @param bool        $debug    Whether to use the debug mode
      * @param null|string $cacheDir
      */
-    public function __construct($debug, $cacheDir = null)
+    public function __construct(bool $debug, string $cacheDir = null)
     {
         $this->debug = (bool) $debug;
         $this->cacheDir = $cacheDir;

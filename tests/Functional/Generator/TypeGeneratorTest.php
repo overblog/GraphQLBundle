@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class TypeGeneratorTest extends TestCase
 {
-    public function testPublicCallback()
+    public function testPublicCallback(): void
     {
         $expected = [
             'data' => [
@@ -37,7 +39,7 @@ class TypeGeneratorTest extends TestCase
         $this->assertResponse('query { object { name } }', $expectedWithoutPrivateData, self::USER_RYAN, 'public');
     }
 
-    public function testFieldDefaultPublic()
+    public function testFieldDefaultPublic(): void
     {
         $this->assertEquals(
             'Cannot query field "other" on type "ObjectWithPrivateField".',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole;
@@ -12,7 +14,7 @@ class HasAnyRoleTest extends TestCase
         return [new HasAnyRole()];
     }
 
-    public function testHasAnyRole()
+    public function testHasAnyRole(): void
     {
         $this->assertExpressionCompile('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])', 'ROLE_ADMIN');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 class ResolverMap implements ResolverMapInterface
@@ -37,7 +39,7 @@ class ResolverMap implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve($typeName, $fieldName)
+    public function resolve(string $typeName, string $fieldName)
     {
         $loadedMap = $this->getLoadedMap();
 
@@ -51,7 +53,7 @@ class ResolverMap implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function isResolvable($typeName, $fieldName)
+    public function isResolvable(string $typeName, string $fieldName): bool
     {
         $key = $typeName.'.'.$fieldName;
         if (!isset($this->memorized[$key])) {
@@ -65,7 +67,7 @@ class ResolverMap implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function covered($typeName = null)
+    public function covered(?string $typeName = null)
     {
         $loadedMap = $this->getLoadedMap();
         $covered = [];
@@ -83,7 +85,7 @@ class ResolverMap implements ResolverMapInterface
         return $covered;
     }
 
-    private function checkMap($map)
+    private function checkMap($map): void
     {
         if (!\is_array($map) && !($map instanceof \ArrayAccess && $map instanceof \Traversable)) {
             throw new \RuntimeException(\sprintf(

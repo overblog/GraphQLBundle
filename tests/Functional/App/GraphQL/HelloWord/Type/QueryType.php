@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\HelloWord\Type;
 
 use GraphQL\Type\Definition\ObjectType;
@@ -31,7 +33,7 @@ final class QueryType extends ObjectType implements AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['Query'];
     }

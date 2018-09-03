@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
@@ -12,7 +14,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ConfigTypesPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $generatedClasses = $container->get('overblog_graphql.cache_compiler')
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
@@ -23,7 +25,7 @@ class ConfigTypesPass implements CompilerPassInterface
         }
     }
 
-    private function setTypeServiceDefinition(ContainerBuilder $container, $class, $alias)
+    private function setTypeServiceDefinition(ContainerBuilder $container, $class, $alias): void
     {
         $definition = $container->setDefinition($class, new Definition($class));
         $definition->setPublic(false);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -9,7 +11,7 @@ class BatchParser implements ParserInterface
 {
     use UploadParserTrait;
 
-    const PARAM_ID = 'id';
+    public const PARAM_ID = 'id';
 
     private static $queriesDefaultValue = [
         self::PARAM_ID => null,
@@ -22,7 +24,7 @@ class BatchParser implements ParserInterface
      *
      * @return array
      */
-    public function parse(Request $request)
+    public function parse(Request $request): array
     {
         // Extracts the GraphQL request parameters
         $queries = $this->getParsedBody($request);
@@ -49,9 +51,9 @@ class BatchParser implements ParserInterface
      *
      * @return array
      */
-    private function getParsedBody(Request $request)
+    private function getParsedBody(Request $request): array
     {
-        $contentType = \explode(';', $request->headers->get('content-type'), 2)[0];
+        $contentType = \explode(';', (string) $request->headers->get('content-type'), 2)[0];
 
         // JSON object
         switch ($contentType) {

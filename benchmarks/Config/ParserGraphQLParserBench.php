@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Benchmarks\Config;
 
 use Overblog\GraphQLBundle\Benchmarks\Benchmark;
@@ -15,12 +17,12 @@ final class ParserGraphQLParserBench extends Benchmark
     /** @var ContainerBuilder */
     private $container;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->container = new ContainerBuilder();
     }
 
-    public function benchParse()
+    public function benchParse(): void
     {
         GraphQLParser::parse(new \SplFileInfo(__DIR__.'/../fixtures/schema.graphql'), $this->container);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 
 use GraphQL\Type\Definition\EnumType;
@@ -9,14 +11,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class DefinitionTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'definition']);
     }
 
-    public function testDefinesEnumTypeWithDeprecatedValue()
+    public function testDefinesEnumTypeWithDeprecatedValue(): void
     {
         /** @var EnumType $enumTypeWithDeprecatedValue */
         $enumTypeWithDeprecatedValue = $this->getType('EnumWithDeprecatedValue');
@@ -30,7 +32,7 @@ class DefinitionTest extends TestCase
         $this->assertTrue($value->isDeprecated());
     }
 
-    public function testDefinesAnObjectTypeWithDeprecatedField()
+    public function testDefinesAnObjectTypeWithDeprecatedField(): void
     {
         /** @var ObjectType $TypeWithDeprecatedField */
         $TypeWithDeprecatedField = $this->getType('ObjectWithDeprecatedField');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe;
@@ -12,7 +14,7 @@ class IsRememberMeTest extends TestCase
         return [new IsRememberMe()];
     }
 
-    public function testIsRememberMe()
+    public function testIsRememberMe(): void
     {
         $this->assertExpressionCompile('isRememberMe()', 'IS_AUTHENTICATED_REMEMBERED');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
@@ -22,7 +24,7 @@ class CompileCommandTest extends TestCase
     /** @var string */
     private $cacheDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::bootKernel(['test_case' => 'generatorCommand']);
@@ -34,14 +36,14 @@ class CompileCommandTest extends TestCase
         $this->commandTester = new CommandTester($this->command);
     }
 
-    public function testFilesNotExistsBeforeGeneration()
+    public function testFilesNotExistsBeforeGeneration(): void
     {
         foreach ($this->typesMapping as $class => $path) {
             $this->assertFileNotExists($path);
         }
     }
 
-    public function testGeneration()
+    public function testGeneration(): void
     {
         $this->commandTester->execute([]);
         $this->assertEquals(0, $this->commandTester->getStatusCode());
@@ -51,7 +53,7 @@ class CompileCommandTest extends TestCase
         }
     }
 
-    public function testVerboseGeneration()
+    public function testVerboseGeneration(): void
     {
         $this->commandTester->execute([], ['verbosity' => Output::VERBOSITY_VERBOSE]);
         $this->assertEquals(0, $this->commandTester->getStatusCode());

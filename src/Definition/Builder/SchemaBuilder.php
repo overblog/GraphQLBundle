@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Type\Definition\Type;
@@ -33,7 +35,7 @@ class SchemaBuilder
      *
      * @return ExtensibleSchema
      */
-    public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null, array $resolverMaps = [], array $types = [])
+    public function create($queryAlias = null, $mutationAlias = null, $subscriptionAlias = null, array $resolverMaps = [], array $types = []): ExtensibleSchema
     {
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);

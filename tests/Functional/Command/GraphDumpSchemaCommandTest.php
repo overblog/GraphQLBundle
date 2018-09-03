@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -17,7 +19,7 @@ class GraphDumpSchemaCommandTest extends TestCase
     /** @var string */
     private $cacheDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::bootKernel(['test_case' => 'connection']);
@@ -32,7 +34,7 @@ class GraphDumpSchemaCommandTest extends TestCase
      * @param bool $withFormatOption
      * @dataProvider formatDataProvider
      */
-    public function testDump($format, $withFormatOption = true)
+    public function testDump($format, $withFormatOption = true): void
     {
         $file = $this->cacheDir.'/schema.'.$format;
 
@@ -51,7 +53,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
-    public function testDumpWithDescriptions()
+    public function testDumpWithDescriptions(): void
     {
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
@@ -65,7 +67,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
-    public function testClassicJsonFormat()
+    public function testClassicJsonFormat(): void
     {
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
@@ -80,7 +82,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
-    public function testModernJsonFormat()
+    public function testModernJsonFormat(): void
     {
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
@@ -99,7 +101,7 @@ class GraphDumpSchemaCommandTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown format "fake".
      */
-    public function testInvalidFormat()
+    public function testInvalidFormat(): void
     {
         $this->commandTester->execute([
             '--format' => 'fake',
@@ -110,7 +112,7 @@ class GraphDumpSchemaCommandTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage "modern" and "classic" options should not be used together.
      */
-    public function testInvalidModernAndClassicUsedTogether()
+    public function testInvalidModernAndClassicUsedTogether(): void
     {
         $this->commandTester->execute([
             '--format' => 'json',
@@ -128,7 +130,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         ];
     }
 
-    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $format, $expectedStatusCode = 0)
+    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $format, $expectedStatusCode = 0): void
     {
         $this->commandTester->execute($input);
 
@@ -147,7 +149,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    private function sortSchemaEntry(array &$entries, $entryKey, $sortBy)
+    private function sortSchemaEntry(array &$entries, $entryKey, $sortBy): void
     {
         if (isset($entries['data']['__schema'][$entryKey])) {
             $data = &$entries['data']['__schema'][$entryKey];

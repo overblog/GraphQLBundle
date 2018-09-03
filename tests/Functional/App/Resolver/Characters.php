@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
 class Characters
 {
-    const TYPE_HUMAN = 'human';
-    const TYPE_DIREWOLF = 'direwolf';
+    public const TYPE_HUMAN = 'human';
+    public const TYPE_DIREWOLF = 'direwolf';
 
     private static $characters = [
         1 => [

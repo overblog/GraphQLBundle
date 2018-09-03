@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\ArgumentWrapper;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class ArgumentWrapperTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         static::bootKernel(['test_case' => 'argumentWrapper']);
     }
 
-    public function testQuery()
+    public function testQuery(): void
     {
         $query = '{ fieldWithResolverAndArgument(name: "foo") fieldWithDefaultResolverAndArgument(name: "bar") field fieldWithAccess}';
         $expectedData = [

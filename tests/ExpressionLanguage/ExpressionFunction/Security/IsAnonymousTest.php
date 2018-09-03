@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
@@ -12,7 +14,7 @@ class IsAnonymousTest extends TestCase
         return [new IsAnonymous()];
     }
 
-    public function testIsAnonymous()
+    public function testIsAnonymous(): void
     {
         $this->assertExpressionCompile('isAnonymous()', 'IS_AUTHENTICATED_ANONYMOUSLY');
     }

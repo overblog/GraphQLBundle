@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
 use GraphQL\Executor\Promise\PromiseAdapter;

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 class Toto
 {
-    const PRIVATE_PROPERTY_WITH_GETTER_VALUE = 'IfYouWantMeUseMyGetter';
-    const PRIVATE_PROPERTY_WITH_GETTER2_VALUE = 'IfYouWantMeUseMyGetter2';
-    const PRIVATE_PROPERTY_WITHOUT_GETTER = 'ImNotAccessibleFromOutside:D';
+    public const PRIVATE_PROPERTY_WITH_GETTER_VALUE = 'IfYouWantMeUseMyGetter';
+    public const PRIVATE_PROPERTY_WITH_GETTER2_VALUE = 'IfYouWantMeUseMyGetter2';
+    public const PRIVATE_PROPERTY_WITHOUT_GETTER = 'ImNotAccessibleFromOutside:D';
 
     private $privatePropertyWithoutGetter = self::PRIVATE_PROPERTY_WITHOUT_GETTER;
     private $privatePropertyWithGetter = self::PRIVATE_PROPERTY_WITH_GETTER_VALUE;

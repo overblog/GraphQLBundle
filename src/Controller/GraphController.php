@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Controller;
 
 use Overblog\GraphQLBundle\Request as GraphQLRequest;
@@ -54,7 +56,7 @@ class GraphController
      *
      * @return JsonResponse|Response
      */
-    public function endpointAction(Request $request, $schemaName = null)
+    public function endpointAction(Request $request, string $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, false);
     }
@@ -65,7 +67,7 @@ class GraphController
      *
      * @return JsonResponse|Response
      */
-    public function batchEndpointAction(Request $request, $schemaName = null)
+    public function batchEndpointAction(Request $request, string $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, true);
     }
@@ -77,7 +79,7 @@ class GraphController
      *
      * @return JsonResponse|Response
      */
-    private function createResponse(Request $request, $schemaName, $batched)
+    private function createResponse(Request $request, string $schemaName = null, bool $batched)
     {
         if ('OPTIONS' === $request->getMethod()) {
             $response = new Response('', 200);
@@ -93,7 +95,7 @@ class GraphController
         return $response;
     }
 
-    private function addCORSHeadersIfNeeded(Response $response, Request $request)
+    private function addCORSHeadersIfNeeded(Response $response, Request $request): void
     {
         if ($this->shouldHandleCORS && $request->headers->has('Origin')) {
             $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'), true);
@@ -111,7 +113,7 @@ class GraphController
      *
      * @return array
      */
-    private function processQuery(Request $request, $schemaName, $batched)
+    private function processQuery(Request $request, string $schemaName = null, bool $batched): array
     {
         if ($batched) {
             $payload = $this->processBatchQuery($request, $schemaName);
@@ -128,7 +130,7 @@ class GraphController
      *
      * @return array
      */
-    private function processBatchQuery(Request $request, $schemaName = null)
+    private function processBatchQuery(Request $request, string $schemaName = null): array
     {
         $queries = $this->batchParser->parse($request);
         $payloads = [];
@@ -152,7 +154,7 @@ class GraphController
      *
      * @return array
      */
-    private function processNormalQuery(Request $request, $schemaName = null)
+    private function processNormalQuery(Request $request, string $schemaName = null): array
     {
         $params = $this->requestParser->parse($request);
 

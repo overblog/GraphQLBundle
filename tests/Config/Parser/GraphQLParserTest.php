@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
@@ -12,12 +14,12 @@ class GraphQLParserTest extends TestCase
     /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject */
     private $containerBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->setMethods(['addResource'])->getMock();
     }
 
-    public function testParse()
+    public function testParse(): void
     {
         $fileName = \sprintf(
             __DIR__.'/fixtures/graphql/schema%s.graphql',
@@ -30,7 +32,7 @@ class GraphQLParserTest extends TestCase
         $this->assertEquals($expected, self::cleanConfig($config));
     }
 
-    public function testParseEmptyFile()
+    public function testParseEmptyFile(): void
     {
         $fileName = __DIR__.'/fixtures/graphql/empty.graphql';
 
@@ -40,7 +42,7 @@ class GraphQLParserTest extends TestCase
         $this->assertEquals([], $config);
     }
 
-    public function testParseInvalidFile()
+    public function testParseInvalidFile(): void
     {
         $fileName = __DIR__.'/fixtures/graphql/invalid.graphql';
         $this->expectException(InvalidArgumentException::class);
@@ -48,21 +50,21 @@ class GraphQLParserTest extends TestCase
         GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
     }
 
-    public function testParseNotSupportedSchemaDefinition()
+    public function testParseNotSupportedSchemaDefinition(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Schema definition is not supported right now.');
         GraphQLParser::parse(new \SplFileInfo(__DIR__.'/fixtures/graphql/not-supported-schema-definition.graphql'), $this->containerBuilder);
     }
 
-    public function testCustomScalarTypeDefaultFieldValue()
+    public function testCustomScalarTypeDefaultFieldValue(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Config entry must be override with ResolverMap to be used.');
         GraphQLParser::mustOverrideConfig();
     }
 
-    private function assertContainerAddFileToResources($fileName)
+    private function assertContainerAddFileToResources($fileName): void
     {
         $this->containerBuilder->expects($this->once())
             ->method('addResource')

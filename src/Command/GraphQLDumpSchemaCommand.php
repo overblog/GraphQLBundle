@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
@@ -23,7 +25,7 @@ final class GraphQLDumpSchemaCommand extends Command
         $this->baseExportPath = $baseExportPath;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('graphql:dump-schema')
@@ -69,7 +71,7 @@ final class GraphQLDumpSchemaCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $io = new SymfonyStyle($input, $output);
         $file = $this->createFile($input);

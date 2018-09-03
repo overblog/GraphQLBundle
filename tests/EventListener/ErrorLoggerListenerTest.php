@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\EventListener;
 
 use GraphQL\Error\Error;
@@ -20,7 +22,7 @@ class ErrorLoggerListenerTest extends TestCase
     /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $logger;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
         $this->listener = new ErrorLoggerListener($this->logger);
@@ -34,7 +36,7 @@ class ErrorLoggerListenerTest extends TestCase
      *
      * @dataProvider fixtures
      */
-    public function testOnErrorFormatting(Error $error, $loggerExpects, $loggerMethod, array $with = null)
+    public function testOnErrorFormatting(Error $error, $loggerExpects, $loggerMethod, array $with = null): void
     {
         $mock = $this->logger->expects($loggerExpects)->method($loggerMethod);
         if ($with) {

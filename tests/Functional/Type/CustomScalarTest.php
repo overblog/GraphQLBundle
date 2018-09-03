@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class CustomScalarTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'customScalar']);
     }
 
-    public function testDateTimeTypeSerialize()
+    public function testDateTimeTypeSerialize(): void
     {
         $query = '{ dateTime }';
         $expected = [
@@ -22,7 +24,7 @@ class CustomScalarTest extends TestCase
         $this->assertGraphQL($query, $expected);
     }
 
-    public function testDateTimeTypeParseValue()
+    public function testDateTimeTypeParseValue(): void
     {
         $query = '{ dateTime(dateTime: "2016-01-18 23:00:00") }';
         $expected = [
@@ -31,7 +33,7 @@ class CustomScalarTest extends TestCase
         $this->assertGraphQL($query, $expected);
     }
 
-    public function testDateTimeTypeDescription()
+    public function testDateTimeTypeDescription(): void
     {
         $dateTimeType = static::$kernel->getContainer()->get('overblog_graphql.type_resolver')->resolve('DateTime');
         $this->assertEquals('The DateTime type', $dateTimeType->description);

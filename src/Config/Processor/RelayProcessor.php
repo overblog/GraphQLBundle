@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
@@ -10,7 +12,7 @@ use Overblog\GraphQLBundle\Relay\Node\NodeDefinition;
 
 final class RelayProcessor implements ProcessorInterface
 {
-    const RELAY_DEFINITION_MAPPING = [
+    public const RELAY_DEFINITION_MAPPING = [
         'relay-connection' => ConnectionDefinition::class,
         'relay-node' => NodeDefinition::class,
         'relay-mutation-input' => InputDefinition::class,
@@ -20,7 +22,7 @@ final class RelayProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public static function process(array $configs)
+    public static function process(array $configs): array
     {
         foreach (static::RELAY_DEFINITION_MAPPING as $typeName => $definitionBuilderClass) {
             $configs = self::processRelayConfigs($typeName, $definitionBuilderClass, $configs);

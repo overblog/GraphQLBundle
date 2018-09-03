@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
@@ -12,7 +14,7 @@ class HasAnyPermissionTest extends TestCase
         return [new HasAnyPermission()];
     }
 
-    public function testHasAnyPermission()
+    public function testHasAnyPermission(): void
     {
         $object = new \stdClass();
 

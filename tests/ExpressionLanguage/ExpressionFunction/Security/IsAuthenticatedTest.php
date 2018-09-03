@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated;
@@ -12,7 +14,7 @@ class IsAuthenticatedTest extends TestCase
         return [new IsAuthenticated()];
     }
 
-    public function testIsAuthenticated()
+    public function testIsAuthenticated(): void
     {
         $this->assertExpressionCompile('isAuthenticated()', $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'));
     }

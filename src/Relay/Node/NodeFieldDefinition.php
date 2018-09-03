@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class NodeFieldDefinition implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         if (!isset($config['idFetcher']) || !\is_string($config['idFetcher'])) {
             throw new \InvalidArgumentException('Node "idFetcher" config is invalid.');

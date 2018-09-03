@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
@@ -9,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class ResolverMapsTest extends TestCase
 {
-    public function testUnresolvable()
+    public function testUnresolvable(): void
     {
         $resolverMaps = new ResolverMaps([]);
         $this->expectException(UnresolvableException::class);
@@ -23,7 +25,7 @@ class ResolverMapsTest extends TestCase
      * @param array  $resolverMaps
      * @param string $type
      */
-    public function testInvalidResolverMap(array $resolverMaps, $type)
+    public function testInvalidResolverMap(array $resolverMaps, $type): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(\sprintf(

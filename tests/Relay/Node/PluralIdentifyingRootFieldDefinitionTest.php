@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
@@ -10,7 +12,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
     /** @var PluralIdentifyingRootFieldDefinition */
     private $definition;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->definition = new PluralIdentifyingRootFieldDefinition();
     }
@@ -19,7 +21,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "argName" config is required.
      */
-    public function testUndefinedArgNameConfig()
+    public function testUndefinedArgNameConfig(): void
     {
         $this->definition->toMappingDefinition([]);
     }
@@ -28,7 +30,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "argName" config is required.
      */
-    public function testArgNameConfigSetButIsNotString()
+    public function testArgNameConfigSetButIsNotString(): void
     {
         $this->definition->toMappingDefinition(['argName' => 45]);
     }
@@ -37,7 +39,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "inputType" config is required.
      */
-    public function testUndefinedInputTypeConfig()
+    public function testUndefinedInputTypeConfig(): void
     {
         $this->definition->toMappingDefinition(['argName' => 'username']);
     }
@@ -46,7 +48,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "inputType" config is required.
      */
-    public function testInputTypeConfigSetButIsNotString()
+    public function testInputTypeConfigSetButIsNotString(): void
     {
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 45]);
     }
@@ -55,7 +57,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "outputType" config is required.
      */
-    public function testUndefinedOutputTypeConfig()
+    public function testUndefinedOutputTypeConfig(): void
     {
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput']);
     }
@@ -64,7 +66,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A valid pluralIdentifyingRoot "outputType" config is required.
      */
-    public function testOutputTypeConfigSetButIsNotString()
+    public function testOutputTypeConfigSetButIsNotString(): void
     {
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput', 'outputType' => 35]);
     }
@@ -73,7 +75,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage PluralIdentifyingRoot "resolveSingleInput" config is required.
      */
-    public function testUndefinedResolveSingleInputConfig()
+    public function testUndefinedResolveSingleInputConfig(): void
     {
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput', 'outputType' => 'User']);
     }
@@ -84,7 +86,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
      *
      * @dataProvider validConfigProvider
      */
-    public function testValidConfig($resolveSingleInput, $expectedResolveSingleInputCallbackArg)
+    public function testValidConfig($resolveSingleInput, $expectedResolveSingleInputCallbackArg): void
     {
         $config = [
             'argName' => 'username',

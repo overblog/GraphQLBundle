@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
@@ -40,11 +42,11 @@ mutation M {
 }
 EOF;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         // load types
-        $this->loader = function ($class) {
+        $this->loader = function ($class): void {
             if (\preg_match('@^'.\preg_quote('Overblog\GraphQLBundle\Access\__DEFINITIONS__\\').'(.*)$@', $class, $matches)) {
                 $file = '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
                 if (\file_exists($file)) {
@@ -60,13 +62,13 @@ EOF;
      * @expectedExceptionMessage Type class for alias "RootQuery" could not be load. If you are using your own classLoader verify the path and the namespace please.
      * @requires PHP 7
      */
-    public function testCustomClassLoaderNotRegister()
+    public function testCustomClassLoaderNotRegister(): void
     {
         \spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
     }
 
-    public function testNotAuthenticatedUserAccessToUserName()
+    public function testNotAuthenticatedUserAccessToUserName(): void
     {
         $expected = [
             'data' => [
@@ -89,7 +91,7 @@ EOF;
         $this->assertResponse($this->userNameQuery, $expected, static::ANONYMOUS_USER, 'access');
     }
 
-    public function testFullyAuthenticatedUserAccessToUserName()
+    public function testFullyAuthenticatedUserAccessToUserName(): void
     {
         $expected = [
             'data' => [
@@ -102,17 +104,17 @@ EOF;
         $this->assertResponse($this->userNameQuery, $expected, static::USER_RYAN, 'access');
     }
 
-    public function testNotAuthenticatedUserAccessToUserRoles()
+    public function testNotAuthenticatedUserAccessToUserRoles(): void
     {
         $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::ANONYMOUS_USER, 'access');
     }
 
-    public function testAuthenticatedUserAccessToUserRolesWithoutEnoughRights()
+    public function testAuthenticatedUserAccessToUserRolesWithoutEnoughRights(): void
     {
         $this->assertResponse($this->userRolesQuery, $this->expectedFailedUserRoles(), static::USER_RYAN, 'access');
     }
 
-    public function testUserWithCorrectRightsAccessToUserRoles()
+    public function testUserWithCorrectRightsAccessToUserRoles(): void
     {
         $expected = [
             'data' => [
@@ -125,7 +127,7 @@ EOF;
         $this->assertResponse($this->userRolesQuery, $expected, static::USER_ADMIN, 'access');
     }
 
-    public function testUserForbiddenField()
+    public function testUserForbiddenField(): void
     {
         $expected = [
             'data' => [
@@ -159,7 +161,7 @@ EOF;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
-    public function testUserAccessToUserFriends()
+    public function testUserAccessToUserFriends(): void
     {
         $expected = [
             'data' => [
@@ -177,7 +179,7 @@ EOF;
         $this->assertResponse($this->userFriendsQuery, $expected, static::USER_ADMIN, 'access');
     }
 
-    public function testMutationAllowedUser()
+    public function testMutationAllowedUser(): void
     {
         $result = 123;
 
@@ -194,7 +196,7 @@ EOF;
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
-    public function testMutationAllowedButNoRightsToDisplayPayload()
+    public function testMutationAllowedButNoRightsToDisplayPayload(): void
     {
         $expected = [
             'data' => [
@@ -224,7 +226,7 @@ EOF;
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
-    public function testMutationNotAllowedUser()
+    public function testMutationNotAllowedUser(): void
     {
         $expected = [
             'data' => [

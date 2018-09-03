@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Resolver;
 
 interface AliasedInterface
@@ -12,5 +14,5 @@ interface AliasedInterface
      *
      * @return array
      */
-    public static function getAliases();
+    public static function getAliases(): array;
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
 
 use GraphQL\Error\UserError;
@@ -21,7 +23,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
     /** @var OverblogGraphQLTypesExtension */
     private $extension;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->container->setParameter('kernel.bundles', []);
@@ -29,7 +31,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $this->extension = new OverblogGraphQLTypesExtension();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->container, $this->extension);
     }
@@ -38,7 +40,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Configs type should never contain more than one config to deal with inheritance.
      */
-    public function testMultipleConfigNotAllowed()
+    public function testMultipleConfigNotAllowed(): void
     {
         $configs = [['foo' => []], ['bar' => []]];
         $this->extension->load($configs, $this->container);
@@ -48,7 +50,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      * @expectedExceptionMessageRegExp #The file "(.*)/broken.types.yml" does not contain valid YAML\.#
      */
-    public function testBrokenYmlOnPrepend()
+    public function testBrokenYmlOnPrepend(): void
     {
         $this->extension->containerPrependExtensionConfig($this->getMappingConfig('yaml'), $this->container);
     }
@@ -57,7 +59,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      * @expectedExceptionMessageRegExp #Unable to parse file "(.*)/broken.types.xml"\.#
      */
-    public function testBrokenXmlOnPrepend()
+    public function testBrokenXmlOnPrepend(): void
     {
         $this->extension->containerPrependExtensionConfig($this->getMappingConfig('xml'), $this->container);
     }
@@ -68,7 +70,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Don't use internal config keys _object_config, _enum_config, _interface_config, _union_config, _input_object_config, _custom_scalar_config, replace it by "config" instead.
      */
-    public function testInternalConfigKeysShouldNotBeUsed($internalConfigKey)
+    public function testInternalConfigKeysShouldNotBeUsed($internalConfigKey): void
     {
         $configs = [
             ['bar' => [$internalConfigKey => []]],
@@ -80,7 +82,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testCustomExceptions()
+    public function testCustomExceptions(): void
     {
         $ext = new OverblogGraphQLExtension();
         $ext->load(
@@ -113,7 +115,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testCustomBuilders()
+    public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();
         $ext->load(

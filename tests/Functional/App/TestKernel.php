@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App;
 
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
@@ -55,7 +57,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         if ($this->testCase) {
             $loader->load(\sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
@@ -63,7 +65,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             $loader->load(__DIR__.'/config/config.yml');
         }
 
-        $loader->load(function (ContainerBuilder $container) {
+        $loader->load(function (ContainerBuilder $container): void {
             $container->addCompilerPass($this);
         });
     }
@@ -71,7 +73,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         // disabled http_exception_listener because it flatten exception to html response
         if ($container->has('http_exception_listener')) {
