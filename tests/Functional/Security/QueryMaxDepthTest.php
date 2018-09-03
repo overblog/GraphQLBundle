@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -41,7 +43,7 @@ query {
 }
 EOF;
 
-    public function testMaxDepthReachLimitation()
+    public function testMaxDepthReachLimitation(): void
     {
         $expected = [
             'errors' => [
@@ -55,7 +57,7 @@ EOF;
         $this->assertResponse($this->userFriendsWithViolationQuery, $expected, self::ANONYMOUS_USER, 'queryMaxDepth');
     }
 
-    public function testMaxDepthReachLimitationEnv()
+    public function testMaxDepthReachLimitationEnv(): void
     {
         $expected = [
             'errors' => [
@@ -69,7 +71,7 @@ EOF;
         $this->assertResponse($this->userFriendsWithViolationQuery, $expected, self::ANONYMOUS_USER, 'queryMaxDepthEnv');
     }
 
-    public function testComplexityUnderLimitation()
+    public function testComplexityUnderLimitation(): void
     {
         $expected = [
             'data' => [

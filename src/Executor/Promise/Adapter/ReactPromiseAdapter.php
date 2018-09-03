@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Executor\Promise\Adapter;
 
 use GraphQL\Executor\ExecutionResult;
@@ -39,7 +41,7 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
      *
      * @throws \Exception
      */
-    public function wait(Promise $promise, callable $onProgress = null)
+    public function wait(Promise $promise, callable $onProgress = null): ?ExecutionResult
     {
         if (!$this->isThenable($promise)) {
             throw new \InvalidArgumentException(\sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
@@ -50,10 +52,10 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
         /** @var \React\Promise\PromiseInterface $reactPromise */
         $reactPromise = $promise->adoptedPromise;
 
-        $reactPromise->then(function ($values) use (&$resolvedValue, &$wait) {
+        $reactPromise->then(function ($values) use (&$resolvedValue, &$wait): void {
             $resolvedValue = $values;
             $wait = false;
-        }, function ($reason) use (&$exception, &$wait) {
+        }, function ($reason) use (&$exception, &$wait): void {
             $exception = $reason;
             $wait = false;
         });

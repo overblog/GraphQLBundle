@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver;
 
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Event;
 
 use GraphQL\Executor\ExecutionResult;
@@ -18,7 +20,7 @@ final class ExecutorResultEvent extends Event
     /**
      * @return ExecutionResult
      */
-    public function getResult()
+    public function getResult(): ExecutionResult
     {
         return $this->result;
     }

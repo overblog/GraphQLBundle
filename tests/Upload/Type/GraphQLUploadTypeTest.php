@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Upload\Type;
 
 use GraphQL\Error\InvariantViolation;
@@ -14,7 +16,7 @@ class GraphQLUploadTypeTest extends TestCase
      *
      * @dataProvider invalidValueProvider
      */
-    public function testInvalidParseValue($invalidValue, $type)
+    public function testInvalidParseValue($invalidValue, $type): void
     {
         $this->expectException(InvariantViolation::class);
         $this->expectExceptionMessage(\sprintf('Upload should be null or instance of "Symfony\Component\HttpFoundation\File\File" but %s given.', $type));

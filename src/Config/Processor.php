@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config;
 
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
@@ -11,10 +13,10 @@ use Overblog\GraphQLBundle\Config\Processor\RelayProcessor;
 
 class Processor implements ProcessorInterface
 {
-    const BEFORE_NORMALIZATION = 0;
-    const NORMALIZATION = 2;
+    public const BEFORE_NORMALIZATION = 0;
+    public const NORMALIZATION = 2;
 
-    const PROCESSORS = [
+    public const PROCESSORS = [
         self::BEFORE_NORMALIZATION => [
             NamedConfigProcessor::class,
             RelayProcessor::class,
@@ -24,7 +26,7 @@ class Processor implements ProcessorInterface
         self::NORMALIZATION => [ExpressionProcessor::class],
     ];
 
-    public static function process(array $configs, $type = self::NORMALIZATION)
+    public static function process(array $configs, $type = self::NORMALIZATION): array
     {
         /** @var ProcessorInterface $processor */
         foreach (static::PROCESSORS[$type] as $processor) {

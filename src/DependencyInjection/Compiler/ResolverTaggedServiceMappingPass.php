@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
@@ -9,7 +11,7 @@ class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
         return 'overblog_graphql.resolver';
     }
 
-    protected function checkRequirements($id, array $tag)
+    protected function checkRequirements($id, array $tag): void
     {
         parent::checkRequirements($id, $tag);
 
@@ -20,7 +22,7 @@ class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
         }
     }
 
-    protected function getResolverServiceID()
+    protected function getResolverServiceID(): string
     {
         return 'overblog_graphql.resolver_resolver';
     }

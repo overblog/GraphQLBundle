@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -11,14 +13,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  */
 class MutationTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'mutation']);
     }
 
-    public function testRequiresAnArgument()
+    public function testRequiresAnArgument(): void
     {
         $query = <<<'EOF'
 mutation M {
@@ -36,7 +38,7 @@ EOF;
         );
     }
 
-    public function testReturnTheSameClientMutationId()
+    public function testReturnTheSameClientMutationId(): void
     {
         $query = <<<'EOF'
 mutation M {
@@ -57,7 +59,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testSupportsThunksAsInputAndOutputFields()
+    public function testSupportsThunksAsInputAndOutputFields(): void
     {
         $query = <<<'EOF'
 mutation M {
@@ -77,7 +79,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testSupportsPromiseMutations()
+    public function testSupportsPromiseMutations(): void
     {
         $query = <<<'EOF'
 mutation M {
@@ -97,7 +99,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testContainsCorrectInput()
+    public function testContainsCorrectInput(): void
     {
         $query = <<<'EOF'
 {
@@ -133,7 +135,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testContainsCorrectPayload()
+    public function testContainsCorrectPayload(): void
     {
         $query = <<<'EOF'
 {
@@ -177,7 +179,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testContainsCorrectField()
+    public function testContainsCorrectField(): void
     {
         $query = <<<'EOF'
 {

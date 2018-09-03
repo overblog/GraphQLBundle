@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
@@ -13,10 +15,10 @@ class TypeResolver extends AbstractResolver
      *
      * @return Type
      */
-    public function resolve($alias)
+    public function resolve($alias): ?Type
     {
         if (null === $alias) {
-            return;
+            return null;
         }
 
         if (!isset($this->cache[$alias])) {
@@ -40,10 +42,8 @@ class TypeResolver extends AbstractResolver
     {
         try {
             $type = $this->getSolution($alias);
-        } catch (\Error $error) {
+        } catch (\Throwable $error) {
             throw self::createTypeLoadingException($alias, $error);
-        } catch (\Exception $exception) {
-            throw self::createTypeLoadingException($alias, $exception);
         }
 
         if (null !== $type) {
@@ -87,11 +87,11 @@ class TypeResolver extends AbstractResolver
 
     /**
      * @param string     $alias
-     * @param \Exception $errorOrException
+     * @param \Throwable $errorOrException
      *
      * @return \RuntimeException
      */
-    private static function createTypeLoadingException($alias, $errorOrException)
+    private static function createTypeLoadingException(string $alias, \Throwable $errorOrException): \RuntimeException
     {
         return new \RuntimeException(
             \sprintf(
@@ -103,7 +103,7 @@ class TypeResolver extends AbstractResolver
         );
     }
 
-    protected function supportedSolutionClass()
+    protected function supportedSolutionClass(): ?string
     {
         return Type::class;
     }

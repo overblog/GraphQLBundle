@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ListOfType;
@@ -31,9 +33,9 @@ class TypeResolverTest extends AbstractResolverTest
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Type class for alias "type" could not be load. If you are using your own classLoader verify the path and the namespace please.
      */
-    public function testErrorLoadingType()
+    public function testErrorLoadingType(): void
     {
-        $this->resolver->addSolution('type', function () {
+        $this->resolver->addSolution('type', function (): void {
             throw new \Exception('Could not load type.');
         });
         $this->resolver->resolve('type');
@@ -43,13 +45,13 @@ class TypeResolverTest extends AbstractResolverTest
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnsupportedResolverException
      * @expectedExceptionMessage Resolver "not-supported" must be "GraphQL\Type\Definition\Type" "stdClass" given.
      */
-    public function testAddNotSupportedSolution()
+    public function testAddNotSupportedSolution(): void
     {
         $this->resolver->addSolution('not-supported', new \stdClass());
         $this->resolver->getSolution('not-supported');
     }
 
-    public function testResolveKnownType()
+    public function testResolveKnownType(): void
     {
         $type = $this->resolver->resolve('Toto');
 
@@ -60,7 +62,7 @@ class TypeResolverTest extends AbstractResolverTest
     /**
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      */
-    public function testResolveUnknownType()
+    public function testResolveUnknownType(): void
     {
         $this->resolver->resolve('Fake');
     }
@@ -69,12 +71,12 @@ class TypeResolverTest extends AbstractResolverTest
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
      * @expectedExceptionMessage Malformed ListOf wrapper type "[Tata" expected "]" but got ""a"".
      */
-    public function testWrongListOfWrappingType()
+    public function testWrongListOfWrappingType(): void
     {
         $this->resolver->resolve('[Tata');
     }
 
-    public function testResolveWithListOfWrapper()
+    public function testResolveWithListOfWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Tata]');
@@ -83,7 +85,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Tata', $type->getWrappedType());
     }
 
-    public function testResolveWithNonNullWrapper()
+    public function testResolveWithNonNullWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('Toto!');
@@ -92,7 +94,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Toto', $type->getWrappedType());
     }
 
-    public function testResolveWithNonNullListOfWrapper()
+    public function testResolveWithNonNullListOfWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto]!');
@@ -102,7 +104,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 
-    public function testResolveWitListOfNonNullWrapper()
+    public function testResolveWitListOfNonNullWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto!]');
@@ -112,7 +114,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 
-    public function testResolveWitNonNullListOfNonNullWrapper()
+    public function testResolveWitNonNullListOfNonNullWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[Toto!]!');
@@ -123,7 +125,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType()->getWrappedType());
     }
 
-    public function testResolveWitListOfListOfWrapper()
+    public function testResolveWitListOfListOfWrapper(): void
     {
         /** @var \GraphQL\Type\Definition\WrappingType $type */
         $type = $this->resolver->resolve('[[Toto]]');
@@ -133,7 +135,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
     }
 
-    public function testAliases()
+    public function testAliases(): void
     {
         $this->assertSame(
             $this->resolver->resolve('Tata'),

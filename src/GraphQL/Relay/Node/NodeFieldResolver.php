@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\GraphQL\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
@@ -15,7 +17,7 @@ final class NodeFieldResolver implements ResolverInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['__invoke' => 'relay_node_field'];
     }

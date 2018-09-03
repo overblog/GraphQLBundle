@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Executor;
 
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -14,7 +16,7 @@ class Executor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
+    public function execute(Schema $schema, string $requestString, array $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
     {
         $args = \func_get_args();
         \array_unshift($args, $this->promiseAdapter);
@@ -25,7 +27,7 @@ class Executor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter): void
     {
         $this->promiseAdapter = $promiseAdapter;
     }
@@ -33,7 +35,7 @@ class Executor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function setDefaultFieldResolver(callable $fn)
+    public function setDefaultFieldResolver(callable $fn): void
     {
         \call_user_func_array([GraphQL::class, 'setDefaultFieldResolver'], \func_get_args());
     }

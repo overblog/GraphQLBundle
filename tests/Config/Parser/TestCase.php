@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase as BaseTestCase;
@@ -10,12 +12,12 @@ abstract class TestCase extends BaseTestCase
     /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject */
     protected $containerBuilder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->setMethods(['addResource'])->getMock();
     }
 
-    protected function assertContainerAddFileToResources($fileName)
+    protected function assertContainerAddFileToResources($fileName): void
     {
         $this->containerBuilder->expects($this->once())
             ->method('addResource')

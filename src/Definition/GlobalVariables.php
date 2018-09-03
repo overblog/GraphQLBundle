@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition;
 
 final class GlobalVariables
@@ -17,7 +19,7 @@ final class GlobalVariables
      *
      * @return mixed
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (!isset($this->services[$name])) {
             throw new \LogicException(\sprintf('Global variable %s could not be located. You should define it.', \json_encode($name)));
@@ -31,7 +33,7 @@ final class GlobalVariables
      *
      * @return bool
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return isset($this->services[$name]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
@@ -14,10 +16,10 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 final class BuilderProcessor implements ProcessorInterface
 {
-    const BUILDER_FIELD_TYPE = 'field';
-    const BUILDER_ARGS_TYPE = 'args';
+    public const BUILDER_FIELD_TYPE = 'field';
+    public const BUILDER_ARGS_TYPE = 'args';
 
-    const BUILDER_TYPES = [
+    public const BUILDER_TYPES = [
         self::BUILDER_FIELD_TYPE,
         self::BUILDER_ARGS_TYPE,
     ];
@@ -40,7 +42,7 @@ final class BuilderProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public static function process(array $configs)
+    public static function process(array $configs): array
     {
         foreach ($configs as &$config) {
             if (isset($config['config']['fields']) && \is_array($config['config']['fields'])) {
@@ -51,7 +53,7 @@ final class BuilderProcessor implements ProcessorInterface
         return $configs;
     }
 
-    public static function addBuilderClass($name, $type, $builderClass)
+    public static function addBuilderClass($name, $type, $builderClass): void
     {
         self::checkBuilderClass($builderClass, $type);
         self::$builderClassMap[$type][$name] = $builderClass;
@@ -61,7 +63,7 @@ final class BuilderProcessor implements ProcessorInterface
      * @param string $builderClass
      * @param string $type
      */
-    private static function checkBuilderClass($builderClass, $type)
+    private static function checkBuilderClass($builderClass, $type): void
     {
         $interface = MappingInterface::class;
 

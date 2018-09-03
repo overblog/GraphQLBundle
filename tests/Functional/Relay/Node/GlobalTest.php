@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -11,14 +13,14 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  */
 class GlobalTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         static::bootKernel(['test_case' => 'global']);
     }
 
-    public function testGlobalIdFields()
+    public function testGlobalIdFields(): void
     {
         $query = <<<'EOF'
 {
@@ -54,7 +56,7 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
-    public function testReFetchesTheIds()
+    public function testReFetchesTheIds(): void
     {
         $query = <<<'EOF'
 {

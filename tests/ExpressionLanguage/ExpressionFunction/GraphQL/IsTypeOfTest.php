@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\GraphQL;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf;
@@ -12,7 +14,7 @@ class IsTypeOfTest extends TestCase
         return [new IsTypeOf()];
     }
 
-    public function testIsTypeOf()
+    public function testIsTypeOf(): void
     {
         $this->assertTrue(eval('$value = new \stdClass(); return '.$this->expressionLanguage->compile(\sprintf('isTypeOf("%s")', 'stdClass'), ['value']).';'));
     }

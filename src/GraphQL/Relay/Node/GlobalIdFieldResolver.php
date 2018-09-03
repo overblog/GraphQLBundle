@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\GraphQL\Relay\Node;
 
 use GraphQL\Type\Definition\ResolveInfo;
@@ -21,7 +23,7 @@ final class GlobalIdFieldResolver implements ResolverInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['__invoke' => 'relay_globalid_field'];
     }

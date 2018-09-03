@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\EventListener;
 
 use Overblog\GraphQLBundle\Error\ErrorHandler;
@@ -23,7 +25,7 @@ final class ErrorHandlerListener
         $this->debug = $debug;
     }
 
-    public function onPostExecutor(ExecutorResultEvent $executorResultEvent)
+    public function onPostExecutor(ExecutorResultEvent $executorResultEvent): void
     {
         $result = $executorResultEvent->getResult();
         $this->errorHandler->handleErrors($result, $this->throwException, $this->debug);

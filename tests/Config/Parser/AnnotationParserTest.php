@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 
 class AnnotationParserTest extends TestCase
 {
-    public function testQueryParse()
+    public function testQueryParse(): void
     {
         $expected = [
             'RootQuery' => [

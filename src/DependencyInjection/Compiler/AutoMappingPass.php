@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use GraphQL\Type\Definition\Type;
@@ -17,13 +19,13 @@ use Symfony\Component\Finder\Finder;
 
 class AutoMappingPass implements CompilerPassInterface
 {
-    const SERVICE_SUBCLASS_TAG_MAPPING = [
+    public const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
         ResolverInterface::class => 'overblog_graphql.resolver',
         Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
     ];
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $enabled = $container->getParameter('overblog_graphql.auto_mapping.enabled');
         // enabled auto mapping for all bundles and custom dirs ?
@@ -67,14 +69,14 @@ class AutoMappingPass implements CompilerPassInterface
      * @param ContainerBuilder   $container
      * @param \ReflectionClass[] $reflectionClasses
      */
-    private function addServicesDefinitions(ContainerBuilder $container, array $reflectionClasses)
+    private function addServicesDefinitions(ContainerBuilder $container, array $reflectionClasses): void
     {
         foreach ($reflectionClasses as $reflectionClass) {
             $this->addServiceDefinition($container, $reflectionClass);
         }
     }
 
-    private function addServiceDefinition(ContainerBuilder $container, \ReflectionClass $reflectionClass)
+    private function addServiceDefinition(ContainerBuilder $container, \ReflectionClass $reflectionClass): void
     {
         $className = $reflectionClass->getName();
         $definition = $container->setDefinition($className, new Definition($className));
@@ -86,7 +88,7 @@ class AutoMappingPass implements CompilerPassInterface
         $this->addDefinitionTags($definition, $reflectionClass);
     }
 
-    private function addDefinitionTags(Definition $definition, \ReflectionClass $reflectionClass)
+    private function addDefinitionTags(Definition $definition, \ReflectionClass $reflectionClass): void
     {
         foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $subclass => $tagName) {
             if (!$reflectionClass->isSubclassOf($subclass)) {

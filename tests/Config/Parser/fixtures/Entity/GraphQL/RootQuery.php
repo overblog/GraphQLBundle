@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL;
 
 use Overblog\GraphQLBundle\Annotation as GQL;

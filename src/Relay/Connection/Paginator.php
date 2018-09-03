@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -8,8 +10,8 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 
 class Paginator
 {
-    const MODE_REGULAR = false;
-    const MODE_PROMISE = true;
+    public const MODE_REGULAR = false;
+    public const MODE_PROMISE = true;
 
     /** @var callable */
     private $fetcher;
@@ -24,7 +26,7 @@ class Paginator
      * @param callable $fetcher
      * @param bool     $promise
      */
-    public function __construct(callable $fetcher, $promise = self::MODE_REGULAR)
+    public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR)
     {
         $this->fetcher = $fetcher;
         $this->promise = $promise;
@@ -60,7 +62,7 @@ class Paginator
      *
      * @return Connection|object A connection or a promise
      */
-    public function forward($args)
+    public function forward(Argument $args)
     {
         $args = $this->protectArgs($args);
         $limit = $args['first'];
@@ -92,7 +94,7 @@ class Paginator
      *
      * @return Connection|object A connection or a promise
      */
-    public function auto($args, $total, $callableArgs = [])
+    public function auto(Argument $args, $total, array $callableArgs = [])
     {
         $args = $this->protectArgs($args);
 
@@ -135,14 +137,14 @@ class Paginator
      *
      * @return Argument
      */
-    private function protectArgs($args)
+    private function protectArgs($args): Argument
     {
         return $args instanceof Argument ? $args : new Argument($args);
     }
 
     /**
-     * @param int   $total
-     * @param array $callableArgs
+     * @param int|callable $total
+     * @param array        $callableArgs
      *
      * @return int|mixed
      */

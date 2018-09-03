@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 final class InheritanceProcessor implements ProcessorInterface
 {
-    const HEIRS_KEY = 'heirs';
-    const INHERITS_KEY = 'inherits';
+    public const HEIRS_KEY = 'heirs';
+    public const INHERITS_KEY = 'inherits';
 
     /**
      * {@inheritdoc}
      */
-    public static function process(array $configs)
+    public static function process(array $configs): array
     {
         $configs = self::processConfigsHeirs($configs);
         $configs = self::processConfigsInherits($configs);
@@ -117,7 +119,7 @@ final class InheritanceProcessor implements ProcessorInterface
         return $flattenInheritsTypes;
     }
 
-    private static function checkTypeExists($name, array $configs, $child)
+    private static function checkTypeExists($name, array $configs, $child): void
     {
         if (!isset($configs[$name])) {
             throw new \InvalidArgumentException(\sprintf(
@@ -128,7 +130,7 @@ final class InheritanceProcessor implements ProcessorInterface
         }
     }
 
-    private static function checkCircularReferenceInheritsTypes($name, array $typesTreated)
+    private static function checkCircularReferenceInheritsTypes($name, array $typesTreated): void
     {
         if (isset($typesTreated[$name])) {
             throw new \InvalidArgumentException(\sprintf(
@@ -138,7 +140,7 @@ final class InheritanceProcessor implements ProcessorInterface
         }
     }
 
-    private static function checkAllowedInheritsTypes($name, array $config, array $allowedTypes, $child)
+    private static function checkAllowedInheritsTypes($name, array $config, array $allowedTypes, $child): void
     {
         if (empty($config['decorator']) && isset($config['type']) && !\in_array($config['type'], $allowedTypes)) {
             throw new \InvalidArgumentException(\sprintf(

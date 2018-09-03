@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -34,7 +36,7 @@ query {
 }
 EOF;
 
-    public function testComplexityReachLimitation()
+    public function testComplexityReachLimitation(): void
     {
         $expected = [
             'errors' => [
@@ -48,7 +50,7 @@ EOF;
         $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexity');
     }
 
-    public function testComplexityReachLimitationEnv()
+    public function testComplexityReachLimitationEnv(): void
     {
         $expected = [
             'errors' => [
@@ -62,7 +64,7 @@ EOF;
         $this->assertResponse($this->userFriendsWithoutLimitQuery, $expected, self::ANONYMOUS_USER, 'queryComplexityEnv');
     }
 
-    public function testComplexityUnderLimitation()
+    public function testComplexityUnderLimitation(): void
     {
         $expected = [
             'data' => [

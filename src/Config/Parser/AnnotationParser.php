@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Composer\Autoload\ClassLoader;
@@ -19,7 +21,7 @@ class AnnotationParser implements ParserInterface
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container)
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
         try {

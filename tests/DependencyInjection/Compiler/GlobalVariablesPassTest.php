@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\GlobalVariablesPass;
@@ -14,7 +16,7 @@ class GlobalVariablesPassTest extends TestCase
      *
      * @dataProvider invalidAliasProvider
      */
-    public function testInvalidAlias($invalidAlias)
+    public function testInvalidAlias($invalidAlias): void
     {
         /** @var ContainerBuilder|MockObject $container */
         $container = $this->getMockBuilder(ContainerBuilder::class)

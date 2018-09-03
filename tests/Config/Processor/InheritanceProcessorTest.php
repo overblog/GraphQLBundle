@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
@@ -19,7 +21,7 @@ class InheritanceProcessorTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Type "toto" inherited by "bar" not found.
      */
-    public function testExtendsUnknownType()
+    public function testExtendsUnknownType(): void
     {
         $configs = $this->fixtures;
         unset($configs['toto']);
@@ -31,7 +33,7 @@ class InheritanceProcessorTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Type "foo" child of "tata" not found.
      */
-    public function testHeirsUnknownType()
+    public function testHeirsUnknownType(): void
     {
         $configs = $this->fixtures;
         unset($configs['foo']);
@@ -43,7 +45,7 @@ class InheritanceProcessorTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Type circular inheritance detected (foo->bar->toto->foo).
      */
-    public function testCircularExtendsType()
+    public function testCircularExtendsType(): void
     {
         $configs = $this->fixtures;
         $configs['toto'][InheritanceProcessor::INHERITS_KEY] = ['foo'];
@@ -55,7 +57,7 @@ class InheritanceProcessorTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Type "bar" can't inherit "toto" because its type ("enum") is not allowed type (["object","interface"]).
      */
-    public function testNotAllowedType()
+    public function testNotAllowedType(): void
     {
         $configs = $this->fixtures;
         $configs['toto']['type'] = 'enum';

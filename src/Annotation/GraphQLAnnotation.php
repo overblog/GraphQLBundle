@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__.'/GraphQLAccessControl.php';
 require_once __DIR__.'/GraphQLAlias.php';
 require_once __DIR__.'/GraphQLColumn.php';

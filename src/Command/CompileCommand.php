@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Command;
 
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
@@ -19,7 +21,7 @@ final class CompileCommand extends Command
         $this->typeGenerator = $typeGenerator;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('graphql:compile')
@@ -27,7 +29,7 @@ final class CompileCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $output->writeln('<info>Types compilation starts</info>');
         $classes = $this->typeGenerator->compile(TypeGenerator::MODE_WRITE | TypeGenerator::MODE_OVERRIDE);

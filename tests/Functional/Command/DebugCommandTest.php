@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Command\DebugCommand;
@@ -18,7 +20,7 @@ class DebugCommandTest extends TestCase
 
     private $logs = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::bootKernel(['test_case' => 'mutation']);
@@ -42,7 +44,7 @@ class DebugCommandTest extends TestCase
      * @param array $categories
      * @dataProvider categoryDataProvider
      */
-    public function testProcess(array $categories)
+    public function testProcess(array $categories): void
     {
         if (empty($categories)) {
             $categories = DebugCommand::getCategories();
@@ -63,7 +65,7 @@ class DebugCommandTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Invalid category (fake)
      */
-    public function testInvalidFormat()
+    public function testInvalidFormat(): void
     {
         $this->commandTester->execute([
             '--category' => 'fake',

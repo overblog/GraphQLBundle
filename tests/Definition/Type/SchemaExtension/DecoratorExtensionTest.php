@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Definition\Type\SchemaExtension;
 
 use GraphQL\Type\Definition\EnumType;
@@ -26,14 +28,14 @@ class DecoratorExtensionTest extends TestCase
      *
      * @dataProvider specialTypeFieldProvider
      */
-    public function testSpecialField($fieldName, Type $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true)
+    public function testSpecialField($fieldName, Type $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
             $fieldValueRetriever = function (Type $type, $fieldName) {
                 return $type->config[$fieldName];
             };
         }
-        $expected = static function () {
+        $expected = static function (): void {
         };
         $realFieldName = \substr($fieldName, 2);
 
@@ -87,7 +89,7 @@ class DecoratorExtensionTest extends TestCase
         return $objectType;
     }
 
-    public function testWrappedResolver()
+    public function testWrappedResolver(): void
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
@@ -116,7 +118,7 @@ class DecoratorExtensionTest extends TestCase
         $this->assertSame($expected, $args->getRawArguments());
     }
 
-    public function testEnumTypeValuesDecoration()
+    public function testEnumTypeValuesDecoration(): void
     {
         $enumType = new EnumType([
             'name' => 'Foo',
@@ -142,7 +144,7 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testEnumTypeUnknownField()
+    public function testEnumTypeUnknownField(): void
     {
         $enumType = new EnumType([
             'name' => 'Foo',
@@ -158,14 +160,14 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testUnionTypeUnknownField()
+    public function testUnionTypeUnknownField(): void
     {
         $unionType = new UnionType(['name' => 'Foo']);
         $this->assertDecorateException(
             [$unionType->name => $unionType],
             [
                 $unionType->name => [
-                    'baz' => function () {
+                    'baz' => function (): void {
                     },
                 ],
             ],
@@ -174,14 +176,14 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testInterfaceTypeUnknownField()
+    public function testInterfaceTypeUnknownField(): void
     {
         $interfaceType = new InterfaceType(['name' => 'Foo']);
         $this->assertDecorateException(
             [$interfaceType->name => $interfaceType],
             [
                 $interfaceType->name => [
-                    'baz' => function () {
+                    'baz' => function (): void {
                     },
                 ],
             ],
@@ -190,14 +192,14 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testCustomScalarTypeUnknownField()
+    public function testCustomScalarTypeUnknownField(): void
     {
         $customScalarType = new CustomScalarType(['name' => 'Foo']);
         $this->assertDecorateException(
             [$customScalarType->name => $customScalarType],
             [
                 $customScalarType->name => [
-                    'baz' => function () {
+                    'baz' => function (): void {
                     },
                 ],
             ],
@@ -206,7 +208,7 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testObjectTypeUnknownField()
+    public function testObjectTypeUnknownField(): void
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
@@ -218,7 +220,7 @@ class DecoratorExtensionTest extends TestCase
             [$objectType->name => $objectType],
             [
                 $objectType->name => [
-                    'baz' => function () {
+                    'baz' => function (): void {
                     },
                 ],
             ],
@@ -227,7 +229,7 @@ class DecoratorExtensionTest extends TestCase
         );
     }
 
-    public function testUnSupportedTypeDefineInResolverMapShouldThrowAnException()
+    public function testUnSupportedTypeDefineInResolverMapShouldThrowAnException(): void
     {
         $this->assertDecorateException(
             ['myType' => new InputObjectType(['name' => 'myType'])],
@@ -270,7 +272,7 @@ class DecoratorExtensionTest extends TestCase
         ];
     }
 
-    private function assertDecorateException(array $types, array $map, $exception = null, $exceptionMessage = null)
+    private function assertDecorateException(array $types, array $map, $exception = null, $exceptionMessage = null): void
     {
         if ($exception) {
             $this->expectException($exception);
@@ -282,7 +284,7 @@ class DecoratorExtensionTest extends TestCase
         $this->decorate($types, $map);
     }
 
-    private function decorate(array $types, array $map)
+    private function decorate(array $types, array $map): void
     {
         (new DecoratorExtension($this->createResolverMapMock($map)))->process($this->createSchemaMock($types));
     }

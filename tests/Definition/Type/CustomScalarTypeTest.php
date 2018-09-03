@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Definition\Type;
 
 use GraphQL\Error\InvariantViolation;
@@ -11,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class CustomScalarTypeTest extends TestCase
 {
-    public function testScalarTypeConfig()
+    public function testScalarTypeConfig(): void
     {
         $this->assertScalarTypeConfig(new YearScalarType());
         $this->assertScalarTypeConfig(function () {
@@ -19,7 +21,7 @@ class CustomScalarTypeTest extends TestCase
         });
     }
 
-    public function testWithoutScalarTypeConfig()
+    public function testWithoutScalarTypeConfig(): void
     {
         $genericFunc = function ($value) {
             return $value;
@@ -42,7 +44,7 @@ class CustomScalarTypeTest extends TestCase
      *
      * @dataProvider invalidScalarTypeProvider
      */
-    public function testAssertValidWithInvalidScalarType($scalarType, $got)
+    public function testAssertValidWithInvalidScalarType($scalarType, $got): void
     {
         $this->expectException(InvariantViolation::class);
         $name = \uniqid('custom');
@@ -56,7 +58,7 @@ class CustomScalarTypeTest extends TestCase
         $type->assertValid();
     }
 
-    public function testAssertValidSerializeFunctionIsRequired()
+    public function testAssertValidSerializeFunctionIsRequired(): void
     {
         $this->expectException(InvariantViolation::class);
         $name = \uniqid('custom');
@@ -83,7 +85,7 @@ class CustomScalarTypeTest extends TestCase
         ];
     }
 
-    private function assertScalarTypeConfig($scalarType)
+    private function assertScalarTypeConfig($scalarType): void
     {
         $type = new CustomScalarType([
             'scalarType' => $scalarType,

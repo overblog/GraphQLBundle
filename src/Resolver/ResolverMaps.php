@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Resolver;
 
 final class ResolverMaps implements ResolverMapInterface
@@ -16,7 +18,7 @@ final class ResolverMaps implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve($typeName, $fieldName)
+    public function resolve(string $typeName, string $fieldName)
     {
         foreach ($this->resolverMaps as $resolverMap) {
             if ($resolverMap->isResolvable($typeName, $fieldName)) {
@@ -29,7 +31,7 @@ final class ResolverMaps implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function isResolvable($typeName, $fieldName)
+    public function isResolvable(string $typeName, string $fieldName): bool
     {
         foreach ($this->resolverMaps as $resolverMap) {
             if ($resolverMap->isResolvable($typeName, $fieldName)) {
@@ -43,7 +45,7 @@ final class ResolverMaps implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function covered($typeName = null)
+    public function covered(?string $typeName = null)
     {
         $covered = [];
         foreach ($this->resolverMaps as $resolverMap) {
@@ -54,7 +56,7 @@ final class ResolverMaps implements ResolverMapInterface
         return $covered;
     }
 
-    private static function checkResolverMaps(array $resolverMaps)
+    private static function checkResolverMaps(array $resolverMaps): void
     {
         foreach ($resolverMaps as $resolverMap) {
             if (!$resolverMap instanceof ResolverMapInterface) {

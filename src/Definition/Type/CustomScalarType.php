@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Type;
 
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
@@ -10,7 +12,7 @@ class CustomScalarType extends BaseCustomScalarType
 {
     public function __construct(array $config = [])
     {
-        $config['name'] = isset($config['name']) ? $config['name'] : \uniqid('CustomScalar');
+        $config['name'] = $config['name'] ?? \uniqid('CustomScalar');
         parent::__construct($config);
 
         $this->config['scalarType'] = isset($this->config['scalarType']) ? $this->config['scalarType'] : null;
@@ -49,7 +51,7 @@ class CustomScalarType extends BaseCustomScalarType
         }
     }
 
-    public function assertValid()
+    public function assertValid(): void
     {
         if (isset($this->config['scalarType'])) {
             $scalarType = $this->loadScalarType();

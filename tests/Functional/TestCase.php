@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
@@ -14,10 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class TestCase extends WebTestCase
 {
-    const USER_RYAN = 'ryan';
-    const USER_ADMIN = 'admin';
-    const ANONYMOUS_USER = null;
-    const DEFAULT_PASSWORD = '123';
+    public const USER_RYAN = 'ryan';
+    public const USER_ADMIN = 'admin';
+    public const ANONYMOUS_USER = null;
+    public const DEFAULT_PASSWORD = '123';
 
     /**
      * {@inheritdoc}
@@ -36,10 +38,10 @@ abstract class TestCase extends WebTestCase
             static::$class = static::getKernelClass();
         }
 
-        $options['test_case'] = isset($options['test_case']) ? $options['test_case'] : null;
+        $options['test_case'] = $options['test_case'] ?? '';
 
-        $env = isset($options['environment']) ? $options['environment'] : 'test'.\strtolower($options['test_case']);
-        $debug = isset($options['debug']) ? $options['debug'] : true;
+        $env = $options['environment'] ?? 'test'.\strtolower($options['test_case']);
+        $debug = $options['debug'] ?? true;
 
         return new static::$class($env, $debug, $options['test_case']);
     }
@@ -47,7 +49,7 @@ abstract class TestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $fs = new Filesystem();
         $fs->remove(\sys_get_temp_dir().'/OverblogGraphQLBundle/');
@@ -56,7 +58,7 @@ abstract class TestCase extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         static::$kernel = null;
     }
@@ -72,7 +74,7 @@ abstract class TestCase extends WebTestCase
         return $res->toArray();
     }
 
-    protected static function assertGraphQL($query, array $expectedData = null, array $expectedErrors = null, $rootValue = [])
+    protected static function assertGraphQL($query, array $expectedData = null, array $expectedErrors = null, $rootValue = []): void
     {
         $result = static::executeGraphQLRequest($query, $rootValue/*, true*/);
 

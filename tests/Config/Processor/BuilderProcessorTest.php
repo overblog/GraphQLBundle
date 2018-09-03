@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
@@ -17,7 +19,7 @@ class BuilderProcessorTest extends TestCase
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
-    public function testApiAbuse($name, $type, $builderClass, $exceptionClass, $exceptionMessage)
+    public function testApiAbuse($name, $type, $builderClass, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass);
         $this->expectExceptionMessage($exceptionMessage);
@@ -31,7 +33,7 @@ class BuilderProcessorTest extends TestCase
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
-    public function testProcessApiAbuse(array $config, $exceptionClass, $exceptionMessage)
+    public function testProcessApiAbuse(array $config, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass);
         $this->expectExceptionMessage($exceptionMessage);

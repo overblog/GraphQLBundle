@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -13,7 +15,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
  */
 class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 {
-    public function testBasicSlicing()
+    public function testBasicSlicing(): void
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters);
 
@@ -22,7 +24,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsASmallerFirst()
+    public function testRespectsASmallerFirst(): void
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 2]);
 
@@ -31,7 +33,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsAnOverlyLargeFirst()
+    public function testRespectsAnOverlyLargeFirst(): void
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['first' => 10]);
 
@@ -40,7 +42,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsASmallerLast()
+    public function testRespectsASmallerLast(): void
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 2]);
 
@@ -49,7 +51,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsAnOverlyLargeLast()
+    public function testRespectsAnOverlyLargeLast(): void
     {
         $actual = ConnectionBuilder::connectionFromArray($this->letters, ['last' => 10]);
 
@@ -58,7 +60,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsFirstAndAfter()
+    public function testRespectsFirstAndAfter(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -70,7 +72,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsFirstAndAfterWithLongFirst()
+    public function testRespectsFirstAndAfterWithLongFirst(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -82,7 +84,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsLastAndBefore()
+    public function testRespectsLastAndBefore(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -94,7 +96,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsLastAndBeforeWithLongLast()
+    public function testRespectsLastAndBeforeWithLongLast(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -106,7 +108,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsFirstAndAfterAndBeforeTooFew()
+    public function testRespectsFirstAndAfterAndBeforeTooFew(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -118,7 +120,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsFirstAndAfterAndBeforeTooMany()
+    public function testRespectsFirstAndAfterAndBeforeTooMany(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -130,7 +132,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsFirstAndAfterAndBeforeExactlyRight()
+    public function testRespectsFirstAndAfterAndBeforeExactlyRight(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -142,7 +144,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsLastAndAfterAndBeforeTooFew()
+    public function testRespectsLastAndAfterAndBeforeTooFew(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -154,7 +156,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsLastAndAfterAndBeforeTooMany()
+    public function testRespectsLastAndAfterAndBeforeTooMany(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -166,7 +168,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testRespectsLastAndAfterAndBeforeExactlyRight()
+    public function testRespectsLastAndAfterAndBeforeExactlyRight(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -182,7 +184,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Argument "first" must be a non-negative integer
      */
-    public function testThrowsAnErrorIfFirstLessThan0()
+    public function testThrowsAnErrorIfFirstLessThan0(): void
     {
         ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -194,7 +196,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Argument "last" must be a non-negative integer
      */
-    public function testThrowsAnErrorIfLastLessThan0()
+    public function testThrowsAnErrorIfLastLessThan0(): void
     {
         ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -202,7 +204,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         );
     }
 
-    public function testReturnsNoElementsIfFirstIs0()
+    public function testReturnsNoElementsIfFirstIs0(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -218,7 +220,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testReturnsAllElementsIfCursorsAreInvalid()
+    public function testReturnsAllElementsIfCursorsAreInvalid(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -230,7 +232,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testReturnsAllElementsIfCursorsAreOnTheOutside()
+    public function testReturnsAllElementsIfCursorsAreOnTheOutside(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -242,7 +244,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testReturnsNoElementsIfCursorsCross()
+    public function testReturnsNoElementsIfCursorsCross(): void
     {
         $actual = ConnectionBuilder::connectionFromArray(
             $this->letters,
@@ -257,7 +259,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with a just-right array slice.
      */
-    public function testWorksWithAJustRightArraySlice()
+    public function testWorksWithAJustRightArraySlice(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 1, 2), // equals to letters.slice(1,3) in JS
@@ -273,7 +275,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an oversized array slice ("left" side).
      */
-    public function testWorksWithAnOversizedArraySliceLeftSide()
+    public function testWorksWithAnOversizedArraySliceLeftSide(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 0, 3), // equals to letters.slice(0,3) in JS
@@ -289,7 +291,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an oversized array slice ("right" side).
      */
-    public function testWorksWithAnOversizedArraySliceRightSide()
+    public function testWorksWithAnOversizedArraySliceRightSide(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
@@ -305,7 +307,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an oversized array slice (both sides).
      */
-    public function testWorksWithAnOversizedArraySliceBothSides()
+    public function testWorksWithAnOversizedArraySliceBothSides(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 1, 3), // equals to letters.slice(1,4) in JS
@@ -321,7 +323,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an undersized array slice ("left" side).
      */
-    public function testWorksWithAnUndersizedArraySliceLeftSide()
+    public function testWorksWithAnUndersizedArraySliceLeftSide(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 3, 2), // equals to letters.slice(3,5) in JS
@@ -337,7 +339,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an undersized array slice ("right" side).
      */
-    public function testWorksWithAnUndersizedArraySliceRightSide()
+    public function testWorksWithAnUndersizedArraySliceRightSide(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
@@ -353,7 +355,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     /**
      * transcript of JS implementation test : works with an undersized array slice (both sides).
      */
-    public function worksWithAnUndersizedArraySliceBothSides()
+    public function worksWithAnUndersizedArraySliceBothSides(): void
     {
         $actual = ConnectionBuilder::connectionFromArraySlice(
             \array_slice($this->letters, 3, 1), // equals to letters.slice(3,4) in JS
@@ -366,14 +368,14 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertEquals($expected, $actual);
     }
 
-    public function testReturnsAnEdgesCursorGivenAnArrayAndAMemberObject()
+    public function testReturnsAnEdgesCursorGivenAnArrayAndAMemberObject(): void
     {
         $letterCursor = ConnectionBuilder::cursorForObjectInConnection($this->letters, 'B');
 
         $this->assertEquals('YXJyYXljb25uZWN0aW9uOjE=', $letterCursor);
     }
 
-    public function testReturnsAnEdgesCursorGivenAnArrayAndANonMemberObject()
+    public function testReturnsAnEdgesCursorGivenAnArrayAndANonMemberObject(): void
     {
         $letterCursor = ConnectionBuilder::cursorForObjectInConnection($this->letters, 'F');
 

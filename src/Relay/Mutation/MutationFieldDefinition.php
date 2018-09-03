@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class MutationFieldDefinition implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         if (!\array_key_exists('mutateAndGetPayload', $config)) {
             throw new \InvalidArgumentException('Mutation "mutateAndGetPayload" config is required.');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use GraphQL\Type\Definition\ResolveInfo;
@@ -23,7 +25,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
 
     public static function acl(array $fields, AccessResolver $accessResolver, callable $defaultResolver)
     {
-        $deniedAccess = static function () {
+        $deniedAccess = static function (): void {
             throw new UserWarning('Access denied to this field.');
         };
         foreach ($fields as &$field) {
@@ -45,7 +47,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(LazyConfig $lazyConfig)
+    public function process(LazyConfig $lazyConfig): LazyConfig
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['fields']) && \is_callable($config['fields'])) {
@@ -69,7 +71,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
      *
      * @return callable
      */
-    private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver)
+    private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable
     {
         if (isset($field['resolve'])) {
             $resolver = $field['resolve'];

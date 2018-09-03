@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Upload\Type;
 
 use GraphQL\Error\InvariantViolation;
@@ -11,7 +13,7 @@ class GraphQLUploadType extends ScalarType
     /**
      * @param string $name
      */
-    public function __construct($name = null)
+    public function __construct(string $name = null)
     {
         parent::__construct([
             'name' => $name,
@@ -41,7 +43,7 @@ class GraphQLUploadType extends ScalarType
     /**
      * {@inheritdoc}
      */
-    public function serialize($value)
+    public function serialize($value): void
     {
         throw new InvariantViolation(\sprintf('%s scalar serialization unsupported.', $this->name));
     }
@@ -49,7 +51,7 @@ class GraphQLUploadType extends ScalarType
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral($valueNode, array $variables = null)
+    public function parseLiteral($valueNode, array $variables = null): void
     {
         throw new InvariantViolation(\sprintf('%s scalar literal unsupported.', $this->name));
     }

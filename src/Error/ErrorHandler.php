@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\ClientAware;
@@ -14,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ErrorHandler
 {
-    const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
+    public const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
@@ -43,7 +45,7 @@ class ErrorHandler
         $this->mapExceptionsToParent = $mapExceptionsToParent;
     }
 
-    public function handleErrors(ExecutionResult $executionResult, $throwRawException = false, $debug = false)
+    public function handleErrors(ExecutionResult $executionResult, $throwRawException = false, $debug = false): void
     {
         $errorFormatter = $this->createErrorFormatter($debug);
         $executionResult->setErrorFormatter($errorFormatter);
@@ -77,7 +79,7 @@ class ErrorHandler
      *
      * @throws \Error|\Exception
      */
-    private function treatExceptions(array $errors, $throwRawException)
+    private function treatExceptions(array $errors, bool $throwRawException): array
     {
         $treatedExceptions = [
             'errors' => [],
@@ -134,7 +136,7 @@ class ErrorHandler
      *
      * @return GraphQLError[]
      */
-    private function flattenErrors(array $errors)
+    private function flattenErrors(array $errors): array
     {
         $flattenErrors = [];
 

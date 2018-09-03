@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition;
 
 final class LazyConfig
@@ -29,7 +31,7 @@ final class LazyConfig
     /**
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $loader = $this->loader;
         $config = $loader($this->globalVariables);
@@ -40,7 +42,7 @@ final class LazyConfig
         return $config;
     }
 
-    public function addPostLoader(callable $postLoader)
+    public function addPostLoader(callable $postLoader): void
     {
         $this->onPostLoad[] = $postLoader;
     }

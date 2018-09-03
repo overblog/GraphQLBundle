@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
@@ -12,7 +14,7 @@ final class AliasedPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definitions = $this->filterDefinitions($container->getDefinitions());
         foreach ($definitions as $definition) {
@@ -25,7 +27,7 @@ final class AliasedPass implements CompilerPassInterface
      *
      * @return Definition[]
      */
-    private function filterDefinitions($definitions)
+    private function filterDefinitions(array $definitions): array
     {
         return \array_filter($definitions, function (Definition $definition) {
             foreach (AutoMappingPass::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
@@ -41,7 +43,7 @@ final class AliasedPass implements CompilerPassInterface
     /**
      * @param Definition $definition
      */
-    private function addDefinitionTagsFromAliases(Definition $definition)
+    private function addDefinitionTagsFromAliases(Definition $definition): void
     {
         $aliases = \call_user_func([$definition->getClass(), 'getAliases']);
         $tagName = $this->guessTagName($definition);

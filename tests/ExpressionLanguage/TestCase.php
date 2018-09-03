@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
@@ -17,7 +19,7 @@ abstract class TestCase extends BaseTestCase
     /** @var ExpressionLanguage */
     protected $expressionLanguage;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->expressionLanguage = new ExpressionLanguage();
         foreach ($this->getFunctions() as $function) {
@@ -30,7 +32,7 @@ abstract class TestCase extends BaseTestCase
      */
     abstract protected function getFunctions();
 
-    protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue')
+    protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue'): void
     {
         $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
         $globalVariable = new GlobalVariables([

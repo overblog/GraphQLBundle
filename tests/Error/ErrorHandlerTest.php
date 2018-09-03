@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Error;
 
 use GraphQL\Error\Error as GraphQLError;
@@ -20,14 +22,14 @@ class ErrorHandlerTest extends TestCase
     /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
     private $dispatcher;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
         $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
         $this->errorHandler = new ErrorHandler($this->dispatcher);
     }
 
-    public function testMaskErrorWithThrowExceptionSetToFalse()
+    public function testMaskErrorWithThrowExceptionSetToFalse(): void
     {
         $executionResult = new ExecutionResult(
             null,
@@ -87,7 +89,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $executionResult->toArray());
     }
 
-    public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue()
+    public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('My Exception message');
@@ -102,7 +104,7 @@ class ErrorHandlerTest extends TestCase
         $this->errorHandler->handleErrors($executionResult, true);
     }
 
-    public function testInvalidUserErrorsItem()
+    public function testInvalidUserErrorsItem(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(\sprintf('Error must be string or instance of %s', GraphQLUserError::class));
@@ -113,7 +115,7 @@ class ErrorHandlerTest extends TestCase
         ]);
     }
 
-    public function testMaskErrorWithWrappedUserErrorAndThrowExceptionSetToTrue()
+    public function testMaskErrorWithWrappedUserErrorAndThrowExceptionSetToTrue(): void
     {
         $executionResult = new ExecutionResult(
             null,
@@ -136,7 +138,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $executionResult->toArray());
     }
 
-    public function testDebugEnabled()
+    public function testDebugEnabled(): void
     {
         try {
             throw new \Exception();
@@ -159,7 +161,7 @@ class ErrorHandlerTest extends TestCase
         }
     }
 
-    public function testMaskErrorWithoutWrappedExceptionAndThrowExceptionSetToTrue()
+    public function testMaskErrorWithoutWrappedExceptionAndThrowExceptionSetToTrue(): void
     {
         $executionResult = new ExecutionResult(
             null,
@@ -182,7 +184,7 @@ class ErrorHandlerTest extends TestCase
         $this->assertEquals($expected, $executionResult->toArray());
     }
 
-    public function testConvertExceptionToUserWarning()
+    public function testConvertExceptionToUserWarning(): void
     {
         $errorHandler = new ErrorHandler($this->dispatcher, null, [\InvalidArgumentException::class => UserWarning::class]);
 
@@ -216,7 +218,7 @@ class ErrorHandlerTest extends TestCase
      *
      * @dataProvider parentExceptionMappingDataProvider
      */
-    public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError)
+    public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError): void
     {
         $errorHandler = new ErrorHandler($this->dispatcher, null, $exceptionMap, $mapExceptionsToParent);
 

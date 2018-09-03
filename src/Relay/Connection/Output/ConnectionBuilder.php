@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Definition\Argument;
@@ -7,11 +9,11 @@ use Overblog\GraphQLBundle\Definition\Argument;
 /**
  * Class ConnectionBuilder.
  *
- * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/arrayconnection.js
+ * https://github.com/graphql/graphql-relay-js/blob/master/src/connection/arrayconnection.js
  */
 class ConnectionBuilder
 {
-    const PREFIX = 'arrayconnection:';
+    public const PREFIX = 'arrayconnection:';
 
     /**
      * A simple function that accepts an array and connection arguments, and returns
@@ -23,7 +25,7 @@ class ConnectionBuilder
      *
      * @return Connection
      */
-    public static function connectionFromArray($data, $args = [])
+    public static function connectionFromArray(array $data, $args = []): Connection
     {
         return static::connectionFromArraySlice(
             $data,
@@ -68,7 +70,7 @@ class ConnectionBuilder
      *
      * @return Connection
      */
-    public static function connectionFromArraySlice($arraySlice, $args, array $meta)
+    public static function connectionFromArraySlice(array $arraySlice, $args, array $meta): Connection
     {
         $connectionArguments = self::getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
@@ -132,7 +134,7 @@ class ConnectionBuilder
             $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);
         }
 
-        $firstEdge = isset($edges[0]) ? $edges[0] : null;
+        $firstEdge = $edges[0] ?? null;
         $lastEdge = \end($edges);
         $lowerBound = $after ? ($afterOffset + 1) : 0;
         $upperBound = $before ? $beforeOffset : $arrayLength;
@@ -175,7 +177,7 @@ class ConnectionBuilder
      *
      * @return null|string
      */
-    public static function cursorForObjectInConnection($data, $object)
+    public static function cursorForObjectInConnection(array $data, $object): ?string
     {
         $offset = null;
 
@@ -190,7 +192,7 @@ class ConnectionBuilder
         }
 
         if (null === $offset) {
-            return;
+            return null;
         }
 
         return static::offsetToCursor($offset);
@@ -201,12 +203,12 @@ class ConnectionBuilder
      * to use; if the cursor contains a valid offset, that will be used,
      * otherwise it will be the default.
      *
-     * @param string $cursor
-     * @param int    $defaultOffset
+     * @param string|null $cursor
+     * @param int         $defaultOffset
      *
      * @return int
      */
-    public static function getOffsetWithDefault($cursor, $defaultOffset)
+    public static function getOffsetWithDefault(?string $cursor, int $defaultOffset): int
     {
         if (empty($cursor)) {
             return $defaultOffset;
@@ -223,7 +225,7 @@ class ConnectionBuilder
      *
      * @return string
      */
-    public static function offsetToCursor($offset)
+    public static function offsetToCursor($offset): string
     {
         return \base64_encode(static::PREFIX.$offset);
     }
@@ -233,10 +235,14 @@ class ConnectionBuilder
      *
      * @param $cursor
      *
-     * @return int
+     * @return string
      */
-    public static function cursorToOffset($cursor)
+    public static function cursorToOffset($cursor): string
     {
+        if (null === $cursor) {
+            return '';
+        }
+
         return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
     }
 
@@ -245,7 +251,7 @@ class ConnectionBuilder
         return $options + $defaults;
     }
 
-    private static function checkPromise($value)
+    private static function checkPromise($value): void
     {
         if (!\is_callable([$value, 'then'])) {
             throw new \InvalidArgumentException('This is not a valid promise.');

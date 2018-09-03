@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Error\UserError;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLExtension extends Extension implements PrependExtensionInterface
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $this->loadConfigFiles($container);
         $config = $this->treatConfigs($configs, $container);
@@ -44,7 +46,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $configs = $container->getExtensionConfig($this->getAlias());
         $configs = $container->getParameterBag()->resolveValue($configs);
@@ -68,7 +70,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         );
     }
 
-    private function loadConfigFiles(ContainerBuilder $container)
+    private function loadConfigFiles(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
@@ -77,7 +79,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $loader->load('definition_config_processors.yml');
     }
 
-    private function setCompilerCacheWarmer(array $config, ContainerBuilder $container)
+    private function setCompilerCacheWarmer(array $config, ContainerBuilder $container): void
     {
         if ($config['definitions']['auto_compile']) {
             $definition = $container->setDefinition(
@@ -89,7 +91,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setClassLoaderListener(array $config, ContainerBuilder $container)
+    private function setClassLoaderListener(array $config, ContainerBuilder $container): void
     {
         $container->setParameter($this->getAlias().'.use_classloader_listener', $config['definitions']['use_classloader_listener']);
         if ($config['definitions']['use_classloader_listener']) {
@@ -104,7 +106,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setDefinitionParameters(array $config, ContainerBuilder $container)
+    private function setDefinitionParameters(array $config, ContainerBuilder $container): void
     {
         // auto mapping
         $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
@@ -115,12 +117,12 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setParameter($this->getAlias().'.cache_dir', $config['definitions']['cache_dir']);
     }
 
-    private function setBatchingMethod(array $config, ContainerBuilder $container)
+    private function setBatchingMethod(array $config, ContainerBuilder $container): void
     {
         $container->setParameter($this->getAlias().'.batching_method', $config['batching_method']);
     }
 
-    private function setDebugListener(array $config, ContainerBuilder $container)
+    private function setDebugListener(array $config, ContainerBuilder $container): void
     {
         if ($config['definitions']['show_debug_info']) {
             $definition = $container->setDefinition(
@@ -132,7 +134,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setConfigBuilders(array $config, ContainerBuilder $container)
+    private function setConfigBuilders(array $config, ContainerBuilder $container): void
     {
         $useObjectToAddResource = \method_exists($container, 'addObjectResource');
         $objectToAddResourceMethod = $useObjectToAddResource ? 'addObjectResource' : 'addClassResource';
@@ -160,7 +162,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         return $config;
     }
 
-    private function setSecurity(array $config, ContainerBuilder $container)
+    private function setSecurity(array $config, ContainerBuilder $container): void
     {
         if (false === $config['security']['enable_introspection']) {
             $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
@@ -172,7 +174,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setErrorHandler(array $config, ContainerBuilder $container)
+    private function setErrorHandler(array $config, ContainerBuilder $container): void
     {
         if ($config['errors_handler']['enabled']) {
             $id = $this->getAlias().'.error_handler';
@@ -206,13 +208,13 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setSchemaBuilderArguments(array $config, ContainerBuilder $container)
+    private function setSchemaBuilderArguments(array $config, ContainerBuilder $container): void
     {
         $container->getDefinition($this->getAlias().'.schema_builder')
             ->replaceArgument(1, $config['definitions']['config_validation']);
     }
 
-    private function setSchemaArguments(array $config, ContainerBuilder $container)
+    private function setSchemaArguments(array $config, ContainerBuilder $container): void
     {
         if (isset($config['definitions']['schema'])) {
             $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
@@ -238,7 +240,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         }
     }
 
-    private function setServicesAliases(array $config, ContainerBuilder $container)
+    private function setServicesAliases(array $config, ContainerBuilder $container): void
     {
         if (isset($config['services'])) {
             foreach ($config['services'] as $name => $id) {

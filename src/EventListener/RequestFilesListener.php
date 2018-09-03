@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\EventListener;
 
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -16,7 +18,7 @@ final class RequestFilesListener
         $this->requestStack = $requestStack;
     }
 
-    public function onExecutorContextEvent(ExecutorContextEvent $event)
+    public function onExecutorContextEvent(ExecutorContextEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest();
 

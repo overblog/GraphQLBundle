@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class ConnectionDefinition implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         $name = $config['name'];
         $namePrefix = \preg_replace('/(.*)?Connection$/', '$1', $name);

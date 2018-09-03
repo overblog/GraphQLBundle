@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Definition\ConfigProcessor;
 
 use Overblog\GraphQLBundle\Definition\ConfigProcessor\ConfigProcessorInterface;
@@ -10,7 +12,7 @@ class NullConfigProcessor implements ConfigProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(LazyConfig $lazyConfig)
+    public function process(LazyConfig $lazyConfig): LazyConfig
     {
         return $lazyConfig;
     }
