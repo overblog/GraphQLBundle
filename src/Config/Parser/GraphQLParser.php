@@ -8,9 +8,11 @@ use GraphQL\Language\AST\InputValueDefinitionNode;
 use GraphQL\Language\AST\NameNode;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
+use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\TypeNode;
 use GraphQL\Language\AST\ValueNode;
 use GraphQL\Language\Parser;
+use GraphQL\Type\Definition\Directive;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -139,6 +141,7 @@ class GraphQLParser implements ParserInterface
                 $this->addDescription($fieldDef, $fields[$fieldName]);
                 $this->addDefaultValue($fieldDef, $fields[$fieldName]);
                 $this->addFieldArguments($fieldDef, $fields[$fieldName]);
+                $this->addFromDirectives($fieldDef->directives, $fields[$fieldName]);
             }
             $config['fields'] = $fields;
         }
@@ -204,8 +207,23 @@ class GraphQLParser implements ParserInterface
             foreach ($typeDef->values as $value) {
                 $values[$value->name->value] = ['value' => $value->name->value];
                 $this->addDescription($value, $values[$value->name->value]);
+                $this->addFromDirectives($value->directives, $values[$value->name->value]);
             }
             $config['values'] = $values;
+        }
+    }
+
+    private function addFromDirectives(NodeList $directives, array &$config)
+    {
+        if ($directives->count()) {
+            foreach ($directives as $directiveDef) {
+                if ('deprecated' === $directiveDef->name->value) {
+                    $reason = $directiveDef->arguments->count() ?
+                        $directiveDef->arguments[0]->value->value : Directive::DEFAULT_DEPRECATION_REASON;
+
+                    $config['deprecationReason'] = $reason;
+                }
+            }
         }
     }
 

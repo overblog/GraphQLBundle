@@ -25,12 +25,13 @@ interface Foo {
 type Bar implements Foo {
   is_foo: Boolean
   user: User!
+  deprecatedField: String! @deprecated(reason: "This field was deprecated!")
 }
 
 enum User {
   TATA
   TITI
-  TOTO
+  TOTO @deprecated
 }
 ```
 

@@ -52,7 +52,10 @@ return [
             'values' => [
                 'NEWHOPE' => ['value' => 'NEWHOPE'],
                 'EMPIRE' => ['value' => 'EMPIRE'],
-                'JEDI' => ['value' => 'JEDI'],
+                'JEDI' => [
+                    'value' => 'JEDI',
+                    'deprecationReason' => 'No longer supported',
+                ],
             ],
         ],
     ],
@@ -64,6 +67,10 @@ return [
                 'name' => ['type' => 'String!'],
                 'friends' => ['type' => '[Character]'],
                 'appearsIn' => ['type' => '[Episode]!'],
+                'deprecatedField' => [
+                    'type' => 'String!',
+                    'deprecationReason' => 'This field was deprecated!',
+                ],
             ],
         ],
     ],
