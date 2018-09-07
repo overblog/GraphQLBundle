@@ -80,7 +80,7 @@ class Greetings implements ResolverInterface
 
 Example using the class invoker:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
 ````
 
 ```php
@@ -98,8 +98,47 @@ class Greetings implements ResolverInterface
     }
 }
 ```
-
 This way `SayHello` resolver can be accessed with `App\GraphQL\Resolver\Greetings`.
+
+You may also use the invoker to define a type-wide resolver with the `resolveField` option:
+
+````yaml
+# config/graphql/types/MyType.types.yaml
+MyType:
+    type: object
+    config:
+        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"])'
+        fields:
+            hello:
+                type: String
+            goodbye:
+                type: String
+````
+
+```php
+<?php
+# src/GraphQL/Resolver/Greetings.php
+namespace App\GraphQL\Resolver;
+
+use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+
+class Greetings implements ResolverInterface
+{
+    public function __invoke(ResolveInfo $info, $name)
+    {
+        if($info->fieldName === 'hello'){
+            return sprintf('hello %s!!!', $name);
+        }
+        else if($info->fieldName === 'goodbye'){
+            return sprintf('goodbye %s!!!', $name);
+        }
+        else{
+            throw new \DomainException('Unknown greetings');
+        }
+    }
+}
+```
 
 ### Mutation
 
