@@ -118,6 +118,7 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('auto_compile')->defaultTrue()->end()
                 ->booleanNode('show_debug_info')->info('Show some performance stats in extensions')->defaultFalse()->end()
                 ->booleanNode('config_validation')->defaultValue($this->debug)->end()
+                ->booleanNode('config_deprecation_fields_warnings')->defaultValue(true)->end()
                 ->append($this->definitionsSchemaSection())
                 ->append($this->definitionsAutoMappingSection())
                 ->append($this->definitionsMappingsSection())

@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
 use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\ValidatorExtension;
+use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\WarningOnDeprecatedFieldsExtension;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
@@ -20,10 +21,14 @@ class SchemaBuilder
     /** @var bool */
     private $enableValidation;
 
-    public function __construct(TypeResolver $typeResolver, $enableValidation = false)
+    /** @var bool */
+    private $enableDeprecationWarnings;
+
+    public function __construct(TypeResolver $typeResolver, $enableValidation = false, $enableDeprecationWarnings = true)
     {
         $this->typeResolver = $typeResolver;
         $this->enableValidation = $enableValidation;
+        $this->enableDeprecationWarnings = $enableDeprecationWarnings;
     }
 
     /**
@@ -46,6 +51,9 @@ class SchemaBuilder
 
         if ($this->enableValidation) {
             $extensions[] = new ValidatorExtension();
+        }
+        if ($this->enableDeprecationWarnings) {
+            $extensions[] = new WarningOnDeprecatedFieldsExtension();
         }
         $schema->setExtensions($extensions);
 

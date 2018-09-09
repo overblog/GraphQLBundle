@@ -34,6 +34,7 @@ services:
         arguments:
             - "@overblog_graphql.type_resolver"
             - false
+            - false
 
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
@@ -121,7 +122,7 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
-            
+
     Overblog\GraphQLBundle\Controller\GraphController:
         public: true
         alias: 'overblog_graphql.controller.graphql'
