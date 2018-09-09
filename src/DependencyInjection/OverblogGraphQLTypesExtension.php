@@ -51,7 +51,6 @@ class OverblogGraphQLTypesExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configs = \array_filter($configs);
-        //$configs = array_filter($configs);
         if (\count($configs) > 1) {
             throw new \InvalidArgumentException('Configs type should never contain more than one config to deal with inheritance.');
         }

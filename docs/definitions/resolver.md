@@ -80,7 +80,7 @@ class Greetings implements ResolverInterface
 
 Example using the class invoker:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
 ````
 
 ```php
@@ -98,8 +98,47 @@ class Greetings implements ResolverInterface
     }
 }
 ```
-
 This way `SayHello` resolver can be accessed with `App\GraphQL\Resolver\Greetings`.
+
+You may also use the invoker to define a type-wide resolver with the `resolveField` option:
+
+````yaml
+# config/graphql/types/MyType.types.yaml
+MyType:
+    type: object
+    config:
+        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"])'
+        fields:
+            hello:
+                type: String
+            goodbye:
+                type: String
+````
+
+```php
+<?php
+# src/GraphQL/Resolver/Greetings.php
+namespace App\GraphQL\Resolver;
+
+use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+
+class Greetings implements ResolverInterface
+{
+    public function __invoke(ResolveInfo $info, $name)
+    {
+        if($info->fieldName === 'hello'){
+            return sprintf('hello %s!!!', $name);
+        }
+        else if($info->fieldName === 'goodbye'){
+            return sprintf('goodbye %s!!!', $name);
+        }
+        else{
+            throw new \DomainException('Unknown greetings');
+        }
+    }
+}
+```
 
 ### Mutation
 
@@ -132,36 +171,18 @@ class CalcMutation implements MutationInterface, AliasedInterface
 `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
 `add` alias.
 
-You can also define custom dirs using the config (Symfony <3.3):
-```yaml
-overblog_graphql:
-    definitions:
-        auto_mapping:
-            directories:
-                - "%kernel.root_dir%/src/*Bundle/CustomDir"
-                - "%kernel.root_dir%/src/AppBundle/{foo,bar}"
-```
-
-If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
-DI `autoconfigure`:
-
-```yaml
-overblog_graphql:
-    definitions:
-        auto_mapping: false
-```
-
 Here an example of how this can be done with DI `autoconfigure`:
 
 ```yaml
 services:
-    App\Mutation\:
-        resource: '../src/Mutation'
-        tags: ['overblog_graphql.mutation']
-    
-    App\Resolver\:
-        resource: '../src/Resolver'
-        tags: ['overblog_graphql.resolver']
+    _instanceof:
+        Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface:
+            tags: ['overblog_graphql.resolver']
+        Overblog\GraphQLBundle\Definition\Resolver\MutationInterface:
+            tags: ['overblog_graphql.mutation']
+
+    Overblog\GraphQLBundle\GraphQL\Relay\:
+        resource: ../../GraphQL/Relay/{Mutation,Node}
 ```
 
 ## The service way

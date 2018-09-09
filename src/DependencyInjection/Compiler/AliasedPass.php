@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 final class AliasedPass implements CompilerPassInterface
 {
+    private const SERVICE_SUBCLASS_TAG_MAPPING = [
+        MutationInterface::class => 'overblog_graphql.mutation',
+        ResolverInterface::class => 'overblog_graphql.resolver',
+        Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +39,7 @@ final class AliasedPass implements CompilerPassInterface
     private function filterDefinitions(array $definitions): array
     {
         return \array_filter($definitions, function (Definition $definition) {
-            foreach (AutoMappingPass::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
+            foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
                 if ($definition->hasTag($tagName)) {
                     return \is_subclass_of($definition->getClass(), AliasedInterface::class);
                 }
@@ -57,7 +66,7 @@ final class AliasedPass implements CompilerPassInterface
     private function guessTagName(Definition $definition)
     {
         $tagName = null;
-        foreach (AutoMappingPass::SERVICE_SUBCLASS_TAG_MAPPING as $refClassName => $tag) {
+        foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $refClassName => $tag) {
             if (\is_subclass_of($definition->getClass(), $refClassName)) {
                 $tagName = $tag;
                 break;
