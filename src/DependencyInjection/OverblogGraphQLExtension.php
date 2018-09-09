@@ -75,6 +75,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('graphql_types.yml');
+        $loader->load('graphql_resolvers.yml');
         $loader->load('expression_language_functions.yml');
         $loader->load('definition_config_processors.yml');
     }
@@ -108,9 +109,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setDefinitionParameters(array $config, ContainerBuilder $container): void
     {
-        // auto mapping
-        $container->setParameter($this->getAlias().'.auto_mapping.enabled', $config['definitions']['auto_mapping']['enabled']);
-        $container->setParameter($this->getAlias().'.auto_mapping.directories', $config['definitions']['auto_mapping']['directories']);
         // generator and config
         $container->setParameter($this->getAlias().'.default_resolver', $config['definitions']['default_resolver']);
         $container->setParameter($this->getAlias().'.class_namespace', $config['definitions']['class_namespace']);

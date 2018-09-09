@@ -31,7 +31,6 @@ overblog_graphql:
         debug: false
     definitions:
         config_validation: true
-        auto_mapping: false
         mappings:
             auto_discover: false
     security:
