@@ -21,11 +21,9 @@ final class TestKernel extends Kernel implements CompilerPassInterface
      */
     public function registerBundles()
     {
-        return [
-            new FrameworkBundle(),
-            new SecurityBundle(),
-            new OverblogGraphQLBundle(),
-        ];
+        yield new FrameworkBundle();
+        yield new SecurityBundle();
+        yield new OverblogGraphQLBundle();
     }
 
     public function __construct($environment, $debug, $testCase = null)

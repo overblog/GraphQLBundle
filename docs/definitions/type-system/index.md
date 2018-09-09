@@ -68,25 +68,6 @@ Types can be define 3 different ways:
     }
     ```
 
-    You can also define custom dirs using config:
-    ```yaml
-    overblog_graphql:
-        definitions:
-            auto_mapping:
-                directories:
-                    - "%kernel.root_dir%/src/*Bundle/CustomDir"
-                    - "%kernel.root_dir%/src/AppBundle/{foo,bar}"
-    ```
-
-    If using Symfony 3.3+ disabling auto mapping can be a solution to leave place to native
-    DI `autoconfigure`:
-
-    ```yaml
-    overblog_graphql:
-        definitions:
-            auto_mapping: false
-    ```
-
     Here an example of how this can be done with DI `autoconfigure`:
 
     ```yaml

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle;
 
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AliasedPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\AutoMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AutowiringTypesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigTypesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\DefinitionConfigProcessorPass;
@@ -30,11 +29,10 @@ class OverblogGraphQLBundle extends Bundle
     {
         parent::build($container);
 
-        //ConfigTypesPass and AutoMappingPass must be before TypeTaggedServiceMappingPass
+        //ConfigTypesPass must be before TypeTaggedServiceMappingPass
         $container->addCompilerPass(new GlobalVariablesPass());
         $container->addCompilerPass(new ExpressionFunctionPass());
         $container->addCompilerPass(new DefinitionConfigProcessorPass());
-        $container->addCompilerPass(new AutoMappingPass());
         $container->addCompilerPass(new AliasedPass());
         $container->addCompilerPass(new AutowiringTypesPass());
 
