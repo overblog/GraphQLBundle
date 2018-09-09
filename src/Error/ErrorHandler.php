@@ -54,6 +54,9 @@ class ErrorHandler
         if (!empty($exceptions['extensions']['warnings'])) {
             $executionResult->extensions['warnings'] = \array_map($errorFormatter, $exceptions['extensions']['warnings']);
         }
+        if (!empty($exceptions['extensions']['deprecationWarnings'])) {
+            $executionResult->extensions['deprecationWarnings'] = \array_map($errorFormatter, $exceptions['extensions']['deprecationWarnings']);
+        }
     }
 
     private function createErrorFormatter($debug = false)
@@ -85,6 +88,7 @@ class ErrorHandler
             'errors' => [],
             'extensions' => [
                 'warnings' => [],
+                'deprecationWarnings' => [],
             ],
         ];
 
@@ -117,6 +121,12 @@ class ErrorHandler
             // user warning
             if ($rawException instanceof UserWarning) {
                 $treatedExceptions['extensions']['warnings'][] = $errorWithConvertedException;
+                continue;
+            }
+
+            // deprecation warning
+            if ($rawException instanceof DeprecationWarning) {
+                $treatedExceptions['extensions']['deprecationWarnings'][] = $errorWithConvertedException;
                 continue;
             }
 
