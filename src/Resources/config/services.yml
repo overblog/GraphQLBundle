@@ -38,6 +38,8 @@ services:
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         public: true
+        calls:
+            - ['setDispatcher', ['@event_dispatcher']]
         tags:
             - { name: overblog_graphql.global_variable, alias: typeResolver }
 
