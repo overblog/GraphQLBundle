@@ -44,7 +44,7 @@ class Executor
         ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher,
         PromiseAdapter $promiseAdapter,
-        callable $defaultFieldResolver = null
+        ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
@@ -52,14 +52,14 @@ class Executor
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
 
-    public function setExecutor(ExecutorInterface $executor)
+    public function setExecutor(ExecutorInterface $executor): self
     {
         $this->executor = $executor;
 
         return $this;
     }
 
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter)
+    public function setPromiseAdapter(PromiseAdapter $promiseAdapter): self
     {
         $this->promiseAdapter = $promiseAdapter;
 
@@ -70,9 +70,9 @@ class Executor
      * @param string $name
      * @param Schema $schema
      *
-     * @return $this
+     * @return self
      */
-    public function addSchema(string $name, Schema $schema)
+    public function addSchema(string $name, Schema $schema): self
     {
         $this->schemas[$name] = $schema;
 
@@ -84,7 +84,7 @@ class Executor
      *
      * @return Schema
      */
-    public function getSchema(string $name = null): Schema
+    public function getSchema(?string $name = null): Schema
     {
         if (empty($this->schemas)) {
             throw new \RuntimeException('At least one schema should be declare.');
@@ -128,15 +128,15 @@ class Executor
      *
      * @return ExecutionResult
      */
-    public function execute(string $schemaName = null, array $request, $rootValue = null): ExecutionResult
+    public function execute(?string $schemaName = null, array $request, $rootValue = null): ExecutionResult
     {
         $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
-            isset($request[ParserInterface::PARAM_QUERY]) ? $request[ParserInterface::PARAM_QUERY] : null,
+            $request[ParserInterface::PARAM_QUERY] ?? null,
             new \ArrayObject(),
             $rootValue,
             $request[ParserInterface::PARAM_VARIABLES],
-            isset($request[ParserInterface::PARAM_OPERATION_NAME]) ? $request[ParserInterface::PARAM_OPERATION_NAME] : null
+            $request[ParserInterface::PARAM_OPERATION_NAME] ?? null
         );
 
         $executorArgumentsEvent->getSchema()->processExtensions();
@@ -155,23 +155,13 @@ class Executor
         return $result;
     }
 
-    /**
-     * @param Schema       $schema
-     * @param string       $requestString
-     * @param \ArrayObject $contextValue
-     * @param mixed        $rootValue
-     * @param array|null   $variableValue
-     * @param string|null  $operationName
-     *
-     * @return ExecutorArgumentsEvent
-     */
     private function preExecute(
         Schema $schema,
-        string $requestString,
+        ?string $requestString,
         \ArrayObject $contextValue,
         $rootValue = null,
-        array $variableValue = null,
-        $operationName = null
+        ?array $variableValue = null,
+        ?string $operationName = null
     ): ExecutorArgumentsEvent {
         $this->checkPromiseAdapter();
 
@@ -201,7 +191,7 @@ class Executor
 
         $this->checkExecutionResult($result);
 
-        return  $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
+        return $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
     }
 
     private function checkPromiseAdapter(): void
