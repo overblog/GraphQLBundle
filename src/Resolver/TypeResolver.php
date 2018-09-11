@@ -13,6 +13,9 @@ class TypeResolver extends AbstractResolver
 {
     private $cache = [];
 
+    /** @var string|null */
+    private $currentSchemaName;
+
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
@@ -21,10 +24,15 @@ class TypeResolver extends AbstractResolver
         $this->dispatcher = $dispatcher;
     }
 
+    public function setCurrentSchemaName(?string $currentSchemaName): void
+    {
+        $this->currentSchemaName = $currentSchemaName;
+    }
+
     protected function onLoadSolution($solution): void
     {
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch(Events::TYPE_LOADED, new TypeLoadedEvent($solution));
+            $this->dispatcher->dispatch(Events::TYPE_LOADED, new TypeLoadedEvent($solution, $this->currentSchemaName));
         }
     }
 

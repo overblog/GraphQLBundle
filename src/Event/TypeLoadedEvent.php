@@ -12,13 +12,22 @@ final class TypeLoadedEvent extends Event
     /** @var Type */
     private $type;
 
-    public function __construct(Type $type)
+    /** @var string */
+    private $schemaName;
+
+    public function __construct(Type $type, ?string $schemaName)
     {
         $this->type = $type;
+        $this->schemaName = $schemaName;
     }
 
     public function getType(): Type
     {
         return $this->type;
+    }
+
+    public function getSchemaName(): ?string
+    {
+        return $this->schemaName;
     }
 }

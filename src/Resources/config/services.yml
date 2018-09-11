@@ -106,6 +106,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
 
+    Overblog\GraphQLBundle\EventListener\TypeDecoratorListener:
+        class: Overblog\GraphQLBundle\EventListener\TypeDecoratorListener
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: graphql.type_loaded, method: onTypeLoaded }
+
     overblog_graphql.promise_adapter.default:
         class: GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter
         public: false
@@ -123,7 +129,7 @@ services:
             - "@overblog_graphql.request_parser"
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
-            
+
     Overblog\GraphQLBundle\Controller\GraphController:
         public: true
         alias: 'overblog_graphql.controller.graphql'
