@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Definition\Type\SchemaExtension;
+namespace Overblog\GraphQLBundle\Tests\EventListener;
 
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -10,15 +10,14 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
-use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
-use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\DecoratorExtension;
+use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
 
-class DecoratorExtensionTest extends TestCase
+class TypeDecoratorListenerTest extends TestCase
 {
     /**
      * @param string        $fieldName
@@ -240,7 +239,7 @@ class DecoratorExtensionTest extends TestCase
                 ],
             ],
             \InvalidArgumentException::class,
-            '"myType".{"foo", "bar"} defined in resolverMap, but type is not managed by SchemaDecorator.'
+            '"myType".{"foo", "bar"} defined in resolverMap, but type is not managed by TypeDecorator.'
         );
     }
 
@@ -272,7 +271,7 @@ class DecoratorExtensionTest extends TestCase
         ];
     }
 
-    private function assertDecorateException(array $types, array $map, $exception = null, $exceptionMessage = null): void
+    private function assertDecorateException(array $types, array $map, ?string $exception = null, ?string $exceptionMessage = null): void
     {
         if ($exception) {
             $this->expectException($exception);
@@ -286,27 +285,11 @@ class DecoratorExtensionTest extends TestCase
 
     private function decorate(array $types, array $map): void
     {
-        (new DecoratorExtension($this->createResolverMapMock($map)))->process($this->createSchemaMock($types));
-    }
+        $typeDecoratorListener = new TypeDecoratorListener();
 
-    /**
-     * @param array $types
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject|Schema
-     */
-    private function createSchemaMock(array $types = [])
-    {
-        $schema = $this->getMockBuilder(Schema::class)->disableOriginalConstructor()->setMethods(['getType'])->getMock();
-
-        $schema->expects($this->any())->method('getType')->willReturnCallback(function ($name) use ($types) {
-            if (!isset($types[$name])) {
-                throw new \Exception(\sprintf('Type "%s" not found.', $name));
-            }
-
-            return $types[$name];
-        });
-
-        return $schema;
+        foreach ($types as $type) {
+            $typeDecoratorListener->decorateType($type, $this->createResolverMapMock($map));
+        }
     }
 
     /**

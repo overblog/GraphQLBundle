@@ -25,6 +25,14 @@ class ResolverMapTest extends TestCase
         $this->assertSame($expectedResolver, $resolver);
     }
 
+    public function testCoveredWithTypeNameNull(): void
+    {
+        $map = $this->map();
+        $resolverMap = $this->createResolverMapMock($map);
+        $covered = $resolverMap->covered();
+        $this->assertSame(\array_keys($map), $covered);
+    }
+
     public function testMapMustBeOverride(): void
     {
         /** @var ResolverMap|\PHPUnit_Framework_MockObject_MockObject $resolverMap */
