@@ -135,14 +135,10 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setConfigBuilders(array $config, ContainerBuilder $container): void
     {
-        $useObjectToAddResource = \method_exists($container, 'addObjectResource');
-        $objectToAddResourceMethod = $useObjectToAddResource ? 'addObjectResource' : 'addClassResource';
-
         foreach (BuilderProcessor::BUILDER_TYPES as $type) {
             if (!empty($config['definitions']['builders'][$type])) {
                 foreach ($config['definitions']['builders'][$type] as $params) {
-                    $object = $useObjectToAddResource ? $params['class'] : new \ReflectionClass($params['class']);
-                    $container->$objectToAddResourceMethod($object);
+                    $container->addObjectResource($params['class']);
                     BuilderProcessor::addBuilderClass($params['alias'], $type, $params['class']);
                 }
             }
