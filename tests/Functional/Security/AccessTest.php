@@ -91,6 +91,39 @@ EOF;
         $this->assertResponse($this->userNameQuery, $expected, static::ANONYMOUS_USER, 'access');
     }
 
+    public function testNonAuthenticatedUserAccessSecuredFieldWhichInitiallyResolvesToArray()
+    {
+        $expected = [
+            'data' => [
+                'youShallNotSeeThisUnauthenticated' => null,
+            ],
+            'extensions' => [
+                'warnings' => [
+                    'message' => 'Access denied to this field.',
+                    'locations' => [
+                        [
+                            'line' => 3,
+                            'column' => 5,
+                        ],
+                    ],
+                    'path' => ['youShallNotSeeThisUnauthenticated'],
+                    'category' => 'user',
+                ],
+            ],
+        ];
+
+        $query = <<<'EOF'
+{
+  youShallNotSeeThisUnauthenticated {
+    secretValue
+    youAreAuthenticated
+  }
+}
+EOF;
+
+        $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'access');
+    }
+
     public function testFullyAuthenticatedUserAccessToUserName(): void
     {
         $expected = [
