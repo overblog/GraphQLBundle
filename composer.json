@@ -48,6 +48,8 @@
         "react/promise": "To use ReactPHP promise adapter"
     },
     "require-dev": {
+        "phpstan/phpstan": "^0.10.3",
+        "phpstan/phpstan-phpunit": "^0.10.0",
         "phpunit/phpunit": "^5.7.26 || ^6.0 || ^7.2",
         "react/promise": "^2.5",
         "sensio/framework-extra-bundle": "^3.0",
@@ -69,11 +71,7 @@
     },
     "scripts": {
         "test": "bin/phpunit --color=always -v --debug",
-        "static-analysis": [
-            "@composer req --ansi --dev 'phpstan/phpstan:^0.10.3' 'phpstan/phpstan-phpunit:^0.10.0'",
-            "phpstan analyse --ansi -l 1 src tests",
-            "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit"
-        ],
+        "static-analysis": "phpstan analyse --ansi",
         "bench":  [
             "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"

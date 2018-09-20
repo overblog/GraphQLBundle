@@ -15,6 +15,7 @@ use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
+use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -134,14 +135,10 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setConfigBuilders(array $config, ContainerBuilder $container): void
     {
-        $useObjectToAddResource = \method_exists($container, 'addObjectResource');
-        $objectToAddResourceMethod = $useObjectToAddResource ? 'addObjectResource' : 'addClassResource';
-
         foreach (BuilderProcessor::BUILDER_TYPES as $type) {
             if (!empty($config['definitions']['builders'][$type])) {
                 foreach ($config['definitions']['builders'][$type] as $params) {
-                    $object = $useObjectToAddResource ? $params['class'] : new \ReflectionClass($params['class']);
-                    $container->$objectToAddResourceMethod($object);
+                    $container->addObjectResource($params['class']);
                     BuilderProcessor::addBuilderClass($params['alias'], $type, $params['class']);
                 }
             }
@@ -216,23 +213,33 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     {
         if (isset($config['definitions']['schema'])) {
             $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
+            $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
 
             foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
                 $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
                 $definition = new Definition(Schema::class);
                 $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
                 $definition->setArguments([
+                    $schemaName,
                     $schemaConfig['query'],
                     $schemaConfig['mutation'],
                     $schemaConfig['subscription'],
-                    \array_map(function ($id) {
-                        return new Reference($id);
-                    }, $schemaConfig['resolver_maps']),
                     $schemaConfig['types'],
                 ]);
                 $definition->setPublic(false);
                 $container->setDefinition($schemaID, $definition);
 
+                if (!empty($schemaConfig['resolver_maps'])) {
+                    $typeDecoratorListenerDefinition->addMethodCall(
+                        'addSchemaResolverMaps',
+                        [
+                            $schemaName,
+                            \array_map(function ($id) {
+                                return new Reference($id);
+                            }, $schemaConfig['resolver_maps']),
+                        ]
+                    );
+                }
                 $executorDefinition->addMethodCall('addSchema', [$schemaName, new Reference($schemaID)]);
             }
         }

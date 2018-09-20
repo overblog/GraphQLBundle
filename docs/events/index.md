@@ -160,3 +160,35 @@ For example:
 *Note:*
 - This event is dispatch by this bundle default error handler, that the reason why, disabling
 error handler will also disable this event.
+
+Type loaded
+----------------
+
+*Event:* `graphql.type_loaded`
+
+This event can be listen to modified type before schema registration.
+
+For example:
+
+```yaml
+App\EventListener\TypeDecorator:
+    tags:
+        - { name: kernel.event_listener, event: graphql.type_loaded, method: onTypeLoaded }
+```
+
+```php
+<?php
+
+namespace App\EventListener;
+
+use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
+
+class TypeDecorator
+{
+  public function onTypeLoaded(TypeLoadedEvent $event)
+  {
+      $type = $event->getType();
+      // here we can modified type
+  }
+}
+```

@@ -81,6 +81,10 @@ abstract class AbstractResolver implements FluentResolverInterface
         return isset($this->solutionOptions[$id]) ? $this->solutionOptions[$id] : [];
     }
 
+    protected function onLoadSolution($solution): void
+    {
+    }
+
     /**
      * @param string $id
      *
@@ -97,10 +101,11 @@ abstract class AbstractResolver implements FluentResolverInterface
             return $this->solutions[$id];
         } else {
             $loader = $this->solutions[$id];
-            $this->solutions[$id] = $loader();
+            $this->solutions[$id] = $solution = $loader();
+            $this->onLoadSolution($solution);
             $this->fullyLoadedSolutions[$id] = true;
 
-            return $this->solutions[$id];
+            return $solution;
         }
     }
 
