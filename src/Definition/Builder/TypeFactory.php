@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
 use GraphQL\Type\Definition\Type;
@@ -19,12 +21,7 @@ final class TypeFactory
         $this->globalVariables = $globalVariables;
     }
 
-    /**
-     * @param string $class
-     *
-     * @return Type
-     */
-    public function create($class)
+    public function create(string $class): Type
     {
         return new $class($this->configProcessor, $this->globalVariables);
     }
