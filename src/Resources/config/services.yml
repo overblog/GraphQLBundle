@@ -35,6 +35,13 @@ services:
             - "@overblog_graphql.type_resolver"
             - false
 
+    overblog_graphql.type_factory:
+        class: Overblog\GraphQLBundle\Definition\Builder\TypeFactory
+        public: false
+        arguments:
+            - '@Overblog\GraphQLBundle\Definition\ConfigProcessor'
+            - '@Overblog\GraphQLBundle\Definition\GlobalVariables'
+
     overblog_graphql.type_resolver:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         public: true
