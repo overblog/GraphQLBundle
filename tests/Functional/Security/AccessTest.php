@@ -91,7 +91,7 @@ EOF;
         $this->assertResponse($this->userNameQuery, $expected, static::ANONYMOUS_USER, 'access');
     }
 
-    public function testNonAuthenticatedUserAccessSecuredFieldWhichInitiallyResolvesToArray()
+    public function testNonAuthenticatedUserAccessSecuredFieldWhichInitiallyResolvesToArray(): void
     {
         $expected = [
             'data' => [
@@ -109,7 +109,7 @@ EOF;
                         ],
                         'path' => ['youShallNotSeeThisUnauthenticated'],
                         'category' => 'user',
-                    ]
+                    ],
                 ],
             ],
         ];
