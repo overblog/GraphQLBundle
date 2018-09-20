@@ -2,8 +2,7 @@
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
-use Overblog\GraphQLBundle\Definition\ConfigProcessor;
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,9 +24,10 @@ class ConfigTypesPass implements CompilerPassInterface
 
     private function setTypeServiceDefinition(ContainerBuilder $container, $class, $alias)
     {
-        $definition = $container->setDefinition($class, new Definition($class));
+        $definition = $container->setDefinition($class, new Definition(Type::class));
+        $definition->setFactory([new Reference('overblog_graphql.type_factory'), 'create']);
         $definition->setPublic(false);
-        $definition->setArguments([new Reference(ConfigProcessor::class), new Reference(GlobalVariables::class)]);
+        $definition->setArguments([$class]);
         $definition->addTag(TypeTaggedServiceMappingPass::TAG_NAME, ['alias' => $alias, 'generated' => true]);
     }
 }
