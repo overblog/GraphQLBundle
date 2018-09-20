@@ -99,15 +99,17 @@ EOF;
             ],
             'extensions' => [
                 'warnings' => [
-                    'message' => 'Access denied to this field.',
-                    'locations' => [
-                        [
-                            'line' => 3,
-                            'column' => 5,
+                    [
+                        'message' => 'Access denied to this field.',
+                        'locations' => [
+                            [
+                                'line' => 2,
+                                'column' => 3,
+                            ],
                         ],
-                    ],
-                    'path' => ['youShallNotSeeThisUnauthenticated'],
-                    'category' => 'user',
+                        'path' => ['youShallNotSeeThisUnauthenticated'],
+                        'category' => 'user',
+                    ]
                 ],
             ],
         ];
