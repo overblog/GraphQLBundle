@@ -7,6 +7,8 @@ namespace Overblog\GraphQLBundle\Resolver;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -59,7 +61,9 @@ class AccessResolver
 
     private function processFilter($result, $accessChecker, $resolveArgs)
     {
-        if (\is_array($result)) {
+        /** @var ResolveInfo $resolveInfo */
+        $resolveInfo = $resolveArgs[3];
+        if (\is_array($result) && $resolveInfo->returnType instanceof ListOfType) {
             $result = \array_map(
                 function ($object) use ($accessChecker, $resolveArgs) {
                     return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
