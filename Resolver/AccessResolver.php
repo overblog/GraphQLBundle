@@ -72,12 +72,9 @@ class AccessResolver
         $resolveInfo = $resolveArgs[3];
 
         if (self::isIterable($result) && $resolveInfo->returnType instanceof ListOfType) {
-            $result = array_map(
-                function ($object) use ($accessChecker, $resolveArgs) {
-                    return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
-                },
-                $result
-            );
+            foreach ($result as $i => $object) {
+                $result[$i] = $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
+            }
         } elseif ($result instanceof Connection) {
             $result->edges = array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
