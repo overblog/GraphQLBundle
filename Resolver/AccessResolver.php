@@ -5,6 +5,8 @@ namespace Overblog\GraphQLBundle\Resolver;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
@@ -57,13 +59,13 @@ class AccessResolver
 
     private function processFilter($result, $accessChecker, $resolveArgs)
     {
-        if (is_array($result)) {
-            $result = array_map(
-                function ($object) use ($accessChecker, $resolveArgs) {
-                    return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
-                },
-                $result
-            );
+        /** @var ResolveInfo $resolveInfo */
+        $resolveInfo = $resolveArgs[3];
+
+        if (self::isIterable($result) && $resolveInfo->returnType instanceof ListOfType) {
+            foreach ($result as $i => $object) {
+                $result[$i] = $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
+            }
         } elseif ($result instanceof Connection) {
             $result->edges = array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
@@ -86,5 +88,19 @@ class AccessResolver
         $access = (bool) call_user_func_array($accessChecker, $resolveArgs);
 
         return $access;
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @return bool
+     */
+    private static function isIterable($data)
+    {
+        if (function_exists('is_iterable')) {
+            return \is_iterable($data);
+        } else {
+            return \is_array($data) || (\is_object($data) && ($data instanceof \Traversable));
+        }
     }
 }

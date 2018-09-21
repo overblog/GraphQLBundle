@@ -6,6 +6,10 @@ RootQuery:
             user:
                 type: User
                 resolve: '@=resolver("query")'
+            youShallNotSeeThisUnauthenticated:
+                type: SecureField
+                access: '@=isFullyAuthenticated()'
+                resolve: '@=[]'
 
 Mutation:
     type: object
@@ -47,6 +51,17 @@ User:
                 type: String!
         interfaces: [Human]
         isTypeOf: true
+
+SecureField:
+    type: object
+    config:
+        fields:
+            secretValue:
+                type: String!
+                resolve: 'top secret'
+            youAreAuthenticated:
+                type: Boolean!
+                resolve: '@=isFullyAuthenticated()'
 
 friendConnection:
     type: relay-connection
