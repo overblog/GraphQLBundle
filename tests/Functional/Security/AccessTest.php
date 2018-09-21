@@ -106,6 +106,7 @@ EOF;
                             ],
                         ],
                         'path' => ['youShallNotSeeThisUnauthenticated'],
+                        'category' => 'user',
                     ],
                 ],
             ],
