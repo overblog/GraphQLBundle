@@ -63,13 +63,11 @@ class AccessResolver
     {
         /** @var ResolveInfo $resolveInfo */
         $resolveInfo = $resolveArgs[3];
-        if (\is_array($result) && $resolveInfo->returnType instanceof ListOfType) {
-            $result = \array_map(
-                function ($object) use ($accessChecker, $resolveArgs) {
-                    return $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
-                },
-                $result
-            );
+
+        if (self::isIterable($result) && $resolveInfo->returnType instanceof ListOfType) {
+            foreach ($result as $i => $object) {
+                $result[$i] = $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
+            }
         } elseif ($result instanceof Connection) {
             $result->edges = \array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
@@ -92,5 +90,19 @@ class AccessResolver
         $access = (bool) \call_user_func_array($accessChecker, $resolveArgs);
 
         return $access;
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @return bool
+     */
+    private static function isIterable($data)
+    {
+        if (\function_exists('is_iterable')) {
+            return \is_iterable($data);
+        } else {
+            return \is_array($data) || (\is_object($data) && ($data instanceof \Traversable));
+        }
     }
 }
