@@ -23,6 +23,7 @@ matrix:
         - php: hhvm
         - php: nightly
     allow_failures:
+        - php: hhvm
         - php: nightly
 
 cache:
