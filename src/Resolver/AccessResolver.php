@@ -97,7 +97,7 @@ class AccessResolver
      */
     private static function isIterable($data)
     {
-        if (function_exists('is_iterable')) {
+        if (\function_exists('is_iterable')) {
             return \is_iterable($data);
         } else {
             return \is_array($data) || (\is_object($data) && ($data instanceof \Traversable));
