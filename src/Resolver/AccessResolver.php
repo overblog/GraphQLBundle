@@ -64,7 +64,7 @@ class AccessResolver
         /** @var ResolveInfo $resolveInfo */
         $resolveInfo = $resolveArgs[3];
 
-        if (self::isIterable($result) && $resolveInfo->returnType instanceof ListOfType) {
+        if (\is_iterable($result) && $resolveInfo->returnType instanceof ListOfType) {
             foreach ($result as $i => $object) {
                 $result[$i] = $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
             }
@@ -90,19 +90,5 @@ class AccessResolver
         $access = (bool) \call_user_func_array($accessChecker, $resolveArgs);
 
         return $access;
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
-    private static function isIterable($data)
-    {
-        if (\function_exists('is_iterable')) {
-            return \is_iterable($data);
-        } else {
-            return \is_array($data) || (\is_object($data) && ($data instanceof \Traversable));
-        }
     }
 }
