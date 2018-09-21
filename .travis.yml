@@ -35,8 +35,11 @@ before_install:
     - composer selfupdate
     - if [ $SYMFONY_VERSION ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" "symfony/framework-bundle:${SYMFONY_VERSION}" --dev --no-update; fi;
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
+    - echo "memory_limit=3072M" >> "$HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini"
 
-install: composer update --prefer-source --no-interaction --optimize-autoloader
+install:
+    - composer update --prefer-source --no-interaction --optimize-autoloader
+    - echo "memory_limit=256M" >> "$HOME/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini"
 
 script:
     - bin/phpunit --debug $( if [ $TEST_COVERAGE = true ]; then echo "-d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml"; fi; )
