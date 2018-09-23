@@ -10,6 +10,7 @@ return [
             'fields' => [
                 'hero' => [
                     'type' => 'Character',
+                    'description' => null,
                     'args' => [
                         'episodes' => [
                             'type' => '[Episode!]!',
@@ -24,6 +25,7 @@ return [
                     'args' => [
                         'id' => [
                             'type' => 'ID!',
+                            'description' => null,
                         ],
                     ],
                 ],
@@ -33,14 +35,17 @@ return [
     'Starship' => [
         'type' => 'object',
         'config' => [
+            'description' => null,
             'fields' => [
-                'id' => ['type' => 'ID!'],
-                'name' => ['type' => 'String!'],
+                'id' => ['type' => 'ID!', 'description' => null],
+                'name' => ['type' => 'String!', 'description' => null],
                 'length' => [
                     'type' => 'Float',
+                    'description' => null,
                     'args' => [
                         'unit' => [
                             'type' => 'LengthUnit',
+                            'description' => null,
                             'defaultValue' => 'METER',
                         ],
                     ],
@@ -51,34 +56,46 @@ return [
     'Episode' => [
         'type' => 'enum',
         'config' => [
+            'description' => null,
             'values' => [
-                'NEWHOPE' => ['value' => 'NEWHOPE'],
-                'EMPIRE' => ['value' => 'EMPIRE'],
-                'JEDI' => ['value' => 'JEDI'],
+                'NEWHOPE' => ['description' => null, 'value' => 'NEWHOPE'],
+                'EMPIRE' => ['description' => null, 'value' => 'EMPIRE'],
+                'JEDI' => [
+                    'description' => null,
+                    'value' => 'JEDI',
+                    'deprecationReason' => 'No longer supported',
+                ],
             ],
         ],
     ],
     'Character' => [
         'type' => 'interface',
         'config' => [
+            'description' => null,
             'fields' => [
-                'id' => ['type' => 'ID!'],
-                'name' => ['type' => 'String!'],
-                'friends' => ['type' => '[Character]'],
-                'appearsIn' => ['type' => '[Episode]!'],
+                'id' => ['type' => 'ID!', 'description' => null],
+                'name' => ['type' => 'String!', 'description' => null],
+                'friends' => ['type' => '[Character]', 'description' => null],
+                'appearsIn' => ['type' => '[Episode]!', 'description' => null],
+                'deprecatedField' => [
+                    'type' => 'String!',
+                    'description' => null,
+                    'deprecationReason' => 'This field was deprecated!',
+                ],
             ],
         ],
     ],
     'Human' => [
         'type' => 'object',
         'config' => [
+            'description' => null,
             'fields' => [
-                'id' => ['type' => 'ID!'],
-                'name' => ['type' => 'String!'],
-                'friends' => ['type' => '[Character]'],
-                'appearsIn' => ['type' => '[Episode]!'],
-                'starships' => ['type' => '[Starship]'],
-                'totalCredits' => ['type' => 'Int'],
+                'id' => ['type' => 'ID!', 'description' => null],
+                'name' => ['type' => 'String!', 'description' => null],
+                'friends' => ['type' => '[Character]', 'description' => null],
+                'appearsIn' => ['type' => '[Episode]!', 'description' => null],
+                'starships' => ['type' => '[Starship]', 'description' => null],
+                'totalCredits' => ['type' => 'Int', 'description' => null],
             ],
             'interfaces' => ['Character'],
         ],
@@ -86,12 +103,13 @@ return [
     'Droid' => [
         'type' => 'object',
         'config' => [
+            'description' => null,
             'fields' => [
-                'id' => ['type' => 'ID!'],
-                'name' => ['type' => 'String!'],
-                'friends' => ['type' => '[Character]'],
-                'appearsIn' => ['type' => '[Episode]!'],
-                'primaryFunction' => ['type' => 'String'],
+                'id' => ['type' => 'ID!', 'description' => null],
+                'name' => ['type' => 'String!', 'description' => null],
+                'friends' => ['type' => '[Character]', 'description' => null],
+                'appearsIn' => ['type' => '[Episode]!', 'description' => null],
+                'primaryFunction' => ['type' => 'String', 'description' => null],
             ],
             'interfaces' => ['Character'],
         ],
@@ -99,24 +117,27 @@ return [
     'SearchResult' => [
         'type' => 'union',
         'config' => [
+            'description' => null,
             'types' => ['Human', 'Droid', 'Starship'],
         ],
     ],
     'ReviewInput' => [
         'type' => 'input-object',
         'config' => [
+            'description' => null,
             'fields' => [
-                'stars' => ['type' => 'Int!', 'defaultValue' => 5],
-                'commentary' => ['type' => 'String', 'defaultValue' => null],
+                'stars' => ['type' => 'Int!', 'description' => null, 'defaultValue' => 5],
+                'commentary' => ['type' => 'String', 'description' => null, 'defaultValue' => null],
             ],
         ],
     ],
     'Year' => [
         'type' => 'custom-scalar',
         'config' => [
-            'serialize' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
-            'parseValue' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
-            'parseLiteral' => [\Overblog\GraphQLBundle\Config\Parser\GraphQLParser::class, 'mustOverrideConfig'],
+            'description' => null,
+            'serialize' => [\Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode::class, 'mustOverrideConfig'],
+            'parseValue' => [\Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode::class, 'mustOverrideConfig'],
+            'parseLiteral' => [\Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode::class, 'mustOverrideConfig'],
         ],
     ],
 ];
