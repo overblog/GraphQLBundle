@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
@@ -7,7 +9,7 @@ use GraphQL\Type\Definition\Directive;
 
 class DirectiveNode implements NodeInterface
 {
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
         $config = [];
 

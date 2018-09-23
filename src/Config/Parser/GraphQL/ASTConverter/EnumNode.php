@@ -1,21 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
 class EnumNode implements NodeInterface
 {
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
-        $config = [
-            'description' => DescriptionNode::toConfig($node),
-        ];
+        $config = DescriptionNode::toConfig($node);
 
         $values = [];
         foreach ($node->values as $value) {
-            $values[$value->name->value] = [
-                'description' => DescriptionNode::toConfig($node),
+            $values[$value->name->value] = DescriptionNode::toConfig($node) + [
                 'value' => $value->name->value,
             ];
 

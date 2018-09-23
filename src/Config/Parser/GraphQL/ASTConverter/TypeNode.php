@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
@@ -7,12 +9,12 @@ use GraphQL\Language\AST\NodeKind;
 
 class TypeNode implements NodeInterface
 {
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
-        return self::astTypeNodeToString($node->type);
+        return ['type' => self::astTypeNodeToString($node->type)];
     }
 
-    public static function astTypeNodeToString(\GraphQL\Language\AST\TypeNode $typeNode)
+    public static function astTypeNodeToString(\GraphQL\Language\AST\TypeNode $typeNode): string
     {
         $type = '';
         switch ($typeNode->kind) {

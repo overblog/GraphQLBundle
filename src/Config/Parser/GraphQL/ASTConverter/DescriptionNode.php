@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
 class DescriptionNode implements NodeInterface
 {
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
-        return self::cleanAstDescription($node->description);
+        return ['description' => self::cleanAstDescription($node->description)];
     }
 
     private static function cleanAstDescription($description)

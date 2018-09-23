@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
 class ObjectNode implements NodeInterface
 {
-    const TYPENAME = 'object';
+    protected const TYPENAME = 'object';
 
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
-        $config = [
-            'description' => DescriptionNode::toConfig($node),
+        $config = DescriptionNode::toConfig($node) + [
             'fields' => FieldsNode::toConfig($node),
         ];
 

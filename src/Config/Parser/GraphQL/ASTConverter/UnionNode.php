@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
 class UnionNode implements NodeInterface
 {
-    public static function toConfig(Node $node)
+    public static function toConfig(Node $node): array
     {
-        $config = ['description' => DescriptionNode::toConfig($node)];
+        $config = DescriptionNode::toConfig($node);
 
         if (!empty($node->types)) {
             $types = [];

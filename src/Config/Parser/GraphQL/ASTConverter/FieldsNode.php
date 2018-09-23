@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
@@ -8,15 +10,12 @@ use GraphQL\Language\AST\ValueNode;
 
 class FieldsNode implements NodeInterface
 {
-    public static function toConfig(Node $node, $property = 'fields')
+    public static function toConfig(Node $node, $property = 'fields'): array
     {
         $config = [];
         if (!empty($node->$property)) {
             foreach ($node->$property as $definition) {
-                $fieldConfig = [
-                    'type' => TypeNode::toConfig($definition),
-                    'description' => DescriptionNode::toConfig($definition),
-                ];
+                $fieldConfig = TypeNode::toConfig($definition) + DescriptionNode::toConfig($definition);
 
                 if (!empty($definition->arguments)) {
                     $fieldConfig['args'] = self::toConfig($definition, 'arguments');

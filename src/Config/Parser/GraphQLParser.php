@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use GraphQL\Language\AST\DefinitionNode;
@@ -11,7 +13,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class GraphQLParser implements ParserInterface
 {
-    const DEFINITION_TYPE_MAPPING = [
+    private const DEFINITION_TYPE_MAPPING = [
         NodeKind::OBJECT_TYPE_DEFINITION => 'object',
         NodeKind::INTERFACE_TYPE_DEFINITION => 'interface',
         NodeKind::ENUM_TYPE_DEFINITION => 'enum',
@@ -23,7 +25,7 @@ class GraphQLParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container)
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
         $content = \trim(\file_get_contents($file->getPathname()));
@@ -51,7 +53,7 @@ class GraphQLParser implements ParserInterface
         return $typesConfig;
     }
 
-    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef)
+    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef): void
     {
         $path = \explode('\\', \get_class($typeDef));
         throw new InvalidArgumentException(
