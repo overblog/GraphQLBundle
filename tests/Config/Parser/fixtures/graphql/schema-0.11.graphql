@@ -17,7 +17,7 @@ type Starship {
 enum Episode {
   NEWHOPE
   EMPIRE
-  JEDI
+  JEDI @deprecated
 }
 
 interface Character {
@@ -25,6 +25,7 @@ interface Character {
   name: String!
   friends: [Character]
   appearsIn: [Episode]!
+  deprecatedField: String! @deprecated(reason: "This field was deprecated!")
 }
 
 type Human implements Character {
