@@ -172,6 +172,14 @@ services:
         tags:
             - { name: console.command }
 
+    overblog_graphql.command.validate:
+        class: Overblog\GraphQLBundle\Command\ValidateCommand
+        public: true
+        calls:
+            - ['setRequestExecutorFactory', [[['@service_container', 'get'], ['overblog_graphql.request_executor']]]]
+        tags:
+            - { name: console.command }
+
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor
         public: false
