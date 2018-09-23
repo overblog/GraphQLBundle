@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -61,7 +62,7 @@ class GraphQLParserTest extends TestCase
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Config entry must be override with ResolverMap to be used.');
-        GraphQLParser::mustOverrideConfig();
+        CustomScalarNode::mustOverrideConfig();
     }
 
     private function assertContainerAddFileToResources($fileName): void

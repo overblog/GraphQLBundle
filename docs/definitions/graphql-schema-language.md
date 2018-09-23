@@ -31,7 +31,7 @@ type Character {
 ```graphql
 # Enumeration of episodes
 enum Episode {
-  NEWHOPE
+  NEWHOPE @deprecated
   EMPIRE
   JEDI
 }
@@ -45,7 +45,7 @@ enum Episode {
 interface Character {
   id: ID!
   name: String!
-  friends: [Character]
+  friends: [Character] @deprecated(reason: "This field was deprecated!")
   appearsIn: [Episode]!
 }
 ```
