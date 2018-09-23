@@ -44,8 +44,8 @@ class CompileCommandTest extends TestCase
     public function testGeneration()
     {
         $this->commandTester->execute([]);
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
-        $this->assertEquals($this->displayExpected(), $this->commandTester->getDisplay());
+        $this->assertSame(0, $this->commandTester->getStatusCode());
+        $this->assertSame($this->displayExpected(), $this->commandTester->getDisplay());
         foreach ($this->typesMapping as $class => $path) {
             $this->assertFileExists($path);
         }
@@ -54,7 +54,7 @@ class CompileCommandTest extends TestCase
     public function testVerboseGeneration()
     {
         $this->commandTester->execute([], ['verbosity' => Output::VERBOSITY_VERBOSE]);
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
+        $this->assertSame(0, $this->commandTester->getStatusCode());
         $this->assertRegExp(
             '@'.$this->displayExpected(true).'@',
             \preg_replace('@\.php[^\n]*\n@', ".php\n", $this->commandTester->getDisplay())

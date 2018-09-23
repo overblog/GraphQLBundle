@@ -54,7 +54,7 @@ class TypeResolverTest extends AbstractResolverTest
         $type = $this->resolver->resolve('Toto');
 
         $this->assertInstanceOf(ObjectType::class, $type);
-        $this->assertEquals('Toto', $type->name);
+        $this->assertSame('Toto', $type->name);
     }
 
     /**
@@ -80,7 +80,7 @@ class TypeResolverTest extends AbstractResolverTest
         $type = $this->resolver->resolve('[Tata]');
 
         $this->assertInstanceOf(ListOfType::class, $type);
-        $this->assertEquals('Tata', $type->getWrappedType());
+        $this->assertSame('Tata', $type->getWrappedType()->name);
     }
 
     public function testResolveWithNonNullWrapper()
@@ -89,7 +89,7 @@ class TypeResolverTest extends AbstractResolverTest
         $type = $this->resolver->resolve('Toto!');
 
         $this->assertInstanceOf(NonNull::class, $type);
-        $this->assertEquals('Toto', $type->getWrappedType());
+        $this->assertSame('Toto', $type->getWrappedType()->name);
     }
 
     public function testResolveWithNonNullListOfWrapper()
@@ -99,7 +99,7 @@ class TypeResolverTest extends AbstractResolverTest
 
         $this->assertInstanceOf(NonNull::class, $type);
         $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
-        $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
+        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
     }
 
     public function testResolveWitListOfNonNullWrapper()
@@ -109,7 +109,7 @@ class TypeResolverTest extends AbstractResolverTest
 
         $this->assertInstanceOf(ListOfType::class, $type);
         $this->assertInstanceOf(NonNull::class, $type->getWrappedType());
-        $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
+        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
     }
 
     public function testResolveWitNonNullListOfNonNullWrapper()
@@ -120,7 +120,7 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertInstanceOf(NonNull::class, $type);
         $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
         $this->assertInstanceOf(NonNull::class, $type->getWrappedType()->getWrappedType());
-        $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType()->getWrappedType());
+        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->getWrappedType()->name);
     }
 
     public function testResolveWitListOfListOfWrapper()
@@ -130,7 +130,7 @@ class TypeResolverTest extends AbstractResolverTest
 
         $this->assertInstanceOf(ListOfType::class, $type);
         $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
-        $this->assertEquals('Toto', $type->getWrappedType()->getWrappedType());
+        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
     }
 
     public function testAliases()

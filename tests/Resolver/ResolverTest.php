@@ -19,7 +19,7 @@ class ResolverTest extends TestCase
     {
         $info = new ResolveInfo(['fieldName' => $fieldName]);
 
-        $this->assertEquals($expected, Resolver::defaultResolveFn($source, [], [], $info));
+        $this->assertSame($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
 
     public function testSetObjectOrArrayValue()

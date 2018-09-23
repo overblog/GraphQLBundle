@@ -22,7 +22,7 @@ class HelloWordTest extends TestCase
     public function testMutation()
     {
         $query = 'mutation { sum(x: 5, y: 15) }';
-        $expectedData = ['sum' => '20'];
+        $expectedData = ['sum' => 20];
 
         $this->assertGraphQL($query, $expectedData);
     }

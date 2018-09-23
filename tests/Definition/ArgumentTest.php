@@ -22,14 +22,14 @@ class ArgumentTest extends TestCase
 
     public function testOffsetGet()
     {
-        $this->assertEquals($this->argument['toto'], 'tata');
+        $this->assertSame($this->argument['toto'], 'tata');
         $this->assertNull($this->argument['fake']);
     }
 
     public function testOffsetSet()
     {
         $this->argument['foo'] = 'bar';
-        $this->assertEquals($this->argument['foo'], 'bar');
+        $this->assertSame($this->argument['foo'], 'bar');
     }
 
     public function testOffsetExists()
@@ -50,6 +50,6 @@ class ArgumentTest extends TestCase
 
     public function testGetRawArgs()
     {
-        $this->assertEquals($this->rawArgs, $this->argument->getRawArguments());
+        $this->assertSame($this->rawArgs, $this->argument->getRawArguments());
     }
 }

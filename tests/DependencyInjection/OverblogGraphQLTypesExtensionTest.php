@@ -107,7 +107,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         ];
 
         $definition = $this->container->getDefinition('overblog_graphql.error_handler');
-        $this->assertEquals($expectedExceptionMap, $definition->getArgument(2));
+        $this->assertSame($expectedExceptionMap, $definition->getArgument(2));
     }
 
     /**
@@ -169,14 +169,13 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
             $this->container
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'foo' => [
                     'type' => 'object',
                     InheritanceProcessor::INHERITS_KEY => [],
                     'decorator' => false,
                     'config' => [
-                        'name' => 'foo',
                         'fields' => [
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
@@ -230,6 +229,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                 ],
                             ],
                         ],
+                        'name' => 'foo',
                         'interfaces' => [],
                     ],
                 ],

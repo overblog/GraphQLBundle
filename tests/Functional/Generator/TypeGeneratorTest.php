@@ -19,7 +19,7 @@ class TypeGeneratorTest extends TestCase
 
         $this->assertResponse('query { object { name privateData } }', $expected, self::USER_ADMIN, 'public');
 
-        $this->assertEquals(
+        $this->assertSame(
             'Cannot query field "privateData" on type "ObjectWithPrivateField".',
             \json_decode(
                 static::query(
@@ -39,7 +39,7 @@ class TypeGeneratorTest extends TestCase
 
     public function testFieldDefaultPublic()
     {
-        $this->assertEquals(
+        $this->assertSame(
             'Cannot query field "other" on type "ObjectWithPrivateField".',
             \json_decode(
                 static::query(

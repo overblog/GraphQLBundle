@@ -99,7 +99,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
             'resolve' => '@=resolver(\'relay_plural_identifying_field\', [args[\'username\'], context, info, resolveSingleInputCallback('.$expectedResolveSingleInputCallbackArg.')])',
         ];
 
-        $this->assertEquals($expected, $this->definition->toMappingDefinition($config));
+        $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
     public function validConfigProvider()

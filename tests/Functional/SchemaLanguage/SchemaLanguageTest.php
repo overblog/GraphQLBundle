@@ -16,34 +16,34 @@ QUERY;
             'data' => [
                 'humans' => [
                     [
-                        'id' => 1,
+                        'id' => '1',
                         'name' => 'Jon Snow',
-                        'direwolf' => ['id' => 7, 'name' => 'Ghost'],
+                        'direwolf' => ['id' => '7', 'name' => 'Ghost'],
                     ],
                     [
-                        'id' => 2,
+                        'id' => '2',
                         'name' => 'Arya',
-                        'direwolf' => ['id' => 8, 'name' => 'Nymeria'],
+                        'direwolf' => ['id' => '8', 'name' => 'Nymeria'],
                     ],
                     [
-                        'id' => 3,
+                        'id' => '3',
                         'name' => 'Bran',
-                        'direwolf' => ['id' => 9, 'name' => 'Summer'],
+                        'direwolf' => ['id' => '9', 'name' => 'Summer'],
                     ],
                     [
-                        'id' => 4,
+                        'id' => '4',
                         'name' => 'Rickon',
-                        'direwolf' => ['id' => 10, 'name' => 'Shaggydog'],
+                        'direwolf' => ['id' => '10', 'name' => 'Shaggydog'],
                     ],
                     [
-                        'id' => 5,
+                        'id' => '5',
                         'name' => 'Robb',
-                        'direwolf' => ['id' => 11, 'name' => 'Grey Wind'],
+                        'direwolf' => ['id' => '11', 'name' => 'Grey Wind'],
                     ],
                     [
-                        'id' => 6,
+                        'id' => '6',
                         'name' => 'Sansa',
-                        'direwolf' => ['id' => 12, 'name' => 'Lady'],
+                        'direwolf' => ['id' => '12', 'name' => 'Lady'],
                     ],
                 ],
             ],

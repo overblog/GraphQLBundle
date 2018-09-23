@@ -55,7 +55,7 @@ class NodeFieldDefinitionTest extends TestCase
             'resolve' => '@=resolver(\'relay_node_field\', [args, context, info, idFetcherCallback('.$idFetcherCallbackArg.')])',
         ];
 
-        $this->assertEquals($expected, $this->definition->toMappingDefinition($config));
+        $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
     public function validConfigProvider()

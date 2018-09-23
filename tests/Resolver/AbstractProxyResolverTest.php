@@ -20,7 +20,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
     {
         $result = $this->resolver->resolve(['Toto', ['my', 'resolve', 'test']]);
 
-        $this->assertEquals(['my', 'resolve', 'test'], $result);
+        $this->assertSame(['my', 'resolve', 'test'], $result);
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
             $this->resolver->getSolution($alias)
         );
 
-        $this->assertEquals(['my', 'resolve', 'test'], $result);
+        $this->assertSame(['my', 'resolve', 'test'], $result);
     }
 
     /**

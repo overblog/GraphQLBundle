@@ -55,7 +55,7 @@ EOF
             });
         });
 
-        $this->assertEquals(
+        $this->assertSame(
             $output,
             $this->adapter->wait($promise, function () use (&$process) {
                 $process->wait();

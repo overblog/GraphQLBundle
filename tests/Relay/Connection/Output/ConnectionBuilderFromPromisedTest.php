@@ -2,6 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 
+use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use React\Promise\FulfilledPromise;
 
@@ -75,9 +76,9 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
         return \React\Promise\resolve($letters ?: $this->letters);
     }
 
-    private function assertEqualsFromPromised($expected, FulfilledPromise $promise)
+    private function assertEqualsFromPromised(Connection $expected, FulfilledPromise $promise)
     {
-        $this->assertEquals($expected, self::await($promise));
+        $this->assertSameConnection($expected, self::await($promise));
     }
 
     private static function await(FulfilledPromise $promise)

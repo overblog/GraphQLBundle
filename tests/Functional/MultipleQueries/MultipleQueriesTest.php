@@ -23,10 +23,6 @@ class MultipleQueriesTest extends TestCase
     ];
 
     const OPTIONAL_FAILS = [
-        'data' => [
-            'fail' => null,
-            'success' => 'foo',
-        ],
         'errors' => [
             [
                 'message' => 'Internal server Error',
@@ -41,6 +37,10 @@ class MultipleQueriesTest extends TestCase
                     'fail',
                 ],
             ],
+        ],
+        'data' => [
+            'fail' => null,
+            'success' => 'foo',
         ],
     ];
 
@@ -60,7 +60,7 @@ class MultipleQueriesTest extends TestCase
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
         $this->assertTrue(empty($result['data']));
     }
 
@@ -73,7 +73,7 @@ EOF;
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::OPTIONAL_FAILS, $result);
+        $this->assertSame(self::OPTIONAL_FAILS, $result);
     }
 
     public function testMutationRequiredFails()
@@ -85,7 +85,7 @@ mutation {
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
         $this->assertTrue(empty($result['data']));
     }
 
@@ -98,6 +98,6 @@ mutation {
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEquals(self::OPTIONAL_FAILS, $result);
+        $this->assertSame(self::OPTIONAL_FAILS, $result);
     }
 }

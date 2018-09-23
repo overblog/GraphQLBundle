@@ -19,7 +19,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection($this->letters, false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsASmallerFirst()
@@ -28,7 +28,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['A', 'B'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsAnOverlyLargeFirst()
@@ -37,7 +37,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection($this->letters, false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsASmallerLast()
@@ -46,7 +46,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['D', 'E'], true, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsAnOverlyLargeLast()
@@ -55,7 +55,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection($this->letters, false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsFirstAndAfter()
@@ -67,7 +67,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C', 'D'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsFirstAndAfterWithLongFirst()
@@ -79,7 +79,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C', 'D', 'E'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsLastAndBefore()
@@ -91,7 +91,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C'], true, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsLastAndBeforeWithLongLast()
@@ -103,7 +103,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['A', 'B', 'C'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsFirstAndAfterAndBeforeTooFew()
@@ -115,7 +115,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsFirstAndAfterAndBeforeTooMany()
@@ -127,7 +127,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsFirstAndAfterAndBeforeExactlyRight()
@@ -139,7 +139,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsLastAndAfterAndBeforeTooFew()
@@ -151,7 +151,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C', 'D'], true, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsLastAndAfterAndBeforeTooMany()
@@ -163,7 +163,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testRespectsLastAndAfterAndBeforeExactlyRight()
@@ -175,7 +175,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -215,7 +215,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             new PageInfo(null, null, false, true)
         );
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testReturnsAllElementsIfCursorsAreInvalid()
@@ -227,7 +227,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection($this->letters, false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testReturnsAllElementsIfCursorsAreOnTheOutside()
@@ -239,7 +239,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection($this->letters, false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testReturnsNoElementsIfCursorsCross()
@@ -251,7 +251,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection([], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -267,7 +267,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -283,7 +283,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['B', 'C'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -299,7 +299,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -315,7 +315,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -331,7 +331,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['D', 'E'], false, false);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -347,7 +347,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['C', 'D'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     /**
@@ -363,14 +363,14 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
         $expected = $this->getExpectedConnection(['D'], false, true);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSameConnection($expected, $actual);
     }
 
     public function testReturnsAnEdgesCursorGivenAnArrayAndAMemberObject()
     {
         $letterCursor = ConnectionBuilder::cursorForObjectInConnection($this->letters, 'B');
 
-        $this->assertEquals('YXJyYXljb25uZWN0aW9uOjE=', $letterCursor);
+        $this->assertSame('YXJyYXljb25uZWN0aW9uOjE=', $letterCursor);
     }
 
     public function testReturnsAnEdgesCursorGivenAnArrayAndANonMemberObject()

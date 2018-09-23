@@ -49,7 +49,7 @@ class DebugCommandTest extends TestCase
         }
 
         $this->commandTester->execute(['--category' => $categories]);
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
+        $this->assertSame(0, $this->commandTester->getStatusCode());
 
         $expected = "\n";
         foreach ($categories as $category) {

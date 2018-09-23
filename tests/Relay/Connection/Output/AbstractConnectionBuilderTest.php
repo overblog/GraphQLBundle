@@ -33,4 +33,26 @@ abstract class AbstractConnectionBuilderTest extends TestCase
             )
         );
     }
+
+    protected function assertSameConnection(Connection $expectedConnection, Connection $actualConnection)
+    {
+        // assert totalCount
+        $this->assertSame($expectedConnection->totalCount, $actualConnection->totalCount);
+
+        // assert pageInfo
+        foreach (['endCursor', 'hasNextPage', 'hasPreviousPage', 'startCursor'] as $property) {
+            $this->assertSame(
+                $expectedConnection->pageInfo->$property,
+                $actualConnection->pageInfo->$property
+            );
+        }
+
+        // assert edges
+        $this->assertCount(\count($expectedConnection->edges), $actualConnection->edges);
+        foreach ($expectedConnection->edges as $i => $expectedEdge) {
+            foreach (['cursor', 'node'] as $property) {
+                $this->assertSame($expectedEdge->$property, $actualConnection->edges[$i]->$property);
+            }
+        }
+    }
 }
