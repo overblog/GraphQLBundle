@@ -71,7 +71,7 @@
         "test": "bin/phpunit --color=always -v --debug",
         "static-analysis": [
             "@composer req --ansi --dev 'phpstan/phpstan:^0.10.3' 'phpstan/phpstan-phpunit:^0.10.0'",
-            "phpstan analyse --ansi -l 1 src tests",
+            "phpstan analyse --ansi",
             "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit"
         ],
         "bench":  [
