@@ -30,7 +30,7 @@ class GraphQLParserTest extends TestCase
 
         $this->assertContainerAddFileToResources($fileName);
         $config = GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
-        $this->assertEquals($expected, self::cleanConfig($config));
+        $this->assertSame($expected, self::cleanConfig($config));
     }
 
     public function testParseEmptyFile(): void
@@ -40,7 +40,7 @@ class GraphQLParserTest extends TestCase
         $this->assertContainerAddFileToResources($fileName);
 
         $config = GraphQLParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
-        $this->assertEquals([], $config);
+        $this->assertSame([], $config);
     }
 
     public function testParseInvalidFile(): void

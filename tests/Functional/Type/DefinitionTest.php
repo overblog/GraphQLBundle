@@ -23,11 +23,11 @@ class DefinitionTest extends TestCase
         /** @var EnumType $enumTypeWithDeprecatedValue */
         $enumTypeWithDeprecatedValue = $this->getType('EnumWithDeprecatedValue');
         $value = $enumTypeWithDeprecatedValue->getValues()[0];
-        $this->assertEquals([
+        $this->assertSame([
             'name' => 'foo',
-            'description' => null,
-            'deprecationReason' => 'Just because',
             'value' => 'foo',
+            'deprecationReason' => 'Just because',
+            'description' => null,
         ], $value->config);
         $this->assertTrue($value->isDeprecated());
     }
@@ -37,11 +37,11 @@ class DefinitionTest extends TestCase
         /** @var ObjectType $TypeWithDeprecatedField */
         $TypeWithDeprecatedField = $this->getType('ObjectWithDeprecatedField');
         $field = $TypeWithDeprecatedField->getField('bar');
-        $this->assertEquals(Type::string(), $field->getType());
+        $this->assertSame(Type::string(), $field->getType());
         $this->assertTrue($field->isDeprecated());
-        $this->assertEquals('A terrible reason', $field->deprecationReason);
-        $this->assertEquals('bar', $field->name);
-        $this->assertEquals([], $field->args);
+        $this->assertSame('A terrible reason', $field->deprecationReason);
+        $this->assertSame('bar', $field->name);
+        $this->assertSame([], $field->args);
     }
 
     private function getType($type)

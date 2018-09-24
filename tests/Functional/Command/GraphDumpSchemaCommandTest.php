@@ -134,7 +134,7 @@ class GraphDumpSchemaCommandTest extends TestCase
     {
         $this->commandTester->execute($input);
 
-        $this->assertEquals($expectedStatusCode, $this->commandTester->getStatusCode());
+        $this->assertSame($expectedStatusCode, $this->commandTester->getStatusCode());
         $expected = \trim(\file_get_contents($expectedFile));
         $actual = \trim(\file_get_contents($actualFile));
         if ('json' === $format) {
@@ -146,7 +146,7 @@ class GraphDumpSchemaCommandTest extends TestCase
             $expected = \preg_replace('@"""(.*)"""@', '# $1', $expected);
         }
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     private function sortSchemaEntry(array &$entries, $entryKey, $sortBy): void
