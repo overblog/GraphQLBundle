@@ -32,12 +32,16 @@ script: composer test
 jobs:
     include:
         - php: 7.2
-          env: SYMFONY_VERSION=3.4.* GRAPHQLPHP_VERSION=^0.11.2
+          env: SYMFONY_VERSION=3.4.*
+        - php: 7.2
+          env: SYMFONY_VERSION=4.0.*
         - php: 7.2
           env: SYMFONY_VERSION=4.1.* STABILITY=beta
         - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
-        - php: 7.2
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs GRAPHQLPHP_VERSION="dev-master"
+
+        - stage: Code Quality
+          php: 7.2
           env: COVERAGE
           before_script:
             - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}

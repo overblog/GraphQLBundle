@@ -175,9 +175,12 @@ services:
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor
         public: false
+        arguments: [!tagged overblog_graphql.definition_config_processor]
 
     Overblog\GraphQLBundle\Definition\GlobalVariables:
         class: Overblog\GraphQLBundle\Definition\GlobalVariables
         public: false
         arguments:
             - []
+
+    GraphQL\Executor\Promise\PromiseAdapter: '@overblog_graphql.promise_adapter'

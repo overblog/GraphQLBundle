@@ -11,62 +11,31 @@ final class ConfigProcessor implements ConfigProcessorInterface
     /**
      * @var ConfigProcessorInterface[]
      */
-    private $orderedProcessors;
-
-    /**
-     * @var array
-     */
     private $processors;
 
-    /**
-     * @var bool
-     */
-    private $isInitialized = false;
-
-    public function addConfigProcessor(ConfigProcessorInterface $configProcessor, $priority = 0): void
+    public function __construct(iterable $processors)
     {
-        $this->register($configProcessor, $priority);
-    }
-
-    public function register(ConfigProcessorInterface $configProcessor, $priority = 0): void
-    {
-        if ($this->isInitialized) {
-            throw new \LogicException('Registering config processor after calling process() is not supported.');
+        foreach ($processors as $processor) {
+            $this->register($processor);
         }
-        $this->processors[] = ['processor' => $configProcessor, 'priority' => $priority];
     }
 
-    public function getOrderedProcessors()
+    public function getProcessors()
     {
-        $this->initialize();
+        return $this->processors;
+    }
 
-        return $this->orderedProcessors;
+    public function register(ConfigProcessorInterface $configProcessor): void
+    {
+        $this->processors[] = $configProcessor;
     }
 
     public function process(LazyConfig $lazyConfig): LazyConfig
     {
-        foreach ($this->getOrderedProcessors() as $processor) {
+        foreach ($this->getProcessors() as $processor) {
             $lazyConfig = $processor->process($lazyConfig);
         }
 
         return $lazyConfig;
-    }
-
-    private function initialize(): void
-    {
-        if (!$this->isInitialized) {
-            // order processors by DESC priority
-            $processors = $this->processors;
-            \usort($processors, function ($processorA, $processorB) {
-                if ($processorA['priority'] === $processorB['priority']) {
-                    return 0;
-                }
-
-                return ($processorA['priority'] < $processorB['priority']) ? 1 : -1;
-            });
-
-            $this->orderedProcessors = \array_column($processors, 'processor');
-            $this->isInitialized = true;
-        }
     }
 }
