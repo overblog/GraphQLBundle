@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Error\Warning;
+use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,7 +14,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ValidateCommand extends Command
 {
-    use RequestExecutorLazyLoaderTrait;
+    /** @var RequestExecutor */
+    private $requestExecutor;
+
+    public function __construct(RequestExecutor $requestExecutor)
+    {
+        parent::__construct();
+        $this->requestExecutor = $requestExecutor;
+    }
+
+    public function setRequestExecutor(RequestExecutor $requestExecutor): void
+    {
+        $this->requestExecutor = $requestExecutor;
+    }
+
+    public function getRequestExecutor(): RequestExecutor
+    {
+        return $this->requestExecutor;
+    }
 
     protected function configure(): void
     {

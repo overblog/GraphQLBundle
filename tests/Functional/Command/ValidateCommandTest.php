@@ -49,11 +49,10 @@ class ValidateCommandTest extends TestCase
         $executor->expects($this->once())->method('getSchema')
             ->with('foo')
             ->willReturn($schema);
-        $schema->expects($this->once())->method('assertValid')->willThrowException(new InvariantViolation('broken schema'));
+        $schema->expects($this->once())->method('assertValid')
+            ->willThrowException(new InvariantViolation('broken schema'));
 
-        $this->command->setRequestExecutorFactory([function () use ($executor) {
-            return $executor;
-        }, []]);
+        $this->command->setRequestExecutor($executor);
 
         $this->commandTester->execute(['--schema' => 'foo']);
         $this->assertEquals(0, $this->commandTester->getStatusCode());
