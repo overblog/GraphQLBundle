@@ -86,7 +86,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $executionResult->toArray());
+        $this->assertSame($expected, $executionResult->toArray());
     }
 
     public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue(): void
@@ -135,7 +135,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $executionResult->toArray());
+        $this->assertSame($expected, $executionResult->toArray());
     }
 
     public function testDebugEnabled(): void
@@ -155,8 +155,8 @@ class ErrorHandlerTest extends TestCase
             $errors = $executionResult->toArray()['errors'];
             $this->assertCount(1, $errors);
             $this->assertArrayHasKey('debugMessage', $errors[0]);
-            $this->assertEquals('Error wrapped exception', $errors[0]['debugMessage']);
-            $this->assertEquals(ErrorHandler::DEFAULT_ERROR_MESSAGE, $errors[0]['message']);
+            $this->assertSame('Error wrapped exception', $errors[0]['debugMessage']);
+            $this->assertSame(ErrorHandler::DEFAULT_ERROR_MESSAGE, $errors[0]['message']);
             $this->assertArrayHasKey('trace', $errors[0]);
         }
     }
@@ -181,7 +181,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $executionResult->toArray());
+        $this->assertSame($expected, $executionResult->toArray());
     }
 
     public function testConvertExceptionToUserWarning(): void
@@ -208,7 +208,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $executionResult->toArray());
+        $this->assertSame($expected, $executionResult->toArray());
     }
 
     /**
@@ -242,7 +242,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleErrors($executionResult, true);
 
         if (\is_array($expectedUserError)) {
-            $this->assertEquals($expectedUserError, $executionResult->toArray());
+            $this->assertSame($expectedUserError, $executionResult->toArray());
         }
     }
 

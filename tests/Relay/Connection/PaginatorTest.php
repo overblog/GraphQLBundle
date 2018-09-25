@@ -42,9 +42,9 @@ class PaginatorTest extends TestCase
      */
     protected function assertSameEdgeNodeValue($expected, Connection $result): void
     {
-        $this->assertEquals(\count($expected), \count($result->edges));
+        $this->assertCount(\count($expected), $result->edges);
         foreach ($expected as $key => $value) {
-            $this->assertEquals($value, $result->edges[$key]->node);
+            $this->assertSame($value, $result->edges[$key]->node);
         }
     }
 

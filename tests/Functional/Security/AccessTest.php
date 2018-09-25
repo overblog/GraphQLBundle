@@ -80,9 +80,9 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
+                        'category' => 'user',
                         'locations' => [['line' => 1, 'column' => 16]],
                         'path' => ['user', 'name'],
-                        'category' => 'user',
                     ],
                 ],
             ],
@@ -101,6 +101,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
+                        'category' => 'user',
                         'locations' => [
                             [
                                 'line' => 2,
@@ -108,7 +109,6 @@ EOF;
                             ],
                         ],
                         'path' => ['youShallNotSeeThisUnauthenticated'],
-                        'category' => 'user',
                     ],
                 ],
             ],
@@ -172,6 +172,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
+                        'category' => 'user',
                         'locations' => [
                             [
                                 'line' => 3,
@@ -179,7 +180,6 @@ EOF;
                             ],
                         ],
                         'path' => ['user', 'forbidden'],
-                        'category' => 'user',
                     ],
                 ],
             ],
@@ -244,6 +244,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
+                        'category' => 'user',
                         'locations' => [
                             [
                                 'line' => 3,
@@ -251,7 +252,6 @@ EOF;
                             ],
                         ],
                         'path' => ['simpleMutationWithThunkFields', 'result'],
-                        'category' => 'user',
                     ],
                 ],
             ],
@@ -264,12 +264,10 @@ EOF;
     public function testMutationNotAllowedUser(): void
     {
         $expected = [
-            'data' => [
-                'simpleMutationWithThunkFields' => null,
-            ],
             'errors' => [
                 [
                     'message' => 'Access denied to this field.',
+                    'category' => 'user',
                     'locations' => [
                         [
                             'line' => 2,
@@ -277,8 +275,10 @@ EOF;
                         ],
                     ],
                     'path' => ['simpleMutationWithThunkFields'],
-                    'category' => 'user',
                 ],
+            ],
+            'data' => [
+                'simpleMutationWithThunkFields' => null,
             ],
         ];
 

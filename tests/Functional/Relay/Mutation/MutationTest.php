@@ -32,7 +32,7 @@ EOF;
         $result = $this->executeGraphQLRequest($query);
 
         $this->assertCount(1, $result['errors']);
-        $this->assertEquals(
+        $this->assertSame(
             'Field "simpleMutation" argument "input" of type "simpleMutationInput!" is required but not provided.',
             $result['errors'][0]['message']
         );
