@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-class ResolverMap implements ResolverMapInterface
+abstract class ResolverMap implements ResolverMapInterface
 {
     /** @var array[] */
     private $loadedMap;
@@ -20,10 +20,7 @@ class ResolverMap implements ResolverMapInterface
      *
      * @return callable[]
      */
-    protected function map()
-    {
-        throw new \LogicException(\sprintf('You must override the %s::map() method.', \get_class($this)));
-    }
+    abstract protected function map();
 
     private function getLoadedMap()
     {
