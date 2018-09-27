@@ -33,19 +33,6 @@ class ResolverMapTest extends TestCase
         $this->assertSame(\array_keys($map), $covered);
     }
 
-    public function testMapMustBeOverride(): void
-    {
-        /** @var ResolverMap|\PHPUnit_Framework_MockObject_MockObject $resolverMap */
-        $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(null)->getMock();
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage(\sprintf(
-            'You must override the %s::map() method.',
-            \get_class($resolverMap)
-        ));
-
-        $resolverMap->resolve('Foo', 'bar');
-    }
-
     /**
      * @dataProvider invalidMapDataProvider
      *
