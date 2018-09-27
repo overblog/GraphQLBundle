@@ -141,8 +141,7 @@ services:
   In this case the first resolverMap in list where `isResolvable`
   returns `true` will be use.
 - You don’t need to specify resolvers for every type in your schema.
-  If you don’t specify a resolver, GraphQL falls back to a default one,
-  which does the following.
+  If you don’t specify a resolver, GraphQL falls back to a default one.
 
 Credits
 -------
