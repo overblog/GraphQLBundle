@@ -6,6 +6,20 @@ If you want to learn more about it, you can see
 the [official documentation](http://graphql.org/learn/schema/)
 or this [cheat sheet](https://github.com/sogko/graphql-shorthand-notation-cheat-sheet).
 
+#### Configuration
+
+```
+overblog_graphql:
+    definitions:
+        schema:
+            # ...
+        mappings:
+            types:
+                -
+                    type: graphql
+                    dir: "%kernel.project_dir%/config/graphql/types"
+```
+
 #### Usage
 
 ##### Define Types
@@ -14,7 +28,7 @@ or this [cheat sheet](https://github.com/sogko/graphql-shorthand-notation-cheat-
 
 
 ```graphql
-# config/graphql/schema.types.graphql
+# config/graphql/types/schema.types.graphql
 
 type Character {
   # Name of the character
