@@ -50,16 +50,16 @@ usleep(30);
 echo '$output';
 EOF
         );
+        $result = new ExecutionResult(['output' => $output]);
 
-        $promise = $this->adapter->create(function (callable $resolve) use (&$process): void {
-            $process->start(function () use ($resolve, &$process): void {
-                $output = $process->getOutput();
-                $resolve(new ExecutionResult(['output' => $output]));
+        $promise = $this->adapter->create(function (callable $resolve) use (&$process, $result): void {
+            $process->start(function () use ($resolve, $result): void {
+                $resolve($result);
             });
         });
 
-        $this->assertEquals(
-            new ExecutionResult(['output' => $output]),
+        $this->assertSame(
+            $result,
             $this->adapter->wait($promise, function () use (&$process): void {
                 $process->wait();
             })

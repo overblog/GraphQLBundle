@@ -67,7 +67,7 @@ EOF;
 
         $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
+        $this->assertSame(['data' => $this->expectedData], \json_decode($result, true), $result);
         $this->assertCORSHeadersExists($client);
     }
 
@@ -179,7 +179,7 @@ EOF;
 
         $client->request('POST', '/', ['query' => $query, 'operationName' => 'FriendsQuery'], [], ['CONTENT_TYPE' => 'application/x-www-form-urlencoded']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
+        $this->assertSame(['data' => $this->expectedData], \json_decode($result, true), $result);
     }
 
     /**
@@ -208,7 +208,7 @@ EOF;
             ['id' => 'friends', 'payload' => ['data' => $this->expectedData]],
             ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];
-        $this->assertEquals($expected, \json_decode($result, true), $result);
+        $this->assertSame($expected, \json_decode($result, true), $result);
     }
 
     public function graphQLBatchEndpointUriProvider()
@@ -268,7 +268,7 @@ EOF;
         $client = static::createClient(['test_case' => 'connection']);
         $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
         $this->assertCORSHeadersNotExists($client);
     }
 
@@ -276,7 +276,7 @@ EOF;
     {
         $client = static::createClient(['test_case' => 'connection']);
         $client->request('PUT', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
-        $this->assertEquals(405, $client->getResponse()->getStatusCode());
+        $this->assertSame(405, $client->getResponse()->getStatusCode());
     }
 
     public function testPreflightedRequestWhenEnabled(): void
@@ -292,7 +292,7 @@ EOF;
 
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
         $result = $client->getResponse()->getContent();
-        $this->assertEquals(['data' => $this->expectedData], \json_decode($result, true), $result);
+        $this->assertSame(['data' => $this->expectedData], \json_decode($result, true), $result);
         $this->assertCORSHeadersNotExists($client);
     }
 
@@ -309,11 +309,11 @@ EOF;
     private function assertCORSHeadersExists(Client $client): void
     {
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('http://example.com', $response->headers->get('Access-Control-Allow-Origin'));
-        $this->assertEquals('OPTIONS, GET, POST', $response->headers->get('Access-Control-Allow-Methods'));
-        $this->assertEquals('true', $response->headers->get('Access-Control-Allow-Credentials'));
-        $this->assertEquals('Content-Type, Authorization', $response->headers->get('Access-Control-Allow-Headers'));
-        $this->assertEquals(3600, $response->headers->get('Access-Control-Max-Age'));
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('http://example.com', $response->headers->get('Access-Control-Allow-Origin'));
+        $this->assertSame('OPTIONS, GET, POST', $response->headers->get('Access-Control-Allow-Methods'));
+        $this->assertSame('true', $response->headers->get('Access-Control-Allow-Credentials'));
+        $this->assertSame('Content-Type, Authorization', $response->headers->get('Access-Control-Allow-Headers'));
+        $this->assertSame(3600, $response->headers->get('Access-Control-Max-Age'));
     }
 }

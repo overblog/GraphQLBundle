@@ -16,6 +16,6 @@ class FromGlobalIDTest extends TestCase
 
     public function testFromGlobalId(): void
     {
-        $this->assertEquals(['type' => 'User', 'id' => 15], eval('return '.$this->expressionLanguage->compile('fromGlobalId("VXNlcjoxNQ==")').';'));
+        $this->assertSame(['type' => 'User', 'id' => '15'], eval('return '.$this->expressionLanguage->compile('fromGlobalId("VXNlcjoxNQ==")').';'));
     }
 }

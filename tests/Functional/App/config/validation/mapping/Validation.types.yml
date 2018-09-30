@@ -1,0 +1,16 @@
+Query:
+    type: object
+    config:
+        fields:
+            user:
+                type: User
+User:
+    type: object
+    config:
+        fields:
+            name:
+                type: String
+            test:
+                type: User
+
+

@@ -146,13 +146,9 @@ services:
         public: true
         arguments:
             - "%kernel.root_dir%"
-        calls:
-            # "overblog_graphql.request_executor" service must be load lazy since that command service
-            # is instanced before ClassLoaderEvent. This issues is fix in Symfony 3.4 introducing lazy commands
-            # see https://symfony.com/blog/new-in-symfony-3-4-lazy-commands
-            - ['setRequestExecutorFactory', [[['@service_container', 'get'], ['overblog_graphql.request_executor']]]]
+            - "@overblog_graphql.request_executor"
         tags:
-            - { name: console.command }
+            - { name: console.command, command: graphql:dump-schema, alias: 'graph:dump-schema' }
 
     overblog_graphql.command.debug:
         class: Overblog\GraphQLBundle\Command\DebugCommand
@@ -162,7 +158,7 @@ services:
             - "@overblog_graphql.mutation_resolver"
             - "@overblog_graphql.resolver_resolver"
         tags:
-            - { name: console.command }
+            - { name: console.command, command: graphql:debug, alias: 'debug:graphql' }
 
     overblog_graphql.command.compile:
         class: Overblog\GraphQLBundle\Command\CompileCommand
@@ -170,14 +166,25 @@ services:
         arguments:
             - "@overblog_graphql.cache_compiler"
         tags:
-            - { name: console.command }
+            - { name: console.command, command: graphql:compile }
+
+    overblog_graphql.command.validate:
+        class: Overblog\GraphQLBundle\Command\ValidateCommand
+        public: true
+        arguments:
+            - '@overblog_graphql.request_executor'
+        tags:
+            - { name: console.command, command: graphql:validate }
 
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor
         public: false
+        arguments: [!tagged overblog_graphql.definition_config_processor]
 
     Overblog\GraphQLBundle\Definition\GlobalVariables:
         class: Overblog\GraphQLBundle\Definition\GlobalVariables
         public: false
         arguments:
             - []
+
+    GraphQL\Executor\Promise\PromiseAdapter: '@overblog_graphql.promise_adapter'

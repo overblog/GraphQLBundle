@@ -126,7 +126,7 @@ return [
         'config' => [
             'description' => null,
             'fields' => [
-                'stars' => ['type' => 'Int!', 'description' => null, 'defaultValue' => 5],
+                'stars' => ['type' => 'Int!', 'description' => null, 'defaultValue' => '5'],
                 'commentary' => ['type' => 'String', 'description' => null, 'defaultValue' => null],
             ],
         ],

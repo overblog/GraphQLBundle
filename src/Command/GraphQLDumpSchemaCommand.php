@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
+use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,15 +15,22 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class GraphQLDumpSchemaCommand extends Command
 {
-    use RequestExecutorLazyLoaderTrait;
+    /** @var RequestExecutor */
+    private $requestExecutor;
 
     /** @var string */
     private $baseExportPath;
 
-    public function __construct($baseExportPath)
+    public function __construct($baseExportPath, RequestExecutor $requestExecutor)
     {
         parent::__construct();
         $this->baseExportPath = $baseExportPath;
+        $this->requestExecutor = $requestExecutor;
+    }
+
+    public function getRequestExecutor(): RequestExecutor
+    {
+        return $this->requestExecutor;
     }
 
     protected function configure(): void

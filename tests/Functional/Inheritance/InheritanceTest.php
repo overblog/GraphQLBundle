@@ -23,13 +23,17 @@ class InheritanceTest extends TestCase
     public function testObjectInheritance(): void
     {
         $this->assertArrayHasKey('Query', $this->config);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'type' => 'object',
                 InheritanceProcessor::INHERITS_KEY => ['QueryFoo', 'QueryBar', 'QueryHelloWord'],
                 'decorator' => false,
                 'config' => [
                     'fields' => [
+                        'sayHello' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
                         'period' => [
                             'type' => 'Period',
                             'args' => [],
@@ -38,13 +42,9 @@ class InheritanceTest extends TestCase
                             'type' => 'String',
                             'args' => [],
                         ],
-                        'sayHello' => [
-                            'type' => 'String',
-                            'args' => [],
-                        ],
                     ],
-                    'interfaces' => ['QueryHelloWord'],
                     'name' => 'Query',
+                    'interfaces' => ['QueryHelloWord'],
                 ],
             ],
             $this->config['Query']
@@ -54,18 +54,18 @@ class InheritanceTest extends TestCase
     public function testEnumInheritance(): void
     {
         $this->assertArrayHasKey('Period', $this->config);
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'type' => 'enum',
                 InheritanceProcessor::INHERITS_KEY => ['Day', 'Month', 'Year'],
                 'decorator' => false,
                 'config' => [
-                    'name' => 'Period',
                     'values' => [
                         'YEAR' => ['value' => 3],
                         'MONTH' => ['value' => 2],
                         'DAY' => ['value' => 1],
                     ],
+                    'name' => 'Period',
                 ],
             ],
             $this->config['Period']

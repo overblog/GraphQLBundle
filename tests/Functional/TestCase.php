@@ -80,15 +80,15 @@ abstract class TestCase extends WebTestCase
 
         $expected = [];
 
-        if (null !== $expectedData) {
-            $expected['data'] = $expectedData;
-        }
-
         if (null !== $expectedErrors) {
             $expected['errors'] = $expectedErrors;
         }
 
-        static::assertEquals($expected, $result, \json_encode($result));
+        if (null !== $expectedData) {
+            $expected['data'] = $expectedData;
+        }
+
+        static::assertSame($expected, $result, \json_encode($result));
     }
 
     protected static function getContainer()
@@ -123,7 +123,7 @@ abstract class TestCase extends WebTestCase
         $client = self::createClientAuthenticated($username, $testCase, $password);
         $result = self::sendRequest($client, $query, false, $variables);
 
-        static::assertEquals($expected, \json_decode($result, true), $result);
+        static::assertSame($expected, \json_decode($result, true), $result);
 
         return $client;
     }

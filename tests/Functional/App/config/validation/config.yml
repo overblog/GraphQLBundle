@@ -1,0 +1,15 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        config_validation: false
+        class_namespace: "Overblog\\GraphQLBundle\\Validation\\__DEFINITIONS__"
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/validation/mapping"
