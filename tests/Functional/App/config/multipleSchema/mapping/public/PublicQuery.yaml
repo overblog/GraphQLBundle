@@ -1,0 +1,9 @@
+PublicQuery:
+    type: object
+    config:
+        name: Query
+        description: 'Root of the schema.'
+        fields:
+            foo:
+                type: 'String!'
+                resolve: "foo"
