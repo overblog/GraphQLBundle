@@ -10,6 +10,9 @@ final class NamedConfigProcessor implements ProcessorInterface
     public static function process(array $configs)
     {
         foreach ($configs as $name => &$config) {
+            if (empty($config['class_name'])) {
+                $config['class_name'] = \sprintf('%sType', $name);
+            }
             if (empty($config['config']['name'])) {
                 $config['config']['name'] = $name;
             }

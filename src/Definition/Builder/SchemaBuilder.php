@@ -38,7 +38,6 @@ class SchemaBuilder
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
-
         $schema = new ExtensibleSchema($this->buildSchemaArguments($query, $mutation, $subscription, $types));
         $extensions = [new DecoratorExtension(1 === \count($resolverMaps) ? \current($resolverMaps) : new ResolverMaps($resolverMaps))];
 

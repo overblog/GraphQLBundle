@@ -86,6 +86,11 @@ class TypeGenerator extends BaseTypeGenerator
         return $this;
     }
 
+    protected function generateClassName(array $config)
+    {
+        return $config['class_name'];
+    }
+
     protected function generateClassDocBlock(array $value)
     {
         return <<<'EOF'
