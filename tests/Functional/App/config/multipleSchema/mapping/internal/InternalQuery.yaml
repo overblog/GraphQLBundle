@@ -1,0 +1,10 @@
+InternalQuery:
+    type: object
+    inherits: [PublicQuery]
+    config:
+        description: 'Root of the schema.'
+        name: Query
+        fields:
+            bar:
+                type: 'String!'
+                resolve: "bar"
