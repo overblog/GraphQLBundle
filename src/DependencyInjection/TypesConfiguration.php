@@ -77,6 +77,15 @@ class TypesConfiguration implements ConfigurationInterface
                 ->end()
                 ->cannotBeOverwritten()
                 ->children()
+                    ->scalarNode('class_name')
+                        ->isRequired()
+                        ->validate()
+                            ->ifTrue(function ($name) {
+                                return !\preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name);
+                            })
+                            ->thenInvalid('A valid class name starts with a letter or underscore, followed by any number of letters, numbers, or underscores.')
+                        ->end()
+                    ->end()
                     ->enumNode('type')->values(self::$types)->isRequired()->end()
                     ->arrayNode(InheritanceProcessor::INHERITS_KEY)
                         ->prototype('scalar')->info('Types to inherit of.')->end()
@@ -115,7 +124,7 @@ class TypesConfiguration implements ConfigurationInterface
             // process beforeNormalization (should be execute after relay normalization)
             ->beforeNormalization()
                 ->ifTrue(function ($types) {
-                    return !empty($types) && \is_array($types);
+                    return \is_array($types);
                 })
                 ->then(function ($types) {
                     return Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION);

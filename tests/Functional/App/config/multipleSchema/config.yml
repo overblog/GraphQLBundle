@@ -1,0 +1,17 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\MultipleSchema\\__DEFINITIONS__"
+        schema:
+            public:
+                query: PublicQuery
+            internal:
+                query: InternalQuery
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.root_dir%/config/multipleSchema/mapping"
+                    suffix: ~
