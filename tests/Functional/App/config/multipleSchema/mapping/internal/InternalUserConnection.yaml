@@ -1,0 +1,8 @@
+InternalUserConnection:
+  type: relay-connection
+  config:
+    name: UserConnection
+    nodeType: InternalUser!
+    connectionFields:
+      totalCount:
+        type: Int!

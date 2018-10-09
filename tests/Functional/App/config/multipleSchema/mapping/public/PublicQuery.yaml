@@ -7,3 +7,5 @@ PublicQuery:
             foo:
                 type: 'String!'
                 resolve: "foo"
+            users:
+                type: 'PublicUserConnection!'

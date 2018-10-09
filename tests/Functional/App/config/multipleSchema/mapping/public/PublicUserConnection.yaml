@@ -1,0 +1,8 @@
+PublicUserConnection:
+  type: relay-connection
+  config:
+    name: UserConnection
+    nodeType: PublicUser!
+    connectionFields:
+      totalCount:
+        type: Int!

@@ -8,3 +8,5 @@ InternalQuery:
             bar:
                 type: 'String!'
                 resolve: "bar"
+            users:
+                type: 'InternalUserConnection!'

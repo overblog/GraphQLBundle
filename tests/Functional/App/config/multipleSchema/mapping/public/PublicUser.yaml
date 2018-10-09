@@ -1,0 +1,8 @@
+PublicUser:
+  type: object
+  config:
+    name: User
+    fields:
+      username:
+        type: 'String'
+        resolve: '@="username"'
