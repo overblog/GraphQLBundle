@@ -125,6 +125,7 @@ return [
             'description' => null,
             'fields' => [
                 'stars' => ['type' => 'Int!', 'description' => null, 'defaultValue' => 5],
+                'rate' => ['type' => 'Float!', 'description' => null, 'defaultValue' => 1.58],
                 'commentary' => ['type' => 'String', 'description' => null, 'defaultValue' => null],
             ],
         ],
