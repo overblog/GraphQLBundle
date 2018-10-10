@@ -3,6 +3,3 @@ InternalUserConnection:
   config:
     name: UserConnection
     nodeType: InternalUser!
-    connectionFields:
-      totalCount:
-        type: Int!

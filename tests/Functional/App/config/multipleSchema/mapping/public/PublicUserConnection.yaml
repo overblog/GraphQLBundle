@@ -3,6 +3,3 @@ PublicUserConnection:
   config:
     name: UserConnection
     nodeType: PublicUser!
-    connectionFields:
-      totalCount:
-        type: Int!

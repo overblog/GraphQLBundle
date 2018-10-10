@@ -6,4 +6,4 @@ InternalUser:
     name: User
     fields:
       email:
-        resolve: '@="email"'
+        type: String
