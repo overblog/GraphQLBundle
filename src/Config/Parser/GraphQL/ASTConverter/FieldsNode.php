@@ -43,11 +43,11 @@ class FieldsNode implements NodeInterface
         $config = null;
         switch ($valueNode->kind) {
             case NodeKind::INT:
-                $config = intval($valueNode->value, 10);
+                $config = \intval($valueNode->value, 10);
                 break;
 
             case NodeKind::FLOAT:
-                $config = floatval($valueNode->value);
+                $config = \floatval($valueNode->value);
                 break;
 
             case NodeKind::STRING:
