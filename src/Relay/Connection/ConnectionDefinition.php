@@ -10,9 +10,11 @@ final class ConnectionDefinition implements MappingInterface
     {
         $name = $config['name'];
         $namePrefix = \preg_replace('/(.*)?Connection$/', '$1', $name);
+        $aliasPrefix = \preg_replace('/(.*)?ConnectionType$/', '$1', $config['class_name']);
 
         //Edge
         $edgeName = $namePrefix.'Edge';
+        $edgeAlias = $aliasPrefix.'Edge';
         $edgeFields = empty($config['edgeFields']) || !\is_array($config['edgeFields']) ? [] : $config['edgeFields'];
         $nodeType = empty($config['nodeType']) || !\is_string($config['nodeType']) ? null : $config['nodeType'];
         $resolveNode = empty($config['resolveNode']) ? null : $config['resolveNode'];
@@ -20,10 +22,11 @@ final class ConnectionDefinition implements MappingInterface
 
         //connection
         $connectionName = $namePrefix.'Connection';
+        $connectionAlias = $aliasPrefix.'Connection';
         $connectionFields = empty($config['connectionFields']) || !\is_array($config['connectionFields']) ? [] : $config['connectionFields'];
 
         return [
-            $edgeName => [
+            $edgeAlias => [
                 'type' => 'object',
                 'config' => [
                     'name' => $edgeName,
@@ -45,7 +48,7 @@ final class ConnectionDefinition implements MappingInterface
                     ),
                 ],
             ],
-            $connectionName => [
+            $connectionAlias => [
                 'type' => 'object',
                 'config' => [
                     'name' => $connectionName,
@@ -58,7 +61,7 @@ final class ConnectionDefinition implements MappingInterface
                                 'description' => 'Information to aid in pagination.',
                             ],
                             'edges' => [
-                                'type' => "[$edgeName]",
+                                'type' => "[$edgeAlias]",
                                 'description' => 'Information to aid in pagination.',
                             ],
                         ]
