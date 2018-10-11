@@ -49,6 +49,7 @@ union SearchResult = Human | Droid | Starship
 
 input ReviewInput {
   stars: Int! = 5
+  rate: Float! = 1.58
   commentary: String = null
 }
 

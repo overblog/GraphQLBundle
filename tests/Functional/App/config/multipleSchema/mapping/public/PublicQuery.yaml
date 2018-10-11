@@ -7,3 +7,6 @@ PublicQuery:
             foo:
                 type: 'String!'
                 resolve: "foo"
+            users:
+                type: 'PublicUserConnection!'
+                resolve: '@={"edges":[{"node":{"username":"user1"}}]}'
