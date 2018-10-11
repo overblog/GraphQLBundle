@@ -1,0 +1,9 @@
+InternalUser:
+  type: object
+  inherits:
+    - PublicUser
+  config:
+    name: User
+    fields:
+      email:
+        type: String

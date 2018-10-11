@@ -36,7 +36,13 @@ final class RelayProcessor implements ProcessorInterface
         foreach ($configs as $name => $config) {
             if (isset($config['type']) && \is_string($config['type']) && $typeName === $config['type']) {
                 $config = isset($config['config']) && \is_array($config['config']) ? $config['config'] : [];
-                $config['name'] = $name;
+
+                if (empty($config['class_name'])) {
+                    $config['class_name'] = \sprintf('%sType', $name);
+                }
+                if (empty($config['name'])) {
+                    $config['name'] = $name;
+                }
 
                 /** @var MappingInterface $builder */
                 $builder = new $definitionBuilderClass();
