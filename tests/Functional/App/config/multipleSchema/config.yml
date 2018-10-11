@@ -3,6 +3,7 @@ imports:
 
 overblog_graphql:
     definitions:
+        config_validation: false
         class_namespace: "Overblog\\GraphQLBundle\\MultipleSchema\\__DEFINITIONS__"
         schema:
             public:
