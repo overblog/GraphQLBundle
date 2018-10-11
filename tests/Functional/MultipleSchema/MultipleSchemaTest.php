@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\MultipleSchema;
 
+use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class MultipleSchemaTest extends TestCase
@@ -34,6 +35,14 @@ class MultipleSchemaTest extends TestCase
 
         $result = $this->executeGraphQLRequest('{users{edges{node{username email}}}}', [], 'internal');
         $this->assertSame([['node' => ['username' => 'user1', 'email' => 'topsecret']]], $result['data']['users']['edges']);
+    }
+
+    public function testUnknownTypeShouldNotInfinityLoop(): void
+    {
+        $schema = $this->getContainer()->get('overblog_graphql.request_executor')->getSchema('public');
+        $this->expectException(InvariantViolation::class);
+        $this->expectExceptionMessage('Type loader is expected to return valid type "unknown", but it returned null');
+        $schema->getType('unknown');
     }
 
     private function assertSchemaQueryTypeName($typeName): void

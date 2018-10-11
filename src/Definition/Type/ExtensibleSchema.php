@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\Type;
 
+use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use GraphQL\Type\SchemaConfig;
 use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\SchemaExtensionInterface;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
@@ -12,21 +14,9 @@ class ExtensibleSchema extends Schema
 {
     public function __construct($config)
     {
-        if (isset($config['typeLoader'])) {
-            $typeLoader = $config['typeLoader'];
-            $config['typeLoader'] = function ($name) use ($typeLoader) {
-                try {
-                    $type = $typeLoader($name);
-                } catch (UnresolvableException $e) {
-                    // second chance for types with un-registered name in TypeResolver
-                    $type = $this->getType($name);
-                }
-
-                return $type;
-            };
-        }
-
-        parent::__construct($config);
+        parent::__construct($this->addDefaultFallBackToTypeLoader(
+            $config instanceof SchemaConfig ? $config : SchemaConfig::create($config)
+        ));
     }
 
     /** @var SchemaExtensionInterface[] */
@@ -65,5 +55,29 @@ class ExtensibleSchema extends Schema
         }
 
         return $this;
+    }
+
+    private function addDefaultFallBackToTypeLoader(SchemaConfig $schemaConfig): SchemaConfig
+    {
+        $typeLoader = $schemaConfig->typeLoader;
+        $loaderWrapper = null;
+        $loaderWrapper = function ($name) use ($typeLoader, &$schemaConfig, &$loaderWrapper): ?Type {
+            $type = null;
+            try {
+                $type = $typeLoader($name);
+            } catch (UnresolvableException $e) {
+                // second chance for types with un-registered name in TypeResolver
+                // we disabled the custom typeLoader to force default loader usage
+                $schemaConfig->typeLoader = null;
+                $type = $this->getType($name);
+                $schemaConfig->typeLoader = $loaderWrapper;
+            }
+
+            return $type;
+        };
+
+        $schemaConfig->typeLoader = $loaderWrapper;
+
+        return $schemaConfig;
     }
 }
