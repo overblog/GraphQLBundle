@@ -22,12 +22,17 @@ class AccessResolver
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], $isMutation = false)
+    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], $useStrictAccess = false)
     {
+        /** @var ResolveInfo $info */
+        $info = $resolveArgs[3];
         // operation is mutation and is mutation field
-        if ($isMutation) {
+        $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
+
+        if ($isMutation || $useStrictAccess) {
             if (!$this->hasAccess($accessChecker, null, $resolveArgs)) {
-                throw new UserError('Access denied to this field.');
+                $exceptionClassName = $isMutation ? UserError::class : UserWarning::class;
+                throw new $exceptionClassName('Access denied to this field.');
             }
 
             $result = \call_user_func_array($resolveCallback, $resolveArgs);

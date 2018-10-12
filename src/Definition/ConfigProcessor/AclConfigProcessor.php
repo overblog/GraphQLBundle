@@ -34,9 +34,8 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 } elseif (\is_callable($accessChecker)) {
                     $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver) {
                         $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
-                        $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
 
-                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $isMutation);
+                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $field['useStrictAccess']);
                     };
                 }
             }
