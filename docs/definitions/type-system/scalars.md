@@ -1,18 +1,16 @@
-Scalars
-=======
+# Scalars
 
 Here all supported built‐in Scalars:
 
-* **Int**
-* **Float**
-* **String**
-* **Boolean**
-* **ID**
+-   **Int**
+-   **Float**
+-   **String**
+-   **Boolean**
+-   **ID**
 
-Custom Scalar
--------------
+## Custom Scalar
 
-### Yaml
+### With YAML
 
 Here a simple example of how to add a custom Scalar:
 
@@ -43,7 +41,7 @@ class DateTimeType
     {
         return $value->format('Y-m-d H:i:s');
     }
- 
+
     /**
      * @param mixed $value
      *
@@ -53,7 +51,7 @@ class DateTimeType
     {
         return new \DateTimeImmutable($value);
     }
- 
+
     /**
      * @param Node $valueNode
      *
@@ -75,7 +73,7 @@ MyEmail:
         scalarType: '@=newObject("App\\Type\\EmailType")'
 ```
 
-### Annotation
+### With annotation
 
 You can create your custom-scalar type using the GraphQLType annotation with only one class.
 For example:
@@ -83,13 +81,14 @@ For example:
 ```php
 <?php
 
+namespace AppBundle;
+
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * Class DatetimeType
  *
- * @GQL\GraphQLAlias(name="datetime")
- * @GQL\GraphQLType(type="custom-scalar")
+ * @GQL\Scalar(name="DateTime")
  */
 class DatetimeType
 {

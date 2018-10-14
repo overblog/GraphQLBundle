@@ -1,26 +1,30 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
+ * Annotation for GraphQL scalar.
  *
  * @Annotation
  * @Target("CLASS")
  */
-final class GraphQLNode
+final class Scalar
 {
     /**
-     * Type.
+     * Scalar name.
      *
      * @var string
      */
-    public $type;
+    public $name;
 
     /**
+     * Scalar type
+     * 
      * @var string
      */
-    public $resolve;
+    public $scalarType;
 }
+
+

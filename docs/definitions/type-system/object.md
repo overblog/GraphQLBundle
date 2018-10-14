@@ -1,5 +1,6 @@
-Object
-======
+# Object
+
+## With YAML
 
 ```yaml
 # src/MyBundle/Resources/config/graphql/Human.types.yml
@@ -41,7 +42,7 @@ Human:
 ```yaml
 # src/MyBundle/Resources/config/graphql/Droid.types.yml
 #  The other type of character in Star Wars is a droid.
-# 
+#
 #  This implements the following type system shorthand:
 #    type Droid : Character {
 #      id: String!
@@ -72,4 +73,41 @@ Droid:
                 type: "String"
                 description: "The primary function of the droid."
         interfaces: [Character]
+```
+
+## With Annotations
+
+```php
+<?php
+
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * @GQL\Type(interfaces={"Character"})
+ * @GQL\Description("A humanoid creature in the Star Wars universe.")
+ */
+class Human
+{
+    /**
+     * @GQL\Field(type="String!", description="The id of the character.")
+     */
+    public $id;
+
+    /**
+     * @GQL\Field(type="String", description="The name of the character.")
+     */
+    public $name;
+
+    /**
+     * @GQL\Field(type="[Character]", description="The friends of the character.")
+     */
+    public $friends;
+
+    /**
+     * @GQL\Field(type="[Episode]", description="Which movies they appear in.")
+     */
+    public $appearsIn;
+}
 ```

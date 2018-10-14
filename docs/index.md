@@ -8,13 +8,13 @@ It also supports batching using libs like [ReactRelayNetworkLayer](https://githu
 Versions requirements
 ----------------------
 
-| Version                                                         | PHP         | Symfony           | Support             |
-|----------------------------------------------------------------:|------------:|------------------:|--------------------:|
-| [`0.12`](https://github.com/overblog/GraphQLBundle/tree/master) |  `>= 7.1`   |  `>= 3.1`         | DEV                 |
-| [`0.11`](https://github.com/overblog/GraphQLBundle/tree/0.11)   |  `>= 5.6`   |  `>= 3.1, <= 4.0` | Active support      |
-| [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
-| [`0.9`](https://github.com/overblog/GraphQLBundle/tree/0.9)     |  `>= 5.5.9` |  `>= 2.8, <= 3.1` | End of life         |
-| [`0.8`](https://github.com/overblog/GraphQLBundle/tree/0.8)     |  `>= 5.4 `  |  `>= 2.7, <= 3.1` | End of life         |
+| Version                                                         | PHP        | Symfony          | Support        |
+| --------------------------------------------------------------: | ---------: | ---------------: | -------------: |
+| [`0.12`](https://github.com/overblog/GraphQLBundle/tree/master) | `>= 7.1`   | `>= 3.1`         | DEV            |
+| [`0.11`](https://github.com/overblog/GraphQLBundle/tree/0.11)   | `>= 5.6`   | `>= 3.1, <= 4.0` | Active support |
+| [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   | `>= 5.5.9` | `>= 2.8, <= 3.1` | End of life    |
+| [`0.9`](https://github.com/overblog/GraphQLBundle/tree/0.9)     | `>= 5.5.9` | `>= 2.8, <= 3.1` | End of life    |
+| [`0.8`](https://github.com/overblog/GraphQLBundle/tree/0.8)     | `>= 5.4 `  | `>= 2.7, <= 3.1` | End of life    |
 
 After installation
 ------------
@@ -131,7 +131,3 @@ Finish by dumping the new autoloader.
 ```bash
 composer dump-autoload
 ```
-
-## Example
-
-You can found complete example using React Apollo and OverblogGraphQLBundle with symfony flex and annotation type here: [https://github.com/CocoJr/sf4-react-graphql-example]()

@@ -1,5 +1,5 @@
 Schema
-=======
+======
 
 Default files location
 -------
@@ -63,47 +63,7 @@ Query:
                 resolve: "@=resolver('character_droid', [args])"
 ```
 
-Or using annotation:
-
-```php
-<?php
-
-use Overblog\GraphQLBundle\Annotation as GQL;
-
-/**
- * Class RootQuery
- *
- * @GQL\GraphQLType(type="object")
- * @GQL\GraphQLDescription(description="A humanoid creature in the Star Wars universe.")
- */
-class RootQuery
-{
-    /**
-     * @GQL\GraphQLColumn(type="Character")
-     * @GQL\GraphQLQuery(
-     *     method="character_hero",
-     *     args={
-     *         "args['episode'].getId()"
-     *     }
-     * )
-     */
-    public $hero;
-
-    /**
-     * @GQL\GraphQLColumn(type="Human")
-     * @GQL\GraphQLQuery(method="character_human", args={"args['id']"})
-     */
-    public $human;
-    
-    /**
-     * @GQL\GraphQLColumn(type="Droid")
-     * @GQL\GraphQLQuery(method="character_human", args={"args"})
-     */
-    public $droid;
-}
-```
-
-
+ 
 ```yaml
 overblog_graphql:
     definitions:
@@ -137,18 +97,18 @@ overblog_graphql:
 
 **foo** schema endpoint can be access:
 
-type | Path
------| -----
-simple request | `/graphql/foo`
-batch request | `/graphql/foo/batch`
-GraphiQL* | `/graphiql/foo`
+| type           | Path                 |
+| -------------- | -------------------- |
+| simple request | `/graphql/foo`       |
+| batch request  | `/graphql/foo/batch` |
+| GraphiQL*      | `/graphiql/foo`      |
 
 **bar** schema endpoint can be access:
 
-type | Path
------| -----
-simple request | `/graphql/bar`
-batch request | `/graphql/bar/batch`
-GraphiQL* | `/graphiql/bar`
+| type           | Path                 |
+| -------------- | -------------------- |
+| simple request | `/graphql/bar`       |
+| batch request  | `/graphql/bar/batch` |
+| GraphiQL*      | `/graphiql/bar`      |
 
 \* `/graphiql` depends on [OverblogGraphiQLBundle](https://github.com/overblog/GraphiQLBundle)
