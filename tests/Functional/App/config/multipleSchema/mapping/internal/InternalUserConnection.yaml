@@ -1,0 +1,5 @@
+InternalUserConnection:
+  type: relay-connection
+  config:
+    name: UserConnection
+    nodeType: InternalUser!

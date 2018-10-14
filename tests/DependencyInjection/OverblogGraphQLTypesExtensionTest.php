@@ -175,6 +175,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
             [
                 'foo' => [
                     'type' => 'object',
+                    'class_name' => 'fooType',
                     InheritanceProcessor::INHERITS_KEY => [],
                     'decorator' => false,
                     'config' => [

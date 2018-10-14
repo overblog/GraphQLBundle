@@ -27,6 +27,7 @@ class InheritanceTest extends TestCase
             [
                 'type' => 'object',
                 InheritanceProcessor::INHERITS_KEY => ['QueryFoo', 'QueryBar', 'QueryHelloWord'],
+                'class_name' => 'QueryType',
                 'decorator' => false,
                 'config' => [
                     'fields' => [
@@ -58,6 +59,7 @@ class InheritanceTest extends TestCase
             [
                 'type' => 'enum',
                 InheritanceProcessor::INHERITS_KEY => ['Day', 'Month', 'Year'],
+                'class_name' => 'PeriodType',
                 'decorator' => false,
                 'config' => [
                     'values' => [

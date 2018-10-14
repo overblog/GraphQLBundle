@@ -1,0 +1,12 @@
+PublicQuery:
+    type: object
+    config:
+        name: Query
+        description: 'Root of the schema.'
+        fields:
+            foo:
+                type: 'String!'
+                resolve: "foo"
+            users:
+                type: 'PublicUserConnection!'
+                resolve: '@={"edges":[{"node":{"username":"user1"}}]}'

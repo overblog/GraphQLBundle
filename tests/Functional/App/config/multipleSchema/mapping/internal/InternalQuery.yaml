@@ -1,0 +1,13 @@
+InternalQuery:
+    type: object
+    inherits: [PublicQuery]
+    config:
+        description: 'Root of the schema.'
+        name: Query
+        fields:
+            bar:
+                type: 'String!'
+                resolve: "bar"
+            users:
+                type: 'InternalUserConnection!'
+                resolve: '@={"edges":[{"node":{"username":"user1","email":"topsecret"}}]}'
