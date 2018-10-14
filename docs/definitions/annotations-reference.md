@@ -197,7 +197,11 @@ Optional attributes:
 
 ## @Field
 
-This annotation can be defined on a _property_ or a _method_
+This annotation can be defined on a _property_ or a _method_.
+
+If it is defined on a _method_:
+
+-   If no `resolve` attribute is define, it will be `@=value_resolver(args, methodName)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
 
 Optional attributes:
 
@@ -215,7 +219,6 @@ Example on properties:
 
 /**
  * @GQL\Type()
- * @GQL\Access("isAuthenticated()")
  */
 class Hero {
     /**
@@ -231,6 +234,29 @@ class Hero {
      * )
      */
     public $friends;
+}
+?>
+```
+
+Example on methods:
+
+```php
+<?php
+
+/**
+ * @GQL\Type()
+ */
+class Hero {
+    /**
+     * @GQL\Field(
+     *   name="friends",
+     *   type="[Hero]",
+     *   args={@GQL\FieldArg(name="limit", type="Int")}
+     * )
+     */
+    public function getFriends(int $limit) {
+        return array_slice($this->friends, 0, $limit);
+    }
 }
 ?>
 ```
