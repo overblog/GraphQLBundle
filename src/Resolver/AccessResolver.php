@@ -24,28 +24,12 @@ class AccessResolver
 
     public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], $useStrictAccess = false)
     {
-        /** @var ResolveInfo $info */
-        $info = $resolveArgs[3];
-        // operation is mutation and is mutation field
-        $isMutation = 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
-
-        if ($isMutation || $useStrictAccess) {
-            if (!$this->hasAccess($accessChecker, null, $resolveArgs)) {
-                $exceptionClassName = $isMutation ? UserError::class : UserWarning::class;
-                throw new $exceptionClassName('Access denied to this field.');
-            }
-
-            $result = \call_user_func_array($resolveCallback, $resolveArgs);
-        } else {
-            $result = $this->filterResultUsingAccess($accessChecker, $resolveCallback, $resolveArgs);
+        if ($useStrictAccess || self::isMutationRootField($resolveArgs[3])) {
+            return $this->checkAccessForStrictMode($accessChecker, $resolveCallback, $resolveArgs);
         }
 
-        return $result;
-    }
-
-    private function filterResultUsingAccess(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
-    {
         $result = \call_user_func_array($resolveCallback, $resolveArgs);
+
         if ($result instanceof Promise) {
             $result = $result->adoptedPromise;
         }
@@ -62,6 +46,21 @@ class AccessResolver
         return $this->processFilter($result, $accessChecker, $resolveArgs);
     }
 
+    private static function isMutationRootField(ResolveInfo $info)
+    {
+        return 'mutation' === $info->operation->operation && $info->parentType === $info->schema->getMutationType();
+    }
+
+    private function checkAccessForStrictMode(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
+    {
+        if (!$this->hasAccess($accessChecker, $resolveArgs)) {
+            $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
+            throw new $exceptionClassName('Access denied to this field.');
+        }
+
+        return \call_user_func_array($resolveCallback, $resolveArgs);
+    }
+
     private function processFilter($result, $accessChecker, $resolveArgs)
     {
         /** @var ResolveInfo $resolveInfo */
@@ -69,25 +68,25 @@ class AccessResolver
 
         if (self::isIterable($result) && $resolveInfo->returnType instanceof ListOfType) {
             foreach ($result as $i => $object) {
-                $result[$i] = $this->hasAccess($accessChecker, $object, $resolveArgs) ? $object : null;
+                $result[$i] = $this->hasAccess($accessChecker, $resolveArgs, $object) ? $object : null;
             }
         } elseif ($result instanceof Connection) {
             $result->edges = \array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
-                    $edge->node = $this->hasAccess($accessChecker, $edge->node, $resolveArgs) ? $edge->node : null;
+                    $edge->node = $this->hasAccess($accessChecker, $resolveArgs, $edge->node) ? $edge->node : null;
 
                     return $edge;
                 },
                 $result->edges
             );
-        } elseif (!$this->hasAccess($accessChecker, $result, $resolveArgs)) {
+        } elseif (!$this->hasAccess($accessChecker, $resolveArgs, $result)) {
             throw new UserWarning('Access denied to this field.');
         }
 
         return $result;
     }
 
-    private function hasAccess(callable $accessChecker, $object, array $resolveArgs = [])
+    private function hasAccess(callable $accessChecker, array $resolveArgs = [], $object = null)
     {
         $resolveArgs[] = $object;
         $access = (bool) \call_user_func_array($accessChecker, $resolveArgs);
