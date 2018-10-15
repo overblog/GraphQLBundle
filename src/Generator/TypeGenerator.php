@@ -7,6 +7,7 @@ use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator extends BaseTypeGenerator
@@ -190,6 +191,18 @@ CODE;
         } else {
             return parent::generateParentClassName($config);
         }
+    }
+
+    protected function generateUseStrictAccess(array $value)
+    {
+        $useStrictAccess = 'true';
+        if (null !== $this->getExpressionLanguage() && $this->arrayKeyExistsAndIsNotNull($value, 'access') && $value['access'] instanceof Expression) {
+            $parsedExpression = $this->getExpressionLanguage()->parse($value['access'], ['value', 'args', 'context', 'info', 'object']);
+            $serializedNode = \str_replace("\n", '//', (string) $parsedExpression->getNodes());
+            $useStrictAccess = false === \strpos($serializedNode, 'NameNode(name: \'object\')') ? 'true' : 'false';
+        }
+
+        return $useStrictAccess;
     }
 
     public function compile($mode)
