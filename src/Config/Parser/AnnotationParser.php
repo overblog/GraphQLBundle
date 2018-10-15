@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 class AnnotationParser implements ParserInterface
 {
     private static $annotationReader = null;
+    private static $classesMap = [];
 
     /**
      * {@inheritdoc}
@@ -348,11 +349,9 @@ class AnnotationParser implements ParserInterface
                 } else {
                     if ($isMethod) {
                         $fieldConfiguration['resolve'] = self::formatExpression(sprintf("value_resolver([%s], '%s')", implode(", ", $args), $target));
+                    } else if ($fieldAnnotation->name) {
+                        $fieldConfiguration['resolve'] = self::formatExpression(sprintf("value.%s", $target));
                     }
-                }
-
-                if (!$isMethod && $fieldAnnotation->name && !$fieldAnnotation->resolve) {
-                    throw new \UnexpectedValueException(\sprintf('The attribute "name" on Graphql annotation "@Field" define on "%s" is not allowed on properties without a configured resolver', $target));
                 }
 
                 if ($fieldAnnotation->argsBuilder) {

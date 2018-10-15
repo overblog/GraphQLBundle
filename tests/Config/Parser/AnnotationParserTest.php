@@ -246,4 +246,24 @@ class AnnotationParserTest extends TestCase
         $this->checkConfigFromFile('Fields/FieldFieldBuilder.php', $expected);
     }
 
+    public function testExtends() : void
+    {
+        $expected = ['ChildClass' => ['type' => 'object', 'config' => [
+            'fields' => [
+                'id' => ['builder' => 'GenericIdBuilder'],
+                'notes' => [
+                    'builder' => 'NoteFieldBuilder',
+                    'builderConfig' => ['option' => 'value']
+                ]
+            ]
+        ]]];
+
+        $this->checkConfigFromFile('Inherits/ChildClass.php', $expected);
+    }
+
+
+
+
+
+
 }

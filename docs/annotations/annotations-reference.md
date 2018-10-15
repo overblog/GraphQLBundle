@@ -152,8 +152,8 @@ class Hero {
 
 ## @Enum
 
-This annotation applies on _class_ to define it as a enum. The constants define on the class will be the enum values.  
-In order to add more meta on the values (like description or deprecated reason), you have to provided them as `@EnumValue` in the `values` attribute with a `name` attribute referencing a constant name.
+This annotation applies on _class_ to define it as a enum. The constants defined on the class will be the enum values.  
+In order to add more meta on the values (like description or deprecated reason), you have to provided them as `@EnumValue` in the `values` attribute with a `name` attribute referencing a constant name. You just need to do it for the constants you want to add meta on.
 
 Optional attributes:
 
@@ -201,12 +201,12 @@ This annotation can be defined on a _property_ or a _method_.
 
 If it is defined on a _method_:
 
--   If no `resolve` attribute is define, it will be `@=value_resolver(args, methodName)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
+-   If no `resolve` attribute is define, it will default to `@=value_resolver(args, methodName)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
 
 Optional attributes:
 
 -   **type** : The GraphqL type of the field (this attribute is required if no builder is define on the field)
--   **name** : The GraphQL name of the field (default to class name). Can only be used when the annotation is used on a method.
+-   **name** : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
 -   **args** : A array of `@FieldArg`
 -   **resolve** : A resolution expression
 -   **fieldBuilder** : A field builder to use. Either as string (will be the field builder name), or as an array, first index will the name of the builder and second one will be the config.
