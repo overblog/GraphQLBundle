@@ -214,6 +214,19 @@ EOF;
         $this->assertResponse($this->userFriendsQuery, $expected, static::USER_ADMIN, 'access');
     }
 
+    public function testUserAccessToUserFriendsAsArray(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'friendsAsArray' => [1, null, 3],
+                ],
+            ],
+        ];
+
+        $this->assertResponse('query { user { friendsAsArray } }', $expected, static::USER_ADMIN, 'access');
+    }
+
     public function testMutationAllowedUser(): void
     {
         $result = 123;
@@ -291,7 +304,25 @@ EOF;
         return [
             'data' => [
                 'user' => [
-                    'roles' => [0 => null],
+                    'roles' => null,
+                ],
+            ],
+            'extensions' => [
+                'warnings' => [
+                    [
+                        'message' => 'Access denied to this field.',
+                        'category' => 'user',
+                        'locations' => [
+                            [
+                                'line' => 1,
+                                'column' => 16,
+                            ],
+                        ],
+                        'path' => [
+                            'user',
+                            'roles',
+                        ],
+                    ],
                 ],
             ],
         ];
