@@ -1,23 +1,22 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
-use phpDocumentor\Reflection\Types\Void_;
 
 class AnnotationParserTest extends TestCase
 {
-    protected function checkConfigFromFile($filename, $expected)
+    protected function checkConfigFromFile($filename, $expected): void
     {
-        $fileName = __DIR__ . '/fixtures/Entity/GraphQL/' . $filename;
+        $fileName = __DIR__.'/fixtures/Entity/GraphQL/'.$filename;
         $this->assertContainerAddFileToResources($fileName);
         $config = AnnotationParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
         $this->assertEquals($expected, self::cleanConfig($config));
     }
 
-    public function testType() : void
+    public function testType(): void
     {
         $expected = [
             'Hero' => [
@@ -26,7 +25,7 @@ class AnnotationParserTest extends TestCase
                     'fields' => [
                         'name' => [
                             'type' => 'String!',
-                            'deprecationReason' => 'it is now deprecated'
+                            'deprecationReason' => 'it is now deprecated',
                         ],
                         'friends' => [
                             'type' => '[Character]',
@@ -40,7 +39,7 @@ class AnnotationParserTest extends TestCase
         $this->checkConfigFromFile('Type/Hero.php', $expected);
     }
 
-    public function testInput() : void
+    public function testInput(): void
     {
         $expected = [
             'PlanetInput' => [
@@ -48,49 +47,49 @@ class AnnotationParserTest extends TestCase
                 'config' => [
                     'fields' => [
                         'name' => ['type' => 'String!'],
-                        'population' => ['type' => 'Int!']
+                        'population' => ['type' => 'Int!'],
                     ],
-                    'description' => 'Planet Input type description'
-                ]
-            ]
+                    'description' => 'Planet Input type description',
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Input/Planet.php', $expected);
     }
 
-    public function testEnum() : void
+    public function testEnum(): void
     {
         $expected = [
             'PlanetEnum' => [
                 'type' => 'enum',
                 'config' => [
                     'values' => [
-                        "DAGOBAH" => ['value' => 1],
-                        "TATOUINE" => ['value' => "2", 'description' => 'The planet of Tatouine'],
-                        "HOTH" => ['value' => "3"],
-                        "BESPIN" => ['value' => "4"],
+                        'DAGOBAH' => ['value' => 1],
+                        'TATOUINE' => ['value' => '2', 'description' => 'The planet of Tatouine'],
+                        'HOTH' => ['value' => '3'],
+                        'BESPIN' => ['value' => '4'],
                     ],
-                    'description' => 'The list of planets!'
-                ]
-            ]
+                    'description' => 'The list of planets!',
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Enum/Planet.php', $expected);
     }
 
-    public function testUnion() : void
+    public function testUnion(): void
     {
         $expected = [
             'Pet' => [
                 'type' => 'union',
                 'config' => [
                     'types' => ['Dog', 'Cat', 'Bird', 'Snake'],
-                    'description' => 'All the pets'
-                ]
-            ]
+                    'description' => 'All the pets',
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Union/Pet.php', $expected);
     }
 
-    public function testScalar() : void
+    public function testScalar(): void
     {
         $expected = [
             'MyScalar' => [
@@ -99,28 +98,28 @@ class AnnotationParserTest extends TestCase
                     'serialize' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'serialize'],
                     'parseValue' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'parseValue'],
                     'parseLiteral' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'parseLiteral'],
-                    'description' => 'My custom scalar'
-                ]
-            ]
+                    'description' => 'My custom scalar',
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Scalar/MyScalar.php', $expected);
     }
 
-    public function testScalar2() : void
+    public function testScalar2(): void
     {
         $expected = [
             'MyScalar' => [
                 'type' => 'custom-scalar',
                 'config' => [
-                    'scalarType' => "@=newObject('App\\\\Type\\\\EmailType')"
-                ]
-            ]
+                    'scalarType' => "@=newObject('App\\\\Type\\\\EmailType')",
+                ],
+            ],
         ];
 
         $this->checkConfigFromFile('Scalar/MyScalar2.php', $expected);
     }
 
-    public function testInterface() : void
+    public function testInterface(): void
     {
         $expected = [
             'Character' => [
@@ -128,16 +127,16 @@ class AnnotationParserTest extends TestCase
                 'config' => [
                     'fields' => [
                         'id' => ['type' => 'String!', 'description' => 'The id of the character'],
-                        'name' => ['type' => 'String!', 'description' => 'The name of the character']
+                        'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                     ],
-                    'description' => 'The character interface'
-                ]
-            ]
+                    'description' => 'The character interface',
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Interfaces/Character.php', $expected);
     }
 
-    public function testAccess() : void
+    public function testAccess(): void
     {
         $expected = [
             'HeroWithAccess' => [
@@ -148,16 +147,16 @@ class AnnotationParserTest extends TestCase
                         'name' => ['type' => 'String!'],
                         'secret' => [
                             'type' => 'Boolean!',
-                            'access' => "@=hasRole('ROLE_ADMIN')"
-                        ]
-                    ]
-                ]
-            ]
+                            'access' => "@=hasRole('ROLE_ADMIN')",
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Type/HeroWithAccess.php', $expected);
     }
 
-    public function testPublic() : void
+    public function testPublic(): void
     {
         $expected = [
             'HeroWithPublic' => [
@@ -168,16 +167,16 @@ class AnnotationParserTest extends TestCase
                         'name' => ['type' => 'String!'],
                         'secret' => [
                             'type' => 'Boolean!',
-                            'public' => "@=hasRole('ROLE_ADMIN')"
-                        ]
-                    ]
-                ]
-            ]
+                            'public' => "@=hasRole('ROLE_ADMIN')",
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->checkConfigFromFile('Type/HeroWithPublic.php', $expected);
     }
 
-    public function testFieldMethod() : void
+    public function testFieldMethod(): void
     {
         $expected = [
             'Type' => [
@@ -188,19 +187,19 @@ class AnnotationParserTest extends TestCase
                             'type' => '[Character]',
                             'args' => [
                                 'gender' => ['type' => 'Gender', 'description' => 'Limit friends of this gender'],
-                                'limit' => ['type' => 'Int', 'description' => 'Limit number of friends to retrieve']
+                                'limit' => ['type' => 'Int', 'description' => 'Limit number of friends to retrieve'],
                             ],
-                            'resolve' => "@=value_resolver([args['gender'], args['limit']], 'getFriends')"
-                        ]
-                    ]
-                ]
-            ]
+                            'resolve' => "@=value_resolver([args['gender'], args['limit']], 'getFriends')",
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->checkConfigFromFile('Fields/FieldMethod.php', $expected);
     }
 
-    public function testFieldArgsBuilder() : void
+    public function testFieldArgsBuilder(): void
     {
         $expected = [
             'Type' => [
@@ -211,22 +210,22 @@ class AnnotationParserTest extends TestCase
                             'type' => '[Character]',
                             'argsBuilder' => [
                                 'builder' => 'MyArgBuilder',
-                                'config' => ['defaultArg' => 1, 'option2' => 'smile']
+                                'config' => ['defaultArg' => 1, 'option2' => 'smile'],
                             ],
-                            'resolve' => "@=value_resolver([], 'getFriends')"
+                            'resolve' => "@=value_resolver([], 'getFriends')",
                         ],
                         'planets' => [
-                            'argsBuilder' => 'MyArgBuilder'
-                        ]
-                    ]
-                ]
-            ]
+                            'argsBuilder' => 'MyArgBuilder',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->checkConfigFromFile('Fields/FieldArgsBuilder.php', $expected);
     }
 
-    public function testFieldFieldBuilder() : void
+    public function testFieldFieldBuilder(): void
     {
         $expected = [
             'Type' => [
@@ -236,34 +235,28 @@ class AnnotationParserTest extends TestCase
                         'id' => ['builder' => 'GenericIdBuilder'],
                         'notes' => [
                             'builder' => 'NoteFieldBuilder',
-                            'builderConfig' => ['option' => 'value']
-                        ]
-                    ]
-                ]
-            ]
+                            'builderConfig' => ['option' => 'value'],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->checkConfigFromFile('Fields/FieldFieldBuilder.php', $expected);
     }
 
-    public function testExtends() : void
+    public function testExtends(): void
     {
         $expected = ['ChildClass' => ['type' => 'object', 'config' => [
             'fields' => [
                 'id' => ['builder' => 'GenericIdBuilder'],
                 'notes' => [
                     'builder' => 'NoteFieldBuilder',
-                    'builderConfig' => ['option' => 'value']
-                ]
-            ]
+                    'builderConfig' => ['option' => 'value'],
+                ],
+            ],
         ]]];
 
         $this->checkConfigFromFile('Inherits/ChildClass.php', $expected);
     }
-
-
-
-
-
-
 }

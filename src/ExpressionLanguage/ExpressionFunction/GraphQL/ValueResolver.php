@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL;
 
@@ -13,7 +13,7 @@ final class ValueResolver extends ExpressionFunction
         parent::__construct(
             $name,
             function ($args = '[]', $method = null) {
-                return \sprintf('call_user_func_array([$value, %s], array_values(%s));', $method ? : '$info->fieldName', $args);
+                return \sprintf('call_user_func_array([$value, %s], array_values(%s));', $method ?: '$info->fieldName', $args);
             }
         );
     }

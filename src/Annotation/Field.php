@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Field
 {
     /**
-     * The field name
+     * The field name.
      */
     public $name;
 
@@ -21,20 +21,21 @@ final class Field
      * Field Type.
      *
      * @required
+     *
      * @var string
      */
     public $type;
 
     /**
-     * Field arguments
-     * 
-     * @var array<Overblog\GraphQLBundle\Annotation\FieldArg>
+     * Field arguments.
+     *
+     * @var array<\Overblog\GraphQLBundle\Annotation\FieldArg>
      */
     public $args;
 
     /**
-     * Resolver for this property
-     * 
+     * Resolver for this property.
+     *
      * @var string
      */
     public $resolve;

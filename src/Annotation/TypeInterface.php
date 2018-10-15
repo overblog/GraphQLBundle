@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
@@ -20,11 +20,9 @@ final class TypeInterface
     public $name;
 
     /**
-     * Resolver type for interface
-     * 
+     * Resolver type for interface.
+     *
      * @var string
      */
     public $resolveType;
 }
-
-

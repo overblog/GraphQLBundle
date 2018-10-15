@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Enum;
 
@@ -12,8 +12,8 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 class Planet
 {
-    const DAGOBAH = 1;
-    const TATOUINE = "2";
-    const HOTH = "3";
-    const BESPIN = "4";
+    public const DAGOBAH = 1;
+    public const TATOUINE = '2';
+    public const HOTH = '3';
+    public const BESPIN = '4';
 }

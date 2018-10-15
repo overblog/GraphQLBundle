@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Inherits;
 
@@ -15,6 +15,4 @@ class ParentClass
      * @GQL\Field(fieldBuilder="GenericIdBuilder")
      */
     public $id;
-
 }
-

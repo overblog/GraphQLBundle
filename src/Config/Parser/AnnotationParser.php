@@ -1,12 +1,17 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
-use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Overblog\GraphQLBundle\Annotation\Enum as AnnotationEnum;
+use Overblog\GraphQLBundle\Annotation\InputType as AnnotationInputType;
+use Overblog\GraphQLBundle\Annotation\Scalar as AnnotationScalar;
+use Overblog\GraphQLBundle\Annotation\Type as AnnotationType;
+use Overblog\GraphQLBundle\Annotation\TypeInterface as AnnotationInterface;
+use Overblog\GraphQLBundle\Annotation\Union as AnnotationUnion;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -20,9 +25,9 @@ class AnnotationParser implements ParserInterface
      * {@inheritdoc}
      *
      * @throws \ReflectionException
-     * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container) : array
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
         try {
@@ -30,7 +35,7 @@ class AnnotationParser implements ParserInterface
 
             $shortClassName = \substr($file->getFilename(), 0, -4);
             if (\preg_match('#namespace (.+);#', $fileContent, $namespace)) {
-                $className = $namespace[1] . '\\' . $shortClassName;
+                $className = $namespace[1].'\\'.$shortClassName;
             } else {
                 $className = $shortClassName;
             }
@@ -56,7 +61,7 @@ class AnnotationParser implements ParserInterface
 
             foreach ($classAnnotations as $classAnnotation) {
                 $method = false;
-                switch (get_class($classAnnotation)) {
+                switch (\get_class($classAnnotation)) {
                     case 'Overblog\GraphQLBundle\Annotation\Type':
                         $gqlTypes += self::getGraphqlType($shortClassName, $classAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations);
                         break;
@@ -89,8 +94,8 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Retrieve annotation reader
-     * 
+     * Retrieve annotation reader.
+     *
      * @return AnnotationReader
      */
     private static function getAnnotationReader()
@@ -109,19 +114,19 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Create a GraphQL Type configuration from annotations on class, properties and methods
-     * 
-     * @param string       $shortClassName
-     * @param Annotation   $typeAnnotation
-     * @param Annotation[] $classAnnotations
-     * @param Annotation[] $propertiesAnnotations
-     * @param Annotation[] $methodsAnnotations
-     * 
+     * Create a GraphQL Type configuration from annotations on class, properties and methods.
+     *
+     * @param string         $shortClassName
+     * @param AnnotationType $typeAnnotation
+     * @param array          $classAnnotations
+     * @param array          $propertiesAnnotations
+     * @param array          $methodsAnnotations
+     *
      * @return array
      */
-    private static function getGraphqlType(string $shortClassName, $typeAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations)
+    private static function getGraphqlType(string $shortClassName, AnnotationType $typeAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations)
     {
-        $typeName = $typeAnnotation->name ? : $shortClassName;
+        $typeName = $typeAnnotation->name ?: $shortClassName;
         $typeConfiguration = [];
 
         $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations);
@@ -152,17 +157,17 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Create a GraphQL Interface type configuration from annotations on properties
-     * 
-     * @param string       $shortClassName
-     * @param Annotation   $interfaceAnnotation
-     * @param Annotation[] $propertiesAnnotations
-     * 
+     * Create a GraphQL Interface type configuration from annotations on properties.
+     *
+     * @param string              $shortClassName
+     * @param AnnotationInterface $interfaceAnnotation
+     * @param array               $propertiesAnnotations
+     *
      * @return array
      */
-    private static function getGraphqlInterface(string $shortClassName, $interfaceAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations)
+    private static function getGraphqlInterface(string $shortClassName, AnnotationInterface $interfaceAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations)
     {
-        $interfaceName = $interfaceAnnotation->name ? : $shortClassName;
+        $interfaceName = $interfaceAnnotation->name ?: $shortClassName;
         $interfaceConfiguration = [];
 
         $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations);
@@ -179,17 +184,17 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Create a GraphQL Input type configuration from annotations on properties
-     * 
-     * @param string       $shortClassName
-     * @param Annotation   $inputAnnotation
-     * @param Annotation[] $propertiesAnnotations
-     * 
+     * Create a GraphQL Input type configuration from annotations on properties.
+     *
+     * @param string              $shortClassName
+     * @param AnnotationInputType $inputAnnotation
+     * @param array               $propertiesAnnotations
+     *
      * @return array
      */
-    private static function getGraphqlInputType(string $shortClassName, $inputAnnotation, $classAnnotations, $propertiesAnnotations)
+    private static function getGraphqlInputType(string $shortClassName, AnnotationInputType $inputAnnotation, array $classAnnotations, array $propertiesAnnotations)
     {
-        $inputName = $inputAnnotation->name ? : self::suffixName($shortClassName, 'Input');
+        $inputName = $inputAnnotation->name ?: self::suffixName($shortClassName, 'Input');
         $inputConfiguration = [];
         $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations, true);
 
@@ -204,17 +209,18 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get a Graphql scalar configuration from given scalar annotation 
-     * 
-     * @param string     $shortClassName
-     * @param string     $className
-     * @param Annotation $scalarAnnotation
-     * 
+     * Get a Graphql scalar configuration from given scalar annotation.
+     *
+     * @param string           $shortClassName
+     * @param string           $className
+     * @param AnnotationScalar $scalarAnnotation
+     * @param array            $classAnnotations
+     *
      * @return array
      */
-    private static function getGraphqlScalar(string $shortClassName, string $className, $scalarAnnotation, $classAnnotations)
+    private static function getGraphqlScalar(string $shortClassName, string $className, AnnotationScalar $scalarAnnotation, array $classAnnotations)
     {
-        $scalarName = $scalarAnnotation->name ? : $shortClassName;
+        $scalarName = $scalarAnnotation->name ?: $shortClassName;
         $scalarConfiguration = [];
 
         if ($scalarAnnotation->scalarType) {
@@ -223,7 +229,7 @@ class AnnotationParser implements ParserInterface
             $scalarConfiguration = [
                 'serialize' => [$className, 'serialize'],
                 'parseValue' => [$className, 'parseValue'],
-                'parseLiteral' => [$className, 'parseLiteral']
+                'parseLiteral' => [$className, 'parseLiteral'],
             ];
         }
 
@@ -233,22 +239,24 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get a Graphql Enum configuration from given enum annotation 
-     * 
-     * @param string     $shortClassName
-     * @param Annotation $enumAnnotation
-     * 
+     * Get a Graphql Enum configuration from given enum annotation.
+     *
+     * @param string         $shortClassName
+     * @param AnnotationEnum $enumAnnotation
+     * @param array          $classAnnotations
+     * @param array          $constants
+     *
      * @return array
      */
-    private static function getGraphqlEnum($shortClassName, $enumAnnotation, $classAnnotations, $constants)
+    private static function getGraphqlEnum(string $shortClassName, AnnotationEnum $enumAnnotation, array $classAnnotations, array $constants)
     {
-        $enumName = $enumAnnotation->name ? : self::suffixName($shortClassName, 'Enum');
+        $enumName = $enumAnnotation->name ?: self::suffixName($shortClassName, 'Enum');
         $enumValues = $enumAnnotation->values ? $enumAnnotation->values : [];
 
         $values = [];
 
         foreach ($constants as $name => $value) {
-            $valueAnnotation = current(array_filter($enumValues, function ($enumValueAnnotation) use ($name) {
+            $valueAnnotation = \current(\array_filter($enumValues, function ($enumValueAnnotation) use ($name) {
                 return $enumValueAnnotation->name == $name;
             }));
             $valueConfig = [];
@@ -272,16 +280,17 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get a Graphql Union configuration from given union annotation 
-     * 
-     * @param string     $shortClassName
-     * @param Annotation $unionAnnotation
-     * 
+     * Get a Graphql Union configuration from given union annotation.
+     *
+     * @param string          $shortClassName
+     * @param AnnotationUnion $unionAnnotation
+     * @param array           $classAnnotations
+     *
      * @return array
      */
-    private static function getGraphqlUnion($shortClassName, $unionAnnotation, $classAnnotations)
+    private static function getGraphqlUnion(string $shortClassName, AnnotationUnion $unionAnnotation, array $classAnnotations): array
     {
-        $unionName = $unionAnnotation->name ? : $shortClassName;
+        $unionName = $unionAnnotation->name ?: $shortClassName;
         $unionConfiguration = ['types' => $unionAnnotation->types];
         $unionConfiguration += self::getDescriptionConfiguration($classAnnotations);
 
@@ -289,15 +298,15 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Create Graphql fields configuration based on annotation
-     * 
-     * @param Annotation[] $annotations
-     * @param boolean      $isInput
-     * @param boolean      $isMethod
-     * 
+     * Create Graphql fields configuration based on annotation.
+     *
+     * @param array $annotations
+     * @param bool  $isInput
+     * @param bool  $isMethod
+     *
      * @return array
      */
-    private static function getGraphqlFieldsFromAnnotations($annotations, $isInput = false, $isMethod = false) : array
+    private static function getGraphqlFieldsFromAnnotations(array $annotations, bool $isInput = false, bool $isMethod = false): array
     {
         $fields = [];
         foreach ($annotations as $target => $annotations) {
@@ -337,43 +346,43 @@ class AnnotationParser implements ParserInterface
                         $fieldConfiguration['args'] = $args;
                     }
 
-                    $args = array_map(function ($a) {
-                        return sprintf("args['%s']", $a);
-                    }, array_keys($args));
+                    $args = \array_map(function ($a) {
+                        return \sprintf("args['%s']", $a);
+                    }, \array_keys($args));
                 }
 
-                $propertyName = $fieldAnnotation->name ? : $propertyName;
+                $propertyName = $fieldAnnotation->name ?: $propertyName;
 
                 if ($fieldAnnotation->resolve) {
                     $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
                 } else {
                     if ($isMethod) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(sprintf("value_resolver([%s], '%s')", implode(", ", $args), $target));
-                    } else if ($fieldAnnotation->name) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(sprintf("value.%s", $target));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf("value_resolver([%s], '%s')", \implode(', ', $args), $target));
+                    } elseif ($fieldAnnotation->name) {
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s', $target));
                     }
                 }
 
                 if ($fieldAnnotation->argsBuilder) {
-                    if (is_string($fieldAnnotation->argsBuilder)) {
+                    if (\is_string($fieldAnnotation->argsBuilder)) {
                         $fieldConfiguration['argsBuilder'] = $fieldAnnotation->argsBuilder;
-                    } elseif (is_array($fieldAnnotation->argsBuilder)) {
+                    } elseif (\is_array($fieldAnnotation->argsBuilder)) {
                         list($builder, $builderConfig) = $fieldAnnotation->argsBuilder;
                         $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
                     } else {
-                        throw new \UnexpectValueException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
                     }
                 }
 
                 if ($fieldAnnotation->fieldBuilder) {
-                    if (is_string($fieldAnnotation->fieldBuilder)) {
+                    if (\is_string($fieldAnnotation->fieldBuilder)) {
                         $fieldConfiguration['builder'] = $fieldAnnotation->fieldBuilder;
-                    } elseif (is_array($fieldAnnotation->fieldBuilder)) {
+                    } elseif (\is_array($fieldAnnotation->fieldBuilder)) {
                         list($builder, $builderConfig) = $fieldAnnotation->fieldBuilder;
                         $fieldConfiguration['builder'] = $builder;
-                        $fieldConfiguration['builderConfig'] = $builderConfig ? : [];
+                        $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
                     } else {
-                        throw new \UnexpectValueException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
                     }
                 }
 
@@ -393,14 +402,14 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the first annotation matching given class
-     * 
-     * @param Annotation[] $annotations
-     * @param string       $annotationClass
-     * 
-     * @return Annotation|false
+     * Get the first annotation matching given class.
+     *
+     * @param array  $annotations
+     * @param string $annotationClass
+     *
+     * @return mixed
      */
-    private static function getFirstAnnotationMatching($annotations, $annotationClass)
+    private static function getFirstAnnotationMatching(array $annotations, $annotationClass)
     {
         foreach ($annotations as $annotation) {
             if ($annotation instanceof $annotationClass) {
@@ -412,13 +421,14 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the config for description & deprecation reason
-     * 
-     * @param Annotation $descriptionAnnotation
-     * 
+     * Get the config for description & deprecation reason.
+     *
+     * @param array $annotations
+     * @param bool  $withDeprecation
+     *
      * @return array
      */
-    private static function getDescriptionConfiguration($annotations, $withDeprecation = false)
+    private static function getDescriptionConfiguration(array $annotations, bool $withDeprecation = false)
     {
         $config = [];
         $descriptionAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Description');
@@ -437,27 +447,27 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Format an expression (ie. add "@=" if not set)
-     * 
+     * Format an expression (ie. add "@=" if not set).
+     *
      * @param string $expression
-     * 
+     *
      * @return string
      */
-    private static function formatExpression($expression)
+    private static function formatExpression(string $expression)
     {
-        return substr($expression, 0, 2) === '@=' ? $expression : sprintf('@=%s', $expression);
+        return '@=' === \substr($expression, 0, 2) ? $expression : \sprintf('@=%s', $expression);
     }
 
     /**
-     * Suffix a name if it is not already
-     * 
+     * Suffix a name if it is not already.
+     *
      * @param string $name
      * @param string $suffix
-     * 
+     *
      * @return string
      */
     private static function suffixName(string $name, string $suffix)
     {
-        return substr($name, strlen($suffix)) === $suffix ? $name : sprintf("%s%s", $name, $suffix);
+        return \substr($name, \strlen($suffix)) === $suffix ? $name : \sprintf('%s%s', $name, $suffix);
     }
 }

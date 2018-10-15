@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
@@ -20,9 +20,9 @@ final class InputType
     public $name;
 
     /**
-     * Is the type a relay input
-     * 
-     * @var boolean
+     * Is the type a relay input.
+     *
+     * @var bool
      */
     public $isRelay = false;
 }

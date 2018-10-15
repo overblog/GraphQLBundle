@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Union;
 
@@ -12,5 +12,4 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 class Pet
 {
-
 }

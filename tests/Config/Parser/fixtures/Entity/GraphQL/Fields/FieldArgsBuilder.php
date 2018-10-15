@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Fields;
 
@@ -19,7 +19,7 @@ class FieldArgsBuilder
     /**
      * @GQL\Field(
      *    name="friends",
-     *    type="[Character]", 
+     *    type="[Character]",
      *    argsBuilder={"MyArgBuilder", {"defaultArg": 1, "option2": "smile"}})
      * )
      */
@@ -28,4 +28,3 @@ class FieldArgsBuilder
         return [];
     }
 }
-

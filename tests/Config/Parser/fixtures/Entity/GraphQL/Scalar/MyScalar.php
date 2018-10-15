@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar;
 
@@ -12,13 +12,15 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 class MyScalar
 {
-    public static function serialize()
+    public static function serialize(): void
     {
     }
-    public static function parseValue()
+
+    public static function parseValue(): void
     {
     }
-    public static function parseLiteral()
+
+    public static function parseLiteral(): void
     {
     }
 }

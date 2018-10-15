@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
@@ -20,16 +20,16 @@ final class Type
     public $name;
 
     /**
-     * Type inherited interfaces
-     * 
+     * Type inherited interfaces.
+     *
      * @var string[]
      */
     public $interfaces;
 
     /**
-     * Is the type a relay payload
-     * 
-     * @var boolean
+     * Is the type a relay payload.
+     *
+     * @var bool
      */
     public $isRelay = false;
 }

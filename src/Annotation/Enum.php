@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
@@ -20,7 +20,7 @@ final class Enum
     public $name;
 
     /**
-     * @var array<Overblog\GraphQLBundle\Annotation\EnumValue>
+     * @var array<\Overblog\GraphQLBundle\Annotation\EnumValue>
      */
     public $values;
 }
