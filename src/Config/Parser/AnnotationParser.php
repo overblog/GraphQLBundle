@@ -357,7 +357,7 @@ class AnnotationParser implements ParserInterface
                     $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
                 } else {
                     if ($isMethod) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf("value_resolver([%s], '%s')", \implode(', ', $args), $target));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s(%s)', $target, \implode(', ', $args)));
                     } elseif ($fieldAnnotation->name) {
                         $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s', $target));
                     }

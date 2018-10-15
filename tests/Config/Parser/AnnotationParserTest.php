@@ -189,13 +189,12 @@ class AnnotationParserTest extends TestCase
                                 'gender' => ['type' => 'Gender', 'description' => 'Limit friends of this gender'],
                                 'limit' => ['type' => 'Int', 'description' => 'Limit number of friends to retrieve'],
                             ],
-                            'resolve' => "@=value_resolver([args['gender'], args['limit']], 'getFriends')",
+                            'resolve' => "@=value.getFriends(args['gender'], args['limit'])",
                         ],
                     ],
                 ],
             ],
         ];
-
         $this->checkConfigFromFile('Fields/FieldMethod.php', $expected);
     }
 
@@ -212,7 +211,7 @@ class AnnotationParserTest extends TestCase
                                 'builder' => 'MyArgBuilder',
                                 'config' => ['defaultArg' => 1, 'option2' => 'smile'],
                             ],
-                            'resolve' => "@=value_resolver([], 'getFriends')",
+                            'resolve' => '@=value.getFriends()',
                         ],
                         'planets' => [
                             'argsBuilder' => 'MyArgBuilder',
@@ -221,7 +220,6 @@ class AnnotationParserTest extends TestCase
                 ],
             ],
         ];
-
         $this->checkConfigFromFile('Fields/FieldArgsBuilder.php', $expected);
     }
 
@@ -241,7 +239,6 @@ class AnnotationParserTest extends TestCase
                 ],
             ],
         ];
-
         $this->checkConfigFromFile('Fields/FieldFieldBuilder.php', $expected);
     }
 
@@ -256,7 +253,6 @@ class AnnotationParserTest extends TestCase
                 ],
             ],
         ]]];
-
         $this->checkConfigFromFile('Inherits/ChildClass.php', $expected);
     }
 }

@@ -85,12 +85,6 @@ services:
         tags:
             - { name: overblog_graphql.expression_function }
 
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\ValueResolver:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\ValueResolver
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
     Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject
         public: false
