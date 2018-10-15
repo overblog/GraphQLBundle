@@ -1,5 +1,6 @@
-Enum
-====
+# Enum
+
+## With YAML
 
 ```yaml
 # MyBundle/Resources/config/graphql/Episode.types.yml
@@ -25,32 +26,30 @@ Episode:
                 description: "Released in 2015."
 ```
 
-Or with annotation:
+## With Annotations
+
+Note: At the moment, doctrine annotations on constants are not supported. So if you need to add config like description or deprecationReason, you must add @GQL\EnumValue with the constant name as name attribute on the annotation.
 
 ```php
 <?php
 
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
 /**
- * @\Overblog\GraphQLBundle\Annotation\GraphQLType(type="enum")
- * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="One of the films in the Star Wars Trilogy")
+ * @GQL\Enum(values={
+ *    @GQL\EnumValue(name="NEWHOPE", description="Released in 1977."),
+ *    @GQL\EnumValue(name="EMPIRE", description="Released in 1980."),
+ *    @GQL\EnumValue(name="FORCEAWAKENS", description="Released in 2015."),
+ * })
+ * @GQL\Description("One of the films in the Star Wars Trilogy")
  */
 class Episode
 {
-    /**
-     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 1977.")
-     */
     const NEWHOPE = 4;
-    
-    /**
-     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 1980.")
-     */
     const EMPIRE = 'constant("App\\StarWars\\Movies::MOVIE_EMPIRE")';
-    
     const JEDI = 6;
-    
-    /**
-     * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="Released in 2015.")
-     */
     const FORCEAWAKENS = 'FORCEAWAKENS';
 }
 ```

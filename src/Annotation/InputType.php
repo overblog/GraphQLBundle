@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
+ * Annotation for GraphQL input type.
  *
  * @Annotation
- * @Target("PROPERTY")
+ * @Target("CLASS")
  */
-final class GraphQLColumn
+final class InputType
 {
     /**
-     * Type.
+     * Type name.
      *
      * @var string
      */
-    public $type;
+    public $name;
 
     /**
-     * Is nullable?
+     * Is the type a relay input.
      *
      * @var bool
      */
-    public $nullable;
+    public $isRelay = false;
 }

@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
+ * Annotation for GraphQL access on fields.
  *
  * @Annotation
- * @Target({"CLASS", "PROPERTY"})
+ * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
-final class GraphQLDescription
+final class Access
 {
     /**
-     * Type.
+     * Field access.
      *
      * @var string
      */
-    public $description;
+    public $value;
 }

@@ -5,18 +5,26 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
- * Use it if you don't use Doctrine ORM annotation.
+ * Annotation for GraphQL union.
  *
  * @Annotation
  * @Target("CLASS")
  */
-final class GraphQLAlias
+final class Union
 {
     /**
-     * Type.
+     * Union name.
      *
      * @var string
      */
     public $name;
+
+    /**
+     * Union types.
+     *
+     * @required
+     *
+     * @var array<string>
+     */
+    public $types;
 }

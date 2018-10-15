@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for graphql type
- * Use it if you don't use Doctrine ORM annotation.
+ * Annotation for GraphQL enum value.
  *
  * @Annotation
- * @Target("PROPERTY")
+ * @Target("ANNOTATION")
  */
-class GraphQLInputArgs
+final class EnumValue
 {
     /**
      * @var string
@@ -21,15 +20,10 @@ class GraphQLInputArgs
     /**
      * @var string
      */
-    public $target;
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var string
-     */
     public $description;
+
+    /**
+     * @var string
+     */
+    public $deprecationReason;
 }

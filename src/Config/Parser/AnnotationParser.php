@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
-use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Overblog\GraphQLBundle\Annotation\Enum as AnnotationEnum;
+use Overblog\GraphQLBundle\Annotation\InputType as AnnotationInputType;
+use Overblog\GraphQLBundle\Annotation\Scalar as AnnotationScalar;
+use Overblog\GraphQLBundle\Annotation\Type as AnnotationType;
+use Overblog\GraphQLBundle\Annotation\TypeInterface as AnnotationInterface;
+use Overblog\GraphQLBundle\Annotation\Union as AnnotationUnion;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -14,6 +19,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 class AnnotationParser implements ParserInterface
 {
     private static $annotationReader = null;
+    private static $classesMap = [];
 
     /**
      * {@inheritdoc}
@@ -27,50 +33,80 @@ class AnnotationParser implements ParserInterface
         try {
             $fileContent = \file_get_contents($file->getRealPath());
 
-            $entityName = \substr($file->getFilename(), 0, -4);
+            $shortClassName = \substr($file->getFilename(), 0, -4);
             if (\preg_match('#namespace (.+);#', $fileContent, $namespace)) {
-                $className = $namespace[1].'\\'.$entityName;
+                $className = $namespace[1].'\\'.$shortClassName;
             } else {
-                $className = $entityName;
+                $className = $shortClassName;
             }
 
             $reflexionEntity = new \ReflectionClass($className);
 
-            $annotations = self::getAnnotationReader()->getClassAnnotations($reflexionEntity);
-            $annotations = self::parseAnnotation($annotations);
+            $classAnnotations = self::getAnnotationReader()->getClassAnnotations($reflexionEntity);
 
-            $alias = self::getGraphQLAlias($annotations) ?: $entityName;
-            $type = self::getGraphQLType($annotations);
+            $properties = $reflexionEntity->getProperties();
 
-            switch ($type) {
-                case 'relay-connection':
-                    return self::formatRelay($type, $alias, $annotations, $reflexionEntity->getProperties());
-                case 'enum':
-                    return self::formatEnumType($alias, $entityName, $reflexionEntity->getProperties());
-                case 'custom-scalar':
-                    return self::formatCustomScalarType($alias, $type, $className, $annotations);
-                default:
-                    return self::formatScalarType($alias, $type, $entityName, $reflexionEntity->getProperties());
+            $propertiesAnnotations = [];
+            foreach ($properties as $property) {
+                $propertiesAnnotations[$property->getName()] = self::getAnnotationReader()->getPropertyAnnotations($property);
             }
+
+            $methods = $reflexionEntity->getMethods();
+            $methodsAnnotations = [];
+            foreach ($methods as $method) {
+                $methodsAnnotations[$method->getName()] = self::getAnnotationReader()->getMethodAnnotations($method);
+            }
+
+            $gqlTypes = [];
+
+            foreach ($classAnnotations as $classAnnotation) {
+                $method = false;
+                switch (\get_class($classAnnotation)) {
+                    case 'Overblog\GraphQLBundle\Annotation\Type':
+                        $gqlTypes += self::getGraphqlType($shortClassName, $classAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations);
+                        break;
+                    case 'Overblog\GraphQLBundle\Annotation\InputType':
+                        $gqlTypes += self::getGraphqlInputType($shortClassName, $classAnnotation, $classAnnotations, $propertiesAnnotations);
+                        break;
+                    case 'Overblog\GraphQLBundle\Annotation\Scalar':
+                        $gqlTypes += self::getGraphqlScalar($shortClassName, $className, $classAnnotation, $classAnnotations);
+                        break;
+                    case 'Overblog\GraphQLBundle\Annotation\Enum':
+                        $gqlTypes += self::getGraphqlEnum($shortClassName, $classAnnotation, $classAnnotations, $reflexionEntity->getConstants());
+                        break;
+                    case 'Overblog\GraphQLBundle\Annotation\Union':
+                        $gqlTypes += self::getGraphqlUnion($shortClassName, $classAnnotation, $classAnnotations);
+                        break;
+                    case 'Overblog\GraphQLBundle\Annotation\TypeInterface':
+                        $gqlTypes += self::getGraphqlInterface($shortClassName, $classAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations);
+                        break;
+                }
+
+                if ($method) {
+                    $gqlTypes += self::$method($shortClassName, $classAnnotation, $propertiesAnnotations);
+                }
+            }
+
+            return $gqlTypes;
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException(\sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
         }
     }
 
+    /**
+     * Retrieve annotation reader.
+     *
+     * @return AnnotationReader
+     */
     private static function getAnnotationReader()
     {
         if (null === self::$annotationReader) {
             if (!\class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
-                !\class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')
-            ) {
-                throw new \Exception('In order to use annotation, you need to require doctrine ORM');
+                !\class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')) {
+                throw new \Exception('In order to use graphql annotation, you need to require doctrine annotations');
             }
 
-            $loader = new ClassLoader();
-            $loader->setClassMapAuthoritative(true);
-
-            AnnotationRegistry::registerLoader([$loader, 'loadClass']);
-            AnnotationRegistry::registerFile(__DIR__.'/../../Annotation/GraphQLAnnotation.php');
+            AnnotationRegistry::registerLoader('class_exists');
             self::$annotationReader = new AnnotationReader();
         }
 
@@ -78,515 +114,360 @@ class AnnotationParser implements ParserInterface
     }
 
     /**
-     * Get the graphQL alias.
+     * Create a GraphQL Type configuration from annotations on class, properties and methods.
      *
-     * @param $annotation
-     *
-     * @return string|null
-     */
-    private static function getGraphQLAlias($annotation)
-    {
-        if (!empty($annotation['GraphQLAlias']['name'])) {
-            return $annotation['GraphQLAlias']['name'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the graphQL type.
-     *
-     * @param $annotation
-     *
-     * @return string
-     */
-    private static function getGraphQLType($annotation)
-    {
-        if (!empty($annotation['GraphQLType']['type'])) {
-            return $annotation['GraphQLType']['type'];
-        }
-
-        if (!empty($annotation['GraphQLScalarType']['type'])) {
-            return 'custom-scalar';
-        }
-
-        return 'object';
-    }
-
-    /**
-     * @param string                $type
-     * @param string                $alias
-     * @param array                 $classAnnotations
-     * @param \ReflectionProperty[] $properties
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    private static function formatRelay($type, $alias, $classAnnotations, $properties)
-    {
-        $typesConfig = [
-            $alias => [
-                'type' => $type,
-                'config' => [],
-            ],
-        ];
-
-        if (!empty($classAnnotations['GraphQLNode'])) {
-            $typesConfig[$alias]['config']['nodeType'] = $classAnnotations['GraphQLNode']['type'];
-            $typesConfig[$alias]['config']['resolveNode'] = $classAnnotations['GraphQLNode']['resolve'];
-        }
-
-        foreach ($properties as $property) {
-            $propertyName = $property->getName();
-            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
-            $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
-
-            if (!empty($propertyAnnotation['GraphQLEdgeFields'])) {
-                if (empty($typesConfig[$alias]['config']['edgeFields'])) {
-                    $typesConfig[$alias]['config']['edgeFields'] = [];
-                }
-
-                $typesConfig[$alias]['config']['edgeFields'][$propertyName] = [
-                    'type' => $propertyAnnotation['GraphQLEdgeFields']['type'],
-                    'resolve' => $propertyAnnotation['GraphQLEdgeFields']['resolve'],
-                ];
-            } elseif (!empty($propertyAnnotation['GraphQLConnectionFields'])) {
-                if (empty($typesConfig[$alias]['config']['connectionFields'])) {
-                    $typesConfig[$alias]['config']['connectionFields'] = [];
-                }
-
-                $typesConfig[$alias]['config']['connectionFields'][$propertyName] = [
-                    'type' => $propertyAnnotation['GraphQLConnectionFields']['type'],
-                    'resolve' => $propertyAnnotation['GraphQLConnectionFields']['resolve'],
-                ];
-            }
-        }
-
-        return empty($typesConfig[$alias]['config']) ? [] : $typesConfig;
-    }
-
-    /**
-     * Format enum type.
-     *
-     * @param string                $alias
-     * @param string                $entityName
-     * @param \ReflectionProperty[] $properties
+     * @param string         $shortClassName
+     * @param AnnotationType $typeAnnotation
+     * @param array          $classAnnotations
+     * @param array          $propertiesAnnotations
+     * @param array          $methodsAnnotations
      *
      * @return array
      */
-    private static function formatEnumType($alias, $entityName, $properties)
+    private static function getGraphqlType(string $shortClassName, AnnotationType $typeAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations)
     {
-        $typesConfig = [
-            $alias => [
-                'type' => 'enum',
-                'config' => [
-                    'description' => $entityName.' type',
-                ],
-            ],
-        ];
+        $typeName = $typeAnnotation->name ?: $shortClassName;
+        $typeConfiguration = [];
+
+        $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations);
+        $fields += self::getGraphqlFieldsFromAnnotations($methodsAnnotations, false, true);
+
+        if (empty($fields)) {
+            return [];
+        }
+
+        $typeConfiguration['fields'] = $fields;
+
+        $publicAnnotation = self::getFirstAnnotationMatching($classAnnotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
+        if ($publicAnnotation) {
+            $typeConfiguration['fieldsDefaultPublic'] = self::formatExpression($publicAnnotation->value);
+        }
+
+        $accessAnnotation = self::getFirstAnnotationMatching($classAnnotations, 'Overblog\GraphQLBundle\Annotation\Access');
+        if ($accessAnnotation) {
+            $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
+        }
+
+        $typeConfiguration += self::getDescriptionConfiguration($classAnnotations);
+        if ($typeAnnotation->interfaces) {
+            $typeConfiguration['interfaces'] = $typeAnnotation->interfaces;
+        }
+
+        return [$typeName => ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration]];
+    }
+
+    /**
+     * Create a GraphQL Interface type configuration from annotations on properties.
+     *
+     * @param string              $shortClassName
+     * @param AnnotationInterface $interfaceAnnotation
+     * @param array               $propertiesAnnotations
+     *
+     * @return array
+     */
+    private static function getGraphqlInterface(string $shortClassName, AnnotationInterface $interfaceAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations)
+    {
+        $interfaceName = $interfaceAnnotation->name ?: $shortClassName;
+        $interfaceConfiguration = [];
+
+        $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations);
+        $fields += self::getGraphqlFieldsFromAnnotations($methodsAnnotations, false, true);
+
+        if (empty($fields)) {
+            return [];
+        }
+
+        $interfaceConfiguration['fields'] = $fields;
+        $interfaceConfiguration += self::getDescriptionConfiguration($classAnnotations);
+
+        return [$interfaceName => ['type' => 'interface', 'config' => $interfaceConfiguration]];
+    }
+
+    /**
+     * Create a GraphQL Input type configuration from annotations on properties.
+     *
+     * @param string              $shortClassName
+     * @param AnnotationInputType $inputAnnotation
+     * @param array               $propertiesAnnotations
+     *
+     * @return array
+     */
+    private static function getGraphqlInputType(string $shortClassName, AnnotationInputType $inputAnnotation, array $classAnnotations, array $propertiesAnnotations)
+    {
+        $inputName = $inputAnnotation->name ?: self::suffixName($shortClassName, 'Input');
+        $inputConfiguration = [];
+        $fields = self::getGraphqlFieldsFromAnnotations($propertiesAnnotations, true);
+
+        if (empty($fields)) {
+            return [];
+        }
+
+        $inputConfiguration['fields'] = $fields;
+        $inputConfiguration += self::getDescriptionConfiguration($classAnnotations);
+
+        return [$inputName => ['type' => $inputAnnotation->isRelay ? 'relay-mutation-input' : 'input-object', 'config' => $inputConfiguration]];
+    }
+
+    /**
+     * Get a Graphql scalar configuration from given scalar annotation.
+     *
+     * @param string           $shortClassName
+     * @param string           $className
+     * @param AnnotationScalar $scalarAnnotation
+     * @param array            $classAnnotations
+     *
+     * @return array
+     */
+    private static function getGraphqlScalar(string $shortClassName, string $className, AnnotationScalar $scalarAnnotation, array $classAnnotations)
+    {
+        $scalarName = $scalarAnnotation->name ?: $shortClassName;
+        $scalarConfiguration = [];
+
+        if ($scalarAnnotation->scalarType) {
+            $scalarConfiguration['scalarType'] = self::formatExpression($scalarAnnotation->scalarType);
+        } else {
+            $scalarConfiguration = [
+                'serialize' => [$className, 'serialize'],
+                'parseValue' => [$className, 'parseValue'],
+                'parseLiteral' => [$className, 'parseLiteral'],
+            ];
+        }
+
+        $scalarConfiguration += self::getDescriptionConfiguration($classAnnotations);
+
+        return [$scalarName => ['type' => 'custom-scalar', 'config' => $scalarConfiguration]];
+    }
+
+    /**
+     * Get a Graphql Enum configuration from given enum annotation.
+     *
+     * @param string         $shortClassName
+     * @param AnnotationEnum $enumAnnotation
+     * @param array          $classAnnotations
+     * @param array          $constants
+     *
+     * @return array
+     */
+    private static function getGraphqlEnum(string $shortClassName, AnnotationEnum $enumAnnotation, array $classAnnotations, array $constants)
+    {
+        $enumName = $enumAnnotation->name ?: self::suffixName($shortClassName, 'Enum');
+        $enumValues = $enumAnnotation->values ? $enumAnnotation->values : [];
 
         $values = [];
-        /** @var \ReflectionProperty $property */
-        foreach ($properties as $property) {
-            $propertyName = $property->getName();
 
-            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
-            $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
+        foreach ($constants as $name => $value) {
+            $valueAnnotation = \current(\array_filter($enumValues, function ($enumValueAnnotation) use ($name) {
+                return $enumValueAnnotation->name == $name;
+            }));
+            $valueConfig = [];
+            $valueConfig['value'] = $value;
 
-            $values[$propertyName] = [
-                'value' => $propertyAnnotation,
-            ];
-
-            if (!empty($test['GraphQLDescription']['description'])) {
-                $values[$propertyName]['description'] = $test['GraphQLDescription']['description'];
+            if ($valueAnnotation && $valueAnnotation->description) {
+                $valueConfig['description'] = $valueAnnotation->description;
             }
+
+            if ($valueAnnotation && $valueAnnotation->deprecationReason) {
+                $valueConfig['deprecationReason'] = $valueAnnotation->deprecationReason;
+            }
+
+            $values[$name] = $valueConfig;
         }
 
-        $typesConfig[$alias]['config']['values'] = $values;
+        $enumConfiguration = ['values' => $values];
+        $enumConfiguration += self::getDescriptionConfiguration($classAnnotations);
 
-        return $typesConfig;
+        return [$enumName => ['type' => 'enum', 'config' => $enumConfiguration]];
     }
 
     /**
-     * Format custom scalar type.
+     * Get a Graphql Union configuration from given union annotation.
      *
-     * @param string $alias
-     * @param string $type
-     * @param string $className
-     * @param array  $annotations
+     * @param string          $shortClassName
+     * @param AnnotationUnion $unionAnnotation
+     * @param array           $classAnnotations
      *
      * @return array
      */
-    private static function formatCustomScalarType($alias, $type, $className, $annotations)
+    private static function getGraphqlUnion(string $shortClassName, AnnotationUnion $unionAnnotation, array $classAnnotations): array
     {
-        if (!empty($annotations['GraphQLScalarType']['type'])) {
-            return [
-                $alias => [
-                    'type' => $type,
-                    'config' => [
-                        'scalarType' => $annotations['GraphQLScalarType']['type'],
-                    ],
-                ],
-            ];
-        }
+        $unionName = $unionAnnotation->name ?: $shortClassName;
+        $unionConfiguration = ['types' => $unionAnnotation->types];
+        $unionConfiguration += self::getDescriptionConfiguration($classAnnotations);
 
-        $config = [
-            'serialize' => [$className, 'serialize'],
-            'parseValue' => [$className, 'parseValue'],
-            'parseLiteral' => [$className, 'parseLiteral'],
-        ];
-
-        return [
-            $alias => [
-                'type' => $type,
-                'config' => $config,
-            ],
-        ];
+        return [$unionName => ['type' => 'union', 'config' => $unionConfiguration]];
     }
 
     /**
-     * Format scalar type.
+     * Create Graphql fields configuration based on annotation.
      *
-     * @param string                $alias
-     * @param string                $type
-     * @param string                $entityName
-     * @param \ReflectionProperty[] $properties
+     * @param array $annotations
+     * @param bool  $isInput
+     * @param bool  $isMethod
      *
      * @return array
      */
-    private static function formatScalarType($alias, $type, $entityName, $properties)
+    private static function getGraphqlFieldsFromAnnotations(array $annotations, bool $isInput = false, bool $isMethod = false): array
     {
-        $typesConfig = [
-            $alias => [
-                'type' => $type,
-                'config' => [
-                    'description' => $entityName.' type',
-                    'fields' => [],
-                ],
-            ],
-        ];
+        $fields = [];
+        foreach ($annotations as $target => $annotations) {
+            $fieldAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Field');
+            $accessAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Access');
+            $publicAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
 
-        foreach ($properties as $property) {
-            $propertyName = $property->getName();
-            $propertyAnnotation = self::getAnnotationReader()->getPropertyAnnotations($property);
-            $propertyAnnotation = self::parseAnnotation($propertyAnnotation);
-
-            if (!$graphQlType = self::getGraphQLFieldType($propertyName, $propertyAnnotation)) {
+            if (!$fieldAnnotation) {
+                if ($accessAnnotation || $publicAnnotation) {
+                    throw new InvalidArgumentException(\sprintf('The annotations "@Access" and/or "@Visible" defined on "%s" are only usable in addition of annotation @Field', $target));
+                }
                 continue;
             }
 
-            if ($graphQlAccessControl = self::getGraphQLAccessControl($propertyAnnotation)) {
-                $graphQlType['access'] = $graphQlAccessControl;
+            // Ignore field with resolver when the type is an Input
+            if ($fieldAnnotation->resolve && $isInput) {
+                continue;
             }
 
-            if ($graphQlPublicControl = self::getGraphQLPublicControl($propertyAnnotation)) {
-                $graphQlType['public'] = $graphQlPublicControl;
+            $propertyName = $target;
+            $fieldType = $fieldAnnotation->type;
+            $fieldConfiguration = [];
+            if ($fieldType) {
+                $fieldConfiguration['type'] = $fieldType;
             }
 
-            $typesConfig[$alias]['config']['fields'][$propertyName] = $graphQlType;
-        }
+            $fieldConfiguration += self::getDescriptionConfiguration($annotations, true);
 
-        return empty($typesConfig[$alias]['config']['fields'])
-            ? []
-            : $typesConfig;
-    }
-
-    /**
-     * Return the graphQL type for the named field.
-     *
-     * @param string $name
-     * @param array  $annotation
-     *
-     * @return array|null
-     */
-    private static function getGraphQLFieldType($name, $annotation)
-    {
-        if (!$type = self::getGraphQLScalarFieldType($name, $annotation)) {
-            if (!$type = self::getGraphQLQueryField($annotation)) {
-                if (!$type = self::getGraphQLMutationField($annotation)) {
-                    return null;
-                }
-            }
-        }
-
-        return $type;
-    }
-
-    /**
-     * Return the common field type, like ID, Int, String, and other user-created type.
-     *
-     * @param string $name
-     * @param array  $annotation
-     *
-     * @return array|null
-     */
-    private static function getGraphQLScalarFieldType($name, $annotation)
-    {
-        // Get the current type, depending on current annotation
-        $type = $graphQLType = null;
-        $nullable = $isMultiple = false;
-        if (\array_key_exists('GraphQLColumn', $annotation) && \array_key_exists('type', $annotation['GraphQLColumn'])) {
-            $annotation = $annotation['GraphQLColumn'];
-            $type = $annotation['type'];
-        } elseif (\array_key_exists('GraphQLToMany', $annotation) && \array_key_exists('target', $annotation['GraphQLToMany'])) {
-            $annotation = $annotation['GraphQLToMany'];
-            $type = $annotation['target'];
-            $isMultiple = $nullable = true;
-        } elseif (\array_key_exists('GraphQLToOne', $annotation) && \array_key_exists('target', $annotation['GraphQLToOne'])) {
-            $annotation = $annotation['GraphQLToOne'];
-            $type = $annotation['target'];
-            $nullable = true;
-        } elseif (\array_key_exists('OneToMany', $annotation) && \array_key_exists('targetEntity', $annotation['OneToMany'])) {
-            $annotation = $annotation['OneToMany'];
-            $type = $annotation['targetEntity'];
-            $isMultiple = $nullable = true;
-        } elseif (\array_key_exists('OneToOne', $annotation) && \array_key_exists('targetEntity', $annotation['OneToOne'])) {
-            $annotation = $annotation['OneToOne'];
-            $type = $annotation['targetEntity'];
-            $nullable = true;
-        } elseif (\array_key_exists('ManyToMany', $annotation) && \array_key_exists('targetEntity', $annotation['ManyToMany'])) {
-            $annotation = $annotation['ManyToMany'];
-            $type = $annotation['targetEntity'];
-            $isMultiple = $nullable = true;
-        } elseif (\array_key_exists('ManyToOne', $annotation) && \array_key_exists('targetEntity', $annotation['ManyToOne'])) {
-            $annotation = $annotation['ManyToOne'];
-            $type = $annotation['targetEntity'];
-            $nullable = true;
-        } elseif (\array_key_exists('Column', $annotation) && \array_key_exists('type', $annotation['Column'])) {
-            $annotation = $annotation['Column'];
-            $type = $annotation['type'];
-        }
-
-        if (!$type) {
-            return null;
-        }
-
-        if (\array_key_exists('nullable', $annotation)) {
-            $nullable = 'true' == $annotation['nullable']
-                ? true
-                : false;
-        }
-
-        $type = \explode('\\', $type);
-        $type = $type[\count($type) - 1];
-
-        // Get the graphQL type representation
-        // Specific case for ID and relation
-        if ('id' === $name && 'integer' === $type) {
-            $graphQLType = 'ID';
-        } else {
-            // Make the relation between doctrine Column type and graphQL type
-            switch ($type) {
-                case 'integer':
-                    $graphQLType = 'Int';
-                    break;
-                case 'string':
-                case 'text':
-                    $graphQLType = 'String';
-                    break;
-                case 'bool':
-                case 'boolean':
-                    $graphQLType = 'Boolean';
-                    break;
-                case 'float':
-                case 'decimal':
-                    $graphQLType = 'Float';
-                    break;
-                default:
-                    // No maching: considering is custom-scalar graphQL type
-                    $graphQLType = $type;
-            }
-        }
-
-        if ($isMultiple) {
-            $graphQLType = '['.$graphQLType.']';
-        }
-
-        if (!$nullable) {
-            $graphQLType .= '!';
-        }
-
-        return ['type' => $graphQLType];
-    }
-
-    /**
-     * Get the graphql query formatted field.
-     *
-     * @param array $annotation
-     *
-     * @return array|null
-     */
-    private static function getGraphQLQueryField($annotation)
-    {
-        if (!\array_key_exists('GraphQLQuery', $annotation)) {
-            return null;
-        }
-
-        $annotationQuery = $annotation['GraphQLQuery'];
-
-        $ret = [
-            'type' => $annotationQuery['type'],
-        ];
-
-        $method = $annotationQuery['method'];
-        $args = $queryArgs = [];
-        if (!empty($annotationQuery['input'])) {
-            $annotationArgs = $annotationQuery['input'];
-            if (!\array_key_exists(0, $annotationArgs)) {
-                $annotationArgs = [$annotationArgs];
-            }
-
-            foreach ($annotationArgs as $arg) {
-                if (!empty($arg['target'])) {
-                    if (!empty($arg['name']) && !empty($arg['type'])) {
-                        $args[$arg['name']] = [
-                            'type' => $arg['type'],
-                        ];
-
-                        if (!empty($arg['description'])) {
-                            $args[$arg['name']]['description'] = $arg['description'];
-                        }
+            if (!$isInput) {
+                $args = [];
+                if ($fieldAnnotation->args) {
+                    foreach ($fieldAnnotation->args as $annotationArg) {
+                        $args[$annotationArg->name] = ['type' => $annotationArg->type] + ($annotationArg->description ? ['description' => $annotationArg->description] : []);
                     }
 
-                    $queryArgs[] = $arg['target'];
+                    if (!empty($args)) {
+                        $fieldConfiguration['args'] = $args;
+                    }
+
+                    $args = \array_map(function ($a) {
+                        return \sprintf("args['%s']", $a);
+                    }, \array_keys($args));
+                }
+
+                $propertyName = $fieldAnnotation->name ?: $propertyName;
+
+                if ($fieldAnnotation->resolve) {
+                    $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
                 } else {
-                    $queryArgs[] = $arg;
+                    if ($isMethod) {
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s(%s)', $target, \implode(', ', $args)));
+                    } elseif ($fieldAnnotation->name) {
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s', $target));
+                    }
+                }
+
+                if ($fieldAnnotation->argsBuilder) {
+                    if (\is_string($fieldAnnotation->argsBuilder)) {
+                        $fieldConfiguration['argsBuilder'] = $fieldAnnotation->argsBuilder;
+                    } elseif (\is_array($fieldAnnotation->argsBuilder)) {
+                        list($builder, $builderConfig) = $fieldAnnotation->argsBuilder;
+                        $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
+                    } else {
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
+                    }
+                }
+
+                if ($fieldAnnotation->fieldBuilder) {
+                    if (\is_string($fieldAnnotation->fieldBuilder)) {
+                        $fieldConfiguration['builder'] = $fieldAnnotation->fieldBuilder;
+                    } elseif (\is_array($fieldAnnotation->fieldBuilder)) {
+                        list($builder, $builderConfig) = $fieldAnnotation->fieldBuilder;
+                        $fieldConfiguration['builder'] = $builder;
+                        $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
+                    } else {
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on Graphql annotation "@Field" defined on %s must be a string or an array where first index is the builder name and the second is the config.', $target));
+                    }
+                }
+
+                if ($accessAnnotation) {
+                    $fieldConfiguration['access'] = self::formatExpression($accessAnnotation->value);
+                }
+
+                if ($publicAnnotation) {
+                    $fieldConfiguration['public'] = self::formatExpression($publicAnnotation->value);
                 }
             }
 
-            if (!empty($args)) {
-                $ret['args'] = $args;
+            $fields[$propertyName] = $fieldConfiguration;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Get the first annotation matching given class.
+     *
+     * @param array  $annotations
+     * @param string $annotationClass
+     *
+     * @return mixed
+     */
+    private static function getFirstAnnotationMatching(array $annotations, $annotationClass)
+    {
+        foreach ($annotations as $annotation) {
+            if ($annotation instanceof $annotationClass) {
+                return $annotation;
             }
         }
 
-        if (!empty($queryArgs)) {
-            $query = "'".$method."', [".\implode(', ', $queryArgs).']';
-        } else {
-            $query = "'".$method."'";
-        }
-
-        $ret['resolve'] = '@=resolver('.$query.')';
-
-        if (!empty($annotationQuery['argsBuilder'])) {
-            $ret['argsBuilder'] = $annotationQuery['argsBuilder'];
-        }
-
-        return $ret;
+        return false;
     }
 
     /**
-     * Get the formatted graphQL mutation field.
-     *
-     * @param array $annotation
-     *
-     * @return array
-     */
-    private static function getGraphQLMutationField($annotation)
-    {
-        if (!\array_key_exists('GraphQLMutation', $annotation)) {
-            return self::getGraphQLRelayMutationField($annotation);
-        }
-
-        $annotation = $annotation['GraphQLMutation'];
-        if (\array_key_exists('args', $annotation)) {
-            $mutate = "@=mutation('".$annotation['method']."', [".\implode(', ', $annotation['args']).'])';
-        } else {
-            $mutate = "'".$annotation['method']."'";
-        }
-
-        return [
-            'type' => $annotation['payload'],
-            'resolve' => $mutate,
-            'args' => $annotation['input'],
-        ];
-    }
-
-    /**
-     * Get the formatted graphQL relay mutation field.
-     *
-     * @param array $annotation
-     *
-     * @return array|null
-     */
-    private static function getGraphQLRelayMutationField($annotation)
-    {
-        if (!\array_key_exists('GraphQLRelayMutation', $annotation)) {
-            return null;
-        }
-
-        $annotation = $annotation['GraphQLRelayMutation'];
-        if (\array_key_exists('args', $annotation)) {
-            $mutate = "'".$annotation['method']."', [".\implode(', ', $annotation['args']).']';
-        } else {
-            $mutate = "'".$annotation['method']."'";
-        }
-
-        return [
-            'builder' => 'Relay::Mutation',
-            'builderConfig' => [
-                'inputType' => $annotation['input'][0],
-                'payloadType' => $annotation['payload'],
-                'mutateAndGetPayload' => '@=mutation('.$mutate.')',
-            ],
-        ];
-    }
-
-    /**
-     * Get graphql access control annotation.
-     *
-     * @param $annotation
-     *
-     * @return null|string
-     */
-    private static function getGraphQLAccessControl($annotation)
-    {
-        if (\array_key_exists('GraphQLAccessControl', $annotation) && \array_key_exists('method', $annotation['GraphQLAccessControl'])) {
-            return '@='.$annotation['GraphQLAccessControl']['method'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Get graphql public control.
-     *
-     * @param $annotation
-     *
-     * @return null|string
-     */
-    private static function getGraphQLPublicControl($annotation)
-    {
-        if (\array_key_exists('GraphQLPublicControl', $annotation) && \array_key_exists('method', $annotation['GraphQLPublicControl'])) {
-            return '@='.$annotation['GraphQLPublicControl']['method'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Parse annotation.
+     * Get the config for description & deprecation reason.
      *
      * @param array $annotations
+     * @param bool  $withDeprecation
      *
      * @return array
      */
-    private static function parseAnnotation($annotations)
+    private static function getDescriptionConfiguration(array $annotations, bool $withDeprecation = false)
     {
-        $returnAnnotation = [];
-        foreach ($annotations as $index => $annotation) {
-            if (!\is_array($annotation)) {
-                $index = \explode('\\', \get_class($annotation));
-                $index = $index[\count($index) - 1];
-            }
+        $config = [];
+        $descriptionAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Description');
+        if ($descriptionAnnotation) {
+            $config['description'] = $descriptionAnnotation->value;
+        }
 
-            $returnAnnotation[$index] = [];
-
-            foreach ($annotation as $indexAnnotation => $value) {
-                $returnAnnotation[$index][$indexAnnotation] = $value;
+        if ($withDeprecation) {
+            $deprecatedAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Deprecated');
+            if ($deprecatedAnnotation) {
+                $config['deprecationReason'] = $deprecatedAnnotation->value;
             }
         }
 
-        return $returnAnnotation;
+        return $config;
+    }
+
+    /**
+     * Format an expression (ie. add "@=" if not set).
+     *
+     * @param string $expression
+     *
+     * @return string
+     */
+    private static function formatExpression(string $expression)
+    {
+        return '@=' === \substr($expression, 0, 2) ? $expression : \sprintf('@=%s', $expression);
+    }
+
+    /**
+     * Suffix a name if it is not already.
+     *
+     * @param string $name
+     * @param string $suffix
+     *
+     * @return string
+     */
+    private static function suffixName(string $name, string $suffix)
+    {
+        return \substr($name, \strlen($suffix)) === $suffix ? $name : \sprintf('%s%s', $name, $suffix);
     }
 }

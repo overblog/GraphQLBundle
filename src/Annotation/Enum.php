@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
+ * Annotation for GraphQL enum.
  *
  * @Annotation
  * @Target("CLASS")
  */
-final class GraphQLNode
+final class Enum
 {
     /**
-     * Type.
+     * Enum name.
      *
      * @var string
      */
-    public $type;
+    public $name;
 
     /**
-     * @var string
+     * @var array<\Overblog\GraphQLBundle\Annotation\EnumValue>
      */
-    public $resolve;
+    public $values;
 }

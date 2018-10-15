@@ -1,5 +1,6 @@
-Interface
-=========
+# Interface
+
+## With YAML
 
 ```yaml
 # src/MyBundle/Resources/config/graphql/Character.types.yml
@@ -33,39 +34,42 @@ Character:
         resolveType: "@=resolver('character_type', [value])"
 ```
 
-
-Or with annotation:
+## With Annotations
 
 ```php
 <?php
 
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
 /**
- * @\Overblog\GraphQLBundle\Annotation\GraphQLDescription(description="A character in the Star Wars Trilogy")
+ * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
+ * @GQL\Description("A character in the Star Wars Trilogy")
  */
 abstract class Character
 {
     /**
-     * @GQL\GraphQLColumn(type="string")
-     * @GQL\GraphQLDescription(description="The id of the character.")
+     * @GQL\Field(type="String!")
+     * @GQL\Description("The id of the character.")
      */
     public $id;
 
     /**
-     * @GQL\GraphQLColumn(type="string")
-     * @GQL\GraphQLDescription(description="The name of the character.")
-     * @GQL\GraphQLAccessControl(method="isAuthenticated()")
+     * @GQL\Field(type="String")
+     * @GQL\Description("The name of the character.")
      */
     public $name;
-    
+
     /**
-     * @GQL\GraphQLToMany(target="Character")
-     * @GQL\GraphQLDescription(description="The friends of the character.")
+     * @GQL\Field(type="[Character]")
+     * @GQL\Description("The friends of the character.")
      */
     public $friends;
-    
+
     /**
-     * @GQL\GraphQLToMany(target="Episode")
-     * @GQL\GraphQLDescription(description="Which movies they appear in.")
+     * @GQL\Field(type="[Episode]")
+     * @GQL\Description("Which movies they appear in.")
      */
     public $appearsIn;
 }
@@ -102,17 +106,17 @@ class CharacterResolver
      * @var TypeResolver
      */
     private $typeResolver;
-    
+
     public function __construct(TypeResolver $typeResolver)
     {
         $this->typeResolver = $typeResolver;
     }
-    
+
     public function resolveType($data)
     {
         $humanType = $this->typeResolver->resolve('Human');
         $droidType = $this->typeResolver->resolve('Droid');
-        
+
         $humans = StarWarsData::humans();
         $droids = StarWarsData::droids();
         if (isset($humans[$data['id']])) {
@@ -123,23 +127,23 @@ class CharacterResolver
         }
         return null;
     }
-    
+
     public function resolveFriends($character)
     {
         return StarWarsData::getFriends($character);
     }
-    
+
     public function resolveHero($args)
     {
         return StarWarsData::getHero(isset($args['episode']) ? $args['episode'] : null);
     }
-    
+
     public function resolveHuman($args)
     {
         $humans = StarWarsData::humans();
         return isset($humans[$args['id']]) ? $humans[$args['id']] : null;
     }
-    
+
     public function resolveDroid($args)
     {
         $droids = StarWarsData::droids();

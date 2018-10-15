@@ -1,5 +1,6 @@
-Union
-=====
+# Union
+
+## With YAML
 
 ```yaml
 # src/MyBundle/Resources/config/graphql/HumanAndDroid.types.yml
@@ -11,4 +12,22 @@ HumanAndDroid:
     config:
         types: [Human, Droid]
         description: Human and Droid
+```
+
+## With YAML
+
+```php
+<?php
+
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * @GQL\Union(types={"Human", "Droid"})
+ * @GQL\Description("Human and Droid")
+ */
+class HumanAndDroid
+{
+}
 ```

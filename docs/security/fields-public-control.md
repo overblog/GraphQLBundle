@@ -1,5 +1,6 @@
-Fields public Control
-=====================
+# Fields public Control
+
+## With YAML
 
 You can use `config.fields.*.public` to control if a field needs to be removed from the results.
 If `config.fields.*.public` value is true or is not set, the field will be visible.
@@ -17,10 +18,9 @@ AnObject:
             privateData:
                 type: "String"
                 public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
-
 ```
 
-Or using annotation:
+## With Annotations
 
 ```php
 <?php

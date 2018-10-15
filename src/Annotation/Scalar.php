@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL type.
+ * Annotation for GraphQL scalar.
  *
  * @Annotation
- * @Target("PROPERTY")
+ * @Target("CLASS")
  */
-final class GraphQLEdgeFields
+final class Scalar
 {
     /**
-     * Type.
+     * Scalar name.
      *
      * @var string
      */
-    public $type;
+    public $name;
 
     /**
+     * Scalar type.
+     *
      * @var string
      */
-    public $resolve;
+    public $scalarType;
 }
