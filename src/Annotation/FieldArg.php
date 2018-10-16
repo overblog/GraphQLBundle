@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class FieldArg
+final class FieldArg implements Annotation
 {
     /**
      * Argument name.

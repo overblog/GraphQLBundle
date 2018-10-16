@@ -215,6 +215,7 @@ class AnnotationParserTest extends TestCase
                         ],
                         'planets' => [
                             'argsBuilder' => 'MyArgBuilder',
+                            'type' => 'String',
                         ],
                     ],
                 ],
@@ -254,5 +255,29 @@ class AnnotationParserTest extends TestCase
             ],
         ]]];
         $this->checkConfigFromFile('Inherits/ChildClass.php', $expected);
+    }
+
+    public function testTypeAutoGuessing(): void
+    {
+        $file1 = __DIR__.'/fixtures/Entity/GraphQL/Autoguess/Autoguess.php';
+        $file2 = __DIR__.'/fixtures/Entity/GraphQL/Autoguess/Autoguess2.php';
+        AnnotationParser::preParse(new \SplFileInfo($file1), $this->containerBuilder);
+        AnnotationParser::preParse(new \SplFileInfo($file2), $this->containerBuilder);
+
+        $config = AnnotationParser::parse(new \SplFileInfo($file1), $this->containerBuilder);
+
+        $expected = ['Autoguess' => ['type' => 'object', 'config' => [
+            'fields' => [
+                'field1' => ['type' => 'String!'],
+                'field2' => ['type' => 'Int'],
+                'field3' => ['type' => '[CustomAutoguessType]!'],
+                'field4' => ['type' => 'CustomAutoguessType!'],
+                'field5' => ['type' => 'CustomAutoguessType!'],
+                'field6' => ['type' => '[CustomAutoguessType]!'],
+                'field7' => ['type' => 'CustomAutoguessType'],
+            ],
+        ]]];
+
+        $this->assertEquals($expected, self::cleanConfig($config));
     }
 }

@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class InputType
+final class InputType implements Annotation
 {
     /**
      * Type name.

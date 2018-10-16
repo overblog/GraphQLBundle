@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
-final class Access
+final class Access implements Annotation
 {
     /**
      * Field access.

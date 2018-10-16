@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class FieldArgsBuilder
 {
     /**
-     * @GQL\Field(argsBuilder="MyArgBuilder")
+     * @GQL\Field(argsBuilder="MyArgBuilder", type="String")
      */
     public $planets;
 

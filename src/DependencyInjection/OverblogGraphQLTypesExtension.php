@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
@@ -45,6 +46,7 @@ class OverblogGraphQLTypesExtension extends Extension
     ];
 
     private $treatedFiles = [];
+    private $preTreatedFiles = [];
 
     public const DEFAULT_TYPES_SUFFIX = '.types';
 
@@ -68,6 +70,11 @@ class OverblogGraphQLTypesExtension extends Extension
         $typesMappings = \call_user_func_array('array_merge', $typesMappings);
         $typeConfigs = [];
         // treats mappings
+        // Pre-parse all files
+        foreach ($typesMappings as $params) {
+            $this->preParseTypeConfigFiles($params['type'], $params['files'], $container);
+        }
+        // Parse all files and get related config
         foreach ($typesMappings as $params) {
             $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container));
         }
@@ -77,6 +84,26 @@ class OverblogGraphQLTypesExtension extends Extension
         $flattenTypeConfig = \call_user_func_array('array_merge', $typeConfigs);
 
         $container->prependExtensionConfig($this->getAlias(), $flattenTypeConfig);
+    }
+
+    /**
+     * @param $type
+     * @param SplFileInfo[]    $files
+     * @param ContainerBuilder $container
+     */
+    private function preParseTypeConfigFiles($type, $files, ContainerBuilder $container): void
+    {
+        if (self::PARSERS[$type] instanceof PreParserInterface) {
+            foreach ($files as $file) {
+                $fileRealPath = $file->getRealPath();
+                if (isset($this->preTreatedFiles[$fileRealPath])) {
+                    continue;
+                }
+
+                \call_user_func(self::PARSERS[$type].'::preParse', $file, $container);
+                $this->preTreatedFiles[$file->getRealPath()] = true;
+            }
+        }
     }
 
     /**

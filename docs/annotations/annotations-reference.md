@@ -205,7 +205,7 @@ If it is defined on a _method_:
 
 Optional attributes:
 
--   **type** : The GraphqL type of the field (this attribute is required if no builder is define on the field)
+-   **type** : The GraphqL type of the field. This attribute can sometimes be auto guess from Doctrine ORM annotations
 -   **name** : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
 -   **args** : A array of `@FieldArg`
 -   **resolve** : A resolution expression

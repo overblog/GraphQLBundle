@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class Union
+final class Union implements Annotation
 {
     /**
      * Union name.

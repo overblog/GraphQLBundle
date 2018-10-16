@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
-final class IsPublic
+final class IsPublic implements Annotation
 {
     /**
      * Field publicity.

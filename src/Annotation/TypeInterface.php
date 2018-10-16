@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class TypeInterface
+final class TypeInterface implements Annotation
 {
     /**
      * Interface name.
