@@ -38,21 +38,14 @@ class TypeResolver extends AbstractResolver
 
     private function baseType($alias)
     {
-        try {
-            $type = $this->getSolution($alias);
-        } catch (\Error $error) {
-            throw self::createTypeLoadingException($alias, $error);
-        } catch (\Exception $exception) {
-            throw self::createTypeLoadingException($alias, $exception);
+        $type = $this->getSolution($alias);
+        if (null === $type) {
+            throw new UnresolvableException(
+                \sprintf('Could not found type with alias "%s". Do you forget to define it?', $alias)
+            );
         }
 
-        if (null !== $type) {
-            return $type;
-        }
-
-        throw new UnresolvableException(
-            \sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
-        );
+        return $type;
     }
 
     private function wrapTypeIfNeeded($alias)
@@ -83,24 +76,6 @@ class TypeResolver extends AbstractResolver
         }
 
         return false;
-    }
-
-    /**
-     * @param string     $alias
-     * @param \Exception $errorOrException
-     *
-     * @return \RuntimeException
-     */
-    private static function createTypeLoadingException($alias, $errorOrException)
-    {
-        return new \RuntimeException(
-            \sprintf(
-                'Type class for alias %s could not be load. If you are using your own classLoader verify the path and the namespace please.',
-                \json_encode($alias)
-            ),
-            0,
-            $errorOrException
-        );
     }
 
     protected function supportedSolutionClass()
