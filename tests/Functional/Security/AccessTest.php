@@ -58,8 +58,8 @@ EOF;
     }
 
     /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Type class for alias "RootQuery" could not be load. If you are using your own classLoader verify the path and the namespace please.
+     * @expectedException \Error
+     * @expectedExceptionMessage Class 'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType' not found
      * @requires PHP 7
      */
     public function testCustomClassLoaderNotRegister(): void

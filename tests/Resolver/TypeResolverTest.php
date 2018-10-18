@@ -30,18 +30,6 @@ class TypeResolverTest extends AbstractResolverTest
     }
 
     /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Type class for alias "type" could not be load. If you are using your own classLoader verify the path and the namespace please.
-     */
-    public function testErrorLoadingType(): void
-    {
-        $this->resolver->addSolution('type', function (): void {
-            throw new \Exception('Could not load type.');
-        });
-        $this->resolver->resolve('type');
-    }
-
-    /**
      * @expectedException \Overblog\GraphQLBundle\Resolver\UnsupportedResolverException
      * @expectedExceptionMessage Resolver "not-supported" must be "GraphQL\Type\Definition\Type" "stdClass" given.
      */
