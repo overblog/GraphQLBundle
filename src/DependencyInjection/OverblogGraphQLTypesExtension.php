@@ -72,11 +72,12 @@ class OverblogGraphQLTypesExtension extends Extension
         // treats mappings
         // Pre-parse all files
         foreach ($typesMappings as $params) {
-            $this->preParseTypeConfigFiles($params['type'], $params['files'], $container);
+            $this->preParseTypeConfigFiles($params['type'], $params['files'], $container, $configs);
         }
+
         // Parse all files and get related config
         foreach ($typesMappings as $params) {
-            $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container));
+            $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $configs));
         }
 
         $this->checkTypesDuplication($typeConfigs);
@@ -87,20 +88,21 @@ class OverblogGraphQLTypesExtension extends Extension
     }
 
     /**
-     * @param $type
+     * @param string           $type
      * @param SplFileInfo[]    $files
      * @param ContainerBuilder $container
+     * @param array            $config
      */
-    private function preParseTypeConfigFiles($type, $files, ContainerBuilder $container): void
+    private function preParseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs): void
     {
-        if (self::PARSERS[$type] instanceof PreParserInterface) {
+        if (\is_a(self::PARSERS[$type], PreParserInterface::class, true)) {
             foreach ($files as $file) {
                 $fileRealPath = $file->getRealPath();
                 if (isset($this->preTreatedFiles[$fileRealPath])) {
                     continue;
                 }
 
-                \call_user_func(self::PARSERS[$type].'::preParse', $file, $container);
+                \call_user_func(self::PARSERS[$type].'::preParse', $file, $container, $configs);
                 $this->preTreatedFiles[$file->getRealPath()] = true;
             }
         }
@@ -110,10 +112,11 @@ class OverblogGraphQLTypesExtension extends Extension
      * @param $type
      * @param SplFileInfo[]    $files
      * @param ContainerBuilder $container
+     * @param array            $config
      *
      * @return array
      */
-    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container)
+    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs)
     {
         $config = [];
         foreach ($files as $file) {
@@ -122,7 +125,7 @@ class OverblogGraphQLTypesExtension extends Extension
                 continue;
             }
 
-            $config[] = \call_user_func(self::PARSERS[$type].'::parse', $file, $container);
+            $config[] = \call_user_func(self::PARSERS[$type].'::parse', $file, $container, $configs);
             $this->treatedFiles[$file->getRealPath()] = true;
         }
 

@@ -25,7 +25,7 @@ class GraphQLParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
         $content = \trim(\file_get_contents($file->getPathname()));

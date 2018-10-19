@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Input;
+namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Input;
 
 use Overblog\GraphQLBundle\Annotation as GQL;
 
@@ -15,10 +15,10 @@ class Planet
     /**
      * @GQL\Field(type="String!")
      */
-    private $name;
+    protected $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
-    private $population;
+    protected $population;
 }

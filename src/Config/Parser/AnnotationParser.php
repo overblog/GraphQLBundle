@@ -6,12 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Overblog\GraphQLBundle\Annotation\Enum as AnnotationEnum;
-use Overblog\GraphQLBundle\Annotation\InputType as AnnotationInputType;
-use Overblog\GraphQLBundle\Annotation\Scalar as AnnotationScalar;
-use Overblog\GraphQLBundle\Annotation\Type as AnnotationType;
-use Overblog\GraphQLBundle\Annotation\TypeInterface as AnnotationInterface;
-use Overblog\GraphQLBundle\Annotation\Union as AnnotationUnion;
+use Overblog\GraphQLBundle\Annotation as GQL;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -20,6 +15,7 @@ class AnnotationParser implements PreParserInterface
 {
     private static $annotationReader = null;
     private static $classesMap = [];
+    private static $providers = [];
 
     /**
      * {@inheritdoc}
@@ -27,9 +23,9 @@ class AnnotationParser implements PreParserInterface
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
-        return self::proccessFile($file, $container);
+        return self::proccessFile($file, $container, $configs);
     }
 
     /**
@@ -38,9 +34,19 @@ class AnnotationParser implements PreParserInterface
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
-    public static function preParse(\SplFileInfo $file, ContainerBuilder $container): void
+    public static function preParse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): void
     {
-        self::proccessFile($file, $container, true);
+        self::proccessFile($file, $container, $configs, true);
+    }
+
+    /**
+     * Clear the Annotation parser.
+     */
+    public static function clear(): void
+    {
+        self::$classesMap = [];
+        self::$providers = [];
+        self::$annotationReader = null;
     }
 
     /**
@@ -53,8 +59,11 @@ class AnnotationParser implements PreParserInterface
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
-    public static function proccessFile(\SplFileInfo $file, ContainerBuilder $container, bool $resolveClassMap = false): array
+    public static function proccessFile(\SplFileInfo $file, ContainerBuilder $container, array $configs, bool $resolveClassMap = false): array
     {
+        $rootQueryType = $configs['definitions']['schema']['default']['query'] ?? false;
+        $rootMutationType = $configs['definitions']['schema']['default']['mutation'] ?? false;
+
         $container->addResource(new FileResource($file->getRealPath()));
         try {
             $fileContent = \file_get_contents($file->getRealPath());
@@ -71,68 +80,84 @@ class AnnotationParser implements PreParserInterface
 
             $classAnnotations = self::getAnnotationReader()->getClassAnnotations($reflexionEntity);
 
-            $properties = $reflexionEntity->getProperties();
-
-            $propertiesAnnotations = [];
-            foreach ($properties as $property) {
-                $propertiesAnnotations[$property->getName()] = self::getAnnotationReader()->getPropertyAnnotations($property);
+            $properties = [];
+            foreach ($reflexionEntity->getProperties() as $property) {
+                $properties[$property->getName()] = ['property' => $property, 'annotations' => self::getAnnotationReader()->getPropertyAnnotations($property)];
             }
 
-            $methods = $reflexionEntity->getMethods();
-            $methodsAnnotations = [];
-            foreach ($methods as $method) {
-                $methodsAnnotations[$method->getName()] = self::getAnnotationReader()->getMethodAnnotations($method);
+            $methods = [];
+            foreach ($reflexionEntity->getMethods() as $method) {
+                $methods[$method->getName()] = ['method' => $method, 'annotations' => self::getAnnotationReader()->getMethodAnnotations($method)];
             }
 
             $gqlTypes = [];
 
             foreach ($classAnnotations as $classAnnotation) {
-                $gqlName = $gqlConfiguration = $gqlType = false;
+                $gqlConfiguration = $gqlType = $gqlName = false;
+
                 switch (true) {
-                    case $classAnnotation instanceof AnnotationType:
+                    case $classAnnotation instanceof GQL\Type:
                         $gqlType = 'type';
+                        $gqlName = $classAnnotation->name ?: $shortClassName;
                         if (!$resolveClassMap) {
-                            $gqlConfiguration = self::getGraphqlType($classAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations, $namespace);
+                            $isRootQuery = ($rootQueryType && $gqlName === $rootQueryType);
+                            $isRootMutation = ($rootMutationType && $gqlName === $rootMutationType);
+                            $currentValue = ($isRootQuery || $isRootMutation) ? \sprintf("service('%s')", self::formatNamespaceForExpression($className)) : 'value';
+
+                            $gqlConfiguration = self::getGraphqlType($classAnnotation, $classAnnotations, $properties, $methods, $namespace, $currentValue);
+
+                            if ($isRootQuery || $isRootMutation) {
+                                foreach (self::$providers as $className => $providerMethods) {
+                                    $gqlConfiguration['config']['fields'] += self::getGraphqlFieldsFromProvider($className, $providerMethods, $isRootMutation);
+                                }
+                            }
                         }
                         break;
-                    case $classAnnotation instanceof AnnotationInputType:
+                    case $classAnnotation instanceof GQL\InputType:
                         $gqlType = 'input';
                         $gqlName = $classAnnotation->name ?: self::suffixName($shortClassName, 'Input');
                         if (!$resolveClassMap) {
-                            $gqlConfiguration = self::getGraphqlInputType($classAnnotation, $classAnnotations, $propertiesAnnotations, $namespace);
+                            $gqlConfiguration = self::getGraphqlInputType($classAnnotation, $classAnnotations, $properties, $namespace);
                         }
                         break;
-                    case $classAnnotation instanceof AnnotationScalar:
+                    case $classAnnotation instanceof GQL\Scalar:
                         $gqlType = 'scalar';
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlScalar($className, $classAnnotation, $classAnnotations);
                         }
                         break;
-                    case $classAnnotation instanceof AnnotationEnum:
+                    case $classAnnotation instanceof GQL\Enum:
                         $gqlType = 'enum';
-                        $gqlName = $classAnnotation->name ?: self::suffixName($shortClassName, 'Enum');
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlEnum($classAnnotation, $classAnnotations, $reflexionEntity->getConstants());
                         }
                         break;
-                    case $classAnnotation instanceof AnnotationUnion:
+                    case $classAnnotation instanceof GQL\Union:
                         $gqlType = 'union';
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlUnion($classAnnotation, $classAnnotations);
                         }
                         break;
-                    case $classAnnotation instanceof AnnotationInterface:
+                    case $classAnnotation instanceof GQL\TypeInterface:
                         $gqlType = 'interface';
                         if (!$resolveClassMap) {
-                            $gqlConfiguration = self::getGraphqlInterface($classAnnotation, $classAnnotations, $propertiesAnnotations, $methodsAnnotations, $namespace);
+                            $gqlConfiguration = self::getGraphqlInterface($classAnnotation, $classAnnotations, $properties, $methods, $namespace);
                         }
                         break;
+                    case $classAnnotation instanceof GQL\Provider:
+                        if ($resolveClassMap) {
+                            self::$providers[$className] = $methods;
+                        }
+                        break;
+                    default:
+                        continue;
                 }
 
                 if ($gqlType) {
                     if (!$gqlName) {
                         $gqlName = $classAnnotation->name ?: $shortClassName;
                     }
+
                     if ($resolveClassMap) {
                         if (isset(self::$classesMap[$gqlName])) {
                             throw new InvalidArgumentException(\sprintf('The GraphQL type "%s" has already been registered in class "%s"', $gqlName, self::$classesMap[$gqlName]['class']));
@@ -173,26 +198,32 @@ class AnnotationParser implements PreParserInterface
     /**
      * Create a GraphQL Type configuration from annotations on class, properties and methods.
      *
-     * @param AnnotationType $typeAnnotation
-     * @param array          $classAnnotations
-     * @param array          $propertiesAnnotations
-     * @param array          $methodsAnnotations
-     * @param string         $namespace
+     * @param GQL\Type $typeAnnotation
+     * @param array    $classAnnotations
+     * @param array    $properties
+     * @param array    $methods
+     * @param string   $namespace
+     * @param string   $currentValue
      *
      * @return array
      */
-    private static function getGraphqlType(AnnotationType $typeAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations, string $namespace)
+    private static function getGraphqlType(GQL\Type $typeAnnotation, array $classAnnotations, array $properties, array $methods, string $namespace, string $currentValue)
     {
         $typeConfiguration = [];
 
-        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $propertiesAnnotations);
-        $fields += self::getGraphqlFieldsFromAnnotations($namespace, $methodsAnnotations, false, true);
-
-        if (empty($fields)) {
-            return [];
-        }
+        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $properties, false, false, $currentValue);
+        $fields += self::getGraphqlFieldsFromAnnotations($namespace, $methods, false, true, $currentValue);
 
         $typeConfiguration['fields'] = $fields;
+        $typeConfiguration += self::getDescriptionConfiguration($classAnnotations);
+
+        if ($typeAnnotation->interfaces) {
+            $typeConfiguration['interfaces'] = $typeAnnotation->interfaces;
+        }
+
+        if ($typeAnnotation->resolveField) {
+            $typeConfiguration['resolveField'] = self::formatExpression($typeAnnotation->resolveField);
+        }
 
         $publicAnnotation = self::getFirstAnnotationMatching($classAnnotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
         if ($publicAnnotation) {
@@ -204,37 +235,31 @@ class AnnotationParser implements PreParserInterface
             $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
         }
 
-        $typeConfiguration += self::getDescriptionConfiguration($classAnnotations);
-        if ($typeAnnotation->interfaces) {
-            $typeConfiguration['interfaces'] = $typeAnnotation->interfaces;
-        }
-
         return ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration];
     }
 
     /**
      * Create a GraphQL Interface type configuration from annotations on properties.
      *
-     * @param string              $shortClassName
-     * @param AnnotationInterface $interfaceAnnotation
-     * @param array               $propertiesAnnotations
-     * @param string              $namespace
+     * @param string        $shortClassName
+     * @param GQL\Interface $interfaceAnnotation
+     * @param array         $properties
+     * @param array         $methods
+     * @param string        $namespace
      *
      * @return array
      */
-    private static function getGraphqlInterface(AnnotationInterface $interfaceAnnotation, array $classAnnotations, array $propertiesAnnotations, array $methodsAnnotations, string $namespace)
+    private static function getGraphqlInterface(GQL\TypeInterface $interfaceAnnotation, array $classAnnotations, array $properties, array $methods, string $namespace)
     {
         $interfaceConfiguration = [];
 
-        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $propertiesAnnotations);
-        $fields += self::getGraphqlFieldsFromAnnotations($namespace, $methodsAnnotations, false, true);
-
-        if (empty($fields)) {
-            return [];
-        }
+        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $properties);
+        $fields += self::getGraphqlFieldsFromAnnotations($namespace, $methods, false, true);
 
         $interfaceConfiguration['fields'] = $fields;
         $interfaceConfiguration += self::getDescriptionConfiguration($classAnnotations);
+
+        $interfaceConfiguration['resolveType'] = $interfaceAnnotation->resolveType;
 
         return ['type' => 'interface', 'config' => $interfaceConfiguration];
     }
@@ -242,17 +267,17 @@ class AnnotationParser implements PreParserInterface
     /**
      * Create a GraphQL Input type configuration from annotations on properties.
      *
-     * @param string              $shortClassName
-     * @param AnnotationInputType $inputAnnotation
-     * @param array               $propertiesAnnotations
-     * @param string              $namespace
+     * @param string        $shortClassName
+     * @param GQL\InputType $inputAnnotation
+     * @param array         $properties
+     * @param string        $namespace
      *
      * @return array
      */
-    private static function getGraphqlInputType(AnnotationInputType $inputAnnotation, array $classAnnotations, array $propertiesAnnotations, string $namespace)
+    private static function getGraphqlInputType(GQL\InputType $inputAnnotation, array $classAnnotations, array $properties, string $namespace)
     {
         $inputConfiguration = [];
-        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $propertiesAnnotations, true);
+        $fields = self::getGraphqlFieldsFromAnnotations($namespace, $properties, true);
 
         if (empty($fields)) {
             return [];
@@ -267,14 +292,14 @@ class AnnotationParser implements PreParserInterface
     /**
      * Get a Graphql scalar configuration from given scalar annotation.
      *
-     * @param string           $shortClassName
-     * @param string           $className
-     * @param AnnotationScalar $scalarAnnotation
-     * @param array            $classAnnotations
+     * @param string     $shortClassName
+     * @param string     $className
+     * @param GQL\Scalar $scalarAnnotation
+     * @param array      $classAnnotations
      *
      * @return array
      */
-    private static function getGraphqlScalar(string $className, AnnotationScalar $scalarAnnotation, array $classAnnotations)
+    private static function getGraphqlScalar(string $className, GQL\Scalar $scalarAnnotation, array $classAnnotations)
     {
         $scalarConfiguration = [];
 
@@ -296,14 +321,14 @@ class AnnotationParser implements PreParserInterface
     /**
      * Get a Graphql Enum configuration from given enum annotation.
      *
-     * @param string         $shortClassName
-     * @param AnnotationEnum $enumAnnotation
-     * @param array          $classAnnotations
-     * @param array          $constants
+     * @param string   $shortClassName
+     * @param GQL\Enum $enumAnnotation
+     * @param array    $classAnnotations
+     * @param array    $constants
      *
      * @return array
      */
-    private static function getGraphqlEnum(AnnotationEnum $enumAnnotation, array $classAnnotations, array $constants)
+    private static function getGraphqlEnum(GQL\Enum $enumAnnotation, array $classAnnotations, array $constants)
     {
         $enumValues = $enumAnnotation->values ? $enumAnnotation->values : [];
 
@@ -336,13 +361,13 @@ class AnnotationParser implements PreParserInterface
     /**
      * Get a Graphql Union configuration from given union annotation.
      *
-     * @param string          $shortClassName
-     * @param AnnotationUnion $unionAnnotation
-     * @param array           $classAnnotations
+     * @param string    $shortClassName
+     * @param GQL\Union $unionAnnotation
+     * @param array     $classAnnotations
      *
      * @return array
      */
-    private static function getGraphqlUnion(AnnotationUnion $unionAnnotation, array $classAnnotations): array
+    private static function getGraphqlUnion(GQL\Union $unionAnnotation, array $classAnnotations): array
     {
         $unionConfiguration = ['types' => $unionAnnotation->types];
         $unionConfiguration += self::getDescriptionConfiguration($classAnnotations);
@@ -354,16 +379,21 @@ class AnnotationParser implements PreParserInterface
      * Create Graphql fields configuration based on annotation.
      *
      * @param string $namespace
-     * @param array  $annotations
+     * @param array  $propertiesOrMethods
      * @param bool   $isInput
      * @param bool   $isMethod
+     * @param string $currentValue
      *
      * @return array
      */
-    private static function getGraphqlFieldsFromAnnotations(string $namespace, array $annotations, bool $isInput = false, bool $isMethod = false): array
+    private static function getGraphqlFieldsFromAnnotations(string $namespace, array $propertiesOrMethods, bool $isInput = false, bool $isMethod = false, string $currentValue = 'value'): array
     {
         $fields = [];
-        foreach ($annotations as $target => $annotations) {
+        foreach ($propertiesOrMethods as $target => $config) {
+            $annotations = $config['annotations'];
+            $method = $isMethod ? $config['method'] : false;
+            $property = $isMethod ? false : $config['property'];
+
             $fieldAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Field');
             $accessAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Access');
             $publicAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
@@ -373,6 +403,10 @@ class AnnotationParser implements PreParserInterface
                     throw new InvalidArgumentException(\sprintf('The annotations "@Access" and/or "@Visible" defined on "%s" are only usable in addition of annotation "@Field"', $target));
                 }
                 continue;
+            }
+
+            if ($isMethod && !$method->isPublic()) {
+                throw new InvalidArgumentException(\sprintf('The Annotation "@Field" can only be applied to public method. The method "%s" is not public.', $target));
             }
 
             // Ignore field with resolver when the type is an Input
@@ -391,18 +425,10 @@ class AnnotationParser implements PreParserInterface
 
             if (!$isInput) {
                 $args = [];
-                if ($fieldAnnotation->args) {
-                    foreach ($fieldAnnotation->args as $annotationArg) {
-                        $args[$annotationArg->name] = ['type' => $annotationArg->type] + ($annotationArg->description ? ['description' => $annotationArg->description] : []);
-                    }
+                $args = self::getArgs($fieldAnnotation->args, $isMethod && !$fieldAnnotation->argsBuilder ? $method : null);
 
-                    if (!empty($args)) {
-                        $fieldConfiguration['args'] = $args;
-                    }
-
-                    $args = \array_map(function ($a) {
-                        return \sprintf("args['%s']", $a);
-                    }, \array_keys($args));
+                if (!empty($args)) {
+                    $fieldConfiguration['args'] = $args;
                 }
 
                 $propertyName = $fieldAnnotation->name ?: $propertyName;
@@ -411,9 +437,9 @@ class AnnotationParser implements PreParserInterface
                     $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
                 } else {
                     if ($isMethod) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s(%s)', $target, \implode(', ', $args)));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('%s.%s(%s)', $currentValue, $target, self::formatArgsForExpression($args)));
                     } elseif ($fieldAnnotation->name) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('value.%s', $target));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('%s.%s', $currentValue, $target));
                     }
                 }
 
@@ -441,7 +467,15 @@ class AnnotationParser implements PreParserInterface
                 } else {
                     if (!$fieldType) {
                         if ($isMethod) {
-                            throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guesses.', $target));
+                            if ($method->hasReturnType()) {
+                                try {
+                                    $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type').'!';
+                                } catch (\Exception $e) {
+                                    throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $target, (string) $method->getReturnType()));
+                                }
+                            } else {
+                                throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guessed as there is not return type hint.', $target));
+                            }
                         } else {
                             try {
                                 $fieldConfiguration['type'] = self::guessType($namespace, $annotations);
@@ -468,6 +502,60 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
+     * ArgTransformer
+     *   Transform Arg type hint with enum as newObject(enumClassTypeHint, arg['a'])new EnumClass(arg['a'])
+     *   Transform Arg type hint input as populate(InputClass, arg['a']).
+     */
+
+    /**
+     * Return fields config from Provider methods.
+     *
+     * @param string $className
+     * @param array  $methods
+     * @param bool   $isMutation
+     *
+     * @return array
+     */
+    private static function getGraphqlFieldsFromProvider(string $className, array $methods, bool $isMutation = false)
+    {
+        $fields = [];
+        foreach ($methods as $methodName => $config) {
+            $annotations = $config['annotations'];
+            $method = $config['method'];
+
+            $annotation = self::getFirstAnnotationMatching($annotations, \sprintf('Overblog\\GraphQLBundle\\Annotation\\%s', $isMutation ? 'Mutation' : 'Query'));
+            if (!$annotation) {
+                continue;
+            }
+
+            $name = $annotation->name ?: $methodName;
+            $type = $annotation->type;
+            $args = self::getArgs($annotation->args, $method);
+            if (!$type) {
+                if ($method->hasReturnType()) {
+                    try {
+                        $type = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type');
+                    } catch (\Exception $e) {
+                        throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $isMutation ? 'Mutation' : 'Query', $method, (string) $method->getReturnType()));
+                    }
+                } else {
+                    throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed as there is not return type hint.', $isMutation ? 'Mutation' : 'Query', $method));
+                }
+            }
+
+            $resolve = \sprintf("@=service('%s').%s(%s)", self::formatNamespaceForExpression($className), $methodName, self::formatArgsForExpression($args));
+
+            return [
+                $name => [
+                    'type' => $type,
+                    'args' => $args,
+                    'resolve' => $resolve,
+                ],
+            ];
+        }
+    }
+
+    /**
      * Get the config for description & deprecation reason.
      *
      * @param array $annotations
@@ -491,6 +579,56 @@ class AnnotationParser implements PreParserInterface
         }
 
         return $config;
+    }
+
+    /**
+     * Get args config from an array of @Arg annotation or by auto-guessing if a method is provided.
+     *
+     * @param array             $args
+     * @param \ReflectionMethod $method
+     *
+     * @return array
+     */
+    private static function getArgs(array $args = null, \ReflectionMethod $method = null)
+    {
+        $config = [];
+        if ($args && !empty($args)) {
+            foreach ($args as $arg) {
+                $config[$arg->name] = ['type' => $arg->type] + ($arg->description ? ['description' => $arg->description] : []);
+            }
+        } elseif ($method) {
+            $config = self::guessArgs($method);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Format an array of args to a list of arguments in an expression.
+     *
+     * @param array $args
+     *
+     * @return string
+     */
+    private static function formatArgsForExpression(array $args)
+    {
+        $resolveArgs = \array_map(function ($a) {
+            return \sprintf("args['%s']", $a);
+        }, \array_keys($args));
+
+        return \implode(', ', $resolveArgs);
+    }
+
+    /**
+     * Format a namespace to be used in an expression (double escape).
+     *
+     * @param string $namespace
+     *
+     * @return string
+     */
+    private static function formatNamespaceForExpression(string $namespace)
+    {
+        return \str_replace('\\', '\\\\', $namespace);
     }
 
     /**
@@ -598,27 +736,6 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * Resolve a Graphql Type from a class name.
-     *
-     * @param string $className
-     * @param string $wantedType
-     *
-     * @return string|false
-     */
-    private static function resolveTypeFromClass(string $className, string $wantedType = null)
-    {
-        foreach (self::$classesMap as $gqlType => $config) {
-            if ($config['class'] === $className) {
-                if (!$wantedType || ($wantedType && $wantedType === $config['type'])) {
-                    return $gqlType;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Resolve a FQN from classname and namespace.
      *
      * @param string $className
@@ -662,6 +779,114 @@ class AnnotationParser implements PreParserInterface
             case 'decimal':
                 return 'Float';
                 break;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Transform a method arguments from reflection to a list of GraphQL argument.
+     *
+     * @param \ReflectionMethod $method
+     *
+     * @return array
+     */
+    private static function guessArgs(\ReflectionMethod $method)
+    {
+        $arguments = [];
+        foreach ($method->getParameters() as $index => $parameter) {
+            if (!$parameter->hasType()) {
+                throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed as there is not type hint".', $index + 1, $parameter->getName(), $method->getName()));
+            }
+
+            try {
+                $gqlType = self::resolveGraphqlTypeFromReflectionType($parameter->getType(), 'input');
+            } catch (\Exception $e) {
+                throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed : %s".', $index + 1, $parameter->getName(), $method->getName(), $e->getMessage()));
+            }
+
+            $argumentConfig = [];
+            if ($parameter->isDefaultValueAvailable()) {
+                $argumentConfig['default'] = $parameter->getDefaultValue();
+            } else {
+                $gqlType .= '!';
+            }
+
+            $argumentConfig['type'] = $gqlType;
+
+            $arguments[$parameter->getName()] = $argumentConfig;
+        }
+
+        return $arguments;
+    }
+
+    /**
+     * Try to guess a GraphQL type from a Reflected Type.
+     *
+     * @param \ReflectionType $type
+     *
+     * @return string
+     */
+    private static function resolveGraphqlTypeFromReflectionType(\ReflectionType $type, string $filterGraphqlType = null)
+    {
+        $stype = (string) $type;
+        if ($type->isBuiltin()) {
+            $gqlType = self::resolveTypeFromPhpType($stype);
+            if (!$gqlType) {
+                throw new \Exception(\sprintf('No corresponding GraphQL type found for builtin type "%s"', $stype));
+            }
+        } else {
+            $gqlType = self::resolveTypeFromClass($stype, $filterGraphqlType);
+            if (!$gqlType) {
+                throw new \Exception(\sprintf('No corresponding GraphQL %s found for class "%s"', $filterGraphqlType ?: 'object', $stype));
+            }
+        }
+
+        return $gqlType;
+    }
+
+    /**
+     * Resolve a Graphql Type from a class name.
+     *
+     * @param string $className
+     * @param string $wantedType
+     *
+     * @return string|false
+     */
+    private static function resolveTypeFromClass(string $className, string $wantedType = null)
+    {
+        foreach (self::$classesMap as $gqlType => $config) {
+            if ($config['class'] === $className) {
+                if (!$wantedType || ($wantedType && $wantedType === $config['type'])) {
+                    return $gqlType;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert a PHP Builtin type to a GraphQL type.
+     *
+     * @param string $phpType
+     *
+     * @return string
+     */
+    private static function resolveTypeFromPhpType(string $phpType)
+    {
+        switch ($phpType) {
+            case 'boolean':
+            case 'bool':
+                return 'Boolean';
+            case 'integer':
+            case 'int':
+                return 'Int';
+            case 'double':
+            case 'float':
+                return 'Float';
+            case 'string':
+                return 'String';
             default:
                 return false;
         }

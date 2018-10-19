@@ -32,4 +32,11 @@ final class Type implements Annotation
      * @var bool
      */
     public $isRelay = false;
+
+    /**
+     * Expression to a target field resolver.
+     *
+     * @var string
+     */
+    public $resolveField;
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar;
+namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar;
 
 use Overblog\GraphQLBundle\Annotation as GQL;
 

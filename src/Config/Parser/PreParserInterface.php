@@ -11,8 +11,9 @@ interface PreParserInterface extends ParserInterface
     /**
      * @param \SplFileInfo     $file
      * @param ContainerBuilder $container
+     * @param array            $configs
      *
      * @return mixed
      */
-    public static function preParse(\SplFileInfo $file, ContainerBuilder $container);
+    public static function preParse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []);
 }

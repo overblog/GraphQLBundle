@@ -24,7 +24,7 @@ class TypeResolver extends AbstractResolver
         $this->dispatcher = $dispatcher;
     }
 
-    public function setCurrentSchemaName(?string $currentSchemaName): void
+    public function setCurrentSchemaName(? string $currentSchemaName): void
     {
         $this->currentSchemaName = $currentSchemaName;
     }
@@ -41,7 +41,7 @@ class TypeResolver extends AbstractResolver
      *
      * @return Type
      */
-    public function resolve($alias): ?Type
+    public function resolve($alias): ? Type
     {
         if (null === $alias) {
             return null;
@@ -129,7 +129,7 @@ class TypeResolver extends AbstractResolver
         );
     }
 
-    protected function supportedSolutionClass(): ?string
+    protected function supportedSolutionClass(): ? string
     {
         return Type::class;
     }

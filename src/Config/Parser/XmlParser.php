@@ -14,7 +14,7 @@ class XmlParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $typesConfig = [];
         $container->addResource(new FileResource($file->getRealPath()));

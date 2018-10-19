@@ -8,259 +8,228 @@ use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 
 class AnnotationParserTest extends TestCase
 {
-    protected function checkConfigFromFile($filename, $expected): void
+    protected $config = [];
+
+    public function setUp(): void
     {
-        $fileName = __DIR__.'/fixtures/Entity/GraphQL/'.$filename;
-        $this->assertContainerAddFileToResources($fileName);
-        $config = AnnotationParser::parse(new \SplFileInfo($fileName), $this->containerBuilder);
-        $this->assertEquals($expected, self::cleanConfig($config));
+        parent::setup();
+
+        $configs = ['definitions' => ['schema' => ['default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation']]]];
+
+        $files = [];
+        $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
+        foreach ($rii as $file) {
+            if (!$file->isDir() && '.php' === \substr($file->getPathname(), -4)) {
+                $files[] = $file->getPathname();
+            }
+        }
+
+        AnnotationParser::clear();
+
+        foreach ($files as $file) {
+            AnnotationParser::preParse(new \SplFileInfo($file), $this->containerBuilder, $configs);
+        }
+
+        $this->config = [];
+        foreach ($files as $file) {
+            $this->config += self::cleanConfig(AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $configs));
+        }
     }
 
-    public function testType(): void
+    private function expect($name, $type, $config = []): void
     {
         $expected = [
-            'Hero' => [
-                'type' => 'object',
-                'config' => [
-                    'fields' => [
-                        'name' => [
-                            'type' => 'String!',
-                            'deprecationReason' => 'it is now deprecated',
-                        ],
-                        'friends' => [
-                            'type' => '[Character]',
-                            'resolve' => "@=resolver('App\\\\MyResolver::getFriends')",
-                        ],
-                    ],
-                    'description' => 'The Hero type',
+            'type' => $type,
+            'config' => $config,
+        ];
+
+        $this->assertArrayHasKey($name, $this->config, \sprintf("The GraphQL type '%s' doesn't exist", $name));
+        $this->assertEquals($expected, $this->config[$name]);
+    }
+
+    public function testTypes(): void
+    {
+        // Test an interface
+        $this->expect('Character', 'interface', [
+            'description' => 'The character interface',
+            'resolveType' => "@=resolver('character_type', [value])",
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+            ],
+        ]);
+
+        // Test a type extending an interface
+        $this->expect('Hero', 'object', [
+            'description' => 'The Hero type',
+            'interfaces' => ['Character'],
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'race' => ['type' => 'Race'],
+            ],
+        ]);
+
+        $this->expect('Droid', 'object', [
+            'description' => 'The Droid type',
+            'interfaces' => ['Character'],
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'memory' => ['type' => 'Int!'],
+            ],
+        ]);
+
+        // Test a type with public/access on fields, methods as field
+        $this->expect('Sith', 'object', [
+            'description' => 'The Sith type',
+            'interfaces' => ['Character'],
+            'fieldsDefaultPublic' => '@=isAuthenticated()',
+            'fieldsDefaultAccess' => '@=isAuthenticated()',
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'realName' => ['type' => 'String!', 'access' => "@=hasRole('SITH_LORD')"],
+                'location' => ['type' => 'String!', 'public' => "@=hasRole('SITH_LORD')"],
+                'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
+                'victims' => [
+                    'type' => '[Character]',
+                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims']],
+                    'resolve' => "@=value.getVictims(args['jediOnly'])",
                 ],
             ],
-        ];
-        $this->checkConfigFromFile('Type/Hero.php', $expected);
+        ]);
+
+        // Test a type with a field builder
+        $this->expect('Planet', 'object', [
+            'description' => 'The Planet type',
+            'fields' => [
+                'name' => ['type' => 'String!'],
+                'location' => ['type' => 'GalaxyCoordinates'],
+                'population' => ['type' => 'Int!'],
+                'notes' => [
+                    'builder' => 'NoteFieldBuilder',
+                    'builderConfig' => ['option1' => 'value1'],
+                ],
+                'closestPlanet' => [
+                    'type' => 'Planet',
+                    'argsBuilder' => [
+                        'builder' => 'PlanetFilterArgBuilder',
+                        'config' => ['option2' => 'value2'],
+                    ],
+                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                ],
+            ],
+        ]);
     }
 
     public function testInput(): void
     {
-        $expected = [
-            'PlanetInput' => [
-                'type' => 'input-object',
-                'config' => [
-                    'fields' => [
-                        'name' => ['type' => 'String!'],
-                        'population' => ['type' => 'Int!'],
-                    ],
-                    'description' => 'Planet Input type description',
-                ],
+        $this->expect('PlanetInput', 'input-object', [
+            'description' => 'Planet Input type description',
+            'fields' => [
+                'name' => ['type' => 'String!'],
+                'population' => ['type' => 'Int!'],
             ],
-        ];
-        $this->checkConfigFromFile('Input/Planet.php', $expected);
+        ]);
     }
 
     public function testEnum(): void
     {
-        $expected = [
-            'PlanetEnum' => [
-                'type' => 'enum',
-                'config' => [
-                    'values' => [
-                        'DAGOBAH' => ['value' => 1],
-                        'TATOUINE' => ['value' => '2', 'description' => 'The planet of Tatouine'],
-                        'HOTH' => ['value' => '3'],
-                        'BESPIN' => ['value' => '4'],
-                    ],
-                    'description' => 'The list of planets!',
-                ],
+        $this->expect('Race', 'enum', [
+            'description' => 'The list of races!',
+            'values' => [
+                'HUMAIN' => ['value' => 1],
+                'CHISS' => ['value' => '2', 'description' => 'The Chiss race'],
+                'ZABRAK' => ['value' => '3', 'deprecationReason' => 'The Zabraks have been wiped out'],
+                'TWILEK' => ['value' => '4'],
             ],
-        ];
-        $this->checkConfigFromFile('Enum/Planet.php', $expected);
+        ]);
     }
 
     public function testUnion(): void
     {
-        $expected = [
-            'Pet' => [
-                'type' => 'union',
-                'config' => [
-                    'types' => ['Dog', 'Cat', 'Bird', 'Snake'],
-                    'description' => 'All the pets',
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Union/Pet.php', $expected);
+        $this->expect('SearchResult', 'union', [
+            'description' => 'A search result',
+            'types' => ['Hero', 'Droid', 'Sith'],
+        ]);
     }
 
     public function testScalar(): void
     {
-        $expected = [
-            'MyScalar' => [
-                'type' => 'custom-scalar',
-                'config' => [
-                    'serialize' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'serialize'],
-                    'parseValue' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'parseValue'],
-                    'parseLiteral' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Scalar\MyScalar', 'parseLiteral'],
-                    'description' => 'My custom scalar',
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Scalar/MyScalar.php', $expected);
+        $this->expect('GalaxyCoordinates', 'custom-scalar', [
+            'serialize' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\GalaxyCoordinates', 'serialize'],
+            'parseValue' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\GalaxyCoordinates', 'parseValue'],
+            'parseLiteral' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\GalaxyCoordinates', 'parseLiteral'],
+            'description' => 'The galaxy coordinates scalar',
+        ]);
     }
 
-    public function testScalar2(): void
+    public function testProviders(): void
     {
-        $expected = [
-            'MyScalar' => [
-                'type' => 'custom-scalar',
-                'config' => [
-                    'scalarType' => "@=newObject('App\\\\Type\\\\EmailType')",
-                ],
-            ],
-        ];
-
-        $this->checkConfigFromFile('Scalar/MyScalar2.php', $expected);
-    }
-
-    public function testInterface(): void
-    {
-        $expected = [
-            'Character' => [
-                'type' => 'interface',
-                'config' => [
-                    'fields' => [
-                        'id' => ['type' => 'String!', 'description' => 'The id of the character'],
-                        'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                    ],
-                    'description' => 'The character interface',
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Interfaces/Character.php', $expected);
-    }
-
-    public function testAccess(): void
-    {
-        $expected = [
-            'HeroWithAccess' => [
-                'type' => 'object',
-                'config' => [
-                    'fieldsDefaultAccess' => '@=isAuthenticated()',
-                    'fields' => [
-                        'name' => ['type' => 'String!'],
-                        'secret' => [
-                            'type' => 'Boolean!',
-                            'access' => "@=hasRole('ROLE_ADMIN')",
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Type/HeroWithAccess.php', $expected);
-    }
-
-    public function testPublic(): void
-    {
-        $expected = [
-            'HeroWithPublic' => [
-                'type' => 'object',
-                'config' => [
-                    'fieldsDefaultPublic' => '@=isAuthenticated()',
-                    'fields' => [
-                        'name' => ['type' => 'String!'],
-                        'secret' => [
-                            'type' => 'Boolean!',
-                            'public' => "@=hasRole('ROLE_ADMIN')",
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Type/HeroWithPublic.php', $expected);
-    }
-
-    public function testFieldMethod(): void
-    {
-        $expected = [
-            'Type' => [
-                'type' => 'object',
-                'config' => [
-                    'fields' => [
-                        'friends' => [
-                            'type' => '[Character]',
-                            'args' => [
-                                'gender' => ['type' => 'Gender', 'description' => 'Limit friends of this gender'],
-                                'limit' => ['type' => 'Int', 'description' => 'Limit number of friends to retrieve'],
-                            ],
-                            'resolve' => "@=value.getFriends(args['gender'], args['limit'])",
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Fields/FieldMethod.php', $expected);
-    }
-
-    public function testFieldArgsBuilder(): void
-    {
-        $expected = [
-            'Type' => [
-                'type' => 'object',
-                'config' => [
-                    'fields' => [
-                        'friends' => [
-                            'type' => '[Character]',
-                            'argsBuilder' => [
-                                'builder' => 'MyArgBuilder',
-                                'config' => ['defaultArg' => 1, 'option2' => 'smile'],
-                            ],
-                            'resolve' => '@=value.getFriends()',
-                        ],
-                        'planets' => [
-                            'argsBuilder' => 'MyArgBuilder',
-                            'type' => 'String',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Fields/FieldArgsBuilder.php', $expected);
-    }
-
-    public function testFieldFieldBuilder(): void
-    {
-        $expected = [
-            'Type' => [
-                'type' => 'object',
-                'config' => [
-                    'fields' => [
-                        'id' => ['builder' => 'GenericIdBuilder'],
-                        'notes' => [
-                            'builder' => 'NoteFieldBuilder',
-                            'builderConfig' => ['option' => 'value'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        $this->checkConfigFromFile('Fields/FieldFieldBuilder.php', $expected);
-    }
-
-    public function testExtends(): void
-    {
-        $expected = ['ChildClass' => ['type' => 'object', 'config' => [
+        $this->expect('RootQuery', 'object', [
             'fields' => [
-                'id' => ['builder' => 'GenericIdBuilder'],
-                'notes' => [
-                    'builder' => 'NoteFieldBuilder',
-                    'builderConfig' => ['option' => 'value'],
+                'searchPlanet' => [
+                    'type' => '[Planet]',
+                    'args' => ['keyword' => ['type' => 'String!']],
+                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet(args['keyword'])",
                 ],
             ],
-        ]]];
-        $this->checkConfigFromFile('Inherits/ChildClass.php', $expected);
+        ]);
+
+        $this->expect('RootMutation', 'object', [
+            'fields' => [
+                'createPlanet' => [
+                    'type' => 'Planet',
+                    'args' => ['planetInput' => ['type' => 'PlanetInput!']],
+                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet(args['planetInput'])",
+                ],
+            ],
+        ]);
     }
 
-    public function testTypeAutoGuessing(): void
+    public function testDoctrineGuessing(): void
     {
-        $file1 = __DIR__.'/fixtures/Entity/GraphQL/Autoguess/Autoguess.php';
-        $file2 = __DIR__.'/fixtures/Entity/GraphQL/Autoguess/Autoguess2.php';
+        $this->expect('Lightsaber', 'object', [
+            'fields' => [
+                'color' => ['type' => 'String!'],
+                'size' => ['type' => 'Int'],
+                'holders' => ['type' => '[Hero]!'],
+                'creator' => ['type' => 'Hero!'],
+                'crystal' => ['type' => 'Crystal!'],
+                'battles' => ['type' => '[Battle]!'],
+                'currentHolder' => ['type' => 'Hero'],
+            ],
+        ]);
+    }
+
+    public function testArgsAndReturnGuessing(): void
+    {
+        // public function getCasualties(int $areaId, string $raceId, int $dayStart = null, int $dayEnd = null,  string $nameStartingWith = '', string $planetId = null) : int
+        $this->expect('Battle', 'object', [
+            'fields' => [
+                'planet' => ['type' => 'Planet'],
+                'casualties' => [
+                    'type' => 'Int!',
+                    'args' => [
+                        'areaId' => ['type' => 'Int!'],
+                        'raceId' => ['type' => 'String!'],
+                        'dayStart' => ['type' => 'Int', 'default' => null],
+                        'dayEnd' => ['type' => 'Int', 'default' => null],
+                        'nameStartingWith' => ['type' => 'String', 'default' => ''],
+                        'planetId' => ['type' => 'String', 'default' => null],
+                    ],
+                    'resolve' => "@=value.getCasualties(args['areaId'], args['raceId'], args['dayStart'], args['dayEnd'], args['nameStartingWith'], args['planetId'])",
+                ],
+            ],
+        ]);
+    }
+
+    /*
+    public function testTypeGuessing() : void
+    {
+        $file1 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess.php';
+        $file2 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess2.php';
         AnnotationParser::preParse(new \SplFileInfo($file1), $this->containerBuilder);
         AnnotationParser::preParse(new \SplFileInfo($file2), $this->containerBuilder);
 
@@ -280,4 +249,31 @@ class AnnotationParserTest extends TestCase
 
         $this->assertEquals($expected, self::cleanConfig($config));
     }
+
+    public function testArgsGuessing() : void
+    {
+        $file1 = __DIR__ . '/fixtures/Entity/GraphQL/GuessArgs/AutoguessArgs.php';
+        //$file2 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess2.php';
+        AnnotationParser::preParse(new \SplFileInfo($file1), $this->containerBuilder);
+        //AnnotationParser::preParse(new \SplFileInfo($file2), $this->containerBuilder);
+
+        $config = AnnotationParser::parse(new \SplFileInfo($file1), $this->containerBuilder);
+
+        $expected = ['AutoguessArgs' => ['type' => 'object', 'config' => [
+            'fields' => [
+                'myMethod' => [
+                    'type' => 'String',
+                    'args' => [
+                        'p1' => [],
+                        'p2' => [],
+                        'p3' => [],
+                        'p4' => [],
+                        'p5' => []
+                    ]
+                ]
+            ],
+        ]]];
+
+        $this->assertEquals($expected, self::cleanConfig($config));
+    }*/
 }

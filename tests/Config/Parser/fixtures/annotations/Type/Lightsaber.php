@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\Entity\GraphQL\Autoguess;
+namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 
 use Doctrine\ORM\Mapping as ORM;
 use Overblog\GraphQLBundle\Annotation as GQL;
@@ -11,48 +11,48 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type
  * @ORM\Entity
  */
-class Autoguess
+class Lightsaber
 {
     /**
      * @ORM\Column
      * @GQL\Field
      */
-    private $field1;
+    protected $color;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @GQL\Field
      */
-    private $field2;
+    protected $size;
 
     /**
-     * @ORM\OneToMany(targetEntity="Autoguess2")
+     * @ORM\OneToMany(targetEntity="Hero")
      * @GQL\Field
      */
-    private $field3;
+    protected $holders;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Autoguess2")
+     * @ORM\ManyToOne(targetEntity="Hero")
      * @GQL\Field
      */
-    private $field4;
+    protected $creator;
 
     /**
-     * @ORM\OneToOne(targetEntity="Autoguess2")
+     * @ORM\OneToOne(targetEntity="Crystal")
      * @GQL\Field
      */
-    private $field5;
+    protected $crystal;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Autoguess2")
+     * @ORM\ManyToMany(targetEntity="Battle")
      * @GQL\Field
      */
-    private $field6;
+    protected $battles;
 
     /**
      * @GQL\Field
-     * @ORM\OneToOne(targetEntity="Autoguess2")
+     * @ORM\OneToOne(targetEntity="Hero")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $field7;
+    protected $currentHolder;
 }

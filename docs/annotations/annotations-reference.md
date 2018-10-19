@@ -43,7 +43,7 @@ class Coordinates {
 
 @Access
 
-@ArgsBuilder
+@Arg
 
 @Deprecated
 
@@ -55,13 +55,17 @@ class Coordinates {
 
 @Field
 
-@FieldArg
-
 @FieldBuilder
 
 @InputType
 
 @IsPublic
+
+@Mutation
+
+@Provider
+
+@Query
 
 @Type
 
@@ -96,6 +100,47 @@ class Hero {
      * @GQL\Field("hasRole('ROLE_ADMIN')")
      */
     public $secret;
+}
+?>
+```
+
+## @Arg
+
+This annotation is used in the `args` attribute of a `@Field` or `@Query` or `@Mutation` to define an argument.
+
+Required attributes:
+
+-   **name** : The GraphQL name of the field argument (default to class name)
+-   **type** : The GraphQL type of the field argument
+
+Optional attributes:
+
+-   **description** : The GraphQL description of the field argument
+
+Example:
+
+```php
+<?php
+
+/**
+ * @GQL\Type
+ */
+class Hero {
+    /**
+     *  @GQL\Field(fieldBuilder={"GenericIdBuilder", {"name": "heroId"}})
+     */
+    public $id;
+
+    /**
+     * @GQL\Field(type="[Hero]",
+     * args={
+     *     @GQL\Arg(name="droidsOnly", type="Boolean", description="Retrieve only droids heroes"),
+     *     @GQL\Arg(name="nameStartsWith", type="String", description="Retrieve only heroes with name starting with")
+     * },
+     * resolve="resolver('hero_friends', [args['droidsOnly'], args['nameStartsWith']])"
+     * )
+     */
+    public $friends;
 }
 ?>
 ```
@@ -157,7 +202,7 @@ In order to add more meta on the values (like description or deprecated reason),
 
 Optional attributes:
 
--   **name** : The GraphQL name of the enum (default to the class name with suffix `Enum` if not already have)
+-   **name** : The GraphQL name of the enum (default to the class name without namespace)
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
 
 Example:
@@ -200,14 +245,16 @@ Optional attributes:
 This annotation can be defined on a _property_ or a _method_.
 
 If it is defined on a _method_:
+- If no `resolve` attribute is define, it will default to `@=value.methodName(...args)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
 
--   If no `resolve` attribute is define, it will default to `@=value_resolver(args, methodName)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
+If it is defined on a _method_ of the Root Query or the Root mutation :
+- If not `resolve` attribute is define, it will default to `@=service(FQN).methodName(...args)"` with `FQN` being the fully qualified name of the Root Query class or Root Mutation.
 
 Optional attributes:
 
 -   **type** : The GraphqL type of the field. This attribute can sometimes be auto guess from Doctrine ORM annotations
 -   **name** : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
--   **args** : A array of `@FieldArg`
+-   **args** : A array of `@Arg`
 -   **resolve** : A resolution expression
 -   **fieldBuilder** : A field builder to use. Either as string (will be the field builder name), or as an array, first index will the name of the builder and second one will be the config.
 -   **argsBuilder** : An args builder to use. Either as string (will be the args builder name), or as an array, first index will the name of the builder and second one will be the config.
@@ -251,53 +298,12 @@ class Hero {
      * @GQL\Field(
      *   name="friends",
      *   type="[Hero]",
-     *   args={@GQL\FieldArg(name="limit", type="Int")}
+     *   args={@GQL\Arg(name="limit", type="Int")}
      * )
      */
     public function getFriends(int $limit) {
         return array_slice($this->friends, 0, $limit);
     }
-}
-?>
-```
-
-## @FieldArg
-
-This annotation is used in the `args` attribute of a `@Field` to define an argument.
-
-Required attributes:
-
--   **name** : The GraphQL name of the field argument (default to class name)
--   **type** : The GraphQL type of the field argument
-
-Optional attributes:
-
--   **description** : The GraphQL description of the field argument
-
-Example:
-
-```php
-<?php
-
-/**
- * @GQL\Type
- */
-class Hero {
-    /**
-     *  @GQL\Field(fieldBuilder={"GenericIdBuilder", {"name": "heroId"}})
-     */
-    public $id;
-
-    /**
-     * @GQL\Field(type="[Hero]",
-     * args={
-     *     @GQL\FieldArg(name="droidsOnly", type="Boolean", description="Retrieve only droids heroes"),
-     *     @GQL\FieldArg(name="nameStartsWith", type="String", description="Retrieve only heroes with name starting with")
-     * },
-     * resolve="resolver('hero_friends', [args['droidsOnly'], args['nameStartsWith']])"
-     * )
-     */
-    public $friends;
 }
 ?>
 ```
@@ -337,6 +343,79 @@ class SecretArea {
 }
 ?>
 ```
+
+## @Mutation
+
+This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Mutation field.  
+The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.mutation`).  
+The class exposing the mutation(s) must have a corresponding service with his className.  
+
+Example:
+
+This will add a `updateUserEmail` mutation, with as resolver `@=service('App\Graphql\MutationProvider').updateUserEmail(...)`.
+
+```php
+<?php
+
+namespace App\Graphql\Mutation;
+
+/**
+ * @GQL\Provider
+ */
+class MutationProvider {
+
+    /**
+     * @GQL\Mutation(type="User", args={
+     *    @GQL\Arg(name="id", type="ID!"),
+     *    @GQL\Arg(name="newEmail", type="String!")
+     * })
+     */
+    public function updateUserEmail(string $id, string $newEmail) {
+        $user = $this->repository->find($id);
+        $user->setEmail($newEmail);
+        $this->repository->save($user);
+
+        return $user;
+    }
+}
+?>
+```
+
+## @Provider
+
+This annotation applies on classes to indicate that it containts methods tagged with `@Query`o or `@Mutation`.  
+Without it, the `@Query` and `@Mutation` are ignored.  When used, __remember to have a corresponding service with the fully qualified name of the class as service id__.
+
+## @Query
+
+This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
+The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
+The class exposing the querie(s) must have a corresponding service with his className.  
+
+Example:
+
+This will add a `users` property on the main query object, with a resolver `@=service('App\Graphql\Query\UsersProviders').getUsers()`.
+
+```php
+<?php
+
+namespace App\Graphql\Query;
+
+/**
+ * @GQL\Provider
+ */
+class UsersProviders {
+
+    /**
+     * @GQL\Query(type="[User]", name="users")
+     */
+    public function getUsers() {
+        return $this->repository->findAll();
+    }
+}
+?>
+```
+
 
 ## @Type
 

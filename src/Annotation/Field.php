@@ -29,7 +29,7 @@ final class Field implements Annotation
     /**
      * Field arguments.
      *
-     * @var array<\Overblog\GraphQLBundle\Annotation\FieldArg>
+     * @var array<\Overblog\GraphQLBundle\Annotation\Arg>
      */
     public $args;
 

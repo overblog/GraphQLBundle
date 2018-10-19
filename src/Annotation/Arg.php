@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 /**
- * Annotation for GraphQL field argument.
+ * Annotation for GraphQL argument.
  *
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class FieldArg implements Annotation
+final class Arg implements Annotation
 {
     /**
      * Argument name.
