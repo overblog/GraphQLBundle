@@ -24,7 +24,7 @@ class TypeResolver extends AbstractResolver
         $this->dispatcher = $dispatcher;
     }
 
-    public function setCurrentSchemaName(? string $currentSchemaName): void
+    public function setCurrentSchemaName(?string $currentSchemaName): void
     {
         $this->currentSchemaName = $currentSchemaName;
     }
@@ -41,7 +41,7 @@ class TypeResolver extends AbstractResolver
      *
      * @return Type
      */
-    public function resolve($alias): ? Type
+    public function resolve($alias): ?Type
     {
         if (null === $alias) {
             return null;
@@ -55,33 +55,28 @@ class TypeResolver extends AbstractResolver
         return $this->cache[$alias];
     }
 
-    private function string2Type($alias)
+    private function string2Type(string $alias): Type
     {
-        if (false !== ($type = $this->wrapTypeIfNeeded($alias))) {
+        if (null !== ($type = $this->wrapTypeIfNeeded($alias))) {
             return $type;
         }
 
         return $this->baseType($alias);
     }
 
-    private function baseType($alias)
+    private function baseType($alias): Type
     {
-        try {
-            $type = $this->getSolution($alias);
-        } catch (\Throwable $error) {
-            throw self::createTypeLoadingException($alias, $error);
+        $type = $this->getSolution($alias);
+        if (null === $type) {
+            throw new UnresolvableException(
+                \sprintf('Could not found type with alias "%s". Do you forget to define it?', $alias)
+            );
         }
 
-        if (null !== $type) {
-            return $type;
-        }
-
-        throw new UnresolvableException(
-            \sprintf('Unknown type with alias "%s" (verified service tag)', $alias)
-        );
+        return $type;
     }
 
-    private function wrapTypeIfNeeded($alias)
+    private function wrapTypeIfNeeded($alias): ?Type
     {
         // Non-Null
         if ('!' === $alias[\strlen($alias) - 1]) {
@@ -92,10 +87,10 @@ class TypeResolver extends AbstractResolver
             return Type::listOf($this->string2Type(\substr($alias, 1, -1)));
         }
 
-        return false;
+        return null;
     }
 
-    private function hasNeedListOfWrapper($alias)
+    private function hasNeedListOfWrapper($alias): bool
     {
         if ('[' === $alias[0]) {
             $got = $alias[\strlen($alias) - 1];
@@ -111,25 +106,7 @@ class TypeResolver extends AbstractResolver
         return false;
     }
 
-    /**
-     * @param string     $alias
-     * @param \Throwable $errorOrException
-     *
-     * @return \RuntimeException
-     */
-    private static function createTypeLoadingException(string $alias, \Throwable $errorOrException): \RuntimeException
-    {
-        return new \RuntimeException(
-            \sprintf(
-                'Type class for alias %s could not be load. If you are using your own classLoader verify the path and the namespace please.',
-                \json_encode($alias)
-            ),
-            0,
-            $errorOrException
-        );
-    }
-
-    protected function supportedSolutionClass(): ? string
+    protected function supportedSolutionClass(): ?string
     {
         return Type::class;
     }
