@@ -8,4 +8,5 @@
 <spaces># public and access are custom options managed only by the bundle
 <spaces>'public' => <public>,
 <spaces>'access' => <access>,
+<spaces>'useStrictAccess' => <useStrictAccess>,
 ],
