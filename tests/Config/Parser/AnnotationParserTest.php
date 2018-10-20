@@ -14,7 +14,18 @@ class AnnotationParserTest extends TestCase
     {
         parent::setup();
 
-        $configs = ['definitions' => ['schema' => ['default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation']]]];
+        $configs = [
+            'definitions' => [
+                'schema' => [
+                    'default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation'],
+                ],
+            ],
+            'doctrine' => [
+                'types_mapping' => [
+                    'text[]' => '[String]',
+                ],
+            ],
+        ];
 
         $files = [];
         $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
@@ -182,7 +193,7 @@ class AnnotationParserTest extends TestCase
                 'createPlanet' => [
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
-                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet(args['planetInput'])",
+                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet(input('PlanetInput!', args['planetInput']))",
                 ],
             ],
         ]);
@@ -199,13 +210,13 @@ class AnnotationParserTest extends TestCase
                 'crystal' => ['type' => 'Crystal!'],
                 'battles' => ['type' => '[Battle]!'],
                 'currentHolder' => ['type' => 'Hero'],
+                'tags' => ['type' => '[String]!'],
             ],
         ]);
     }
 
     public function testArgsAndReturnGuessing(): void
     {
-        // public function getCasualties(int $areaId, string $raceId, int $dayStart = null, int $dayEnd = null,  string $nameStartingWith = '', string $planetId = null) : int
         $this->expect('Battle', 'object', [
             'fields' => [
                 'planet' => ['type' => 'Planet'],
@@ -224,56 +235,4 @@ class AnnotationParserTest extends TestCase
             ],
         ]);
     }
-
-    /*
-    public function testTypeGuessing() : void
-    {
-        $file1 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess.php';
-        $file2 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess2.php';
-        AnnotationParser::preParse(new \SplFileInfo($file1), $this->containerBuilder);
-        AnnotationParser::preParse(new \SplFileInfo($file2), $this->containerBuilder);
-
-        $config = AnnotationParser::parse(new \SplFileInfo($file1), $this->containerBuilder);
-
-        $expected = ['Autoguess' => ['type' => 'object', 'config' => [
-            'fields' => [
-                'field1' => ['type' => 'String!'],
-                'field2' => ['type' => 'Int'],
-                'field3' => ['type' => '[CustomAutoguessType]!'],
-                'field4' => ['type' => 'CustomAutoguessType!'],
-                'field5' => ['type' => 'CustomAutoguessType!'],
-                'field6' => ['type' => '[CustomAutoguessType]!'],
-                'field7' => ['type' => 'CustomAutoguessType'],
-            ],
-        ]]];
-
-        $this->assertEquals($expected, self::cleanConfig($config));
-    }
-
-    public function testArgsGuessing() : void
-    {
-        $file1 = __DIR__ . '/fixtures/Entity/GraphQL/GuessArgs/AutoguessArgs.php';
-        //$file2 = __DIR__ . '/fixtures/Entity/GraphQL/GuessType/Autoguess2.php';
-        AnnotationParser::preParse(new \SplFileInfo($file1), $this->containerBuilder);
-        //AnnotationParser::preParse(new \SplFileInfo($file2), $this->containerBuilder);
-
-        $config = AnnotationParser::parse(new \SplFileInfo($file1), $this->containerBuilder);
-
-        $expected = ['AutoguessArgs' => ['type' => 'object', 'config' => [
-            'fields' => [
-                'myMethod' => [
-                    'type' => 'String',
-                    'args' => [
-                        'p1' => [],
-                        'p2' => [],
-                        'p3' => [],
-                        'p4' => [],
-                        'p5' => []
-                    ]
-                ]
-            ],
-        ]]];
-
-        $this->assertEquals($expected, self::cleanConfig($config));
-    }*/
 }

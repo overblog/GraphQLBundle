@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Input;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\InputType
+ * @GQL\Input
  * @GQL\Description("Planet Input type description")
  */
 class Planet

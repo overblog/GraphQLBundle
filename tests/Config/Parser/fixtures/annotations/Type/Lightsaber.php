@@ -55,4 +55,10 @@ class Lightsaber
      * @ORM\JoinColumn(nullable=true)
      */
     protected $currentHolder;
+
+    /**
+     * @GQL\Field
+     * @ORM\Column(type="text[]")
+     */
+    protected $tags;
 }

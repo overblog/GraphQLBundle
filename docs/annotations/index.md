@@ -3,10 +3,14 @@
 ## Annotations reference
 - [Annotations reference](annotations-reference.md)
 
+## Input populating & validation
+- [The Input Builder](input-builder.md)
+
 ## Annotations & type inheritance
 
 As PHP classes naturally support inheritances (and so is the annotation reader), it doesn't make sense to allow classes to use the "inherits" option.  
 The type will inherits the annotations declared on parent classes properties and methods. The annotation on the class itself will not be herited.
+
 
 ## Annotations, Root Query & Root Mutation
 
@@ -47,6 +51,21 @@ The type can be auto-guess from :
 - `@ORM\ManyToOne`, `@ORM\ManyToMany`, `@ORM\OneToOne`, `@ORM\OneToMany`, based on the `targetEntity` attribute. The target entity must be a GraphQL type itself to work.
     - `@ORM\ManyToOne`, `@ORM\OneToOne`     The generated type will also use the `@ORM\JoinColumn` annotation and his `nullable` attribute to generate either `Type` or `Type!`
     - `@ORM\ManyToMany`, `@ORM\OneToMany`   The generated type will always be not null, like `[Type]!` as you're supposed to initialize corresponding properties with an ArrayCollection
+
+You can also provide your own doctrine / GraphQL types mappings in the bundle configuration.  
+For example:
+
+
+```yaml (graphql.yaml)
+overblog_graphql:
+    ...
+    doctrine:
+        types_mapping:
+            text[]:    "[String]"
+            datetime:  DateTime    # If you have registered this custom scalar
+
+```
+
 
 ### @Field type auto-guessing when applied on a method with a return type hint
 
@@ -104,3 +123,11 @@ As PHP type hinting doesn't support "array of instances of class", we cannot rel
 In these case, you'll need to declare your types or arguments type manually.
 
 For example, in PHP, a signature like this : `public function getArrayOfStrings(): string[] {}` is invalid. 
+
+
+
+
+
+
+
+

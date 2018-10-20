@@ -17,8 +17,6 @@ abstract class Operation implements Annotation
     /**
      * Operation Type.
      *
-     * @required
-     *
      * @var string
      */
     public $type;

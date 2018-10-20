@@ -13,20 +13,12 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class AnnotationParser implements PreParserInterface
 {
+    public const CLASSESMAP_CONTAINER_PARAMETER = 'overblog_graphql_types.classes_map';
+
     private static $annotationReader = null;
     private static $classesMap = [];
     private static $providers = [];
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \ReflectionException
-     * @throws InvalidArgumentException
-     */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
-    {
-        return self::proccessFile($file, $container, $configs);
-    }
+    private static $doctrineMapping = [];
 
     /**
      * {@inheritdoc}
@@ -37,6 +29,17 @@ class AnnotationParser implements PreParserInterface
     public static function preParse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): void
     {
         self::proccessFile($file, $container, $configs, true);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \ReflectionException
+     * @throws InvalidArgumentException
+     */
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
+    {
+        return self::proccessFile($file, $container, $configs);
     }
 
     /**
@@ -61,10 +64,17 @@ class AnnotationParser implements PreParserInterface
      */
     public static function proccessFile(\SplFileInfo $file, ContainerBuilder $container, array $configs, bool $resolveClassMap = false): array
     {
+        self::$doctrineMapping = $configs['doctrine']['types_mapping'];
+
         $rootQueryType = $configs['definitions']['schema']['default']['query'] ?? false;
         $rootMutationType = $configs['definitions']['schema']['default']['mutation'] ?? false;
 
         $container->addResource(new FileResource($file->getRealPath()));
+
+        if (!$resolveClassMap && !$container->hasParameter(self::CLASSESMAP_CONTAINER_PARAMETER)) {
+            $container->setParameter(self::CLASSESMAP_CONTAINER_PARAMETER, self::$classesMap);
+        }
+
         try {
             $fileContent = \file_get_contents($file->getRealPath());
 
@@ -113,11 +123,11 @@ class AnnotationParser implements PreParserInterface
                             }
                         }
                         break;
-                    case $classAnnotation instanceof GQL\InputType:
+                    case $classAnnotation instanceof GQL\Input:
                         $gqlType = 'input';
                         $gqlName = $classAnnotation->name ?: self::suffixName($shortClassName, 'Input');
                         if (!$resolveClassMap) {
-                            $gqlConfiguration = self::getGraphqlInputType($classAnnotation, $classAnnotations, $properties, $namespace);
+                            $gqlConfiguration = self::getGraphqlInput($classAnnotation, $classAnnotations, $properties, $namespace);
                         }
                         break;
                     case $classAnnotation instanceof GQL\Scalar:
@@ -267,14 +277,14 @@ class AnnotationParser implements PreParserInterface
     /**
      * Create a GraphQL Input type configuration from annotations on properties.
      *
-     * @param string        $shortClassName
-     * @param GQL\InputType $inputAnnotation
-     * @param array         $properties
-     * @param string        $namespace
+     * @param string    $shortClassName
+     * @param GQL\Input $inputAnnotation
+     * @param array     $properties
+     * @param string    $namespace
      *
      * @return array
      */
-    private static function getGraphqlInputType(GQL\InputType $inputAnnotation, array $classAnnotations, array $properties, string $namespace)
+    private static function getGraphqlInput(GQL\Input $inputAnnotation, array $classAnnotations, array $properties, string $namespace)
     {
         $inputConfiguration = [];
         $fields = self::getGraphqlFieldsFromAnnotations($namespace, $properties, true);
@@ -418,6 +428,13 @@ class AnnotationParser implements PreParserInterface
             $fieldType = $fieldAnnotation->type;
             $fieldConfiguration = [];
             if ($fieldType) {
+                $resolvedType = self::resolveClassFromType($fieldType);
+                if ($resolvedType) {
+                    if ($isInput && !\in_array($resolvedType['type'], ['input', 'scalar', 'enum'])) {
+                        throw new InvalidArgumentException(\sprintf('The type "%s" on "%s" is a "%s" not valid on an Input @Field. Only Input, Scalar and Enum are allowed.', $fieldType, $target, $resolvedType['type']));
+                    }
+                }
+
                 $fieldConfiguration['type'] = $fieldType;
             }
 
@@ -480,7 +497,7 @@ class AnnotationParser implements PreParserInterface
                             try {
                                 $fieldConfiguration['type'] = self::guessType($namespace, $annotations);
                             } catch (\Exception $e) {
-                                throw new InvalidArgumentException(\sprintf('The attribute "type" on "@Field" defined on "%s" cannot be auto-guessed : %s.', $target, $e->getMessage()));
+                                throw new InvalidArgumentException(\sprintf('The attribute "type" on "@Field" defined on "%s" is required and cannot be auto-guessed : %s.', $target, $e->getMessage()));
                             }
                         }
                     }
@@ -545,14 +562,14 @@ class AnnotationParser implements PreParserInterface
 
             $resolve = \sprintf("@=service('%s').%s(%s)", self::formatNamespaceForExpression($className), $methodName, self::formatArgsForExpression($args));
 
-            return [
-                $name => [
-                    'type' => $type,
-                    'args' => $args,
-                    'resolve' => $resolve,
-                ],
+            $fields[$name] = [
+                'type' => $type,
+                'args' => $args,
+                'resolve' => $resolve,
             ];
         }
+
+        return $fields;
     }
 
     /**
@@ -612,11 +629,27 @@ class AnnotationParser implements PreParserInterface
      */
     private static function formatArgsForExpression(array $args)
     {
-        $resolveArgs = \array_map(function ($a) {
-            return \sprintf("args['%s']", $a);
-        }, \array_keys($args));
+        $resolvedArgs = [];
+        foreach ($args as $name => $config) {
+            $cleanedType = \str_replace(['[', ']', '!'], '', $config['type']);
+            $definition = self::resolveClassFromType($cleanedType);
+            $defaultFormat = \sprintf("args['%s']", $name);
+            if (!$definition) {
+                $resolvedArgs[] = $defaultFormat;
+            } else {
+                switch ($definition['type']) {
+                    case 'input':
+                    case 'enum':
+                        $resolvedArgs[] = \sprintf("input('%s', args['%s'])", $config['type'], $name);
+                        break;
+                    default:
+                        $resolvedArgs[] = $defaultFormat;
+                        break;
+                }
+            }
+        }
 
-        return \implode(', ', $resolveArgs);
+        return \implode(', ', $resolvedArgs);
     }
 
     /**
@@ -678,7 +711,7 @@ class AnnotationParser implements PreParserInterface
      */
     private static function suffixName(string $name, string $suffix)
     {
-        return \substr($name, \strlen($suffix)) === $suffix ? $name : \sprintf('%s%s', $name, $suffix);
+        return \substr($name, -\strlen($suffix)) === $suffix ? $name : \sprintf('%s%s', $name, $suffix);
     }
 
     /**
@@ -761,6 +794,10 @@ class AnnotationParser implements PreParserInterface
      */
     private static function resolveTypeFromDoctrineType(string $doctrineType)
     {
+        if (isset(self::$doctrineMapping[$doctrineType])) {
+            return self::$doctrineMapping[$doctrineType];
+        }
+
         switch ($doctrineType) {
             case 'integer':
             case 'smallint':
@@ -846,7 +883,7 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * Resolve a Graphql Type from a class name.
+     * Resolve a GraphQL Type from a class name.
      *
      * @param string $className
      * @param string $wantedType
@@ -867,6 +904,18 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
+     * Resolve a PHP class from a GraphQL type.
+     *
+     * @param string $type
+     *
+     * @return string|false
+     */
+    private static function resolveClassFromType(string $type)
+    {
+        return self::$classesMap[$type] ?? false;
+    }
+
+    /**
      * Convert a PHP Builtin type to a GraphQL type.
      *
      * @param string $phpType
@@ -882,8 +931,8 @@ class AnnotationParser implements PreParserInterface
             case 'integer':
             case 'int':
                 return 'Int';
-            case 'double':
             case 'float':
+            case 'double':
                 return 'Float';
             case 'string':
                 return 'String';

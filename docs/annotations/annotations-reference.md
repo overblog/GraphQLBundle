@@ -8,7 +8,7 @@ In the following reference examples, the `use Overblog\GraphQLBundle\Annotation 
 
     -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']`.
 
--   You can use multiple type annotations on the same class. For example, if you need your class to be a Graphql Type AND a Graphql InputType, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
+-   You can use multiple type annotations on the same class. For example, if you need your class to be a Graphql Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
 
 In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated.  
 As fields on input type don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
@@ -18,7 +18,7 @@ As fields on input type don't support resolvers, the field `elevation` will simp
 
 /**
  * @GQL\Type
- * @GQL\InputType
+ * @GQL\Input
  */
 class Coordinates {
     /**
@@ -57,7 +57,7 @@ class Coordinates {
 
 @FieldBuilder
 
-@InputType
+@Input
 
 @IsPublic
 
@@ -174,7 +174,7 @@ class Hero {
 
 ## @Description
 
-This annotation is used in conjonction with one of `@Enum`, `@Field`, `@InputType`, `@Scalar`, `@Type`, `@TypeInterface`, `@Union` to set a description for the GraphQL object.
+This annotation is used in conjonction with one of `@Enum`, `@Field`, `@Input`, `@Scalar`, `@Type`, `@TypeInterface`, `@Union` to set a description for the GraphQL object.
 
 Example
 
@@ -205,6 +205,8 @@ Optional attributes:
 -   **name** : The GraphQL name of the enum (default to the class name without namespace)
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
 
+The class will also be used by the `Input Builder` service when an `Enum` is encoutered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
+
 Example:
 
 ```php
@@ -223,9 +225,13 @@ class Planet
     const TATOUINE = "2";
     const HOTH = "3";
     const BESPIN = "4";
+
+    public $value;
 }
 ?>
 ```
+
+In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Input Builder documentation](input-builder.md)).
 
 ## @EnumValue
 
@@ -308,7 +314,7 @@ class Hero {
 ?>
 ```
 
-## @InputType
+## @Input
 
 This annotation is used on a _class_ to define an input type.
 An Input type is pretty much the same as an input except:
@@ -319,6 +325,8 @@ Optional attributes:
 
 -   **name** : The GraphQL name of the input field (default to classnameInput )
 -   **isRelay** : Set to true if you want your input to be relay compatible (ie. An extra field `clientMutationId` will be added to the input)
+
+The corresponding class will also be used by the `Input Builder` service. A instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Input Builder documentation](input-builder.md)).
 
 ## @IsPublic
 
