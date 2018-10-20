@@ -64,6 +64,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
     public function containerPrependExtensionConfig(array $configs, ContainerBuilder $container): void
     {
+        $container->setParameter('overblog_graphql_types.classes_map', []);
         $typesMappings = $this->mappingConfig($configs, $container);
         // reset treated files
         $this->treatedFiles = [];

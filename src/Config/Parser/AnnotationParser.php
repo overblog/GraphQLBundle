@@ -71,7 +71,7 @@ class AnnotationParser implements PreParserInterface
 
         $container->addResource(new FileResource($file->getRealPath()));
 
-        if (!$resolveClassMap && !$container->hasParameter(self::CLASSESMAP_CONTAINER_PARAMETER)) {
+        if (!$resolveClassMap) {
             $container->setParameter(self::CLASSESMAP_CONTAINER_PARAMETER, self::$classesMap);
         }
 

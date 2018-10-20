@@ -231,7 +231,8 @@ class Planet
 ?>
 ```
 
-In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Input Builder documentation](input-builder.md)).
+In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Input Builder documentation](input-builder.md)).  
+As the class can be instanciated from the `Input Builder` service, it cannot have a constructor with required arguments. 
 
 ## @EnumValue
 
