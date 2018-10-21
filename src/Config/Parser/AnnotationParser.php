@@ -181,7 +181,7 @@ class AnnotationParser implements PreParserInterface
 
             return $resolveClassMap ? self::$classesMap : $gqlTypes;
         } catch (\InvalidArgumentException $e) {
-            throw new InvalidArgumentException(\sprintf('Unable to parse file "%s".', $file), $e->getCode(), $e);
+            throw new InvalidArgumentException(\sprintf('Failed to parse GraphQL annotations from file "%s".', $file), $e->getCode(), $e);
         }
     }
 
@@ -288,10 +288,6 @@ class AnnotationParser implements PreParserInterface
     {
         $inputConfiguration = [];
         $fields = self::getGraphqlFieldsFromAnnotations($namespace, $properties, true);
-
-        if (empty($fields)) {
-            return [];
-        }
 
         $inputConfiguration['fields'] = $fields;
         $inputConfiguration += self::getDescriptionConfiguration($classAnnotations);
@@ -454,9 +450,9 @@ class AnnotationParser implements PreParserInterface
                     $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
                 } else {
                     if ($isMethod) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('%s.%s(%s)', $currentValue, $target, self::formatArgsForExpression($args)));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('@=call(%s.%s, %s)', $currentValue, $target, self::formatArgsForExpression($args)));
                     } elseif ($fieldAnnotation->name) {
-                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('%s.%s', $currentValue, $target));
+                        $fieldConfiguration['resolve'] = self::formatExpression(\sprintf('@=call(%s.%s, [])', $currentValue, $target));
                     }
                 }
 
@@ -560,7 +556,7 @@ class AnnotationParser implements PreParserInterface
                 }
             }
 
-            $resolve = \sprintf("@=service('%s').%s(%s)", self::formatNamespaceForExpression($className), $methodName, self::formatArgsForExpression($args));
+            $resolve = \sprintf("@=call(service('%s').%s, %s)", self::formatNamespaceForExpression($className), $methodName, self::formatArgsForExpression($args));
 
             $fields[$name] = [
                 'type' => $type,
@@ -620,6 +616,16 @@ class AnnotationParser implements PreParserInterface
         return $config;
     }
 
+    private static function formatArgsForExpression(array $args)
+    {
+        $mapping = [];
+        foreach ($args as $name => $config) {
+            $mapping[] = \sprintf('%s: "%s"', $name, $config['type']);
+        }
+
+        return \sprintf('arguments({%s}, args)', \implode(', ', $mapping));
+    }
+
     /**
      * Format an array of args to a list of arguments in an expression.
      *
@@ -627,6 +633,7 @@ class AnnotationParser implements PreParserInterface
      *
      * @return string
      */
+    /*
     private static function formatArgsForExpression(array $args)
     {
         $resolvedArgs = [];
@@ -640,7 +647,7 @@ class AnnotationParser implements PreParserInterface
                 switch ($definition['type']) {
                     case 'input':
                     case 'enum':
-                        $resolvedArgs[] = \sprintf("input('%s', args['%s'])", $config['type'], $name);
+                        $resolvedArgs[] = \sprintf("input('%s', args['%s'], '%s')", $config['type'], $name, $name);
                         break;
                     default:
                         $resolvedArgs[] = $defaultFormat;
@@ -649,8 +656,9 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        return \implode(', ', $resolvedArgs);
+        return sprintf("inputs(%s)", \implode(', ', $resolvedArgs));
     }
+     */
 
     /**
      * Format a namespace to be used in an expression (double escape).
@@ -844,7 +852,7 @@ class AnnotationParser implements PreParserInterface
 
             $argumentConfig = [];
             if ($parameter->isDefaultValueAvailable()) {
-                $argumentConfig['default'] = $parameter->getDefaultValue();
+                $argumentConfig['defaultValue'] = $parameter->getDefaultValue();
             } else {
                 $gqlType .= '!';
             }

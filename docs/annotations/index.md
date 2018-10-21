@@ -3,8 +3,8 @@
 ## Annotations reference
 - [Annotations reference](annotations-reference.md)
 
-## Input populating & validation
-- [The Input Builder](input-builder.md)
+## Arguments transformation, populating & validation
+- [Arguments Transformer](arguments-transformer.md)
 
 ## Annotations & type inheritance
 

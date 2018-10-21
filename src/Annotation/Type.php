@@ -34,7 +34,7 @@ final class Type implements Annotation
     public $isRelay = false;
 
     /**
-     * Expression to a target field resolver.
+     * Expression to a target fields resolver.
      *
      * @var string
      */

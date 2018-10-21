@@ -58,6 +58,13 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals($expected, $this->config[$name]);
     }
 
+    public function testExceptionIfRegisterSameType(): void
+    {
+        $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Failed to parse GraphQL annotations from file "/Volumes/lake/github/GraphQLBundle/tests/Config/Parser/fixtures/annotations/Type/Battle.php".');
+        AnnotationParser::preParse(new \SplFileInfo(__DIR__.'/fixtures/annotations/Type/Battle.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]);
+    }
+
     public function testTypes(): void
     {
         // Test an interface
@@ -106,7 +113,7 @@ class AnnotationParserTest extends TestCase
                 'victims' => [
                     'type' => '[Character]',
                     'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims']],
-                    'resolve' => "@=value.getVictims(args['jediOnly'])",
+                    'resolve' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
                 ],
             ],
         ]);
@@ -183,7 +190,7 @@ class AnnotationParserTest extends TestCase
                 'searchPlanet' => [
                     'type' => '[Planet]',
                     'args' => ['keyword' => ['type' => 'String!']],
-                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet(args['keyword'])",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
                 ],
             ],
         ]);
@@ -193,7 +200,7 @@ class AnnotationParserTest extends TestCase
                 'createPlanet' => [
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
-                    'resolve' => "@=service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet(input('PlanetInput!', args['planetInput']))",
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
                 ],
             ],
         ]);
@@ -225,12 +232,12 @@ class AnnotationParserTest extends TestCase
                     'args' => [
                         'areaId' => ['type' => 'Int!'],
                         'raceId' => ['type' => 'String!'],
-                        'dayStart' => ['type' => 'Int', 'default' => null],
-                        'dayEnd' => ['type' => 'Int', 'default' => null],
-                        'nameStartingWith' => ['type' => 'String', 'default' => ''],
-                        'planetId' => ['type' => 'String', 'default' => null],
+                        'dayStart' => ['type' => 'Int', 'defaultValue' => null],
+                        'dayEnd' => ['type' => 'Int', 'defaultValue' => null],
+                        'nameStartingWith' => ['type' => 'String', 'defaultValue' => ''],
+                        'planetId' => ['type' => 'String', 'defaultValue' => null],
                     ],
-                    'resolve' => "@=value.getCasualties(args['areaId'], args['raceId'], args['dayStart'], args['dayEnd'], args['nameStartingWith'], args['planetId'])",
+                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planetId: "String"}, args))',
                 ],
             ],
         ]);

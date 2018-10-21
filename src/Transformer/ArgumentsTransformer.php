@@ -9,11 +9,13 @@ use GraphQL\Type\Definition\InputType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Error\InvalidArgumentError;
+use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class InputBuilder
+class ArgumentsTransformer
 {
     /**
      * @var ValidatorInterface
@@ -76,6 +78,10 @@ class InputBuilder
      */
     private function populateObject(Type $type, $data, $multiple = false, ResolveInfo $info)
     {
+        if (!$data) {
+            return $data;
+        }
+
         if ($multiple) {
             return \array_map(function ($data) use ($type, $info) {
                 return $this->populateObject($type, $data, false, $info);
@@ -127,7 +133,7 @@ class InputBuilder
      *
      * @return mixed
      */
-    public function getInstanceAndValidate(string $argType, $data, ResolveInfo $info)
+    public function getInstanceAndValidate(string $argType, $data, ResolveInfo $info, string $argName)
     {
         $isRequired = '!' === $argType[\strlen($argType) - 1];
         $isMultiple = '[' === $argType[0];
@@ -135,12 +141,45 @@ class InputBuilder
         $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
+        $errors = [];
+        if (\is_object($result)) {
+            $errors = $this->validator->validate($result);
+        }
 
-        $errors = $this->validator->validate($result);
         if (\count($errors) > 0) {
-            throw new \Exception((string) $errors);
+            throw new InvalidArgumentError($argName, $errors);
         } else {
             return $result;
         }
+    }
+
+    /**
+     * Transform a list of arguments into their corresponding php class and validate them.
+     *
+     * @param array       $mapping
+     * @param mixed       $data
+     * @param ResolveInfo $info
+     *
+     * @return array
+     */
+    public function getArguments(array $mapping, $data, ResolveInfo $info)
+    {
+        $args = [];
+        $exceptions = [];
+
+        foreach ($mapping as $name => $type) {
+            try {
+                $value = $this->getInstanceAndValidate($type, $data[$name], $info, $name);
+                $args[] = $value;
+            } catch (InvalidArgumentError $exception) {
+                $exceptions[] = $exception;
+            }
+        }
+
+        if (!empty($exceptions)) {
+            throw new InvalidArgumentsError($exceptions);
+        }
+
+        return $args;
     }
 }

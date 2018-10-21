@@ -9,20 +9,20 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
-use Overblog\GraphQLBundle\Transformer\InputBuilder;
+use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
 
-class InputBuilderTest extends TestCase
+class ArgumentsTransformerTest extends TestCase
 {
     /**
-     * @return InputBuilder
+     * @return ArgumentsTransformer
      */
-    private function getBuilder(array $classesMap = null): InputBuilder
+    private function getBuilder(array $classesMap = null): ArgumentsTransformer
     {
         $validator = $this->createMock(\Symfony\Component\Validator\Validator\RecursiveValidator::class);
         $validator->method('validate')->willReturn([]);
 
-        return new InputBuilder($validator, $classesMap);
+        return new ArgumentsTransformer($validator, $classesMap);
     }
 
     public function getResolveInfo($types): ResolveInfo
@@ -72,7 +72,7 @@ class InputBuilderTest extends TestCase
             'field3' => true,
         ];
 
-        $res = $builder->getInstanceAndValidate('InputType1', $data, $info);
+        $res = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
 
         $this->assertInstanceOf(InputType1::class, $res);
         $this->assertEquals($res->field1, $data['field1']);
@@ -87,7 +87,7 @@ class InputBuilderTest extends TestCase
             'field2' => 3,
         ];
 
-        $res2 = $builder->getInstanceAndValidate('InputType2', $data, $info);
+        $res2 = $builder->getInstanceAndValidate('InputType2', $data, $info, 'input2');
 
         $this->assertInstanceOf(InputType2::class, $res2);
         $this->assertTrue(\is_array($res2->field1));
@@ -96,7 +96,7 @@ class InputBuilderTest extends TestCase
         $this->assertInstanceOf(InputType1::class, $res2->field1[0]);
         $this->assertInstanceOf(InputType1::class, $res2->field1[1]);
 
-        $res3 = $builder->getInstanceAndValidate('Enum1', 2, $info);
+        $res3 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
 
         $this->assertEquals(2, $res3);
 
@@ -106,8 +106,25 @@ class InputBuilderTest extends TestCase
             'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
         ]);
 
-        $res4 = $builder->getInstanceAndValidate('Enum1', 2, $info);
+        $res4 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
         $this->assertInstanceOf(Enum1::class, $res4);
         $this->assertEquals(2, $res4->value);
+
+        $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2', 'enum1' => 'Enum1', 'int1' => 'Int!', 'string1' => 'String!'];
+        $data = [
+            'input1' => ['field1' => 'hello', 'field2' => 12, 'field3' => true],
+            'input2' => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12],
+            'enum1' => 2,
+            'int1' => 14,
+            'string1' => 'test_string',
+        ];
+
+        $res5 = $builder->getArguments($mapping, $data, $info);
+        $this->assertInstanceOf(InputType1::class, $res5[0]);
+        $this->assertInstanceOf(InputType2::class, $res5[1]);
+        $this->assertInstanceOf(Enum1::class, $res5[2]);
+        $this->assertEquals(2, \count($res5[1]->field1));
+        $this->assertInternalType('int', $res5[3]);
+        $this->assertEquals($res5[4], 'test_string');
     }
 }

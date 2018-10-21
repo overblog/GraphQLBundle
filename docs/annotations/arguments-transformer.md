@@ -1,14 +1,14 @@
-# The Input Builder service
+# The Arguments Transformer service
 
 When using annotation, as we use classes to describe our GraphQL objects, it is also possible to create and populate classes instances using GraphQL data.  
 If a class is used to describe a GraphQL Input, this same class can be instanciated to hold the corresponding GraphQL Input data.  
-This is where the `Input Builder` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instanciate a PHP classes and populate it with data based on the corresponding GraphQL type.
-To invoke the Input Builder, we use the `input` expression function in our resolvers. 
+This is where the `Arguments Transformer` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instanciate a PHP classes and populate it with data based on the corresponding GraphQL type.
+To invoke the Arguments Transformer, we use the `input` expression function in our resolvers. 
 
-## the `input` function in expression language
+## the `arguments` function in expression language
 
-The `input` function take two parameter, a GraphQL type (in GraphQL notation, eventually with the "[]" and "!") and a variable containing data.  
-This function will use the `Input Builder` service to create an instance of the PHP class matching the GraphQL type if it has one and using a property accessor, it will populate the instance, and will use the `validator` service to validate it.  
+The `arguments` function take two parameters, a mapping of arguments name and their type, like `name => type`. The type is in GraphQL notation, eventually with the "[]" and "!". The data are indexed by argument name.
+This function will use the `Arguments Transformer` service to transform the list of arguments into their corresponding PHP class if it has one and using a property accessor, it will populate the instance, and will use the `validator` service to validate it.  
 The transformation is done recursively. If an Input include another Input as field, it will also be populated the same way.
 
 For example:
@@ -91,7 +91,7 @@ class RootMutation {
      *   args={
      *     @GQL\Arg(name="input", type="UserRegisterInput")
      *   },
-     *   resolve="@=service('UserRepository').createUser(input(arg['input']))"
+     *   resolve="@=call(service('UserRepository').createUser, arguments({input: 'UserRegisterInput'}, arg))"
      * )
      */
     public $createUser;
@@ -99,4 +99,3 @@ class RootMutation {
 ```
 
 So, the resolver (the `createUser` method) will receive an instance of the class `UserRegisterInput` instead of an array of data. 
-

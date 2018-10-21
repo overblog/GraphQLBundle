@@ -205,7 +205,7 @@ Optional attributes:
 -   **name** : The GraphQL name of the enum (default to the class name without namespace)
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
 
-The class will also be used by the `Input Builder` service when an `Enum` is encoutered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
+The class will also be used by the `Arguments Transformer` service when an `Enum` is encoutered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
 
 Example:
 
@@ -231,8 +231,8 @@ class Planet
 ?>
 ```
 
-In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Input Builder documentation](input-builder.md)).  
-As the class can be instanciated from the `Input Builder` service, it cannot have a constructor with required arguments. 
+In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Arguments Transformer documentation](arguments-transformer.md)).  
+As the class can be instanciated from the `Arguments Transformer` service, it cannot have a constructor with required arguments. 
 
 ## @EnumValue
 
@@ -327,7 +327,7 @@ Optional attributes:
 -   **name** : The GraphQL name of the input field (default to classnameInput )
 -   **isRelay** : Set to true if you want your input to be relay compatible (ie. An extra field `clientMutationId` will be added to the input)
 
-The corresponding class will also be used by the `Input Builder` service. A instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Input Builder documentation](input-builder.md)).
+The corresponding class will also be used by the `Arguments Transformer` service. A instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
 
 ## @IsPublic
 

@@ -50,8 +50,8 @@ services:
         tags:
             - { name: overblog_graphql.global_variable, alias: typeResolver }
 
-    overblog_graphql.input_builder:
-        class: Overblog\GraphQLBundle\Transformer\InputBuilder
+    overblog_graphql.arguments_transformer:
+        class: Overblog\GraphQLBundle\Transformer\ArgumentsTransformer
         public: true
         arguments:
             - "@validator"
@@ -193,5 +193,12 @@ services:
         public: false
         arguments:
             - []
+
+    overblog_graphql.validation_errors.listener:
+        class: Overblog\GraphQLBundle\EventListener\ValidationErrorsListener
+        tags:
+            - name: kernel.event_listener
+              event: !php/const Overblog\GraphQLBundle\Event\Events::ERROR_FORMATTING
+              method: onErrorFormatting
 
     GraphQL\Executor\Promise\PromiseAdapter: "@overblog_graphql.promise_adapter"
