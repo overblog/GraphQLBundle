@@ -61,7 +61,7 @@ class AnnotationParserTest extends TestCase
     public function testExceptionIfRegisterSameType(): void
     {
         $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Failed to parse GraphQL annotations from file "/Volumes/lake/github/GraphQLBundle/tests/Config/Parser/fixtures/annotations/Type/Battle.php".');
+        $this->expectExceptionMessageRegExp('/^Failed to parse GraphQL annotations from file/');
         AnnotationParser::preParse(new \SplFileInfo(__DIR__.'/fixtures/annotations/Type/Battle.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]);
     }
 
