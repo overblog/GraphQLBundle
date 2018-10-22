@@ -118,7 +118,7 @@ class AnnotationParser implements PreParserInterface
 
                             if ($isRootQuery || $isRootMutation) {
                                 foreach (self::$providers as $className => $providerMethods) {
-                                    $gqlConfiguration['config']['fields'] += self::getGraphqlFieldsFromProvider($className, $providerMethods, $isRootMutation);
+                                    $gqlConfiguration['config']['fields'] += self::getGraphqlFieldsFromProvider($namespace, $className, $providerMethods, $isRootMutation);
                                 }
                             }
                         }
@@ -382,7 +382,7 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * Create Graphql fields configuration based on annotation.
+     * Create Graphql fields configuration based on annotations.
      *
      * @param string $namespace
      * @param array  $propertiesOrMethods
@@ -392,7 +392,7 @@ class AnnotationParser implements PreParserInterface
      *
      * @return array
      */
-    private static function getGraphqlFieldsFromAnnotations(string $namespace, array $propertiesOrMethods, bool $isInput = false, bool $isMethod = false, string $currentValue = 'value'): array
+    private static function getGraphqlFieldsFromAnnotations(string $namespace, array $propertiesOrMethods, bool $isInput = false, bool $isMethod = false, string $currentValue = 'value', string $fieldAnnotationName = 'Field'): array
     {
         $fields = [];
         foreach ($propertiesOrMethods as $target => $config) {
@@ -400,7 +400,7 @@ class AnnotationParser implements PreParserInterface
             $method = $isMethod ? $config['method'] : false;
             $property = $isMethod ? false : $config['property'];
 
-            $fieldAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Field');
+            $fieldAnnotation = self::getFirstAnnotationMatching($annotations, \sprintf('Overblog\GraphQLBundle\Annotation\%s', $fieldAnnotationName));
             $accessAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\Access');
             $publicAnnotation = self::getFirstAnnotationMatching($annotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
 
@@ -515,12 +515,6 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * ArgTransformer
-     *   Transform Arg type hint with enum as newObject(enumClassTypeHint, arg['a'])new EnumClass(arg['a'])
-     *   Transform Arg type hint input as populate(InputClass, arg['a']).
-     */
-
-    /**
      * Return fields config from Provider methods.
      *
      * @param string $className
@@ -529,43 +523,23 @@ class AnnotationParser implements PreParserInterface
      *
      * @return array
      */
-    private static function getGraphqlFieldsFromProvider(string $className, array $methods, bool $isMutation = false)
+    private static function getGraphqlFieldsFromProvider(string $namespace, string $className, array $methods, bool $isMutation = false)
     {
-        $fields = [];
+        $filteredMethods = [];
         foreach ($methods as $methodName => $config) {
             $annotations = $config['annotations'];
-            $method = $config['method'];
 
             $annotation = self::getFirstAnnotationMatching($annotations, \sprintf('Overblog\\GraphQLBundle\\Annotation\\%s', $isMutation ? 'Mutation' : 'Query'));
             if (!$annotation) {
                 continue;
             }
 
-            $name = $annotation->name ?: $methodName;
-            $type = $annotation->type;
-            $args = self::getArgs($annotation->args, $method);
-            if (!$type) {
-                if ($method->hasReturnType()) {
-                    try {
-                        $type = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type');
-                    } catch (\Exception $e) {
-                        throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $isMutation ? 'Mutation' : 'Query', $method, (string) $method->getReturnType()));
-                    }
-                } else {
-                    throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed as there is not return type hint.', $isMutation ? 'Mutation' : 'Query', $method));
-                }
-            }
-
-            $resolve = \sprintf("@=call(service('%s').%s, %s)", self::formatNamespaceForExpression($className), $methodName, self::formatArgsForExpression($args));
-
-            $fields[$name] = [
-                'type' => $type,
-                'args' => $args,
-                'resolve' => $resolve,
-            ];
+            $filteredMethods[$methodName] = $config;
         }
 
-        return $fields;
+        $currentValue = \sprintf("service('%s')", self::formatNamespaceForExpression($className));
+
+        return self::getGraphqlFieldsFromAnnotations($namespace, $filteredMethods, false, true, $currentValue, $isMutation ? 'Mutation' : 'Query');
     }
 
     /**

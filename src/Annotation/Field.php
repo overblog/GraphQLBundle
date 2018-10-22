@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"PROPERTY", "METHOD"})
  */
-final class Field implements Annotation
+class Field implements Annotation
 {
     /**
      * The field name.

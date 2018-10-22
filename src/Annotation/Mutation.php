@@ -10,6 +10,6 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"METHOD"})
  */
-final class Mutation extends Operation
+final class Mutation extends Field
 {
 }

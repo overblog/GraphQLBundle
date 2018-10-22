@@ -10,6 +10,6 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"METHOD"})
  */
-final class Query extends Operation
+final class Query extends Field
 {
 }
