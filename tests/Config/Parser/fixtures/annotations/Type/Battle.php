@@ -19,7 +19,7 @@ class Battle
     /**
      * @GQL\Field(name="casualties")
      */
-    public function getCasualties(int $areaId, string $raceId, int $dayStart = null, int $dayEnd = null, string $nameStartingWith = '', string $planetId = null): int
+    public function getCasualties(int $areaId, string $raceId, int $dayStart = null, int $dayEnd = null, string $nameStartingWith = '', string $planetId = null): ? int
     {
         return 12;
     }

@@ -228,7 +228,7 @@ class AnnotationParserTest extends TestCase
             'fields' => [
                 'planet' => ['type' => 'Planet'],
                 'casualties' => [
-                    'type' => 'Int!',
+                    'type' => 'Int',
                     'args' => [
                         'areaId' => ['type' => 'Int!'],
                         'raceId' => ['type' => 'String!'],

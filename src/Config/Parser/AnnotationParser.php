@@ -482,7 +482,7 @@ class AnnotationParser implements PreParserInterface
                         if ($isMethod) {
                             if ($method->hasReturnType()) {
                                 try {
-                                    $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type').'!';
+                                    $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type');
                                 } catch (\Exception $e) {
                                     throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $target, (string) $method->getReturnType()));
                                 }
@@ -819,7 +819,7 @@ class AnnotationParser implements PreParserInterface
             }
 
             try {
-                $gqlType = self::resolveGraphqlTypeFromReflectionType($parameter->getType(), 'input');
+                $gqlType = self::resolveGraphqlTypeFromReflectionType($parameter->getType(), 'input', $parameter->isDefaultValueAvailable());
             } catch (\Exception $e) {
                 throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed : %s".', $index + 1, $parameter->getName(), $method->getName(), $e->getMessage()));
             }
@@ -827,8 +827,6 @@ class AnnotationParser implements PreParserInterface
             $argumentConfig = [];
             if ($parameter->isDefaultValueAvailable()) {
                 $argumentConfig['defaultValue'] = $parameter->getDefaultValue();
-            } else {
-                $gqlType .= '!';
             }
 
             $argumentConfig['type'] = $gqlType;
@@ -846,7 +844,7 @@ class AnnotationParser implements PreParserInterface
      *
      * @return string
      */
-    private static function resolveGraphqlTypeFromReflectionType(\ReflectionType $type, string $filterGraphqlType = null)
+    private static function resolveGraphqlTypeFromReflectionType(\ReflectionType $type, string $filterGraphqlType = null, bool $isOptionnal = false)
     {
         $stype = (string) $type;
         if ($type->isBuiltin()) {
@@ -861,7 +859,7 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        return $gqlType;
+        return \sprintf('%s%s', $gqlType, ($type->allowsNull() || $isOptionnal) ? '' : '!');
     }
 
     /**
