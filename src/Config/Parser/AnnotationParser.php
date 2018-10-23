@@ -463,7 +463,7 @@ class AnnotationParser implements PreParserInterface
                         list($builder, $builderConfig) = $fieldAnnotation->argsBuilder;
                         $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
                     } else {
-                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on GraphQL annotation "@Field" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $target));
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $target));
                     }
                 }
 
@@ -475,7 +475,7 @@ class AnnotationParser implements PreParserInterface
                         $fieldConfiguration['builder'] = $builder;
                         $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
                     } else {
-                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on GraphQL annotation "@Field" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $target));
+                        throw new InvalidArgumentException(\sprintf('The attribute "argsBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $target));
                     }
                 } else {
                     if (!$fieldType) {
@@ -484,16 +484,16 @@ class AnnotationParser implements PreParserInterface
                                 try {
                                     $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type');
                                 } catch (\Exception $e) {
-                                    throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $target, (string) $method->getReturnType()));
+                                    throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $fieldAnnotationName, $target, (string) $method->getReturnType()));
                                 }
                             } else {
-                                throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@Field" is missing on method "%s" and cannot be auto-guessed as there is not return type hint.', $target));
+                                throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed as there is not return type hint.', $fieldAnnotationName, $target));
                             }
                         } else {
                             try {
                                 $fieldConfiguration['type'] = self::guessType($namespace, $annotations);
                             } catch (\Exception $e) {
-                                throw new InvalidArgumentException(\sprintf('The attribute "type" on "@Field" defined on "%s" is required and cannot be auto-guessed : %s.', $target, $e->getMessage()));
+                                throw new InvalidArgumentException(\sprintf('The attribute "type" on "@%s" defined on "%s" is required and cannot be auto-guessed : %s.', $fieldAnnotationName, $target, $e->getMessage()));
                             }
                         }
                     }
