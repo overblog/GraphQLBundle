@@ -41,12 +41,23 @@ class Field implements Annotation
     public $resolve;
 
     /**
+     * Args builder.
+     *
      * @var mixed
      */
     public $argsBuilder;
 
     /**
+     * Field builder.
+     *
      * @var mixed
      */
     public $fieldBuilder;
+
+    /**
+     * Complexity expression.
+     *
+     * @var string
+     */
+    public $complexity;
 }

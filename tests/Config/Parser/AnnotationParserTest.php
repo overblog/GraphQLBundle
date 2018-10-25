@@ -95,6 +95,10 @@ class AnnotationParserTest extends TestCase
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
                 'memory' => ['type' => 'Int!'],
+                'planet_allowedPlanets' => [
+                    'type' => '[Planet]',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
+                ],
             ],
         ]);
 
@@ -170,6 +174,12 @@ class AnnotationParserTest extends TestCase
         $this->expect('SearchResult', 'union', [
             'description' => 'A search result',
             'types' => ['Hero', 'Droid', 'Sith'],
+            'resolveType' => '@=value.getType()',
+        ]);
+
+        $this->expect('SearchResult2', 'union', [
+            'types' => ['Hero', 'Droid', 'Sith'],
+            'resolveType' => "@=call('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Union\\\\SearchResult2::resolveType', [service('overblog_graphql.type_resolver'), value], true)",
         ]);
     }
 
@@ -187,7 +197,7 @@ class AnnotationParserTest extends TestCase
     {
         $this->expect('RootQuery', 'object', [
             'fields' => [
-                'searchPlanet' => [
+                'planet_searchPlanet' => [
                     'type' => '[Planet]',
                     'args' => ['keyword' => ['type' => 'String!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
@@ -197,7 +207,7 @@ class AnnotationParserTest extends TestCase
 
         $this->expect('RootMutation', 'object', [
             'fields' => [
-                'createPlanet' => [
+                'planet_createPlanet' => [
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
@@ -226,7 +236,7 @@ class AnnotationParserTest extends TestCase
     {
         $this->expect('Battle', 'object', [
             'fields' => [
-                'planet' => ['type' => 'Planet'],
+                'planet' => ['type' => 'Planet', 'complexity' => '@=100 + childrenComplexity'],
                 'casualties' => [
                     'type' => 'Int',
                     'args' => [
@@ -238,6 +248,7 @@ class AnnotationParserTest extends TestCase
                         'planetId' => ['type' => 'String', 'defaultValue' => null],
                     ],
                     'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planetId: "String"}, args))',
+                    'complexity' => '@=childrenComplexity * 5',
                 ],
             ],
         ]);

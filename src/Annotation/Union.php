@@ -27,4 +27,11 @@ final class Union implements Annotation
      * @var array<string>
      */
     public $types;
+
+    /**
+     * Resolver type for union.
+     *
+     * @var string
+     */
+    public $resolveType;
 }

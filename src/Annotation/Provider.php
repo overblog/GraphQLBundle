@@ -12,4 +12,10 @@ namespace Overblog\GraphQLBundle\Annotation;
  */
 final class Provider implements Annotation
 {
+    /**
+     * Optionnal prefix for provider fields.
+     *
+     * @var string
+     */
+    public $prefix;
 }

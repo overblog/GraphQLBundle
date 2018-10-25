@@ -12,4 +12,8 @@ namespace Overblog\GraphQLBundle\Annotation;
  */
 final class Query extends Field
 {
+    /**
+     * The target type to attach this query to.
+     */
+    public $targetType;
 }

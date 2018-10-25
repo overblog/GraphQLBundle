@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Reposi
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\Provider
+ * @GQL\Provider(prefix="planet_")
  */
 class PlanetRepository
 {
@@ -27,6 +27,14 @@ class PlanetRepository
      * })
      */
     public function createPlanet(array $planetInput)
+    {
+        return [];
+    }
+
+    /**
+     * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
+     */
+    public function getAllowedPlanetsForDroids()
     {
         return [];
     }

@@ -12,8 +12,12 @@ final class Call extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function ($target, $args = '[]') {
-                return \sprintf('%s(...%s)', $target, $args);
+            function ($target, $args = '[]', $static = false) {
+                if ($static) {
+                    return \sprintf('\call_user_func_array(%s, %s)', $target, $args);
+                } else {
+                    return \sprintf('%s(...%s)', $target, $args);
+                }
             }
         );
     }

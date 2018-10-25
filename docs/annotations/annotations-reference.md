@@ -395,11 +395,19 @@ class MutationProvider {
 This annotation applies on classes to indicate that it containts methods tagged with `@Query`o or `@Mutation`.  
 Without it, the `@Query` and `@Mutation` are ignored.  When used, __remember to have a corresponding service with the fully qualified name of the class as service id__.
 
+Optional attributes:
+
+-   **prefix** : A prefix to apply to all field names from this provider
+
 ## @Query
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
 The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
 The class exposing the querie(s) must have a corresponding service with his className.  
+
+Optional attributes:
+
+-   **targetType** : The GraphQL type to attach the field to (by default, it'll be the Root query).
 
 Example:
 
@@ -528,6 +536,7 @@ Required attributes:
 Optional attributes:
 
 -   **name** : The GraphQL name of the union (default to the class name without namespace)
+-   **resolveType** : Expression to resolve an object type. By default, it'll use a static method `resolveType` on the related class and call it with the `type resolver` as first argument and then the `value`.
 
 Example:
 
@@ -535,8 +544,19 @@ Example:
 <?php
 
 /**
- * @GQL\Union(types={"Dog", "Cat", "Bird", "Snake"})
+ * @GQL\Union(types={"Cat", "Bird", "Snake"})
  * @GQL\Description("All the pets")
  */
-class Pet {}
+class Pet {
+    public static function resolveType(TypeResolver $typeResolver, $value) 
+    {
+        if ($value->hasWings()) {
+            return $typeResolver->resolve('Bird');
+        } else if (!$value->hasArms()) {
+            return $typeResolver->resolve('Snake');
+        } else {
+            return $typeResolver->resolve('Cat');
+        }
+    }
+}
 ```
