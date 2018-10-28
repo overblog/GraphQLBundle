@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Transformer;
 
 use GraphQL\Type\Definition\EnumType;
-use GraphQL\Type\Definition\InputType;
+use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -97,7 +97,7 @@ class ArgumentsTransformer
             } else {
                 return $data;
             }
-        } elseif ($type instanceof InputType) {
+        } elseif ($type instanceof InputObjectType) {
             $instance = $this->getTypeClassInstance($type->name);
             if (!$instance) {
                 return $data;
