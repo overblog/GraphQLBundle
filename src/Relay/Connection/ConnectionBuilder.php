@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Relay\Connection\Output;
+namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
+use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
 /**
  * Class ConnectionBuilder.
@@ -16,6 +19,26 @@ class ConnectionBuilder
     public const PREFIX = 'arrayconnection:';
 
     /**
+     * If set, used to generate the connection object.
+     *
+     * @var callable
+     */
+    protected $connectionCallback;
+
+    /**
+     * If set, used to generate the edge object.
+     *
+     * @var callable
+     */
+    protected $edgeCallback;
+
+    public function __construct(callable $connectionCallback = null, callable $edgeCallback = null)
+    {
+        $this->connectionCallback = $connectionCallback;
+        $this->edgeCallback = $edgeCallback;
+    }
+
+    /**
      * A simple function that accepts an array and connection arguments, and returns
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
@@ -25,9 +48,9 @@ class ConnectionBuilder
      *
      * @return Connection
      */
-    public static function connectionFromArray(array $data, $args = []): Connection
+    public function connectionFromArray(array $data, $args = []): Connection
     {
-        return static::connectionFromArraySlice(
+        return $this->connectionFromArraySlice(
             $data,
             $args,
             [
@@ -46,12 +69,12 @@ class ConnectionBuilder
      *
      * @return mixed a promise
      */
-    public static function connectionFromPromisedArray($dataPromise, $args = [])
+    public function connectionFromPromisedArray($dataPromise, $args = [])
     {
-        self::checkPromise($dataPromise);
+        $this->checkPromise($dataPromise);
 
         return $dataPromise->then(function ($data) use ($args) {
-            return static::connectionFromArray($data, $args);
+            return $this->connectionFromArray($data, $args);
         });
     }
 
@@ -70,9 +93,9 @@ class ConnectionBuilder
      *
      * @return Connection
      */
-    public static function connectionFromArraySlice(array $arraySlice, $args, array $meta): Connection
+    public function connectionFromArraySlice(array $arraySlice, $args, array $meta): Connection
     {
-        $connectionArguments = self::getOptionsWithDefaults(
+        $connectionArguments = $this->getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
             [
                 'after' => '',
@@ -81,7 +104,7 @@ class ConnectionBuilder
                 'last' => null,
             ]
         );
-        $arraySliceMetaInfo = self::getOptionsWithDefaults(
+        $arraySliceMetaInfo = $this->getOptionsWithDefaults(
             $meta,
             [
                 'sliceStart' => 0,
@@ -97,8 +120,8 @@ class ConnectionBuilder
         $sliceStart = $arraySliceMetaInfo['sliceStart'];
         $arrayLength = $arraySliceMetaInfo['arrayLength'];
         $sliceEnd = $sliceStart + $arraySliceLength;
-        $beforeOffset = static::getOffsetWithDefault($before, $arrayLength);
-        $afterOffset = static::getOffsetWithDefault($after, -1);
+        $beforeOffset = $this->getOffsetWithDefault($before, $arrayLength);
+        $afterOffset = $this->getOffsetWithDefault($after, -1);
 
         $startOffset = \max($sliceStart - 1, $afterOffset, -1) + 1;
         $endOffset = \min($sliceEnd, $beforeOffset, $arrayLength);
@@ -131,7 +154,16 @@ class ConnectionBuilder
         $edges = [];
 
         foreach ($slice as $index => $value) {
-            $edges[] = new Edge(static::offsetToCursor($startOffset + $index), $value);
+            $cursor = $this->offsetToCursor($startOffset + $index);
+            if ($this->edgeCallback) {
+                $edge = ($this->edgeCallback)($cursor, $value, $index);
+                if (!($edge instanceof EdgeInterface)) {
+                    throw new \InvalidArgumentException(\sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
+                }
+            } else {
+                $edge = new Edge($cursor, $value);
+            }
+            $edges[] = $edge;
         }
 
         $firstEdge = $edges[0] ?? null;
@@ -139,15 +171,23 @@ class ConnectionBuilder
         $lowerBound = $after ? ($afterOffset + 1) : 0;
         $upperBound = $before ? $beforeOffset : $arrayLength;
 
-        return new Connection(
-            $edges,
-            new PageInfo(
-                $firstEdge instanceof Edge ? $firstEdge->cursor : null,
-                $lastEdge instanceof Edge ? $lastEdge->cursor : null,
-                null !== $last ? $startOffset > $lowerBound : false,
-                null !== $first ? $endOffset < $upperBound : false
-            )
+        $pageInfo = new PageInfo(
+            $firstEdge instanceof EdgeInterface ? $firstEdge->getCursor() : null,
+            $lastEdge instanceof EdgeInterface ? $lastEdge->getCursor() : null,
+            null !== $last ? $startOffset > $lowerBound : false,
+            null !== $first ? $endOffset < $upperBound : false
         );
+
+        if ($this->connectionCallback) {
+            $connection = ($this->connectionCallback)($edges, $pageInfo);
+            if (!($connection instanceof ConnectionInterface)) {
+                throw new \InvalidArgumentException(\sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
+            }
+
+            return $connection;
+        }
+
+        return new Connection($edges, $pageInfo);
     }
 
     /**
@@ -160,12 +200,12 @@ class ConnectionBuilder
      *
      * @return mixed a promise
      */
-    public static function connectionFromPromisedArraySlice($dataPromise, $args, array $meta)
+    public function connectionFromPromisedArraySlice($dataPromise, $args, array $meta)
     {
-        self::checkPromise($dataPromise);
+        $this->checkPromise($dataPromise);
 
         return $dataPromise->then(function ($arraySlice) use ($args, $meta) {
-            return static::connectionFromArraySlice($arraySlice, $args, $meta);
+            return $this->connectionFromArraySlice($arraySlice, $args, $meta);
         });
     }
 
@@ -177,7 +217,7 @@ class ConnectionBuilder
      *
      * @return null|string
      */
-    public static function cursorForObjectInConnection(array $data, $object): ?string
+    public function cursorForObjectInConnection(array $data, $object): ? string
     {
         $offset = null;
 
@@ -195,7 +235,7 @@ class ConnectionBuilder
             return null;
         }
 
-        return static::offsetToCursor($offset);
+        return $this->offsetToCursor($offset);
     }
 
     /**
@@ -208,12 +248,12 @@ class ConnectionBuilder
      *
      * @return int
      */
-    public static function getOffsetWithDefault(?string $cursor, int $defaultOffset): int
+    public function getOffsetWithDefault(? string $cursor, int $defaultOffset): int
     {
         if (empty($cursor)) {
             return $defaultOffset;
         }
-        $offset = static::cursorToOffset($cursor);
+        $offset = $this->cursorToOffset($cursor);
 
         return !\is_numeric($offset) ? $defaultOffset : (int) $offset;
     }
@@ -225,7 +265,7 @@ class ConnectionBuilder
      *
      * @return string
      */
-    public static function offsetToCursor($offset): string
+    public function offsetToCursor($offset): string
     {
         return \base64_encode(static::PREFIX.$offset);
     }
@@ -237,7 +277,7 @@ class ConnectionBuilder
      *
      * @return string
      */
-    public static function cursorToOffset($cursor): string
+    public function cursorToOffset($cursor): string
     {
         if (null === $cursor) {
             return '';
@@ -246,12 +286,12 @@ class ConnectionBuilder
         return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
     }
 
-    private static function getOptionsWithDefaults(array $options, array $defaults)
+    private function getOptionsWithDefaults(array $options, array $defaults)
     {
         return $options + $defaults;
     }
 
-    private static function checkPromise($value): void
+    private function checkPromise($value): void
     {
         if (!\is_callable([$value, 'then'])) {
             throw new \InvalidArgumentException('This is not a valid promise.');

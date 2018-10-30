@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
+namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
@@ -28,8 +28,8 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         return new Connection(
             $expectedEdges,
             new PageInfo(
-                isset($expectedEdges[0]) ? $expectedEdges[0]->cursor : null,
-                \end($expectedEdges) ? \end($expectedEdges)->cursor : null,
+                isset($expectedEdges[0]) ? $expectedEdges[0]->getCursor() : null,
+                \end($expectedEdges) ? \end($expectedEdges)->getCursor() : null,
                 $hasPreviousPage,
                 $hasNextPage
             )
@@ -39,22 +39,21 @@ abstract class AbstractConnectionBuilderTest extends TestCase
     protected function assertSameConnection(Connection $expectedConnection, Connection $actualConnection): void
     {
         // assert totalCount
-        $this->assertSame($expectedConnection->totalCount, $actualConnection->totalCount);
+        $this->assertSame($expectedConnection->getTotalCount(), $actualConnection->getTotalCount());
 
         // assert pageInfo
         foreach (['endCursor', 'hasNextPage', 'hasPreviousPage', 'startCursor'] as $property) {
             $this->assertSame(
-                $expectedConnection->pageInfo->$property,
-                $actualConnection->pageInfo->$property
+                $expectedConnection->getPageInfo()->$property,
+                $actualConnection->getPageInfo()->$property
             );
         }
 
         // assert edges
-        $this->assertCount(\count($expectedConnection->edges), $actualConnection->edges);
-        foreach ($expectedConnection->edges as $i => $expectedEdge) {
-            foreach (['cursor', 'node'] as $property) {
-                $this->assertSame($expectedEdge->$property, $actualConnection->edges[$i]->$property);
-            }
+        $this->assertCount(\count($expectedConnection->getEdges()), $actualConnection->getEdges());
+        foreach ($expectedConnection->getEdges() as $i => $expectedEdge) {
+            $this->assertSame($expectedEdge->getNode(), $actualConnection->getEdges()[$i]->getNode());
+            $this->assertSame($expectedEdge->getCursor(), $actualConnection->getEdges()[$i]->getCursor());
         }
     }
 }

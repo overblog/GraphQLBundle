@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
+namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
-use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 use React\Promise\FulfilledPromise;
 
 class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {
-        $promise = ConnectionBuilder::connectionFromPromisedArray($this->promisedLetters(), []);
+        $promise = (new ConnectionBuilder())->connectionFromPromisedArray($this->promisedLetters(), []);
         $expected = $this->getExpectedConnection($this->letters, false, false);
         $this->assertEqualsFromPromised($expected, $promise);
     }
 
     public function testRespectsASmallerFirst(): void
     {
-        $promise = ConnectionBuilder::connectionFromPromisedArray($this->promisedLetters(), ['first' => 2]);
+        $promise = (new ConnectionBuilder())->connectionFromPromisedArray($this->promisedLetters(), ['first' => 2]);
         $expected = $this->getExpectedConnection(['A', 'B'], false, true);
         $this->assertEqualsFromPromised($expected, $promise);
     }
@@ -33,7 +33,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      */
     public function testInvalidPromise($invalidPromise): void
     {
-        ConnectionBuilder::connectionFromPromisedArray($invalidPromise, []);
+        (new ConnectionBuilder())->connectionFromPromisedArray($invalidPromise, []);
     }
 
     public function invalidPromiseDataProvider()
@@ -49,7 +49,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     public function testRespectsASmallerFirstWhenSlicing(): void
     {
-        $promise = ConnectionBuilder::connectionFromPromisedArraySlice(
+        $promise = (new ConnectionBuilder())->connectionFromPromisedArraySlice(
             $this->promisedLetters(['A', 'B', 'C']),
             ['first' => 2],
             [
@@ -70,7 +70,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
-        ConnectionBuilder::connectionFromPromisedArraySlice($invalidPromise, [], []);
+        (new ConnectionBuilder())->connectionFromPromisedArraySlice($invalidPromise, [], []);
     }
 
     private function promisedLetters(array $letters = null)
