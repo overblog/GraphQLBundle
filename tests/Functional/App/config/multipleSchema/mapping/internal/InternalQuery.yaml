@@ -8,3 +8,6 @@ InternalQuery:
             bar:
                 type: 'String!'
                 resolve: "bar"
+            users:
+                type: 'InternalUserConnection!'
+                resolve: '@={"edges":[{"node":{"username":"user1","email":"topsecret"}}]}'

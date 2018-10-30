@@ -41,11 +41,16 @@ User:
                 type: Boolean
                 resolve: true
             friends:
-                # replace by strict equality after fix compilation expression language bug in sf 4.0
+                # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
                 access: "@=object == 1"
                 type: friendConnection
                 argsBuilder: ConnectionArgs
                 resolve: '@=resolver("friends", [value, args])'
+            friendsAsArray:
+                # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
+                access: "@=object != 2"
+                type: '[Int]'
+                resolve: [1, 2, 3]
             forbidden:
                 access: false
                 type: String!
