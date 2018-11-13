@@ -34,7 +34,7 @@ final class ErrorHandlerListener
         LoggerInterface $logger,
         bool $throwException = false,
         bool $debug = false,
-        string $errorLevel = LogLevel::ERROR
+        string $errorLevel = LogLevel::DEBUG
     ) {
         $this->errorHandler = $errorHandler;
         $this->throwException = $throwException;

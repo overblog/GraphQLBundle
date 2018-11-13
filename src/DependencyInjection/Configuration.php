@@ -9,6 +9,7 @@ use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Resolver\Resolver;
+use Psr\Log\LogLevel;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
@@ -86,6 +87,7 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('log')->defaultTrue()->end()
                 ->scalarNode('logger_service')->defaultValue(ErrorLoggerListener::DEFAULT_LOGGER_SERVICE)->end()
                 ->booleanNode('map_exceptions_to_parent')->defaultFalse()->end()
+                ->scalarNode('log_level')->defaultValue(LogLevel::DEBUG)->end()
                 ->arrayNode('exceptions')
                     ->addDefaultsIfNotSet()
                     ->children()

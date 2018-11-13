@@ -12,6 +12,7 @@ use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
@@ -97,6 +98,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                 \InvalidArgumentException::class,
                             ],
                         ],
+                        'log_level' => LogLevel::DEBUG,
                     ],
                 ],
             ],
