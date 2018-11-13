@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\EventListener;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
 final class ErrorHandlerListener
@@ -25,16 +26,21 @@ final class ErrorHandlerListener
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var string */
+    private $errorLevel;
+
     public function __construct(
         ErrorHandler $errorHandler,
         LoggerInterface $logger,
         bool $throwException = false,
-        bool $debug = false
+        bool $debug = false,
+        string $errorLevel = LogLevel::ERROR
     ) {
         $this->errorHandler = $errorHandler;
         $this->throwException = $throwException;
         $this->debug = $debug;
         $this->logger = null === $logger ? new NullLogger() : $logger;
+        $this->errorLevel = $errorLevel;
     }
 
     public function onPostExecutor(ExecutorResultEvent $executorResultEvent): void
@@ -44,7 +50,7 @@ final class ErrorHandlerListener
         $result = $result->toArray();
 
         if (isset($result['errors'])) {
-            $this->logger->error(__METHOD__.' : '.\json_encode($result['errors']));
+            $this->logger->{$this->errorLevel}(__METHOD__.' : '.\json_encode($result['errors']));
         }
     }
 }

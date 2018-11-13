@@ -187,7 +187,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
             $errorHandlerListenerDefinition = $container->setDefinition(ErrorHandlerListener::class, new Definition(ErrorHandlerListener::class));
             $errorHandlerListenerDefinition->setPublic(true)
-                ->setArguments([new Reference($id), new Reference(ErrorHandlerListener::DEFAULT_LOGGER_SERVICE), $config['errors_handler']['rethrow_internal_exceptions'], $config['errors_handler']['debug']])
+                ->setArguments([new Reference($id), new Reference(ErrorHandlerListener::DEFAULT_LOGGER_SERVICE), $config['errors_handler']['rethrow_internal_exceptions'], $config['errors_handler']['debug'], $config['errors_handler']['log_level']])
                 ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor'])
             ;
 
