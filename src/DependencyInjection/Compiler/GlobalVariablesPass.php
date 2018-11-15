@@ -32,7 +32,7 @@ final class GlobalVariablesPass implements CompilerPassInterface
                     $expressionLanguageDefinition->addMethodCall(
                         'addGlobalName',
                         [
-                            \sprintf('globalVariables->get(\'%s\')', $attributes['alias']),
+                            \sprintf('globalVariable->get(\'%s\')', $attributes['alias']),
                             $attributes['alias'],
                         ]
                     );
