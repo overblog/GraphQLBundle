@@ -8,8 +8,11 @@ overblog_graphql:
         schema:
             public:
                 query: PublicQuery
+                mutation: PublicMutation
             internal:
                 query: InternalQuery
+                mutation: InternalMutation
+
         mappings:
             types:
                 -
