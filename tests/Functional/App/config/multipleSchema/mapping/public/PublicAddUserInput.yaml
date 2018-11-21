@@ -1,0 +1,7 @@
+PublicAddUserInput:
+  type: relay-mutation-input
+  config:
+    name: AddUserInput
+    fields:
+      username:
+        type: 'String!'
