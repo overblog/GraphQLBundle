@@ -1,0 +1,7 @@
+InternalAddUserPayload:
+  type: relay-mutation-payload
+  config:
+    name: AddUserPayload
+    fields:
+      user:
+        type: 'InternalUser'
