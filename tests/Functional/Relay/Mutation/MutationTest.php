@@ -77,6 +77,28 @@ EOF;
         $this->assertGraphQL($query, $expectedData);
     }
 
+    public function testSupportsInheritanceOfInputAndOutputFields()
+    {
+        $query = <<<'EOF'
+mutation M {
+    simpleMutationWithInheritance(input: {inputData: 1234, moreData: 1337, clientMutationId: "abc"}) {
+    result
+    more
+    clientMutationId
+  }
+}
+EOF;
+        $expectedData = [
+            'simpleMutationWithInheritance' => [
+                'result' => 1234,
+                'more' => 1337,
+                'clientMutationId' => 'abc',
+            ],
+        ];
+
+        $this->assertGraphQL($query, $expectedData);
+    }
+
     public function testSupportsPromiseMutations()
     {
         $query = <<<'EOF'
@@ -247,6 +269,26 @@ EOF;
                             ],
                             'type' => [
                                 'name' => 'simpleMutationWithThunkFieldsPayload',
+                                'kind' => 'OBJECT',
+                            ],
+                        ],
+                        [
+                            'name' => 'simpleMutationWithInheritance',
+                            'args' => [
+                                [
+                                    'name' => 'input',
+                                    'type' => [
+                                        'name' => null,
+                                        'kind' => 'NON_NULL',
+                                        'ofType' => [
+                                            'name' => 'simpleMutationWithInheritanceInput',
+                                            'kind' => 'INPUT_OBJECT',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'type' => [
+                                'name' => 'simpleMutationWithInheritancePayload',
                                 'kind' => 'OBJECT',
                             ],
                         ],

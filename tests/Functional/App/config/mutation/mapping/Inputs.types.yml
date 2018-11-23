@@ -9,6 +9,14 @@ simpleMutationWithThunkFieldsInput:
         fields:
             inputData : { type: "Int" }
 
+simpleMutationWithInheritanceInput:
+    type: relay-mutation-input
+    inherits:
+        - simpleMutationWithThunkFieldsInput
+    config:
+        fields:
+            moreData : { type: "Int" }
+
 simplePromiseMutationInput:
     type: relay-mutation-input
     config:

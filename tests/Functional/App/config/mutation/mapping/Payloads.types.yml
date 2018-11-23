@@ -10,6 +10,14 @@ simpleMutationWithThunkFieldsPayload:
         fields:
             result: { type: "Int" }
 
+simpleMutationWithInheritancePayload:
+    type: relay-mutation-payload
+    inherits:
+        - simpleMutationWithThunkFieldsPayload
+    config:
+        fields:
+            more: { type: "Int" }
+
 simplePromiseMutationPayload:
     type: relay-mutation-payload
     config:
