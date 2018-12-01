@@ -1,19 +1,14 @@
 Events
 =========
 
-[Events](http://symfony.com/doc/master/event_dispatcher.html) are a way to hook
-into the execution flow. This bundle provides various events from executor
-and context value initialization, executor result formatting (data, errors, extensions),
-errors/warnings formatting.
-
-With this in mind we now turn to explain each one of them.
+[Events](http://symfony.com/doc/master/event_dispatcher.html) are a way to hook into the execution flow. This bundle provides various events around the executor's context value initialization and result formatting (data, errors, extensions).
 
 Executor context value
 ----------------------
 
 *Event:* `graphql.executor.context`
 
-This event can be listen to initialize executor `contextValue` argument.
+It is used to initialize the executor's `contextValue` argument.
 
 
 Executor initialisation
@@ -21,12 +16,11 @@ Executor initialisation
 
 *Event:* `graphql.pre_executor`
 
-This event can be listen to initialize executor execute arguments
-(`schema`, `requestString`, `rootValue`, `contextValue`, `variableValue`, `operationName`).
+Used to initialize the executor's execute arguments: `schema`, `requestString`, `rootValue`, `contextValue`, `variableValue`, `operationName`.
 
-For example:
+Example:
 
-* Initializing `rootValue` with the current user (we assume that user is fully authenticated)
+* Initialize the `rootValue` with the current user (we assume that user is fully authenticated)
 
     ```yaml
     App\EventListener\RootValueInitialization:
@@ -62,12 +56,12 @@ Executor result
 
 *Event:* `graphql.post_executor`
 
-This event can be listen to set custom error handling and formatting, it can also be use to
-add information to `extensions` section.
+Used to set custom error handling and formatting. It can also be used to
+add information to the `extensions` section.
 
-For example:
+Example:
 
-* How to add `credits` entry in `extensions` section
+* Add a `credits` entry in the `extensions` section
 
     ```yaml
     App\EventListener\Credits:
@@ -106,11 +100,11 @@ Error formatting
 
 *Event:* `graphql.error_formatting`
 
-This event can be listen to add or remove fields from result `errors` and `extensions.warnings`
-sections, it can also be use to log errors or exception. Each single error or warning will trigger
+Used to add or remove fields from the result's `errors` and `extensions.warnings`
+sections. It can also be used to log errors or exception. Each single error or warning will trigger
 an event.
 
-For example:
+Example:
 
 * How to add error code:
 
@@ -158,17 +152,17 @@ For example:
   ```
 
 *Note:*
-- This event is dispatch by this bundle default error handler, that the reason why, disabling
-error handler will also disable this event.
+- This event is dispatched by this bundle's default error handler. Disabling it
+will also disable this event.
 
 Type loaded
 ----------------
 
 *Event:* `graphql.type_loaded`
 
-This event can be listen to modified type before schema registration.
+Used to modify types before schema registration.
 
-For example:
+Example:
 
 ```yaml
 App\EventListener\TypeDecorator:
@@ -188,7 +182,7 @@ class TypeDecorator
   public function onTypeLoaded(TypeLoadedEvent $event)
   {
       $type = $event->getType();
-      // here we can modified type
+      // modify the type
   }
 }
 ```
