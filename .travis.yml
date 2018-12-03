@@ -15,7 +15,6 @@ cache:
     directories:
         - $HOME/.composer/cache
         - $HOME/.php_cs.cache
-        - vendor/
 
 before_install:
     - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
