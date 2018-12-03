@@ -39,8 +39,10 @@ class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(self::NAME);
+        $treeBuilder = new TreeBuilder(self::NAME);
+
+        // BC layer for symfony/config 4.1 and older
+        $rootNode = \method_exists($treeBuilder, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root(self::NAME);
 
         $rootNode
             ->children()
@@ -56,9 +58,9 @@ class Configuration implements ConfigurationInterface
 
     private function batchingMethodSection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('batching_method', 'enum');
         /** @var EnumNodeDefinition $node */
-        $node = $builder->root('batching_method', 'enum');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('batching_method', 'enum');
 
         $node
             ->values(['relay', 'apollo'])
@@ -70,9 +72,9 @@ class Configuration implements ConfigurationInterface
 
     private function errorsHandlerSection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('errors_handler');
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root('errors_handler');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('errors_handler');
         $node
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
@@ -105,9 +107,9 @@ class Configuration implements ConfigurationInterface
 
     private function definitionsSection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('definitions');
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root('definitions');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('definitions');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -135,9 +137,9 @@ class Configuration implements ConfigurationInterface
 
     private function servicesSection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('services');
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root('services');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('services');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -159,9 +161,9 @@ class Configuration implements ConfigurationInterface
 
     private function securitySection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('security');
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root('security');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('security');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -177,9 +179,9 @@ class Configuration implements ConfigurationInterface
 
     private function definitionsSchemaSection()
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder('schema');
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root('schema');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('schema');
         $node
             ->beforeNormalization()
                 ->ifTrue(function ($v) {
@@ -213,8 +215,8 @@ class Configuration implements ConfigurationInterface
 
     private function definitionsMappingsSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('mappings');
+        $builder = new TreeBuilder('mappings');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('mappings');
         $node
             ->children()
                 ->arrayNode('auto_discover')
@@ -267,9 +269,9 @@ class Configuration implements ConfigurationInterface
      */
     private function builderSection($name)
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder($name);
         /** @var ArrayNodeDefinition $node */
-        $node = $builder->root($name);
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name);
         $node->beforeNormalization()
             ->ifTrue(function ($v) {
                 return \is_array($v) && !empty($v);
@@ -307,9 +309,9 @@ class Configuration implements ConfigurationInterface
      */
     private function securityQuerySection($name, $disabledValue)
     {
-        $builder = new TreeBuilder();
+        $builder = new TreeBuilder($name, 'scalar');
         /** @var ScalarNodeDefinition $node */
-        $node = $builder->root($name, 'scalar');
+        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, 'scalar');
         $node->beforeNormalization()
                 ->ifTrue(function ($v) {
                     return \is_string($v) && \is_numeric($v);
