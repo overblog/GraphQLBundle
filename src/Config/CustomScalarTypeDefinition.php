@@ -2,14 +2,11 @@
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-
 class CustomScalarTypeDefinition extends TypeDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_custom_scalar_config');
+        $node = self::createNode('_custom_scalar_config');
 
         $node
             ->children()
