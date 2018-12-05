@@ -2,14 +2,11 @@
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-
 class EnumTypeDefinition extends TypeDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_enum_config');
+        $node = self::createNode('_enum_config');
 
         $node
             ->children()

@@ -48,7 +48,9 @@ jobs:
           env: SYMFONY_VERSION=4.2.*
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
-        - php: 7.2
+
+        - stage: Code Quality
+          php: 7.2
           env: COVERAGE
           before_script:
             - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}

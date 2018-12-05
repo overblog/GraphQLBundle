@@ -2,14 +2,11 @@
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-
 class InputObjectTypeDefinition extends TypeDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_input_object_config');
+        $node = self::createNode('_input_object_config');
 
         $node
             ->children()

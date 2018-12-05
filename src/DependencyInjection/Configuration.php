@@ -39,8 +39,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder(self::NAME);
 
-        // BC layer for symfony/config 4.1 and older
-        $rootNode = \method_exists($treeBuilder, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root(self::NAME);
+        $rootNode = self::getRootNodeWithoutDeprecation($treeBuilder, self::NAME);
 
         $rootNode
             ->children()
@@ -58,7 +57,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('batching_method', 'enum');
         /** @var EnumNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('batching_method', 'enum');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'batching_method', 'enum');
 
         $node
             ->values(['relay', 'apollo'])
@@ -72,7 +71,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('errors_handler');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('errors_handler');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'errors_handler');
         $node
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
@@ -138,7 +137,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('services');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('services');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'services');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -180,7 +179,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('schema');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('schema');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'schema');
         $node
             ->beforeNormalization()
                 ->ifTrue(function ($v) {
@@ -216,7 +215,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('auto_mapping');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('auto_mapping');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'auto_mapping');
         $node
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
@@ -237,7 +236,7 @@ class Configuration implements ConfigurationInterface
     private function definitionsMappingsSection()
     {
         $builder = new TreeBuilder('mappings');
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('mappings');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'mappings');
         $node
             ->children()
                 ->arrayNode('auto_discover')
@@ -292,7 +291,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder($name);
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name);
+        $node = self::getRootNodeWithoutDeprecation($builder, $name);
         $node->beforeNormalization()
             ->ifTrue(function ($v) {
                 return \is_array($v) && !empty($v);
@@ -332,7 +331,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder($name, 'scalar');
         /** @var ScalarNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, 'scalar');
+        $node = self::getRootNodeWithoutDeprecation($builder, $name, 'scalar');
         $node->beforeNormalization()
                 ->ifTrue(function ($v) {
                     return \is_string($v) && \is_numeric($v);
@@ -362,5 +361,20 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $node;
+    }
+
+    /**
+     * @internal
+     *
+     * @param TreeBuilder $builder
+     * @param string|null $name
+     * @param string      $type
+     *
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, $name, $type = 'array')
+    {
+        // BC layer for symfony/config 4.1 and older
+        return \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, $type);
     }
 }
