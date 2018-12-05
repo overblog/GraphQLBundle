@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-
 class InterfaceTypeDefinition extends TypeWithOutputFieldsDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_interface_config');
+        $node = self::createNode('_interface_config');
 
         $node
             ->children()

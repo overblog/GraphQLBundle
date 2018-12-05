@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_object_config');
+        $node = self::createNode('_object_config');
 
         $node
             ->children()

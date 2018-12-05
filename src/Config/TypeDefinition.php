@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
+use Overblog\GraphQLBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 abstract class TypeDefinition
@@ -24,16 +25,14 @@ abstract class TypeDefinition
 
     protected function resolveTypeSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('resolveType', 'variable');
+        $node = self::createNode('resolveType', 'variable');
 
         return $node;
     }
 
     protected function nameSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('name', 'scalar');
+        $node = self::createNode('name', 'scalar');
         $node->isRequired();
         $node->validate()
             ->ifTrue(function ($name) {
@@ -47,24 +46,21 @@ abstract class TypeDefinition
 
     protected function defaultValueSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('defaultValue', 'variable');
+        $node = self::createNode('defaultValue', 'variable');
 
         return $node;
     }
 
     protected function descriptionSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('description', 'scalar');
+        $node = self::createNode('description', 'scalar');
 
         return $node;
     }
 
     protected function deprecationReasonSelection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('deprecationReason', 'scalar');
+        $node = self::createNode('deprecationReason', 'scalar');
 
         $node->info('Text describing why this field is deprecated. When not empty - field will not be returned by introspection queries (unless forced)');
 
@@ -73,8 +69,7 @@ abstract class TypeDefinition
 
     protected function typeSelection($isRequired = false)
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('type', 'scalar');
+        $node = self::createNode('type', 'scalar');
 
         $node->info('One of internal or custom types.');
 
@@ -83,5 +78,18 @@ abstract class TypeDefinition
         }
 
         return $node;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $name
+     * @param string $type
+     *
+     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected static function createNode(string $name, string $type = 'array')
+    {
+        return Configuration::getRootNodeWithoutDeprecation(new TreeBuilder($name, $type), $name, $type);
     }
 }
