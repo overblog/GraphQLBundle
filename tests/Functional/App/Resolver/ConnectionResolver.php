@@ -80,4 +80,9 @@ class ConnectionResolver
 
         return $this->allUsers[0];
     }
+
+    public function resolvePromiseFullFilled($value)
+    {
+        return $this->promiseAdapter->createFulfilled($value);
+    }
 }

@@ -8,3 +8,4 @@ services:
             - { name: "overblog_graphql.resolver", alias: "node", method: "resolveNode" }
             - { name: "overblog_graphql.resolver", alias: "query", method: "resolveQuery" }
             - { name: "overblog_graphql.resolver", alias: "connection", method: "resolveConnection" }
+            - { name: "overblog_graphql.resolver", alias: "promise", method: "resolvePromiseFullFilled" }

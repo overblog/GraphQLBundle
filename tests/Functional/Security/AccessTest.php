@@ -15,7 +15,7 @@ class AccessTest extends TestCase
 
     private $userRolesQuery = 'query { user { roles } }';
 
-    private $userIsEnabledQuery = 'query { user { isEnabled } }';
+    private $userIsEnabledQuery = 'query ($hasAccess: Boolean = true) { user { isEnabled(hasAccess: $hasAccess) } }';
 
     private $userFriendsQuery = <<<'EOF'
 query {
@@ -64,6 +64,44 @@ EOF;
     {
         \spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
+    }
+
+    public function testNotAuthenticatedUserAccessAsPromisedFulfilledTrue()
+    {
+        $this->assertResponse(
+            $this->userIsEnabledQuery,
+            ['data' => ['user' => ['isEnabled' => true]]],
+            static::ANONYMOUS_USER,
+            'access'
+        );
+    }
+
+    public function testNotAuthenticatedUserAccessAsPromisedFulfilledFalse()
+    {
+        $this->assertResponse(
+            $this->userIsEnabledQuery,
+            [
+                'data' => [
+                    'user' => [
+                        'isEnabled' => null,
+                    ],
+                ],
+                'extensions' => [
+                    'warnings' => [
+                        [
+                            'message' => 'Access denied to this field.',
+                            'category' => 'user',
+                            'locations' => [['line' => 1, 'column' => 45]],
+                            'path' => ['user', 'isEnabled'],
+                        ],
+                    ],
+                ],
+            ],
+            static::ANONYMOUS_USER,
+            'access',
+            '',
+            ['hasAccess' => false]
+        );
     }
 
     public function testNotAuthenticatedUserAccessToUserName()
