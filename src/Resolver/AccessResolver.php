@@ -28,22 +28,18 @@ class AccessResolver
             return $this->checkAccessForStrictMode($accessChecker, $resolveCallback, $resolveArgs);
         }
 
-        $result = \call_user_func_array($resolveCallback, $resolveArgs);
+        $resultOrPromise = \call_user_func_array($resolveCallback, $resolveArgs);
 
-        if ($result instanceof Promise) {
-            $result = $result->adoptedPromise;
-        }
-
-        if ($this->promiseAdapter->isThenable($result) || $result instanceof SyncPromise) {
-            return $this->promiseAdapter->then(
-                new Promise($result, $this->promiseAdapter),
+        if ($this->isThenable($resultOrPromise)) {
+            return $this->createPromise(
+                $resultOrPromise,
                 function ($result) use ($accessChecker, $resolveArgs) {
                     return $this->processFilter($result, $accessChecker, $resolveArgs);
                 }
             );
         }
 
-        return $this->processFilter($result, $accessChecker, $resolveArgs);
+        return $this->processFilter($resultOrPromise, $accessChecker, $resolveArgs);
     }
 
     private static function isMutationRootField(ResolveInfo $info)
@@ -53,12 +49,21 @@ class AccessResolver
 
     private function checkAccessForStrictMode(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
     {
-        if (!$this->hasAccess($accessChecker, $resolveArgs)) {
-            $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
-            throw new $exceptionClassName('Access denied to this field.');
-        }
+        $promiseOrHasAccess = $this->hasAccess($accessChecker, $resolveArgs);
+        $callback = function ($hasAccess) use ($resolveArgs, $resolveCallback) {
+            if (!$hasAccess) {
+                $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
+                throw new $exceptionClassName('Access denied to this field.');
+            }
 
-        return \call_user_func_array($resolveCallback, $resolveArgs);
+            return \call_user_func_array($resolveCallback, $resolveArgs);
+        };
+
+        if ($this->isThenable($promiseOrHasAccess)) {
+            return $this->createPromise($promiseOrHasAccess, $callback);
+        } else {
+            return $callback($promiseOrHasAccess);
+        }
     }
 
     private function processFilter($result, $accessChecker, $resolveArgs)
@@ -89,9 +94,33 @@ class AccessResolver
     private function hasAccess(callable $accessChecker, array $resolveArgs = [], $object = null)
     {
         $resolveArgs[] = $object;
-        $access = (bool) \call_user_func_array($accessChecker, $resolveArgs);
+        $accessOrPromise = \call_user_func_array($accessChecker, $resolveArgs);
 
-        return $access;
+        return $accessOrPromise;
+    }
+
+    private function isThenable($object)
+    {
+        $object = $this->extractAdoptedPromise($object);
+
+        return $this->promiseAdapter->isThenable($object) || $object instanceof SyncPromise;
+    }
+
+    private function extractAdoptedPromise($object)
+    {
+        if ($object instanceof Promise) {
+            $object = $object->adoptedPromise;
+        }
+
+        return $object;
+    }
+
+    private function createPromise($promise, callable $onFulfilled = null)
+    {
+        return $this->promiseAdapter->then(
+            new Promise($this->extractAdoptedPromise($promise), $this->promiseAdapter),
+            $onFulfilled
+        );
     }
 
     /**
