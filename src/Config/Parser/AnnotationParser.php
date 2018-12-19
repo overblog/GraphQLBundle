@@ -156,7 +156,7 @@ class AnnotationParser implements PreParserInterface
                         }
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
 
                 if ($gqlType) {
