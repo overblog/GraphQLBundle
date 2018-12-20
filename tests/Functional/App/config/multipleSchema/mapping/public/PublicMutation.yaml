@@ -1,0 +1,12 @@
+PublicMutation:
+    type: object
+    config:
+        name: Mutation
+        description: 'Root of the schema.'
+        fields:
+          addUser:
+            builder: 'Relay::Mutation'
+            builderConfig:
+              inputType: PublicAddUserInput
+              payloadType: PublicAddUserPayload
+              mutateAndGetPayload: {"user":{"username":"user1"}}

@@ -24,6 +24,23 @@ class MultipleSchemaTest extends TestCase
 
         $result = $this->executeGraphQLRequest('{users{edges{node{username}}}}', [], 'public');
         $this->assertSame([['node' => ['username' => 'user1']]], $result['data']['users']['edges']);
+
+        $query = <<<'EOF'
+mutation M {
+  addUser(input: {username: "user1"}) {
+    user {
+      username
+    }
+  }
+}
+EOF;
+        $expectedData = [
+            'addUser' => [
+                'user' => ['username' => 'user1'],
+            ],
+        ];
+
+        $this->assertGraphQL($query, $expectedData, null, [], 'public');
     }
 
     public function testInternalSchema(): void
@@ -35,6 +52,24 @@ class MultipleSchemaTest extends TestCase
 
         $result = $this->executeGraphQLRequest('{users{edges{node{username email}}}}', [], 'internal');
         $this->assertSame([['node' => ['username' => 'user1', 'email' => 'topsecret']]], $result['data']['users']['edges']);
+
+        $query = <<<'EOF'
+mutation M {
+  addUser(input: {username: "user1"}) {
+    user {
+      username
+      email
+    }
+  }
+}
+EOF;
+        $expectedData = [
+            'addUser' => [
+                'user' => ['username' => 'user1', 'email' => 'email1'],
+            ],
+        ];
+
+        $this->assertGraphQL($query, $expectedData, null, [], 'internal');
     }
 
     public function testUnknownTypeShouldNotInfinityLoop(): void

@@ -8,6 +8,7 @@ use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
@@ -202,9 +203,14 @@ CODE;
 
     protected function generateUseStrictAccess(array $value)
     {
+        $expressionLanguage = $this->getExpressionLanguage();
         $useStrictAccess = 'true';
-        if (null !== $this->getExpressionLanguage() && $this->arrayKeyExistsAndIsNotNull($value, 'access') && $value['access'] instanceof Expression) {
-            $parsedExpression = $this->getExpressionLanguage()->parse($value['access'], ['value', 'args', 'context', 'info', 'object']);
+        if (null !== $expressionLanguage && $this->arrayKeyExistsAndIsNotNull($value, 'access') && $value['access'] instanceof Expression) {
+            $names = ExpressionLanguage::KNOWN_NAMES;
+            if ($expressionLanguage instanceof ExpressionLanguage) {
+                $names = \array_merge($names, $expressionLanguage->getGlobalNames());
+            }
+            $parsedExpression = $expressionLanguage->parse($value['access'], $names);
             $serializedNode = \str_replace("\n", '//', (string) $parsedExpression->getNodes());
             $useStrictAccess = false === \strpos($serializedNode, 'NameNode(name: \'object\')') ? 'true' : 'false';
         }

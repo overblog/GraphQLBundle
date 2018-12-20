@@ -42,6 +42,42 @@ All definition config entries can use expression language but it must be explici
 
 [For more details on expression syntax](http://symfony.com/doc/current/components/expression_language/syntax.html)
 
+Private services
+----------------
+
+It is not possible to use private services with `service` or `serv` functions since this is equivalent to call
+`get` method on the container. Private services must be tag as global variable to be accessible.
+
+Yaml example:
+
+```yaml
+App\MyPrivateService:
+    public: false
+    tags:
+        - { name: overblog_graphql.global_variable, alias: my_private_service }
+```
+
+To use a vendor private services:
+
+```php
+<?php
+
+$vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
+$vendorPrivateServiceDef->addTag('overblog_graphql.global_variable', ['alias' => 'vendor_private_service']);
+```
+
+Usage:
+
+```yaml
+MyType:
+    type: object
+    config:
+        fields:
+            name:
+                type: String!
+                resolve: '@=my_private_service.formatName(value)'
+```
+
 Custom expression function
 --------------------------
 

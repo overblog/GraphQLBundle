@@ -16,6 +16,7 @@ Mutation:
     config:
         fields:
             user:
+                access: '@=private_service.hasAccess()'
                 type: Human
                 resolve: '@=resolver("query")'
 
@@ -38,6 +39,10 @@ User:
                 access: "@=hasRole('ROLE_ADMIN')"
                 resolve: ['ROLE_USER']
             isEnabled:
+                # access as a promise
+                access: "@=resolver('promise', [args['hasAccess']])"
+                args:
+                    hasAccess: {type: Boolean!}
                 type: Boolean
                 resolve: true
             friends:

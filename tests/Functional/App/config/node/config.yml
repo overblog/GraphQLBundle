@@ -4,8 +4,6 @@ imports:
 services:
     node_resolver:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NodeResolver
-        arguments:
-            - "@overblog_graphql.type_resolver"
         tags:
             - { name: "overblog_graphql.resolver", method: "typeResolver" }
             - { name: "overblog_graphql.resolver", alias: "node_id_fetcher", method: "idFetcher" }
