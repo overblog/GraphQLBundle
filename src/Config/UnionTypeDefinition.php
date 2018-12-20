@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-
 class UnionTypeDefinition extends TypeDefinition
 {
     public function getDefinition()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('_union_config');
+        $node = self::createNode('_union_config');
 
         $node
             ->children()

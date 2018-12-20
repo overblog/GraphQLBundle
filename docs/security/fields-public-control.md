@@ -25,8 +25,8 @@ You can also use `config.fieldsDefaultPublic` to handle the setting globally on 
 ```yaml
 AnObject:
     type: object
-    fieldsDefaultPublic: "@=service('my_service').isGranted(typeName, fieldName)"
     config:
+        fieldsDefaultPublic: "@=service('my_service').isGranted(typeName, fieldName)"
         fields:
             id:
                 type: "String!"

@@ -15,7 +15,6 @@ cache:
     directories:
         - $HOME/.composer/cache
         - $HOME/.php_cs.cache
-        - vendor/
 
 before_install:
     - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
@@ -36,7 +35,9 @@ jobs:
         - php: 7.2
           env: SYMFONY_VERSION=4.0.*
         - php: 7.2
-          env: SYMFONY_VERSION=4.1.* STABILITY=beta
+          env: SYMFONY_VERSION=4.1.*
+        - php: 7.3
+          env: SYMFONY_VERSION=4.2.*
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
