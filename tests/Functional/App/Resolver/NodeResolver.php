@@ -13,9 +13,6 @@ class NodeResolver implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /** @var TypeResolver */
-    private $typeResolver;
-
     private $userData = [
         '1' => [
             'id' => 1,
@@ -37,11 +34,6 @@ class NodeResolver implements ContainerAwareInterface
             'photoWidth' => 400,
         ],
     ];
-
-    public function __construct(TypeResolver $typeResolver)
-    {
-        $this->typeResolver = $typeResolver;
-    }
 
     public function resolvePhotoField($value, ResolveInfo $info)
     {
@@ -69,9 +61,9 @@ class NodeResolver implements ContainerAwareInterface
     public function typeResolver($value)
     {
         if (isset($value['name'])) {
-            return $this->typeResolver->resolve('User');
+            return 'User';
         } else {
-            return $this->typeResolver->resolve('Photo');
+            return 'Photo';
         }
     }
 }

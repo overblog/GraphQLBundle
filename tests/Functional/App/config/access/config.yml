@@ -19,3 +19,10 @@ overblog_graphql:
                 -
                     type: yaml
                     dir: "%kernel.root_dir%/config/access/mapping"
+
+services:
+    overblog_graphql.test.private:
+        class: Overblog\GraphQLBundle\Tests\Functional\App\Service\PrivateService
+        public: false
+        tags:
+            - { name: "overblog_graphql.global_variable", alias: "private_service" }
