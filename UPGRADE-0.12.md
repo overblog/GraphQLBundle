@@ -35,3 +35,29 @@ UPGRADE FROM 0.11 to 0.12
            App\GraphQL\:
                resource: ../GraphQL
        ```
+
+
+### Relay Paginator, Connections & Edges
+
+-   Following the [paginator update](docs/helpers/relay-paginator.md) and the use of interfaces for Relay Connection & Edge, getters & setters must be use to manipulate Connection et Edge Properties
+
+Before :
+
+```php
+$connection->edges = $edges;
+$connection->totalCount = 10;
+...
+$edge->cursor = $cursor;
+$edge->node = $node;
+
+```
+
+After :
+
+```php
+$connection->setEdges($edges);
+$connection->setTotalCount(10);
+...
+$edge->setCursor($cursor);
+$edge->setNode($node);
+```
