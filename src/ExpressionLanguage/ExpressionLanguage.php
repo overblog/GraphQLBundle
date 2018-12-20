@@ -8,7 +8,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLan
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
-    const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object'];
+    public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object'];
 
     private $globalNames = [];
 
