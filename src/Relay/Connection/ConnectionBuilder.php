@@ -297,34 +297,4 @@ class ConnectionBuilder
             throw new \InvalidArgumentException('This is not a valid promise.');
         }
     }
-
-    public static function __callStatic($method, $arguments)
-    {
-        static $deprecatedStaticMethods = [
-            'connectionFromArray', 'connectionFromPromisedArray', 'connectionFromArraySlice',
-            'cursorForObjectInConnection', 'getOffsetWithDefault', 'offsetToCursor', 'cursorToOffset',
-        ];
-        static $instance = null;
-        if (null === $instance) {
-            $instance = new static();
-        }
-
-        if (\in_array($method, $deprecatedStaticMethods)) {
-            @\trigger_error(
-                \sprintf(
-                    'Calling static method %s::%s is deprecated as of 0.12 and will be removed in 0.13. '.
-                    'You should use an object instance of %s to access "%s" method.',
-                    __CLASS__,
-                    $method,
-                    __CLASS__,
-                    $method
-                ),
-                \E_USER_DEPRECATED
-            );
-
-            return $instance->$method(...$arguments);
-        }
-
-        throw new \BadMethodCallException(\sprintf('Undefined static method %s::%s', __CLASS__, $method));
-    }
 }
