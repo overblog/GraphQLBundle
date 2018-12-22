@@ -39,7 +39,7 @@ UPGRADE FROM 0.11 to 0.12
 
 ### Relay Paginator, Connections & Edges
 
--   Following the [paginator update](docs/helpers/relay-paginator.md) and the use of interfaces for Relay Connection & Edge, getters & setters must be use to manipulate Connection et Edge Properties
+-   Following the [paginator update](docs/helpers/relay-paginator.md) and the use of interfaces for Relay Connection & Edge, getters & setters must be use to manipulate Connection, Edge and PageInfo Properties
 
 Before :
 
@@ -60,4 +60,23 @@ $connection->setTotalCount(10);
 ...
 $edge->setCursor($cursor);
 $edge->setNode($node);
+```
+
+Connection builder method are no more accessible statically:
+
+Before:
+
+```php
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+
+ConnectionBuilder::connectionFromArray([]);
+```
+
+After:
+
+```php
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+
+$connectionBuilder = new ConnectionBuilder();
+$connectionBuilder->connectionFromArray([]);
 ```
