@@ -46,9 +46,9 @@ class ConnectionBuilder
      * @param array          $data
      * @param array|Argument $args
      *
-     * @return Connection
+     * @return ConnectionInterface
      */
-    public function connectionFromArray(array $data, $args = []): Connection
+    public function connectionFromArray(array $data, $args = []): ConnectionInterface
     {
         return $this->connectionFromArraySlice(
             $data,
@@ -91,9 +91,9 @@ class ConnectionBuilder
      * @param array|Argument $args
      * @param array          $meta
      *
-     * @return Connection
+     * @return ConnectionInterface
      */
-    public function connectionFromArraySlice(array $arraySlice, $args, array $meta): Connection
+    public function connectionFromArraySlice(array $arraySlice, $args, array $meta): ConnectionInterface
     {
         $connectionArguments = $this->getOptionsWithDefaults(
             $args instanceof Argument ? $args->getRawArguments() : $args,
@@ -248,7 +248,7 @@ class ConnectionBuilder
      *
      * @return int
      */
-    public function getOffsetWithDefault(? string $cursor, int $defaultOffset): int
+    public function getOffsetWithDefault(?string $cursor, int $defaultOffset): int
     {
         if (empty($cursor)) {
             return $defaultOffset;
@@ -296,5 +296,35 @@ class ConnectionBuilder
         if (!\is_callable([$value, 'then'])) {
             throw new \InvalidArgumentException('This is not a valid promise.');
         }
+    }
+
+    public static function __callStatic($method, $arguments)
+    {
+        static $deprecatedStaticMethods = [
+            'connectionFromArray', 'connectionFromPromisedArray', 'connectionFromArraySlice',
+            'cursorForObjectInConnection', 'getOffsetWithDefault', 'offsetToCursor', 'cursorToOffset',
+        ];
+        static $instance = null;
+        if (null === $instance) {
+            $instance = new static();
+        }
+
+        if (\in_array($method, $deprecatedStaticMethods)) {
+            @\trigger_error(
+                \sprintf(
+                    'Calling static method %s::%s is deprecated as of 0.12 and will be removed in 0.13. '.
+                    'You should use an object instance of %s to access "%s" method.',
+                    __CLASS__,
+                    $method,
+                    __CLASS__,
+                    $method
+                ),
+                \E_USER_DEPRECATED
+            );
+
+            return $instance->$method(...$arguments);
+        }
+
+        throw new \BadMethodCallException(\sprintf('Undefined static method %s::%s', __CLASS__, $method));
     }
 }

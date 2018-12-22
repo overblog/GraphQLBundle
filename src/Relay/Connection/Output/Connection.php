@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
+use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
 
 class Connection implements ConnectionInterface
 {
-    /** @var Edge[] */
-    protected $edges = [];
+    use DeprecatedPropertyPublicAccessTrait;
 
-    /** @var PageInfo */
-    protected $pageInfo = null;
+    /** @var EdgeInterface[] */
+    protected $edges;
 
-    /** @var int */
-    protected $totalCount = 0;
+    /** @var PageInfoInterface */
+    protected $pageInfo;
 
-    public function __construct($edges = [], PageInfo $pageInfo = null)
+    /** @var int|null */
+    protected $totalCount;
+
+    public function __construct($edges = [], PageInfoInterface $pageInfo = null)
     {
         $this->edges = $edges;
         $this->pageInfo = $pageInfo;
@@ -42,7 +46,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getPageInfo(): ? PageInfo
+    public function getPageInfo(): ? PageInfoInterface
     {
         return $this->pageInfo;
     }
@@ -50,7 +54,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setPageInfo(PageInfo $pageInfo): void
+    public function setPageInfo(PageInfoInterface $pageInfo): void
     {
         $this->pageInfo = $pageInfo;
     }
@@ -58,7 +62,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalCount(): int
+    public function getTotalCount(): ?int
     {
         return $this->totalCount;
     }

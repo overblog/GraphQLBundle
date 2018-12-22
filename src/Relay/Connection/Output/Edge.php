@@ -8,6 +8,8 @@ use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 
 class Edge implements EdgeInterface
 {
+    use DeprecatedPropertyPublicAccessTrait;
+
     /** @var string */
     protected $cursor;
 

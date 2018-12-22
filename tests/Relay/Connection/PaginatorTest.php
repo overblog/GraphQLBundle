@@ -61,7 +61,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
-        $this->assertTrue($result->getPageInfo()->hasNextPage);
+        $this->assertTrue($result->getPageInfo()->getHasNextPage());
     }
 
     public function testForwardAfterInMiddle(): void
@@ -77,7 +77,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(1, $result->getEdges());
         $this->assertSameEdgeNodeValue(['D'], $result);
-        $this->assertTrue($result->getPageInfo()->hasNextPage);
+        $this->assertTrue($result->getPageInfo()->getHasNextPage());
     }
 
     public function testForwardAfterAtTheEnd(): void
@@ -93,7 +93,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(2, $result->getEdges());
         $this->assertSameEdgeNodeValue(['D', 'E'], $result);
-        $this->assertFalse($result->getPageInfo()->hasNextPage);
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testForwardAfterLast(): void
@@ -109,7 +109,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(0, $result->getEdges());
         $this->assertSameEdgeNodeValue([], $result);
-        $this->assertFalse($result->getPageInfo()->hasNextPage);
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testForwardAfterWithUnvalidCursorAndSlice(): void
@@ -125,8 +125,8 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
-        $this->assertTrue($result->getPageInfo()->hasNextPage);
-        $this->assertFalse($result->getPageInfo()->hasPreviousPage);
+        $this->assertTrue($result->getPageInfo()->getHasNextPage());
+        $this->assertFalse($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testBackward(): void
@@ -142,8 +142,8 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(3, $result->getEdges());
         $this->assertSameEdgeNodeValue(['C', 'D', 'E'], $result);
-        $this->assertTrue($result->getPageInfo()->hasPreviousPage);
-        $this->assertFalse($result->getPageInfo()->hasNextPage);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testBackwardWithLimitEqualsToTotal(): void
@@ -159,8 +159,8 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(5, $result->getEdges());
         $this->assertSameEdgeNodeValue($this->data, $result);
-        $this->assertFalse($result->getPageInfo()->hasPreviousPage);
-        $this->assertFalse($result->getPageInfo()->hasNextPage);
+        $this->assertFalse($result->getPageInfo()->getHasPreviousPage());
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testBackwardBeforeLast(): void
@@ -175,7 +175,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
-        $this->assertFalse($result->getPageInfo()->hasPreviousPage);
+        $this->assertFalse($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testBackwardPartialBeforeInMiddle(): void
@@ -191,7 +191,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(2, $result->getEdges());
         $this->assertSameEdgeNodeValue(['B', 'C'], $result);
-        $this->assertTrue($result->getPageInfo()->hasPreviousPage);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testAutoBackward(): void
@@ -207,8 +207,8 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
-        $this->assertTrue($result->getPageInfo()->hasPreviousPage);
-        $this->assertFalse($result->getPageInfo()->hasNextPage);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testAutoForward(): void
@@ -224,7 +224,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
-        $this->assertTrue($result->getPageInfo()->hasNextPage);
+        $this->assertTrue($result->getPageInfo()->getHasNextPage());
     }
 
     public function testAutoBackwardWithCallable(): void
@@ -246,7 +246,7 @@ class PaginatorTest extends TestCase
         $this->assertTrue($countCalled);
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
-        $this->assertTrue($result->getPageInfo()->hasPreviousPage);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testTotalCallableWithArguments(): void
@@ -277,7 +277,7 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
-        $this->assertTrue($result->getPageInfo()->hasPreviousPage);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testPromiseMode(): void

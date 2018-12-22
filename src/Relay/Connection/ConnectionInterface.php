@@ -11,37 +11,37 @@ interface ConnectionInterface
     /**
      * Get the connection edges.
      *
-     * @return iterable
+     * @return iterable|EdgeInterface[]
      */
     public function getEdges();
 
     /**
      * Set the connection edges.
      *
-     * @param iterable $edges
+     * @param iterable|EdgeInterface[] $edges
      */
     public function setEdges(iterable $edges);
 
     /**
      * Get the page info.
      *
-     * @return PageInfo
+     * @return PageInfoInterface
      */
-    public function getPageInfo(): ? PageInfo;
+    public function getPageInfo(): ?PageInfoInterface;
 
     /**
      * Set the page info.
      *
-     * @param PageInfo $pageInfo
+     * @param PageInfoInterface $pageInfo
      */
-    public function setPageInfo(PageInfo $pageInfo);
+    public function setPageInfo(PageInfoInterface $pageInfo);
 
     /**
      * Get the total count.
      *
      * @return int
      */
-    public function getTotalCount(): int;
+    public function getTotalCount(): ?int;
 
     /**
      * Set the total count.

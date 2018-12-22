@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
@@ -13,7 +14,7 @@ abstract class AbstractConnectionBuilderTest extends TestCase
 {
     protected $letters = ['A', 'B', 'C', 'D', 'E'];
 
-    protected function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage)
+    protected function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage): ConnectionInterface
     {
         $edges = [
             'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
@@ -36,16 +37,16 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         );
     }
 
-    protected function assertSameConnection(Connection $expectedConnection, Connection $actualConnection): void
+    protected function assertSameConnection(ConnectionInterface $expectedConnection, ConnectionInterface $actualConnection): void
     {
         // assert totalCount
         $this->assertSame($expectedConnection->getTotalCount(), $actualConnection->getTotalCount());
 
         // assert pageInfo
-        foreach (['endCursor', 'hasNextPage', 'hasPreviousPage', 'startCursor'] as $property) {
+        foreach (['getEndCursor', 'getHasNextPage', 'getHasPreviousPage', 'getStartCursor'] as $method) {
             $this->assertSame(
-                $expectedConnection->getPageInfo()->$property,
-                $actualConnection->getPageInfo()->$property
+                $expectedConnection->getPageInfo()->$method(),
+                $actualConnection->getPageInfo()->$method()
             );
         }
 
