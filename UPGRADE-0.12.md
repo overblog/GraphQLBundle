@@ -62,12 +62,12 @@ $edge->setCursor($cursor);
 $edge->setNode($node);
 ```
 
-Connection builder method are no more accessible statically:
+Connection builder has been moved and it methods are no more accessible statically:
 
 Before:
 
 ```php
-use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 
 ConnectionBuilder::connectionFromArray([]);
 ```

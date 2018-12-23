@@ -12,14 +12,14 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {
-        $promise = (new ConnectionBuilder())->connectionFromPromisedArray($this->promisedLetters(), []);
+        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), []);
         $expected = $this->getExpectedConnection($this->letters, false, false);
         $this->assertEqualsFromPromised($expected, $promise);
     }
 
     public function testRespectsASmallerFirst(): void
     {
-        $promise = (new ConnectionBuilder())->connectionFromPromisedArray($this->promisedLetters(), ['first' => 2]);
+        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), ['first' => 2]);
         $expected = $this->getExpectedConnection(['A', 'B'], false, true);
         $this->assertEqualsFromPromised($expected, $promise);
     }
@@ -33,7 +33,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      */
     public function testInvalidPromise($invalidPromise): void
     {
-        (new ConnectionBuilder())->connectionFromPromisedArray($invalidPromise, []);
+        \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
     }
 
     public function invalidPromiseDataProvider()
@@ -49,7 +49,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     public function testRespectsASmallerFirstWhenSlicing(): void
     {
-        $promise = (new ConnectionBuilder())->connectionFromPromisedArraySlice(
+        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'],
             $this->promisedLetters(['A', 'B', 'C']),
             ['first' => 2],
             [
@@ -70,7 +70,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
-        (new ConnectionBuilder())->connectionFromPromisedArraySlice($invalidPromise, [], []);
+        \call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'], $invalidPromise, [], []);
     }
 
     private function promisedLetters(array $letters = null)
@@ -101,5 +101,10 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
         }
 
         return $resolvedValue;
+    }
+
+    public static function getBuilder()
+    {
+        return new ConnectionBuilder(...\func_get_args());
     }
 }
