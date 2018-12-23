@@ -630,6 +630,13 @@ class AnnotationParser implements PreParserInterface
         return $config;
     }
 
+    /**
+     * Format an array of args to a list of arguments in an expression.
+     *
+     * @param array $args
+     *
+     * @return string
+     */
     private static function formatArgsForExpression(array $args)
     {
         $mapping = [];
@@ -639,40 +646,6 @@ class AnnotationParser implements PreParserInterface
 
         return \sprintf('arguments({%s}, args)', \implode(', ', $mapping));
     }
-
-    /**
-     * Format an array of args to a list of arguments in an expression.
-     *
-     * @param array $args
-     *
-     * @return string
-     */
-    /*
-    private static function formatArgsForExpression(array $args)
-    {
-        $resolvedArgs = [];
-        foreach ($args as $name => $config) {
-            $cleanedType = \str_replace(['[', ']', '!'], '', $config['type']);
-            $definition = self::resolveClassFromType($cleanedType);
-            $defaultFormat = \sprintf("args['%s']", $name);
-            if (!$definition) {
-                $resolvedArgs[] = $defaultFormat;
-            } else {
-                switch ($definition['type']) {
-                    case 'input':
-                    case 'enum':
-                        $resolvedArgs[] = \sprintf("input('%s', args['%s'], '%s')", $config['type'], $name, $name);
-                        break;
-                    default:
-                        $resolvedArgs[] = $defaultFormat;
-                        break;
-                }
-            }
-        }
-
-        return sprintf("inputs(%s)", \implode(', ', $resolvedArgs));
-    }
-     */
 
     /**
      * Format a namespace to be used in an expression (double escape).
@@ -855,7 +828,7 @@ class AnnotationParser implements PreParserInterface
         $arguments = [];
         foreach ($method->getParameters() as $index => $parameter) {
             if (!$parameter->hasType()) {
-                throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed as there is not type hint".', $index + 1, $parameter->getName(), $method->getName()));
+                throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed as there is not type hint.', $index + 1, $parameter->getName(), $method->getName()));
             }
 
             try {

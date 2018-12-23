@@ -153,7 +153,7 @@ The GraphQL arguments will be auto-guessed as:
 ### Limitation of auto-guessing:
 
 When trying to auto-guess type or args based on PHP Reflection (from type hinted method parameters or type hinted return value), there is a limitation.  
-As PHP type hinting doesn't support "array of instances of class", we cannot relay on it to guess the type when dealing with collection of objects.  
+As PHP type hinting doesn't support "array of instances of class", we cannot rely on it to guess the type when dealing with collection of objects.  
 In these case, you'll need to declare your types or arguments type manually.
 
 For example, in PHP, a signature like this : `public function getArrayOfStrings(): string[] {}` is invalid. 

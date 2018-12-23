@@ -32,7 +32,7 @@ class ArgumentsTransformer
      */
     protected $accessor;
 
-    public function __construct(ValidatorInterface $validator, $classesMap = [])
+    public function __construct(ValidatorInterface $validator = null, $classesMap = [])
     {
         $this->validator = $validator;
         $this->accessor = PropertyAccess::createPropertyAccessor();
@@ -142,7 +142,7 @@ class ArgumentsTransformer
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
         $errors = [];
-        if (\is_object($result)) {
+        if (\is_object($result) && $this->validator) {
             $errors = $this->validator->validate($result);
         }
 

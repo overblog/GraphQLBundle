@@ -54,7 +54,7 @@ services:
         class: Overblog\GraphQLBundle\Transformer\ArgumentsTransformer
         public: true
         arguments:
-            - "@validator"
+            - "@?validator"
             - "%overblog_graphql_types.classes_map%"
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:

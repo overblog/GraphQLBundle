@@ -59,6 +59,7 @@ class Lightsaber
     /**
      * @GQL\Field
      * @ORM\Column(type="text[]")
+     * @GQL\Deprecated("No more tags on lightsabers")
      */
     protected $tags;
 }

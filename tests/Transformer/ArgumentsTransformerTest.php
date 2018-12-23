@@ -11,16 +11,18 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class ArgumentsTransformerTest extends TestCase
 {
     /**
      * @return ArgumentsTransformer
      */
-    private function getBuilder(array $classesMap = null): ArgumentsTransformer
+    private function getBuilder(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(\Symfony\Component\Validator\Validator\RecursiveValidator::class);
-        $validator->method('validate')->willReturn([]);
+        $validator->method('validate')->willReturn($validateReturn ?: []);
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
@@ -33,7 +35,7 @@ class ArgumentsTransformerTest extends TestCase
         return $info;
     }
 
-    public function testPopulating(): void
+    protected function getTypes()
     {
         $t1 = new InputObjectType([
             'name' => 'InputType1',
@@ -57,14 +59,17 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $types = [$t1, $t2, $t3];
+        return [$t1, $t2, $t3];
+    }
 
+    public function testPopulating(): void
+    {
         $builder = $this->getBuilder([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
         ]);
 
-        $info = $this->getResolveInfo($types);
+        $info = $this->getResolveInfo($this->getTypes());
 
         $data = [
             'field1' => 'hello',
@@ -126,5 +131,46 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals(2, \count($res5[1]->field1));
         $this->assertInternalType('int', $res5[3]);
         $this->assertEquals($res5[4], 'test_string');
+    }
+
+    public function testRaisedErrors()
+    {
+        $violation = new ConstraintViolation('validation_error', 'validation_error', [], 'invalid', 'field2', 'invalid');
+        $builder = $this->getBuilder([
+            'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
+            'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
+        ], new ConstraintViolationList([$violation]));
+
+        $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2'];
+        $data = [
+            'input1' => ['field1' => 'hello', 'field2' => 12, 'field3' => true],
+            'input2' => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12]
+        ];
+
+        try {
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
+            $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
+        } catch(\Exception $e) {
+            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
+            $first = $e->getErrors()[0];
+            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
+            $this->assertEquals($first->getErrors()->get(0), $violation);
+            $this->assertEquals($first->getName(), 'input1');
+
+            $expected = [
+                "input1" => [[
+                    "path" => "field2",
+                    "message" => "validation_error",
+                    "code" => null
+                ]],
+                "input2" => [[
+                    "path" => "field2",
+                    "message" => "validation_error",
+                    "code" => null
+                ]]
+            ];
+
+            $this->assertEquals($e->toState(), $expected);
+        }
     }
 }
