@@ -8,7 +8,7 @@ use GraphQL\Deferred;
 use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter;
-use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use React\Promise\Promise;
 
@@ -50,14 +50,14 @@ class ConnectionResolver
     public function friendsResolver($user, $args)
     {
         return $this->promiseAdapter->create(function (callable $resolve) use ($user, $args) {
-            return $resolve(ConnectionBuilder::connectionFromArray($user['friends'], $args));
+            return $resolve((new ConnectionBuilder())->connectionFromArray($user['friends'], $args));
         });
     }
 
     public function resolveNode(Edge $edge)
     {
         return $this->promiseAdapter->create(function (callable $resolve) use ($edge) {
-            return $resolve(isset($this->allUsers[$edge->node]) ? $this->allUsers[$edge->node] : null);
+            return $resolve(isset($this->allUsers[$edge->getNode()]) ? $this->allUsers[$edge->getNode()] : null);
         });
     }
 

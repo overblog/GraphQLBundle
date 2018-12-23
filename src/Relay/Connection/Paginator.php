@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
-use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 
 class Paginator
 {
@@ -22,14 +20,18 @@ class Paginator
     /** @var int */
     private $totalCount;
 
+    /** @var ConnectionBuilder */
+    private $connectionBuilder;
+
     /**
      * @param callable $fetcher
      * @param bool     $promise
      */
-    public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR)
+    public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR, ConnectionBuilder $connectionBuilder = null)
     {
         $this->fetcher = $fetcher;
         $this->promise = $promise;
+        $this->connectionBuilder = $connectionBuilder ?: new ConnectionBuilder();
     }
 
     /**
@@ -37,7 +39,7 @@ class Paginator
      * @param int|callable $total
      * @param array        $callableArgs
      *
-     * @return Connection|object A connection or a promise
+     * @return ConnectionInterface|object A connection or a promise
      */
     public function backward($args, $total, array $callableArgs = [])
     {
@@ -45,12 +47,12 @@ class Paginator
 
         $args = $this->protectArgs($args);
         $limit = $args['last'];
-        $offset = \max(0, ConnectionBuilder::getOffsetWithDefault($args['before'], $total) - $limit);
+        $offset = \max(0, $this->connectionBuilder->getOffsetWithDefault($args['before'], $total) - $limit);
 
         $entities = \call_user_func($this->fetcher, $offset, $limit);
 
         return $this->handleEntities($entities, function ($entities) use ($args, $offset, $total) {
-            return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
+            return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
                 'sliceStart' => $offset,
                 'arrayLength' => $total,
             ]);
@@ -60,26 +62,26 @@ class Paginator
     /**
      * @param Argument $args
      *
-     * @return Connection|object A connection or a promise
+     * @return ConnectionInterface|object A connection or a promise
      */
     public function forward(Argument $args)
     {
         $args = $this->protectArgs($args);
         $limit = $args['first'];
-        $offset = ConnectionBuilder::getOffsetWithDefault($args['after'], 0);
+        $offset = $this->connectionBuilder->getOffsetWithDefault($args['after'], 0);
 
         // If we don't have a cursor or if it's not valid, then we must not use the slice method
-        if (!\is_numeric(ConnectionBuilder::cursorToOffset($args['after'])) || !$args['after']) {
+        if (!\is_numeric($this->connectionBuilder->cursorToOffset($args['after'])) || !$args['after']) {
             $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
 
             return $this->handleEntities($entities, function ($entities) use ($args) {
-                return ConnectionBuilder::connectionFromArray($entities, $args);
+                return $this->connectionBuilder->connectionFromArray($entities, $args);
             });
         } else {
             $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
 
             return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
-                return ConnectionBuilder::connectionFromArraySlice($entities, $args, [
+                return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
                     'sliceStart' => $offset,
                     'arrayLength' => $offset + \count($entities),
                 ]);
@@ -92,7 +94,7 @@ class Paginator
      * @param int|callable $total
      * @param array        $callableArgs
      *
-     * @return Connection|object A connection or a promise
+     * @return ConnectionInterface|object A connection or a promise
      */
     public function auto(Argument $args, $total, array $callableArgs = [])
     {
@@ -105,13 +107,13 @@ class Paginator
         }
 
         if ($this->promise) {
-            return $connection->then(function (Connection $connection) use ($total, $callableArgs) {
-                $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
+            return $connection->then(function (ConnectionInterface $connection) use ($total, $callableArgs) {
+                $connection->setTotalCount($this->computeTotalCount($total, $callableArgs));
 
                 return $connection;
             });
         } else {
-            $connection->totalCount = $this->computeTotalCount($total, $callableArgs);
+            $connection->setTotalCount($this->computeTotalCount($total, $callableArgs));
 
             return $connection;
         }
@@ -121,7 +123,7 @@ class Paginator
      * @param array|object $entities An array of entities to paginate or a promise
      * @param callable     $callback
      *
-     * @return Connection|object A connection or a promise
+     * @return ConnectionInterface|object A connection or a promise
      */
     private function handleEntities($entities, callable $callback)
     {
