@@ -151,20 +151,7 @@ class ConnectionBuilder
             $length
         );
 
-        $edges = [];
-
-        foreach ($slice as $index => $value) {
-            $cursor = $this->offsetToCursor($startOffset + $index);
-            if ($this->edgeCallback) {
-                $edge = ($this->edgeCallback)($cursor, $value, $index);
-                if (!($edge instanceof EdgeInterface)) {
-                    throw new \InvalidArgumentException(\sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
-                }
-            } else {
-                $edge = new Edge($cursor, $value);
-            }
-            $edges[] = $edge;
-        }
+        $edges = $this->createEdges($slice, $startOffset);
 
         $firstEdge = $edges[0] ?? null;
         $lastEdge = \end($edges);
@@ -178,16 +165,7 @@ class ConnectionBuilder
             null !== $first ? $endOffset < $upperBound : false
         );
 
-        if ($this->connectionCallback) {
-            $connection = ($this->connectionCallback)($edges, $pageInfo);
-            if (!($connection instanceof ConnectionInterface)) {
-                throw new \InvalidArgumentException(\sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
-            }
-
-            return $connection;
-        }
-
-        return new Connection($edges, $pageInfo);
+        return $this->createConnection($edges, $pageInfo);
     }
 
     /**
@@ -284,6 +262,40 @@ class ConnectionBuilder
         }
 
         return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
+    }
+
+    private function createEdges(iterable $slice, int $startOffset): array
+    {
+        $edges = [];
+
+        foreach ($slice as $index => $value) {
+            $cursor = $this->offsetToCursor($startOffset + $index);
+            if ($this->edgeCallback) {
+                $edge = ($this->edgeCallback)($cursor, $value, $index);
+                if (!($edge instanceof EdgeInterface)) {
+                    throw new \InvalidArgumentException(\sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
+                }
+            } else {
+                $edge = new Edge($cursor, $value);
+            }
+            $edges[] = $edge;
+        }
+
+        return $edges;
+    }
+
+    private function createConnection($edges, PageInfoInterface $pageInfo): ConnectionInterface
+    {
+        if ($this->connectionCallback) {
+            $connection = ($this->connectionCallback)($edges, $pageInfo);
+            if (!($connection instanceof ConnectionInterface)) {
+                throw new \InvalidArgumentException(\sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
+            }
+
+            return $connection;
+        }
+
+        return new Connection($edges, $pageInfo);
     }
 
     private function getOptionsWithDefaults(array $options, array $defaults)
