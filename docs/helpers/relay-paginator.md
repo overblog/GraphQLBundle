@@ -261,3 +261,53 @@ public function resolveList($args)
     return $pagination->forward($args);
 }
 ```
+
+
+#### Customize the way the connection & edges are built
+
+Sometimes, you want to add fields to your Connection or Edges. In order to do so, you'll have to pass a custom instance of `ConnectionBuilder` to your Paginator as follow:  
+
+```php
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+
+public function resolveSomething(Argument $args)
+{
+    $connectionBuilder = new ConnectionBuilder( 
+        function(iterable $edges, PageInfo $pageInfo) : FriendsConnection {
+            $connection = new FriendsConnection($edges, $pageInfo)
+            $connection->setAverageAge(calculateAverage($edges));
+            return $connection;
+        },
+        function(string $cursor, UserFriend $entity, int $index):FriendEdge {
+            $edge = new FriendEdge($cursor, $entity->getUser());
+            $edge->setFriendshipTime($entity->getCreatedAt());
+            return $edge;
+        }
+    );
+
+    $paginator = new Paginator(function ($offset, $limit) use ($backend) {
+        return $backend->getData($offset);
+    }, true, $connectionBuilder);
+}
+```
+
+The `ConnectionBuilder` constructor accepts two parameters. The first one is a callback to build the Connection object, and the second one is a callback to build an Edge object.  
+
+The connection callback will be call with the following parameters :
+
+- `edges` An array of edges object implementing `Overblog\GraphQLBundle\Relay\Connection\EdgeInterface`
+- `pageInfo` a PageInfo object `Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo`
+
+This callback MUST return an instance of `Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface`
+
+
+The edge callback will be call with the following parameters :
+
+- `cursor` The cursor
+- `value` A value returned by the paginator data fetcher
+- `index` The index of the value
+
+This callback MUST return an instance of `Overblog\GraphQLBundle\Relay\Connection\EdgeInterface`
+
+If no callback are specified for the `ConnectionBuilder`, it'll generate instance of `Overblog\GraphQLBundle\Relay\Connection\Output\Connection` and `Overblog\GraphQLBundle\Relay\Connection\Output\Edge`
+

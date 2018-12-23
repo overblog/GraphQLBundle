@@ -78,14 +78,14 @@ class AccessResolver
                 $result[$i] = $this->hasAccess($accessChecker, $resolveArgs, $object) ? $object : null;
             }
         } elseif ($result instanceof Connection) {
-            $result->edges = \array_map(
+            $result->setEdges(\array_map(
                 function (Edge $edge) use ($accessChecker, $resolveArgs) {
-                    $edge->node = $this->hasAccess($accessChecker, $resolveArgs, $edge->node) ? $edge->node : null;
+                    $edge->setNode($this->hasAccess($accessChecker, $resolveArgs, $edge->getNode()) ? $edge->getNode() : null);
 
                     return $edge;
                 },
-                $result->edges
-            );
+                $result->getEdges()
+            ));
         } elseif (!$this->hasAccess($accessChecker, $resolveArgs, $result)) {
             throw new UserWarning('Access denied to this field.');
         }
