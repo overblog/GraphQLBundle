@@ -40,15 +40,12 @@ trait DeprecatedPropertyPublicAccessTrait
             return $this->$method($value);
         }
 
-        \trigger_error(
-            \sprintf(
-                'Undefined property %s::$%s.',
-                __CLASS__,
-                $name
-            ),
-            \E_USER_NOTICE
-        );
+        if ('set' === $type) {
+            $this->$name = $value;
 
-        return null;
+            return null;
+        } else {
+            return $this->$name;
+        }
     }
 }

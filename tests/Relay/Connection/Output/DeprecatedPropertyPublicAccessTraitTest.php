@@ -75,4 +75,12 @@ class DeprecatedPropertyPublicAccessTraitTest extends TestCase
         $pageInfo->hasNextPage = false;
         $this->assertFalse($pageInfo->getHasNextPage());
     }
+
+    public function testAllowExtraProperties(): void
+    {
+        $connection = new Connection();
+        $connection->extra = 'value';
+
+        $this->assertSame('value', $connection->extra);
+    }
 }
