@@ -74,7 +74,7 @@ class UserRepository {
 }
 ```
 
-When this Input is used in a mutation, the Symfony service `overblog_graphql.input_builder` is called in order to transform the received array of data into a `UserRegisterInput` instance using a property accessor.  
+When this Input is used in a mutation, the Symfony service `overblog_graphql.arguments_transformer` is called in order to transform the received array of data into a `UserRegisterInput` instance using a property accessor.  
 Then the `validator` service is used to validate this instance against the configured constraints.  
 The mutation received the valid instance.  
 
