@@ -16,16 +16,12 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class ValidationErrorsListenerTest extends TestCase
 {
-    /** @var ErrorLoggerListener */
+    /** @var ValidationErrorsListener */
     private $listener;
-
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $logger;
 
     public function setUp(): void
     {
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
-        $this->listener = new ValidationErrorsListener($this->logger);
+        $this->listener = new ValidationErrorsListener();
     }
 
     public function testOnErrorFormatting(): void
