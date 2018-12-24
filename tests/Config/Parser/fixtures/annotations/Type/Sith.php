@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\Type(interfaces={"Character"})
+ * @GQL\Type(interfaces={"Character"}, resolveField="value")
  * @GQL\Description("The Sith type")
  * @GQL\Access("isAuthenticated()")
  * @GQL\IsPublic("isAuthenticated()")

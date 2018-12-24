@@ -106,6 +106,7 @@ class AnnotationParserTest extends TestCase
         $this->expect('Sith', 'object', [
             'description' => 'The Sith type',
             'interfaces' => ['Character'],
+            'resolveField' => '@=value',
             'fieldsDefaultPublic' => '@=isAuthenticated()',
             'fieldsDefaultAccess' => '@=isAuthenticated()',
             'fields' => [
@@ -306,6 +307,42 @@ class AnnotationParserTest extends TestCase
         } catch (\Exception $e) {
             $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
             $this->assertRegexp('/Unable to auto-guess GraphQL type from Doctrine type "invalidType"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidUnion(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidUnion.php';
+            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Union with missing resolve type shoud have raise an exception');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
+            $this->assertRegexp('/The annotation @Union has no "resolveType"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidAccess(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidAccess.php';
+            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('@Access annotation without a @Field annotation should raise an exception');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
+            $this->assertRegexp('/The annotations "@Access" and\/or "@Visible" defined on "field"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testFieldOnPrivateProperty(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidPrivateMethod.php';
+            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('@Access annotation without a @Field annotation should raise an exception');
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
+            $this->assertRegexp('/The Annotation "@Field" can only be applied to public method/', $e->getPrevious()->getMessage());
         }
     }
 }
