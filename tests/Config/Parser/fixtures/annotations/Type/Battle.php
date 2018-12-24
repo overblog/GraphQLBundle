@@ -24,5 +24,4 @@ class Battle
     {
         return 12;
     }
-
 }

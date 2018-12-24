@@ -14,9 +14,8 @@ class InvalidArgumentGuessing
     /**
      * @GQL\Field(name="guessFailed")
      */
-    public function guessFail($test):int
+    public function guessFail($test): int
     {
         return 12;
     }
-
 }

@@ -21,6 +21,7 @@ class CallTest extends TestCase
 
     public function testCall(): void
     {
-        $this->assertEquals('AA', eval('return '.$this->expressionLanguage->compile(\sprintf('call("%s::%s", ["A"], true)', \str_replace('\\', '\\\\', get_class($this)), 'method')).';'));
+        $this->assertEquals('AA', eval('$class = new '.self::class.'(); return '.$this->expressionLanguage->compile(\sprintf('call(%s.%s, ["A"])', 'class', 'method'), ['class']).';'));
+        $this->assertEquals('AA', eval('return '.$this->expressionLanguage->compile(\sprintf('call("%s::%s", ["A"], true)', \str_replace('\\', '\\\\', \get_class($this)), 'method')).';'));
     }
 }

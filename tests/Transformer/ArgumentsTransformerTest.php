@@ -11,8 +11,8 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class ArgumentsTransformerTest extends TestCase
 {
@@ -133,7 +133,7 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($res5[4], 'test_string');
     }
 
-    public function testRaisedErrors()
+    public function testRaisedErrors(): void
     {
         $violation = new ConstraintViolation('validation_error', 'validation_error', [], 'invalid', 'field2', 'invalid');
         $builder = $this->getBuilder([
@@ -144,13 +144,13 @@ class ArgumentsTransformerTest extends TestCase
         $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2'];
         $data = [
             'input1' => ['field1' => 'hello', 'field2' => 12, 'field3' => true],
-            'input2' => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12]
+            'input2' => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12],
         ];
 
         try {
             $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
             $first = $e->getErrors()[0];
             $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
@@ -158,16 +158,16 @@ class ArgumentsTransformerTest extends TestCase
             $this->assertEquals($first->getName(), 'input1');
 
             $expected = [
-                "input1" => [[
-                    "path" => "field2",
-                    "message" => "validation_error",
-                    "code" => null
+                'input1' => [[
+                    'path' => 'field2',
+                    'message' => 'validation_error',
+                    'code' => null,
                 ]],
-                "input2" => [[
-                    "path" => "field2",
-                    "message" => "validation_error",
-                    "code" => null
-                ]]
+                'input2' => [[
+                    'path' => 'field2',
+                    'message' => 'validation_error',
+                    'code' => null,
+                ]],
             ];
 
             $this->assertEquals($e->toState(), $expected);

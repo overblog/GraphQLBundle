@@ -18,5 +18,4 @@ class InvalidReturnTypeGuessing
     {
         return 12;
     }
-
 }

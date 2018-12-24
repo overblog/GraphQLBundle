@@ -30,7 +30,7 @@ class AnnotationParserTest extends TestCase
         $files = [];
         $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
         foreach ($rii as $file) {
-            if (!$file->isDir() && '.php' === \substr($file->getPathname(), -4) && strpos($file->getPathName(), 'Invalid') === false) {
+            if (!$file->isDir() && '.php' === \substr($file->getPathname(), -4) && false === \strpos($file->getPathName(), 'Invalid')) {
                 $files[] = $file->getPathname();
             }
         }
@@ -216,7 +216,7 @@ class AnnotationParserTest extends TestCase
         ]);
     }
 
-    public function testFullqualifiedName() : void
+    public function testFullqualifiedName(): void
     {
         $this->assertEquals(self::class, AnnotationParser::fullyQualifiedClassName(self::class, 'Overblog\GraphQLBundle'));
     }
@@ -252,7 +252,7 @@ class AnnotationParserTest extends TestCase
                         'nameStartingWith' => ['type' => 'String', 'defaultValue' => ''],
                         'planet' => ['type' => 'PlanetInput', 'defaultValue' => null],
                         'away' => ['type' => 'Boolean', 'defaultValue' => false],
-                        'maxDistance' => ['type' => 'Float', 'defaultValue' => null]
+                        'maxDistance' => ['type' => 'Float', 'defaultValue' => null],
                     ],
                     'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
                     'complexity' => '@=childrenComplexity * 5',
@@ -266,8 +266,8 @@ class AnnotationParserTest extends TestCase
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidArgumentGuessing.php';
             AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
-            $this->fail("Missing type hint for auto-guessed argument should have raise an exception");
-        } catch(\Exception $e) {
+            $this->fail('Missing type hint for auto-guessed argument should have raise an exception');
+        } catch (\Exception $e) {
             $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
             $this->assertRegexp('/Argument n°1 "\$test"/', $e->getPrevious()->getMessage());
         }
@@ -278,8 +278,8 @@ class AnnotationParserTest extends TestCase
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidReturnTypeGuessing.php';
             AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
-            $this->fail("Missing type hint for auto-guessed return type should have raise an exception");
-        } catch(\Exception $e) {
+            $this->fail('Missing type hint for auto-guessed return type should have raise an exception');
+        } catch (\Exception $e) {
             $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
             $this->assertRegexp('/cannot be auto-guessed as there is not return type hint./', $e->getPrevious()->getMessage());
         }
@@ -290,8 +290,8 @@ class AnnotationParserTest extends TestCase
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineRelationGuessing.php';
             AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
-            $this->fail("Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception");
-        } catch(\Exception $e) {
+            $this->fail('Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception');
+        } catch (\Exception $e) {
             $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
             $this->assertRegexp('/Unable to auto-guess GraphQL type from Doctrine target class/', $e->getPrevious()->getMessage());
         }
@@ -302,9 +302,8 @@ class AnnotationParserTest extends TestCase
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineTypeGuessing.php';
             AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
-            $this->fail("Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception");
-        } catch(\Exception $e) {
-
+            $this->fail('Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception');
+        } catch (\Exception $e) {
             $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
             $this->assertRegexp('/Unable to auto-guess GraphQL type from Doctrine type "invalidType"/', $e->getPrevious()->getMessage());
         }
