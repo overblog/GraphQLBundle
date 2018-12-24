@@ -10,7 +10,6 @@ use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\EventListener\ValidationErrorsListener;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 
