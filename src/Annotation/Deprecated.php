@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"METHOD", "PROPERTY"})
  */
-final class Deprecated
+final class Deprecated implements Annotation
 {
     /**
      * The deprecation reason.

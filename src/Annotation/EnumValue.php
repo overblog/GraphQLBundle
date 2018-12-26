@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("ANNOTATION")
  */
-final class EnumValue
+final class EnumValue implements Annotation
 {
     /**
      * @var string

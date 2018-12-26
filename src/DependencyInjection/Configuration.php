@@ -50,6 +50,7 @@ class Configuration implements ConfigurationInterface
                 ->append($this->errorsHandlerSection())
                 ->append($this->servicesSection())
                 ->append($this->securitySection())
+                ->append($this->doctrineSection())
             ->end();
 
         return $treeBuilder;
@@ -254,6 +255,23 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
                         ->end()
                     ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    private function doctrineSection()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('doctrine');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('types_mapping')
+                    ->defaultValue([])
+                    ->prototype('scalar')->end()
                 ->end()
             ->end()
         ;

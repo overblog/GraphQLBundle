@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class Scalar
+final class Scalar implements Annotation
 {
     /**
      * Scalar name.

@@ -91,6 +91,18 @@ services:
         tags:
             - { name: overblog_graphql.expression_function }
 
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call:
+        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call
+        public: false
+        tags:
+            - { name: overblog_graphql.expression_function }
+
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments:
+        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments
+        public: false
+        tags:
+            - { name: overblog_graphql.expression_function }
+
     # relay
     Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID

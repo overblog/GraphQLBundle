@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class Type
+final class Type implements Annotation
 {
     /**
      * Type name.
@@ -32,4 +32,11 @@ final class Type
      * @var bool
      */
     public $isRelay = false;
+
+    /**
+     * Expression to a target fields resolver.
+     *
+     * @var string
+     */
+    public $resolveField;
 }

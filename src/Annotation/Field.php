@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"PROPERTY", "METHOD"})
  */
-final class Field
+class Field implements Annotation
 {
     /**
      * The field name.
@@ -29,7 +29,7 @@ final class Field
     /**
      * Field arguments.
      *
-     * @var array<\Overblog\GraphQLBundle\Annotation\FieldArg>
+     * @var array<\Overblog\GraphQLBundle\Annotation\Arg>
      */
     public $args;
 
@@ -41,12 +41,23 @@ final class Field
     public $resolve;
 
     /**
+     * Args builder.
+     *
      * @var mixed
      */
     public $argsBuilder;
 
     /**
+     * Field builder.
+     *
      * @var mixed
      */
     public $fieldBuilder;
+
+    /**
+     * Complexity expression.
+     *
+     * @var string
+     */
+    public $complexity;
 }

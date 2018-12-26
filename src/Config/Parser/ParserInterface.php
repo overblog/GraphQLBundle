@@ -11,8 +11,9 @@ interface ParserInterface
     /**
      * @param \SplFileInfo     $file
      * @param ContainerBuilder $container
+     * @param array            $configs
      *
      * @return array
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array;
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array;
 }

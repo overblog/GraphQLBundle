@@ -10,7 +10,7 @@ namespace Overblog\GraphQLBundle\Annotation;
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
-final class Description
+final class Description implements Annotation
 {
     /**
      * The object description.
