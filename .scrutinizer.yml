@@ -7,10 +7,6 @@ build:
             tests:
                 override:
                     - php-scrutinizer-run
-    tests-and-coverage:
-        tests:
-            override:
-                - true
 
 filter:
     excluded_paths:
