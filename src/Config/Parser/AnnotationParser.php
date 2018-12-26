@@ -20,6 +20,19 @@ class AnnotationParser implements PreParserInterface
     private static $providers = [];
     private static $doctrineMapping = [];
 
+    public const GQL_SCALAR = 'scalar';
+    public const GQL_ENUM = 'enum';
+    public const GQL_TYPE = 'type';
+    public const GQL_INPUT = 'input';
+    public const GQL_UNION = 'union';
+    public const GQL_INTERFACE = 'interface';
+
+    /**
+     * @see https://facebook.github.io/graphql/draft/#sec-Input-and-Output-Types
+     */
+    protected static $validInputTypes = [self::GQL_SCALAR, self::GQL_ENUM, self::GQL_INPUT];
+    protected static $validOutputTypes = [self::GQL_SCALAR, self::GQL_TYPE, self::GQL_INTERFACE, self::GQL_UNION, self::GQL_ENUM];
+
     /**
      * {@inheritdoc}
      *
@@ -107,7 +120,7 @@ class AnnotationParser implements PreParserInterface
 
                 switch (true) {
                     case $classAnnotation instanceof GQL\Type:
-                        $gqlType = 'type';
+                        $gqlType = self::GQL_TYPE;
                         $gqlName = $classAnnotation->name ?: $shortClassName;
                         if (!$resolveClassMap) {
                             $isRootQuery = ($rootQueryType && $gqlName === $rootQueryType);
@@ -120,32 +133,32 @@ class AnnotationParser implements PreParserInterface
                         }
                         break;
                     case $classAnnotation instanceof GQL\Input:
-                        $gqlType = 'input';
+                        $gqlType = self::GQL_INPUT;
                         $gqlName = $classAnnotation->name ?: self::suffixName($shortClassName, 'Input');
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlInput($classAnnotation, $classAnnotations, $properties, $namespace);
                         }
                         break;
                     case $classAnnotation instanceof GQL\Scalar:
-                        $gqlType = 'scalar';
+                        $gqlType = self::GQL_SCALAR;
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlScalar($className, $classAnnotation, $classAnnotations);
                         }
                         break;
                     case $classAnnotation instanceof GQL\Enum:
-                        $gqlType = 'enum';
+                        $gqlType = self::GQL_ENUM;
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlEnum($classAnnotation, $classAnnotations, $reflexionEntity->getConstants());
                         }
                         break;
                     case $classAnnotation instanceof GQL\Union:
-                        $gqlType = 'union';
+                        $gqlType = self::GQL_UNION;
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlUnion($className, $classAnnotation, $classAnnotations, $methods);
                         }
                         break;
                     case $classAnnotation instanceof GQL\TypeInterface:
-                        $gqlType = 'interface';
+                        $gqlType = self::GQL_INTERFACE;
                         if (!$resolveClassMap) {
                             $gqlConfiguration = self::getGraphqlInterface($classAnnotation, $classAnnotations, $properties, $methods, $namespace);
                         }
@@ -438,7 +451,7 @@ class AnnotationParser implements PreParserInterface
             if ($fieldType) {
                 $resolvedType = self::resolveClassFromType($fieldType);
                 if ($resolvedType) {
-                    if ($isInput && !\in_array($resolvedType['type'], ['input', 'scalar', 'enum'])) {
+                    if ($isInput && !\in_array($resolvedType['type'], self::$validInputTypes)) {
                         throw new InvalidArgumentException(\sprintf('The type "%s" on "%s" is a "%s" not valid on an Input @Field. Only Input, Scalar and Enum are allowed.', $fieldType, $target, $resolvedType['type']));
                     }
                 }
@@ -496,7 +509,7 @@ class AnnotationParser implements PreParserInterface
                         if ($isMethod) {
                             if ($method->hasReturnType()) {
                                 try {
-                                    $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), 'type');
+                                    $fieldConfiguration['type'] = self::resolveGraphqlTypeFromReflectionType($method->getReturnType(), self::$validOutputTypes);
                                 } catch (\Exception $e) {
                                     throw new InvalidArgumentException(\sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $fieldAnnotationName, $target, (string) $method->getReturnType()));
                                 }
@@ -740,7 +753,7 @@ class AnnotationParser implements PreParserInterface
         $associationAnnotation = self::getFirstAnnotationMatching($annotations, \array_keys($associationAnnotations));
         if ($associationAnnotation) {
             $target = self::fullyQualifiedClassName($associationAnnotation->targetEntity, $namespace);
-            $type = self::resolveTypeFromClass($target, 'type');
+            $type = self::resolveTypeFromClass($target, ['type']);
 
             if ($type) {
                 $isMultiple = $associationAnnotations[\get_class($associationAnnotation)];
@@ -832,7 +845,7 @@ class AnnotationParser implements PreParserInterface
             }
 
             try {
-                $gqlType = self::resolveGraphqlTypeFromReflectionType($parameter->getType(), 'input', $parameter->isDefaultValueAvailable());
+                $gqlType = self::resolveGraphqlTypeFromReflectionType($parameter->getType(), self::$validInputTypes, $parameter->isDefaultValueAvailable());
             } catch (\Exception $e) {
                 throw new InvalidArgumentException(\sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed : %s".', $index + 1, $parameter->getName(), $method->getName(), $e->getMessage()));
             }
@@ -857,7 +870,7 @@ class AnnotationParser implements PreParserInterface
      *
      * @return string
      */
-    private static function resolveGraphqlTypeFromReflectionType(\ReflectionType $type, string $filterGraphqlType = null, bool $isOptionnal = false)
+    private static function resolveGraphqlTypeFromReflectionType(\ReflectionType $type, array $filterGraphqlTypes = null, bool $isOptionnal = false)
     {
         $stype = (string) $type;
         if ($type->isBuiltin()) {
@@ -866,9 +879,9 @@ class AnnotationParser implements PreParserInterface
                 throw new \Exception(\sprintf('No corresponding GraphQL type found for builtin type "%s"', $stype));
             }
         } else {
-            $gqlType = self::resolveTypeFromClass($stype, $filterGraphqlType);
+            $gqlType = self::resolveTypeFromClass($stype, $filterGraphqlTypes);
             if (!$gqlType) {
-                throw new \Exception(\sprintf('No corresponding GraphQL %s found for class "%s"', $filterGraphqlType ?: 'object', $stype));
+                throw new \Exception(\sprintf('No corresponding GraphQL %s found for class "%s"', $filterGraphqlTypes ? \implode(',', $filterGraphqlTypes) : 'object', $stype));
             }
         }
 
@@ -879,15 +892,15 @@ class AnnotationParser implements PreParserInterface
      * Resolve a GraphQL Type from a class name.
      *
      * @param string $className
-     * @param string $wantedType
+     * @param array  $wantedTypes
      *
      * @return string|false
      */
-    private static function resolveTypeFromClass(string $className, string $wantedType = null)
+    private static function resolveTypeFromClass(string $className, array $wantedTypes = null)
     {
         foreach (self::$classesMap as $gqlType => $config) {
             if ($config['class'] === $className) {
-                if (!$wantedType || ($wantedType && $wantedType === $config['type'])) {
+                if (!$wantedTypes || \in_array($config['type'], $wantedTypes)) {
                     return $gqlType;
                 }
             }
