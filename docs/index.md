@@ -86,8 +86,18 @@ class AppKernel extends Kernel
 
 ```yaml
 # in app/config/routing.yml
-overblog_graphql_endpoint:
-    resource: "@OverblogGraphQLBundle/Resources/config/routing/graphql.yml"
+overblog_graphql_single_endpoint:
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/unique.yaml"
+    prefix: /
+```
+
+To use multiple schemas:
+
+```yaml
+# in app/config/routing.yml
+overblog_graphql_multiple_endpoint:
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/multiple.yaml"
+    prefix: /graphql
 ```
 
 Composer autoloader configuration (optional)
