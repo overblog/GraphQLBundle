@@ -1,23 +1,7 @@
-overblog_graphql_endpoint:
-    path: /
-    defaults:
-        _controller: Overblog\GraphQLBundle\Controller\GraphController::endpointAction
-        _format: "json"
-
-overblog_graphql_batch_endpoint:
-    path: /batch
-    defaults:
-        _controller: Overblog\GraphQLBundle\Controller\GraphController::batchEndpointAction
-        _format: "json"
+overblog_graphql_single_endpoint:
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/single.yaml"
+    prefix: /
 
 overblog_graphql_multiple_endpoint:
-    path: /graphql/{schemaName}
-    defaults:
-        _controller: Overblog\GraphQLBundle\Controller\GraphController::endpointAction
-        _format: "json"
-
-overblog_graphql_batch_multiple_endpoint:
-    path: /graphql/{schemaName}/batch
-    defaults:
-        _controller: Overblog\GraphQLBundle\Controller\GraphController::batchEndpointAction
-        _format: "json"
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/multiple.yaml"
+    prefix: /graphql

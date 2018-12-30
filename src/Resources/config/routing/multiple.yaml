@@ -1,0 +1,15 @@
+overblog_graphql_multiple_endpoint:
+    path: /{schemaName}
+    defaults:
+        _controller: Overblog\GraphQLBundle\Controller\GraphController::endpointAction
+        _format: "json"
+    requirements:
+        schemaName: '[^/]+'
+
+overblog_graphql_batch_multiple_endpoint:
+    path: /{schemaName}/batch
+    defaults:
+        _controller: Overblog\GraphQLBundle\Controller\GraphController::batchEndpointAction
+        _format: "json"
+    requirements:
+        schemaName: '[^/]+'
