@@ -47,6 +47,7 @@ class InheritanceTest extends TestCase
                     ],
                     'name' => 'Query',
                     'interfaces' => ['QueryHelloWord'],
+                    'builders' => [],
                 ],
             ],
             $this->config['Query']

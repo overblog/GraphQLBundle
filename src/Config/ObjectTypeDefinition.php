@@ -16,6 +16,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
             ->children()
                 ->append($this->nameSection())
                 ->append($this->outputFieldsSelection())
+                ->append($this->fieldsBuilderSection())
                 ->append($this->descriptionSection())
                 ->arrayNode('interfaces')
                     ->prototype('scalar')->info('One of internal or custom interface types.')->end()
@@ -30,6 +31,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->end()
             ->end();
 
+        $this->treatFieldsRequired($node);
         $this->treatFieldsDefaultAccess($node);
         $this->treatFieldsDefaultPublic($node);
 
@@ -67,6 +69,19 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
      * @param ArrayNodeDefinition $node
      */
     private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
+    {
+        $node->validate()
+            ->ifTrue(function ($v) {
+                return empty($v['builders']) && empty($v['fields']);
+            })
+            ->thenInvalid('Unless fields builders are defined, you must define at least one field')
+        ->end();
+    }
+
+    /**
+     * if no fields builder is set, ensure we have at least one field definition.
+     */
+    private function treatFieldsRequired(ArrayNodeDefinition $node): void
     {
         $node->validate()
             ->ifTrue(function ($v) {

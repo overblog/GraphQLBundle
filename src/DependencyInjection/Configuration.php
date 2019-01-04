@@ -124,6 +124,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('builders')
                     ->children()
                         ->append($this->builderSection('field'))
+                        ->append($this->builderSection('fields'))
                         ->append($this->builderSection('args'))
                     ->end()
                 ->end()
