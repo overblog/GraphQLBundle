@@ -14,10 +14,10 @@ interface ExecutorInterface
     /**
      * @param Schema      $schema
      * @param string      $requestString
-     * @param null|array  $rootValue
-     * @param null|array  $contextValue
-     * @param null|array  $variableValues
-     * @param null|string $operationName
+     * @param array|null  $rootValue
+     * @param array|null  $contextValue
+     * @param array|null  $variableValues
+     * @param string|null $operationName
      *
      * @return ExecutionResult|Promise
      */
