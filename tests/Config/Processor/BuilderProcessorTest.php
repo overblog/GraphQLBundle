@@ -44,10 +44,14 @@ class BuilderProcessorTest extends TestCase
     {
         return [
             ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, [], \InvalidArgumentException::class, 'Field builder class should be string, but array given.'],
+            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, [], \InvalidArgumentException::class, 'Fields builder class should be string, but array given.'],
             ['foo', BuilderProcessor::BUILDER_ARGS_TYPE, [], \InvalidArgumentException::class, 'Args builder class should be string, but array given.'],
             ['bar', BuilderProcessor::BUILDER_FIELD_TYPE, null, \InvalidArgumentException::class, 'Field builder class should be string, but NULL given.'],
+            ['bar', BuilderProcessor::BUILDER_FIELDS_TYPE, null, \InvalidArgumentException::class, 'Fields builder class should be string, but NULL given.'],
             ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, 'Fake\Foo', \InvalidArgumentException::class, 'Field builder class "Fake\Foo" not found.'],
+            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, 'Fake\Foo', \InvalidArgumentException::class, 'Fields builder class "Fake\Foo" not found.'],
             ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Field builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
+            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Fields builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
             ['foo', BuilderProcessor::BUILDER_ARGS_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Args builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
         ];
     }

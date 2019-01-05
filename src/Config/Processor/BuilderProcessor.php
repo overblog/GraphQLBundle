@@ -17,10 +17,12 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 final class BuilderProcessor implements ProcessorInterface
 {
     public const BUILDER_FIELD_TYPE = 'field';
+    public const BUILDER_FIELDS_TYPE = 'fields';
     public const BUILDER_ARGS_TYPE = 'args';
 
     public const BUILDER_TYPES = [
         self::BUILDER_FIELD_TYPE,
+        self::BUILDER_FIELDS_TYPE,
         self::BUILDER_ARGS_TYPE,
     ];
 
@@ -37,6 +39,7 @@ final class BuilderProcessor implements ProcessorInterface
             'Relay::Node' => NodeFieldDefinition::class,
             'Relay::PluralIdentifyingRoot' => PluralIdentifyingRootFieldDefinition::class,
         ],
+        self::BUILDER_FIELDS_TYPE => [],
     ];
 
     /**
@@ -45,6 +48,12 @@ final class BuilderProcessor implements ProcessorInterface
     public static function process(array $configs): array
     {
         foreach ($configs as &$config) {
+            if (isset($config['config']['builders']) && \is_array($config['config']['builders'])) {
+                $buildersFields = self::processFieldsBuilders($config['config']['builders']);
+                $config['config']['fields'] = isset($config['config']['fields']) ? \array_merge($buildersFields, $config['config']['fields']) : $buildersFields;
+                unset($config['config']['builders']);
+            }
+
             if (isset($config['config']['fields']) && \is_array($config['config']['fields'])) {
                 $config['config']['fields'] = self::processFieldBuilders($config['config']['fields']);
             }
@@ -123,6 +132,21 @@ final class BuilderProcessor implements ProcessorInterface
             if (isset($field['argsBuilder'])) {
                 $field = self::processFieldArgumentsBuilders($field);
             }
+        }
+
+        return $fields;
+    }
+
+    private static function processFieldsBuilders(array $builders)
+    {
+        $fields = [];
+        foreach ($builders as $builder) {
+            $builderName = $builder['builder'];
+            $builderConfig = null;
+            if (isset($builder['builderConfig'])) {
+                $builderConfig = $builder['builderConfig'];
+            }
+            $fields = \array_merge($fields, self::getBuilder($builderName, self::BUILDER_FIELDS_TYPE)->toMappingDefinition($builderConfig));
         }
 
         return $fields;

@@ -19,7 +19,6 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $node
             ->isRequired()
             ->requiresAtLeastOneElement();
-
         /* @var ArrayNodeDefinition $prototype */
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 
@@ -60,6 +59,21 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                 ->variableNode('complexity')
                     ->info('Custom complexity calculator.')
                 ->end()
+            ->end();
+
+        return $node;
+    }
+
+    protected function fieldsBuilderSection()
+    {
+        $node = self::createNode('builders');
+
+        $prototype = $node->prototype('array');
+
+        $prototype
+            ->children()
+                ->variableNode('builder')->isRequired()->end()
+                ->variableNode('builderConfig')->end()
             ->end();
 
         return $node;

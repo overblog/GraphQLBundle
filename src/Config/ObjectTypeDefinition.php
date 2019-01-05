@@ -16,6 +16,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
             ->children()
                 ->append($this->nameSection())
                 ->append($this->outputFieldsSelection())
+                ->append($this->fieldsBuilderSection())
                 ->append($this->descriptionSection())
                 ->arrayNode('interfaces')
                     ->prototype('scalar')->info('One of internal or custom interface types.')->end()
@@ -77,7 +78,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                     if (\array_key_exists('public', $field) && null !== $field['public']) {
                         continue;
                     }
-
                     $field['public'] = $v['fieldsDefaultPublic'];
                 }
 

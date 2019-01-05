@@ -193,7 +193,7 @@ class ConnectionBuilder
      * @param array $data
      * @param mixed $object
      *
-     * @return null|string
+     * @return string|null
      */
     public function cursorForObjectInConnection(array $data, $object): ? string
     {

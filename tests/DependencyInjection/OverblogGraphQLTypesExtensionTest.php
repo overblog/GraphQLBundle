@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
+use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -139,6 +140,9 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                             'field' => [
                                 'RawId' => RawIdField::class,
                             ],
+                            'fields' => [
+                                'Timestamps' => TimestampFields::class,
+                            ],
                             'args' => [
                                 [
                                     'alias' => 'Pager',
@@ -158,6 +162,12 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                     'foo' => [
                         'type' => 'object',
                         'config' => [
+                            'builders' => [
+                                [
+                                    'builder' => 'Timestamps',
+                                    'builderConfig' => ['param1' => 'val1'],
+                                ],
+                            ],
                             'fields' => [
                                 'rawIDWithDescriptionOverride' => [
                                     'builder' => 'RawId',
@@ -193,6 +203,18 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
+                            'createdAt' => [
+                                'description' => 'The creation date of the object',
+                                'type' => 'Int!',
+                                'resolve' => '@=value.createdAt',
+                                'args' => [],
+                            ],
+                            'updatedAt' => [
+                                'description' => 'The update date of the object',
+                                'type' => 'Int!',
+                                'resolve' => '@=value.updatedAt',
+                                'args' => [],
+                            ],
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
                                 'type' => 'Int!',
@@ -246,6 +268,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                             ],
                         ],
                         'name' => 'foo',
+                        'builders' => [],
                         'interfaces' => [],
                     ],
                 ],
