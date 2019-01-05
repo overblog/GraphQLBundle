@@ -71,9 +71,18 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     {
         $node->validate()
             ->ifTrue(function ($v) {
-                return empty($v['builders']) && empty($v['fields']);
+                return \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
             })
-            ->thenInvalid('Unless fields builders are defined, you must define at least one field')
+            ->then(function ($v) {
+                foreach ($v['fields'] as &$field) {
+                    if (\array_key_exists('public', $field) && null !== $field['public']) {
+                        continue;
+                    }
+                    $field['public'] = $v['fieldsDefaultPublic'];
+                }
+
+                return $v;
+            })
         ->end();
     }
 }
