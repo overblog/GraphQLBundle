@@ -25,9 +25,9 @@ class SchemaBuilder
     }
 
     /**
-     * @param null|string            $queryAlias
-     * @param null|string            $mutationAlias
-     * @param null|string            $subscriptionAlias
+     * @param string|null            $queryAlias
+     * @param string|null            $mutationAlias
+     * @param string|null            $subscriptionAlias
      * @param ResolverMapInterface[] $resolverMaps
      * @param string[]               $types
      *

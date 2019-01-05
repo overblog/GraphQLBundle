@@ -42,7 +42,7 @@ interface ResolverMapInterface
      * if $typeName equal to null or return the type fields covered
      * by the resolverMap.
      *
-     * @param null|string $typeName
+     * @param string|null $typeName
      *
      * @return string[]
      */

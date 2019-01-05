@@ -10,7 +10,7 @@ final class Helper
     /**
      * @param GlobalVariables $globalVariable
      *
-     * @return null|TokenInterface
+     * @return TokenInterface|null
      */
     private static function getToken(GlobalVariables $globalVariable)
     {

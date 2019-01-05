@@ -19,10 +19,10 @@ final class ExecutorArgumentsEvent extends Event
     /** @var \ArrayObject */
     private $contextValue;
 
-    /** @var null|array */
+    /** @var array|null */
     private $variableValue;
 
-    /** @var null|string */
+    /** @var string|null */
     private $operationName;
 
     public static function create(
@@ -45,7 +45,7 @@ final class ExecutorArgumentsEvent extends Event
     }
 
     /**
-     * @param null|string $operationName
+     * @param string|null $operationName
      */
     public function setOperationName($operationName = null)
     {
@@ -124,7 +124,7 @@ final class ExecutorArgumentsEvent extends Event
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getOperationName()
     {

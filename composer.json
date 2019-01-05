@@ -81,6 +81,7 @@
         "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
+            "@php php-cs-fixer.phar self-update",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [

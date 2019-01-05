@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
      * Constructor.
      *
      * @param bool        $debug    Whether to use the debug mode
-     * @param null|string $cacheDir
+     * @param string|null $cacheDir
      */
     public function __construct($debug, $cacheDir = null)
     {

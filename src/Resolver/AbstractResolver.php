@@ -173,7 +173,7 @@ abstract class AbstractResolver implements FluentResolverInterface
     /**
      * default return null to accept mixed type.
      *
-     * @return null|string supported class name
+     * @return string|null supported class name
      */
     protected function supportedSolutionClass()
     {
