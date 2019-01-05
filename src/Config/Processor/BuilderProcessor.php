@@ -49,10 +49,8 @@ final class BuilderProcessor implements ProcessorInterface
     {
         foreach ($configs as &$config) {
             if (isset($config['config']['builders']) && \is_array($config['config']['builders'])) {
-                if (!isset($config['config']['fields'])) {
-                    $config['config']['fields'] = [];
-                }
-                $config['config']['fields'] = \array_merge(self::processFieldsBuilders($config['config']['builders']), $config['config']['fields']);
+                $buildersFields = self::processFieldsBuilders($config['config']['builders']);
+                $config['config']['fields'] = isset($config['config']['fields']) ? \array_merge($buildersFields, $config['config']['fields']) : $buildersFields;
                 unset($config['config']['builders']);
             }
 

@@ -115,64 +115,6 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
 
     /**
      * @runInSeparateProcess
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessageRegExp #Unless fields builders are defined, you must define at least one field#
-     */
-    public function testFieldsRequired(): void
-    {
-        $this->extension->load(
-            [
-                [
-                    'foo' => [
-                        'type' => 'object',
-                    ],
-                ],
-            ],
-            $this->container
-       );
-    }
-
-    /**
-     * @runInSeparateProcess
-     * @doesNotPerformAssertions
-     */
-    public function testFieldsNotRequiredWhenBuilders(): void
-    {
-        $ext = new OverblogGraphQLExtension();
-        $ext->load(
-            [
-                [
-                    'definitions' => [
-                        'builders' => [
-                            'fields' => [
-                                'bar' => TimestampFields::class,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            $this->container
-        );
-
-        $this->extension->load(
-            [
-                [
-                    'foo' => [
-                        'type' => 'object',
-                        'config' => [
-                            'builders' => [
-                                ['builder' => 'bar'],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            $this->container
-       );
-    }
-
-    /**
-     * @runInSeparateProcess
      */
     public function testCustomBuilders(): void
     {

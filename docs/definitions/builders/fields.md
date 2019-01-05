@@ -58,11 +58,6 @@ User:
             - builder: Timestamped
               builderConfig:
                   propertyCreated: dateCreated
-        fields:
-            # equivalent to => rawId: { description: "The user raw id", type: 'Int!', resolve: "@=value.id"  }
-            rawId:
-                builder: "RawId"
-                description: "The user raw id"
 ```
 
 this is equivalent to:

@@ -15,8 +15,9 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
      */
     protected function outputFieldsSelection(string $name = 'fields')
     {
-        $node = self::createNode($name);
-
+        $node = self::createNode($name)
+            ->isRequired()
+            ->requiresAtLeastOneElement();
         /* @var ArrayNodeDefinition $prototype */
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 

@@ -31,7 +31,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->end()
             ->end();
 
-        $this->treatFieldsRequired($node);
         $this->treatFieldsDefaultAccess($node);
         $this->treatFieldsDefaultPublic($node);
 
@@ -75,29 +74,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 return empty($v['builders']) && empty($v['fields']);
             })
             ->thenInvalid('Unless fields builders are defined, you must define at least one field')
-        ->end();
-    }
-
-    /**
-     * if no fields builder is set, ensure we have at least one field definition.
-     */
-    private function treatFieldsRequired(ArrayNodeDefinition $node): void
-    {
-        $node->validate()
-            ->ifTrue(function ($v) {
-                return \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
-            })
-            ->then(function ($v) {
-                foreach ($v['fields'] as &$field) {
-                    if (\array_key_exists('public', $field) && null !== $field['public']) {
-                        continue;
-                    }
-
-                    $field['public'] = $v['fieldsDefaultPublic'];
-                }
-
-                return $v;
-            })
         ->end();
     }
 }
