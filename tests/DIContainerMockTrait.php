@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Container;
 trait DIContainerMockTrait
 {
     /**
-     * @return null|\Symfony\Component\DependencyInjection\ContainerInterface
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface|null
      */
     protected function getDIContainerMock(array $services = [], array $parameters = [])
     {

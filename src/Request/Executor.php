@@ -122,9 +122,9 @@ class Executor
     }
 
     /**
-     * @param null|string                    $schemaName
+     * @param string|null                    $schemaName
      * @param array                          $request
-     * @param null|array|\ArrayObject|object $rootValue
+     * @param array|\ArrayObject|object|null $rootValue
      *
      * @return ExecutionResult
      */
