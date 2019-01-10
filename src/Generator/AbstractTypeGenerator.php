@@ -71,7 +71,7 @@ EOF;
      * @param string           $classNamespace The namespace to use for the classes.
      * @param string[]|string  $skeletonDirs
      */
-    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], $cacheDirMask = 0777)
+    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], $cacheDirMask = 0775)
     {
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
