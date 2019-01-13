@@ -144,6 +144,14 @@ class AnnotationParserTest extends TestCase
                 ],
             ],
         ]);
+
+        // Test a type with a fields builder
+        $this->expect('Crystal', 'object', [
+            'fields' => [
+                'color' => ['type' => 'String!'],
+            ],
+            'builders' => [['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']]],
+        ]);
     }
 
     public function testInput(): void
