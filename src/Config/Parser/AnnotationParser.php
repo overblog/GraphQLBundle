@@ -244,6 +244,12 @@ class AnnotationParser implements PreParserInterface
             $typeConfiguration['resolveField'] = self::formatExpression($typeAnnotation->resolveField);
         }
 
+        if ($typeAnnotation->builders && \count($typeAnnotation->builders) > 0) {
+            $typeConfiguration['builders'] = \array_map(function ($fieldsBuilderAnnotation) {
+                return ['builder' => $fieldsBuilderAnnotation->builder, 'builderConfig' => $fieldsBuilderAnnotation->builderConfig];
+            }, $typeAnnotation->builders);
+        }
+
         $publicAnnotation = self::getFirstAnnotationMatching($classAnnotations, 'Overblog\GraphQLBundle\Annotation\IsPublic');
         if ($publicAnnotation) {
             $typeConfiguration['fieldsDefaultPublic'] = self::formatExpression($publicAnnotation->value);

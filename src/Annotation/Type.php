@@ -39,4 +39,11 @@ final class Type implements Annotation
      * @var string
      */
     public $resolveField;
+
+    /**
+     * List of fields builder.
+     *
+     * @var array<\Overblog\GraphQLBundle\Annotation\FieldsBuilder>
+     */
+    public $builders = [];
 }

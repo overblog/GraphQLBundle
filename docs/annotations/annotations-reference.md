@@ -55,7 +55,7 @@ class Coordinates {
 
 @Field
 
-@FieldBuilder
+@FieldsBuilder
 
 @Input
 
@@ -232,7 +232,7 @@ class Planet
 ```
 
 In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Arguments Transformer documentation](arguments-transformer.md)).  
-As the class can be instanciated from the `Arguments Transformer` service, it cannot have a constructor with required arguments. 
+As the class can be instanciated from the `Arguments Transformer` service, it cannot have a constructor with required arguments.
 
 ## @EnumValue
 
@@ -252,10 +252,12 @@ Optional attributes:
 This annotation can be defined on a _property_ or a _method_.
 
 If it is defined on a _method_:
-- If no `resolve` attribute is define, it will default to `@=value.methodName(...args)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
+
+-   If no `resolve` attribute is define, it will default to `@=value.methodName(...args)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
 
 If it is defined on a _method_ of the Root Query or the Root mutation :
-- If not `resolve` attribute is define, it will default to `@=service(FQN).methodName(...args)"` with `FQN` being the fully qualified name of the Root Query class or Root Mutation.
+
+-   If not `resolve` attribute is define, it will default to `@=service(FQN).methodName(...args)"` with `FQN` being the fully qualified name of the Root Query class or Root Mutation.
 
 Optional attributes:
 
@@ -315,6 +317,33 @@ class Hero {
 ?>
 ```
 
+## @FieldsBuilder
+
+This annotation is used on the attributes `builders` of a `@Type` annotation.
+It is used to add fields builder to types (see [Fields builders](../definitions/builders/fields.md)))
+
+Required attributes:
+
+-   **builder** : The name of the fields builder
+
+Optional attributes:
+
+-   **builderConfig** : The configuration to pass to the fields builder
+
+Example:
+
+```php
+<?php
+
+/**
+ * @GQL\Type(name="MyType", builders={@GQL\FieldsBuilder(builder="Timestamped")})
+ */
+class MyType {
+
+}
+?>
+```
+
 ## @Input
 
 This annotation is used on a _class_ to define an input type.
@@ -357,7 +386,7 @@ class SecretArea {
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Mutation field.  
 The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.mutation`).  
-The class exposing the mutation(s) must have a corresponding service with his className.  
+The class exposing the mutation(s) must have a corresponding service with his className.
 
 Example:
 
@@ -393,7 +422,7 @@ class MutationProvider {
 ## @Provider
 
 This annotation applies on classes to indicate that it containts methods tagged with `@Query`o or `@Mutation`.  
-Without it, the `@Query` and `@Mutation` are ignored.  When used, __remember to have a corresponding service with the fully qualified name of the class as service id__.
+Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.
 
 Optional attributes:
 
@@ -403,7 +432,7 @@ Optional attributes:
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
 The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
-The class exposing the querie(s) must have a corresponding service with his className.  
+The class exposing the querie(s) must have a corresponding service with his className.
 
 Optional attributes:
 
@@ -433,7 +462,6 @@ class UsersProviders {
 ?>
 ```
 
-
 ## @Type
 
 This annotation is used on _class_ to define a GraphQL Type.
@@ -443,12 +471,13 @@ Optional attributes:
 -   **name** : The GraphQL name of the type (default to the class name without namespace)
 -   **interfaces** : An array of GraphQL interface this type herits from
 -   **isRelay** : Set to true to have a Relay compatible type (ie. A `clientMutationId` will be added).
+-   **builders**: An array of `@FieldsBuilder` annotations
 
 ```php
 <?php
 
 /**
- * @GQL\Type(interfaces={"Character"})
+ * @GQL\Type(interfaces={"Character"}, builders={@GQL\FieldsBuilder(builder="Timestamped")})
  */
 class Hero {
     /**
@@ -548,7 +577,7 @@ Example:
  * @GQL\Description("All the pets")
  */
 class Pet {
-    public static function resolveType(TypeResolver $typeResolver, $value) 
+    public static function resolveType(TypeResolver $typeResolver, $value)
     {
         if ($value->hasWings()) {
             return $typeResolver->resolve('Bird');

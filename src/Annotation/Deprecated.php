@@ -15,6 +15,8 @@ final class Deprecated implements Annotation
     /**
      * The deprecation reason.
      *
+     * @required
+     *
      * @var string
      */
     public $value;

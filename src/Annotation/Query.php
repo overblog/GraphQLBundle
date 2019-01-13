@@ -14,6 +14,8 @@ final class Query extends Field
 {
     /**
      * The target type to attach this query to.
+     *
+     * @var string
      */
     public $targetType;
 }

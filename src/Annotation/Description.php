@@ -15,6 +15,8 @@ final class Description implements Annotation
     /**
      * The object description.
      *
+     * @required
+     *
      * @var string
      */
     public $value;
