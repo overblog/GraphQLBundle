@@ -95,6 +95,7 @@ services:
             - "%overblog_graphql.use_classloader_listener%"
             - ~
             - "%kernel.cache_dir%"
+            - "%overblog_graphql.cache_dir_permissions%"
         calls:
             - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
             - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\LazyConfig']]
