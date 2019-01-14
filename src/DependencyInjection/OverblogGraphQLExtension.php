@@ -113,6 +113,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $container->setParameter($this->getAlias().'.default_resolver', $config['definitions']['default_resolver']);
         $container->setParameter($this->getAlias().'.class_namespace', $config['definitions']['class_namespace']);
         $container->setParameter($this->getAlias().'.cache_dir', $config['definitions']['cache_dir']);
+        $container->setParameter($this->getAlias().'.cache_dir_permissions', $config['definitions']['cache_dir_permissions']);
     }
 
     private function setBatchingMethod(array $config, ContainerBuilder $container)
