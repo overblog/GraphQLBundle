@@ -32,14 +32,14 @@ class TypeGenerator extends BaseTypeGenerator
     private static $classMapLoaded = false;
 
     public function __construct(
-        $classNamespace,
+        string $classNamespace,
         array $skeletonDirs,
-        $cacheDir,
+        ?string $cacheDir,
         array $configs,
-        $useClassMap = true,
+        bool $useClassMap = true,
         callable $configProcessor = null,
-        $baseCacheDir = null,
-        $cacheDirMask = null
+        ?string $baseCacheDir = null,
+        ?int $cacheDirMask = null
     ) {
         $this->setCacheDir($cacheDir);
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Generator;
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +15,7 @@ class TypeGeneratorTest extends TestCase
      *
      * @dataProvider getPermissionsProvider
      */
-    public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask)
+    public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask): void
     {
         $mask = (new TypeGenerator(
             'App', [], $cacheDir, [], true, null, null, $cacheDirMask
