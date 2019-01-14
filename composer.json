@@ -31,7 +31,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "overblog/graphql-php-generator": "^0.7.0",
+        "overblog/graphql-php-generator": "^0.7.4",
         "psr/log": "^1.0",
         "symfony/config": "^3.4 || ^4.0",
         "symfony/dependency-injection": "^3.4 || ^4.0",

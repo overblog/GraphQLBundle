@@ -38,15 +38,20 @@ class TypeGenerator extends BaseTypeGenerator
         array $configs,
         $useClassMap = true,
         callable $configProcessor = null,
-        $baseCacheDir = null
+        $baseCacheDir = null,
+        $cacheDirMask = null
     ) {
         $this->setCacheDir($cacheDir);
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
+        if (null === $cacheDirMask) {
+            // we apply permission 0777 for default cache dir otherwise we apply 0775.
+            $cacheDirMask = null === $cacheDir ? 0777 : 0775;
+        }
 
-        parent::__construct($classNamespace, $skeletonDirs);
+        parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
     }
 
     /**
