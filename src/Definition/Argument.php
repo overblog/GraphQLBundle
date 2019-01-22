@@ -14,12 +14,12 @@ class Argument implements \ArrayAccess, \Countable
 
     public function offsetExists($offset)
     {
-        return isset($this->arguments[$offset]);
+        return \array_key_exists($offset, $this->arguments);
     }
 
     public function offsetGet($offset)
     {
-        return isset($this->arguments[$offset]) ? $this->arguments[$offset] : null;
+        return $this->offsetExists($offset) ? $this->arguments[$offset] : null;
     }
 
     public function offsetSet($offset, $value)
