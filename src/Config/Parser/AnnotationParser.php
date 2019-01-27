@@ -162,7 +162,7 @@ class AnnotationParser implements PreParserInterface
                                             'builders' => [
                                                 ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]],
                                             ],
-                                        ]
+                                        ],
                                     ];
                                 }
                                 if (!isset($gqlConfiguration['config']['builders'])) {
