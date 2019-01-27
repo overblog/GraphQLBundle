@@ -7,6 +7,8 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -133,7 +135,7 @@ class AnnotationParser implements PreParserInterface
                             $gqlConfiguration['config']['fields'] = $providerFields + $gqlConfiguration['config']['fields'];
 
                             if ($classAnnotation instanceof GQL\Relay\Edge) {
-                                if (!$reflexionEntity->implementsInterface(Edge::class)) {
+                                if (!$reflexionEntity->implementsInterface(EdgeInterface::class)) {
                                     throw new InvalidArgumentException(\sprintf('The annotation @Edge on class "%s" can only be used on class implementing the EdgeInterface.', $className));
                                 }
                                 if (!isset($gqlConfiguration['config']['builders'])) {
@@ -143,7 +145,7 @@ class AnnotationParser implements PreParserInterface
                             }
 
                             if ($classAnnotation instanceof GQL\RelayConnection) {
-                                if (!$reflexionEntity->implementsInterface(Connection::class)) {
+                                if (!$reflexionEntity->implementsInterface(ConnectionInterface::class)) {
                                     throw new InvalidArgumentException(\sprintf('The annotation @Connection on class "%s" can only be used on class implementing the ConnectionInterface.', $className));
                                 }
 
