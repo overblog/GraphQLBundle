@@ -273,34 +273,30 @@ class AnnotationParserTest extends TestCase
     public function testRelayConnectionAuto(): void
     {
         $this->expect('EnemiesConnection', 'object', [
-            'fields' => [
-                'edges' => ['type' => '[EnemiesConnectionEdge]'],
-                'pageInfo' => ['type' => 'PageInfo!'],
-            ],
+            'builders' => [
+                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'EnemiesConnectionEdge']]
+            ]
         ]);
 
         $this->expect('EnemiesConnectionEdge', 'object', [
-            'fields' => [
-                'node' => ['type' => 'Character'],
-                'cursor' => ['type' => 'String!'],
-            ],
+            'builders' => [
+                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']]
+            ]
         ]);
     }
 
     public function testRelayConnectionEdge(): void
     {
         $this->expect('FriendsConnection', 'object', [
-            'fields' => [
-                'edges' => ['type' => '[FriendsConnectionEdge]'],
-                'pageInfo' => ['type' => 'PageInfo!'],
-            ],
+            'builders' => [
+                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'FriendsConnectionEdge']]
+            ]
         ]);
 
         $this->expect('FriendsConnectionEdge', 'object', [
-            'fields' => [
-                'node' => ['type' => 'Character'],
-                'cursor' => ['type' => 'String!'],
-            ],
+            'builders' => [
+                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']]
+            ]
         ]);
     }
 
