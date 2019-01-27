@@ -270,6 +270,40 @@ class AnnotationParserTest extends TestCase
         ]);
     }
 
+    public function testRelayConnectionAuto(): void
+    {
+        $this->expect('EnemiesConnection', 'object', [
+            'fields' => [
+                'edges' => ['type' => '[EnemiesConnectionEdge]'],
+                'pageInfo' => ['type' => 'PageInfo!'],
+            ],
+        ]);
+
+        $this->expect('EnemiesConnectionEdge', 'object', [
+            'fields' => [
+                'node' => ['type' => 'Character'],
+                'cursor' => ['type' => 'String!'],
+            ],
+        ]);
+    }
+
+    public function testRelayConnectionEdge(): void
+    {
+        $this->expect('FriendsConnection', 'object', [
+            'fields' => [
+                'edges' => ['type' => '[FriendsConnectionEdge]'],
+                'pageInfo' => ['type' => 'PageInfo!'],
+            ],
+        ]);
+
+        $this->expect('FriendsConnectionEdge', 'object', [
+            'fields' => [
+                'node' => ['type' => 'Character'],
+                'cursor' => ['type' => 'String!'],
+            ],
+        ]);
+    }
+
     public function testInvalidParamGuessing(): void
     {
         try {
