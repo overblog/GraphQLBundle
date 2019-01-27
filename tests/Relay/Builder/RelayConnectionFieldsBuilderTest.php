@@ -49,7 +49,7 @@ class RelayConnectionFieldsBuilderTest extends TestCase
             ],
             'pageInfo' => [
                 'description' => $config['pageInfoDescription'],
-                'type' => 'Custom page info description',
+                'type' => 'CustomPageInfo',
             ],
         ];
         $this->assertSame($this->doMapping($config), $expected);

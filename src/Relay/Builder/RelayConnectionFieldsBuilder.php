@@ -27,7 +27,7 @@ class RelayConnectionFieldsBuilder implements MappingInterface
             ],
             'pageInfo' => [
                 'description' => $pageInfoDescription,
-                'type' => $pageInfoDescription,
+                'type' => $pageInfoType,
             ],
         ];
     }

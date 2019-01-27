@@ -144,7 +144,7 @@ class AnnotationParser implements PreParserInterface
                                 \array_unshift($gqlConfiguration['config']['builders'], ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]]);
                             }
 
-                            if ($classAnnotation instanceof GQL\RelayConnection) {
+                            if ($classAnnotation instanceof GQL\Relay\Connection) {
                                 if (!$reflexionEntity->implementsInterface(ConnectionInterface::class)) {
                                     throw new InvalidArgumentException(\sprintf('The annotation @Connection on class "%s" can only be used on class implementing the ConnectionInterface.', $className));
                                 }
@@ -156,11 +156,13 @@ class AnnotationParser implements PreParserInterface
                                 $edgeType = $classAnnotation->edge;
                                 if (!$edgeType) {
                                     $edgeType = \sprintf('%sEdge', $gqlName);
-                                    $gqlTypes[] = [
-                                        'type' => $edgeType,
-                                        'builders' => [
-                                            ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]],
-                                        ],
+                                    $gqlTypes[$edgeType] = [
+                                        'type' => 'object',
+                                        'config' => [
+                                            'builders' => [
+                                                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]],
+                                            ],
+                                        ]
                                     ];
                                 }
                                 if (!isset($gqlConfiguration['config']['builders'])) {
