@@ -274,14 +274,14 @@ class AnnotationParserTest extends TestCase
     {
         $this->expect('EnemiesConnection', 'object', [
             'builders' => [
-                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'EnemiesConnectionEdge']]
-            ]
+                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'EnemiesConnectionEdge']],
+            ],
         ]);
 
         $this->expect('EnemiesConnectionEdge', 'object', [
             'builders' => [
-                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']]
-            ]
+                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']],
+            ],
         ]);
     }
 
@@ -289,14 +289,14 @@ class AnnotationParserTest extends TestCase
     {
         $this->expect('FriendsConnection', 'object', [
             'builders' => [
-                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'FriendsConnectionEdge']]
-            ]
+                ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => 'FriendsConnectionEdge']],
+            ],
         ]);
 
         $this->expect('FriendsConnectionEdge', 'object', [
             'builders' => [
-                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']]
-            ]
+                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => 'Character']],
+            ],
         ]);
     }
 
