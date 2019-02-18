@@ -16,6 +16,7 @@ matrix:
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
     allow_failures:
+        - php: hhvm
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
