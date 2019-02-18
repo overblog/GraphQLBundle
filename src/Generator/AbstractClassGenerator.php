@@ -335,7 +335,10 @@ abstract class AbstractClassGenerator
 
     protected function generateUseStatement(array $config)
     {
-        $useStatements = $this->tokenizeUseStatements(array_merge($this->internalUseStatements, $this->useStatements));
+        $statements = array_merge($this->internalUseStatements, $this->useStatements);
+        sort($statements);
+
+        $useStatements = $this->tokenizeUseStatements($statements);
 
         return $useStatements;
     }
