@@ -87,7 +87,7 @@ class AppKernel extends Kernel
 ```yaml
 # in app/config/routing.yml
 overblog_graphql_single_endpoint:
-    resource: "@OverblogGraphQLBundle/Resources/config/routing/unique.yaml"
+    resource: "@OverblogGraphQLBundle/Resources/config/routing/single.yaml"
     prefix: /
 ```
 
