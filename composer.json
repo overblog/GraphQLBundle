@@ -54,7 +54,6 @@
         "react/promise": "To use ReactPHP promise adapter"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
         "phpunit/phpunit": "^5.7.26 || ^6.0 || ^7.2",
         "react/promise": "^2.5",
         "sensio/framework-extra-bundle": "^3.0",
@@ -85,13 +84,17 @@
             "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],
+        "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
         "fix-cs": [
-            "@php bin/php-cs-fixer fix --diff -v --allow-risky=yes --ansi",
-            "@php bin/php-cs-fixer fix --diff -v --allow-risky=yes --ansi"
+            "@install-cs",
+            "@php php-cs-fixer.phar self-update",
+            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
-            "@php bin/php-cs-fixer fix --dry-run --diff -v --allow-risky=yes --ansi",
-            "@php bin/php-cs-fixer fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
+            "@install-cs",
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",
