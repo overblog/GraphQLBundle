@@ -63,12 +63,18 @@ EOF;
     private $expressionLanguage;
 
     /**
+     * @var int
+     */
+    protected $cacheDirMask;
+
+    /**
      * @param string           $classNamespace The namespace to use for the classes.
      * @param string[]|string  $skeletonDirs
      */
-    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [])
+    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], $cacheDirMask = 0775)
     {
         parent::__construct($classNamespace, $skeletonDirs);
+        $this->cacheDirMask = $cacheDirMask;
     }
 
     public function setExpressionLanguage(ExpressionLanguage $expressionLanguage = null)
@@ -361,7 +367,7 @@ EOF;
             if ($mode & self::MODE_WRITE) {
                 $dir = dirname($path);
                 if (!is_dir($dir)) {
-                    mkdir($dir, 0775, true);
+                    mkdir($dir, $this->cacheDirMask, true);
                 }
                 if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
                     file_put_contents($path, $code);
