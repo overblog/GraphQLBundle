@@ -86,10 +86,12 @@
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],
         "fix-cs": [
+            "@php bin/php-cs-fixer fix --diff -v --allow-risky=yes --ansi",
             "@php bin/php-cs-fixer fix --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
-            "@php bin/php-cs-fixer fix --dry-run --diff -v --allow-risky=yes --ansi"
+            "@php bin/php-cs-fixer fix --dry-run --diff -v --allow-risky=yes --ansi",
+            "@php bin/php-cs-fixer fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",
