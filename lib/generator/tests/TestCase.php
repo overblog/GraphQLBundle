@@ -11,41 +11,6 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
-use Symfony\Component\Process\ProcessBuilder;
-
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
-    public function assertCodeStandard($pathToCode, $level = null, $fixers = null)
-    {
-        // Run linter in dry-run mode so it changes nothing.
-        $csBuilder = new ProcessBuilder([
-            __DIR__ . '/../bin/php-cs-fixer',
-            'fix',
-            '--dry-run',
-            '--diff',
-            $pathToCode,
-        ]);
-
-        if (null !== $level) {
-            $csBuilder->add('--level=' . $level);
-        }
-        if (null !== $fixers) {
-            $csBuilder->add('--fixers=' . $fixers);
-        }
-
-        $process = $csBuilder->getProcess();
-        $process->setWorkingDirectory(__DIR__ . '/../bin');
-        $process->setTimeout(60);
-        $process->run();
-
-        $this->assertTrue(
-            $process->isSuccessful(),
-            sprintf(
-                'cli "%s" linter reported errors in "%s/": %s',
-                $process->getCommandLine(),
-                $pathToCode,
-                $process->getOutput()
-            )
-        );
-    }
 }

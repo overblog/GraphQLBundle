@@ -171,7 +171,8 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         /** @var ObjectType $type */
         $type = $this->getType('T');
 
-        $this->setExpectedException('\DomainException', 'You can not clone a singleton.');
+        $this->expectException('\DomainException');
+        $this->expectExceptionMessage('You can not clone a singleton.');
 
         $t = clone $type;
     }
@@ -183,7 +184,8 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         /** @var ObjectType $type */
         $type = $this->getType('T');
 
-        $this->setExpectedException('\DomainException', 'You can not create more than one copy of a singleton.');
+        $this->expectException('\DomainException');
+        $this->expectExceptionMessage('You can not create more than one copy of a singleton.');
 
         $class = get_class($type);
         $t = new $class();

@@ -32,12 +32,12 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     public function setUp()
     {
         $this->filesystem = new Filesystem();
-        $this->tmpDir = sys_get_temp_dir() . '/mcgweb-graphql-generator';
+        $this->tmpDir = sys_get_temp_dir() . '/overblog-graphql-generator';
         $this->filesystem->remove($this->tmpDir);
         $this->typeConfigs = $this->prepareTypeConfigs();
         $this->typeGenerator = new TypeGenerator();
         $this->typeGenerator->setExpressionLanguage(new ExpressionLanguage());
-        $this->classLoader = require __DIR__ . '/../../vendor/autoload.php';
+        $this->classLoader = new ClassLoader();
     }
 
     public function tearDown()
@@ -58,6 +58,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $classes = $this->typeGenerator->generateClasses($typeConfigs, $tmpDir, $mode);
 
         $this->classLoader->addClassMap($classes);
+        $this->classLoader->register();
 
         return $classes;
     }

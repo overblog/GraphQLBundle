@@ -2,23 +2,8 @@ dist: trusty
 
 language: php
 
-matrix:
-    fast_finish: true
-    include:
-        - php: 5.5
-        - php: 5.6
-        - php: 7.0
-        - php: 7.1
-        - php: 7.1
-          env: COMPOSER_UPDATE_FLAGS=--prefer-lowest
-        - php: 7.2
-        - php: hhvm
-        - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
-    allow_failures:
-        - php: hhvm
-        - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
+git:
+    depth: 50
 
 branches:
     only:
@@ -28,15 +13,47 @@ branches:
 cache:
     directories:
         - $HOME/.composer/cache
+        - $HOME/.php_cs.cache
 
 before_install:
-    - if [[ "$TRAVIS_PHP_VERSION" != "7.1=" && "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then phpenv config-rm xdebug.ini || true; fi
+    - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
+    - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
+    - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
-    - if [ "$GRAPHQLPHP_VERSION" != "" ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
+    - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
-install: composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
+install: travis_retry composer update --prefer-source --no-interaction --optimize-autoloader ${COMPOSER_UPDATE_FLAGS}
 
-script: ./bin/travis_phpunit
-after_script:
-    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+script: bin/phpunit --color=always -v --debug
 
+jobs:
+    include:
+        - stage: Test
+          php: 5.6
+        - php: 7.0
+        - php: 7.1
+        - php: 7.1
+          env: COMPOSER_UPDATE_FLAGS=--prefer-lowest
+        - php: 7.2
+        - php: 7.3
+        - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
+
+        - stage: Code Quality
+          php: 7.2
+          env: COVERAGE
+          before_script:
+            - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
+            - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
+          script: bin/phpunit --color=always -v --debug -d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml
+          after_script:
+            - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+
+        - stage: Code Quality
+          php: 7.2
+          env: CODING_STANDARDS
+          script: bin/php-cs-fixer fix --dry-run --diff -v --allow-risky=yes --ansi
+
+    allow_failures:
+        - php: nightly
+          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs

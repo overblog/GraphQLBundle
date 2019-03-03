@@ -11,18 +11,8 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
-use Symfony\Component\Process\ProcessBuilder;
-
 class StarWarsQueryTest extends AbstractStarWarsTest
 {
-    /**
-     * @group cs
-     */
-    public function testSchemaCodeStandard()
-    {
-        $this->assertCodeStandard($this->tmpDir, 'psr2', 'short_array_syntax');
-    }
-
     // Star Wars Query Tests
     // Basic Queries
     public function testCorrectlyIdentifiesR2D2AsTheHeroOfTheStarWarsSaga()

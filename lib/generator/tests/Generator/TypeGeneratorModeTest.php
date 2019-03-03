@@ -35,7 +35,7 @@ class TypeGeneratorModeTest extends TestCase
 
     public function setUp()
     {
-        $this->dir = sys_get_temp_dir() . '/mcgweb-graphql-generator-modes';
+        $this->dir = sys_get_temp_dir() . '/overblog-graphql-generator-modes';
         $this->typeGenerator = $this->getMockBuilder(TypeGenerator::class)
             ->setMethods(['processPlaceHoldersReplacements', 'processTemplatePlaceHoldersReplacements'])
             ->getMock()
