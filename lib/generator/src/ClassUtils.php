@@ -22,7 +22,7 @@ abstract class ClassUtils
 
     public static function shortenClassName($definition)
     {
-        $shortName = substr($definition, strrpos($definition, '\\') + 1);
+        $shortName = \substr($definition, \strrpos($definition, '\\') + 1);
 
         return $shortName;
     }
@@ -35,13 +35,13 @@ abstract class ClassUtils
             };
         }
 
-        $codeParsed = preg_replace_callback('@((?:\\\\{1,2}\w+|\w+\\\\{1,2})(?:\w+\\\\{0,2})+)@', $callback, $code);
+        $codeParsed = \preg_replace_callback('@((?:\\\\{1,2}\w+|\w+\\\\{1,2})(?:\w+\\\\{0,2})+)@', $callback, $code);
 
         return $codeParsed;
     }
 
     public static function cleanClasseName($use)
     {
-        return ltrim($use, '\\');
+        return \ltrim($use, '\\');
     }
 }

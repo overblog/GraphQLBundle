@@ -103,8 +103,8 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
 
     public function testAddTraitAndClearTraits()
     {
-        $trait = __NAMESPACE__ . '\\FooTrait';
-        $interface = __NAMESPACE__ . '\\FooInterface';
+        $trait = __NAMESPACE__.'\\FooTrait';
+        $interface = __NAMESPACE__.'\\FooInterface';
         $this->typeGenerator->addTrait($trait)
             ->addImplement($interface);
         $this->generateClasses(['U' => $this->getConfigs()['T']]);
@@ -124,7 +124,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $type = $this->getType('V');
 
         $this->assertNotInstanceOf($interface, $type);
-        $this->assertFalse(method_exists($type, 'bar'));
+        $this->assertFalse(\method_exists($type, 'bar'));
     }
 
     public function testCallbackEntryDoesNotTreatObject()
@@ -187,7 +187,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $this->expectException('\DomainException');
         $this->expectExceptionMessage('You can not create more than one copy of a singleton.');
 
-        $class = get_class($type);
+        $class = \get_class($type);
         $t = new $class();
     }
 

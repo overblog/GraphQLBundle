@@ -60,7 +60,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $this->sortSchemaEntry($actual, 'types', 'name');
         $this->sortSchemaEntry($expected, 'types', 'name');
         $expected = ['data' => $expected];
-        $this->assertEquals($expected, $actual, json_encode($actual));
+        $this->assertEquals($expected, $actual, \json_encode($actual));
     }
 
     // it('Allows querying the schema for query type')
@@ -319,7 +319,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'hero',
                             'args' => [
                                 [
-                                    'defaultValue' =>  null,
+                                    'defaultValue' => null,
                                     'description' => "If omitted, returns the hero of the whole saga.\nIf provided, returns the hero of that particular episode.\n",
                                     'name' => 'episode',
                                     'type' => [

@@ -81,12 +81,12 @@ abstract class AbstractClassGenerator
     {
         $this->skeletonDirs = [];
 
-        if (is_string($skeletonDirs)) {
+        if (\is_string($skeletonDirs)) {
             $this->addSkeletonDir($skeletonDirs);
         } else {
-            if (!is_array($skeletonDirs) && !$skeletonDirs instanceof \Traversable) {
+            if (!\is_array($skeletonDirs) && !$skeletonDirs instanceof \Traversable) {
                 throw new \InvalidArgumentException(
-                    sprintf('Skeleton dirs must be array or object implementing \Traversable interface, "%s" given.', gettype($skeletonDirs))
+                    \sprintf('Skeleton dirs must be array or object implementing \Traversable interface, "%s" given.', \gettype($skeletonDirs))
                 );
             }
 
@@ -103,7 +103,7 @@ abstract class AbstractClassGenerator
         $skeletonDirs = $this->skeletonDirs ;
 
         if ($withDefault) {
-            $skeletonDirs[] =  __DIR__ . '/../Resources/skeleton';
+            $skeletonDirs[] = __DIR__.'/../Resources/skeleton';
         }
 
         return $skeletonDirs;
@@ -111,18 +111,18 @@ abstract class AbstractClassGenerator
 
     public function addSkeletonDir($skeletonDir)
     {
-        if (!is_string($skeletonDir) && !is_object($skeletonDir) && !is_callable($skeletonDir, '__toString')) {
+        if (!\is_string($skeletonDir) && !\is_object($skeletonDir) && !\is_callable($skeletonDir, '__toString')) {
             throw new \InvalidArgumentException(
-                sprintf('Skeleton dir must be string or object implementing __toString, "%s" given.', gettype($skeletonDir))
+                \sprintf('Skeleton dir must be string or object implementing __toString, "%s" given.', \gettype($skeletonDir))
             );
         }
 
         $skeletonDir = (string) $skeletonDir;
 
-        if (!is_dir($skeletonDir)) {
-            throw new \InvalidArgumentException(sprintf('Skeleton dir "%s" not found.', $skeletonDir));
+        if (!\is_dir($skeletonDir)) {
+            throw new \InvalidArgumentException(\sprintf('Skeleton dir "%s" not found.', $skeletonDir));
         }
-        $this->skeletonDirs[] = realpath($skeletonDir);
+        $this->skeletonDirs[] = \realpath($skeletonDir);
 
         return $this;
     }
@@ -137,7 +137,7 @@ abstract class AbstractClassGenerator
      */
     public function setNumSpaces($numSpaces)
     {
-        $this->spaces = str_repeat(' ', $numSpaces);
+        $this->spaces = \str_repeat(' ', $numSpaces);
         $this->numSpaces = $numSpaces;
 
         return $this;
@@ -146,7 +146,7 @@ abstract class AbstractClassGenerator
     public function addTrait($trait)
     {
         $cleanTrait = $this->shortenClassName($trait, false);
-        if (!in_array($cleanTrait, $this->traits)) {
+        if (!\in_array($cleanTrait, $this->traits)) {
             $this->traits[] = $cleanTrait;
         }
 
@@ -163,7 +163,7 @@ abstract class AbstractClassGenerator
     public function addImplement($implement)
     {
         $cleanImplement = $this->shortenClassName($implement, false);
-        if (!in_array($cleanImplement, $this->implements)) {
+        if (!\in_array($cleanImplement, $this->implements)) {
             $this->implements[] = $cleanImplement;
         }
 
@@ -180,7 +180,7 @@ abstract class AbstractClassGenerator
     public function addUseStatement($useStatement)
     {
         $cleanUse = ClassUtils::cleanClasseName($useStatement);
-        if (!in_array($cleanUse, $this->useStatements)) {
+        if (!\in_array($cleanUse, $this->useStatements)) {
             $this->useStatements[] = $cleanUse;
         }
 
@@ -199,14 +199,14 @@ abstract class AbstractClassGenerator
         $skeletonDirs = $this->getSkeletonDirs($withDefault);
 
         foreach ($skeletonDirs as $skeletonDir) {
-            $path = $skeletonDir . '/' . $skeleton . static::SKELETON_FILE_PREFIX;
+            $path = $skeletonDir.'/'.$skeleton.static::SKELETON_FILE_PREFIX;
 
-            if (!file_exists($path)) {
+            if (!\file_exists($path)) {
                 continue;
             }
 
             if (!isset(self::$templates[$path])) {
-                $content = trim(file_get_contents($path));
+                $content = \trim(\file_get_contents($path));
 
                 self::$templates[$path] = $content;
             }
@@ -215,10 +215,10 @@ abstract class AbstractClassGenerator
         }
 
         throw new \InvalidArgumentException(
-            sprintf(
+            \sprintf(
                 'Skeleton "%s" could not be found in %s.',
                 $skeleton,
-                implode(', ', $skeletonDirs)
+                \implode(', ', $skeletonDirs)
             )
         );
     }
@@ -226,7 +226,7 @@ abstract class AbstractClassGenerator
     protected function addInternalUseStatement($use)
     {
         $cleanUse = ClassUtils::cleanClasseName($use);
-        if (!in_array($cleanUse, $this->internalUseStatements)) {
+        if (!\in_array($cleanUse, $this->internalUseStatements)) {
             $this->internalUseStatements[] = $cleanUse;
         }
     }
@@ -242,7 +242,7 @@ abstract class AbstractClassGenerator
     {
         $shortName = ClassUtils::shortenClassName($definition);
 
-        $useStatement = preg_replace('@\:\:.*$@i', '', $definition);
+        $useStatement = \preg_replace('@\:\:.*$@i', '', $definition);
         if ($isInternal) {
             $this->addInternalUseStatement($useStatement);
         } else {
@@ -269,37 +269,37 @@ abstract class AbstractClassGenerator
         $replacements = [];
 
         foreach ($placeHolders as $placeHolder) {
-            $generator = [$this, 'generate' . ucfirst($placeHolder)];
-            $name = '<' . $placeHolder . '>';
+            $generator = [$this, 'generate'.\ucfirst($placeHolder)];
+            $name = '<'.$placeHolder.'>';
 
-            if (is_callable($generator)) {
-                $replacements[$name] = call_user_func_array($generator, [$values]);
+            if (\is_callable($generator)) {
+                $replacements[$name] = \call_user_func_array($generator, [$values]);
             } else {
                 throw new \RuntimeException(
-                    sprintf(
+                    \sprintf(
                         'Generator [%s] for placeholder "%s" is not callable.',
-                        get_class($generator[0]) . '::' . $generator[1],
+                        \get_class($generator[0]).'::'.$generator[1],
                         $placeHolder
                     )
                 );
             }
         }
 
-        return strtr($content, $replacements);
+        return \strtr($content, $replacements);
     }
 
     protected function processTemplatePlaceHoldersReplacements($template, array $values, array $skip = [])
     {
         $code = $this->getSkeletonContent($template);
         $placeHolders = $this->getPlaceHolders($code);
-        $code = $this->processPlaceHoldersReplacements(array_diff($placeHolders, $skip), $code, $values);
+        $code = $this->processPlaceHoldersReplacements(\array_diff($placeHolders, $skip), $code, $values);
 
         return $code;
     }
 
     protected function getPlaceHolders($content)
     {
-        preg_match_all('@<([\w]+)>@i', $content, $placeHolders);
+        \preg_match_all('@<([\w]+)>@i', $content, $placeHolders);
 
         return isset($placeHolders[1]) ? $placeHolders[1] : [];
     }
@@ -312,15 +312,15 @@ abstract class AbstractClassGenerator
      */
     protected function prefixCodeWithSpaces($code, $num = 1)
     {
-        $lines = explode("\n", $code);
+        $lines = \explode("\n", $code);
 
         foreach ($lines as $key => $value) {
             if (!empty($value)) {
-                $lines[$key] = str_repeat($this->spaces, $num) . $lines[$key];
+                $lines[$key] = \str_repeat($this->spaces, $num).$lines[$key];
             }
         }
 
-        return implode("\n", $lines);
+        return \implode("\n", $lines);
     }
 
     protected function generateSpaces()
@@ -330,13 +330,13 @@ abstract class AbstractClassGenerator
 
     protected function generateNamespace()
     {
-        return null !== $this->classNamespace ? 'namespace ' . $this->classNamespace . ';' : null;
+        return null !== $this->classNamespace ? 'namespace '.$this->classNamespace.';' : null;
     }
 
     protected function generateUseStatement(array $config)
     {
-        $statements = array_merge($this->internalUseStatements, $this->useStatements);
-        sort($statements);
+        $statements = \array_merge($this->internalUseStatements, $this->useStatements);
+        \sort($statements);
 
         $useStatements = $this->tokenizeUseStatements($statements);
 
@@ -350,14 +350,14 @@ abstract class AbstractClassGenerator
 
     protected function generateImplements()
     {
-        return count($this->implements) ? ' implements ' . implode(', ', $this->implements) : null;
+        return \count($this->implements) ? ' implements '.\implode(', ', $this->implements) : null;
     }
 
     protected function generateTraits()
     {
         $traits = $this->tokenizeUseStatements($this->traits, '<spaces>');
 
-        return $traits ? $traits . "\n" : $traits;
+        return $traits ? $traits."\n" : $traits;
     }
 
     protected function tokenizeUseStatements(array $useStatements, $prefix = '')

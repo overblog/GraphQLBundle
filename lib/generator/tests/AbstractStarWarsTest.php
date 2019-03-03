@@ -27,7 +27,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
     {
         parent::setUp();
 
-        $this->classLoader->setPsr4('GraphQL\\Tests\\', __DIR__ . '/../vendor/webonyx/graphql-php/tests');
+        $this->classLoader->setPsr4('GraphQL\\Tests\\', __DIR__.'/../vendor/webonyx/graphql-php/tests');
 
         $this->generateClasses();
 
@@ -47,9 +47,9 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
     protected function assertValidQuery($query, $expected, $variables = null)
     {
         $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)
-            ->toArray(Debug::INCLUDE_DEBUG_MESSAGE|Debug::INCLUDE_TRACE);
+            ->toArray(Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE);
         $expected = ['data' => $expected];
-        $this->assertEquals($expected, $actual, json_encode($actual));
+        $this->assertEquals($expected, $actual, \json_encode($actual));
     }
 
     protected function sortSchemaEntry(array &$entries, $entryKey, $sortBy)
@@ -60,8 +60,8 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
             $data = &$entries['__schema'][$entryKey];
         }
 
-        usort($data, function ($data1, $data2) use ($sortBy) {
-            return strcmp($data1[$sortBy], $data2[$sortBy]);
+        \usort($data, function ($data1, $data2) use ($sortBy) {
+            return \strcmp($data1[$sortBy], $data2[$sortBy]);
         });
     }
 }

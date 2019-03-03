@@ -35,7 +35,7 @@ class TypeGeneratorModeTest extends TestCase
 
     public function setUp()
     {
-        $this->dir = sys_get_temp_dir() . '/overblog-graphql-generator-modes';
+        $this->dir = \sys_get_temp_dir().'/overblog-graphql-generator-modes';
         $this->typeGenerator = $this->getMockBuilder(TypeGenerator::class)
             ->setMethods(['processPlaceHoldersReplacements', 'processTemplatePlaceHoldersReplacements'])
             ->getMock()
@@ -61,17 +61,17 @@ class TypeGeneratorModeTest extends TestCase
         $classes = $this->typeGenerator->generateClasses(self::$configs, $this->dir, $mode);
         $file = $this->dir.'/QueryType.php';
         $this->assertEquals(['Overblog\CG\GraphQLGenerator\__Schema__\QueryType' => $this->dir.'/QueryType.php'], $classes);
-        if (method_exists($this, 'assertDirectoryNotExists')) {
+        if (\method_exists($this, 'assertDirectoryNotExists')) {
             $this->assertDirectoryNotExists($this->dir);
         } else { // for phpunit 4
-            $this->assertFalse(file_exists($this->dir));
-            $this->assertFalse(is_dir($this->dir));
+            $this->assertFalse(\file_exists($this->dir));
+            $this->assertFalse(\is_dir($this->dir));
         }
-        if (method_exists($this, 'assertFileNotExists')) {
+        if (\method_exists($this, 'assertFileNotExists')) {
             $this->assertFileNotExists($file);
         } else { // for phpunit 4
-            $this->assertFalse(file_exists($file));
-            $this->assertFalse(is_file($file));
+            $this->assertFalse(\file_exists($file));
+            $this->assertFalse(\is_file($file));
         }
     }
 }
