@@ -71,10 +71,11 @@ jobs:
           env: CODING_STANDARDS
           script: composer check-cs
 
-        - stage: Code Quality
-          php: 7.2
-          env: BENCHMARK
-          script: composer bench
+# TODO(mcg-web): uncomment after this close https://github.com/phpbench/phpbench/issues/597
+#        - stage: Code Quality
+#          php: 7.2
+#          env: BENCHMARK
+#          script: composer bench
 
     allow_failures:
         - php: nightly

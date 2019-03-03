@@ -11,7 +11,6 @@
 
 namespace Overblog\GraphQLGenerator\Tests;
 
-use GraphQL\Tests\StarWarsData;
 use GraphQL\Type\Definition\Type;
 
 abstract class Resolver

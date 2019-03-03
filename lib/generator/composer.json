@@ -12,10 +12,7 @@
     ],
     "config" : {
         "sort-packages": true,
-        "bin-dir": "bin",
-        "preferred-install": {
-            "webonyx/graphql-php": "source"
-        }
+        "bin-dir": "bin"
     },
     "require": {
         "php": ">=5.6",
@@ -37,9 +34,6 @@
     "autoload-dev": {
         "psr-4": {
             "Overblog\\GraphQLGenerator\\Tests\\": "tests/"
-        },
-        "classmap": [
-            "vendor/webonyx/graphql-php/tests/StarWarsData.php"
-        ]
+        }
     }
 }
