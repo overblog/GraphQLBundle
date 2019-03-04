@@ -1,0 +1,5 @@
+[
+<spaces>'name' => <name>,
+<spaces>'type' => <type>,
+<spaces>'description' => <description>,<defaultValue>
+],

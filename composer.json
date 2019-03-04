@@ -12,18 +12,16 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": "src"
+            "Overblog\\GraphQLBundle\\": "src/",
+            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks",
-            "Overblog\\GraphQLBundle\\Tests\\": "tests"
-        },
-        "files": [
-            "vendor/overblog/graphql-php-generator/tests/DateTimeType.php",
-            "vendor/overblog/graphql-php-generator/tests/Resolver.php"
-        ]
+            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
+            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+        }
     },
     "config" : {
         "bin-dir": "bin",
@@ -31,7 +29,6 @@
     },
     "require": {
         "php": ">=5.6",
-        "overblog/graphql-php-generator": "^0.7.4",
         "psr/log": "^1.0",
         "symfony/config": "^3.1 || ^4.0",
         "symfony/dependency-injection": "^3.1 || ^4.0",
@@ -41,6 +38,9 @@
         "symfony/options-resolver": "^3.1 || ^4.0",
         "symfony/property-access": "^3.1 || ^4.0",
         "webonyx/graphql-php": "^0.11.2 || ^0.12.0"
+    },
+    "replace": {
+        "overblog/graphql-php-generator": "self.version"
     },
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
@@ -58,8 +58,6 @@
         "symfony/phpunit-bridge": "^3.1 || ^4.0",
         "symfony/process": "^3.1 || ^4.0",
         "symfony/security-bundle": "^3.1 || ^4.0",
-        "symfony/templating": "^3.1 || ^4.0",
-        "symfony/web-profiler-bundle": "^3.1 || ^4.0",
         "symfony/yaml": "^3.1 || ^4.0"
     },
     "extra": {
@@ -82,11 +80,13 @@
         "fix-cs": [
             "@install-cs",
             "@php php-cs-fixer.phar self-update",
-            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
+            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi"
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",

@@ -1,0 +1,43 @@
+<?php
+<namespace>
+<useStatement>
+<classDocBlock>
+<classType>class <className> extends <parentClassName><implements>
+{<traits>
+<spaces>/**
+<spaces> * @var static
+<spaces> */
+<spaces>private static $instance;
+
+<spaces>/**
+<spaces> * @return static
+<spaces> */
+<spaces>public static function getInstance()
+<spaces>{
+<spaces><spaces>return null !== self::$instance ? self::$instance : self::$instance = new static();
+<spaces>}
+
+<spaces>public static function clearInstance()
+<spaces>{
+<spaces><spaces>self::$instance = null;
+<spaces>}
+
+<spaces>public function __construct()
+<spaces>{
+<spaces><spaces>if (isset(static::$instance)) {
+<spaces><spaces><spaces>throw new \DomainException('You can not create more than one copy of a singleton.');
+<spaces><spaces>}
+<spaces><spaces>parent::__construct(<config>);
+<spaces><spaces>static::$instance = $this;
+<spaces>}
+
+<spaces>public function __clone()
+<spaces>{
+<spaces><spaces>throw new \DomainException('You can not clone a singleton.');
+<spaces>}
+
+<spaces>public function __destruct()
+<spaces>{
+<spaces><spaces>$this->clearInstance();
+<spaces>}
+}
