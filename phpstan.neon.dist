@@ -1,6 +1,8 @@
 parameters:
   level: 1
   paths:
+    - %currentWorkingDirectory%/lib/generator/src
+    - %currentWorkingDirectory%/lib/generator/tests
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/tests
 
