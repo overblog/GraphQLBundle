@@ -61,6 +61,7 @@
         "symfony/phpunit-bridge": "^3.4 || ^4.0",
         "symfony/process": "^3.4 || ^4.0",
         "symfony/security-bundle": "^3.4 || ^4.0",
+        "symfony/validator": "^3.4 || ^4.0",
         "symfony/yaml": "^3.4 || ^4.0"
     },
     "extra": {
