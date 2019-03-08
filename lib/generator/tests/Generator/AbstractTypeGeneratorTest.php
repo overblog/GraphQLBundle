@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLGenerator\Tests\Generator;
 
 use Composer\Autoload\ClassLoader;
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator;
 use Overblog\GraphQLGenerator\Tests\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -29,7 +30,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     /** @var ClassLoader */
     protected $classLoader;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->filesystem = new Filesystem();
         $this->tmpDir = \sys_get_temp_dir().'/overblog-graphql-generator';
@@ -40,12 +41,12 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         $this->classLoader = new ClassLoader();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->filesystem->remove($this->tmpDir);
     }
 
-    protected function generateClasses(array $typeConfigs = null, $tmpDir = null, $mode = true)
+    protected function generateClasses(array $typeConfigs = null, ?string $tmpDir = null, int $mode = TypeGenerator::MODE_WRITE): array
     {
         if (null === $typeConfigs) {
             $typeConfigs = $this->typeConfigs;
@@ -66,7 +67,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     /**
      * @return array
      */
-    protected function prepareTypeConfigs()
+    protected function prepareTypeConfigs(): array
     {
         $yaml = new \Symfony\Component\Yaml\Parser();
         $typeConfigs = $yaml->parse(\file_get_contents(__DIR__.'/../starWarsSchema.yml'));
@@ -74,7 +75,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         return $this->processConfig($typeConfigs);
     }
 
-    protected function processConfig(array $configs)
+    protected function processConfig(array $configs): array
     {
         return \array_map(
             function ($v) {
@@ -90,7 +91,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         );
     }
 
-    protected function getType($type)
+    protected function getType($type): Type
     {
         return \call_user_func(["\\".$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
     }

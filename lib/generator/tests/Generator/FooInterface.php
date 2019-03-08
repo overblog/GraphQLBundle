@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -13,5 +13,5 @@ namespace Overblog\GraphQLGenerator\Tests\Generator;
 
 interface FooInterface
 {
-    public function bar();
+    public function bar(): string;
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -13,47 +13,47 @@ namespace Overblog\GraphQLGenerator\Generator;
 
 class TypeGenerator extends AbstractTypeGenerator
 {
-    protected function generateOutputFields(array $config)
+    protected function generateOutputFields(array $config): string
     {
-        return  \sprintf(static::$closureTemplate, '', $this->processFromArray($config['fields'], 'OutputField'));
+        return  \sprintf(static::CLOSURE_TEMPLATE, '', $this->processFromArray($config['fields'], 'OutputField'));
     }
 
-    protected function generateInputFields(array $config)
+    protected function generateInputFields(array $config): string
     {
-        return \sprintf(static::$closureTemplate, '', $this->processFromArray($config['fields'], 'InputField'));
+        return \sprintf(static::CLOSURE_TEMPLATE, '', $this->processFromArray($config['fields'], 'InputField'));
     }
 
-    protected function generateArgs(array $fields)
+    protected function generateArgs(array $fields): string
     {
         return isset($fields['args']) ? $this->processFromArray($fields['args'], 'Arg') : '[]';
     }
 
-    protected function generateValues(array $config)
+    protected function generateValues(array $config): string
     {
         return $this->processFromArray($config['values'], 'Value');
     }
 
-    protected function generateValue(array $value)
+    protected function generateValue(array $value): string
     {
         return $this->varExportFromArrayValue($value, 'value');
     }
 
-    protected function generateDescription(array $value)
+    protected function generateDescription(array $value): string
     {
         return $this->varExportFromArrayValue($value, 'description');
     }
 
-    protected function generateName(array $value)
+    protected function generateName(array $value): string
     {
         return $this->varExportFromArrayValue($value, 'name');
     }
 
-    protected function generateDeprecationReason(array $value)
+    protected function generateDeprecationReason(array $value): string
     {
         return $this->varExportFromArrayValue($value, 'deprecationReason');
     }
 
-    protected function generateDefaultValue(array $value)
+    protected function generateDefaultValue(array $value): string
     {
         $key = 'defaultValue';
         if (!\array_key_exists($key, $value)) {
@@ -63,7 +63,7 @@ class TypeGenerator extends AbstractTypeGenerator
         return \sprintf("\n<spaces>'%s' => %s,", $key, $this->varExportFromArrayValue($value, $key));
     }
 
-    protected function generateType(array $value)
+    protected function generateType(array $value): string
     {
         $type = 'null';
 
@@ -74,84 +74,52 @@ class TypeGenerator extends AbstractTypeGenerator
         return $type;
     }
 
-    protected function generateInterfaces(array $value)
+    protected function generateInterfaces(array $value): string
     {
         return $this->resolveTypesCode($value, 'interfaces');
     }
 
-    protected function generateTypes(array $value)
+    protected function generateTypes(array $value): string
     {
         return $this->resolveTypesCode($value, 'types');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateResolve(array $value)
+    protected function generateResolve(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'resolve', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateResolveType(array $value)
+    protected function generateResolveType(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'resolveType', '$value, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateIsTypeOf(array $value)
+    protected function generateIsTypeOf(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'isTypeOf', '$value, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateResolveField(array $value)
+    protected function generateResolveField(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'resolveField', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateComplexity(array $value)
+    protected function generateComplexity(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'complexity', '$childrenComplexity, $args = []');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateSerialize(array $value)
+    protected function generateSerialize(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'serialize', '$value');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateParseValue(array $value)
+    protected function generateParseValue(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'parseValue', '$value');
     }
 
-    /**
-     * @param array $value
-     * @return string
-     */
-    protected function generateParseLiteral(array $value)
+    protected function generateParseLiteral(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'parseLiteral', '$value');
     }

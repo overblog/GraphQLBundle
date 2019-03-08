@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -22,7 +22,7 @@ class TypeGeneratorModeTest extends TestCase
     /** @var TypeGenerator|\PHPUnit_Framework_MockObject_MockObject */
     private $typeGenerator;
 
-    private static $configs = [
+    private const CONFIG = [
         'Query' => [
             'type' => 'object',
             'config' => [
@@ -33,7 +33,7 @@ class TypeGeneratorModeTest extends TestCase
         ]
     ];
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dir = \sys_get_temp_dir().'/overblog-graphql-generator-modes';
         $this->typeGenerator = $this->getMockBuilder(TypeGenerator::class)
@@ -42,23 +42,23 @@ class TypeGeneratorModeTest extends TestCase
         ;
     }
 
-    public function testDryRunMode()
+    public function testDryRunMode(): void
     {
         $this->typeGenerator->expects($this->once())->method('processPlaceHoldersReplacements');
         $this->typeGenerator->expects($this->once())->method('processTemplatePlaceHoldersReplacements');
         $this->assertGenerateClassesMode(TypeGenerator::MODE_DRY_RUN);
     }
 
-    public function testMappingOnlyMode()
+    public function testMappingOnlyMode(): void
     {
         $this->typeGenerator->expects($this->never())->method('processPlaceHoldersReplacements');
         $this->typeGenerator->expects($this->never())->method('processTemplatePlaceHoldersReplacements');
         $this->assertGenerateClassesMode(TypeGenerator::MODE_MAPPING_ONLY);
     }
 
-    private function assertGenerateClassesMode($mode)
+    private function assertGenerateClassesMode($mode): void
     {
-        $classes = $this->typeGenerator->generateClasses(self::$configs, $this->dir, $mode);
+        $classes = $this->typeGenerator->generateClasses(self::CONFIG, $this->dir, $mode);
         $file = $this->dir.'/QueryType.php';
         $this->assertEquals(['Overblog\CG\GraphQLGenerator\__Schema__\QueryType' => $this->dir.'/QueryType.php'], $classes);
         if (\method_exists($this, 'assertDirectoryNotExists')) {

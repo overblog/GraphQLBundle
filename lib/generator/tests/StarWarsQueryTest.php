@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -15,7 +15,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
 {
     // Star Wars Query Tests
     // Basic Queries
-    public function testCorrectlyIdentifiesR2D2AsTheHeroOfTheStarWarsSaga()
+    public function testCorrectlyIdentifiesR2D2AsTheHeroOfTheStarWarsSaga(): void
     {
         // Correctly identifies R2-D2 as the hero of the Star Wars Saga
         $query = '
@@ -33,7 +33,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected);
     }
 
-    public function testAllowsUsToQueryForTheIDAndFriendsOfR2D2()
+    public function testAllowsUsToQueryForTheIDAndFriendsOfR2D2(): void
     {
         $query = '
         query HeroNameAndFriendsQuery {
@@ -67,7 +67,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     }
 
     // Nested Queries
-    public function testAllowsUsToQueryForTheFriendsOfFriendsOfR2D2()
+    public function testAllowsUsToQueryForTheFriendsOfFriendsOfR2D2(): void
     {
         $query = '
         query NestedQuery {
@@ -124,7 +124,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     }
 
     // Using IDs and query parameters to refetch objects
-    public function testAllowsUsToQueryForLukeSkywalkerDirectlyUsingHisID()
+    public function testAllowsUsToQueryForLukeSkywalkerDirectlyUsingHisID(): void
     {
         $query = '
         query FetchLukeQuery {
@@ -140,7 +140,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         ];
         $this->assertValidQuery($query, $expected);
     }
-    public function testGenericQueryToGetLukeSkywalkerById()
+    public function testGenericQueryToGetLukeSkywalkerById(): void
     {
         // Allows us to create a generic query, then use it to fetch Luke Skywalker using his ID
         $query = '
@@ -161,7 +161,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected, $params);
     }
 
-    public function testGenericQueryToGetHanSoloById()
+    public function testGenericQueryToGetHanSoloById(): void
     {
         // Allows us to create a generic query, then use it to fetch Han Solo using his ID
         $query = '
@@ -182,7 +182,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected, $params);
     }
 
-    public function testGenericQueryWithInvalidId()
+    public function testGenericQueryWithInvalidId(): void
     {
         // Allows us to create a generic query, then pass an invalid ID to get null back
         $query = '
@@ -202,7 +202,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     }
 
     // Using aliases to change the key in the response
-    public function testLukeKeyAlias()
+    public function testLukeKeyAlias(): void
     {
         // Allows us to query for Luke, changing his key with an alias
         $query = '
@@ -220,7 +220,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected);
     }
 
-    public function testTwoRootKeysAsAnAlias()
+    public function testTwoRootKeysAsAnAlias(): void
     {
         // Allows us to query for both Luke and Leia, using two root fields and an alias
         $query = '
@@ -245,7 +245,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     }
 
     // Uses fragments to express more complex queries
-    public function testQueryUsingDuplicatedContent()
+    public function testQueryUsingDuplicatedContent(): void
     {
         // Allows us to query using duplicated content
         $query = '
@@ -273,7 +273,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected);
     }
 
-    public function testUsingFragment()
+    public function testUsingFragment(): void
     {
         // Allows us to use a fragment to avoid duplicating content
         $query = '
@@ -304,7 +304,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
     }
 
     // Using __typename to find the type of an object
-    public function testVerifyThatR2D2IsADroid()
+    public function testVerifyThatR2D2IsADroid(): void
     {
         $query = '
         query CheckTypeOfR2 {
@@ -323,7 +323,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected);
     }
 
-    public function testVerifyThatLukeIsHuman()
+    public function testVerifyThatLukeIsHuman(): void
     {
         $query = '
         query CheckTypeOfLuke($episode: HeroInput!) {
@@ -342,7 +342,7 @@ class StarWarsQueryTest extends AbstractStarWarsTest
         $this->assertValidQuery($query, $expected, ['episode' => ['name' => 'EMPIRE']]);
     }
 
-    public function testDateTime()
+    public function testDateTime(): void
     {
         $query = '{ dateTime }';
         $expected = [
