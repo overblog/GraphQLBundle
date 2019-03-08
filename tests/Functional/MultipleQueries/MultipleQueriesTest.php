@@ -11,7 +11,7 @@ class MultipleQueriesTest extends TestCase
     public const REQUIRED_FAILS_ERRORS = [
         [
             'message' => 'Internal server Error',
-            'category' => 'internal',
+            'extensions' => ['category' => 'internal'],
             'locations' => [
                 [
                     'line' => 2,
@@ -28,7 +28,7 @@ class MultipleQueriesTest extends TestCase
         'errors' => [
             [
                 'message' => 'Internal server Error',
-                'category' => 'internal',
+                'extensions' => ['category' => 'internal'],
                 'locations' => [
                     [
                         'line' => 2,

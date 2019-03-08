@@ -16,7 +16,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "webonyx/graphql-php": "^0.11.2|^0.12.0"
+        "webonyx/graphql-php": "^0.13.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",

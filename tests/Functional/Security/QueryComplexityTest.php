@@ -42,7 +42,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'Max query complexity should be 10 but got 54.',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -56,7 +56,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'Max query complexity should be 10 but got 54.',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];

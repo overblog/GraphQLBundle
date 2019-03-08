@@ -19,7 +19,8 @@ class ResolverTest extends TestCase
      */
     public function testDefaultResolveFn($fieldName, $source, $expected): void
     {
-        $info = new ResolveInfo(['fieldName' => $fieldName]);
+        $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
+        $info->fieldName = $fieldName;
 
         $this->assertSame($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
