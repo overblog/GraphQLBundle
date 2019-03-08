@@ -1,0 +1,8 @@
+<name> => [
+<spaces>'type' => <type>,
+<spaces>'args' => <args>,
+<spaces>'resolve' => <resolve>,
+<spaces>'description' => <description>,
+<spaces>'deprecationReason' => <deprecationReason>,
+<spaces>'complexity' => <complexity>,
+],
