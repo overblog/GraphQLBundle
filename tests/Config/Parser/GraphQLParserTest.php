@@ -4,6 +4,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -22,7 +23,7 @@ class GraphQLParserTest extends TestCase
     {
         $fileName = \sprintf(
             __DIR__.'/fixtures/graphql/schema%s.graphql',
-            isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION'] ? '-0.11' : ''
+            VersionHelper::compareWebonyxGraphQLPHPVersion('0.12.0', '<') ? '-0.11' : ''
         );
         $expected = include __DIR__.'/fixtures/graphql/schema.php';
 

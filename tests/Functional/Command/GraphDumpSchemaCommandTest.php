@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -126,7 +127,7 @@ class GraphDumpSchemaCommandTest extends TestCase
             $actual = \json_decode($actual, true);
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
-        } elseif ('graphql' === $format && isset($_SERVER['GRAPHQLPHP_VERSION']) && '^0.11.2' === $_SERVER['GRAPHQLPHP_VERSION']) {
+        } elseif ('graphql' === $format && VersionHelper::compareWebonyxGraphQLPHPVersion('0.12.0', '<')) {
             $expected = \preg_replace('@"""(.*)"""@', '# $1', $expected);
         }
 
