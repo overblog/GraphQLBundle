@@ -29,6 +29,8 @@ return PhpCsFixer\Config::create()
   ->setFinder($finder)
   ->setRules([
     '@PSR2' => true,
+    '@PHP71Migration' => true,
+    '@PHP71Migration:risky' => true,
     'single_blank_line_before_namespace' => true,
     'ordered_imports' => true,
     'concat_space' => ['spacing' => 'none'],
@@ -38,7 +40,6 @@ return PhpCsFixer\Config::create()
     'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],
     'native_function_invocation' => true,
     'fully_qualified_strict_types' => true,
-    'native_constant_invocation' => true,
     'header_comment' => ['header' => $header],
   ])
 ;

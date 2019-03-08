@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -12,12 +12,15 @@
 namespace Overblog\GraphQLGenerator\Generator;
 
 use Overblog\GraphQLGenerator\ClassUtils;
-use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 abstract class AbstractClassGenerator
 {
-    const SKELETON_FILE_PREFIX = '.php.skeleton';
+    public const MODE_DRY_RUN = 1;
+    public const MODE_MAPPING_ONLY = 2;
+    public const MODE_WRITE = 4;
+    public const MODE_OVERRIDE = 8;
+
+    protected const SKELETON_FILE_PREFIX = '.php.skeleton';
 
     /**
      * The namespace that contains all classes.
@@ -66,18 +69,14 @@ abstract class AbstractClassGenerator
         return $this->classNamespace;
     }
 
-    public function setClassNamespace($classNamespace)
+    public function setClassNamespace($classNamespace): self
     {
         $this->classNamespace = ClassUtils::cleanClasseName($classNamespace);
 
         return $this;
     }
 
-    /**
-     * @param string[]|string $skeletonDirs
-     * @return $this
-     */
-    public function setSkeletonDirs($skeletonDirs)
+    public function setSkeletonDirs($skeletonDirs): self
     {
         $this->skeletonDirs = [];
 
@@ -98,7 +97,7 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function getSkeletonDirs($withDefault = true)
+    public function getSkeletonDirs(bool $withDefault = true): array
     {
         $skeletonDirs = $this->skeletonDirs ;
 
@@ -109,9 +108,9 @@ abstract class AbstractClassGenerator
         return $skeletonDirs;
     }
 
-    public function addSkeletonDir($skeletonDir)
+    public function addSkeletonDir($skeletonDir): self
     {
-        if (!\is_string($skeletonDir) && !\is_object($skeletonDir) && !\is_callable($skeletonDir, '__toString')) {
+        if (!\is_string($skeletonDir) && !\is_object($skeletonDir) && !\is_callable([$skeletonDir, '__toString'])) {
             throw new \InvalidArgumentException(
                 \sprintf('Skeleton dir must be string or object implementing __toString, "%s" given.', \gettype($skeletonDir))
             );
@@ -135,7 +134,7 @@ abstract class AbstractClassGenerator
      *
      * @return self
      */
-    public function setNumSpaces($numSpaces)
+    public function setNumSpaces(int $numSpaces): self
     {
         $this->spaces = \str_repeat(' ', $numSpaces);
         $this->numSpaces = $numSpaces;
@@ -143,7 +142,7 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function addTrait($trait)
+    public function addTrait(string $trait): self
     {
         $cleanTrait = $this->shortenClassName($trait, false);
         if (!\in_array($cleanTrait, $this->traits)) {
@@ -153,14 +152,14 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function clearTraits()
+    public function clearTraits(): self
     {
         $this->traits = [];
 
         return $this;
     }
 
-    public function addImplement($implement)
+    public function addImplement(string $implement): self
     {
         $cleanImplement = $this->shortenClassName($implement, false);
         if (!\in_array($cleanImplement, $this->implements)) {
@@ -170,14 +169,14 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function clearImplements()
+    public function clearImplements(): self
     {
         $this->implements = [];
 
         return $this;
     }
 
-    public function addUseStatement($useStatement)
+    public function addUseStatement(string $useStatement): self
     {
         $cleanUse = ClassUtils::cleanClasseName($useStatement);
         if (!\in_array($cleanUse, $this->useStatements)) {
@@ -187,14 +186,14 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function clearUseStatements()
+    public function clearUseStatements(): self
     {
         $this->useStatements = [];
 
         return $this;
     }
 
-    public function getSkeletonContent($skeleton, $withDefault = true)
+    public function getSkeletonContent(string $skeleton, bool $withDefault = true)
     {
         $skeletonDirs = $this->getSkeletonDirs($withDefault);
 
@@ -223,7 +222,7 @@ abstract class AbstractClassGenerator
         );
     }
 
-    protected function addInternalUseStatement($use)
+    protected function addInternalUseStatement(string $use): void
     {
         $cleanUse = ClassUtils::cleanClasseName($use);
         if (!\in_array($cleanUse, $this->internalUseStatements)) {
@@ -231,14 +230,14 @@ abstract class AbstractClassGenerator
         }
     }
 
-    protected function clearInternalUseStatements()
+    protected function clearInternalUseStatements(): self
     {
         $this->internalUseStatements = [];
 
         return $this;
     }
 
-    protected function shortenClassName($definition, $isInternal = true)
+    protected function shortenClassName(string $definition, bool $isInternal = true): string
     {
         $shortName = ClassUtils::shortenClassName($definition);
 
@@ -252,7 +251,7 @@ abstract class AbstractClassGenerator
         return $shortName;
     }
 
-    protected function shortenClassFromCode($code)
+    protected function shortenClassFromCode(?string $code): string
     {
         $codeParsed = ClassUtils::shortenClassFromCode(
             $code,
@@ -264,7 +263,7 @@ abstract class AbstractClassGenerator
         return $codeParsed;
     }
 
-    protected function processPlaceHoldersReplacements(array $placeHolders, $content, array $values)
+    protected function processPlaceHoldersReplacements(array $placeHolders, string $content, array $values): string
     {
         $replacements = [];
 
@@ -288,7 +287,7 @@ abstract class AbstractClassGenerator
         return \strtr($content, $replacements);
     }
 
-    protected function processTemplatePlaceHoldersReplacements($template, array $values, array $skip = [])
+    protected function processTemplatePlaceHoldersReplacements(string $template, array $values, array $skip = []): string
     {
         $code = $this->getSkeletonContent($template);
         $placeHolders = $this->getPlaceHolders($code);
@@ -297,11 +296,11 @@ abstract class AbstractClassGenerator
         return $code;
     }
 
-    protected function getPlaceHolders($content)
+    protected function getPlaceHolders(string $content): array
     {
         \preg_match_all('@<([\w]+)>@i', $content, $placeHolders);
 
-        return isset($placeHolders[1]) ? $placeHolders[1] : [];
+        return $placeHolders[1] ?? [];
     }
 
     /**
@@ -310,7 +309,7 @@ abstract class AbstractClassGenerator
      *
      * @return string
      */
-    protected function prefixCodeWithSpaces($code, $num = 1)
+    protected function prefixCodeWithSpaces(string $code, int $num = 1): string
     {
         $lines = \explode("\n", $code);
 
@@ -323,17 +322,17 @@ abstract class AbstractClassGenerator
         return \implode("\n", $lines);
     }
 
-    protected function generateSpaces()
+    protected function generateSpaces(): string
     {
         return $this->spaces;
     }
 
-    protected function generateNamespace()
+    protected function generateNamespace(): ?string
     {
         return null !== $this->classNamespace ? 'namespace '.$this->classNamespace.';' : null;
     }
 
-    protected function generateUseStatement(array $config)
+    protected function generateUseStatement(array $config): string
     {
         $statements = \array_merge($this->internalUseStatements, $this->useStatements);
         \sort($statements);
@@ -343,24 +342,24 @@ abstract class AbstractClassGenerator
         return $useStatements;
     }
 
-    protected function generateClassType()
+    protected function generateClassType(): string
     {
         return 'final ';
     }
 
-    protected function generateImplements()
+    protected function generateImplements(): ?string
     {
         return \count($this->implements) ? ' implements '.\implode(', ', $this->implements) : null;
     }
 
-    protected function generateTraits()
+    protected function generateTraits(): ?string
     {
         $traits = $this->tokenizeUseStatements($this->traits, '<spaces>');
 
         return $traits ? $traits."\n" : $traits;
     }
 
-    protected function tokenizeUseStatements(array $useStatements, $prefix = '')
+    protected function tokenizeUseStatements(array $useStatements, $prefix = ''): ?string
     {
         if (empty($useStatements)) {
             return null;
@@ -380,20 +379,20 @@ abstract class AbstractClassGenerator
      *
      * @param array    $configs raw configs
      * @param string   $outputDirectory
-     * @param int|bool $mode
+     * @param int $mode
      *
      * @return array classes map [[FQCLN => classPath], [FQCLN => classPath], ...]
      */
-    abstract public function generateClasses(array $configs, $outputDirectory, $mode = false);
+    abstract public function generateClasses(array $configs, ?string $outputDirectory, int $mode = self::MODE_WRITE): array;
 
     /**
      * Generates a class file.
      *
-     * @param array $config
-     * @param $outputDirectory
-     * @param bool $mode
+     * @param array  $config
+     * @param string $outputDirectory
+     * @param int    $mode
      *
      * @return array classes map [FQCLN => classPath]
      */
-    abstract public function generateClass(array $config, $outputDirectory, $mode = false);
+    abstract public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array;
 }
