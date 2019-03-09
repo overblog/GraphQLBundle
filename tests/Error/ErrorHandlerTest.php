@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -86,7 +87,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $executionResult->toArray());
+        $this->assertSame(VersionHelper::normalizedPayload($expected), $executionResult->toArray());
     }
 
     public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue(): void
@@ -135,7 +136,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $executionResult->toArray());
+        $this->assertSame(VersionHelper::normalizedPayload($expected), $executionResult->toArray());
     }
 
     public function testDebugEnabled(): void
@@ -181,7 +182,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $executionResult->toArray());
+        $this->assertSame(VersionHelper::normalizedPayload($expected), $executionResult->toArray());
     }
 
     public function testConvertExceptionToUserWarning(): void
@@ -208,7 +209,7 @@ class ErrorHandlerTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $executionResult->toArray());
+        $this->assertSame(VersionHelper::normalizedPayload($expected), $executionResult->toArray());
     }
 
     /**
@@ -242,7 +243,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleErrors($executionResult, true);
 
         if (\is_array($expectedUserError)) {
-            $this->assertSame($expectedUserError, $executionResult->toArray());
+            $this->assertSame(VersionHelper::normalizedPayload($expectedUserError), $executionResult->toArray());
         }
     }
 

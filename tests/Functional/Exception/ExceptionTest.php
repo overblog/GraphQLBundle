@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Exception;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 
 class ExceptionTest extends TestCase
 {
@@ -41,6 +42,6 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQL($query, $expectedData, $expectedErrors);
+        $this->assertGraphQL($query, $expectedData, VersionHelper::normalizedErrors($expectedErrors));
     }
 }

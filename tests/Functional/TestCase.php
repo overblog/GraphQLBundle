@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -123,7 +124,7 @@ abstract class TestCase extends WebTestCase
         $client = self::createClientAuthenticated($username, $testCase, $password);
         $result = self::sendRequest($client, $query, false, $variables);
 
-        static::assertSame($expected, \json_decode($result, true), $result);
+        static::assertSame(VersionHelper::normalizedPayload($expected), \json_decode($result, true), $result);
 
         return $client;
     }
