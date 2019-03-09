@@ -14,8 +14,10 @@ services:
         tags:
             - { name: overblog_graphql.definition_config_processor, priority: 512 }
 
-    Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor:
-        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor
+    Overblog\GraphQLBundle\Definition\ConfigProcessor\FormConfigProcessor:
+        class: Overblog\GraphQLBundle\Definition\ConfigProcessor\FormConfigProcessor
         public: false
+        arguments:
+            - "@Overblog\\GraphQLBundle\\Definition\\Builder\\FormDescriber"
         tags:
-            - { name: overblog_graphql.definition_config_processor }
+            - { name: overblog_graphql.definition_config_processor, priority: 512 }

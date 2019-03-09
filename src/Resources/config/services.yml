@@ -188,4 +188,9 @@ services:
         arguments:
             - []
 
+    Overblog\GraphQLBundle\Definition\Builder\FormDescriber:
+        public: false
+        arguments:
+            - "@Symfony\\Component\\Form\\FormFactoryInterface"
+
     GraphQL\Executor\Promise\PromiseAdapter: '@overblog_graphql.promise_adapter'

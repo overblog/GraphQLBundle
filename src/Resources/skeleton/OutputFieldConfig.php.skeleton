@@ -5,8 +5,9 @@
 <spaces>'description' => <description>,
 <spaces>'deprecationReason' => <deprecationReason>,
 <spaces>'complexity' => <complexity>,
-<spaces># public and access are custom options managed only by the bundle
+<spaces># public, access and form are custom options managed only by the bundle
 <spaces>'public' => <public>,
 <spaces>'access' => <access>,
+<spaces>'form' => <form>,
 <spaces>'useStrictAccess' => <useStrictAccess>,
 ],

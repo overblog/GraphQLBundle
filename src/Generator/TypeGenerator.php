@@ -111,6 +111,16 @@ EOF;
         return  \sprintf('$globalVariable->get(\'typeResolver\')->resolve(%s)', \var_export($alias, true));
     }
 
+    protected function generateForm(array $value): string
+    {
+        //var_dump('form');
+        if (!$this->arrayKeyExistsAndIsNotNull($value, 'form')) {
+            return 'null';
+        }
+
+        return $this->varExport($value['form']);
+    }
+
     protected function generatePublic(array $value): string
     {
         if (!$this->arrayKeyExistsAndIsNotNull($value, 'public')) {
