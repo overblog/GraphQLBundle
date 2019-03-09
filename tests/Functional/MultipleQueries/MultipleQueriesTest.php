@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\MultipleQueries;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 
 class MultipleQueriesTest extends TestCase
 {
@@ -60,7 +61,7 @@ class MultipleQueriesTest extends TestCase
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertSame(VersionHelper::normalizedErrors(self::REQUIRED_FAILS_ERRORS), $result['errors']);
         $this->assertTrue(empty($result['data']));
     }
 
@@ -73,7 +74,7 @@ EOF;
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertSame(self::OPTIONAL_FAILS, $result);
+        $this->assertSame(VersionHelper::normalizedPayload(self::OPTIONAL_FAILS), $result);
     }
 
     public function testMutationRequiredFails()
@@ -85,7 +86,7 @@ mutation {
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
+        $this->assertSame(VersionHelper::normalizedErrors(self::REQUIRED_FAILS_ERRORS), $result['errors']);
         $this->assertTrue(empty($result['data']));
     }
 
@@ -98,6 +99,6 @@ mutation {
 }
 EOF;
         $result = $this->executeGraphQLRequest($query);
-        $this->assertSame(self::OPTIONAL_FAILS, $result);
+        $this->assertSame(VersionHelper::normalizedPayload(self::OPTIONAL_FAILS), $result);
     }
 }
