@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
-use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;

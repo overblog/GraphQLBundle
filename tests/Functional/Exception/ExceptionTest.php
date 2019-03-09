@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Exception;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Overblog\GraphQLBundle\Tests\VersionHelper;
 
 class ExceptionTest extends TestCase
 {
@@ -31,7 +30,7 @@ EOF;
         $expectedErrors = [
             [
                 'message' => 'Invalid argument exception',
-                'category' => 'user',
+                'extensions' => ['category' => 'user'],
                 'locations' => [
                     [
                         'line' => 2,
@@ -42,6 +41,6 @@ EOF;
             ],
         ];
 
-        $this->assertGraphQL($query, $expectedData, VersionHelper::normalizedErrors($expectedErrors));
+        $this->assertGraphQL($query, $expectedData, $expectedErrors);
     }
 }

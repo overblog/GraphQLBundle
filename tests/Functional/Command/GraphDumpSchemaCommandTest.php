@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 

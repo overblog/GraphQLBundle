@@ -92,7 +92,7 @@ EOF;
                     'warnings' => [
                         [
                             'message' => 'Access denied to this field.',
-                            'category' => 'user',
+                            'extensions' => ['category' => 'user'],
                             'locations' => [['line' => 1, 'column' => 45]],
                             'path' => ['user', 'isEnabled'],
                         ],
@@ -118,7 +118,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                         'locations' => [['line' => 1, 'column' => 16]],
                         'path' => ['user', 'name'],
                     ],
@@ -139,7 +139,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 2,
@@ -210,7 +210,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -295,7 +295,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -318,7 +318,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'Access denied to this field.',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                     'locations' => [
                         [
                             'line' => 2,
@@ -349,7 +349,7 @@ EOF;
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 1,
