@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Upload;
 
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadTest extends TestCase
@@ -111,9 +112,12 @@ class UploadTest extends TestCase
 
     public function testParseLiteralIsUnsupported(): void
     {
-        $this->expectException(InvariantViolation::class);
-        $this->expectExceptionMessage('Upload scalar literal unsupported.');
-        $this->uploadRequest(
+        $willThrowRawException = VersionHelper::compareWebonyxGraphQLPHPVersion('0.13.1', '<');
+        if ($willThrowRawException) {
+            $this->expectException(InvariantViolation::class);
+            $this->expectExceptionMessage('Upload scalar literal unsupported.');
+        }
+        $result = $this->uploadRequest(
             [
                 'operations' => [
                     'query' => 'mutation { singleUpload(file: {}) }',
@@ -123,6 +127,27 @@ class UploadTest extends TestCase
             ],
             ['0' => 'a.txt']
         );
+        if (!$willThrowRawException) {
+            $this->assertEquals(
+                [
+                    'errors' => [
+                        [
+                            'message' => 'Field "singleUpload" argument "file" requires type Upload, found {}; GraphQLUpload scalar literal unsupported.',
+                            'extensions' => [
+                                'category' => 'graphql',
+                            ],
+                            'locations' => [
+                                [
+                                    'line' => 1,
+                                    'column' => 31,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                $result
+            );
+        }
     }
 
     private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true): void
