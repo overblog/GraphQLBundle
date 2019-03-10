@@ -29,7 +29,7 @@ class ArgumentsTransformerTest extends TestCase
 
     public function getResolveInfo($types): ResolveInfo
     {
-        $info = new ResolveInfo([]);
+        $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->schema = new Schema(['types' => $types]);
 
         return $info;
