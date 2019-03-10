@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -11,7 +11,12 @@
 
 namespace Overblog\GraphQLGenerator\Tests\Generator;
 
+use GraphQL\Type\Definition\BooleanType;
+use GraphQL\Type\Definition\FloatType;
+use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
 
 class TypeGeneratorTest extends AbstractTypeGeneratorTest
@@ -20,7 +25,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Skeleton dir "fake" not found.
      */
-    public function testWrongSetSkeletonDirs()
+    public function testWrongSetSkeletonDirs(): void
     {
         $this->typeGenerator->setSkeletonDirs(['fake']);
     }
@@ -29,7 +34,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Skeleton dir must be string or object implementing __toString, "array" given.
      */
-    public function testWrongAddSkeletonDir()
+    public function testWrongAddSkeletonDir(): void
     {
         $this->typeGenerator->addSkeletonDir([]);
     }
@@ -38,7 +43,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Skeleton dirs must be array or object implementing \Traversable interface, "object" given.
      */
-    public function testWrongObjectSetSkeletonDir()
+    public function testWrongObjectSetSkeletonDir(): void
     {
         $this->typeGenerator->setSkeletonDirs(new \stdClass());
     }
@@ -48,23 +53,23 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp  /Skeleton "fake" could not be found in .*\/skeleton./
      */
-    public function testWrongGetSkeletonDirs()
+    public function testWrongGetSkeletonDirs(): void
     {
         $this->typeGenerator->getSkeletonContent('fake');
     }
 
-    public function testTypeAlias2String()
+    public function testTypeAlias2String(): void
     {
         $this->generateClasses($this->getConfigs());
 
         /** @var ObjectType $type */
         $type = $this->getType('T');
 
-        $this->assertInstanceOf('GraphQL\Type\Definition\StringType', $type->getField('string')->getType());
-        $this->assertInstanceOf('GraphQL\Type\Definition\IntType', $type->getField('int')->getType());
-        $this->assertInstanceOf('GraphQL\Type\Definition\IDType', $type->getField('id')->getType());
-        $this->assertInstanceOf('GraphQL\Type\Definition\FloatType', $type->getField('float')->getType());
-        $this->assertInstanceOf('GraphQL\Type\Definition\BooleanType', $type->getField('boolean')->getType());
+        $this->assertInstanceOf(StringType::class, $type->getField('string')->getType());
+        $this->assertInstanceOf(IntType::class, $type->getField('int')->getType());
+        $this->assertInstanceOf(IDType::class, $type->getField('id')->getType());
+        $this->assertInstanceOf(FloatType::class, $type->getField('float')->getType());
+        $this->assertInstanceOf(BooleanType::class, $type->getField('boolean')->getType());
 
         $this->assertEquals(Type::nonNull(Type::string()), $type->getField('nonNullString')->getType());
         $this->assertEquals(Type::listOf(Type::string()), $type->getField('listOfString')->getType());
@@ -87,7 +92,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Malformed ListOf wrapper type "[String" expected "]" but got "g".
      */
-    public function testTypeAlias2StringInvalidListOf()
+    public function testTypeAlias2StringInvalidListOf(): void
     {
         $this->generateClasses([
             'T' => [
@@ -101,10 +106,10 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         ]);
     }
 
-    public function testAddTraitAndClearTraits()
+    public function testAddTraitAndClearTraits(): void
     {
-        $trait = __NAMESPACE__.'\\FooTrait';
-        $interface = __NAMESPACE__.'\\FooInterface';
+        $trait = FooTrait::class;
+        $interface = FooInterface::class;
         $this->typeGenerator->addTrait($trait)
             ->addImplement($interface);
         $this->generateClasses(['U' => $this->getConfigs()['T']]);
@@ -127,7 +132,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $this->assertFalse(\method_exists($type, 'bar'));
     }
 
-    public function testCallbackEntryDoesNotTreatObject()
+    public function testCallbackEntryDoesNotTreatObject(): void
     {
         $this->generateClasses([
             'W' => [
@@ -149,7 +154,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $this->assertNull($type->getField('resolveObject')->resolveFn);
         $this->assertNull($type->getField('resolveObject')->description);
         $resolveFn = $type->getField('resolveAnyNotObject')->resolveFn;
-        $this->assertInstanceOf('\Closure', $resolveFn);
+        $this->assertInstanceOf(\Closure::class, $resolveFn);
         $this->assertEquals(['result' => 1], $resolveFn());
     }
 
@@ -157,41 +162,41 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Generator [Overblog\GraphQLGenerator\Generator\TypeGenerator::generateFake] for placeholder "fake" is not callable.
      */
-    public function testProcessInvalidPlaceHoldersReplacements()
+    public function testProcessInvalidPlaceHoldersReplacements(): void
     {
         $this->typeGenerator->setSkeletonDirs(__DIR__.'/../Resources/Skeleton');
 
         $this->generateClasses($this->getConfigs());
     }
 
-    public function testTypeSingletonCantBeClone()
+    public function testTypeSingletonCantBeClone(): void
     {
         $this->generateClasses($this->getConfigs());
 
         /** @var ObjectType $type */
         $type = $this->getType('T');
 
-        $this->expectException('\DomainException');
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('You can not clone a singleton.');
 
         $t = clone $type;
     }
 
-    public function testTypeSingletonCanBeInstantiatedOnlyOnce()
+    public function testTypeSingletonCanBeInstantiatedOnlyOnce(): void
     {
         $this->generateClasses($this->getConfigs());
 
         /** @var ObjectType $type */
         $type = $this->getType('T');
 
-        $this->expectException('\DomainException');
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('You can not create more than one copy of a singleton.');
 
         $class = \get_class($type);
         $t = new $class();
     }
 
-    private function getConfigs()
+    private function getConfigs(): array
     {
         return [
             'T' => [

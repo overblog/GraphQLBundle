@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -25,12 +25,12 @@ abstract class Resolver
     {
     }
 
-    public static function getHumanType()
+    public static function getHumanType(): Type
     {
         return self::$humanType;
     }
 
-    public static function getDroidType()
+    public static function getDroidType(): Type
     {
         return self::$droidType;
     }
@@ -38,7 +38,7 @@ abstract class Resolver
     /**
      * @param Type $humanType
      */
-    public static function setHumanType($humanType)
+    public static function setHumanType($humanType): void
     {
         self::$humanType = $humanType;
     }
@@ -46,12 +46,12 @@ abstract class Resolver
     /**
      * @param Type $droidType
      */
-    public static function setDroidType($droidType)
+    public static function setDroidType($droidType): void
     {
         self::$droidType = $droidType;
     }
 
-    public static function resolveType($obj)
+    public static function resolveType($obj): ?Type
     {
         $humans = StarWarsData::humans();
         $droids = StarWarsData::droids();
@@ -64,30 +64,32 @@ abstract class Resolver
         return null;
     }
 
-    public static function getFriends($droidOrHuman)
+    public static function getFriends($droidOrHuman): array
     {
         return StarWarsData::getFriends($droidOrHuman);
     }
 
-    public static function getHero($root, $args)
+    public static function getHero($root, $args): array
     {
-        return StarWarsData::getHero(isset($args['episode']['name']) ? $args['episode']['name'] : null);
+        return StarWarsData::getHero($args['episode']['name'] ?? null);
     }
 
-    public static function getHuman($root, $args)
+    public static function getHuman($root, $args): ?array
     {
         $humans = StarWarsData::humans();
-        return isset($humans[$args['id']]) ? $humans[$args['id']] : null;
+
+        return $humans[$args['id']] ?? null;
     }
 
-    public static function getDroid($root, $args)
+    public static function getDroid($root, $args): array
     {
         $droids = StarWarsData::droids();
-        return isset($droids[$args['id']]) ? $droids[$args['id']] : null;
+
+        return $droids[$args['id']] ?? null;
     }
 
-    public static function getDateTime($root, $args)
+    public static function getDateTime($root, $args): ?\DateTime
     {
-        return isset($args['dateTime']) ? $args['dateTime'] : new \DateTime('2016-11-28 12:00:00');
+        return $args['dateTime'] ?? new \DateTime('2016-11-28 12:00:00');
     }
 }

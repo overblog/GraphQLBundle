@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -11,38 +11,38 @@
 
 namespace Overblog\GraphQLGenerator\Generator;
 
+use GraphQL\Type\Definition\CustomScalarType;
+use GraphQL\Type\Definition\EnumType;
+use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\InterfaceType;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\UnionType;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
-    const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
+    public const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
 
-    const MODE_DRY_RUN = 1;
-    const MODE_MAPPING_ONLY = 2;
-    const MODE_WRITE = 4;
-    const MODE_OVERRIDE = 8;
+    protected const DEFERRED_PLACEHOLDERS = ['useStatement', 'spaces', 'closureUseStatements'];
 
-    protected static $deferredPlaceHolders = ['useStatement', 'spaces', 'closureUseStatements'];
-
-    protected static $closureTemplate = <<<EOF
+    protected const CLOSURE_TEMPLATE = <<<EOF
 function (%s) <closureUseStatements>{
 <spaces><spaces>return %s;
 <spaces>}
 EOF;
 
-    private static $typeSystems = [
-        'object' => 'GraphQL\\Type\\Definition\\ObjectType',
-        'interface' => 'GraphQL\\Type\\Definition\\InterfaceType',
-        'enum' => 'GraphQL\\Type\\Definition\\EnumType',
-        'union' => 'GraphQL\\Type\\Definition\\UnionType',
-        'input-object' => 'GraphQL\\Type\\Definition\\InputObjectType',
-        'custom-scalar' => 'GraphQL\\Type\\Definition\\CustomScalarType',
+    private const TYPE_SYSTEMS = [
+        'object' => ObjectType::class,
+        'interface' => InterfaceType::class,
+        'enum' => EnumType::class,
+        'union' => UnionType::class,
+        'input-object' => InputObjectType::class,
+        'custom-scalar' => CustomScalarType::class,
     ];
 
-
-    private static $internalTypes = [
+    private const INTERNAL_TYPES = [
         Type::STRING => '\\GraphQL\\Type\\Definition\\Type::string()',
         Type::INT => '\\GraphQL\\Type\\Definition\\Type::int()',
         Type::FLOAT => '\\GraphQL\\Type\\Definition\\Type::float()',
@@ -50,7 +50,7 @@ EOF;
         Type::ID => '\\GraphQL\\Type\\Definition\\Type::id()',
     ];
 
-    private static $wrappedTypes = [
+    private const WRAPPED_TYPES = [
         'NonNull' => '\\GraphQL\\Type\\Definition\\Type::nonNull',
         'ListOf' => '\\GraphQL\\Type\\Definition\\Type::listOf',
     ];
@@ -68,16 +68,17 @@ EOF;
     protected $cacheDirMask;
 
     /**
-     * @param string           $classNamespace The namespace to use for the classes.
-     * @param string[]|string  $skeletonDirs
+     * @param string $classNamespace The namespace to use for the classes.
+     * @param string[]|string $skeletonDirs
+     * @param int $cacheDirMask
      */
-    public function __construct($classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], $cacheDirMask = 0775)
+    public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775)
     {
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
     }
 
-    public function setExpressionLanguage(ExpressionLanguage $expressionLanguage = null)
+    public function setExpressionLanguage(ExpressionLanguage $expressionLanguage = null): self
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->canManageExpressionLanguage = null !== $expressionLanguage;
@@ -85,37 +86,37 @@ EOF;
         return $this;
     }
 
-    public function getExpressionLanguage()
+    public function getExpressionLanguage(): ExpressionLanguage
     {
         return $this->expressionLanguage;
     }
 
-    public function isExpression($str)
+    public function isExpression($str): bool
     {
         return $this->canManageExpressionLanguage && $str instanceof Expression;
     }
 
-    public static function getInternalTypes($name)
+    public static function getInternalTypes(string $name): ?string
     {
-        return isset(self::$internalTypes[$name]) ? self::$internalTypes[$name] : null;
+        return isset(self::INTERNAL_TYPES[$name]) ? self::INTERNAL_TYPES[$name] : null;
     }
 
-    public static function getWrappedType($name)
+    public static function getWrappedType(string $name): ?string
     {
-        return isset(self::$wrappedTypes[$name]) ? self::$wrappedTypes[$name] : null;
+        return isset(self::WRAPPED_TYPES[$name]) ? self::WRAPPED_TYPES[$name] : null;
     }
 
-    protected function generateParentClassName(array $config)
+    protected function generateParentClassName(array $config): string
     {
-        return $this->shortenClassName(self::$typeSystems[$config['type']]);
+        return $this->shortenClassName(self::TYPE_SYSTEMS[$config['type']]);
     }
 
-    protected function generateClassName(array $config)
+    protected function generateClassName(array $config): string
     {
         return $config['config']['name'].'Type';
     }
 
-    protected function generateClassDocBlock(array $config)
+    protected function generateClassDocBlock(array $config): string
     {
         $className = $this->generateClassName($config);
         $namespace = $this->getClassNamespace();
@@ -129,7 +130,7 @@ EOF;
 EOF;
     }
 
-    protected function varExportFromArrayValue(array $values, $key, $default = 'null', array $compilerNames = [])
+    protected function varExportFromArrayValue(array $values, string $key, string $default = 'null', array $compilerNames = []): string
     {
         if (!isset($values[$key])) {
             return $default;
@@ -140,7 +141,7 @@ EOF;
         return $code;
     }
 
-    protected function varExport($var, $default = null, array $compilerNames = [])
+    protected function varExport($var, ?string $default = null, array $compilerNames = []): ?string
     {
         switch (true) {
             case \is_array($var):
@@ -184,29 +185,29 @@ EOF;
         }
     }
 
-    protected function processFromArray(array $values, $templatePrefix)
+    protected function processFromArray(array $values, string $templatePrefix)
     {
         $code = '';
 
         foreach ($values as $name => $value) {
-            $value['name'] = isset($value['name']) ? $value['name'] : $name;
+            $value['name'] = $value['name'] ?? $name;
             $code .= "\n".$this->processTemplatePlaceHoldersReplacements($templatePrefix.'Config', $value);
         }
 
         return '['.$this->prefixCodeWithSpaces($code, 2)."\n<spaces>]";
     }
 
-    protected function callableCallbackFromArrayValue(array $value, $key, $argDefinitions = null, $default = 'null', array $compilerNames = null)
+    protected function callableCallbackFromArrayValue(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array $compilerNames = null)
     {
         if (!$this->arrayKeyExistsAndIsNotNull($value, $key)) {
             return $default;
         }
 
-        $code = static::$closureTemplate;
+        $code = static::CLOSURE_TEMPLATE;
 
         if (\is_callable($value[$key])) {
             $func = $value[$key];
-            $code = \sprintf($code, null, 'call_user_func_array(%s, func_get_args())');
+            $code = \sprintf($code, null, '\call_user_func_array(%s, \func_get_args())');
 
             if (\is_array($func) && isset($func[0]) && \is_string($func[0])) {
                 $code = \sprintf($code, $this->varExport($func));
@@ -219,8 +220,11 @@ EOF;
             }
         } elseif ($this->isExpression($value[$key])) {
             if (null === $compilerNames) {
-                \preg_match_all('@\$([a-z_][a-z0-9_]+)@i', $argDefinitions, $matches);
-                $compilerNames = isset($matches[1]) ? $matches[1] : [];
+                $compilerNames = [];
+                if (null !== $argDefinitions) {
+                    \preg_match_all('@\$([a-z_][a-z0-9_]+)@i', $argDefinitions, $matches);
+                    $compilerNames = $matches[1] ?? [];
+                }
             }
             $code = \sprintf(
                 $code,
@@ -247,12 +251,12 @@ EOF;
         return $code;
     }
 
-    protected function generateClosureUseStatements(array $config)
+    protected function generateClosureUseStatements(array $config): ?string
     {
         return null;
     }
 
-    protected function typeAlias2String($alias)
+    protected function typeAlias2String($alias): string
     {
         // Non-Null
         if ('!' === $alias[\strlen($alias) - 1]) {
@@ -277,15 +281,15 @@ EOF;
         return $this->resolveTypeCode($alias);
     }
 
-    protected function resolveTypeCode($alias)
+    protected function resolveTypeCode(string $alias): string
     {
         return $alias.'Type::getInstance()';
     }
 
-    protected function resolveTypesCode(array $values, $key)
+    protected function resolveTypesCode(array $values, string $key): string
     {
         if (isset($values[$key])) {
-            $types = \sprintf(static::$closureTemplate, '', $this->types2String($values[$key]));
+            $types = \sprintf(static::CLOSURE_TEMPLATE, '', $this->types2String($values[$key]));
         } else {
             $types = '[]';
         }
@@ -293,14 +297,14 @@ EOF;
         return  $types;
     }
 
-    protected function types2String(array $types)
+    protected function types2String(array $types): string
     {
         $types = \array_map(__CLASS__.'::typeAlias2String', $types);
 
         return '['.\implode(', ', $types).']';
     }
 
-    protected function arrayKeyExistsAndIsNotNull(array $value, $key)
+    protected function arrayKeyExistsAndIsNotNull(array $value, $key): bool
     {
         return \array_key_exists($key, $value) && null !== $value[$key];
     }
@@ -323,16 +327,16 @@ EOF;
      *
      * @param array    $configs
      * @param string   $outputDirectory
-     * @param int|bool $mode
+     * @param int $mode
      *
      * @return array
      */
-    public function generateClasses(array $configs, $outputDirectory, $mode = false)
+    public function generateClasses(array $configs, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
         $classesMap = [];
 
         foreach ($configs as $name => $config) {
-            $config['config']['name'] = isset($config['config']['name']) ? $config['config']['name'] : $name;
+            $config['config']['name'] = $config['config']['name'] ?? $name;
             $classMap = $this->generateClass($config, $outputDirectory, $mode);
 
             $classesMap = \array_merge($classesMap, $classMap);
@@ -344,25 +348,19 @@ EOF;
     /**
      * @param array    $config
      * @param string   $outputDirectory
-     * @param int|bool $mode true consider as MODE_WRITE|MODE_OVERRIDE and false as MODE_WRITE
+     * @param int      $mode
      *
      * @return array
      */
-    public function generateClass(array $config, $outputDirectory, $mode = false)
+    public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
-        if (true === $mode) {
-            $mode = self::MODE_WRITE | self::MODE_OVERRIDE;
-        } elseif (false === $mode) {
-            $mode = self::MODE_WRITE;
-        }
-
         $className = $this->generateClassName($config);
         $path = $outputDirectory.'/'.$className.'.php';
 
         if (!($mode & self::MODE_MAPPING_ONLY)) {
             $this->clearInternalUseStatements();
-            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::$deferredPlaceHolders);
-            $code = $this->processPlaceHoldersReplacements(static::$deferredPlaceHolders, $code, $config)."\n";
+            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::DEFERRED_PLACEHOLDERS);
+            $code = $this->processPlaceHoldersReplacements(static::DEFERRED_PLACEHOLDERS, $code, $config)."\n";
 
             if ($mode & self::MODE_WRITE) {
                 $dir = \dirname($path);

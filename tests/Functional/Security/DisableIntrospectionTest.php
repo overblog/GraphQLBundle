@@ -25,7 +25,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'GraphQL introspection is not allowed, but the query contained __schema or __type',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                     'locations' => [
                         [
                             'line' => 2,

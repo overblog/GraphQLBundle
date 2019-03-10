@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -23,11 +23,9 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
      */
     protected $schema;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-
-        $this->classLoader->setPsr4('GraphQL\\Tests\\', __DIR__.'/../vendor/webonyx/graphql-php/tests');
 
         $this->generateClasses();
 
@@ -38,13 +36,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         $this->schema->assertValid();
     }
 
-    /**
-     * Helper function to test a query and the expected response.
-     * @param $query
-     * @param $expected
-     * @param null $variables
-     */
-    protected function assertValidQuery($query, $expected, $variables = null)
+    protected function assertValidQuery(string $query, array $expected, array $variables = null): void
     {
         $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)
             ->toArray(Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE);
@@ -52,7 +44,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         $this->assertEquals($expected, $actual, \json_encode($actual));
     }
 
-    protected function sortSchemaEntry(array &$entries, $entryKey, $sortBy)
+    protected function sortSchemaEntry(array &$entries, string $entryKey, string $sortBy): void
     {
         if (isset($entries['data']['__schema'][$entryKey])) {
             $data = &$entries['data']['__schema'][$entryKey];

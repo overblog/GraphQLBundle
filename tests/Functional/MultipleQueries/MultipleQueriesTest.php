@@ -8,10 +8,10 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class MultipleQueriesTest extends TestCase
 {
-    public const REQUIRED_FAILS_ERRORS = [
+    private const REQUIRED_FAILS_ERRORS = [
         [
             'message' => 'Internal server Error',
-            'category' => 'internal',
+            'extensions' => ['category' => 'internal'],
             'locations' => [
                 [
                     'line' => 2,
@@ -24,11 +24,11 @@ class MultipleQueriesTest extends TestCase
         ],
     ];
 
-    public const OPTIONAL_FAILS = [
+    private const OPTIONAL_FAILS = [
         'errors' => [
             [
                 'message' => 'Internal server Error',
-                'category' => 'internal',
+                'extensions' => ['category' => 'internal'],
                 'locations' => [
                     [
                         'line' => 2,
