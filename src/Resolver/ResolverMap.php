@@ -18,7 +18,7 @@ abstract class ResolverMap implements ResolverMapInterface
     /**
      * Resolvers map.
      *
-     * @return callable[]
+     * @return array<string, callable[]>
      */
     abstract protected function map();
 
