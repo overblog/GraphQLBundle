@@ -13,15 +13,13 @@ use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ArgumentsTransformerTest extends TestCase
 {
-    /**
-     * @return ArgumentsTransformer
-     */
     private function getBuilder(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
     {
-        $validator = $this->createMock(\Symfony\Component\Validator\Validator\RecursiveValidator::class);
+        $validator = $this->createMock(RecursiveValidator::class);
         $validator->method('validate')->willReturn($validateReturn ?: []);
 
         return new ArgumentsTransformer($validator, $classesMap);
