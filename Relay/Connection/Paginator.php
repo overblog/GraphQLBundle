@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
 
@@ -91,10 +92,14 @@ class Paginator
      * @param array        $callableArgs
      *
      * @return Connection
+     * @throws UserError
      */
     public function auto($args, $total, $callableArgs = [])
     {
         $args = $this->protectArgs($args);
+        if (empty($args['first']) && empty($args['last'])) {
+            throw new UserError('The arg first or last must be provided to paginate values.');
+        }
 
         if ($args['last']) {
             $connection = $this->backward($args, $total, $callableArgs);
