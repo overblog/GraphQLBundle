@@ -30,7 +30,7 @@ EOF;
         $expectedErrors = [
             [
                 'message' => 'Invalid argument exception',
-                'category' => 'user',
+                'extensions' => ['category' => 'user'],
                 'locations' => [
                     [
                         'line' => 2,

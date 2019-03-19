@@ -1,102 +1,99 @@
 {
-  "name": "overblog/graphql-bundle",
-  "type": "symfony-bundle",
-  "license": "MIT",
-  "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
-  "keywords": [
-    "GraphQL",
-    "Relay"
-  ],
-  "authors": [
-    {
-      "name": "Overblog",
-      "homepage": "http://www.over-blog.com"
-    }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Overblog\\GraphQLBundle\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks",
-      "Overblog\\GraphQLBundle\\Tests\\": "tests"
+    "name": "overblog/graphql-bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
+    "keywords": ["GraphQL", "Relay"],
+    "authors": [
+        {
+            "name": "Overblog",
+            "homepage": "http://www.over-blog.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Overblog\\GraphQLBundle\\": "src/",
+            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
+        }
     },
-    "files": [
-      "vendor/overblog/graphql-php-generator/tests/DateTimeType.php",
-      "vendor/overblog/graphql-php-generator/tests/Resolver.php"
-    ]
-  },
-  "config": {
-    "bin-dir": "bin",
-    "sort-packages": true
-  },
-  "require": {
-    "php": ">=7.1",
-    "overblog/graphql-php-generator": "^0.7.4",
-    "psr/log": "^1.0",
-    "symfony/config": "^3.4 || ^4.0",
-    "symfony/dependency-injection": "^3.4 || ^4.0",
-    "symfony/event-dispatcher": "^3.4 || ^4.0",
-    "symfony/expression-language": "^3.4 || ^4.0",
-    "symfony/framework-bundle": "^3.4 || ^4.0",
-    "symfony/options-resolver": "^3.4 || ^4.0",
-    "symfony/property-access": "^3.4 || ^4.0",
-    "webonyx/graphql-php": "^0.12.0"
-  },
-  "suggest": {
-    "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
-    "overblog/graphiql-bundle": "If you want to use graphiQL.",
-    "react/promise": "To use ReactPHP promise adapter"
-  },
-  "require-dev": {
-    "doctrine/orm": "^2.5",
-    "phpstan/phpstan": "^0.10.3",
-    "phpstan/phpstan-phpunit": "^0.10.0",
-    "phpunit/phpunit": "^5.7.26 || ^6.0 || ^7.2",
-    "react/promise": "^2.5",
-    "sensio/framework-extra-bundle": "^3.0",
-    "symfony/asset": "^3.4 || ^4.0",
-    "symfony/browser-kit": "^3.4 || ^4.0",
-    "symfony/console": "^3.4 || ^4.0",
-    "symfony/css-selector": "^3.4 || ^4.0",
-    "symfony/phpunit-bridge": "^3.4 || ^4.0",
-    "symfony/process": "^3.4 || ^4.0",
-    "symfony/security-bundle": "^3.4 || ^4.0",
-    "symfony/templating": "^3.4 || ^4.0",
-    "symfony/validator": "^3.4 || ^4.0",
-    "symfony/web-profiler-bundle": "^3.4 || ^4.0",
-    "symfony/yaml": "^3.4 || ^4.0"
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "0.12-dev"
+    "autoload-dev": {
+        "psr-4": {
+            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
+            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+        }
+    },
+    "config": {
+        "bin-dir": "bin",
+        "sort-packages": true
+    },
+    "require": {
+        "php": ">=7.1",
+        "psr/log": "^1.0",
+        "symfony/config": "^3.4 || ^4.0",
+        "symfony/dependency-injection": "^3.4 || ^4.0",
+        "symfony/event-dispatcher": "^3.4 || ^4.0",
+        "symfony/expression-language": "^3.4 || ^4.0",
+        "symfony/framework-bundle": "^3.4 || ^4.0",
+        "symfony/options-resolver": "^3.4 || ^4.0",
+        "symfony/property-access": "^3.4 || ^4.0",
+        "webonyx/graphql-php": "^0.13.0"
+},
+    "replace": {
+        "overblog/graphql-php-generator": "self.version"
+    },
+    "suggest": {
+        "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
+        "overblog/graphiql-bundle": "If you want to use graphiQL.",
+        "react/promise": "To use ReactPHP promise adapter"
+    },
+    "require-dev": {
+        "doctrine/orm": "^2.5",
+        "phpstan/phpstan": "^0.10.3",
+        "phpstan/phpstan-phpunit": "^0.10.0",
+        "phpunit/phpunit": "^5.7.26 || ^6.0 || ^7.2",
+        "react/promise": "^2.5",
+        "sensio/framework-extra-bundle": "^3.0",
+        "symfony/asset": "^3.4 || ^4.0",
+        "symfony/browser-kit": "^3.4 || ^4.0",
+        "symfony/console": "^3.4 || ^4.0",
+        "symfony/css-selector": "^3.4 || ^4.0",
+        "symfony/phpunit-bridge": "^3.4 || ^4.0",
+        "symfony/process": "^3.4 || ^4.0",
+        "symfony/security-bundle": "^3.4 || ^4.0",
+        "symfony/validator": "^3.4 || ^4.0",
+        "symfony/yaml": "^3.4 || ^4.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.12-dev"
+        }
+    },
+    "scripts": {
+        "test": "bin/phpunit --color=always -v --debug",
+        "static-analysis": "phpstan analyse --ansi",
+        "bench": [
+            "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
+            "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
+        ],
+        "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
+        "fix-cs": [
+            "@install-cs",
+            "@php php-cs-fixer.phar self-update",
+            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --diff -v --allow-risky=yes --ansi"
+        ],
+        "check-cs": [
+            "@install-cs",
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi",
+            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
+        ],
+        "code-quality": [
+            "rm composer.lock",
+            "@composer install --ansi",
+            "@static-analysis",
+            "@bench",
+            "@check-cs"
+        ]
     }
-  },
-  "scripts": {
-    "test": "bin/phpunit --color=always -v --debug",
-    "static-analysis": "phpstan analyse --ansi",
-    "bench": [
-      "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
-      "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
-    ],
-    "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
-    "fix-cs": [
-      "@install-cs",
-      "@php php-cs-fixer.phar self-update",
-      "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
-    ],
-    "check-cs": [
-      "@install-cs",
-      "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi"
-    ],
-    "code-quality": [
-      "rm composer.lock",
-      "@composer install --ansi",
-      "@static-analysis",
-      "@bench",
-      "@check-cs"
-    ]
-  }
 }

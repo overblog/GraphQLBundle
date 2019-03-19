@@ -116,6 +116,11 @@ class Executor
         $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
     }
 
+    public function enableIntrospectionQuery(): void
+    {
+        DocumentValidator::addRule(new DisableIntrospection(DisableIntrospection::DISABLED));
+    }
+
     public function disableIntrospectionQuery(): void
     {
         DocumentValidator::addRule(new DisableIntrospection());

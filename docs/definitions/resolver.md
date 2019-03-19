@@ -107,7 +107,7 @@ You may also use the invoker to define a type-wide resolver with the `resolveFie
 MyType:
     type: object
     config:
-        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"])'
+        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"]])'
         fields:
             hello:
                 type: String

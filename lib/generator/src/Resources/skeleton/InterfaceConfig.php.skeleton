@@ -1,0 +1,6 @@
+[
+<spaces>'name' => <name>,
+<spaces>'description' => <description>,
+<spaces>'fields' => <outputFields>,
+<spaces>'resolveType' => <resolveType>,
+]

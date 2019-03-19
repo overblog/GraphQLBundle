@@ -49,38 +49,38 @@ class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
                 [
                     'message' => ErrorHandler::DEFAULT_ERROR_MESSAGE,
-                    'category' => 'internal',
+                    'extensions' => ['category' => 'internal'],
                 ],
                 [
                     'message' => 'Error with wrapped user error',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'Error with wrapped base user error',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 1',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 2',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 3',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
             ],
             'extensions' => [
                 'warnings' => [
                     [
                         'message' => 'Error with wrapped user warning',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                     ],
                 ],
             ],
@@ -130,7 +130,7 @@ class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error with wrapped user error',
-                    'category' => 'user',
+                    'extensions' => ['category' => 'user'],
                 ],
             ],
         ];
@@ -176,7 +176,7 @@ class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -202,7 +202,7 @@ class ErrorHandlerTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Error with invalid argument exception',
-                        'category' => 'user',
+                        'extensions' => ['category' => 'user'],
                     ],
                 ],
             ],
@@ -261,7 +261,7 @@ class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'category' => 'user',
+                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -287,7 +287,7 @@ class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'category' => 'user',
+                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -302,7 +302,7 @@ class ErrorHandlerTest extends TestCase
                         'warnings' => [
                             [
                                 'message' => 'Error with invalid argument exception',
-                                'category' => 'user',
+                                'extensions' => ['category' => 'user'],
                             ],
                         ],
                     ],
@@ -318,7 +318,7 @@ class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'category' => 'user',
+                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -334,7 +334,7 @@ class ErrorHandlerTest extends TestCase
                         'warnings' => [
                             [
                                 'message' => 'Error with invalid argument exception',
-                                'category' => 'user',
+                                'extensions' => ['category' => 'user'],
                             ],
                         ],
                     ],
@@ -350,7 +350,7 @@ class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'category' => 'user',
+                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],

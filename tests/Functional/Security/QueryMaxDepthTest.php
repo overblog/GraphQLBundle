@@ -49,7 +49,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -63,7 +63,7 @@ EOF;
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'category' => 'graphql',
+                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
