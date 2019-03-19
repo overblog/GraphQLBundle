@@ -7,6 +7,8 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -122,6 +124,7 @@ class AnnotationParser implements PreParserInterface
                     case $classAnnotation instanceof GQL\Type:
                         $gqlType = self::GQL_TYPE;
                         $gqlName = $classAnnotation->name ?: $shortClassName;
+
                         if (!$resolveClassMap) {
                             $isRootQuery = ($rootQueryType && $gqlName === $rootQueryType);
                             $isRootMutation = ($rootMutationType && $gqlName === $rootMutationType);
@@ -130,6 +133,43 @@ class AnnotationParser implements PreParserInterface
                             $gqlConfiguration = self::getGraphqlType($classAnnotation, $classAnnotations, $properties, $methods, $namespace, $currentValue);
                             $providerFields = self::getGraphqlFieldsFromProviders($namespace, $className, $isRootMutation ? 'Mutation' : 'Query', $gqlName, ($isRootQuery || $isRootMutation));
                             $gqlConfiguration['config']['fields'] = $providerFields + $gqlConfiguration['config']['fields'];
+
+                            if ($classAnnotation instanceof GQL\Relay\Edge) {
+                                if (!$reflexionEntity->implementsInterface(EdgeInterface::class)) {
+                                    throw new InvalidArgumentException(\sprintf('The annotation @Edge on class "%s" can only be used on class implementing the EdgeInterface.', $className));
+                                }
+                                if (!isset($gqlConfiguration['config']['builders'])) {
+                                    $gqlConfiguration['config']['builders'] = [];
+                                }
+                                \array_unshift($gqlConfiguration['config']['builders'], ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]]);
+                            }
+
+                            if ($classAnnotation instanceof GQL\Relay\Connection) {
+                                if (!$reflexionEntity->implementsInterface(ConnectionInterface::class)) {
+                                    throw new InvalidArgumentException(\sprintf('The annotation @Connection on class "%s" can only be used on class implementing the ConnectionInterface.', $className));
+                                }
+
+                                if (!($classAnnotation->edge xor $classAnnotation->node)) {
+                                    throw new InvalidArgumentException(\sprintf('The annotation @Connection on class "%s" is invalid. You must define the "edge" OR the "node" attribute.', $className));
+                                }
+
+                                $edgeType = $classAnnotation->edge;
+                                if (!$edgeType) {
+                                    $edgeType = \sprintf('%sEdge', $gqlName);
+                                    $gqlTypes[$edgeType] = [
+                                        'type' => 'object',
+                                        'config' => [
+                                            'builders' => [
+                                                ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classAnnotation->node]],
+                                            ],
+                                        ],
+                                    ];
+                                }
+                                if (!isset($gqlConfiguration['config']['builders'])) {
+                                    $gqlConfiguration['config']['builders'] = [];
+                                }
+                                \array_unshift($gqlConfiguration['config']['builders'], ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => $edgeType]]);
+                            }
                         }
                         break;
                     case $classAnnotation instanceof GQL\Input:

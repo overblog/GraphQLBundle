@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Relay\Builder\RelayConnectionFieldsBuilder;
+use Overblog\GraphQLBundle\Relay\Builder\RelayEdgeFieldsBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\BackwardConnectionArgsDefinition;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionArgsDefinition;
 use Overblog\GraphQLBundle\Relay\Connection\ForwardConnectionArgsDefinition;
@@ -39,7 +41,10 @@ final class BuilderProcessor implements ProcessorInterface
             'Relay::Node' => NodeFieldDefinition::class,
             'Relay::PluralIdentifyingRoot' => PluralIdentifyingRootFieldDefinition::class,
         ],
-        self::BUILDER_FIELDS_TYPE => [],
+        self::BUILDER_FIELDS_TYPE => [
+            'relay-connection' => RelayConnectionFieldsBuilder::class,
+            'relay-edge' => RelayEdgeFieldsBuilder::class,
+        ],
     ];
 
     /**
