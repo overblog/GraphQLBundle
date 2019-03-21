@@ -50,7 +50,7 @@ final class ErrorHandlerListener
         $result = $result->toArray();
 
         if (isset($result['errors'])) {
-            $this->logger->{$this->errorLevel}(__METHOD__.' : '.\json_encode($result['errors']));
+            $this->logger->{$this->errorLevel}('GraphQL request resulted with an error.', $result['errors']);
         }
     }
 }
