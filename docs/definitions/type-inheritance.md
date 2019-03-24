@@ -127,6 +127,15 @@ CharacterWizard:
             magicPoints: {type: Int!}
 ```
 
+Make sure to register `CharacterWarrior` and `CharacterWizard` as types in your `overblog_graphql` configuration, otherwise it cannot be found:
+```yaml
+overblog_graphql:
+   definitions:
+      schema:
+         query: Query
+         types: [CharacterWarrior, CharacterWizard]
+```
+
 **Notes:**
  * Inheritance works only with the generated types
  * Type can be inherited even from any type (from different files)
