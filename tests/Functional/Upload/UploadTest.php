@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Upload;
 
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Overblog\GraphQLBundle\Tests\VersionHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadTest extends TestCase
@@ -112,42 +111,45 @@ class UploadTest extends TestCase
 
     public function testParseLiteralIsUnsupported(): void
     {
-        $willThrowRawException = VersionHelper::compareWebonyxGraphQLPHPVersion('0.13.1', '<');
-        if ($willThrowRawException) {
+        try {
+            $result = $this->uploadRequest(
+                [
+                    'operations' => [
+                        'query' => 'mutation { singleUpload(file: {}) }',
+                        'variables' => ['file' => null],
+                    ],
+                    'map' => ['0' => ['variables.file']],
+                ],
+                ['0' => 'a.txt']
+            );
+        } catch (\Exception $e) {
+            // webonyx/graphql-php (<0.13.1) does not generate error result
             $this->expectException(InvariantViolation::class);
             $this->expectExceptionMessage('Upload scalar literal unsupported.');
+
+            throw $e;
         }
-        $result = $this->uploadRequest(
+
+        // webonyx/graphql-php (>=0.13.1) catches exceptions and generates error result
+        $this->assertEquals(
             [
-                'operations' => [
-                    'query' => 'mutation { singleUpload(file: {}) }',
-                    'variables' => ['file' => null],
-                ],
-                'map' => ['0' => ['variables.file']],
-            ],
-            ['0' => 'a.txt']
-        );
-        if (!$willThrowRawException) {
-            $this->assertEquals(
-                [
-                    'errors' => [
-                        [
-                            'message' => 'Field "singleUpload" argument "file" requires type Upload, found {}; GraphQLUpload scalar literal unsupported.',
-                            'extensions' => [
-                                'category' => 'graphql',
-                            ],
-                            'locations' => [
-                                [
-                                    'line' => 1,
-                                    'column' => 31,
-                                ],
+                'errors' => [
+                    [
+                        'message' => 'Field "singleUpload" argument "file" requires type Upload, found {}; GraphQLUpload scalar literal unsupported.',
+                        'extensions' => [
+                            'category' => 'graphql',
+                        ],
+                        'locations' => [
+                            [
+                                'line' => 1,
+                                'column' => 31,
                             ],
                         ],
                     ],
                 ],
-                $result
-            );
-        }
+            ],
+            $result
+        );
     }
 
     private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true): void
