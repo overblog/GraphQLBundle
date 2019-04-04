@@ -175,7 +175,7 @@ final class BuilderProcessor implements ProcessorInterface
 
         foreach ($builders as $builder) {
             $builderName = $builder['builder'];
-            $builderConfig = $builder['builderConfig'] ?? null;
+            $builderConfig = $builder['builderConfig'] ?? [];
 
             $mapping = self::getFieldBuilderMapping($builderName, self::BUILDER_FIELDS_TYPE, $builderConfig, $reservedTypesMap);
 
