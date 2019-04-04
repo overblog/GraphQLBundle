@@ -9,10 +9,13 @@ use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
+use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
@@ -94,6 +97,31 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
     }
 
     /**
+     * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
+     * @runInSeparateProcess
+     *
+     * @param array  $builders
+     * @param array  $configs
+     * @param string $exceptionClass
+     * @param string $exceptionMessage
+     */
+    public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
+    {
+        $ext = new OverblogGraphQLExtension();
+        $ext->load(
+            [
+                ['definitions' => ['builders' => $builders]],
+            ],
+            $this->container
+        );
+
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($exceptionMessage);
+
+        $this->extension->load([$configs], $this->container);
+    }
+
+    /**
      * @runInSeparateProcess
      */
     public function testCustomExceptions(): void
@@ -139,9 +167,11 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                         'builders' => [
                             'field' => [
                                 'RawId' => RawIdField::class,
+                                'Mutation' => MutationField::class,
                             ],
                             'fields' => [
                                 'Timestamps' => TimestampFields::class,
+                                'Boxes' => BoxFields::class,
                             ],
                             'args' => [
                                 [
@@ -185,6 +215,40 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                 'categories2' => [
                                     'type' => '[String!]!',
                                     'argsBuilder' => ['builder' => 'Pager', 'config' => ['defaultLimit' => 50]],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'Boxes' => [
+                        'type' => 'object',
+                        'config' => [
+                            'builders' => [
+                                [
+                                    'builder' => 'Boxes',
+                                    'builderConfig' => [
+                                        'foo' => 'Foo',
+                                        'bar' => 'Bar',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'Mutation' => [
+                        'type' => 'object',
+                        'config' => [
+                            'fields' => [
+                                'foo' => [
+                                    'builder' => 'Mutation',
+                                    'builderConfig' => [
+                                        'name' => 'Foo',
+                                        'resolver' => 'Mutation.foo',
+                                        'inputFields' => [
+                                            'bar' => ['type' => 'String!'],
+                                        ],
+                                        'payloadFields' => [
+                                            'fooString' => ['type' => 'String!'],
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -272,6 +336,123 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                         'interfaces' => [],
                     ],
                 ],
+                'Boxes' => [
+                    'type' => 'object',
+                    'class_name' => 'BoxesType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'foo' => ['type' => 'FooBox!', 'args' => []],
+                            'bar' => ['type' => 'BarBox!', 'args' => []],
+                        ],
+                        'name' => 'Boxes',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
+                'Mutation' => [
+                    'type' => 'object',
+                    'class_name' => 'MutationType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'foo' => [
+                                'type' => 'FooPayload!',
+                                'resolve' => '@=mutation("Mutation.foo", [args["input"]])',
+                                'args' => [
+                                    'input' => ['type' => 'FooInput!'],
+                                ],
+                            ],
+                        ],
+                        'name' => 'Mutation',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
+                'FooBox' => [
+                    'type' => 'object',
+                    'class_name' => 'FooBoxType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
+                            'item' => ['type' => 'Foo', 'args' => []],
+                        ],
+                        'name' => 'FooBox',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
+                'BarBox' => [
+                    'type' => 'object',
+                    'class_name' => 'BarBoxType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
+                            'item' => ['type' => 'Bar', 'args' => []],
+                        ],
+                        'name' => 'BarBox',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
+                'FooInput' => [
+                    'type' => 'input-object',
+                    'class_name' => 'FooInputType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'bar' => ['type' => 'String!'],
+                        ],
+                        'name' => 'FooInput',
+                    ],
+                ],
+                'FooPayload' => [
+                    'type' => 'union',
+                    'class_name' => 'FooPayloadType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'types' => ['FooSuccessPayload', 'FooFailurePayload'],
+                        'resolveType' => '@=resolver("PayloadTypeResolver", [value, "FooSuccessPayload", "FooFailurePayload"])',
+                        'name' => 'FooPayload',
+                    ],
+                ],
+                'FooSuccessPayload' => [
+                    'type' => 'object',
+                    'class_name' => 'FooSuccessPayloadType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            'fooString' => ['type' => 'String!', 'args' => []],
+                        ],
+                        'name' => 'FooSuccessPayload',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
+                'FooFailurePayload' => [
+                    'type' => 'object',
+                    'class_name' => 'FooFailurePayloadType',
+                    InheritanceProcessor::INHERITS_KEY => [],
+                    'decorator' => false,
+                    'config' => [
+                        'fields' => [
+                            '_error' => ['type' => 'String', 'args' => []],
+                            'bar' => ['type' => 'String', 'args' => []],
+                        ],
+                        'name' => 'FooFailurePayload',
+                        'builders' => [],
+                        'interfaces' => [],
+                    ],
+                ],
             ],
             $this->container->getParameter('overblog_graphql_types.config')
         );
@@ -305,5 +486,111 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         ];
 
         return $config;
+    }
+
+    public function fieldBuilderTypeOverrideNotAllowedProvider()
+    {
+        $expectedMessage = 'Type "%s" emitted by builder "%s" already exists. Type was provided by "%s". Builder may only emit new types. Overriding is not allowed.';
+
+        $simpleObjectType = [
+            'type' => 'object',
+            'config' => [
+                'fields' => [
+                    'value' => ['type' => 'String'],
+                ],
+            ],
+        ];
+
+        $mutationFieldBuilder = [
+            'builder' => 'Mutation',
+            'builderConfig' => [
+                'name' => 'Foo',
+                'resolver' => 'Mutation.foo',
+                'inputFields' => [
+                    'bar' => ['type' => 'String!'],
+                ],
+                'payloadFields' => [
+                    'fooString' => ['type' => 'String!'],
+                ],
+            ],
+        ];
+
+        $boxFieldsBuilders = [
+            [
+                'builder' => 'Boxes',
+                'builderConfig' => [
+                    'foo' => 'Foo',
+                    'bar' => 'Bar',
+                ],
+            ],
+        ];
+
+        return [
+            [
+                ['field' => ['Mutation' => MutationField::class]],
+                [
+                    'Mutation' => [
+                        'type' => 'object',
+                        'config' => [
+                            'fields' => [
+                                'foo' => $mutationFieldBuilder,
+                            ],
+                        ],
+                    ],
+                    'FooInput' => $simpleObjectType,
+                ],
+                InvalidConfigurationException::class,
+                \sprintf($expectedMessage, 'FooInput', MutationField::class, 'configs'),
+            ],
+            [
+                ['field' => ['Mutation' => MutationField::class]],
+                [
+                    'Mutation' => [
+                        'type' => 'object',
+                        'config' => [
+                            'fields' => [
+                                'foo' => $mutationFieldBuilder,
+                                'bar' => $mutationFieldBuilder,
+                            ],
+                        ],
+                    ],
+                ],
+                InvalidConfigurationException::class,
+                \sprintf($expectedMessage, 'FooInput', MutationField::class, MutationField::class),
+            ],
+            [
+                ['fields' => ['Boxes' => BoxFields::class]],
+                [
+                    'Boxes' => [
+                        'type' => 'object',
+                        'config' => [
+                            'builders' => $boxFieldsBuilders,
+                        ],
+                    ],
+                    'FooBox' => $simpleObjectType,
+                ],
+                InvalidConfigurationException::class,
+                \sprintf($expectedMessage, 'FooBox', BoxFields::class, 'configs'),
+            ],
+            [
+                ['fields' => ['Boxes' => BoxFields::class]],
+                [
+                    'Boxes' => [
+                        'type' => 'object',
+                        'config' => [
+                            'builders' => $boxFieldsBuilders,
+                        ],
+                    ],
+                    'OtherBoxes' => [
+                        'type' => 'object',
+                        'config' => [
+                            'builders' => $boxFieldsBuilders,
+                        ],
+                    ],
+                ],
+                InvalidConfigurationException::class,
+                \sprintf($expectedMessage, 'FooBox', BoxFields::class, BoxFields::class),
+            ],
+        ];
     }
 }

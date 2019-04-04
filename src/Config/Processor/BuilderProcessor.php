@@ -52,19 +52,42 @@ final class BuilderProcessor implements ProcessorInterface
      */
     public static function process(array $configs): array
     {
+        $addedTypes = [];
+        // map: "type name" => "provided by" for better DX, while debugging accidental type overrides in builders
+        $reservedTypesMap = \array_combine(
+            \array_keys($configs),
+            \array_fill(0, \count($configs), 'configs')
+        );
+
         foreach ($configs as &$config) {
             if (isset($config['config']['builders']) && \is_array($config['config']['builders'])) {
-                $buildersFields = self::processFieldsBuilders($config['config']['builders']);
-                $config['config']['fields'] = isset($config['config']['fields']) ? \array_merge($buildersFields, $config['config']['fields']) : $buildersFields;
+                ['fields' => $buildersFields, 'types' => $buildersTypes] = self::processFieldsBuilders(
+                    $config['config']['builders'],
+                    $reservedTypesMap
+                );
+
+                $config['config']['fields'] = isset($config['config']['fields'])
+                    ? \array_merge($buildersFields, $config['config']['fields'])
+                    : $buildersFields;
+
+                $addedTypes = \array_merge($addedTypes, $buildersTypes);
+
                 unset($config['config']['builders']);
             }
 
             if (isset($config['config']['fields']) && \is_array($config['config']['fields'])) {
-                $config['config']['fields'] = self::processFieldBuilders($config['config']['fields']);
+                ['fields' => $buildersFields, 'types' => $buildersTypes] = self::processFieldBuilders(
+                    $config['config']['fields'],
+                    $reservedTypesMap
+                );
+
+                $config['config']['fields'] = $buildersFields;
+
+                $addedTypes = \array_merge($addedTypes, $buildersTypes);
             }
         }
 
-        return $configs;
+        return \array_merge($configs, $addedTypes);
     }
 
     public static function addBuilderClass($name, $type, $builderClass): void
@@ -105,8 +128,10 @@ final class BuilderProcessor implements ProcessorInterface
         }
     }
 
-    private static function processFieldBuilders(array $fields)
+    private static function processFieldBuilders(array $fields, array &$reservedTypesMap)
     {
+        $newTypes = [];
+
         foreach ($fields as &$field) {
             $fieldBuilderName = null;
 
@@ -131,30 +156,92 @@ final class BuilderProcessor implements ProcessorInterface
             }
 
             if ($fieldBuilderName) {
-                $buildField = self::getBuilder($fieldBuilderName, self::BUILDER_FIELD_TYPE)->toMappingDefinition($builderConfig);
-                $field = \is_array($field) ? \array_merge($buildField, $field) : $buildField;
+                $mapping = self::getFieldBuilderMapping($fieldBuilderName, self::BUILDER_FIELD_TYPE, $builderConfig, $reservedTypesMap);
+
+                $fieldMapping = $mapping['field'];
+                $field = \is_array($field) ? \array_merge($fieldMapping, $field) : $fieldMapping;
+                $newTypes = \array_merge($newTypes, $mapping['types']);
             }
             if (isset($field['argsBuilder'])) {
                 $field = self::processFieldArgumentsBuilders($field);
             }
         }
 
-        return $fields;
+        return [
+            'fields' => $fields,
+            'types' => $newTypes,
+        ];
     }
 
-    private static function processFieldsBuilders(array $builders)
+    private static function processFieldsBuilders(array $builders, array &$reservedTypesMap)
     {
         $fields = [];
+        $newTypes = [];
+
         foreach ($builders as $builder) {
             $builderName = $builder['builder'];
-            $builderConfig = null;
-            if (isset($builder['builderConfig'])) {
-                $builderConfig = $builder['builderConfig'];
-            }
-            $fields = \array_merge($fields, self::getBuilder($builderName, self::BUILDER_FIELDS_TYPE)->toMappingDefinition($builderConfig));
+            $builderConfig = $builder['builderConfig'] ?? [];
+
+            $mapping = self::getFieldBuilderMapping($builderName, self::BUILDER_FIELDS_TYPE, $builderConfig, $reservedTypesMap);
+
+            $fields = \array_merge($fields, $mapping['fields']);
+            $newTypes = \array_merge($newTypes, $mapping['types']);
         }
 
-        return $fields;
+        return [
+            'fields' => $fields,
+            'types' => $newTypes,
+        ];
+    }
+
+    /**
+     * @param string $builderName
+     * @param string $builderType
+     * @param array  $builderConfig
+     * @param array  $reservedTypesMap
+     *
+     * @return array
+     *
+     * @throws InvalidConfigurationException
+     */
+    private static function getFieldBuilderMapping(string $builderName, string $builderType, array $builderConfig, array &$reservedTypesMap)
+    {
+        $builder = self::getBuilder($builderName, $builderType);
+        $mapping = $builder->toMappingDefinition($builderConfig);
+
+        $fieldMappingKey = null;
+
+        if (self::BUILDER_FIELD_TYPE === $builderType) {
+            $fieldMappingKey = 'field';
+        } elseif (self::BUILDER_FIELDS_TYPE === $builderType) {
+            $fieldMappingKey = 'fields';
+        }
+
+        $fieldMapping = $mapping[$fieldMappingKey] ?? $mapping;
+        $typesMapping = [];
+
+        if (isset($mapping[$fieldMappingKey], $mapping['types'])) {
+            $builderClass = \get_class($builder);
+
+            foreach ($mapping['types'] as $typeName => $typeConfig) {
+                if (isset($reservedTypesMap[$typeName])) {
+                    throw new InvalidConfigurationException(\sprintf(
+                        'Type "%s" emitted by builder "%s" already exists. Type was provided by "%s". Builder may only emit new types. Overriding is not allowed.',
+                        $typeName,
+                        $builderClass,
+                        $reservedTypesMap[$typeName]
+                    ));
+                }
+
+                $reservedTypesMap[$typeName] = $builderClass;
+                $typesMapping[$typeName] = $typeConfig;
+            }
+        }
+
+        return [
+            $fieldMappingKey => $fieldMapping,
+            'types' => $typesMapping,
+        ];
     }
 
     /**
