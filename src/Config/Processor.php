@@ -19,8 +19,8 @@ class Processor implements ProcessorInterface
     public const PROCESSORS = [
         self::BEFORE_NORMALIZATION => [
             RelayProcessor::class,
-            NamedConfigProcessor::class,
             BuilderProcessor::class,
+            NamedConfigProcessor::class,
             InheritanceProcessor::class,
         ],
         self::NORMALIZATION => [ExpressionProcessor::class],
