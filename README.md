@@ -56,6 +56,7 @@ Documentation
     - [Mutation](docs/definitions/relay/mutation.md)
   - [Builders](docs/definitions/builders/index.md)
     - [Field Builder](docs/definitions/builders/field.md)
+    - [Fields Builder](docs/definitions/builders/fields.md)
     - [Args Builder](docs/definitions/builders/args.md)
   - [Expression language](docs/definitions/expression-language.md)
   - [Debug](docs/definitions/debug/index.md)
