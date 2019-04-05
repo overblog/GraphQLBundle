@@ -1,0 +1,10 @@
+/*
+!/lib/
+!/src/
+!/tests/
+!/benchmarks/
+!/composer.json
+!/phpunit.xml.*
+!/phpstan.neon.*
+!/.php_cs.*
+!/phpbench.json

@@ -18,6 +18,12 @@ You can run the tests by calling:
 composer test
 ```
 
+Or with docker:
+
+```bash
+docker build . -t graphql-test && docker image prune -f >/dev/null && docker run --rm graphql-test test
+```
+
 Code quality
 ---------------------------
 
@@ -25,6 +31,12 @@ Checking code standard, benchmark, and more.
 
 ```bash
 composer code-quality
+```
+
+Or with docker:
+
+```bash
+docker build . -t graphql-test && docker image prune -f >/dev/null && docker run --rm graphql-test code-quality
 ```
 
 Coding Standard
