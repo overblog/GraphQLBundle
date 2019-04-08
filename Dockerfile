@@ -27,7 +27,7 @@ RUN set -eu; \
         php7-dom \
     ;
 
-RUN set -eu; \
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
     EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"; \
     ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"; \
