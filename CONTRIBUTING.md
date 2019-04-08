@@ -21,7 +21,10 @@ composer test
 Or with docker:
 
 ```bash
-docker build . -t graphql-test && docker image prune -f >/dev/null && docker run --rm graphql-test test
+composer docker -- test
+composer docker -- test -- --filter=SomeTest
+# optional: remove image when you do not need it anymore
+composer docker-clean
 ```
 
 Code quality
@@ -36,7 +39,9 @@ composer code-quality
 Or with docker:
 
 ```bash
-docker build . -t graphql-test && docker image prune -f >/dev/null && docker run --rm graphql-test code-quality
+composer docker -- code-quality
+# optional: remove image when you do not need it anymore
+composer docker-clean
 ```
 
 Coding Standard
