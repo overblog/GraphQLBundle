@@ -18,6 +18,15 @@ You can run the tests by calling:
 composer test
 ```
 
+Or with docker:
+
+```bash
+composer docker -- test
+composer docker -- test -- --filter=SomeTest
+# optional: remove image when you do not need it anymore
+composer docker-clean
+```
+
 Code quality
 ---------------------------
 
@@ -25,6 +34,14 @@ Checking code standard, benchmark, and more.
 
 ```bash
 composer code-quality
+```
+
+Or with docker:
+
+```bash
+composer docker -- code-quality
+# optional: remove image when you do not need it anymore
+composer docker-clean
 ```
 
 Coding Standard

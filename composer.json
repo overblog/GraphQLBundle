@@ -92,6 +92,8 @@
             "@static-analysis",
             "@bench",
             "@check-cs"
-        ]
+        ],
+        "docker-clean": "docker image rm $(docker image ls -qf reference=graphql-test)",
+        "docker": "docker build . -t graphql-test && docker image prune -f >/dev/null && docker run --rm graphql-test"
     }
 }
