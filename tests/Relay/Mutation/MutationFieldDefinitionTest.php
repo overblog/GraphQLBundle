@@ -20,9 +20,37 @@ class MutationFieldDefinitionTest extends TestCase
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Mutation "mutateAndGetPayload" config is required.
+     *
+     * @dataProvider undefinedMutateAndGetPayloadProvider
      */
-    public function testUndefinedMutateAndGetPayloadConfig(): void
+    public function testUndefinedMutateAndGetPayloadConfig(array $config): void
     {
-        $this->definition->toMappingDefinition([]);
+        $this->definition->toMappingDefinition($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Cannot parse "mutateAndGetPayload" configuration string.
+     */
+    public function testInvalidMutateAndGetPayloadString(): void
+    {
+        $this->definition->toMappingDefinition(['mutateAndGetPayload' => 'Some invalid string']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid format for "mutateAndGetPayload" configuration.
+     */
+    public function testInvalidMutateAndGetPayloadFormat(): void
+    {
+        $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
+    }
+
+    public function undefinedMutateAndGetPayloadProvider(): array
+    {
+        return [
+            [[]],
+            [['mutateAndGetPayload' => null]],
+        ];
     }
 }
