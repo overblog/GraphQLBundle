@@ -14,13 +14,11 @@ final class MutationFieldDefinition implements MappingInterface
     public function toMappingDefinition(array $config): array
     {
         $mutateAndGetPayload = $this->cleanMutateAndGetPayload($config);
-        $payloadType = isset($config['payloadType']) && \is_string($config['payloadType']) ? $config['payloadType'] : null;
-        $inputType = isset($config['inputType']) && \is_string($config['inputType']) ? $config['inputType'].'!' : null;
 
         return [
-            'type' => $payloadType,
+            'type' => $this->extractPayloadType($config),
             'args' => [
-                'input' => ['type' => $inputType],
+                'input' => ['type' => $this->extractInputType($config)],
             ],
             'resolve' => "@=resolver('relay_mutation_field', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
         ];
@@ -60,5 +58,15 @@ final class MutationFieldDefinition implements MappingInterface
         if (!\is_array($mutateAndGetPayload)) {
             throw new InvalidArgumentException(\sprintf('Invalid format for "%s" configuration.', self::KEY_MUTATE_GET_PAYLOAD));
         }
+    }
+
+    private function extractPayloadType(array $config): ?string
+    {
+        return isset($config['payloadType']) && \is_string($config['payloadType']) ? $config['payloadType'] : null;
+    }
+
+    private function extractInputType(array $config): ?string
+    {
+        return isset($config['inputType']) && \is_string($config['inputType']) ? $config['inputType'].'!' : null;
     }
 }
