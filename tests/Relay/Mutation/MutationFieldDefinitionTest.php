@@ -18,6 +18,17 @@ class MutationFieldDefinitionTest extends TestCase
     }
 
     /**
+     * @dataProvider validConfigurationProvider
+     */
+    public function testToMappingDefinition(array $config, array $expectedMapping): void
+    {
+        self::assertEquals(
+            $expectedMapping,
+            $this->definition->toMappingDefinition($config)
+        );
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Mutation "mutateAndGetPayload" config is required.
      *
@@ -44,6 +55,38 @@ class MutationFieldDefinitionTest extends TestCase
     public function testInvalidMutateAndGetPayloadFormat(): void
     {
         $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
+    }
+
+    public function validConfigurationProvider(): array
+    {
+        return [
+            'types not string return null' => [[
+                'payloadType' => 123,
+                'inputType' => [],
+                'mutateAndGetPayload' => '@=foobar',
+            ], [
+                'type' => null,
+                'args' => [
+                    'input' => [
+                        'type' => null,
+                    ],
+                ],
+                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+            ]],
+            'types set as string return expected type string' => [[
+                'payloadType' => 'foo',
+                'inputType' => 'bar',
+                'mutateAndGetPayload' => '@=foobar',
+            ], [
+                'type' => 'foo',
+                'args' => [
+                    'input' => [
+                        'type' => 'bar!',
+                    ],
+                ],
+                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+            ]],
+        ];
     }
 
     public function undefinedMutateAndGetPayloadProvider(): array
