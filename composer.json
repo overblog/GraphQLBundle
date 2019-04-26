@@ -29,6 +29,7 @@
     },
     "require": {
         "php": ">=7.1",
+        "ext-json": "*",
         "psr/log": "^1.0",
         "symfony/config": "^3.4 || ^4.0",
         "symfony/dependency-injection": "^3.4 || ^4.0",
@@ -38,7 +39,7 @@
         "symfony/options-resolver": "^3.4 || ^4.0",
         "symfony/property-access": "^3.4 || ^4.0",
         "webonyx/graphql-php": "^0.13.0"
-},
+    },
     "replace": {
         "overblog/graphql-php-generator": "self.version"
     },

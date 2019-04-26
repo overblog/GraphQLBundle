@@ -18,11 +18,82 @@ class MutationFieldDefinitionTest extends TestCase
     }
 
     /**
+     * @dataProvider validConfigurationProvider
+     */
+    public function testToMappingDefinition(array $config, array $expectedMapping): void
+    {
+        self::assertEquals(
+            $expectedMapping,
+            $this->definition->toMappingDefinition($config)
+        );
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Mutation "mutateAndGetPayload" config is required.
+     *
+     * @dataProvider undefinedMutateAndGetPayloadProvider
      */
-    public function testUndefinedMutateAndGetPayloadConfig(): void
+    public function testUndefinedMutateAndGetPayloadConfig(array $config): void
     {
-        $this->definition->toMappingDefinition([]);
+        $this->definition->toMappingDefinition($config);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Cannot parse "mutateAndGetPayload" configuration string.
+     */
+    public function testInvalidMutateAndGetPayloadString(): void
+    {
+        $this->definition->toMappingDefinition(['mutateAndGetPayload' => 'Some invalid string']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid format for "mutateAndGetPayload" configuration.
+     */
+    public function testInvalidMutateAndGetPayloadFormat(): void
+    {
+        $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
+    }
+
+    public function validConfigurationProvider(): array
+    {
+        return [
+            'types not string return null' => [[
+                'payloadType' => 123,
+                'inputType' => [],
+                'mutateAndGetPayload' => '@=foobar',
+            ], [
+                'type' => null,
+                'args' => [
+                    'input' => [
+                        'type' => null,
+                    ],
+                ],
+                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+            ]],
+            'types set as string return expected type string' => [[
+                'payloadType' => 'foo',
+                'inputType' => 'bar',
+                'mutateAndGetPayload' => '@=foobar',
+            ], [
+                'type' => 'foo',
+                'args' => [
+                    'input' => [
+                        'type' => 'bar!',
+                    ],
+                ],
+                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+            ]],
+        ];
+    }
+
+    public function undefinedMutateAndGetPayloadProvider(): array
+    {
+        return [
+            [[]],
+            [['mutateAndGetPayload' => null]],
+        ];
     }
 }
