@@ -1,5 +1,6 @@
-Interface
-=========
+# Interface
+
+## With YAML
 
 ```yaml
 # src/MyBundle/Resources/config/graphql/Character.types.yml
@@ -33,6 +34,47 @@ Character:
         resolveType: "@=resolver('character_type', [value])"
 ```
 
+## With Annotations
+
+```php
+<?php
+
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
+ * @GQL\Description("A character in the Star Wars Trilogy")
+ */
+abstract class Character
+{
+    /**
+     * @GQL\Field(type="String!")
+     * @GQL\Description("The id of the character.")
+     */
+    public $id;
+
+    /**
+     * @GQL\Field(type="String")
+     * @GQL\Description("The name of the character.")
+     */
+    public $name;
+
+    /**
+     * @GQL\Field(type="[Character]")
+     * @GQL\Description("The friends of the character.")
+     */
+    public $friends;
+
+    /**
+     * @GQL\Field(type="[Episode]")
+     * @GQL\Description("Which movies they appear in.")
+     */
+    public $appearsIn;
+}
+```
+
 ```yaml
 # src/MyBundle/Resources/config/services.yml
 services:
@@ -49,6 +91,7 @@ services:
 ```
 
 ```php
+<?php
 // src/MyBundle/GraphQL/Resolver
 namespace MyBundle\GraphQL\Resolver;
 
@@ -63,17 +106,17 @@ class CharacterResolver
      * @var TypeResolver
      */
     private $typeResolver;
-    
+
     public function __construct(TypeResolver $typeResolver)
     {
         $this->typeResolver = $typeResolver;
     }
-    
+
     public function resolveType($data)
     {
         $humanType = $this->typeResolver->resolve('Human');
         $droidType = $this->typeResolver->resolve('Droid');
-        
+
         $humans = StarWarsData::humans();
         $droids = StarWarsData::droids();
         if (isset($humans[$data['id']])) {
@@ -84,23 +127,23 @@ class CharacterResolver
         }
         return null;
     }
-    
+
     public function resolveFriends($character)
     {
         return StarWarsData::getFriends($character);
     }
-    
+
     public function resolveHero($args)
     {
         return StarWarsData::getHero(isset($args['episode']) ? $args['episode'] : null);
     }
-    
+
     public function resolveHuman($args)
     {
         $humans = StarWarsData::humans();
         return isset($humans[$args['id']]) ? $humans[$args['id']] : null;
     }
-    
+
     public function resolveDroid($args)
     {
         $droids = StarWarsData::droids();

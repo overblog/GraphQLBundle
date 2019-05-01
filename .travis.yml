@@ -9,6 +9,7 @@ git:
 branches:
     only:
         - master
+        - annotations
         - /^\d+\.\d+$/
 
 cache:

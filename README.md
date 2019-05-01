@@ -65,6 +65,7 @@ Documentation
 - [Data fetching](docs/data-fetching/index.md)
   - [Query batching](docs/data-fetching/batching.md)
   - [Promise](docs/data-fetching/promise.md)
+- [Annotations](docs/annotations/index.md)
 - [Security](docs/security/index.md)
   - [Handle CORS](docs/security/handle-cors.md)
   - [Object access control](docs/security/object-access-control.md)

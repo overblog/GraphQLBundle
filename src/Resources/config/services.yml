@@ -46,9 +46,16 @@ services:
         class: Overblog\GraphQLBundle\Resolver\TypeResolver
         public: true
         calls:
-            - ['setDispatcher', ['@event_dispatcher']]
+            - ["setDispatcher", ["@event_dispatcher"]]
         tags:
             - { name: overblog_graphql.global_variable, alias: typeResolver }
+
+    overblog_graphql.arguments_transformer:
+        class: Overblog\GraphQLBundle\Transformer\ArgumentsTransformer
+        public: true
+        arguments:
+            - "@?validator"
+            - "%overblog_graphql_types.classes_map%"
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         alias: overblog_graphql.type_resolver
@@ -84,7 +91,7 @@ services:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage
         public: false
         arguments:
-            - '@?overblog_graphql.cache_expression_language_parser'
+            - "@?overblog_graphql.cache_expression_language_parser"
 
     overblog_graphql.cache_compiler:
         class: Overblog\GraphQLBundle\Generator\TypeGenerator
@@ -99,9 +106,9 @@ services:
             - "%kernel.cache_dir%"
             - "%overblog_graphql.cache_dir_permissions%"
         calls:
-            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
-            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\LazyConfig']]
-            - ['addUseStatement', ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
+            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
+            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\LazyConfig']]
+            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
             - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
 
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
@@ -140,7 +147,7 @@ services:
 
     Overblog\GraphQLBundle\Controller\GraphController:
         public: true
-        alias: 'overblog_graphql.controller.graphql'
+        alias: "overblog_graphql.controller.graphql"
 
     overblog_graphql.command.dump_schema:
         class: Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand
@@ -149,7 +156,7 @@ services:
             - "%kernel.root_dir%"
             - "@overblog_graphql.request_executor"
         tags:
-            - { name: console.command, command: graphql:dump-schema, alias: 'graph:dump-schema' }
+            - { name: console.command, command: graphql:dump-schema, alias: "graph:dump-schema" }
 
     overblog_graphql.command.debug:
         class: Overblog\GraphQLBundle\Command\DebugCommand
@@ -159,7 +166,7 @@ services:
             - "@overblog_graphql.mutation_resolver"
             - "@overblog_graphql.resolver_resolver"
         tags:
-            - { name: console.command, command: graphql:debug, alias: 'debug:graphql' }
+            - { name: console.command, command: graphql:debug, alias: "debug:graphql" }
 
     overblog_graphql.command.compile:
         class: Overblog\GraphQLBundle\Command\CompileCommand
@@ -173,7 +180,7 @@ services:
         class: Overblog\GraphQLBundle\Command\ValidateCommand
         public: true
         arguments:
-            - '@overblog_graphql.request_executor'
+            - "@overblog_graphql.request_executor"
         tags:
             - { name: console.command, command: graphql:validate }
 
@@ -188,4 +195,11 @@ services:
         arguments:
             - []
 
-    GraphQL\Executor\Promise\PromiseAdapter: '@overblog_graphql.promise_adapter'
+    overblog_graphql.validation_errors.listener:
+        class: Overblog\GraphQLBundle\EventListener\ValidationErrorsListener
+        tags:
+            - name: kernel.event_listener
+              event: !php/const Overblog\GraphQLBundle\Event\Events::ERROR_FORMATTING
+              method: onErrorFormatting
+
+    GraphQL\Executor\Promise\PromiseAdapter: "@overblog_graphql.promise_adapter"

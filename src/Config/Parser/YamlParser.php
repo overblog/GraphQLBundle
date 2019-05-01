@@ -18,7 +18,7 @@ class YamlParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public static function parse(\SplFileInfo $file, ContainerBuilder $container): array
+    public static function parse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         if (null === self::$yamlParser) {
             self::$yamlParser = new Parser();

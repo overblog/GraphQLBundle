@@ -185,14 +185,12 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                         $this->buildExceptionMap($config['errors_handler']['exceptions']),
                         $config['errors_handler']['map_exceptions_to_parent'],
                     ]
-                )
-            ;
+                );
 
             $errorHandlerListenerDefinition = $container->setDefinition(ErrorHandlerListener::class, new Definition(ErrorHandlerListener::class));
             $errorHandlerListenerDefinition->setPublic(true)
                 ->setArguments([new Reference($id), $config['errors_handler']['rethrow_internal_exceptions'], $config['errors_handler']['debug']])
-                ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor'])
-            ;
+                ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
 
             if ($config['errors_handler']['log']) {
                 $loggerServiceId = $config['errors_handler']['logger_service'];
@@ -200,8 +198,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 $errorHandlerListenerDefinition = $container->setDefinition(ErrorLoggerListener::class, new Definition(ErrorLoggerListener::class));
                 $errorHandlerListenerDefinition->setPublic(true)
                     ->setArguments([new Reference($loggerServiceId, $invalidBehavior)])
-                    ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting'])
-                ;
+                    ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting']);
             }
         }
     }

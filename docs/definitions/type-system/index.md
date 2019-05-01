@@ -28,7 +28,7 @@ Types can be define 3 different ways:
                 # auto_discover: false # to disable bundles and root dir auto discover
                 types:
                     -
-                        type: yaml # or xml or graphql null
+                        type: yaml # or xml or graphql or annotation null
                         dir: "%kernel.root_dir%/.../mapping" # sub directories are also searched
                         # suffix: .types # use to change default file suffix
                     -

@@ -1,5 +1,6 @@
-Fields public Control
-=====================
+# Fields public Control
+
+## With YAML
 
 You can use `config.fields.*.public` to control if a field needs to be removed from the results.
 If `config.fields.*.public` value is true or is not set, the field will be visible.
@@ -17,7 +18,35 @@ AnObject:
             privateData:
                 type: "String"
                 public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
+```
 
+## With Annotations
+
+```php
+<?php
+
+namespace App\Entity\GraphQLType;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * Class FormErrorType
+ *
+ * @GQL\GraphQLType(type="object")
+ */
+class AnObject
+{
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     */
+    public $id;
+
+    /**
+     * @GQL\GraphQLColumn(type="string")
+     * @GQL\GraphQLPublicControl(method="service('security.authorization_checker').isGranted('ROLE_ADMIN')")
+     */
+    public $privateData;
+}
 ```
 
 You can also use `config.fieldsDefaultPublic` to handle the setting globally on an object:

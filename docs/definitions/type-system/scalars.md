@@ -1,16 +1,16 @@
-Scalars
-=======
+# Scalars
 
 Here all supported built‐in Scalars:
 
-* **Int**
-* **Float**
-* **String**
-* **Boolean**
-* **ID**
+-   **Int**
+-   **Float**
+-   **String**
+-   **Boolean**
+-   **ID**
 
-Custom Scalar
--------------
+## Custom Scalar
+
+### With YAML
 
 Here a simple example of how to add a custom Scalar:
 
@@ -41,7 +41,7 @@ class DateTimeType
     {
         return $value->format('Y-m-d H:i:s');
     }
- 
+
     /**
      * @param mixed $value
      *
@@ -51,7 +51,7 @@ class DateTimeType
     {
         return new \DateTimeImmutable($value);
     }
- 
+
     /**
      * @param Node $valueNode
      *
@@ -71,4 +71,55 @@ MyEmail:
     type: custom-scalar
     config:
         scalarType: '@=newObject("App\\Type\\EmailType")'
+```
+
+### With annotation
+
+You can create your custom-scalar type using the GraphQLType annotation with only one class.
+For example:
+
+```php
+<?php
+
+namespace AppBundle;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * Class DatetimeType
+ *
+ * @GQL\Scalar(name="DateTime")
+ */
+class DatetimeType
+{
+    /**
+     * @param \DateTime $value
+     *
+     * @return string
+     */
+    public static function serialize(\DateTime $value)
+    {
+        return $value->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public static function parseValue($value)
+    {
+        return new \DateTime($value);
+    }
+
+    /**
+     * @param Node $valueNode
+     *
+     * @return string
+     */
+    public static function parseLiteral($valueNode)
+    {
+        return new \DateTime($valueNode->value);
+    }
+}
 ```

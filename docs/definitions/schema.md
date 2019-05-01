@@ -1,5 +1,5 @@
 Schema
-=======
+======
 
 Default files location
 -------
@@ -63,6 +63,7 @@ Query:
                 resolve: "@=resolver('character_droid', [args])"
 ```
 
+ 
 ```yaml
 overblog_graphql:
     definitions:
@@ -96,18 +97,18 @@ overblog_graphql:
 
 **foo** schema endpoint can be access:
 
-type | Path
------| -----
-simple request | `/graphql/foo`
-batch request | `/graphql/foo/batch`
-GraphiQL* | `/graphiql/foo`
+| type           | Path                 |
+| -------------- | -------------------- |
+| simple request | `/graphql/foo`       |
+| batch request  | `/graphql/foo/batch` |
+| GraphiQL*      | `/graphiql/foo`      |
 
 **bar** schema endpoint can be access:
 
-type | Path
------| -----
-simple request | `/graphql/bar`
-batch request | `/graphql/bar/batch`
-GraphiQL* | `/graphiql/bar`
+| type           | Path                 |
+| -------------- | -------------------- |
+| simple request | `/graphql/bar`       |
+| batch request  | `/graphql/bar/batch` |
+| GraphiQL*      | `/graphiql/bar`      |
 
 \* `/graphiql` depends on [OverblogGraphiQLBundle](https://github.com/overblog/GraphiQLBundle)

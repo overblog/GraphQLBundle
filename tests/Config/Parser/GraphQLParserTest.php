@@ -6,20 +6,10 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class GraphQLParserTest extends TestCase
 {
-    /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject */
-    private $containerBuilder;
-
-    public function setUp(): void
-    {
-        $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->setMethods(['addResource'])->getMock();
-    }
-
     public function testParse(): void
     {
         $fileName = __DIR__.'/fixtures/graphql/schema.graphql';
@@ -60,25 +50,5 @@ class GraphQLParserTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Config entry must be override with ResolverMap to be used.');
         CustomScalarNode::mustOverrideConfig();
-    }
-
-    private function assertContainerAddFileToResources($fileName): void
-    {
-        $this->containerBuilder->expects($this->once())
-            ->method('addResource')
-            ->with($fileName);
-    }
-
-    private static function cleanConfig($config)
-    {
-        foreach ($config as $key => &$value) {
-            if (\is_array($value)) {
-                $value = self::cleanConfig($value);
-            }
-        }
-
-        return \array_filter($config, function ($item) {
-            return !\is_array($item) || !empty($item);
-        });
     }
 }

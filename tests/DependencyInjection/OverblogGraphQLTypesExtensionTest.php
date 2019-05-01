@@ -68,6 +68,19 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $this->extension->containerPrependExtensionConfig($this->getMappingConfig('xml'), $this->container);
     }
 
+    public function testPreparseOnPrepend(): void
+    {
+        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('annotation'), $this->container);
+        $expected = [0 => [
+            'Type' => [
+                'type' => 'object',
+                'config' => ['fields' => []],
+            ],
+        ]];
+
+        $this->assertEquals($this->container->getExtensionConfig('overblog_graphql_types'), $expected);
+    }
+
     /**
      * @param $internalConfigKey
      * @dataProvider internalConfigKeys
@@ -469,6 +482,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                     ],
                 ],
             ],
+            'doctrine' => ['types_mapping' => []],
         ];
 
         return $config;
