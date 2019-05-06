@@ -76,7 +76,7 @@ class ArgumentsTransformer
      *
      * @return mixed
      */
-    private function populateObject(Type $type, $data, $multiple = false, ResolveInfo $info)
+    private function populateObject(Type $type, $data, bool $multiple, ResolveInfo $info)
     {
         if (!$data) {
             return $data;
