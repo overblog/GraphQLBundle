@@ -21,8 +21,6 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class AnnotationParser implements PreParserInterface
 {
-    public const CLASSES_MAP_CONTAINER_PARAMETER = 'overblog_graphql_types.classes_map';
-
     private static $annotationReader = null;
     private static $classesMap = [];
     private static $providers = [];
@@ -50,7 +48,7 @@ class AnnotationParser implements PreParserInterface
      */
     public static function preParse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): void
     {
-        $container->setParameter(self::CLASSES_MAP_CONTAINER_PARAMETER, self::processFile($file, $container, $configs, true));
+        self::processFile($file, $container, $configs, true);
     }
 
     /**

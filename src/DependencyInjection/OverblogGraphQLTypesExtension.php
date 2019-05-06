@@ -68,12 +68,16 @@ class OverblogGraphQLTypesExtension extends Extension
         $typesMappings = $this->mappingConfig($configs, $container);
         // reset treated files
         $this->treatedFiles = [];
-        $typesMappings = \call_user_func_array('array_merge', $typesMappings);
+        $typesMappings = \array_merge(...$typesMappings);
         $typeConfigs = [];
+
         // treats mappings
         // Pre-parse all files
+        $typesNeedPreParsing = $this->typesNeedPreParsing();
         foreach ($typesMappings as $params) {
-            $this->preParseTypeConfigFiles($params['type'], $params['files'], $container, $configs);
+            if ($typesNeedPreParsing[$params['type']]) {
+                $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $configs, true);
+            }
         }
 
         // Parse all files and get related config
@@ -83,51 +87,49 @@ class OverblogGraphQLTypesExtension extends Extension
 
         $this->checkTypesDuplication($typeConfigs);
         // flatten config is a requirement to support inheritance
-        $flattenTypeConfig = \call_user_func_array('array_merge', $typeConfigs);
+        $flattenTypeConfig = \array_merge(...$typeConfigs);
 
         $container->prependExtensionConfig($this->getAlias(), $flattenTypeConfig);
     }
 
-    /**
-     * @param string           $type
-     * @param SplFileInfo[]    $files
-     * @param ContainerBuilder $container
-     * @param array            $config
-     */
-    private function preParseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs): void
+    private function typesNeedPreParsing(): array
     {
-        if (\is_a(self::PARSERS[$type], PreParserInterface::class, true)) {
-            foreach ($files as $file) {
-                $fileRealPath = $file->getRealPath();
-                if (isset($this->preTreatedFiles[$fileRealPath])) {
-                    continue;
-                }
-
-                \call_user_func(self::PARSERS[$type].'::preParse', $file, $container, $configs);
-                $this->preTreatedFiles[$file->getRealPath()] = true;
-            }
+        $needPreParsing = [];
+        foreach (self::PARSERS as $type => $className) {
+            $needPreParsing[$type] = \is_a($className, PreParserInterface::class, true);
         }
+
+        return $needPreParsing;
     }
 
     /**
      * @param $type
      * @param SplFileInfo[]    $files
      * @param ContainerBuilder $container
-     * @param array            $config
+     * @param array            $configs
+     * @param bool             $preParse
      *
      * @return array
      */
-    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs)
+    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs, bool $preParse = false)
     {
+        if ($preParse) {
+            $method = 'preParse';
+            $treatedFiles = &$this->preTreatedFiles;
+        } else {
+            $method = 'parse';
+            $treatedFiles = &$this->treatedFiles;
+        }
+
         $config = [];
         foreach ($files as $file) {
             $fileRealPath = $file->getRealPath();
-            if (isset($this->treatedFiles[$fileRealPath])) {
+            if (isset($treatedFiles[$fileRealPath])) {
                 continue;
             }
 
-            $config[] = \call_user_func(self::PARSERS[$type].'::parse', $file, $container, $configs);
-            $this->treatedFiles[$file->getRealPath()] = true;
+            $config[] = \call_user_func([self::PARSERS[$type], $method], $file, $container, $configs);
+            $treatedFiles[$file->getRealPath()] = true;
         }
 
         return $config;
@@ -135,7 +137,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
     private function checkTypesDuplication(array $typeConfigs): void
     {
-        $types = \call_user_func_array('array_merge', \array_map('array_keys', $typeConfigs));
+        $types = \array_merge(...\array_map('array_keys', $typeConfigs));
         $duplications = \array_keys(\array_filter(\array_count_values($types), function ($count) {
             return $count > 1;
         }));
