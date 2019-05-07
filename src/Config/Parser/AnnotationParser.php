@@ -63,11 +63,9 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * Clear the Annotation parser.
-     *
      * @internal
      */
-    public static function clear(): void
+    public static function reset(): void
     {
         self::$classesMap = [];
         self::$providers = [];
