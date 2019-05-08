@@ -732,7 +732,7 @@ class AnnotationParser implements PreParserInterface
         $config = [];
         if ($args && !empty($args)) {
             foreach ($args as $arg) {
-                $config[$arg->name] = ['type' => $arg->type] 
+                $config[$arg->name] = ['type' => $arg->type]
                     + ($arg->description ? ['description' => $arg->description] : [])
                     + ($arg->default ? ['defaultValue' => $arg->default] : []);
             }
