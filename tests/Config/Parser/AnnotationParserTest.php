@@ -35,7 +35,7 @@ class AnnotationParserTest extends TestCase
             }
         }
 
-        AnnotationParser::clear();
+        AnnotationParser::reset();
 
         foreach ($files as $file) {
             AnnotationParser::preParse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);

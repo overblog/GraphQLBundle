@@ -73,6 +73,7 @@ class OverblogGraphQLTypesExtension extends Extension
 
         // treats mappings
         // Pre-parse all files
+        AnnotationParser::reset();
         $typesNeedPreParsing = $this->typesNeedPreParsing();
         foreach ($typesMappings as $params) {
             if ($typesNeedPreParsing[$params['type']]) {
