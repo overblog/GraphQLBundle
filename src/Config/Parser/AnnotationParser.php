@@ -730,7 +730,9 @@ class AnnotationParser implements PreParserInterface
         $config = [];
         if ($args && !empty($args)) {
             foreach ($args as $arg) {
-                $config[$arg->name] = ['type' => $arg->type] + ($arg->description ? ['description' => $arg->description] : []);
+                $config[$arg->name] = ['type' => $arg->type]
+                    + ($arg->description ? ['description' => $arg->description] : [])
+                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
             }
         } elseif ($method) {
             $config = self::guessArgs($method);
