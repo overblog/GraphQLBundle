@@ -48,7 +48,7 @@ class AnnotationParser implements PreParserInterface
      */
     public static function preParse(\SplFileInfo $file, ContainerBuilder $container, array $configs = []): void
     {
-        self::processFile($file, $container, $configs, true);
+        $container->setParameter('overblog_graphql_types.classes_map', self::processFile($file, $container, $configs, true));
     }
 
     /**
