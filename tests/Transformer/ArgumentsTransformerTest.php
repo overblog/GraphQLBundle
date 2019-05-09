@@ -129,6 +129,10 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals(2, \count($res5[1]->field1));
         $this->assertInternalType('int', $res5[3]);
         $this->assertEquals($res5[4], 'test_string');
+
+        $data = [];
+        $res6 = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $this->assertInstanceOf(InputType1::class, $res6);
     }
 
     public function testRaisedErrors(): void

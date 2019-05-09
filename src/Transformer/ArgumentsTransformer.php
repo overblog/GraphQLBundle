@@ -78,7 +78,7 @@ class ArgumentsTransformer
      */
     private function populateObject(Type $type, $data, bool $multiple, ResolveInfo $info)
     {
-        if (!$data) {
+        if ($data === null) {
             return $data;
         }
 
