@@ -350,7 +350,7 @@ class Configuration implements ConfigurationInterface
                     return $disabledValue;
                 })
             ->end()
-            ->defaultFalse()
+            ->defaultValue($disabledValue)
             ->validate()
                 ->ifTrue(function ($v) {
                     return \is_int($v) && $v < 0;

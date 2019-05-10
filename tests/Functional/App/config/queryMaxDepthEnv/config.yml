@@ -7,7 +7,7 @@ parameters:
 
 overblog_graphql:
     security:
-        query_max_depth: '%env(GRAPHQL_QUERY_MAX_DEPTH)%'
+        query_max_depth: '%env(int:GRAPHQL_QUERY_MAX_DEPTH)%'
     definitions:
         class_namespace: "Overblog\\GraphQLBundle\\QueryComplexity\\__DEFINITIONS__"
         schema:
