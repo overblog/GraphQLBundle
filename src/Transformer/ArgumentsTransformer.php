@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Transformer;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
@@ -80,6 +81,10 @@ class ArgumentsTransformer
     {
         if (null === $data) {
             return $data;
+        }
+
+        if ($type instanceof NonNull) {
+            $type = $type->getWrappedType();
         }
 
         if ($multiple) {
