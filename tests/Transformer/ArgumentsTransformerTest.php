@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ArgumentsTransformerTest extends TestCase
 {
-    private function getBuilder(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
+    private function getTransformer(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
         $validator->method('validate')->willReturn($validateReturn ?: []);
@@ -54,6 +54,7 @@ class ArgumentsTransformerTest extends TestCase
             'fields' => [
                 'field1' => Type::listOf($t1),
                 'field2' => $t3,
+                'field3' => Type::nonNull($t3),
             ],
         ]);
 
@@ -62,7 +63,7 @@ class ArgumentsTransformerTest extends TestCase
 
     public function testPopulating(): void
     {
-        $builder = $this->getBuilder([
+        $builder = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
         ]);
@@ -103,7 +104,7 @@ class ArgumentsTransformerTest extends TestCase
 
         $this->assertEquals(2, $res3);
 
-        $builder = $this->getBuilder([
+        $builder = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
             'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
@@ -133,12 +134,16 @@ class ArgumentsTransformerTest extends TestCase
         $data = [];
         $res6 = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
         $this->assertInstanceOf(InputType1::class, $res6);
+
+        $res7 = $builder->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
+        $this->assertInstanceOf(Enum1::class, $res7->field3);
+        $this->assertEquals('enum1', $res7->field3->value);
     }
 
     public function testRaisedErrors(): void
     {
         $violation = new ConstraintViolation('validation_error', 'validation_error', [], 'invalid', 'field2', 'invalid');
-        $builder = $this->getBuilder([
+        $builder = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
         ], new ConstraintViolationList([$violation]));
