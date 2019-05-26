@@ -138,13 +138,6 @@ final class BuilderProcessor implements ProcessorInterface
             if (isset($field['builder']) && \is_string($field['builder'])) {
                 $fieldBuilderName = $field['builder'];
                 unset($field['builder']);
-            } elseif (\is_string($field)) {
-                @\trigger_error(
-                    'The builder short syntax (Field: Builder => Field: {builder: Builder}) is deprecated as of 0.7 and will be removed in 0.12. '.
-                    'It will be replaced by the field type short syntax (Field: Type => Field: {type: Type})',
-                    \E_USER_DEPRECATED
-                );
-                $fieldBuilderName = $field;
             }
 
             $builderConfig = [];
@@ -263,16 +256,6 @@ final class BuilderProcessor implements ProcessorInterface
 
         if (isset($builderClassMap[$name])) {
             return $builders[$type][$name] = new $builderClassMap[$name]();
-        }
-        // deprecated relay builder name ?
-        $newName = 'Relay::'.\rtrim($name, 'Args');
-        if (isset($builderClassMap[$newName])) {
-            @\trigger_error(
-                \sprintf('The "%s" %s builder is deprecated as of 0.7 and will be removed in 0.12. Use "%s" instead.', $name, $type, $newName),
-                \E_USER_DEPRECATED
-            );
-
-            return $builders[$type][$newName] = new $builderClassMap[$newName]();
         }
 
         throw new InvalidConfigurationException(\sprintf('%s builder "%s" not found.', \ucfirst($type), $name));

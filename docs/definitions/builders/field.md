@@ -208,7 +208,7 @@ Mutation:
                 builder: 'Mutation'
                 builderConfig:
                     name: 'Foo'
-                    resolver: 'Mutation.foo',
+                    resolver: 'Mutation.foo'
                     inputFields:
                         bar: {type: 'String!'}
                     payloadFields:

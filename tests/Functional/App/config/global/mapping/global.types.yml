@@ -20,7 +20,8 @@ User:
     type: object
     config:
         fields:
-            id: "Relay::GlobalId"
+            id:
+                builder: "Relay::GlobalId"
             name:
                 type: String
         interfaces: [NodeInterface]

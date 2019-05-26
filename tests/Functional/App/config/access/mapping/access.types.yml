@@ -49,7 +49,7 @@ User:
                 # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
                 access: "@=object == 1"
                 type: friendConnection
-                argsBuilder: ConnectionArgs
+                argsBuilder: "Relay::Connection"
                 resolve: '@=resolver("friends", [value, args])'
             friendsAsArray:
                 # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
@@ -93,7 +93,7 @@ RootMutation:
     config:
         fields:
             simpleMutationWithThunkFields:
-                builder: Mutation
+                builder: "Relay::Mutation"
                 access: "@=hasRole('ROLE_ADMIN')"
                 builderConfig:
                     inputType: simpleMutationWithThunkFieldsInput

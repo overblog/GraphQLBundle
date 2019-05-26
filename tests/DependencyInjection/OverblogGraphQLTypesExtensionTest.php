@@ -203,7 +203,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                     'builder' => 'RawId',
                                     'description' => 'rawIDWithDescriptionOverride description',
                                 ],
-                                'rawID' => 'RawId',
+                                'rawID' => ['builder' => 'RawId'],
                                 'rawIDs' => [
                                     'type' => '[RawID!]!',
                                     'argsBuilder' => 'Pager',

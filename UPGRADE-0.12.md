@@ -4,6 +4,8 @@ UPGRADE FROM 0.11 to 0.12
 # Table of Contents
 
 - [Remove auto mapping configuration](#remove-auto-mapping-configuration)
+- [Relay Paginator, Connections & Edges](#relay-paginator-connections--edges)
+- [Remove obsoletes deprecations](#remove-obsoletes-deprecations)
 
 ### Remove auto mapping configuration
 
@@ -79,4 +81,30 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 
 $connectionBuilder = new ConnectionBuilder();
 $connectionBuilder->connectionFromArray([]);
+```
+
+### Remove obsoletes deprecations
+
+The builder short syntax (Field: Builder => Field: {builder: Builder}) is obsolete:
+
+```diff
+Foo:
+    type: object
+    config:
+        fields:
+-            bar: MyBuilder
++            bar: {builder: MyBuilder}
+
+```
+
+Relay builder without 'Relay::' prefix is obsolete:
+
+```diff
+Foo:
+    type: object
+    config:
+        fields:
+            bar:
+-                argsBuilder: ConnectionArgs
++                argsBuilder: "Relay::Connection"
 ```
