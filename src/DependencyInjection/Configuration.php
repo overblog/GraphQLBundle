@@ -165,7 +165,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('security');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('security');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'security');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -266,8 +266,9 @@ class Configuration implements ConfigurationInterface
 
     private function doctrineSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('doctrine');
+        $builder = new TreeBuilder('doctrine');
+        /** @var ArrayNodeDefinition $node */
+        $node = self::getRootNodeWithoutDeprecation($builder, 'doctrine');
         $node
             ->addDefaultsIfNotSet()
             ->children()
