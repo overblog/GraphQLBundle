@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
+use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
-use Overblog\GraphQLBundle\Resolver\Resolver;
 
 final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
 {
+    private $argumentFactory;
+
+    public function __construct(ArgumentFactory $argumentFactory)
+    {
+        $this->argumentFactory = $argumentFactory;
+    }
+
     public function process(LazyConfig $lazyConfig): LazyConfig
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['resolveField']) && \is_callable($config['resolveField'])) {
-                $config['resolveField'] = Resolver::wrapArgs($config['resolveField']);
+                $config['resolveField'] = $this->argumentFactory->wrapResolverArgs($config['resolveField']);
             }
 
             if (isset($config['fields'])) {
@@ -23,7 +30,7 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
                         $fields = $config['fields']();
                     }
 
-                    return self::wrapFieldsArgument($fields);
+                    return $this->wrapFieldsArgument($fields);
                 };
             }
 
@@ -33,11 +40,11 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
         return $lazyConfig;
     }
 
-    private static function wrapFieldsArgument(array $fields)
+    private function wrapFieldsArgument(array $fields)
     {
         foreach ($fields as &$field) {
             if (isset($field['resolve']) && \is_callable($field['resolve'])) {
-                $field['resolve'] = Resolver::wrapArgs($field['resolve']);
+                $field['resolve'] = $this->argumentFactory->wrapResolverArgs($field['resolve']);
             }
         }
 

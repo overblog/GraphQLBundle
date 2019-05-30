@@ -11,6 +11,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
@@ -114,7 +115,7 @@ class TypeDecoratorListenerTest extends TestCase
         /** @var Argument $args */
         $args = $resolveFn(null, $expected);
         $this->assertInstanceOf(Argument::class, $args);
-        $this->assertSame($expected, $args->getRawArguments());
+        $this->assertSame($expected, $args->getArrayCopy());
     }
 
     public function testEnumTypeValuesDecoration(): void
@@ -285,7 +286,7 @@ class TypeDecoratorListenerTest extends TestCase
 
     private function decorate(array $types, array $map): void
     {
-        $typeDecoratorListener = new TypeDecoratorListener();
+        $typeDecoratorListener = new TypeDecoratorListener(new ArgumentFactory(Argument::class));
 
         foreach ($types as $type) {
             $typeDecoratorListener->decorateType($type, $this->createResolverMapMock($map));

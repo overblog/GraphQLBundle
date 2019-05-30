@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\Argument;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -45,18 +44,6 @@ class Resolver
         } elseif (\is_object($objectOrArray) && self::isWritable($objectOrArray, $fieldName)) {
             self::getAccessor()->setValue($objectOrArray, $fieldName, $value);
         }
-    }
-
-    public static function wrapArgs(callable $resolver)
-    {
-        return static function () use ($resolver) {
-            $args = \func_get_args();
-            if (\count($args) > 1 && !$args[1] instanceof Argument) {
-                $args[1] = new Argument($args[1]);
-            }
-
-            return $resolver(...$args);
-        };
     }
 
     private static function isReadable($objectOrArray, $indexOrProperty)
