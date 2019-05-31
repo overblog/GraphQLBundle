@@ -10,6 +10,7 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -183,11 +184,16 @@ class Executor
         if ($this->defaultFieldResolver) {
             $this->executor->setDefaultFieldResolver($this->defaultFieldResolver);
         }
-        $this->dispatcher->dispatch(Events::EXECUTOR_CONTEXT, new ExecutorContextEvent($contextValue));
+        EventDispatcherVersionHelper::dispatch(
+            $this->dispatcher,
+            new ExecutorContextEvent($contextValue),
+            Events::EXECUTOR_CONTEXT
+        );
 
-        return $this->dispatcher->dispatch(
-            Events::PRE_EXECUTOR,
-            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName)
+        return EventDispatcherVersionHelper::dispatch(
+            $this->dispatcher,
+            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
+            Events::PRE_EXECUTOR
         );
     }
 
@@ -203,8 +209,13 @@ class Executor
         }
 
         $this->checkExecutionResult($result);
+        $event = EventDispatcherVersionHelper::dispatch(
+            $this->dispatcher,
+            new ExecutorResultEvent($result),
+            Events::POST_EXECUTOR
+        );
 
-        return  $this->dispatcher->dispatch(Events::POST_EXECUTOR, new ExecutorResultEvent($result))->getResult();
+        return $event->getResult();
     }
 
     private function checkPromiseAdapter()

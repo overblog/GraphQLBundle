@@ -79,9 +79,10 @@ final class GraphQLDumpSchemaCommand extends Command
 
         switch ($format) {
             case 'json':
+                // TODO(mcg-web): remove this hack after removing webonyx/graphql-php <= 0.11
+                $param = new \ReflectionParameter([Introspection::class, 'getIntrospectionQuery'], 0);
                 $request = [
-                    // TODO(mcg-web): remove silence deprecation notices after removing webonyx/graphql-php <= 0.11
-                    'query' => @Introspection::getIntrospectionQuery(false),
+                    'query' => Introspection::getIntrospectionQuery('options' === $param->name ? ['descriptions' => false] : false),
                     'variables' => [],
                     'operationName' => null,
                 ];

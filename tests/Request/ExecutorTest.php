@@ -7,6 +7,7 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
+use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,7 @@ class ExecutorTest extends TestCase
     public function setUp()
     {
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
-        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
+        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(EventDispatcherVersionHelper::isForLegacy() ? 1 : 0);
 
         $this->executor = $this->createRequestExecutor();
         $queryType = new ObjectType([
