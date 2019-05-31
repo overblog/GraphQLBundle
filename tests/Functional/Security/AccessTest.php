@@ -58,6 +58,8 @@ EOF;
     }
 
     /**
+     * @group legacy
+     *
      * @expectedException \Error
      * @expectedExceptionMessage Class 'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType' not found
      * @requires PHP 7

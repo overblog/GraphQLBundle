@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpKernel\Client;
 
 class GraphControllerTest extends TestCase
@@ -296,7 +297,10 @@ EOF;
         $this->assertCORSHeadersNotExists($client);
     }
 
-    private function assertCORSHeadersNotExists(Client $client): void
+    /**
+     * @param Client|KernelBrowser $client
+     */
+    private function assertCORSHeadersNotExists($client): void
     {
         $headers = $client->getResponse()->headers->all();
         $this->assertArrayNotHasKey('access-control-allow-origin', $headers);
@@ -306,7 +310,10 @@ EOF;
         $this->assertArrayNotHasKey('access-control-max-age', $headers);
     }
 
-    private function assertCORSHeadersExists(Client $client): void
+    /**
+     * @param Client|KernelBrowser $client
+     */
+    private function assertCORSHeadersExists($client): void
     {
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());

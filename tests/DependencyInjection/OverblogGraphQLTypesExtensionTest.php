@@ -156,6 +156,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
 
     /**
      * @runInSeparateProcess
+     * @group legacy
      */
     public function testCustomBuilders(): void
     {
@@ -328,7 +329,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                         'type' => 'Int!',
                                         'defaultValue' => 0,
                                     ],
-                                ],
+                                 ],
                             ],
                         ],
                         'name' => 'foo',

@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
@@ -128,7 +129,15 @@ abstract class TestCase extends WebTestCase
         return $client;
     }
 
-    protected static function sendRequest(Client $client, $query, $isDecoded = false, array $variables = null)
+    /**
+     * @param Client|KernelBrowser $client
+     * @param $query
+     * @param bool       $isDecoded
+     * @param array|null $variables
+     *
+     * @return mixed
+     */
+    protected static function sendRequest($client, $query, $isDecoded = false, array $variables = null)
     {
         $client->request('GET', '/', ['query' => $query, 'variables' => \json_encode($variables)]);
         $result = $client->getResponse()->getContent();

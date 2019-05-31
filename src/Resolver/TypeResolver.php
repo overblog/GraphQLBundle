@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -32,7 +33,7 @@ class TypeResolver extends AbstractResolver
     protected function onLoadSolution($solution): void
     {
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch(Events::TYPE_LOADED, new TypeLoadedEvent($solution, $this->currentSchemaName));
+            EventDispatcherVersionHelper::dispatch($this->dispatcher, new TypeLoadedEvent($solution, $this->currentSchemaName), Events::TYPE_LOADED);
         }
     }
 

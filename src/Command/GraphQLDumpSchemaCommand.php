@@ -97,8 +97,7 @@ final class GraphQLDumpSchemaCommand extends Command
         switch ($format) {
             case 'json':
                 $request = [
-                    // TODO(mcg-web): remove silence deprecation notices after removing webonyx/graphql-php <= 0.11
-                    'query' => @Introspection::getIntrospectionQuery($includeDescription),
+                    'query' => Introspection::getIntrospectionQuery(['descriptions' => $includeDescription]),
                     'variables' => [],
                     'operationName' => null,
                 ];
