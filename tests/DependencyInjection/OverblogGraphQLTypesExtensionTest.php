@@ -156,7 +156,6 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
 
     /**
      * @runInSeparateProcess
-     * @group legacy
      */
     public function testCustomBuilders(): void
     {

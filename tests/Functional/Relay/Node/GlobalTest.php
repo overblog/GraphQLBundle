@@ -9,8 +9,6 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 /**
  * Class GlobalTest.
  *
- * @group legacy
- *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/global.js
  */
 class GlobalTest extends TestCase
