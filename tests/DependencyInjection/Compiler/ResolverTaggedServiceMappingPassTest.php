@@ -30,6 +30,9 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
         $this->container->compile();
     }
 
+    /**
+     * @group legacy
+     */
     public function testCompilationWorksPassConfigDirective()
     {
         $testResolver = new Definition(ResolverTestService::class);

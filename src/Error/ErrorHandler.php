@@ -9,6 +9,7 @@ use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
+use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Event\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -63,7 +64,7 @@ class ErrorHandler
 
         return function (GraphQLError $error) use ($debugMode) {
             $event = new ErrorFormattingEvent($error, FormattedError::createFromException($error, $debugMode, $this->internalErrorMessage));
-            $this->dispatcher->dispatch(Events::ERROR_FORMATTING, $event);
+            EventDispatcherVersionHelper::dispatch($this->dispatcher, $event, Events::ERROR_FORMATTING);
 
             return $event->getFormattedError()->getArrayCopy();
         };
