@@ -16,6 +16,8 @@ services:
 
     Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor:
         class: Overblog\GraphQLBundle\Definition\ConfigProcessor\WrapArgumentConfigProcessor
+        arguments:
+            - '@Overblog\GraphQLBundle\Definition\ArgumentFactory'
         public: false
         tags:
             - { name: overblog_graphql.definition_config_processor }

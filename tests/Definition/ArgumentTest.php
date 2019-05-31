@@ -52,6 +52,16 @@ class ArgumentTest extends TestCase
 
     public function testGetRawArgs(): void
     {
+        $this->assertSame($this->rawArgs, $this->argument->getArrayCopy());
+    }
+
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation This "%s" method is deprecated since 0.12 and will be removed in 0.13. You should use "%s::getArrayCopy" instead.
+     */
+    public function testDeprecatedGetRawArgs(): void
+    {
         $this->assertSame($this->rawArgs, $this->argument->getRawArguments());
     }
 }

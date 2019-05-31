@@ -113,6 +113,12 @@ services:
 
             - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
+    Overblog\GraphQLBundle\Definition\ArgumentFactory:
+        arguments:
+            - '%overblog_graphql.argument_class%'
+        tags:
+            - { name: overblog_graphql.global_variable, alias: argumentFactory }
+
     Overblog\GraphQLBundle\EventListener\RequestFilesListener:
         class: Overblog\GraphQLBundle\EventListener\RequestFilesListener
         public: true
@@ -122,7 +128,8 @@ services:
             - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
 
     Overblog\GraphQLBundle\EventListener\TypeDecoratorListener:
-        class: Overblog\GraphQLBundle\EventListener\TypeDecoratorListener
+        arguments:
+            - '@Overblog\GraphQLBundle\Definition\ArgumentFactory'
         public: true
         tags:
             - { name: kernel.event_listener, event: graphql.type_loaded, method: onTypeLoaded }

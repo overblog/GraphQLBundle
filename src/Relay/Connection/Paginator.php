@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 
 class Paginator
 {
@@ -35,19 +35,18 @@ class Paginator
     }
 
     /**
-     * @param Argument     $args
-     * @param int|callable $total
-     * @param array        $callableArgs
+     * @param ArgumentInterface $args
+     * @param int|callable      $total
+     * @param array             $callableArgs
      *
      * @return ConnectionInterface|object A connection or a promise
      */
-    public function backward($args, $total, array $callableArgs = [])
+    public function backward(ArgumentInterface $args, $total, array $callableArgs = [])
     {
         $total = $this->computeTotalCount($total, $callableArgs);
-
-        $args = $this->protectArgs($args);
-        $limit = $args['last'];
-        $offset = \max(0, $this->connectionBuilder->getOffsetWithDefault($args['before'], $total) - $limit);
+        $limit = $args['last'] ?? null;
+        $before = $args['before'] ?? null;
+        $offset = \max(0, $this->connectionBuilder->getOffsetWithDefault($before, $total) - $limit);
 
         $entities = \call_user_func($this->fetcher, $offset, $limit);
 
@@ -60,18 +59,18 @@ class Paginator
     }
 
     /**
-     * @param Argument $args
+     * @param ArgumentInterface $args
      *
      * @return ConnectionInterface|object A connection or a promise
      */
-    public function forward(Argument $args)
+    public function forward(ArgumentInterface $args)
     {
-        $args = $this->protectArgs($args);
-        $limit = $args['first'];
-        $offset = $this->connectionBuilder->getOffsetWithDefault($args['after'], 0);
+        $limit = $args['first'] ?? null;
+        $after = $args['after'] ?? null;
+        $offset = $this->connectionBuilder->getOffsetWithDefault($after, 0);
 
         // If we don't have a cursor or if it's not valid, then we must not use the slice method
-        if (!\is_numeric($this->connectionBuilder->cursorToOffset($args['after'])) || !$args['after']) {
+        if (!\is_numeric($this->connectionBuilder->cursorToOffset($after)) || !$after) {
             $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
 
             return $this->handleEntities($entities, function ($entities) use ($args) {
@@ -90,17 +89,15 @@ class Paginator
     }
 
     /**
-     * @param Argument     $args
-     * @param int|callable $total
-     * @param array        $callableArgs
+     * @param ArgumentInterface $args
+     * @param int|callable      $total
+     * @param array             $callableArgs
      *
      * @return ConnectionInterface|object A connection or a promise
      */
-    public function auto(Argument $args, $total, array $callableArgs = [])
+    public function auto(ArgumentInterface $args, $total, array $callableArgs = [])
     {
-        $args = $this->protectArgs($args);
-
-        if ($args['last']) {
+        if (isset($args['last'])) {
             $connection = $this->backward($args, $total, $callableArgs);
         } else {
             $connection = $this->forward($args);
@@ -132,16 +129,6 @@ class Paginator
         }
 
         return \call_user_func($callback, $entities);
-    }
-
-    /**
-     * @param Argument|array $args
-     *
-     * @return Argument
-     */
-    private function protectArgs($args): Argument
-    {
-        return $args instanceof Argument ? $args : new Argument($args);
     }
 
     /**

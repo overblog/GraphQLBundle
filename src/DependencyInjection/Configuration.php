@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Resolver\Resolver;
@@ -109,10 +110,11 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('definitions');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('definitions');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'definitions');
         $node
             ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('argument_class')->defaultValue(Argument::class)->end()
                 ->variableNode('default_resolver')->defaultValue([Resolver::class, 'defaultResolveFn'])->end()
                 ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
                 ->scalarNode('cache_dir')->defaultNull()->end()
