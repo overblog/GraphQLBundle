@@ -5,6 +5,8 @@ services:
     overblog_graphql.executor.default:
         class: Overblog\GraphQLBundle\Executor\Executor
         public: false
+        calls:
+            - ["setPromiseAdapter", ['@overblog_graphql.promise_adapter']]
 
     overblog_graphql.request_executor:
         class: Overblog\GraphQLBundle\Request\Executor
@@ -12,8 +14,7 @@ services:
         arguments:
             - "@overblog_graphql.executor"
             - "@event_dispatcher"
-            - "@overblog_graphql.promise_adapter"
-            - "%overblog_graphql.default_resolver%"
+            - '%overblog_graphql.default_resolver%'
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
