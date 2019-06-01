@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @internal
+ * TODO(mcg-web): delete hack after migrating Symfony >= 4.3
  */
 final class EventDispatcherVersionHelper
 {
