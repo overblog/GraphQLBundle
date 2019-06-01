@@ -67,7 +67,7 @@ class VersionHelper
         if (empty($version)) {
             $composerBinPath = \file_exists(__DIR__.'/../composer.phar') ? __DIR__.'/../composer.phar' : '`which composer`';
             $commandline = $composerBinPath.' show \'webonyx/graphql-php\' | grep \'versions\' | grep -o -E \'\*\ .+\' | cut -d\' \' -f2 | cut -d\',\' -f1';
-            if (is_callable([Process::class, 'fromShellCommandline'])) {
+            if (\is_callable([Process::class, 'fromShellCommandline'])) {
                 $process = Process::fromShellCommandline($commandline);
             } else {
                 $process = new Process($commandline);
