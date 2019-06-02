@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\Experimental\Executor\CoroutineExecutor;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -23,24 +25,24 @@ class Executor
 {
     public const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
-    /** @var Schema[] */
     private $schemas = [];
 
-    /** @var EventDispatcherInterface|null */
     private $dispatcher;
 
-    /** @var ExecutorInterface */
+    private $promiseAdapter;
+
     private $executor;
 
-    /** @var callable|null */
     private $defaultFieldResolver;
 
     public function __construct(
         ExecutorInterface $executor,
+        PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
         ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
+        $this->promiseAdapter = $promiseAdapter;
         $this->dispatcher = $dispatcher;
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
@@ -119,7 +121,7 @@ class Executor
      *
      * @return ExecutionResult
      */
-    public function execute(?string $schemaName = null, array $request, $rootValue = null): ExecutionResult
+    public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
         $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
@@ -133,6 +135,7 @@ class Executor
         $executorArgumentsEvent->getSchema()->processExtensions();
 
         $result = $this->executor->execute(
+            $this->promiseAdapter,
             $executorArgumentsEvent->getSchema(),
             $executorArgumentsEvent->getRequestString(),
             $executorArgumentsEvent->getRootValue(),

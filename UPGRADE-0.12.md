@@ -115,18 +115,11 @@ Foo:
 This section is only for users using custom executor.
 
 The interface move to be look a little be more to `GraphQL\GraphQL`
-execute method.
+`promiseToExecute` method.
 
 In `Overblog\GraphQLBundle\Executor\ExecutorInterface`
 `setPromiseAdapter` and `setDefaultFieldResolver` has been removed.
-To use promise adapter should now inject it using DI like this:
 
-```yaml
-services:
-    App\CustomExecutor:
-        calls:
-            - ["setPromiseAdapter", ['@overblog_graphql.promise_adapter']]
-```
-
-Default field resolver is now the 7th argument (`$fieldResolver`) of
+Promise adapter is now the first argument (`$promiseAdapter`)
+and default field resolver the 7th argument (`$fieldResolver`) of
 `Overblog\GraphQLBundle\Executor\ExecutorInterface::execute` method.

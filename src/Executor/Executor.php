@@ -12,13 +12,11 @@ use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 
 class Executor implements ExecutorInterface
 {
-    /** @var PromiseAdapter */
-    private $promiseAdapter;
-
     /**
      * {@inheritdoc}
      */
     public function execute(
+        PromiseAdapter $promiseAdapter,
         Schema $schema,
         string $requestString,
         $rootValue = null,
@@ -28,7 +26,7 @@ class Executor implements ExecutorInterface
         ?callable $fieldResolver = null,
         ?array $validationRules = null
     ): ExecutionResult {
-        if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !\is_callable([$this->promiseAdapter, 'wait'])) {
+        if (!\method_exists($promiseAdapter, 'wait')) {
             throw new \RuntimeException(
                 \sprintf(
                     'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
@@ -38,11 +36,6 @@ class Executor implements ExecutorInterface
             );
         }
 
-        return $this->promiseAdapter->wait(GraphQL::promiseToExecute($this->promiseAdapter, ...\func_get_args()));
-    }
-
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter): void
-    {
-        $this->promiseAdapter = $promiseAdapter;
+        return $promiseAdapter->wait(GraphQL::promiseToExecute(...\func_get_args()));
     }
 }

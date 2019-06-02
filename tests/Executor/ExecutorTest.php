@@ -19,7 +19,6 @@ class ExecutorTest extends TestCase
     {
         $schema = $this->getMockBuilder(Schema::class)->disableOriginalConstructor()->getMock();
         $executor = new Executor();
-        $executor->setPromiseAdapter(new ReactPromiseAdapter());
-        $executor->execute($schema, '');
+        $executor->execute(new ReactPromiseAdapter(), $schema, '');
     }
 }

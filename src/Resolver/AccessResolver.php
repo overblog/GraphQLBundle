@@ -64,6 +64,11 @@ class AccessResolver
         if ($this->isThenable($promiseOrHasAccess)) {
             return $this->createPromise($promiseOrHasAccess, $callback);
         } else {
+            $promiseOrHasAccess = $this->extractAdoptedPromise($promiseOrHasAccess);
+            if ($promiseOrHasAccess instanceof SyncPromise) {
+                $promiseOrHasAccess = $promiseOrHasAccess->result;
+            }
+
             return $callback($promiseOrHasAccess);
         }
     }
