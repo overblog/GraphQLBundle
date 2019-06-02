@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -34,16 +35,20 @@ class Executor
 
     private $defaultFieldResolver;
 
+    private $useExperimentalExecutor;
+
     public function __construct(
         ExecutorInterface $executor,
         PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
-        ?callable $defaultFieldResolver = null
+        ?callable $defaultFieldResolver = null,
+        bool $useExperimental = false
     ) {
         $this->executor = $executor;
         $this->promiseAdapter = $promiseAdapter;
         $this->dispatcher = $dispatcher;
         $this->defaultFieldResolver = $defaultFieldResolver;
+        $this->useExperimentalExecutor = $useExperimental;
     }
 
     public function setExecutor(ExecutorInterface $executor): self
@@ -122,6 +127,8 @@ class Executor
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
+        $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
+
         $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
             $request[ParserInterface::PARAM_QUERY] ?? null,
