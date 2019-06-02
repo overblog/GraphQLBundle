@@ -25,6 +25,7 @@ RUN set -eu; \
         php7-xml \
         php7-xmlwriter \
         php7-dom \
+        php7-pdo \
     ;
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
