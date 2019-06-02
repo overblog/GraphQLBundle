@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Experimental\Executor\CoroutineExecutor;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
