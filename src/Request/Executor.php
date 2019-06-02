@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Request;
 
 use GraphQL\Executor\ExecutionResult;
-use GraphQL\Executor\Promise\Promise;
-use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -18,7 +16,6 @@ use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Overblog\GraphQLBundle\Executor\ExecutorInterface;
-use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -35,34 +32,22 @@ class Executor
     /** @var ExecutorInterface */
     private $executor;
 
-    /** @var PromiseAdapter */
-    private $promiseAdapter;
-
     /** @var callable|null */
     private $defaultFieldResolver;
 
     public function __construct(
         ExecutorInterface $executor,
         EventDispatcherInterface $dispatcher,
-        PromiseAdapter $promiseAdapter,
         ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->dispatcher = $dispatcher;
-        $this->promiseAdapter = $promiseAdapter;
         $this->defaultFieldResolver = $defaultFieldResolver;
     }
 
     public function setExecutor(ExecutorInterface $executor): self
     {
         $this->executor = $executor;
-
-        return $this;
-    }
-
-    public function setPromiseAdapter(PromiseAdapter $promiseAdapter): self
-    {
-        $this->promiseAdapter = $promiseAdapter;
 
         return $this;
     }
@@ -153,7 +138,8 @@ class Executor
             $executorArgumentsEvent->getRootValue(),
             $executorArgumentsEvent->getContextValue(),
             $executorArgumentsEvent->getVariableValue(),
-            $executorArgumentsEvent->getOperationName()
+            $executorArgumentsEvent->getOperationName(),
+            $this->defaultFieldResolver
         );
 
         $result = $this->postExecute($result);
@@ -169,13 +155,6 @@ class Executor
         ?array $variableValue = null,
         ?string $operationName = null
     ): ExecutorArgumentsEvent {
-        $this->checkPromiseAdapter();
-
-        $this->executor->setPromiseAdapter($this->promiseAdapter);
-        // this is needed when not using only generated types
-        if ($this->defaultFieldResolver) {
-            $this->executor->setDefaultFieldResolver($this->defaultFieldResolver);
-        }
         EventDispatcherVersionHelper::dispatch(
             $this->dispatcher,
             new ExecutorContextEvent($contextValue),
@@ -189,46 +168,12 @@ class Executor
         );
     }
 
-    /**
-     * @param ExecutionResult|Promise $result
-     *
-     * @return ExecutionResult
-     */
-    private function postExecute($result): ExecutionResult
+    private function postExecute(ExecutionResult $result): ExecutionResult
     {
-        if ($result instanceof Promise) {
-            $result = $this->promiseAdapter->wait($result);
-        }
-
-        $this->checkExecutionResult($result);
-        $event = EventDispatcherVersionHelper::dispatch(
+        return EventDispatcherVersionHelper::dispatch(
             $this->dispatcher,
             new ExecutorResultEvent($result),
             Events::POST_EXECUTOR
-        );
-
-        return $event->getResult();
-    }
-
-    private function checkPromiseAdapter(): void
-    {
-        if ($this->promiseAdapter && !$this->promiseAdapter instanceof PromiseAdapterInterface && !\is_callable([$this->promiseAdapter, 'wait'])) {
-            throw new \RuntimeException(
-                \sprintf(
-                    'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
-                    PromiseAdapterInterface::class,
-                    PromiseAdapter::class
-                )
-            );
-        }
-    }
-
-    private function checkExecutionResult($result): void
-    {
-        if (!\is_object($result) || !$result instanceof ExecutionResult) {
-            throw new \RuntimeException(
-                \sprintf('Execution result should be an object instantiating "%s".', ExecutionResult::class)
-            );
-        }
+        )->getResult();
     }
 }
