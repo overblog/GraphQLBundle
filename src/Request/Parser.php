@@ -35,6 +35,7 @@ class Parser implements ParserInterface
     private function getParsedBody(Request $request): array
     {
         $body = $request->getContent();
+        $method = $request->getMethod();
         $contentType = \explode(';', (string) $request->headers->get('content-type'), 2)[0];
 
         switch ($contentType) {
@@ -46,6 +47,10 @@ class Parser implements ParserInterface
             // JSON object
             case static::CONTENT_TYPE_JSON:
                 if (empty($body)) {
+                    if (Request::METHOD_GET === $method) {
+                        $parsedBody = [];
+                        break;
+                    }
                     throw new BadRequestHttpException('The request content body must not be empty when using json content type request.');
                 }
 
