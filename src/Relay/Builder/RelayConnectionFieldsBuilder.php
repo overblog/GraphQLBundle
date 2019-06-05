@@ -20,6 +20,8 @@ class RelayConnectionFieldsBuilder implements MappingInterface
         $pageInfoType = $config['pageInfoType'] ?? 'PageInfo';
         $pageInfoDescription = $config['pageInfoDescription'] ?? 'Page info of the connection';
 
+        $totalCountDescription = $config['totalCountDescription'] ?? 'Total count of items in the connection.';
+
         return [
             'edges' => [
                 'description' => $edgeDescription,
@@ -28,6 +30,10 @@ class RelayConnectionFieldsBuilder implements MappingInterface
             'pageInfo' => [
                 'description' => $pageInfoDescription,
                 'type' => $pageInfoType,
+            ],
+            'totalCount' => [
+                'description' => $totalCountDescription,
+                'type' => 'Int',
             ],
         ];
     }
