@@ -41,6 +41,7 @@ class RelayConnectionFieldsBuilderTest extends TestCase
             'edgeDescription' => 'Custom edge description',
             'pageInfoType' => 'CustomPageInfo',
             'pageInfoDescription' => 'Custom page info description',
+            'totalCountDescription' => 'Custom total count description',
         ];
         $expected = [
             'edges' => [
@@ -50,6 +51,10 @@ class RelayConnectionFieldsBuilderTest extends TestCase
             'pageInfo' => [
                 'description' => $config['pageInfoDescription'],
                 'type' => 'CustomPageInfo',
+            ],
+            'totalCount' => [
+                'description' => $config['totalCountDescription'],
+                'type' => 'Int',
             ],
         ];
         $this->assertSame($this->doMapping($config), $expected);
