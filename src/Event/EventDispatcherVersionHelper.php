@@ -11,18 +11,12 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 final class EventDispatcherVersionHelper
 {
-    private static $isForLegacy;
-
     /**
      * @return bool
      */
     public static function isForLegacy()
     {
-        if (null === self::$isForLegacy) {
-            self::$isForLegacy = \version_compare(Kernel::VERSION, '4.3.0', '<');
-        }
-
-        return self::$isForLegacy;
+        return Kernel::VERSION_ID < 403000;
     }
 
     /**
