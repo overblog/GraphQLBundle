@@ -76,7 +76,8 @@ class VersionHelper
             $process->run();
             if ($process->isSuccessful()) {
                 $version = $process->getOutput();
-                $version = \preg_replace('/[^\.0-9]/', '', $version);
+                $version = \str_replace('.x-dev', '.999', $version);
+                $version = \preg_replace('/[^\.0-9]\.?/', '', $version);
             } else {
                 throw new ProcessFailedException($process);
             }
