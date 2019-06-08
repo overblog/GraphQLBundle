@@ -88,4 +88,7 @@ jobs:
     allow_failures:
         - php: nightly
         - php: 7.4snapshot
-        - env: DEPENDENCIES=dev
+        - php: 7.3
+          env: SYMFONY_VERSION=4.4.* DEPENDENCIES=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.3
+          env: SYMFONY_VERSION=5.0.* DEPENDENCIES=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
