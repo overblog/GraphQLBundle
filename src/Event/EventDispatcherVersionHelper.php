@@ -16,7 +16,7 @@ final class EventDispatcherVersionHelper
      */
     public static function isForLegacy()
     {
-        return Kernel::VERSION_ID < 403000;
+        return Kernel::VERSION_ID < 40300;
     }
 
     /**
