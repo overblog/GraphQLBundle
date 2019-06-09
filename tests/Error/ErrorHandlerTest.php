@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Tests\VersionHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -24,7 +25,7 @@ class ErrorHandlerTest extends TestCase
     public function setUp()
     {
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
-        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(1);
+        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(EventDispatcherVersionHelper::isForLegacy() ? 1 : 0);
         $this->errorHandler = new ErrorHandler($this->dispatcher);
     }
 
