@@ -13,15 +13,9 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 final class EventDispatcherVersionHelper
 {
-    private static $isForLegacy;
-
     public static function isForLegacy(): bool
     {
-        if (null === self::$isForLegacy) {
-            self::$isForLegacy = \version_compare(Kernel::VERSION, '4.3.0', '<');
-        }
-
-        return self::$isForLegacy;
+        return Kernel::VERSION_ID < 40300;
     }
 
     public static function dispatch(EventDispatcherInterface $dispatcher, $event, ?string $eventName)

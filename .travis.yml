@@ -41,6 +41,12 @@ jobs:
           env: SYMFONY_VERSION=4.2.*
         - php: 7.3
           env: SYMFONY_VERSION=4.3.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.3
+          env: SYMFONY_VERSION=4.4.* STABILITY=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.3
+          env: SYMFONY_VERSION=5.0.* STABILITY=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.4snapshot
+          env: SYMFONY_VERSION=4.3.*
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
@@ -73,4 +79,8 @@ jobs:
 
     allow_failures:
         - php: nightly
-          env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
+        - php: 7.4snapshot
+        - php: 7.3
+          env: SYMFONY_VERSION=4.4.* STABILITY=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.3
+          env: SYMFONY_VERSION=5.0.* STABILITY=dev SYMFONY_DEPRECATIONS_HELPER=max[total]=0
