@@ -1,168 +1,53 @@
 services:
+    _defaults:
+        tags:
+            - { name: overblog_graphql.expression_function }
+
     # Authorization
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe: ~
 
     # Config
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments: ~
 
     # relay
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\GlobalID:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\GlobalID
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\IdFetcherCallback:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\IdFetcherCallback
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\MutateAndGetPayloadCallback:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\MutateAndGetPayloadCallback
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
-
-    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\ResolveSingleInputCallback:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\ResolveSingleInputCallback
-        public: false
-        tags:
-            - { name: overblog_graphql.expression_function }
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\GlobalID: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\IdFetcherCallback: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\MutateAndGetPayloadCallback: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\ResolveSingleInputCallback: ~
 
     # aliases
     expression_function.parameter_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter
-        public: false
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter
         arguments:
             - param
-        tags:
-            - { name: overblog_graphql.expression_function }
 
     expression_function.service_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service
-        public: false
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service
         arguments:
             - serv
-        tags:
-            - { name: overblog_graphql.expression_function }
 
     expression_function.mutation_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation
-        public: false
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation
         arguments:
             - mut
-        tags:
-            - { name: overblog_graphql.expression_function }
 
     expression_function.resolver_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver
-        public: false
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver
         arguments:
             - res
-        tags:
-            - { name: overblog_graphql.expression_function }

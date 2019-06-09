@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
+use Overblog\GraphQLBundle\Command\CompileCommand;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Command\Command;
@@ -29,7 +30,7 @@ class CompileCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'generatorCommand']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.compile');
+        $this->command = static::$kernel->getContainer()->get(CompileCommand::class);
         $this->typesMapping = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
         $this->cacheDir = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')->getCacheDir();

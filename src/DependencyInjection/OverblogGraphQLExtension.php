@@ -8,6 +8,7 @@ use GraphQL\Error\UserError;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
+use Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\Events;
@@ -16,6 +17,7 @@ use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
+use Overblog\GraphQLBundle\Request\Executor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -74,11 +76,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
     private function loadConfigFiles(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
-        $loader->load('graphql_types.yml');
-        $loader->load('graphql_resolvers.yml');
-        $loader->load('expression_language_functions.yml');
-        $loader->load('definition_config_processors.yml');
+        $loader->load('services.yaml');
+        $loader->load('commands.yaml');
+        $loader->load('listeners.yaml');
+        $loader->load('graphql_types.yaml');
+        $loader->load('graphql_resolvers.yaml');
+        $loader->load('expression_language_functions.yaml');
+        $loader->load('definition_config_processors.yaml');
+        $loader->load('aliases.yaml');
     }
 
     private function setCompilerCacheWarmer(array $config, ContainerBuilder $container): void
@@ -161,7 +166,7 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setSecurity(array $config, ContainerBuilder $container): void
     {
-        $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
+        $executorDefinition = $container->getDefinition(Executor::class);
         if ($config['security']['enable_introspection']) {
             $executorDefinition->addMethodCall('enableIntrospectionQuery');
         } else {
@@ -206,14 +211,14 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
 
     private function setSchemaBuilderArguments(array $config, ContainerBuilder $container): void
     {
-        $container->getDefinition($this->getAlias().'.schema_builder')
+        $container->getDefinition(SchemaBuilder::class)
             ->replaceArgument(1, $config['definitions']['config_validation']);
     }
 
     private function setSchemaArguments(array $config, ContainerBuilder $container): void
     {
         if (isset($config['definitions']['schema'])) {
-            $executorDefinition = $container->getDefinition($this->getAlias().'.request_executor');
+            $executorDefinition = $container->getDefinition(Executor::class);
             $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
 
             foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {

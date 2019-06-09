@@ -25,7 +25,7 @@ class DebugCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'mutation']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.debug');
+        $this->command = static::$kernel->getContainer()->get(DebugCommand::class);
         $this->commandTester = new CommandTester($this->command);
 
         foreach (DebugCommand::getCategories() as $category) {
