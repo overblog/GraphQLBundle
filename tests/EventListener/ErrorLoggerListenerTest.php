@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\MockObject\Matcher\Invocation;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -19,7 +20,7 @@ class ErrorLoggerListenerTest extends TestCase
     /** @var ErrorLoggerListener */
     private $listener;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
     public function setUp(): void

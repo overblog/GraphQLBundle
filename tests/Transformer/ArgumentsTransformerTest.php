@@ -128,7 +128,7 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertInstanceOf(InputType2::class, $res5[1]);
         $this->assertInstanceOf(Enum1::class, $res5[2]);
         $this->assertEquals(2, \count($res5[1]->field1));
-        $this->assertInternalType('int', $res5[3]);
+        $this->assertIsInt($res5[3]);
         $this->assertEquals($res5[4], 'test_string');
 
         $data = [];

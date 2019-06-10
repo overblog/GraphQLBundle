@@ -17,66 +17,52 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
         $this->definition = new PluralIdentifyingRootFieldDefinition();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "argName" config is required.
-     */
     public function testUndefinedArgNameConfig(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "argName" config is required.');
         $this->definition->toMappingDefinition([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "argName" config is required.
-     */
     public function testArgNameConfigSetButIsNotString(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "argName" config is required.');
         $this->definition->toMappingDefinition(['argName' => 45]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "inputType" config is required.
-     */
     public function testUndefinedInputTypeConfig(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "inputType" config is required.');
         $this->definition->toMappingDefinition(['argName' => 'username']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "inputType" config is required.
-     */
     public function testInputTypeConfigSetButIsNotString(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "inputType" config is required.');
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 45]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "outputType" config is required.
-     */
     public function testUndefinedOutputTypeConfig(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "outputType" config is required.');
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A valid pluralIdentifyingRoot "outputType" config is required.
-     */
     public function testOutputTypeConfigSetButIsNotString(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A valid pluralIdentifyingRoot "outputType" config is required.');
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput', 'outputType' => 35]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage PluralIdentifyingRoot "resolveSingleInput" config is required.
-     */
     public function testUndefinedResolveSingleInputConfig(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('PluralIdentifyingRoot "resolveSingleInput" config is required.');
         $this->definition->toMappingDefinition(['argName' => 'username', 'inputType' => 'UserInput', 'outputType' => 'User']);
     }
 

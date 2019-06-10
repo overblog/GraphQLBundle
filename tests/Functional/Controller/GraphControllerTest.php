@@ -7,6 +7,8 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GraphControllerTest extends TestCase
 {
@@ -80,23 +82,19 @@ EOF;
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Must provide query parameter
-     */
     public function testEndpointWithEmptyQuery(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Must provide query parameter');
         $client = static::createClient();
         $client->request('GET', '/', []);
         $client->getResponse()->getContent();
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage The request content body must not be empty when using json content type request.
-     */
     public function testEndpointWithEmptyPostJsonBodyQuery(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('The request content body must not be empty when using json content type request.');
         $client = static::createClient();
         $client->request('POST', '/', [], [], ['CONTENT_TYPE' => 'application/json']);
     }
@@ -109,12 +107,10 @@ EOF;
         $this->assertSame(['data' => $this->expectedData], \json_decode($result, true), $result);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage POST body sent invalid JSON
-     */
     public function testEndpointWithInvalidBodyQuery(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('POST body sent invalid JSON');
         $client = static::createClient();
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
@@ -145,12 +141,10 @@ EOF;
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Variables are invalid JSON
-     */
     public function testEndpointActionWithInvalidVariables(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Variables are invalid JSON');
         $client = static::createClient(['test_case' => 'connection']);
 
         $query = <<<'EOF'
@@ -162,12 +156,10 @@ EOF;
         $client->request('GET', '/', ['query' => $query, 'variables' => '"firstFriends": 2}']);
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     * @expectedExceptionMessage Could not found "fake" schema.
-     */
     public function testMultipleEndpointActionWithUnknownSchemaName(): void
     {
+        $this->expectException(NotFoundHttpException::class);
+        $this->expectExceptionMessage('Could not found "fake" schema.');
         $client = static::createClient(['test_case' => 'connection']);
 
         $query = <<<'EOF'
@@ -227,45 +219,37 @@ EOF;
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Must provide at least one valid query.
-     */
     public function testBatchEndpointWithEmptyQuery(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Must provide at least one valid query.');
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
         $client->getResponse()->getContent();
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Batching parser only accepts "application/json" or "multipart/form-data" content-type but got "".
-     */
     public function testBatchEndpointWrongContentType(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Batching parser only accepts "application/json" or "multipart/form-data" content-type but got "".');
         $client = static::createClient();
         $client->request('GET', '/batch');
         $client->getResponse()->getContent();
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage POST body sent invalid JSON
-     */
     public function testBatchEndpointWithInvalidJson(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('POST body sent invalid JSON');
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage 1 is not a valid query
-     */
     public function testBatchEndpointWithInvalidQuery(): void
     {
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('1 is not a valid query');
         $client = static::createClient();
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();

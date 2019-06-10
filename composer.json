@@ -50,7 +50,7 @@
     },
     "require-dev": {
         "doctrine/orm": "^2.5",
-        "phpunit/phpunit": "^5.7.26 || ^6.0 || ^7.2",
+        "phpunit/phpunit": "^7.2 || ^8.2",
         "react/promise": "^2.5",
         "symfony/asset": "^3.4 || ^4.0",
         "symfony/browser-kit": "^3.4 || ^4.0",

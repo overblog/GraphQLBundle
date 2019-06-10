@@ -21,22 +21,21 @@ class ReactPromiseAdapterTest extends TestCase
         $this->adapter = new ReactPromiseAdapter();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The "Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter::wait" method must be call with compatible a Promise.
-     */
     public function testWaitWithNotSupportedPromise(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'The "%s::wait" method must be call with compatible a Promise.',
+            ReactPromiseAdapter::class
+        ));
         $noSupportedPromise = new Promise(new \stdClass(), $this->adapter);
         $this->adapter->wait($noSupportedPromise);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Promise has been rejected!
-     */
     public function testWaitRejectedPromise(): void
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Promise has been rejected!');
         $rejected = $this->adapter->createRejected(new \Exception('Promise has been rejected!'));
         $this->adapter->wait($rejected);
     }

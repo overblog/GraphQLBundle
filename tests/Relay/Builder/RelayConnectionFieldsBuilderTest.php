@@ -16,21 +16,17 @@ class RelayConnectionFieldsBuilderTest extends TestCase
         return $builder->toMappingDefinition($config);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Using the Relay Connection fields builder, the key "edgeType" defining the GraphQL type of edges is required and must be a string.
-     */
     public function testMissingEdgeType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Using the Relay Connection fields builder, the key "edgeType" defining the GraphQL type of edges is required and must be a string.');
         $this->doMapping([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Using the Relay Connection fields builder, the key "edgeType" defining the GraphQL type of edges is required and must be a string.
-     */
     public function testInvalidEdgeType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Using the Relay Connection fields builder, the key "edgeType" defining the GraphQL type of edges is required and must be a string.');
         $this->doMapping(['edgeType' => true]);
     }
 

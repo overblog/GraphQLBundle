@@ -98,23 +98,19 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown format "fake".
-     */
     public function testInvalidFormat(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown format "fake"');
         $this->commandTester->execute([
             '--format' => 'fake',
         ]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "modern" and "classic" options should not be used together.
-     */
     public function testInvalidModernAndClassicUsedTogether(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"modern" and "classic" options should not be used together.');
         $this->commandTester->execute([
             '--format' => 'json',
             '--classic' => true,
