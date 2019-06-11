@@ -179,24 +179,20 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertSameConnection($expected, $actual);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Argument "first" must be a non-negative integer
-     */
     public function testThrowsAnErrorIfFirstLessThan0(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument "first" must be a non-negative integer');
         \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
             ['first' => -1]
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Argument "last" must be a non-negative integer
-     */
     public function testThrowsAnErrorIfLastLessThan0(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument "last" must be a non-negative integer');
         \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
             ['last' => -1]

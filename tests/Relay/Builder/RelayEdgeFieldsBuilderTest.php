@@ -16,21 +16,17 @@ class RelayEdgeFieldsBuilderTest extends TestCase
         return $builder->toMappingDefinition($config);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Using the Relay Edge fields builder, the key "nodeType" defining the GraphQL type of the node is required and must be a string.
-     */
     public function testMissingNodeType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Using the Relay Edge fields builder, the key "nodeType" defining the GraphQL type of the node is required and must be a string.');
         $this->doMapping([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Using the Relay Edge fields builder, the key "nodeType" defining the GraphQL type of the node is required and must be a string.
-     */
     public function testInvalidNodeType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Using the Relay Edge fields builder, the key "nodeType" defining the GraphQL type of the node is required and must be a string.');
         $this->doMapping(['nodeType' => true]);
     }
 

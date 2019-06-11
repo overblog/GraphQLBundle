@@ -18,43 +18,35 @@ use GraphQL\Type\Definition\IntType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\StringType;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLGenerator\Generator\TypeGenerator;
 
 class TypeGeneratorTest extends AbstractTypeGeneratorTest
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Skeleton dir "fake" not found.
-     */
     public function testWrongSetSkeletonDirs(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Skeleton dir "fake" not found.');
         $this->typeGenerator->setSkeletonDirs(['fake']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Skeleton dir must be string or object implementing __toString, "array" given.
-     */
     public function testWrongAddSkeletonDir(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Skeleton dir must be string or object implementing __toString, "array" given.');
         $this->typeGenerator->addSkeletonDir([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Skeleton dirs must be array or object implementing \Traversable interface, "object" given.
-     */
     public function testWrongObjectSetSkeletonDir(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Skeleton dirs must be array or object implementing \Traversable interface, "object" given.');
         $this->typeGenerator->setSkeletonDirs(new \stdClass());
     }
 
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp  /Skeleton "fake" could not be found in .*\/skeleton./
-     */
     public function testWrongGetSkeletonDirs(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('/Skeleton "fake" could not be found in .*\/skeleton./');
         $this->typeGenerator->getSkeletonContent('fake');
     }
 
@@ -88,12 +80,10 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         );
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Malformed ListOf wrapper type "[String" expected "]" but got "g".
-     */
     public function testTypeAlias2StringInvalidListOf(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Malformed ListOf wrapper type "[String" expected "]" but got "g".');
         $this->generateClasses([
             'T' => [
                 'type' => 'object',
@@ -158,12 +148,13 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $this->assertEquals(['result' => 1], $resolveFn());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Generator [Overblog\GraphQLGenerator\Generator\TypeGenerator::generateFake] for placeholder "fake" is not callable.
-     */
     public function testProcessInvalidPlaceHoldersReplacements(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Generator [%s::generateFake] for placeholder "fake" is not callable.',
+            TypeGenerator::class
+            ));
         $this->typeGenerator->setSkeletonDirs(__DIR__.'/../Resources/Skeleton');
 
         $this->generateClasses($this->getConfigs());

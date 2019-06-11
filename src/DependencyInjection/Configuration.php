@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
+use Overblog\GraphQLBundle\Executor\Executor;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
@@ -148,13 +151,13 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('executor')
-                    ->defaultValue(self::NAME.'.executor.default')
+                    ->defaultValue(Executor::class)
                 ->end()
                 ->scalarNode('promise_adapter')
-                    ->defaultValue(self::NAME.'.promise_adapter.default')
+                    ->defaultValue(SyncPromiseAdapter::class)
                 ->end()
                 ->scalarNode('expression_language')
-                    ->defaultValue(self::NAME.'.expression_language.default')
+                    ->defaultValue(ExpressionLanguage::class)
                 ->end()
                 ->scalarNode('cache_expression_language_parser')->end()
             ->end()

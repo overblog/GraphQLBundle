@@ -8,7 +8,6 @@ use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpKernel\Kernel;
 
 class DebugCommandTest extends TestCase
 {
@@ -25,7 +24,7 @@ class DebugCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'mutation']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.debug');
+        $this->command = static::$kernel->getContainer()->get(DebugCommand::class);
         $this->commandTester = new CommandTester($this->command);
 
         foreach (DebugCommand::getCategories() as $category) {
@@ -58,15 +57,13 @@ class DebugCommandTest extends TestCase
             $expected .= $this->logs[$category]." \n\n\n\n";
         }
 
-        $this->assertContains($expected, $this->commandTester->getDisplay(), '', \version_compare(Kernel::VERSION, '3.3.0') < 0);
+        $this->assertStringContainsString($expected, $this->commandTester->getDisplay());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid category (fake)
-     */
     public function testInvalidFormat(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid category (fake)');
         $this->commandTester->execute([
             '--category' => 'fake',
         ]);

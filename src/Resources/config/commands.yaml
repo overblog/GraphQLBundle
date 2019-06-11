@@ -1,0 +1,30 @@
+services:
+    _defaults:
+        public: true
+
+    Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand:
+        arguments:
+            - "%kernel.root_dir%"
+            - '@Overblog\GraphQLBundle\Request\Executor'
+        tags:
+            - { name: console.command, command: graphql:dump-schema, alias: "graph:dump-schema" }
+
+    Overblog\GraphQLBundle\Command\DebugCommand:
+        arguments:
+            - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
+            - '@Overblog\GraphQLBundle\Resolver\MutationResolver'
+            - '@Overblog\GraphQLBundle\Resolver\ResolverResolver'
+        tags:
+            - { name: console.command, command: graphql:debug, alias: "debug:graphql" }
+
+    Overblog\GraphQLBundle\Command\CompileCommand:
+        arguments:
+            - '@Overblog\GraphQLBundle\Generator\TypeGenerator'
+        tags:
+            - { name: console.command, command: graphql:compile }
+
+    Overblog\GraphQLBundle\Command\ValidateCommand:
+        arguments:
+            - '@Overblog\GraphQLBundle\Request\Executor'
+        tags:
+            - { name: console.command, command: graphql:validate }

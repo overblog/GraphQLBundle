@@ -7,7 +7,10 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use Overblog\GraphQLBundle\Resolver\UnsupportedResolverException;
 
 class TypeResolverTest extends AbstractResolverTest
 {
@@ -29,12 +32,13 @@ class TypeResolverTest extends AbstractResolverTest
         return new ObjectType($config);
     }
 
-    /**
-     * @expectedException \Overblog\GraphQLBundle\Resolver\UnsupportedResolverException
-     * @expectedExceptionMessage Resolver "not-supported" must be "GraphQL\Type\Definition\Type" "stdClass" given.
-     */
     public function testAddNotSupportedSolution(): void
     {
+        $this->expectException(UnsupportedResolverException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Resolver "not-supported" must be "%s" "stdClass" given.',
+            Type::class
+        ));
         $this->resolver->addSolution('not-supported', new \stdClass());
         $this->resolver->getSolution('not-supported');
     }
@@ -47,20 +51,16 @@ class TypeResolverTest extends AbstractResolverTest
         $this->assertSame('Toto', $type->name);
     }
 
-    /**
-     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
-     */
     public function testResolveUnknownType(): void
     {
+        $this->expectException(UnresolvableException::class);
         $this->resolver->resolve('Fake');
     }
 
-    /**
-     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
-     * @expectedExceptionMessage Malformed ListOf wrapper type "[Tata" expected "]" but got ""a"".
-     */
     public function testWrongListOfWrappingType(): void
     {
+        $this->expectException(UnresolvableException::class);
+        $this->expectExceptionMessage('Malformed ListOf wrapper type "[Tata" expected "]" but got ""a"".');
         $this->resolver->resolve('[Tata');
     }
 

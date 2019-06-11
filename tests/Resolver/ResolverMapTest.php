@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ResolverMapTest extends TestCase
@@ -98,11 +99,11 @@ class ResolverMapTest extends TestCase
     /**
      * @param mixed $map
      *
-     * @return ResolverMap|\PHPUnit_Framework_MockObject_MockObject
+     * @return ResolverMap|MockObject
      */
     private function createResolverMapMock($map)
     {
-        /** @var ResolverMap|\PHPUnit_Framework_MockObject_MockObject $resolverMap */
+        /** @var ResolverMap|MockObject $resolverMap */
         $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(['map'])->getMock();
         $resolverMap->method('map')->willReturn($map);
 

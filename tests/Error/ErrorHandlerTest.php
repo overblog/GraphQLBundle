@@ -12,6 +12,7 @@ use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -20,7 +21,7 @@ class ErrorHandlerTest extends TestCase
     /** @var ErrorHandler */
     private $errorHandler;
 
-    /** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EventDispatcher|MockObject */
     private $dispatcher;
 
     public function setUp(): void

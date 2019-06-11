@@ -27,12 +27,11 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
     /**
      * @param $invalidPromise
      * @dataProvider invalidPromiseDataProvider
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage This is not a valid promise.
      */
     public function testInvalidPromise($invalidPromise): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('This is not a valid promise.');
         \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
     }
 
@@ -64,12 +63,11 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
     /**
      * @param $invalidPromise
      * @dataProvider invalidPromiseDataProvider
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage This is not a valid promise.
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('This is not a valid promise.');
         \call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'], $invalidPromise, [], []);
     }
 

@@ -57,13 +57,10 @@ EOF;
         \spl_autoload_register($this->loader);
     }
 
-    /**
-     * @expectedException \Error
-     * @expectedExceptionMessage Class 'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType' not found
-     * @requires PHP 7
-     */
     public function testCustomClassLoaderNotRegister(): void
     {
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Class \'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType\' not found');
         \spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
     }

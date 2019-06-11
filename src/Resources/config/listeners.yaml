@@ -1,0 +1,18 @@
+services:
+    Overblog\GraphQLBundle\EventListener\RequestFilesListener:
+        arguments:
+            - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: graphql.executor.context, method: onExecutorContextEvent }
+
+    Overblog\GraphQLBundle\EventListener\TypeDecoratorListener:
+        arguments:
+            - '@Overblog\GraphQLBundle\Definition\ArgumentFactory'
+        tags:
+            - { name: kernel.event_listener, event: graphql.type_loaded, method: onTypeLoaded }
+
+    Overblog\GraphQLBundle\EventListener\ValidationErrorsListener:
+        tags:
+            - name: kernel.event_listener
+              event: !php/const Overblog\GraphQLBundle\Event\Events::ERROR_FORMATTING
+              method: onErrorFormatting

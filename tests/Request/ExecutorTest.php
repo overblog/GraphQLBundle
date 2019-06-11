@@ -12,12 +12,10 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ExecutorTest extends TestCase
 {
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage At least one schema should be declare.
-     */
     public function testGetSchemaNoSchemaFound(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('At least one schema should be declare.');
         $dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
 
         (new RequestExecutor(new Executor(), new ReactPromiseAdapter(), $dispatcher))->getSchema('fake');

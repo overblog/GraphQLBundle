@@ -17,48 +17,40 @@ class InheritanceProcessorTest extends TestCase
         'tata' => ['type' => 'interface', InheritanceProcessor::HEIRS_KEY => ['foo'], 'config' => []],
     ];
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type "toto" inherited by "bar" not found.
-     */
     public function testExtendsUnknownType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type "toto" inherited by "bar" not found.');
         $configs = $this->fixtures;
         unset($configs['toto']);
 
         InheritanceProcessor::process($configs);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type "foo" child of "tata" not found.
-     */
     public function testHeirsUnknownType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type "foo" child of "tata" not found.');
         $configs = $this->fixtures;
         unset($configs['foo']);
 
         InheritanceProcessor::process($configs);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type circular inheritance detected (foo->bar->toto->foo).
-     */
     public function testCircularExtendsType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type circular inheritance detected (foo->bar->toto->foo).');
         $configs = $this->fixtures;
         $configs['toto'][InheritanceProcessor::INHERITS_KEY] = ['foo'];
 
         InheritanceProcessor::process($configs);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Type "bar" can't inherit "toto" because its type ("enum") is not allowed type (["object","interface"]).
-     */
     public function testNotAllowedType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type "bar" can\'t inherit "toto" because its type ("enum") is not allowed type (["object","interface"]).');
         $configs = $this->fixtures;
         $configs['toto']['type'] = 'enum';
 
