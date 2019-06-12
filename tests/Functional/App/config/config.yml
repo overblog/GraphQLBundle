@@ -30,6 +30,7 @@ overblog_graphql:
     errors_handler:
         debug: false
     definitions:
+        use_experimental_executor: '%env(bool:USE_EXPERIMENTAL_EXECUTOR)%'
         config_validation: true
         mappings:
             auto_discover: false

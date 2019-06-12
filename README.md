@@ -44,6 +44,7 @@ Documentation
   - [GraphQL schema language](docs/definitions/graphql-schema-language.md)
   - [Schema](docs/definitions/schema.md)
   - [Resolver](docs/definitions/resolver.md)
+  - [Experimental coroutine executor](docs/definitions/coroutine-executor.md)
   - [Solving N+1 problem](docs/definitions/solving-n-plus-1-problem.md)
   - [Mutation](docs/definitions/mutation.md)
   - [Relay](docs/definitions/relay/index.md)
