@@ -7,6 +7,7 @@
 
 ## Go further
 
+-   [Experimental coroutine executor](coroutine-executor.md)
 -   [Solving N+1 problem](solving-n-plus-1-problem.md)
 -   [Resolver](resolver.md)
 -   [Mutation](mutation.md)
