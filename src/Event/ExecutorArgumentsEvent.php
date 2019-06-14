@@ -7,29 +7,27 @@ namespace Overblog\GraphQLBundle\Event;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Symfony\Contracts\EventDispatcher\Event;
 
-// TODO(mcg-web): remove hack after migrjating Symfony >= 4.3
-if (EventDispatcherVersionHelper::isForLegacy()) {
-    final class ExecutorArgumentsEvent extends \Symfony\Component\EventDispatcher\Event
-    {
-        /** @var ExtensibleSchema */
-        private $schema;
+final class ExecutorArgumentsEvent extends Event
+{
+    /** @var ExtensibleSchema */
+    private $schema;
 
-        /** @var string */
-        private $requestString;
+    /** @var string */
+    private $requestString;
 
-        /** @var mixed */
-        private $rootValue;
+    /** @var mixed */
+    private $rootValue;
 
-        /** @var \ArrayObject */
-        private $contextValue;
+    /** @var \ArrayObject */
+    private $contextValue;
 
-        /** @var array|null */
-        private $variableValue;
+    /** @var array|null */
+    private $variableValue;
 
-        /** @var string|null */
-        private $operationName;
+    /** @var string|null */
+    private $operationName;
 
-        public static function create(
+    public static function create(
             ExtensibleSchema $schema,
             $requestString,
             \ArrayObject $contextValue,
@@ -37,229 +35,101 @@ if (EventDispatcherVersionHelper::isForLegacy()) {
             array $variableValue = null,
             $operationName = null
         ) {
-            $instance = new static();
-            $instance->setSchema($schema);
-            $instance->setRequestString($requestString);
-            $instance->setContextValue($contextValue);
-            $instance->setRootValue($rootValue);
-            $instance->setVariableValue($variableValue);
-            $instance->setOperationName($operationName);
+        $instance = new static();
+        $instance->setSchema($schema);
+        $instance->setRequestString($requestString);
+        $instance->setContextValue($contextValue);
+        $instance->setRootValue($rootValue);
+        $instance->setVariableValue($variableValue);
+        $instance->setOperationName($operationName);
 
-            return $instance;
-        }
-
-        /**
-         * @param string|null $operationName
-         */
-        public function setOperationName($operationName = null): void
-        {
-            $this->operationName = $operationName;
-        }
-
-        public function setContextValue(\ArrayObject $contextValue = null): void
-        {
-            $this->contextValue = $contextValue;
-        }
-
-        /**
-         * @param mixed $rootValue
-         */
-        public function setRootValue($rootValue = null): void
-        {
-            $this->rootValue = $rootValue;
-        }
-
-        /**
-         * @param string $requestString
-         */
-        public function setRequestString($requestString): void
-        {
-            $this->requestString = $requestString;
-        }
-
-        public function setVariableValue(array $variableValue = null): void
-        {
-            $this->variableValue = $variableValue;
-        }
-
-        public function setSchema(ExtensibleSchema $schema): void
-        {
-            $this->schema = $schema;
-        }
-
-        /**
-         * @return ExtensibleSchema
-         */
-        public function getSchema(): ExtensibleSchema
-        {
-            return $this->schema;
-        }
-
-        /**
-         * @return string
-         */
-        public function getRequestString(): string
-        {
-            return $this->requestString;
-        }
-
-        /**
-         * @return array|null
-         */
-        public function getRootValue()
-        {
-            return $this->rootValue;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getContextValue(): \ArrayObject
-        {
-            return $this->contextValue;
-        }
-
-        /**
-         * @return array|null
-         */
-        public function getVariableValue()
-        {
-            return $this->variableValue;
-        }
-
-        /**
-         * @return string|null
-         */
-        public function getOperationName()
-        {
-            return $this->operationName;
-        }
+        return $instance;
     }
-} else {
-    final class ExecutorArgumentsEvent extends Event
+
+    /**
+     * @param string|null $operationName
+     */
+    public function setOperationName($operationName = null): void
     {
-        /** @var ExtensibleSchema */
-        private $schema;
+        $this->operationName = $operationName;
+    }
 
-        /** @var string */
-        private $requestString;
+    public function setContextValue(\ArrayObject $contextValue = null): void
+    {
+        $this->contextValue = $contextValue;
+    }
 
-        /** @var mixed */
-        private $rootValue;
+    /**
+     * @param mixed $rootValue
+     */
+    public function setRootValue($rootValue = null): void
+    {
+        $this->rootValue = $rootValue;
+    }
 
-        /** @var \ArrayObject */
-        private $contextValue;
+    /**
+     * @param string $requestString
+     */
+    public function setRequestString($requestString): void
+    {
+        $this->requestString = $requestString;
+    }
 
-        /** @var array|null */
-        private $variableValue;
+    public function setVariableValue(array $variableValue = null): void
+    {
+        $this->variableValue = $variableValue;
+    }
 
-        /** @var string|null */
-        private $operationName;
+    public function setSchema(ExtensibleSchema $schema): void
+    {
+        $this->schema = $schema;
+    }
 
-        public static function create(
-            ExtensibleSchema $schema,
-            $requestString,
-            \ArrayObject $contextValue,
-            $rootValue = null,
-            array $variableValue = null,
-            $operationName = null
-        ) {
-            $instance = new static();
-            $instance->setSchema($schema);
-            $instance->setRequestString($requestString);
-            $instance->setContextValue($contextValue);
-            $instance->setRootValue($rootValue);
-            $instance->setVariableValue($variableValue);
-            $instance->setOperationName($operationName);
+    /**
+     * @return ExtensibleSchema
+     */
+    public function getSchema(): ExtensibleSchema
+    {
+        return $this->schema;
+    }
 
-            return $instance;
-        }
+    /**
+     * @return string
+     */
+    public function getRequestString(): string
+    {
+        return $this->requestString;
+    }
 
-        /**
-         * @param string|null $operationName
-         */
-        public function setOperationName($operationName = null): void
-        {
-            $this->operationName = $operationName;
-        }
+    /**
+     * @return array|null
+     */
+    public function getRootValue()
+    {
+        return $this->rootValue;
+    }
 
-        public function setContextValue(\ArrayObject $contextValue = null): void
-        {
-            $this->contextValue = $contextValue;
-        }
+    /**
+     * @return \ArrayObject
+     */
+    public function getContextValue(): \ArrayObject
+    {
+        return $this->contextValue;
+    }
 
-        /**
-         * @param mixed $rootValue
-         */
-        public function setRootValue($rootValue = null): void
-        {
-            $this->rootValue = $rootValue;
-        }
+    /**
+     * @return array|null
+     */
+    public function getVariableValue()
+    {
+        return $this->variableValue;
+    }
 
-        /**
-         * @param string $requestString
-         */
-        public function setRequestString($requestString): void
-        {
-            $this->requestString = $requestString;
-        }
-
-        public function setVariableValue(array $variableValue = null): void
-        {
-            $this->variableValue = $variableValue;
-        }
-
-        public function setSchema(ExtensibleSchema $schema): void
-        {
-            $this->schema = $schema;
-        }
-
-        /**
-         * @return ExtensibleSchema
-         */
-        public function getSchema(): ExtensibleSchema
-        {
-            return $this->schema;
-        }
-
-        /**
-         * @return string
-         */
-        public function getRequestString(): string
-        {
-            return $this->requestString;
-        }
-
-        /**
-         * @return array|null
-         */
-        public function getRootValue()
-        {
-            return $this->rootValue;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getContextValue(): \ArrayObject
-        {
-            return $this->contextValue;
-        }
-
-        /**
-         * @return array|null
-         */
-        public function getVariableValue()
-        {
-            return $this->variableValue;
-        }
-
-        /**
-         * @return string|null
-         */
-        public function getOperationName()
-        {
-            return $this->operationName;
-        }
+    /**
+     * @return string|null
+     */
+    public function getOperationName()
+    {
+        return $this->operationName;
     }
 }
