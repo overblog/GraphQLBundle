@@ -11,6 +11,7 @@ services:
     overblog_graphql.request_executor: '@Overblog\GraphQLBundle\Request\Executor'
     overblog_graphql.request_parser: '@Overblog\GraphQLBundle\Request\Parser'
     overblog_graphql.request_batch_parser: '@Overblog\GraphQLBundle\Request\BatchParser'
+    overblog_graphql.arguments_transformer: '@Overblog\GraphQLBundle\Transformer\ArgumentsTransformer'
 
     overblog_graphql.schema_builder:
         alias: 'Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder'
