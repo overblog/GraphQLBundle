@@ -64,7 +64,7 @@ class SchemaBuilder
             'types' => function () use ($types, $schemaName) {
                 $this->typeResolver->setCurrentSchemaName($schemaName);
 
-                return \array_map([$this->typeResolver, 'getSolution'], $types);
+                return \array_map([$this->typeResolver, 'resolve'], $types);
             },
         ];
     }
