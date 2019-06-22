@@ -8,6 +8,7 @@ use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Executor\Executor;
@@ -257,10 +258,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->children()
                             ->arrayNode('types')
-                                ->prototype('enum')->values(\array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
+                                ->prototype('enum')->values(\array_keys(ConfigParserPass::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
                             ->end()
                             ->scalarNode('dir')->defaultNull()->end()
-                            ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
+                            ->scalarNode('suffix')->defaultValue(ConfigParserPass::DEFAULT_TYPES_SUFFIX)->end()
                         ->end()
                     ->end()
                 ->end()
