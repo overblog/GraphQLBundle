@@ -22,17 +22,17 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OverblogGraphQLExtension extends Extension implements PrependExtensionInterface
+class OverblogGraphQLExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
         $this->loadConfigFiles($container);
-        $config = $this->treatConfigs($configs, $container);
+        $configuration = $this->getConfiguration($configs, $container);
+        $config = $this->processConfiguration($configuration, $configs);
 
         $this->setBatchingMethod($config, $container);
         $this->setServicesAliases($config, $container);
@@ -46,18 +46,8 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
 
+        $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        $configs = $container->getExtensionConfig($this->getAlias());
-        $configs = $container->getParameterBag()->resolveValue($configs);
-        $config = $this->treatConfigs($configs, $container, true);
-
-        /** @var OverblogGraphQLTypesExtension $typesExtension */
-        $typesExtension = $container->getExtension($this->getAlias().'_types');
-        $typesExtension->containerPrependExtensionConfig($config, $container);
     }
 
     public function getAlias()
@@ -151,18 +141,6 @@ class OverblogGraphQLExtension extends Extension implements PrependExtensionInte
                 }
             }
         }
-    }
-
-    private function treatConfigs(array $configs, ContainerBuilder $container, $forceReload = false)
-    {
-        static $config = null;
-
-        if ($forceReload || null === $config) {
-            $configuration = $this->getConfiguration($configs, $container);
-            $config = $this->processConfiguration($configuration, $configs);
-        }
-
-        return $config;
     }
 
     private function setSecurity(array $config, ContainerBuilder $container): void

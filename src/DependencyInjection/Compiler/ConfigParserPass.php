@@ -2,22 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\DependencyInjection;
+namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
+use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OverblogGraphQLTypesExtension extends Extension
+class ConfigParserPass implements CompilerPassInterface
 {
     public const SUPPORTED_TYPES_EXTENSIONS = [
         'yaml' => '{yaml,yml}',
@@ -50,22 +52,23 @@ class OverblogGraphQLTypesExtension extends Extension
 
     public const DEFAULT_TYPES_SUFFIX = '.types';
 
-    public function load(array $configs, ContainerBuilder $container): void
+    public function process(ContainerBuilder $container): void
     {
-        $configs = \array_filter($configs);
-        if (\count($configs) > 1) {
-            throw new \InvalidArgumentException('Configs type should never contain more than one config to deal with inheritance.');
-        }
-        $configuration = $this->getConfiguration($configs, $container);
-        $config = $this->processConfiguration($configuration, $configs);
-
+        $config = $this->processConfiguration([$this->getConfigs($container)]);
         $container->setParameter($this->getAlias().'.config', $config);
     }
 
-    public function containerPrependExtensionConfig(array $configs, ContainerBuilder $container): void
+    public function processConfiguration(array $configs): array
     {
-        $container->setParameter('overblog_graphql_types.classes_map', []);
-        $typesMappings = $this->mappingConfig($configs, $container);
+        return (new Processor())->processConfiguration(new TypesConfiguration(), $configs);
+    }
+
+    private function getConfigs(ContainerBuilder $container): array
+    {
+        $config = $container->getParameterBag()->resolveValue($container->getParameter('overblog_graphql.config'));
+        $container->getParameterBag()->remove('overblog_graphql.config');
+        $container->setParameter($this->getAlias().'.classes_map', []);
+        $typesMappings = $this->mappingConfig($config, $container);
         // reset treated files
         $this->treatedFiles = [];
         $typesMappings = \array_merge(...$typesMappings);
@@ -77,20 +80,20 @@ class OverblogGraphQLTypesExtension extends Extension
         $typesNeedPreParsing = $this->typesNeedPreParsing();
         foreach ($typesMappings as $params) {
             if ($typesNeedPreParsing[$params['type']]) {
-                $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $configs, true);
+                $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $config, true);
             }
         }
 
         // Parse all files and get related config
         foreach ($typesMappings as $params) {
-            $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $configs));
+            $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $config));
         }
 
         $this->checkTypesDuplication($typeConfigs);
         // flatten config is a requirement to support inheritance
         $flattenTypeConfig = \array_merge(...$typeConfigs);
 
-        $container->prependExtensionConfig($this->getAlias(), $flattenTypeConfig);
+        return $flattenTypeConfig;
     }
 
     private function typesNeedPreParsing(): array
@@ -252,18 +255,13 @@ class OverblogGraphQLTypesExtension extends Extension
         return $bundleDir;
     }
 
-    public function getAliasPrefix()
+    private function getAliasPrefix()
     {
         return 'overblog_graphql';
     }
 
-    public function getAlias()
+    private function getAlias()
     {
         return $this->getAliasPrefix().'_types';
-    }
-
-    public function getConfiguration(array $config, ContainerBuilder $container)
-    {
-        return new TypesConfiguration();
     }
 }
