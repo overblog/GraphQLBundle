@@ -13,10 +13,6 @@ class ConfigProcessorPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->has(ConfigProcessor::class)) {
-            return;
-        }
-
         $definition = $container->findDefinition(ConfigProcessor::class);
 
         $taggedServices = $container->findTaggedServiceIds('overblog_graphql.definition_config_processor');
