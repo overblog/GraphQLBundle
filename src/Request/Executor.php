@@ -148,7 +148,7 @@ class Executor
             $this->defaultFieldResolver
         );
 
-        $result = $this->postExecute($result);
+        $result = $this->postExecute($result, $executorArgumentsEvent);
 
         return $result;
     }
@@ -172,10 +172,10 @@ class Executor
         );
     }
 
-    private function postExecute(ExecutionResult $result): ExecutionResult
+    private function postExecute(ExecutionResult $result, ExecutorArgumentsEvent $executorArguments): ExecutionResult
     {
         return $this->dispatcher->dispatch(
-            new ExecutorResultEvent($result),
+            new ExecutorResultEvent($result, $executorArguments),
             Events::POST_EXECUTOR
         )->getResult();
     }
