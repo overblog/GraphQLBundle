@@ -12,9 +12,13 @@ final class ExecutorResultEvent extends Event
     /** @var ExecutionResult */
     private $result;
 
-    public function __construct(ExecutionResult $result)
+    /** @var ExecutorArgumentsEvent */
+    private $executorArguments;
+
+    public function __construct(ExecutionResult $result, ExecutorArgumentsEvent $executorArguments)
     {
         $this->result = $result;
+        $this->executorArguments = $executorArguments;
     }
 
     /**
@@ -23,5 +27,10 @@ final class ExecutorResultEvent extends Event
     public function getResult(): ExecutionResult
     {
         return $this->result;
+    }
+
+    public function getExecutorArguments(): ExecutorArgumentsEvent
+    {
+        return $this->executorArguments;
     }
 }
