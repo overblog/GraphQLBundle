@@ -147,8 +147,22 @@ class ArgumentsTransformer
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
         $errors = [];
-        if (\is_object($result) && $this->validator) {
-            $errors = $this->validator->validate($result);
+        if ($this->validator) {
+            if (\is_object($result)) {
+                $errors = $this->validator->validate($result);
+            }
+            if (\is_array($result) && $isMultiple) {
+                foreach ($result as $element) {
+                    if (\is_object($element)) {
+                        $tmpErrors = $this->validator->validate($element);
+                        if (is_array($errors)) {
+                            $errors = $tmpErrors;
+                        } else {
+                            $errors->addAll($tmpErrors);
+                        }
+                    }
+                }
+            }
         }
 
         if (\count($errors) > 0) {

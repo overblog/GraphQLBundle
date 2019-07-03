@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -175,6 +176,79 @@ class ArgumentsTransformerTest extends TestCase
                     'message' => 'validation_error',
                     'code' => null,
                 ]],
+            ];
+
+            $this->assertEquals($e->toState(), $expected);
+        }
+    }
+
+    /**
+     * Validate array of input values annotated with Constraints, for example [InputTypeWithConstraints!]
+     */
+    public function testRaisedErrorsForMultipleInputs(): void
+    {
+        $violation1 = new ConstraintViolation(
+            'validation_error1',
+            'validation_error',
+            [],
+            'invalid',
+            'field2',
+            'invalid'
+        );
+        $violation2 = new ConstraintViolation(
+            'validation_error2',
+            'validation_error',
+            [],
+            'invalid',
+            'field2',
+            'invalid'
+        );
+
+        $validator = $this->createMock(RecursiveValidator::class);
+        $validator->method('validate')->willReturnOnConsecutiveCalls(
+            new ConstraintViolationList([$violation1]),
+            new ConstraintViolationList([$violation2])
+        );
+        $builder = new ArgumentsTransformer($validator, [
+            'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
+            'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
+        ]);
+
+        $mapping = ['input1' => '[InputType1]', 'input2' => '[InputType2]'];
+        $data = [
+            'input1' => [['field1' => 'hello', 'field2' => 12, 'field3' => true]],
+            'input2' => [['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12]],
+        ];
+
+        try {
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
+            $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
+            /** @var InvalidArgumentsError $e */
+            $first = $e->getErrors()[0];
+            $second = $e->getErrors()[1];
+            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
+            $this->assertEquals($first->getErrors()->get(0), $violation1);
+            $this->assertEquals($first->getName(), 'input1');
+            $this->assertEquals($second->getErrors()->get(0), $violation2);
+            $this->assertEquals($second->getName(), 'input2');
+
+            $expected = [
+                'input1' => [
+                    [
+                        'path'    => 'field2',
+                        'message' => 'validation_error1',
+                        'code'    => null,
+                    ]
+                ],
+                'input2' => [
+                    [
+                        'path'    => 'field2',
+                        'message' => 'validation_error2',
+                        'code'    => null,
+                    ]
+                ],
             ];
 
             $this->assertEquals($e->toState(), $expected);
