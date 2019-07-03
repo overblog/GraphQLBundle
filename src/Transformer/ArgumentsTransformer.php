@@ -155,7 +155,7 @@ class ArgumentsTransformer
                 foreach ($result as $element) {
                     if (\is_object($element)) {
                         $tmpErrors = $this->validator->validate($element);
-                        if (is_array($errors)) {
+                        if (\is_array($errors)) {
                             $errors = $tmpErrors;
                         } else {
                             $errors->addAll($tmpErrors);

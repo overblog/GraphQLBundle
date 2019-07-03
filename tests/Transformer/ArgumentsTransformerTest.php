@@ -183,7 +183,7 @@ class ArgumentsTransformerTest extends TestCase
     }
 
     /**
-     * Validate array of input values annotated with Constraints, for example [InputTypeWithConstraints!]
+     * Validate array of input values annotated with Constraints, for example [InputTypeWithConstraints!].
      */
     public function testRaisedErrorsForMultipleInputs(): void
     {
@@ -237,16 +237,16 @@ class ArgumentsTransformerTest extends TestCase
             $expected = [
                 'input1' => [
                     [
-                        'path'    => 'field2',
+                        'path' => 'field2',
                         'message' => 'validation_error1',
-                        'code'    => null,
+                        'code' => null,
                     ]
                 ],
                 'input2' => [
                     [
-                        'path'    => 'field2',
+                        'path' => 'field2',
                         'message' => 'validation_error2',
-                        'code'    => null,
+                        'code' => null,
                     ]
                 ],
             ];
