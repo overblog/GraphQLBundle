@@ -240,14 +240,14 @@ class ArgumentsTransformerTest extends TestCase
                         'path' => 'field2',
                         'message' => 'validation_error1',
                         'code' => null,
-                    ]
+                    ],
                 ],
                 'input2' => [
                     [
                         'path' => 'field2',
                         'message' => 'validation_error2',
                         'code' => null,
-                    ]
+                    ],
                 ],
             ];
 
