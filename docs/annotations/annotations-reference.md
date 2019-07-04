@@ -101,7 +101,7 @@ class Hero {
 
     /**
      * @GQL\Field(type="String")
-     * @GQL\Field("hasRole('ROLE_ADMIN')")
+     * @GQL\Access("hasRole('ROLE_ADMIN')")
      */
     public $secret;
 }
@@ -426,7 +426,8 @@ class MutationProvider {
 ## @Provider
 
 This annotation applies on classes to indicate that it containts methods tagged with `@Query`o or `@Mutation`.  
-Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.
+Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.  
+You can use `@Access` and/or `@IsPublic` on a provider class to add default access or visibility on query or mutation defined.  
 
 Optional attributes:
 

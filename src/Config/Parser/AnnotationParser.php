@@ -228,7 +228,7 @@ class AnnotationParser implements PreParserInterface
 
             case $classAnnotation instanceof GQL\Provider:
                 if ($preProcess) {
-                    self::$providers[$reflectionEntity->getName()] = ['annotation' => $classAnnotation, 'methods' => $methods];
+                    self::$providers[$reflectionEntity->getName()] = ['annotation' => $classAnnotation, 'methods' => $methods, 'annotations' => $classAnnotations];
                 }
                 break;
         }
@@ -656,6 +656,13 @@ class AnnotationParser implements PreParserInterface
         foreach (self::$providers as $className => $configuration) {
             $providerMethods = $configuration['methods'];
             $providerAnnotation = $configuration['annotation'];
+            $providerAnnotations = $configuration['annotations'];
+
+            $defaultAccessAnnotation = self::getFirstAnnotationMatching($providerAnnotations, GQL\Access::class);
+            $defaultIsPublicAnnotation = self::getFirstAnnotationMatching($providerAnnotations, GQL\IsPublic::class);
+
+            $defaultAccess = $defaultAccessAnnotation ? self::formatExpression($defaultAccessAnnotation->value) : false;
+            $defaultIsPublic = $defaultIsPublicAnnotation ? self::formatExpression($defaultIsPublicAnnotation->value) : false;
 
             $filteredMethods = [];
             foreach ($providerMethods as $methodName => $config) {
@@ -684,6 +691,15 @@ class AnnotationParser implements PreParserInterface
                 if ($providerAnnotation->prefix) {
                     $fieldName = \sprintf('%s%s', $providerAnnotation->prefix, $fieldName);
                 }
+
+                if ($defaultAccess && !isset($fieldConfig['access'])) {
+                    $fieldConfig['access'] = $defaultAccess;
+                }
+
+                if ($defaultIsPublic && !isset($fieldConfig['public'])) {
+                    $fieldConfig['public'] = $defaultIsPublic;
+                }
+
                 $fields[$fieldName] = $fieldConfig;
             }
         }

@@ -7,43 +7,21 @@ namespace Overblog\GraphQLBundle\Event;
 use GraphQL\Executor\ExecutionResult;
 use Symfony\Contracts\EventDispatcher\Event;
 
-// TODO(mcg-web): remove hack after migrating Symfony >= 4.3
-if (EventDispatcherVersionHelper::isForLegacy()) {
-    final class ExecutorResultEvent extends \Symfony\Component\EventDispatcher\Event
+final class ExecutorResultEvent extends Event
+{
+    /** @var ExecutionResult */
+    private $result;
+
+    public function __construct(ExecutionResult $result)
     {
-        /** @var ExecutionResult */
-        private $result;
-
-        public function __construct(ExecutionResult $result)
-        {
-            $this->result = $result;
-        }
-
-        /**
-         * @return ExecutionResult
-         */
-        public function getResult(): ExecutionResult
-        {
-            return $this->result;
-        }
+        $this->result = $result;
     }
-} else {
-    final class ExecutorResultEvent extends Event
+
+    /**
+     * @return ExecutionResult
+     */
+    public function getResult(): ExecutionResult
     {
-        /** @var ExecutionResult */
-        private $result;
-
-        public function __construct(ExecutionResult $result)
-        {
-            $this->result = $result;
-        }
-
-        /**
-         * @return ExecutionResult
-         */
-        public function getResult(): ExecutionResult
-        {
-            return $this->result;
-        }
+        return $this->result;
     }
 }
