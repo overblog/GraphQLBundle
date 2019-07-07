@@ -75,7 +75,7 @@ class ShipMutation implements MutationInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return [
             // `create_ship` is the name of the mutation that you SHOULD use inside of your types definition
