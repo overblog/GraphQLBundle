@@ -48,7 +48,7 @@ class Greetings implements ResolverInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['sayHello' => 'say_hello'];
     }
@@ -162,7 +162,7 @@ class CalcMutation implements MutationInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['addition' => 'add'];
     }

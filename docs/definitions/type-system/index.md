@@ -60,7 +60,7 @@ Types can be define 3 different ways:
         /**
          * {@inheritdoc}
          */
-        public static function getAliases()
+        public static function getAliases(): array
         {
             return ['DateTime', 'Date'];
         }
