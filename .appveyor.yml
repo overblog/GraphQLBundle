@@ -1,0 +1,29 @@
+build: false
+platform: x86
+clone_depth: 50
+clone_folder: c:\projects\overblog\graphql-bundle
+
+cache:
+    - '%LOCALAPPDATA%\Composer\files'
+
+init:
+    - SET COMPOSER_NO_INTERACTION=1
+
+install:
+    - ps: Set-Service wuauserv -StartupType Manual
+    - cinst -y php composer
+    - refreshenv
+    - cd c:\tools\php73
+    - copy php.ini-production php.ini /Y
+    - echo date.timezone="UTC" >> php.ini
+    - echo extension_dir=ext >> php.ini
+    - echo extension=php_openssl.dll >> php.ini
+    - echo extension=php_mbstring.dll >> php.ini
+    - echo extension=php_intl.dll >> php.ini
+    - echo memory_limit=1G >> php.ini
+    - cd %APPVEYOR_BUILD_FOLDER%
+    - composer install --no-progress --no-suggest
+
+test_script:
+    - cd %APPVEYOR_BUILD_FOLDER%
+    - php vendor\phpunit\phpunit\phpunit
