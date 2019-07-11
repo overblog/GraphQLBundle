@@ -22,7 +22,7 @@ class GraphQLParserTest extends TestCase
     public function testParse()
     {
         $fileName = \sprintf(
-            __DIR__.'/fixtures/graphql/schema%s.graphql',
+            __DIR__.\DIRECTORY_SEPARATOR.'fixtures'.\DIRECTORY_SEPARATOR.'graphql'.\DIRECTORY_SEPARATOR.'schema%s.graphql',
             VersionHelper::compareWebonyxGraphQLPHPVersion('0.12.0', '<') ? '-0.11' : ''
         );
         $expected = include __DIR__.'/fixtures/graphql/schema.php';
@@ -34,7 +34,7 @@ class GraphQLParserTest extends TestCase
 
     public function testParseEmptyFile()
     {
-        $fileName = __DIR__.'/fixtures/graphql/empty.graphql';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'fixtures'.\DIRECTORY_SEPARATOR.'graphql'.\DIRECTORY_SEPARATOR.'empty.graphql';
 
         $this->assertContainerAddFileToResources($fileName);
 

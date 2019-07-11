@@ -65,8 +65,8 @@ class VersionHelper
         static $version = null;
 
         if (empty($version)) {
-            $composerBinPath = \file_exists(__DIR__.'/../composer.phar') ? __DIR__.'/../composer.phar' : '`which composer`';
-            $commandline = $composerBinPath.' show \'webonyx/graphql-php\' | grep \'versions\' | grep -o -E \'\*\ .+\' | cut -d\' \' -f2 | cut -d\',\' -f1';
+            $composerBinPath = \file_exists(__DIR__.'/../composer.phar') ? __DIR__.'/../composer.phar' : 'composer';
+            $commandline = $composerBinPath.' show webonyx/graphql-php';
             if (\is_callable([Process::class, 'fromShellCommandline'])) {
                 $process = Process::fromShellCommandline($commandline);
             } else {
@@ -75,8 +75,8 @@ class VersionHelper
             $process->setWorkingDirectory(__DIR__.'/../');
             $process->run();
             if ($process->isSuccessful()) {
-                $version = $process->getOutput();
-                $version = \str_replace('.x-dev', '.999', $version);
+                \preg_match('/versions : (?:\*\s)?(.+)/', $process->getOutput(), $version);
+                $version = \str_replace('.x-dev', '.999', $version[1]);
                 $version = \preg_replace('/[^\.0-9]\.?/', '', $version);
             } else {
                 throw new ProcessFailedException($process);
