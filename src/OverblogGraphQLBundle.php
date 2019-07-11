@@ -21,6 +21,13 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OverblogGraphQLBundle extends Bundle
 {
+    public function boot(): void
+    {
+        if ($this->container->has('overblog_graphql.cache_compiler')) {
+            $this->container->get('overblog_graphql.cache_compiler')->loadClasses();
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
