@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class OverblogGraphQLTypesExtensionTest extends TestCase
@@ -44,21 +45,17 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $this->extension->load($configs, $this->container);
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessageRegExp #The file "(.*)/broken.types.yml" does not contain valid YAML\.#
-     */
     public function testBrokenYmlOnPrepend()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('#The file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
         $this->extension->containerPrependExtensionConfig($this->getMappingConfig('yaml'), $this->container);
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessageRegExp #Unable to parse file "(.*)/broken.types.xml"\.#
-     */
     public function testBrokenXmlOnPrepend()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('#Unable to parse file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
         $this->extension->containerPrependExtensionConfig($this->getMappingConfig('xml'), $this->container);
     }
 
