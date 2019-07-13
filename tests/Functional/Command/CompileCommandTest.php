@@ -60,7 +60,7 @@ class CompileCommandTest extends TestCase
         $this->assertSame(0, $this->commandTester->getStatusCode());
         $this->assertRegExp(
             '@'.$this->displayExpected(true).'@',
-            \preg_replace('@\.php[^\n]*\n@', ".php\n", $this->commandTester->getDisplay())
+            \preg_replace('@\.php\s*'.\PHP_EOL.'@', '.php'.\PHP_EOL, $this->commandTester->getDisplay())
         );
     }
 
@@ -81,20 +81,18 @@ Summary
  \-[\-]+\s+\-[\-]+\s
   class\s+path\s*
  \-[\-]+\s+\-[\-]+\s
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\QueryType              {{PATH}}/QueryType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\UserType               {{PATH}}/UserType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendConnectionType   {{PATH}}/friendConnectionType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userConnectionType     {{PATH}}/userConnectionType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\PageInfoType           {{PATH}}/PageInfoType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendEdgeType         {{PATH}}/friendEdgeType.php
-  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userEdgeType           {{PATH}}/userEdgeType.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\QueryType              {{PATH}}/QueryType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\UserType               {{PATH}}/UserType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendConnectionType   {{PATH}}/friendConnectionType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userConnectionType     {{PATH}}/userConnectionType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\PageInfoType           {{PATH}}/PageInfoType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendEdgeType         {{PATH}}/friendEdgeType\.php
+  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userEdgeType           {{PATH}}/userEdgeType\.php
  \-[\-]+\s+\-[\-]+\s
-
-
 OUTPUT;
-            $display = \str_replace('{{PATH}}', $this->cacheDir, $display);
+            $display = \str_replace('{{PATH}}', \preg_quote($this->cacheDir), $display);
         }
 
-        return $display;
+        return \str_replace("\n", \PHP_EOL, $display);
     }
 }
