@@ -44,14 +44,14 @@ class ConfigParserPassTest extends TestCase
     public function testBrokenYmlOnPrepend(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('#The file "(.*)/broken.types.yml" does not contain valid YAML\.#');
+        $this->expectExceptionMessageRegExp('#The file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
         $this->processCompilerPass($this->getMappingConfig('yaml'));
     }
 
     public function testBrokenXmlOnPrepend(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('#Unable to parse file "(.*)/broken.types.xml"\.#');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('#Unable to parse file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
         $this->processCompilerPass($this->getMappingConfig('xml'));
     }
 
