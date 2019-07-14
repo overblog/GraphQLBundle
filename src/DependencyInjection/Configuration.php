@@ -125,7 +125,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('cache_dir')->defaultNull()->end()
                 ->scalarNode('cache_dir_permissions')->defaultNull()->end()
                 ->booleanNode('use_classloader_listener')->defaultTrue()->end()
-                ->booleanNode('auto_compile')->defaultTrue()->end()
+                ->scalarNode('auto_compile')->defaultTrue()->end()
                 ->booleanNode('show_debug_info')->info('Show some performance stats in extensions')->defaultFalse()->end()
                 ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                 ->append($this->definitionsSchemaSection())
