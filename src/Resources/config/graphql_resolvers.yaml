@@ -2,12 +2,7 @@ services:
     _defaults:
         autowire: true
         public: true
-
-    _instanceof:
-        Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface:
-            tags: ['overblog_graphql.resolver']
-        Overblog\GraphQLBundle\Definition\Resolver\MutationInterface:
-            tags: ['overblog_graphql.mutation']
+        autoconfigure: true
 
     Overblog\GraphQLBundle\GraphQL\Relay\:
         resource: ../../GraphQL/Relay/{Mutation,Node}

@@ -175,11 +175,8 @@ Here an example of how this can be done with DI `autoconfigure`:
 
 ```yaml
 services:
-    _instanceof:
-        Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface:
-            tags: ['overblog_graphql.resolver']
-        Overblog\GraphQLBundle\Definition\Resolver\MutationInterface:
-            tags: ['overblog_graphql.mutation']
+    _defaults:
+        autoconfigure: true
 
     Overblog\GraphQLBundle\GraphQL\Relay\:
         resource: ../../GraphQL/Relay/{Mutation,Node}

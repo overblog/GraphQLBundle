@@ -72,9 +72,8 @@ Types can be define 3 different ways:
 
     ```yaml
     services:
-        _instanceof:
-            GraphQL\Type\Definition\Type:
-                tags: ['overblog_graphql.type']
+        _defaults:
+            autoconfigure: true
 
         App\Type\:
             resource: '../src/Type'
