@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use GraphQL\Error\UserError;
+use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\Events;
@@ -45,6 +48,7 @@ class OverblogGraphQLExtension extends Extension
         $this->setDefinitionParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
+        $this->registerForAutoconfiguration($container);
 
         $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
@@ -74,6 +78,16 @@ class OverblogGraphQLExtension extends Extension
         $loader->load('expression_language_functions.yaml');
         $loader->load('definition_config_processors.yaml');
         $loader->load('aliases.yaml');
+    }
+
+    private function registerForAutoconfiguration(ContainerBuilder $container): void
+    {
+        $container->registerForAutoconfiguration(MutationInterface::class)
+            ->addTag('overblog_graphql.mutation');
+        $container->registerForAutoconfiguration(ResolverInterface::class)
+            ->addTag('overblog_graphql.resolver');
+        $container->registerForAutoconfiguration(Type::class)
+            ->addTag('overblog_graphql.type');
     }
 
     private function setCompilerCacheWarmer(array $config, ContainerBuilder $container): void
