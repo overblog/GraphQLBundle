@@ -78,14 +78,15 @@ class OverblogGraphQLExtension extends Extension
 
     private function setCompilerCacheWarmer(array $config, ContainerBuilder $container): void
     {
-        if ($config['definitions']['auto_compile']) {
-            $definition = $container->setDefinition(
-                CompileCacheWarmer::class,
-                new Definition(CompileCacheWarmer::class)
-            );
-            $definition->setArguments([new Reference($this->getAlias().'.cache_compiler')]);
-            $definition->addTag('kernel.cache_warmer', ['priority' => 50]);
-        }
+        $definition = $container->setDefinition(
+            CompileCacheWarmer::class,
+            new Definition(CompileCacheWarmer::class)
+        );
+        $definition->setArguments([
+            new Reference($this->getAlias().'.cache_compiler'),
+            $config['definitions']['auto_compile'],
+        ]);
+        $definition->addTag('kernel.cache_warmer', ['priority' => 50]);
     }
 
     private function setClassLoaderListener(array $config, ContainerBuilder $container): void
