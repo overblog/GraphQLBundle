@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 abstract class AbstractProxyResolver extends AbstractResolver
 {
     /**
@@ -19,14 +17,8 @@ abstract class AbstractProxyResolver extends AbstractResolver
             $input = [$input];
         }
 
-        if (!isset($input[0]) || !isset($input[1])) {
-            $optionResolver = new OptionsResolver();
-            $optionResolver->setDefaults([null, []]);
-            $input = $optionResolver->resolve($input);
-        }
-
-        $alias = $input[0];
-        $funcArgs = $input[1];
+        $alias = $input[0] ?? '';
+        $funcArgs = $input[1] ?? [];
 
         $solution = $this->getSolution($alias);
 
