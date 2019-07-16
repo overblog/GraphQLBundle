@@ -27,6 +27,14 @@ Browse your version documentation:
 
 [Versions requirements](docs/index.md#versions-requirements)
 
+Proof of Concept
+-----------------
+
+* [mcg-web/graphql-symfony-doctrine-sandbox](https://github.com/mcg-web/graphql-symfony-doctrine-sandbox)
+* [michaelperrin/blog-graphql-upload-demo](https://github.com/michaelperrin/blog-graphql-upload-demo)
+* [overblog/GraphQLBundleDemo](https://github.com/overblog/GraphQLBundleDemo)
+* [Samffy/graphql-poc](https://github.com/Samffy/graphql-poc)
+
 Documentation
 -------------
 
