@@ -389,7 +389,7 @@ class SecretArea {
 ## @Mutation
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Mutation field.  
-The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.mutation`).  
+The resulting field is added to the root Mutation type (define in configuration at key `overblog_graphql.definitions.schema.mutation`).  
 The class exposing the mutation(s) must have a corresponding service with his className.
 
 Example:
@@ -436,12 +436,12 @@ Optional attributes:
 ## @Query
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
-The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
+By default, the resulting field is added to the root Query type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
 The class exposing the querie(s) must have a corresponding service with his className.
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to (by default, it'll be the Root query).
+-   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type).
 
 Example:
 
