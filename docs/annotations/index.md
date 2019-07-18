@@ -1,5 +1,19 @@
 # Annotations
 
+In order to use annotations, you need to configure the mapping:
+```yaml
+# config/packages/graphql.yaml
+overblog_graphql:
+  definitions:
+    mappings:
+      types:
+        - type: annotation
+          dir: "%kernel.project_dir%/src/GraphQL"
+          suffix: ~
+```
+
+This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
+
 ## Annotations reference
 - [Annotations reference](annotations-reference.md)
 
