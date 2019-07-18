@@ -1,17 +1,17 @@
 # Annotations reference
 
-In the following reference examples, the `use Overblog\GraphQLBundle\Annotation as GQL;` will is omitted.
+In the following reference examples the line `use Overblog\GraphQLBundle\Annotation as GQL;` will be omitted.
 
 ## Notes
 
--   When a annotation require an expression, the `@=` will be added automatically if it is not set.
+-   When an annotation requires an expression, the `@=` will be added automatically if it's not set.
 
-    -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']`.
+    -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']` during the compilation.
 
--   You can use multiple type annotations on the same class. For example, if you need your class to be a Graphql Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
+-   You can use multiple type annotations on the same class. For example, if you need your class to be a GraphQL Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
 
-In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated.  
-As fields on input type don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
+In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated during the compilation process.  
+As fields on input types don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
 
 ```php
 <?php
@@ -36,7 +36,6 @@ class Coordinates {
      */
     public $elevation;
 }
->
 ```
 
 ## Index
