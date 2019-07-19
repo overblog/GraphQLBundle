@@ -289,7 +289,7 @@ Checks whether logged in user has given permission for given object (requires [s
 Example:
 ```yaml
 # Using in combination with the 'service' function.
-@=hasPermission(ser('user_repository').find(1), ‘OWNER’)
+@=hasPermission(ser('user_repository').find(1), 'OWNER')
 ```
 
 ---
@@ -302,7 +302,7 @@ Checks whether the token has any of the given permissions for the given object
 Example:
 ```yaml
 # Using in combination with the 'service' function
-@=hasAnyPermission(service('my_service').getObject(), [‘OWNER’, ‘ADMIN’])
+@=hasAnyPermission(service('my_service').getObject(), ['OWNER', 'ADMIN'])
 ```
 
 ---
