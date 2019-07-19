@@ -428,12 +428,12 @@ Backslashes in expressions must be escaped by 2 or 4 backslasehs, depending on w
 When using **single quotes** as _outer_ quotes, you must use **double backslashes**. e.g.:
 ```yaml
 ...
-access: '@=resolver("App\\GraphQL\\Resolver\\ResolverName::methodName")'
+resolve: '@=resolver("App\\GraphQL\\Resolver\\ResolverName::methodName")'
 ...
 ```
 When using **double quotes** as _outer_ quotes, you must use **4 backslashes**, e.g.:
 ```yaml
 ...
-access: "@=resolver('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
+resolve: "@=resolver('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
 ...
 ```
