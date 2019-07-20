@@ -34,7 +34,7 @@ All definition config entries can use expression language but it must be explici
 ## Registered functions
 
 ### service
-**Signature**: <code><b>service</b>(string <b>$id</b>): object|null</code> | **Alias**: `ser`
+**Signature**: <code><b>service</b>(string <b>$id</b>): object|null</code> | **Alias**: `serv`
 
 Gets a service from the [service container](https://symfony.com/doc/current/service_container.html). Private services should be explicitly tagged to be accessible, see [this](#private-services) section for more details.
 
@@ -43,14 +43,14 @@ Examples:
 @=service('my_service').customMethod()
 
 # Using the 'ser' alias
-@=ser('my_service').customMethod()
+@=serv('my_service').customMethod()
 
 # Using the FQCN for the service name (only works for public services).
 # Note the double quotes.
-@=ser("App\\Manager\\UserManager").someMethod()
+@=serv("App\\Manager\\UserManager").someMethod()
 
 # If using single quotes, you must use 4 slashes
-@=ser('App\\\\Manager\\\\UserManager').someMethod()
+@=serv('App\\\\Manager\\\\UserManager').someMethod()
 ```
 
 ---
@@ -289,7 +289,7 @@ Checks whether logged in user has given permission for given object (requires [s
 Example:
 ```yaml
 # Using in combination with the 'service' function.
-@=hasPermission(ser('user_repository').find(1), 'OWNER')
+@=hasPermission(serv('user_repository').find(1), 'OWNER')
 ```
 
 ---
