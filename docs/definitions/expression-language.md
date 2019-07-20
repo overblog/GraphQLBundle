@@ -188,7 +188,7 @@ Examples:
 @=call("App\\Util\\Validator::email", ["arg1", 2])
 
 # Calling a static method using an array callable
-call(["App\\Util\\Validator", "email"], [args["email"]])
+@=call(["App\\Util\\Validator", "email"], [args["email"]])
 
 # Calling a function
 @=call('array_merge', [args['array1'], args['array2']])
