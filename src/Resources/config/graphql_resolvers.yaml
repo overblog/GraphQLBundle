@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        public: true
+        autoconfigure: true
+
+    Overblog\GraphQLBundle\GraphQL\Relay\:
+        resource: ../../GraphQL/Relay/{Mutation,Node}

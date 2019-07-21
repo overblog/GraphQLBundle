@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
-use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
@@ -158,17 +157,15 @@ CODE;
             return $resolveComplexity;
         }
 
-        $argumentClass = $this->shortenClassName(Argument::class);
-
         $code = <<<'CODE'
 function ($childrenComplexity, $args = []) <closureUseStatements>{
 <spaces><spaces>$resolveComplexity = %s;
 
-<spaces><spaces>return call_user_func_array($resolveComplexity, [$childrenComplexity, new %s($args)]);
+<spaces><spaces>return call_user_func_array($resolveComplexity, [$childrenComplexity, $globalVariable->get('argumentFactory')->create($args)]);
 <spaces>}
 CODE;
 
-        $code = \sprintf($code, $resolveComplexity, $argumentClass);
+        $code = \sprintf($code, $resolveComplexity);
 
         return $code;
     }

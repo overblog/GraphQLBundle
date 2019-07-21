@@ -24,7 +24,7 @@ class ValidateCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'validation']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.validate');
+        $this->command = static::$kernel->getContainer()->get(ValidateCommand::class);
         $this->commandTester = new CommandTester($this->command);
     }
 

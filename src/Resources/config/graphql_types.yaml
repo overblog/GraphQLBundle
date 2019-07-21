@@ -2,35 +2,30 @@ services:
     # GraphQL build-in Scalars types
     overblog_graphql.definition.string_type:
         class: GraphQL\Type\Definition\StringType
-        public: false
         factory: ["GraphQL\\Type\\Definition\\Type", string]
         tags:
             - { name: overblog_graphql.type, alias: String }
 
     overblog_graphql.definition.int_type:
         class: GraphQL\Type\Definition\IntType
-        public: false
         factory: ["GraphQL\\Type\\Definition\\Type", int]
         tags:
             - { name: overblog_graphql.type, alias: Int }
 
     overblog_graphql.definition.float_type:
         class: GraphQL\Type\Definition\FloatType
-        public: false
         factory: ["GraphQL\\Type\\Definition\\Type", Float]
         tags:
             - { name: overblog_graphql.type, alias: Float }
 
     overblog_graphql.definition.boolean_type:
         class: GraphQL\Type\Definition\BooleanType
-        public: false
         factory: ["GraphQL\\Type\\Definition\\Type", boolean]
         tags:
             - { name: overblog_graphql.type, alias: Boolean }
 
     overblog_graphql.definition.id_type:
         class: GraphQL\Type\Definition\IDType
-        public: false
         factory: ["GraphQL\\Type\\Definition\\Type", id]
         tags:
             - { name: overblog_graphql.type, alias: ID }

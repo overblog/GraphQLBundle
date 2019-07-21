@@ -1,13 +1,13 @@
 RootQuery:
     type: object
     config:
-        resolveField: '@="Arguments: " ~ json_encode(args.getRawArguments()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
+        resolveField: '@="Arguments: " ~ json_encode(args.getArrayCopy()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
         fields:
             fieldWithResolverAndArgument:
                 type: String!
                 args:
                     name: {type: String!}
-                resolve: '@="Field resolver Arguments: " ~ json_encode(args.getRawArguments()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
+                resolve: '@="Field resolver Arguments: " ~ json_encode(args.getArrayCopy()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
             fieldWithDefaultResolverAndArgument:
                 type: String!
                 args:

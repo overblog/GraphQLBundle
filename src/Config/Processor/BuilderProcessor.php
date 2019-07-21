@@ -148,7 +148,7 @@ final class BuilderProcessor implements ProcessorInterface
                 unset($field['builderConfig']);
             }
 
-            if ($fieldBuilderName) {
+            if (\is_string($fieldBuilderName)) {
                 $mapping = self::getFieldBuilderMapping($fieldBuilderName, self::BUILDER_FIELD_TYPE, $builderConfig, $reservedTypesMap);
 
                 $fieldMapping = $mapping['field'];

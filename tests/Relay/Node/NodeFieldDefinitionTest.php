@@ -17,21 +17,17 @@ class NodeFieldDefinitionTest extends TestCase
         $this->definition = new NodeFieldDefinition();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Node "idFetcher" config is invalid.
-     */
     public function testUndefinedIdFetcherConfig(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Node "idFetcher" config is invalid.');
         $this->definition->toMappingDefinition([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Node "idFetcher" config is invalid.
-     */
     public function testIdFetcherConfigSetButIsNotString(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Node "idFetcher" config is invalid.');
         $this->definition->toMappingDefinition(['idFetcher' => 45]);
     }
 

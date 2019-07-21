@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Event;
 
 use GraphQL\Executor\ExecutionResult;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExecutorResultEvent extends Event
 {

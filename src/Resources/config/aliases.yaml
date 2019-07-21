@@ -1,0 +1,22 @@
+services:
+    _defaults:
+        public: true
+
+    overblog_graphql.type_resolver: '@Overblog\GraphQLBundle\Resolver\TypeResolver'
+    overblog_graphql.resolver_resolver: '@Overblog\GraphQLBundle\Resolver\ResolverResolver'
+    overblog_graphql.mutation_resolver: '@Overblog\GraphQLBundle\Resolver\MutationResolver'
+    overblog_graphql.access_resolver: '@Overblog\GraphQLBundle\Resolver\AccessResolver'
+    overblog_graphql.cache_compiler: '@Overblog\GraphQLBundle\Generator\TypeGenerator'
+    overblog_graphql.react.promise_adapter: '@Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter'
+    overblog_graphql.request_executor: '@Overblog\GraphQLBundle\Request\Executor'
+    overblog_graphql.request_parser: '@Overblog\GraphQLBundle\Request\Parser'
+    overblog_graphql.request_batch_parser: '@Overblog\GraphQLBundle\Request\BatchParser'
+    overblog_graphql.arguments_transformer: '@Overblog\GraphQLBundle\Transformer\ArgumentsTransformer'
+
+    overblog_graphql.schema_builder:
+        alias: 'Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder'
+        public: false
+
+    overblog_graphql.type_factory:
+        alias: 'Overblog\GraphQLBundle\Definition\Builder\TypeFactory'
+        public: false

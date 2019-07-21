@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
+use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -24,7 +25,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'connection']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.dump_schema');
+        $this->command = static::$kernel->getContainer()->get(GraphQLDumpSchemaCommand::class);
         $this->commandTester = new CommandTester($this->command);
         $this->cacheDir = static::$kernel->getCacheDir();
     }
@@ -97,23 +98,19 @@ class GraphDumpSchemaCommandTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unknown format "fake".
-     */
     public function testInvalidFormat(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown format "fake"');
         $this->commandTester->execute([
             '--format' => 'fake',
         ]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "modern" and "classic" options should not be used together.
-     */
     public function testInvalidModernAndClassicUsedTogether(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('"modern" and "classic" options should not be used together.');
         $this->commandTester->execute([
             '--format' => 'json',
             '--classic' => true,

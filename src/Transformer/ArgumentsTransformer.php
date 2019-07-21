@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ArgumentsTransformer
@@ -146,9 +147,20 @@ class ArgumentsTransformer
         $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
-        $errors = [];
-        if (\is_object($result) && $this->validator) {
-            $errors = $this->validator->validate($result);
+        $errors = new ConstraintViolationList();
+        if ($this->validator) {
+            if (\is_object($result)) {
+                $errors = $this->validator->validate($result);
+            }
+            if (\is_array($result) && $isMultiple) {
+                foreach ($result as $element) {
+                    if (\is_object($element)) {
+                        $errors->addAll(
+                            $this->validator->validate($element)
+                        );
+                    }
+                }
+            }
         }
 
         if (\count($errors) > 0) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
@@ -43,8 +43,8 @@ class ConnectionBuilder
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
      *
-     * @param array          $data
-     * @param array|Argument $args
+     * @param array                   $data
+     * @param array|ArgumentInterface $args
      *
      * @return ConnectionInterface
      */
@@ -64,8 +64,8 @@ class ConnectionBuilder
      * A version of `connectionFromArray` that takes a promised array, and returns a
      * promised connection.
      *
-     * @param mixed          $dataPromise a promise
-     * @param array|Argument $args
+     * @param mixed                   $dataPromise a promise
+     * @param array|ArgumentInterface $args
      *
      * @return mixed a promise
      */
@@ -87,16 +87,16 @@ class ConnectionBuilder
      * to materialize the entire array, and instead wish pass in a slice of the
      * total result large enough to cover the range specified in `args`.
      *
-     * @param array          $arraySlice
-     * @param array|Argument $args
-     * @param array          $meta
+     * @param array                   $arraySlice
+     * @param array|ArgumentInterface $args
+     * @param array                   $meta
      *
      * @return ConnectionInterface
      */
     public function connectionFromArraySlice(array $arraySlice, $args, array $meta): ConnectionInterface
     {
         $connectionArguments = $this->getOptionsWithDefaults(
-            $args instanceof Argument ? $args->getRawArguments() : $args,
+            $args instanceof ArgumentInterface ? $args->getArrayCopy() : $args,
             [
                 'after' => '',
                 'before' => '',
@@ -172,9 +172,9 @@ class ConnectionBuilder
      * A version of `connectionFromArraySlice` that takes a promised array slice,
      * and returns a promised connection.
      *
-     * @param mixed          $dataPromise a promise
-     * @param array|Argument $args
-     * @param array          $meta
+     * @param mixed                   $dataPromise a promise
+     * @param array|ArgumentInterface $args
+     * @param array                   $meta
      *
      * @return mixed a promise
      */

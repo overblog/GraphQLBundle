@@ -60,8 +60,7 @@ namespace App\Resolver;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Utils;
-use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 
 class MyResolverMap extends ResolverMap
@@ -70,7 +69,7 @@ class MyResolverMap extends ResolverMap
     {
         return [
             'Query' => [
-                self::RESOLVE_FIELD => function ($value, Argument $args, \ArrayObject $context, ResolveInfo $info) {
+                self::RESOLVE_FIELD => function ($value, ArgumentInterface $args, \ArrayObject $context, ResolveInfo $info) {
                     if ('baz' === $info->fieldName) {
                         $id = (int) $args['id'];
 
@@ -136,7 +135,7 @@ services:
 
 **Notes:**
 - ResolverMap will override **all matching entries** when decorating types.
-- ResolverMap does not supports `access` and `query complexity` right now.
+- ResolverMap does not supports `access`, `public` and `query complexity` right now.
 - Many resolver map can be set for the same schema.
   In this case the first resolverMap in list where `isResolvable`
   returns `true` will be use.

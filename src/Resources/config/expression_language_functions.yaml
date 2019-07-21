@@ -1,0 +1,53 @@
+services:
+    _defaults:
+        tags:
+            - { name: overblog_graphql.expression_function }
+
+    # Authorization
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe: ~
+
+    # Config
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments: ~
+
+    # relay
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\GlobalID: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\IdFetcherCallback: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\MutateAndGetPayloadCallback: ~
+    Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\ResolveSingleInputCallback: ~
+
+    # aliases
+    expression_function.parameter_alias:
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter
+        arguments:
+            - param
+
+    expression_function.service_alias:
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service
+        arguments:
+            - serv
+
+    expression_function.mutation_alias:
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation
+        arguments:
+            - mut
+
+    expression_function.resolver_alias:
+        parent: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver
+        arguments:
+            - res

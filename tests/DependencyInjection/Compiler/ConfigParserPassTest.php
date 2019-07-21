@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\DependencyInjection;
+namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
-use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLTypesExtension;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
@@ -17,83 +17,64 @@ use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
-class OverblogGraphQLTypesExtensionTest extends TestCase
+class ConfigParserPassTest extends TestCase
 {
     /** @var ContainerBuilder */
     private $container;
 
-    /** @var OverblogGraphQLTypesExtension */
-    private $extension;
+    /** @var ConfigParserPass */
+    private $compilerPass;
 
     public function setUp(): void
     {
         $this->container = new ContainerBuilder();
         $this->container->setParameter('kernel.bundles', []);
         $this->container->setParameter('kernel.debug', false);
-        $this->extension = new OverblogGraphQLTypesExtension();
+        $this->compilerPass = new ConfigParserPass();
     }
 
     public function tearDown(): void
     {
-        unset($this->container, $this->extension);
+        unset($this->container, $this->compilerPass);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Configs type should never contain more than one config to deal with inheritance.
-     */
-    public function testMultipleConfigNotAllowed(): void
-    {
-        $configs = [['foo' => []], ['bar' => []]];
-        $this->extension->load($configs, $this->container);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessageRegExp #The file "(.*)/broken.types.yml" does not contain valid YAML\.#
-     */
     public function testBrokenYmlOnPrepend(): void
     {
-        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('yaml'), $this->container);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('#The file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
+        $this->processCompilerPass($this->getMappingConfig('yaml'));
     }
 
-    /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @expectedExceptionMessageRegExp #Unable to parse file "(.*)/broken.types.xml"\.#
-     */
     public function testBrokenXmlOnPrepend(): void
     {
-        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('xml'), $this->container);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageRegExp('#Unable to parse file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
+        $this->processCompilerPass($this->getMappingConfig('xml'));
     }
 
     public function testPreparseOnPrepend(): void
     {
-        $this->extension->containerPrependExtensionConfig($this->getMappingConfig('annotation'), $this->container);
-        $expected = [0 => [
-            'Type' => [
-                'type' => 'object',
-                'config' => ['fields' => []],
-            ],
-        ]];
-
-        $this->assertEquals($this->container->getExtensionConfig('overblog_graphql_types'), $expected);
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The path "overblog_graphql_types.Type._object_config.fields" should have at least 1 element(s) defined.');
+        $this->processCompilerPass($this->getMappingConfig('annotation'));
     }
 
     /**
      * @param $internalConfigKey
      * @dataProvider internalConfigKeys
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Don't use internal config keys _object_config, _enum_config, _interface_config, _union_config, _input_object_config, _custom_scalar_config, replace it by "config" instead.
      */
     public function testInternalConfigKeysShouldNotBeUsed($internalConfigKey): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Don\'t use internal config keys _object_config, _enum_config, _interface_config, _union_config, _input_object_config, _custom_scalar_config, replace it by "config" instead.');
         $configs = [
             ['bar' => [$internalConfigKey => []]],
         ];
 
-        $this->extension->load($configs, $this->container);
+        $this->compilerPass->processConfiguration($configs);
     }
 
     /**
@@ -118,7 +99,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         $this->expectException($exceptionClass);
         $this->expectExceptionMessage($exceptionMessage);
 
-        $this->extension->load([$configs], $this->container);
+        $this->compilerPass->processConfiguration([$configs]);
     }
 
     /**
@@ -186,7 +167,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
             $this->container
         );
 
-        $this->extension->load(
+        $config = $this->compilerPass->processConfiguration(
             [
                 [
                     'foo' => [
@@ -254,8 +235,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                         ],
                     ],
                 ],
-            ],
-            $this->container
+            ]
         );
 
         $this->assertSame(
@@ -328,7 +308,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                                         'type' => 'Int!',
                                         'defaultValue' => 0,
                                     ],
-                                ],
+                                 ],
                             ],
                         ],
                         'name' => 'foo',
@@ -454,7 +434,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                     ],
                 ],
             ],
-            $this->container->getParameter('overblog_graphql_types.config')
+            $config
         );
     }
 
@@ -469,7 +449,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
         ];
     }
 
-    private function getMappingConfig($type)
+    private function getMappingConfig($type): array
     {
         $config = [
             'definitions' => [
@@ -477,7 +457,7 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                     'types' => [
                         [
                             'types' => [$type],
-                            'dir' => __DIR__.'/mapping/'.$type,
+                            'dir' => __DIR__.'/../mapping/'.$type,
                         ],
                     ],
                 ],
@@ -592,5 +572,13 @@ class OverblogGraphQLTypesExtensionTest extends TestCase
                 \sprintf($expectedMessage, 'FooBox', BoxFields::class, BoxFields::class),
             ],
         ];
+    }
+
+    private function processCompilerPass(array $configs, ?ConfigParserPass $compilerPass = null, ?ContainerBuilder $container = null): void
+    {
+        $container = $container ?? $this->container;
+        $compilerPass = $compilerPass ?? $this->compilerPass;
+        $container->setParameter('overblog_graphql.config', $configs);
+        $compilerPass->process($container);
     }
 }

@@ -8,6 +8,8 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Provider(prefix="planet_")
+ * @GQL\Access("default_access")
+ * @GQL\IsPublic("default_public")
  */
 class PlanetRepository
 {
@@ -25,6 +27,7 @@ class PlanetRepository
      * @GQL\Mutation(type="Planet", args={
      *    @GQL\Arg(type="PlanetInput!", name="planetInput")
      * })
+     * @GQL\IsPublic("override_public")
      */
     public function createPlanet(array $planetInput)
     {
@@ -33,6 +36,7 @@ class PlanetRepository
 
     /**
      * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
+     * @GQL\Access("override_access")
      */
     public function getAllowedPlanetsForDroids()
     {

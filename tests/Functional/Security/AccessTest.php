@@ -48,7 +48,7 @@ EOF;
         // load types
         $this->loader = function ($class): void {
             if (\preg_match('@^'.\preg_quote('Overblog\GraphQLBundle\Access\__DEFINITIONS__\\').'(.*)$@', $class, $matches)) {
-                $file = '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
+                $file = \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
                 if (\file_exists($file)) {
                     require $file;
                 }
@@ -57,13 +57,10 @@ EOF;
         \spl_autoload_register($this->loader);
     }
 
-    /**
-     * @expectedException \Error
-     * @expectedExceptionMessage Class 'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType' not found
-     * @requires PHP 7
-     */
     public function testCustomClassLoaderNotRegister(): void
     {
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Class \'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType\' not found');
         \spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
     }

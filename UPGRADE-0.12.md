@@ -6,6 +6,7 @@ UPGRADE FROM 0.11 to 0.12
 - [Remove auto mapping configuration](#remove-auto-mapping-configuration)
 - [Relay Paginator, Connections & Edges](#relay-paginator-connections--edges)
 - [Remove obsoletes deprecations](#remove-obsoletes-deprecations)
+- [Simplify executor interface](#simplify-executor-interface)
 
 ### Remove auto mapping configuration
 
@@ -108,3 +109,17 @@ Foo:
 -                argsBuilder: ConnectionArgs
 +                argsBuilder: "Relay::Connection"
 ```
+
+### Simplify executor interface
+
+This section is only for users using custom executor.
+
+The interface move to be look a little be more to `GraphQL\GraphQL`
+`promiseToExecute` method.
+
+In `Overblog\GraphQLBundle\Executor\ExecutorInterface`
+`setPromiseAdapter` and `setDefaultFieldResolver` has been removed.
+
+Promise adapter is now the first argument (`$promiseAdapter`)
+and default field resolver the 7th argument (`$fieldResolver`) of
+`Overblog\GraphQLBundle\Executor\ExecutorInterface::execute` method.

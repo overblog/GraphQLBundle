@@ -32,7 +32,7 @@ class TypeResolver extends AbstractResolver
     protected function onLoadSolution($solution): void
     {
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch(Events::TYPE_LOADED, new TypeLoadedEvent($solution, $this->currentSchemaName));
+            $this->dispatcher->dispatch(new TypeLoadedEvent($solution, $this->currentSchemaName), Events::TYPE_LOADED);
         }
     }
 

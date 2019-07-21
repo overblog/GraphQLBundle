@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+
 abstract class AbstractProxyResolverTest extends AbstractResolverTest
 {
     protected function getResolverSolutionsMapping()
@@ -41,11 +43,9 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
         $this->assertSame(['my', 'resolve', 'test'], $result);
     }
 
-    /**
-     * @expectedException \Overblog\GraphQLBundle\Resolver\UnresolvableException
-     */
     public function testResolveUnknownMutation(): void
     {
+        $this->expectException(UnresolvableException::class);
         $this->resolver->resolve('Fake');
     }
 

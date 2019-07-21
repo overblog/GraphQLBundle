@@ -9,15 +9,22 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
-use Overblog\GraphQLBundle\Resolver\Resolver;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
 
 final class TypeDecoratorListener
 {
+    private $argumentFactory;
+
     private $schemaResolverMaps = [];
+
+    public function __construct(ArgumentFactory $argumentFactory)
+    {
+        $this->argumentFactory = $argumentFactory;
+    }
 
     public function addSchemaResolverMaps(string $schemaName, array $resolverMaps): void
     {
@@ -62,7 +69,7 @@ final class TypeDecoratorListener
             if (ResolverMapInterface::IS_TYPEOF === $fieldName) {
                 $this->configTypeMapping($type, ResolverMapInterface::IS_TYPEOF, $resolverMap);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
-                $resolveFieldFn = Resolver::wrapArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
+                $resolveFieldFn = $this->argumentFactory->wrapResolverArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
                 $type->config[\substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
@@ -158,7 +165,7 @@ final class TypeDecoratorListener
                 $fieldName = $field['name'] ?? $key;
 
                 if ($resolverMap->isResolvable($type->name, $fieldName)) {
-                    $field['resolve'] = Resolver::wrapArgs($resolverMap->resolve($type->name, $fieldName));
+                    $field['resolve'] = $this->argumentFactory->wrapResolverArgs($resolverMap->resolve($type->name, $fieldName));
                 }
 
                 $fieldNames[] = $fieldName;

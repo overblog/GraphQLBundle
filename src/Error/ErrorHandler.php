@@ -65,7 +65,7 @@ class ErrorHandler
 
         return function (GraphQLError $error) use ($debugMode) {
             $event = new ErrorFormattingEvent($error, FormattedError::createFromException($error, $debugMode, $this->internalErrorMessage));
-            $this->dispatcher->dispatch(Events::ERROR_FORMATTING, $event);
+            $this->dispatcher->dispatch($event, Events::ERROR_FORMATTING);
 
             return $event->getFormattedError()->getArrayCopy();
         };

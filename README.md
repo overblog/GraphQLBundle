@@ -2,6 +2,7 @@ OverblogGraphQLBundle
 ======================
 
 [![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=master)](https://travis-ci.org/overblog/GraphQLBundle)
+[![Build status](https://ci.appveyor.com/api/projects/status/7ksxlcgwt40q74hv/branch/master?svg=true)](https://ci.appveyor.com/project/overblog/graphqlbundle/branch/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=master)](https://coveralls.io/github/overblog/GraphQLBundle?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/overblog/graphql-bundle/version)](https://packagist.org/packages/overblog/graphql-bundle)
@@ -21,9 +22,18 @@ Browse your version documentation:
 * [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
 * [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
 * [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
-* [0.12 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
+* [0.13 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
 
 [Versions requirements](docs/index.md#versions-requirements)
+
+Proof of Concept
+-----------------
+
+* [mcg-web/graphql-symfony-doctrine-sandbox](https://github.com/mcg-web/graphql-symfony-doctrine-sandbox)
+* [michaelperrin/blog-graphql-upload-demo](https://github.com/michaelperrin/blog-graphql-upload-demo)
+* [overblog/GraphQLBundleDemo](https://github.com/overblog/GraphQLBundleDemo)
+* [Samffy/graphql-poc](https://github.com/Samffy/graphql-poc)
 
 Documentation
 -------------
@@ -44,6 +54,7 @@ Documentation
   - [GraphQL schema language](docs/definitions/graphql-schema-language.md)
   - [Schema](docs/definitions/schema.md)
   - [Resolver](docs/definitions/resolver.md)
+  - [Experimental coroutine executor](docs/definitions/coroutine-executor.md)
   - [Solving N+1 problem](docs/definitions/solving-n-plus-1-problem.md)
   - [Mutation](docs/definitions/mutation.md)
   - [Relay](docs/definitions/relay/index.md)

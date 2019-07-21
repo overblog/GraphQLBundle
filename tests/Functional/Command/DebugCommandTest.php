@@ -8,7 +8,6 @@ use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpKernel\Kernel;
 
 class DebugCommandTest extends TestCase
 {
@@ -25,7 +24,7 @@ class DebugCommandTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'mutation']);
 
-        $this->command = static::$kernel->getContainer()->get('overblog_graphql.command.debug');
+        $this->command = static::$kernel->getContainer()->get(DebugCommand::class);
         $this->commandTester = new CommandTester($this->command);
 
         foreach (DebugCommand::getCategories() as $category) {
@@ -36,7 +35,7 @@ class DebugCommandTest extends TestCase
                 )
             );
 
-            $this->logs[$category] = \trim($content);
+            $this->logs[$category] = \str_replace("\n", \PHP_EOL, \trim($content));
         }
     }
 
@@ -53,20 +52,18 @@ class DebugCommandTest extends TestCase
         $this->commandTester->execute(['--category' => $categories]);
         $this->assertSame(0, $this->commandTester->getStatusCode());
 
-        $expected = "\n";
+        $expected = \PHP_EOL;
         foreach ($categories as $category) {
-            $expected .= $this->logs[$category]." \n\n\n\n";
+            $expected .= $this->logs[$category].' '.\PHP_EOL.\PHP_EOL."\n\n";
         }
 
-        $this->assertContains($expected, $this->commandTester->getDisplay(), '', \version_compare(Kernel::VERSION, '3.3.0') < 0);
+        $this->assertStringContainsString($expected, $this->commandTester->getDisplay());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid category (fake)
-     */
     public function testInvalidFormat(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid category (fake)');
         $this->commandTester->execute([
             '--category' => 'fake',
         ]);

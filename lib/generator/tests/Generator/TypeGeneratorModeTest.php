@@ -13,13 +13,14 @@ namespace Overblog\GraphQLGenerator\Tests\Generator;
 
 use Overblog\GraphQLGenerator\Generator\TypeGenerator;
 use Overblog\GraphQLGenerator\Tests\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TypeGeneratorModeTest extends TestCase
 {
     /** @var string */
     private $dir;
 
-    /** @var TypeGenerator|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TypeGenerator|MockObject */
     private $typeGenerator;
 
     private const CONFIG = [

@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
+use Overblog\GraphQLBundle\Executor\Executor;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\Resolver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
@@ -109,16 +114,18 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('definitions');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('definitions');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'definitions');
         $node
             ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('argument_class')->defaultValue(Argument::class)->end()
+                ->scalarNode('use_experimental_executor')->defaultFalse()->end()
                 ->variableNode('default_resolver')->defaultValue([Resolver::class, 'defaultResolveFn'])->end()
                 ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
                 ->scalarNode('cache_dir')->defaultNull()->end()
                 ->scalarNode('cache_dir_permissions')->defaultNull()->end()
                 ->booleanNode('use_classloader_listener')->defaultTrue()->end()
-                ->booleanNode('auto_compile')->defaultTrue()->end()
+                ->scalarNode('auto_compile')->defaultTrue()->end()
                 ->booleanNode('show_debug_info')->info('Show some performance stats in extensions')->defaultFalse()->end()
                 ->booleanNode('config_validation')->defaultValue($this->debug)->end()
                 ->append($this->definitionsSchemaSection())
@@ -146,13 +153,13 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('executor')
-                    ->defaultValue(self::NAME.'.executor.default')
+                    ->defaultValue(Executor::class)
                 ->end()
                 ->scalarNode('promise_adapter')
-                    ->defaultValue(self::NAME.'.promise_adapter.default')
+                    ->defaultValue(SyncPromiseAdapter::class)
                 ->end()
                 ->scalarNode('expression_language')
-                    ->defaultValue(self::NAME.'.expression_language.default')
+                    ->defaultValue(ExpressionLanguage::class)
                 ->end()
                 ->scalarNode('cache_expression_language_parser')->end()
             ->end()
@@ -165,7 +172,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('security');
         /** @var ArrayNodeDefinition $node */
-        $node = \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root('security');
+        $node = self::getRootNodeWithoutDeprecation($builder, 'security');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -251,10 +258,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->children()
                             ->arrayNode('types')
-                                ->prototype('enum')->values(\array_keys(OverblogGraphQLTypesExtension::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
+                                ->prototype('enum')->values(\array_keys(ConfigParserPass::SUPPORTED_TYPES_EXTENSIONS))->isRequired()->end()
                             ->end()
                             ->scalarNode('dir')->defaultNull()->end()
-                            ->scalarNode('suffix')->defaultValue(OverblogGraphQLTypesExtension::DEFAULT_TYPES_SUFFIX)->end()
+                            ->scalarNode('suffix')->defaultValue(ConfigParserPass::DEFAULT_TYPES_SUFFIX)->end()
                         ->end()
                     ->end()
                 ->end()
@@ -266,8 +273,9 @@ class Configuration implements ConfigurationInterface
 
     private function doctrineSection()
     {
-        $builder = new TreeBuilder();
-        $node = $builder->root('doctrine');
+        $builder = new TreeBuilder('doctrine');
+        /** @var ArrayNodeDefinition $node */
+        $node = self::getRootNodeWithoutDeprecation($builder, 'doctrine');
         $node
             ->addDefaultsIfNotSet()
             ->children()
