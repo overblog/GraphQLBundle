@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class ResolveSingleInputCallback extends ExpressionFunction
 {
-    public function __construct($name = 'resolveSingleInputCallback')
+    public function __construct(GlobalVariables $globalVariables, $name = 'resolveSingleInputCallback')
     {
         parent::__construct(
             $name,
@@ -18,6 +19,18 @@ final class ResolveSingleInputCallback extends ExpressionFunction
                 $code .= 'return '.$resolveSingleInput.'; }';
 
                 return $code;
+            },
+            // TODO: finish this callback
+            function ($arguments, $mutateAndGetPayload) use ($globalVariables) {
+                [
+                    'context' => $context,
+                    'args'    => $args,
+                    'info'    => $info
+                ] = $arguments;
+
+                return function($value) use ($mutateAndGetPayload, $globalVariables, $args, $context, $info) {
+                    return $mutateAndGetPayload;
+                };
             }
         );
     }

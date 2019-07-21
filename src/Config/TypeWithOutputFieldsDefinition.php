@@ -42,6 +42,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                             ->append($this->typeSelection(true))
                             ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
+                            ->append($this->validationSection(TypeWithOutputFieldsDefinition::VALIDATION_LEVEL_PROPERTY))
                         ->end()
                     ->end()
                 ->end()

@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Overblog\GraphQLBundle\DependencyInjection\Configuration;
+use function preg_match;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 abstract class TypeDefinition
 {
+    public const VALIDATION_LEVEL_CLASS    = 0;
+    public const VALIDATION_LEVEL_PROPERTY = 1;
+
     abstract public function getDefinition();
 
     protected function __construct()
@@ -36,7 +43,7 @@ abstract class TypeDefinition
         $node->isRequired();
         $node->validate()
             ->ifTrue(function ($name) {
-                return !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name);
+                return !preg_match('/^[_a-z][_0-9a-z]*$/i', $name);
             })
                 ->thenInvalid('Invalid type name "%s". (see https://facebook.github.io/graphql/October2016/#Name)')
         ->end();
@@ -47,6 +54,77 @@ abstract class TypeDefinition
     protected function defaultValueSection()
     {
         $node = self::createNode('defaultValue', 'variable');
+
+        return $node;
+    }
+
+    /**
+     * @param int $level
+     * @return ArrayNodeDefinition|NodeDefinition
+     */
+    protected function validationSection(int $level): NodeParentInterface
+    {
+        $node = self::createNode('validation', 'array');
+
+        $node
+            // allow shorthands
+            ->beforeNormalization()
+                ->always(function ($value) {
+                    if (is_string($value)) {
+                        // cascade or link
+                        return $value === 'cascade' ? ['cascade' => null] : ['link' => $value];
+                    }
+
+                    if (is_array($value)) {
+                        foreach ($value as $k => $a) {
+                            if (!is_int($k)) {
+                                // validation: { link: ... , constraints: ..., cascade: ... }
+                                return $value;
+                            }
+                        }
+                        // validation: [<validation constraints>]
+                        return ['constraints' => $value];
+                    }
+
+                    return [];
+                })
+            ->end()
+            ->children()
+                ->scalarNode('link')
+                    ->defaultNull()
+                    ->validate()
+                        ->ifTrue(function ($link) use ($level) {
+                            if ($level === self::VALIDATION_LEVEL_PROPERTY) {
+                                return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]+::(?:[$]?[A-Za-z][A-Za-z_\d]+|[A-Za-z_\d]+\(\))$/m', $link);
+                            } else {
+                                return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]$/m', $link);
+                            }
+                        })
+                        ->thenInvalid('Invalid link provided: "%s".')
+                    ->end()
+                ->end()
+
+                ->variableNode('constraints')
+                    ->defaultNull()
+                ->end()
+            ->end();
+
+        // Add the 'cascade' option if it's a property level validation section
+        if ($level === self::VALIDATION_LEVEL_PROPERTY) {
+            $node
+                ->children()
+                    ->arrayNode('cascade')
+                        ->children()
+                            ->arrayNode('groups')
+                                ->beforeNormalization()
+                                    ->castToArray()
+                                ->end()
+                                ->scalarPrototype()->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end();
+        }
 
         return $node;
     }
@@ -81,12 +159,12 @@ abstract class TypeDefinition
     }
 
     /**
-     * @internal
-     *
      * @param string $name
      * @param string $type
      *
-     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @return ArrayNodeDefinition|NodeDefinition
+     *@internal
+     *
      */
     protected static function createNode(string $name, string $type = 'array')
     {
