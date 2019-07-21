@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -29,7 +31,7 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 
     protected const CLOSURE_TEMPLATE = <<<EOF
 function (%s) <closureUseStatements>{
-<spaces><spaces>return %s;
+<spaces><spaces>%sreturn %s;
 <spaces>}
 EOF;
 
@@ -66,6 +68,11 @@ EOF;
      * @var int
      */
     protected $cacheDirMask;
+
+    /**
+     * @var string
+     */
+    protected $currentlyGeneratedClass;
 
     /**
      * @param string $classNamespace The namespace to use for the classes.
@@ -226,9 +233,13 @@ EOF;
                     $compilerNames = $matches[1] ?? [];
                 }
             }
+
+            $extraCode = $this->generateExtraCode($value, $key, $argDefinitions, $default, $compilerNames);
+
             $code = \sprintf(
                 $code,
                 $this->shortenClassFromCode($argDefinitions),
+                $extraCode,
                 $this->getExpressionLanguage()->compile($value[$key], $compilerNames)
             );
 
@@ -289,7 +300,7 @@ EOF;
     protected function resolveTypesCode(array $values, string $key): string
     {
         if (isset($values[$key])) {
-            $types = \sprintf(static::CLOSURE_TEMPLATE, '', $this->types2String($values[$key]));
+            $types = \sprintf(static::CLOSURE_TEMPLATE, '', '', $this->types2String($values[$key]));
         } else {
             $types = '[]';
         }
@@ -354,6 +365,8 @@ EOF;
      */
     public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
+        $this->currentlyGeneratedClass = $config['config']['name'];
+
         $className = $this->generateClassName($config);
         $path = $outputDirectory.'/'.$className.'.php';
 
@@ -373,6 +386,20 @@ EOF;
             }
         }
 
+        $this->currentlyGeneratedClass = null;
+
         return [$this->getClassNamespace().'\\'.$className => $path];
     }
+
+    /**
+     * Adds an extra code into resolver closure before 'return' statement
+     *
+     * @param array         $value
+     * @param string        $key
+     * @param string|null   $argDefinitions
+     * @param string        $default
+     * @param array|null    $compilerNames
+     * @return string|null
+     */
+    abstract protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): ?string;
 }
