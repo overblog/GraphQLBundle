@@ -936,7 +936,7 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 
 // ...
 
-    public static function validate(ValidationNode $object, ExecutionContextInterface $context, $payload): void  
+    public static function validate(ValidationNode $object, ExecutionContextInterface $context, $payload): void
     {  
         switch ($object->getFieldName()) {  
             case 'createUser':  
@@ -946,7 +946,7 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
                 // Validation logic for admins  
                 break;  
             default:  
-                // Validation logic for all other fields  
+                // Validation logic for all other fields 
         }  
     }
 
