@@ -1,6 +1,6 @@
 ﻿# Validation
 
-This bundle provides a tight integration with the Symfony Validation Component to validate user input data.
+This bundle provides a tight integration with the [Symfony Validator Component](https://symfony.com/doc/current/components/validator.html) to validate user input data.
 
 ###  Contents:
 - [Overview](#overview)
@@ -293,7 +293,7 @@ for the `registerAdmin` resolver:
 
 ## Applying validation constraints
 
-If you are familiar with Symfony's Validation Сomponent, then you might know that constraints can have different [targets](https://symfony.com/doc/current/validation.html#constraint-targets) (class members or entire classes). This bundle provides the same technique in which you could declare property constraints as well as class constraints.
+If you are familiar with Symfony Validator Сomponent, then you might know that constraints can have different [targets](https://symfony.com/doc/current/validation.html#constraint-targets) (class members or entire classes). This bundle provides the same technique in which you could declare property constraints as well as class constraints.
 
 Constraints can be listed directly in the type configurations or can be mapped from existent classes (e.g. Doctrine entities) with the `link` key. See [Linking to classes](#linking-to-classes) section for more details.
 
@@ -301,7 +301,8 @@ Constraints can be applied to `object` and `input-object` types.
 
 ### Listing constraints explicitly
 The most straightforward way to apply validation constraints to input data is to list them under the `constraints` key.
-In the chapter [Basics](#basics) this method was already demonstrated.  
+In the chapter [Overview](#overview) this method was already demonstrated. Follow the examples below to see how to use
+this method in combinations with [linking](#linking-class-constraints):
 
 #### object:
 Property constraints are applied to _arguments_:
@@ -793,12 +794,12 @@ To translate into other languages just create additional  translation resource w
 
 ## Using built in expression functions
 
-This bundle comes with pre-registered [expression functions and variables](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md). By default the  [`Expression`](https://symfony.com/doc/current/reference/constraints/Expression.html) constraint has no access to the functions and variables of this bundle, as both of them use 2 different instances of ExpressionLanguage. In order to _tell_ the `Expression` constraint to use the instance of the bundle, add the following config to the `services.yaml`:
+This bundle comes with pre-registered [expression functions and variables](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md). By default the  [`Expression`](https://symfony.com/doc/current/reference/constraints/Expression.html) constraint has no access to the functions and variables of this bundle, as both of them use 2 different instances of `ExpressionLanguage`. In order to _tell_ the `Expression` constraint to use the instance of this bundle, add the following config to the `services.yaml` to rewrite the default service declaration:
 
 ```yaml
 validator.expression:  
     class: Symfony\Component\Validator\Constraints\ExpressionValidator  
-    arguments: ['@overblog_graphql.expression_language.default']  
+    arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']  
     tags:  
         - name: validator.constraint_validator  
           alias: validator.expression
@@ -806,21 +807,36 @@ validator.expression:
 > **Note**
 > In some versions of Symfony the class `ExpressionValidator` expects 2 arguments, instead of one. In this case you should pass the service `@overblog_graphql.expression_language.default` as the second argument:
 > ```yaml
-> arguments:  [null, '@overblog_graphql.expression_language.default']
+> arguments:  [null, '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
 > ```
 > Check the constructor of the class `ExpressionValidator` to make it clear.
 
-This will rewrite the default service definition and make possible to use all functions, registered in this bundle:
+This will make possible to use all functions, registered in this bundle:
 ```yaml
-...
+# ...
 args:
     username:
         type: String!
         validation:
-            - Expression: "service('my_service').validate(value)"
+            - Expression: "service('my_service').entityExists(value)"
 ```
 > **Note**
-> Expressions in the `Expression` constraint shouldn't be prefixed with the `@=`.
+> Expressions in the `Expression` constraint shouldn't be prefixed with `@=`.
+
+and it's also possible to use variables from the resolver context (`value`, `args`, `context` and `info`):
+```yaml
+# ...
+args:
+    username:
+        type: String!
+        validation:
+            - Expression: "service('my_service').isValid(value, args, info, context, prevValue)"
+```
+> **Note**
+>
+> As you might know the `Expression` constraint has one built in variable called [`value`](https://symfony.com/doc/current/reference/constraints/Expression.html#message). In order to avoid the name conflicts the resolver variable `value` is renamed to `prevValue`, when using in the `Expression` constraint.
+>
+> In short: the `value` represents currently validated input data, and `prevValue` represents the data returned by the previous resolver.
 
 
 ## ValidationNode API
@@ -830,19 +846,19 @@ The ValidationNode class is used internally during the validation process. See t
 This class has methods, that may be usefull when using such constraints as `Callback` or `Expression`, which work in a context.
 
 ### Methods
-<code><b>getType</b>(): GraphQL\Type\Definition\Type</code>
+<code><b>getType</b>(): GraphQL\Type\Definition\Type</code>  
 Returns the `Type` object associated with current validation node.
 
-<code><b>getName</b>(): string</code>
+<code><b>getName</b>(): string</code>  
 Returns the name of the associated Type object. Shorthand for `getType()->name`.
 
-<code><b>getFieldName</b>(): string|null</code>
-Returns the field name if the object is associated with an `object` type, otherwise returns `null`
+<code><b>getFieldName</b>(): string|null</code>   
+Returns the field name if the object is associated with an `object` type, otherwise returns `null`   
 
-<code><b>getParent</b>(): ValidationNode|null</code>
+<code><b>getParent</b>(): ValidationNode|null</code>   
 Returns the parent node.
 
-<code><b>findParent</b>(string <b>$name</b>): ValidationNode|null</code>
+<code><b>findParent</b>(string <b>$name</b>): ValidationNode|null</code>   
 Traverses up through parent nodes and returns first object with matching name.
 
 ### Examples
@@ -882,11 +898,11 @@ Profile:
                 type: String!
                 validation:
                     - Expression: "value in this.getParent().emails"
-            ...
+            # ...
 ```
 
 #### Usage with `Callback` constraints:
-In this example we are using a single validation method for both  `registerUser` and `registerAdmin` resolvers.
+In this example we are using a single validation method for both  `createUser` and `createAdmin` resolvers.
 ```yaml
 Mutation:
     type: object
@@ -943,7 +959,7 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 
 The current implementation of `ArgumentsValidator` works only for schema types declared in yaml files. Types declared with [annotations](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/index.md) or with [GraphQL schema language](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/graphql-schema-language.md) are not supported. This can be changed in the future versions.
 
-Types declared with annotations have its own limited validation system, see the [Arguments Transformer](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/arguments-transformer.md) section for more details.
+The annotations system of this bundle has its own limited validation implementation, see the [Arguments Transformer](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/arguments-transformer.md) section for more details.
 
 ### Unsupported constraints
 These are the validation constraints, which are not currently supported:
