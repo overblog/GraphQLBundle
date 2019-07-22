@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class HasPermission extends ExpressionFunction
 {
-    public function __construct(AuthorizationChecker $authorizationChecker, $name = 'hasPermission')
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, $name = 'hasPermission')
     {
         parent::__construct(
             $name,

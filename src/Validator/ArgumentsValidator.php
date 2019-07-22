@@ -8,7 +8,6 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
@@ -89,13 +88,28 @@ class ArgumentsValidator
             );
         }
 
-        $this->resolverArgs      = $resolverArgs;
-        $this->args 		     = $resolverArgs[1]->getRawArguments();
-        $this->info              = $resolverArgs[3];
+        $this->resolverArgs      = $this->mapResolverArgs($resolverArgs);
+        $this->info              = $this->resolverArgs['info'];
         $this->constraintMapping = $mapping;
         $this->validator 	     = $validator;
         $this->validatorFactory  = $factory;
         $this->metadataFactory   = new MetadataFactory();
+    }
+
+    /**
+     * Converts a numeric array of resolver args to an associative one.
+     *
+     * @param array  $rawReolverArgs
+     * @return array
+     */
+    private function mapResolverArgs(array $rawReolverArgs)
+    {
+        return [
+            'value'   => $rawReolverArgs[0],
+            'args'    => $rawReolverArgs[1],
+            'context' => $rawReolverArgs[2],
+            'info'    => $rawReolverArgs[3],
+        ];
     }
 
     /**
@@ -108,7 +122,7 @@ class ArgumentsValidator
     {
         $rootObject = new ValidationNode($this->info->parentType, $this->info->fieldName, null, $this->resolverArgs);
 
-        $this->buildValidationTree($rootObject, $this->constraintMapping, $this->args);
+        $this->buildValidationTree($rootObject, $this->constraintMapping, $this->resolverArgs['args']->getArrayCopy());
 
         $validator = $this->validatorFactory->createValidator($this->metadataFactory);
 
@@ -125,9 +139,10 @@ class ArgumentsValidator
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      *
-     * @param ValidationNode $rootObject
-     * @param array          $constraintMapping
-     * @param array          $args
+     * @param ValidationNode    $rootObject
+     * @param array             $constraintMapping
+     * @param array             $args
+     * @return ValidationNode
      */
     protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
     {

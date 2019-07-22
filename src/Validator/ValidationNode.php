@@ -25,7 +25,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
  */
 class ValidationNode
 {
-    private const KNOWN_VAR_NAMES = ['value', 'args', 'info', 'context'];
+    private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
     /**
      * @var ObjectType|InputObjectType|Type
