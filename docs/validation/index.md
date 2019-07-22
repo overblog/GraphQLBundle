@@ -137,10 +137,6 @@ Any arguments of the type `input-object` marked for [cascade](#cascade) validati
 
 Let's take the example from the chapter [Overview](#overview). When you call `$validator->validate()` in the `register` resolver, the following objects will be created:
 
-<img src="https://pp.userapi.com/c857732/v857732014/deab/c3u-KG7tuiI.jpg" width="700" />
-
-svg:
-
 ![enter_image_description_here](img/diagram_1.svg)
 
 Notice, that the `birthday` argument is converted to an object, as it was marked for cascade validation.
