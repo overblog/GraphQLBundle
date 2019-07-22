@@ -715,7 +715,7 @@ public function register(Argument $args, ArgumentsValidator $validator)
 > All arguments marked for cascade validation will be automatically validated against the [Valid](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint.
 
 ## Group Sequences
-You can use `GroupSequence` constraint to sequentially apply validation groups. See the [official documentation](https://symfony.com/doc/current/validation/sequence_provider.html#group-sequence-providers) for more details.
+You can use `GroupSequence` constraint to sequentially apply validation groups. See the [official documentation](https://symfony.com/doc/current/validation/sequence_provider.html) for more details.
 
 Applying group sequences is similar to _normal_ constraints:
 ```yaml
