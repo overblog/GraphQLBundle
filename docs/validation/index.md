@@ -302,7 +302,7 @@ Constraints can be applied to `object` and `input-object` types.
 ### Listing constraints explicitly
 The most straightforward way to apply validation constraints to input data is to list them under the `constraints` key.
 In the chapter [Overview](#overview) this method was already demonstrated. Follow the examples below to see how to use
-this method in combinations with [linking](#linking-class-constraints):
+_only_ this method as well as in combinations with [linking](#linking-class-constraints):
 
 #### object:
 Property constraints are applied to _arguments_:
@@ -334,7 +334,7 @@ Mutation:
                             link: App\Entity\User::$info
                             constraints:
                                 - NotBlank: ~
-                                - App\Constraint\MyConstraint:  ~ # custom constraint						
+                                - App\Constraint\MyConstraint:  ~ # custom constraint
 ```
 Class constraints are applied on the _field_ level:
 ```yaml
@@ -503,7 +503,7 @@ Mutation:
                         text:
                             type: String!
                             validation:
-                                link: App\Entity\Post::$text # only property					
+                                link: App\Entity\Post::$text # only property
 ```
 or use the short form (omitting the `link` key), which is equal to the config above:
 ```yaml
@@ -834,7 +834,7 @@ args:
 ```
 > **Note**
 >
-> As you might know the `Expression` constraint has one built in variable called [`value`](https://symfony.com/doc/current/reference/constraints/Expression.html#message). In order to avoid the name conflicts the resolver variable `value` is renamed to `prevValue`, when using in the `Expression` constraint.
+> As you might know the `Expression` constraint has one built in variable called [`value`](https://symfony.com/doc/current/reference/constraints/Expression.html#message). In order to avoid name conflicts the resolver variable `value` is renamed to `prevValue`, when using in the `Expression` constraint.
 >
 > In short: the `value` represents currently validated input data, and `prevValue` represents the data returned by the previous resolver.
 
@@ -847,19 +847,19 @@ This class has methods, that may be usefull when using such constraints as `Call
 
 ### Methods
 <code><b>getType</b>(): GraphQL\Type\Definition\Type</code>  
-Returns the `Type` object associated with current validation node.
+&nbsp;&nbsp;Returns the `Type` object associated with current validation node.
 
 <code><b>getName</b>(): string</code>  
-Returns the name of the associated Type object. Shorthand for `getType()->name`.
+&nbsp;&nbsp;Returns the name of the associated Type object. Shorthand for `getType()->name`.
 
 <code><b>getFieldName</b>(): string|null</code>   
-Returns the field name if the object is associated with an `object` type, otherwise returns `null`   
+&nbsp;&nbsp;Returns the field name if the object is associated with an `object` type, otherwise returns `null`   
 
 <code><b>getParent</b>(): ValidationNode|null</code>   
-Returns the parent node.
+&nbsp;&nbsp;Returns the parent node.
 
 <code><b>findParent</b>(string <b>$name</b>): ValidationNode|null</code>   
-Traverses up through parent nodes and returns first object with matching name.
+&nbsp;&nbsp;Traverses up through parent nodes and returns first object with matching name.
 
 ### Examples
 
