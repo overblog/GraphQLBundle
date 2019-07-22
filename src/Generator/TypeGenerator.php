@@ -10,7 +10,6 @@ use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Validator\ArgumentsValidator;
-use Overblog\GraphQLBundle\Validator\ValidatorFactory;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use ReflectionException;
 use RuntimeException;
@@ -290,7 +289,6 @@ CODE;
             $mapping = $this->buildValidationMapping($value);
             $extraCode = $this->generateValidation($mapping);
             $this->addInternalUseStatement(ArgumentsValidator::class);
-            $this->addInternalUseStatement(ValidatorFactory::class);
         }
 
         return $extraCode ?? "";
