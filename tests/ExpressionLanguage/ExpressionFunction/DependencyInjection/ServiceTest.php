@@ -12,7 +12,12 @@ class ServiceTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new Service(), new Service('serv')];
+        $container = $this->getDIContainerMock();
+
+        return [
+            new Service($container),
+            new Service($container, 'serv')
+        ];
     }
 
     /**

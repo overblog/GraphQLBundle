@@ -6,12 +6,15 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HasRoleTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new HasRole()];
+        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+
+        return [new HasRole($authorizationChecker)];
     }
 
     public function testHasRole(): void

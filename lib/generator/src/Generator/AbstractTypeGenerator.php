@@ -214,7 +214,7 @@ EOF;
 
         if (\is_callable($value[$key])) {
             $func = $value[$key];
-            $code = \sprintf($code, null, '\call_user_func_array(%s, \func_get_args())');
+            $code = \sprintf($code, null, null, '\call_user_func_array(%s, \func_get_args())');
 
             if (\is_array($func) && isset($func[0]) && \is_string($func[0])) {
                 $code = \sprintf($code, $this->varExport($func));
@@ -245,7 +245,7 @@ EOF;
 
             return $code;
         } elseif (!\is_object($value[$key])) {
-            $code = \sprintf($code, null, $this->varExportFromArrayValue($value, $key, $default));
+            $code = \sprintf($code, null, null, $this->varExportFromArrayValue($value, $key, $default));
 
             return $code;
         }
