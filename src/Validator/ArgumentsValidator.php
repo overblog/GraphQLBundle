@@ -40,11 +40,6 @@ class ArgumentsValidator
     /**
      * @var array
      */
-    private $args;
-
-    /**
-     * @var array
-     */
     private $constraintMapping;
 
     /**
@@ -77,7 +72,8 @@ class ArgumentsValidator
      *
      * @param array                   $resolverArgs
      * @param ValidatorInterface|null $validator
-     * @param array                   $mapping
+     * @param ValidatorFactory        $factory
+     * @param array $mapping
      */
     public function __construct(array $resolverArgs, ?ValidatorInterface $validator, ValidatorFactory $factory, array $mapping)
     {
@@ -216,8 +212,8 @@ class ArgumentsValidator
     }
 
     /**
-     * @param array          $values
-     * @param Type           $type
+     * @param array                           $values
+     * @param ObjectType|InputObjectType|Type $type
      * @param ValidationNode $parent
      * @return array
      */
