@@ -14,7 +14,7 @@ This bundle provides a tight integration with the [Symfony Validator Component](
         - [Validation groups of linked constraints](#validation-groups-of-linked-constraints)
     - [Cascade](#cascade)
 - [Groups](#groups)
-    - [Group Sequences](#group-sequences)
+- [Group Sequences](#group-sequences)
 - [Customize error messages](#customize-error-messages)
 - [Translations](#translations)
 - [Using build in expression functions](#using-built-in-expression-functions)
@@ -713,6 +713,38 @@ public function register(Argument $args, ArgumentsValidator $validator)
 ```
 > **Note**:
 > All arguments marked for cascade validation will be automatically validated against the [Valid](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint.
+
+## Group Sequences
+You can use `GroupSequence` constraint to sequentially apply validation groups. See the [official documentation](#https://symfony.com/doc/current/validation/sequence_provider.html#group-sequence-providers) for more details.
+
+Applying group sequences is similar to _normal_ constraints:
+```yaml
+Mutation:
+    type: object
+    config:
+        validation:
+            - GroupSequence: ['group1', 'group2']
+        fields:
+            create:
+                # ...
+            update:
+                # ...
+```
+or for each field:
+```yaml
+Mutation:
+    type: object
+    config:
+        fields:
+            create:
+                validation:
+                    - GroupSequence: ['group1', 'group2']
+                # ...
+            update:
+                validation:
+                    - GroupSequence: ['group3', 'group4']
+                # ...
+```
 
 ## Customize Error Messages
 By default an `ArgumentsValidator` object throws a `ArgumentsValidationException`, which will be caught and serialized into a readable response. 
