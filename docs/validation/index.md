@@ -286,13 +286,14 @@ Birthday:
 The configuration above would produce object compositions as shown in the UML diagrams below:
 
 for the `registerUser` resolver:
-![enter image description here](https://pp.userapi.com/c857732/v857732014/deb5/hPJALC_2FTQ.jpg)
+
+![enter image description here](img/diagram_2.svg)
 
 > Note that the argument `address` in the object `Mutation` wasn't converted to an object of class `ValidationNode`, as it wasn't marked as `cascade`, but it will still be validated against the `Collection` constraint.
 
 for the `registerAdmin` resolver:
 
-<img src="https://pp.userapi.com/c850528/v850528014/1641e5/bH_e9tKegD4.jpg" width="290" />
+![enter image description here](img/diagram_3.svg)
 
 ## Applying validation constraints
 
@@ -420,16 +421,16 @@ User:
 If you already have classes (e.g. Doctrine entities) with validation constraints applied to them, you can reuse these constraints in your configuration files by linking corresponding _properties_, _getters_ or entire _classes_.
 
 A `link` can have 4 different targets:
-    - **property**: `<ClassName>::$<propertyName>`
-    - **getters**:  `<ClassName>::<propertyName>()`
-    - **property and getters**: `<ClassName>::<propertyName>`
-    - **class**: `<ClassName>`
+ - **property**: `<ClassName>::$<propertyName>`
+ - **getters**:  `<ClassName>::<propertyName>()`
+ - **property and getters**: `<ClassName>::<propertyName>`
+ - **class**: `<ClassName>`
 
 for example:
-    - **property**: `App\Entity\User::$username` links to a single property `$username` of the class `User`. 
-    - **getters**:  `App\Entity\User::username()` links to `getUsername()`, `isUsername()` and `hasUsername()`.
-    - **property and getters**: `App\Entity\User::username` links to a single property `$username` as well to `getUsername()`, `isUsername()`  and `hasUsername()`
-    - **class**: `App\Entity\User` links to
+ - **property**: `App\Entity\User::$username` links to a single property `$username` of the class `User`. 
+ - **getters**:  `App\Entity\User::username()` links to `getUsername()`, `isUsername()` and `hasUsername()`.
+ - **property and getters**: `App\Entity\User::username` links to a single property `$username` as well to `getUsername()`, `isUsername()`  and `hasUsername()`
+ - **class**: `App\Entity\User` links to
 
 > **Note**:
 > If you target only getters, then prefixes must be omitted. For example, if you want to target getters of the class `User` with the names `isChild()` and `hasChildren()`, then the link would be `App\Entity\User::child()`.
@@ -509,7 +510,7 @@ Mutation:
 ```
 or use the short form (omitting the `link` key), which is equal to the config above:
 ```yaml
- ...
+ # ...
                     validation: App\Entity\Post # targeting the class
                     args:
                         title:
@@ -518,7 +519,7 @@ or use the short form (omitting the `link` key), which is equal to the config ab
                         text:
                             type: String!
                             validation: App\Entity\Post::$text # only property
- ...
+ # ...
 ```
 The argument `title` will get 3 assertions: `NotBlank()`, `Length(min=5, max=10)` and `EqualTo("Lorem Ipsum")`, whereas the argument `text` will only get `Length(max=512)`. The callback `validate` of the class `PostValidator` will also be called once.
 
@@ -549,7 +550,7 @@ Mutation:
             createUser:
                 validation: App\Entity\User # linking
                 resolve: "@=res('createUser', [args, validator])"
-                ...
+                # ...
 ```
 Now when you try to validate the arguments in your resolver it will throw an exception, because it will try to call a method with name `validate` on the object of class `ValidationNode`, which doesn't have such. As explained in the section [How does it work?](#how-does-it-work) each GraphQL type gets _it's own_ object during the validation process.
 
@@ -698,7 +699,7 @@ public function register(Argument $args, ArgumentsValidator $validator)
      *       - year against 'Range'
      */ 
     $validator->validate('Default');
-    // ... which is equal to:
+    // ... which is in this case equal to:
     $validator->validate(); 
 
     /** 
@@ -709,7 +710,7 @@ public function register(Argument $args, ArgumentsValidator $validator)
 
     // Validates all arguments in each type against all constraints.
     $validator->validate(['registration', 'Default']);
-    // ... which is equal to:
+    // ... which is in this case equal to:
     $validator->validate(['registration', 'Mutation', 'Birthdate']);
 }
 ```
