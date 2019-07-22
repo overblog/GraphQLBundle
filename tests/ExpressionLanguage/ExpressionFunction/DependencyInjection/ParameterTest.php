@@ -7,12 +7,18 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ParameterTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new Parameter(), new Parameter('param')];
+        $parameterBag = $this->getMockBuilder(ParameterBagInterface::class)->getMock();
+
+        return [
+            new Parameter($parameterBag),
+            new Parameter($parameterBag, 'param')
+        ];
     }
 
     /**

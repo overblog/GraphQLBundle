@@ -6,12 +6,15 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class IsAnonymousTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new IsAnonymous()];
+        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+
+        return [new IsAnonymous($authorizationChecker)];
     }
 
     public function testIsAnonymous(): void

@@ -6,12 +6,15 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HasPermissionTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new HasPermission()];
+        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+
+        return [new HasPermission($authorizationChecker)];
     }
 
     public function testHasPermission(): void
