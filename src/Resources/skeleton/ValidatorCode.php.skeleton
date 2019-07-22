@@ -1,7 +1,7 @@
 $validator = new ArgumentsValidator(
 <spaces>func_get_args(),
 <spaces>$globalVariable->get('container')->get('validator'),
-<spaces>$globalVariable->get('container')->get(ValidatorFactory::class),
+<spaces>$globalVariable->get('validatorFactory'),
 <spaces>[
 <spaces><spaces>'class' => <classValidation>,
 <spaces><spaces>'properties' => <validationMapping>
