@@ -63,7 +63,6 @@ class ArgumentsTransformerTest extends TestCase
             'name' => 'InputType3',
             'fields' => [
                 'field1' => Type::nonNull(Type::listOf($t1)),
-                'field2' => Type::nonNull(Type::listOf(Type::string())),
             ],
         ]);
 
