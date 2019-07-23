@@ -59,14 +59,23 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        return [$t1, $t2, $t3];
+        $t4 = new InputObjectType([
+            'name' => 'InputType3',
+            'fields' => [
+                'field1' => Type::nonNull(Type::listOf($t1)),
+                'field2' => Type::nonNull(Type::listOf(Type::string())),
+            ],
+        ]);
+
+        return [$t1, $t2, $t3, $t4];
     }
 
     public function testPopulating(): void
     {
         $builder = $this->getTransformer([
-            'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
-            'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
+            'InputType1' => ['type' => 'input', 'class' => InputType1::class],
+            'InputType2' => ['type' => 'input', 'class' => InputType2::class],
+            'InputType3' => ['type' => 'input', 'class' => InputType3::class],
         ]);
 
         $info = $this->getResolveInfo($this->getTypes());
@@ -92,18 +101,41 @@ class ArgumentsTransformerTest extends TestCase
             'field2' => 3,
         ];
 
-        $res2 = $builder->getInstanceAndValidate('InputType2', $data, $info, 'input2');
+        $res = $builder->getInstanceAndValidate('InputType2', $data, $info, 'input2');
 
-        $this->assertInstanceOf(InputType2::class, $res2);
-        $this->assertTrue(\is_array($res2->field1));
-        $this->assertArrayHasKey(0, $res2->field1);
-        $this->assertArrayHasKey(1, $res2->field1);
-        $this->assertInstanceOf(InputType1::class, $res2->field1[0]);
-        $this->assertInstanceOf(InputType1::class, $res2->field1[1]);
+        $this->assertInstanceOf(InputType2::class, $res);
+        $this->assertTrue(\is_array($res->field1));
+        $this->assertArrayHasKey(0, $res->field1);
+        $this->assertArrayHasKey(1, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[0]);
+        $this->assertInstanceOf(InputType1::class, $res->field1[1]);
 
-        $res3 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        // InputType3
+        $data = [
+            // [InputType1]!
+            'field1' => [
+                ['field1' => 'string 1', 'field2' => 1, 'field3' => true],
+                ['field1' => 'string 2', 'field2' => 2, 'field3' => false],
+            ],
+        ];
 
-        $this->assertEquals(2, $res3);
+        $res = $builder->getInstanceAndValidate('InputType3', $data, $info, 'input');
+
+        $this->assertInstanceOf(InputType3::class, $res);
+        $this->assertArrayHasKey(0, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[0]);
+        $this->assertEquals($data['field1'][0]['field1'], $res->field1[0]->field1);
+        $this->assertEquals($data['field1'][0]['field2'], $res->field1[0]->field2);
+        $this->assertEquals($data['field1'][0]['field3'], $res->field1[0]->field3);
+        $this->assertArrayHasKey(1, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[1]);
+        $this->assertEquals($data['field1'][1]['field1'], $res->field1[1]->field1);
+        $this->assertEquals($data['field1'][1]['field2'], $res->field1[1]->field2);
+        $this->assertEquals($data['field1'][1]['field3'], $res->field1[1]->field3);
+
+        $res = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+
+        $this->assertEquals(2, $res);
 
         $builder = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
@@ -111,9 +143,9 @@ class ArgumentsTransformerTest extends TestCase
             'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
         ]);
 
-        $res4 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
-        $this->assertInstanceOf(Enum1::class, $res4);
-        $this->assertEquals(2, $res4->value);
+        $res = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        $this->assertInstanceOf(Enum1::class, $res);
+        $this->assertEquals(2, $res->value);
 
         $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2', 'enum1' => 'Enum1', 'int1' => 'Int!', 'string1' => 'String!'];
         $data = [
@@ -124,21 +156,21 @@ class ArgumentsTransformerTest extends TestCase
             'string1' => 'test_string',
         ];
 
-        $res5 = $builder->getArguments($mapping, $data, $info);
-        $this->assertInstanceOf(InputType1::class, $res5[0]);
-        $this->assertInstanceOf(InputType2::class, $res5[1]);
-        $this->assertInstanceOf(Enum1::class, $res5[2]);
-        $this->assertEquals(2, \count($res5[1]->field1));
-        $this->assertIsInt($res5[3]);
-        $this->assertEquals($res5[4], 'test_string');
+        $res = $builder->getArguments($mapping, $data, $info);
+        $this->assertInstanceOf(InputType1::class, $res[0]);
+        $this->assertInstanceOf(InputType2::class, $res[1]);
+        $this->assertInstanceOf(Enum1::class, $res[2]);
+        $this->assertEquals(2, \count($res[1]->field1));
+        $this->assertIsInt($res[3]);
+        $this->assertEquals($res[4], 'test_string');
 
         $data = [];
-        $res6 = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
-        $this->assertInstanceOf(InputType1::class, $res6);
+        $res = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $this->assertInstanceOf(InputType1::class, $res);
 
-        $res7 = $builder->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
-        $this->assertInstanceOf(Enum1::class, $res7->field3);
-        $this->assertEquals('enum1', $res7->field3->value);
+        $res = $builder->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
+        $this->assertInstanceOf(Enum1::class, $res->field3);
+        $this->assertEquals('enum1', $res->field3->value);
     }
 
     public function testRaisedErrors(): void
