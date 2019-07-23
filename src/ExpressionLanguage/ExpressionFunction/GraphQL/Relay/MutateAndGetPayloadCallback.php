@@ -22,15 +22,16 @@ final class MutateAndGetPayloadCallback extends ExpressionFunction
             },
             // TODO: finish this callback
             function ($arguments, $mutateAndGetPayload) use ($globalVariables) {
-                [
-                    'context' => $context,
-                    'args'    => $args,
-                    'info'    => $info
-                ] = $arguments;
-
-                return function($value) use ($mutateAndGetPayload, $globalVariables, $args, $context, $info) {
-                    return $mutateAndGetPayload;
-                };
+//                [
+//                    'context' => $context,
+//                    'args'    => $args,
+//                    'info'    => $info
+//                ] = $arguments;
+//
+//                return function($value) use ($mutateAndGetPayload, $globalVariables, $args, $context, $info) {
+//                    return $mutateAndGetPayload;
+//                };
+                throw new \RuntimeException("The expression function 'mutateAndGetPayloadCallback' is not yet finished and therefore is not allowed to be used.");
             }
         );
     }
