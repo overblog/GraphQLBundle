@@ -113,11 +113,16 @@ class ArgumentsTransformer
 
             foreach ($fields as $name => $field) {
                 $fieldData = $this->accessor->getValue($data, \sprintf('[%s]', $name));
+                $fieldType = $field->getType();
 
-                if ($field->getType() instanceof ListOfType) {
-                    $fieldValue = $this->populateObject($field->getType()->getWrappedType(), $fieldData, true, $info);
+                if ($fieldType instanceof NonNull) {
+                    $fieldType = $fieldType->getWrappedType();
+                }
+
+                if ($fieldType instanceof ListOfType) {
+                    $fieldValue = $this->populateObject($fieldType->getWrappedType(), $fieldData, true, $info);
                 } else {
-                    $fieldValue = $this->populateObject($field->getType(), $fieldData, false, $info);
+                    $fieldValue = $this->populateObject($fieldType, $fieldData, false, $info);
                 }
 
                 $this->accessor->setValue($instance, $name, $fieldValue);
