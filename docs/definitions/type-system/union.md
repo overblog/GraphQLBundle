@@ -14,7 +14,7 @@ HumanAndDroid:
         description: Human and Droid
 ```
 
-## With YAML
+## With annotations
 
 ```php
 <?php
