@@ -25,6 +25,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $prototype
             ->children()
                 ->append($this->typeSelection())
+                ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
                 ->arrayNode('args')
                     ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
                     ->useAttributeAsKey('name', false)
@@ -42,7 +43,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                             ->append($this->typeSelection(true))
                             ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
-                            ->append($this->validationSection(TypeWithOutputFieldsDefinition::VALIDATION_LEVEL_PROPERTY))
+                            ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
                         ->end()
                     ->end()
                 ->end()
