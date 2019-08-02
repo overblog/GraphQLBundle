@@ -90,6 +90,10 @@ final class InheritanceProcessor implements ProcessorInterface
             unset($mergedParentsConfig['resolveType']);
         }
 
+        if (isset($mergedParentsConfig['interfaces'], $childType['config']['interfaces'])) {
+            $childType['config']['interfaces'] = \array_merge($mergedParentsConfig['interfaces'], $childType['config']['interfaces']);
+        }
+
         $configs = \array_replace_recursive(['config' => $mergedParentsConfig], $childType);
 
         return $configs;
