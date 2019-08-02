@@ -104,6 +104,7 @@ class InheritanceTest extends TestCase
                         ],
                     ],
                     'name' => 'AandB',
+                    'builders' => [],
                 ],
             ],
             $this->config['AandB']
