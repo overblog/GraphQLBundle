@@ -82,7 +82,7 @@ class InheritanceTest extends TestCase
         $this->assertArrayNotHasKey('QueryFooDecorator', $this->config);
     }
 
-    public function testDecoratorInterfacesShouldMerge()
+    public function testDecoratorInterfacesShouldMerge(): void
     {
         $this->assertArrayHasKey('AandB', $this->config);
         $this->assertSame(
