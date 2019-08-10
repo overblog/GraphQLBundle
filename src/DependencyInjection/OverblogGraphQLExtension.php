@@ -216,9 +216,10 @@ class OverblogGraphQLExtension extends Extension
             $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
 
             foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
-                $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
-                $definition = new Definition(Schema::class);
-                $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'create']);
+                // builder
+                $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
+                $definition = $container->register($schemaBuilderID, \Closure::class);
+                $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
                 $definition->setArguments([
                     $schemaName,
                     $schemaConfig['query'],
@@ -226,8 +227,10 @@ class OverblogGraphQLExtension extends Extension
                     $schemaConfig['subscription'],
                     $schemaConfig['types'],
                 ]);
-                $definition->setPublic(false);
-                $container->setDefinition($schemaID, $definition);
+                // schema
+                $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+                $definition = $container->register($schemaID, Schema::class);
+                $definition->setFactory([new Reference($schemaBuilderID), 'call']);
 
                 if (!empty($schemaConfig['resolver_maps'])) {
                     $typeDecoratorListenerDefinition->addMethodCall(
@@ -240,7 +243,7 @@ class OverblogGraphQLExtension extends Extension
                         ]
                     );
                 }
-                $executorDefinition->addMethodCall('addSchema', [$schemaName, new Reference($schemaID)]);
+                $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
             }
         }
     }

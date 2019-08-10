@@ -23,6 +23,18 @@ class SchemaBuilder
         $this->enableValidation = $enableValidation;
     }
 
+    public function getBuilder(string  $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): callable
+    {
+        return function () use ($name, $queryAlias, $mutationAlias, $subscriptionAlias, $types): ExtensibleSchema {
+            static $schema = null;
+            if (null === $schema) {
+                $schema = $this->create($name, $queryAlias, $mutationAlias, $subscriptionAlias, $types);
+            }
+
+            return $schema;
+        };
+    }
+
     /**
      * @param string      $name
      * @param string|null $queryAlias
