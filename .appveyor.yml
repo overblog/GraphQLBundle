@@ -22,7 +22,7 @@ install:
     - echo extension=php_intl.dll >> php.ini
     - echo memory_limit=1G >> php.ini
     - cd %APPVEYOR_BUILD_FOLDER%
-    - composer install --no-progress --no-suggest
+    - composer update --prefer-source --no-interaction --optimize-autoloader
 
 test_script:
     - cd %APPVEYOR_BUILD_FOLDER%
