@@ -58,6 +58,13 @@ class Executor
         return $this;
     }
 
+    public function addSchemaBuilder(string $name, callable $builder): self
+    {
+        $this->schemas[$name] = $builder;
+
+        return $this;
+    }
+
     /**
      * @param string $name
      * @param Schema $schema
@@ -83,12 +90,18 @@ class Executor
         }
 
         if (null === $name) {
-            $schema = \array_values($this->schemas)[0];
-        } else {
-            if (!isset($this->schemas[$name])) {
-                throw new NotFoundHttpException(\sprintf('Could not found "%s" schema.', $name));
+            // TODO(mcg-web): Replace by array_key_first PHP 7 >= 7.3.0.
+            foreach ($this->schemas as $name => $schema) {
+                break;
             }
-            $schema = $this->schemas[$name];
+        }
+        if (!isset($this->schemas[$name])) {
+            throw new NotFoundHttpException(\sprintf('Could not found "%s" schema.', $name));
+        }
+        $schema = $this->schemas[$name];
+        if (\is_callable($schema)) {
+            $schema = $schema();
+            $this->addSchema($name, $schema);
         }
 
         return $schema;

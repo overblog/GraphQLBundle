@@ -5,11 +5,16 @@ overblog_graphql:
     definitions:
         class_namespace: "Overblog\\GraphQLBundle\\SchemaLanguage\\__DEFINITIONS__"
         schema:
-            query: Query
-            mutation: Mutation
-            resolver_maps:
-                - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap
-                - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap
+            main:
+                query: Query
+                mutation: Mutation
+                resolver_maps:
+                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap
+                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap
+            empty:
+                query: Query
+                resolver_maps:
+                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NullResolverMap
         mappings:
             types:
                 -
@@ -18,9 +23,6 @@ overblog_graphql:
                     suffix: ~
 
 services:
-    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap:
-        class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap
-        public: false
-    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap:
-        class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap
-        public: false
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NullResolverMap: ~
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap: ~
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap: ~
