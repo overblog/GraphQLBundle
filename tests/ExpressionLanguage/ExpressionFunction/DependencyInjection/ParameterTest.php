@@ -7,13 +7,14 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class ParameterTest extends TestCase
 {
     protected function getFunctions()
     {
-        $parameterBag = $this->getMockBuilder(ParameterBagInterface::class)->getMock();
+        $parameterBag = new ParameterBag();
+        $parameterBag->set('test', 5);
 
         return [
             new Parameter($parameterBag),
@@ -25,11 +26,20 @@ class ParameterTest extends TestCase
      * @param string $name
      * @dataProvider getNames
      */
-    public function testParameter($name): void
+    public function testParameterCompilation($name): void
     {
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
         $globalVariable->get('container');
         $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
+    }
+
+    /**
+     * @param string $name
+     * @dataProvider getNames
+     */
+    public function testParameterEvaluation($name): void
+    {
+        $this->assertSame(5, $this->expressionLanguage->evaluate($name.'("test")'));
     }
 
     public function getNames()

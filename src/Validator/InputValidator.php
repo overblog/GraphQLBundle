@@ -23,11 +23,11 @@ use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * ArgumentsValidator
+ * InputValidator
  *
  * @author Timur Murtukov <murtukov@gmail.com>
  */
-class ArgumentsValidator
+class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER   = 'getter';
@@ -68,7 +68,7 @@ class ArgumentsValidator
     private $cachedMetadata = [];
 
     /**
-     * ArgumentsValidator constructor.
+     * InputValidator constructor.
      *
      * @param array                   $resolverArgs
      * @param ValidatorInterface|null $validator
@@ -79,8 +79,8 @@ class ArgumentsValidator
     {
         if (null === $validator) {
             throw new ServiceNotFoundException(
-                "The 'validator' service is not found. To use the 'ArgumentsValidator' you need to install
-                the Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
+                "The 'validator' service is not found. To use the 'InputValidator' you need to install the 
+                Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
             );
         }
 
@@ -111,6 +111,7 @@ class ArgumentsValidator
     /**
      * @param string|array|null $groups
      * @param bool              $throw
+     *
      * @return ConstraintViolationListInterface|null
      * @throws ArgumentsValidationException
      */
