@@ -106,11 +106,11 @@ namespace App\GraphQL\Mutation\Mutation
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Validator\ArgumentsValidator;
+use Overblog\GraphQLBundle\Validator\InputValidator;
 
 class UserResolver implements MutationInterface, AliasedInterface
 {
-    public function register(Argument $args, ArgumentsValidator $validator): User
+    public function register(Argument $args, InputValidator $validator): User
     {
         // This line executes a validation process and throws MutationValidationException 
         // on fail. The client will then get a well formatted error message.
@@ -141,7 +141,7 @@ Let's take the example from the chapter [Overview](#overview). When you call `$v
 
 Notice, that the `birthday` argument is converted to an object, as it was marked for cascade validation.
 
-Here is a complex example to better demonstrate the internal work of the `ArgumentsValidator`:
+Here is a complex example to better demonstrate the internal work of the `InputValidator`:
 ```yaml
 # config\graphql\types\Mutation.yaml
 Mutation:
@@ -677,7 +677,7 @@ Birthday:
 ```
 The configuration above could be used in a resolver as follows:
 ```php
-public function register(Argument $args, ArgumentsValidator $validator)
+public function register(Argument $args, InputValidator $validator)
 {
     /* 
      * Validates:
@@ -747,12 +747,12 @@ Mutation:
 ```
 
 ## Customize Error Messages
-By default an `ArgumentsValidator` object throws a `ArgumentsValidationException`, which will be caught and serialized into a readable response. 
+By default an `InputValidator` object throws a `ArgumentsValidationException`, which will be caught and serialized into a readable response. 
 
 You can customize the output  by passing `false` as a second argument to the `validate` method. This will prevent an exception to be thrown and a `ConstraintViolationList` object will be returned instead:
 
 ```php
-public function resolver(ArgumentsValidator $validator) 
+public function resolver(InputValidator $validator) 
 {
     $errors = $validator->validate(null, false);
     
@@ -989,7 +989,7 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 
 ### Annotations and GraphQL Schema language
 
-The current implementation of `ArgumentsValidator` works only for schema types declared in yaml files. Types declared with [annotations](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/index.md) or with [GraphQL schema language](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/graphql-schema-language.md) are not supported. This can be changed in the future versions.
+The current implementation of `InputValidator` works only for schema types declared in yaml files. Types declared with [annotations](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/index.md) or with [GraphQL schema language](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/graphql-schema-language.md) are not supported. This can be changed in the future versions.
 
 The annotations system of this bundle has its own limited validation implementation, see the [Arguments Transformer](https://github.com/overblog/GraphQLBundle/blob/master/docs/annotations/arguments-transformer.md) section for more details.
 

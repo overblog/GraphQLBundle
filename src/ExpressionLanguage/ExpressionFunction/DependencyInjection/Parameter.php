@@ -16,7 +16,7 @@ final class Parameter extends ExpressionFunction
             function (string $value) {
                 return "\$globalVariable->get('container')->getParameter($value)";
             },
-            function ($arguments, $paramName) use ($parameterBag): string {
+            function ($arguments, $paramName) use ($parameterBag) {
                 return $parameterBag->get($paramName);
             }
         );

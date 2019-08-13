@@ -68,8 +68,8 @@ class GetUserTest extends TestCase
     public function getUserProvider()
     {
         $user = $this->getMockBuilder(UserInterface::class)->getMock();
-        $std = new \stdClass();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
+        $std = new \stdClass();
 
         return [
             [$user, $user],

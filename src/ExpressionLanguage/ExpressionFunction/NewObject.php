@@ -17,7 +17,7 @@ final class NewObject extends ExpressionFunction
             function ($className, $args = '[]'): string {
                 return \sprintf('(new \ReflectionClass(%s))->newInstanceArgs(%s)', $className, $args);
             },
-            function ($arguments, $className, $args): object {
+            function ($arguments, $className, $args = []): object {
                 return new $className(...$args);
             }
         );
