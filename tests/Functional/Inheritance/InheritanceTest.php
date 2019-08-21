@@ -81,4 +81,33 @@ class InheritanceTest extends TestCase
         $this->assertArrayNotHasKey('QueryBarDecorator', $this->config);
         $this->assertArrayNotHasKey('QueryFooDecorator', $this->config);
     }
+
+    public function testDecoratorInterfacesShouldMerge(): void
+    {
+        $this->assertArrayHasKey('AandB', $this->config);
+        $this->assertSame(
+            [
+                'type' => 'object',
+                InheritanceProcessor::INHERITS_KEY => ['DecoratorA'],
+                'class_name' => 'AandBType',
+                'decorator' => false,
+                'config' => [
+                    'interfaces' => ['InterfaceA', 'InterfaceB'],
+                    'fields' => [
+                        'a' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'b' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                    ],
+                    'name' => 'AandB',
+                    'builders' => [],
+                ],
+            ],
+            $this->config['AandB']
+        );
+    }
 }
