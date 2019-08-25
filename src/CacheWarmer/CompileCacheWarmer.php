@@ -28,7 +28,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional(): bool
+    public function isOptional()
     {
         return !$this->compiled;
     }
