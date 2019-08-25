@@ -82,7 +82,12 @@ final class InheritanceProcessor implements ProcessorInterface
     private static function inheritsTypeConfig($child, array $parents, array $configs)
     {
         $parentTypes = \array_intersect_key($configs, \array_flip($parents));
-        $parentTypes = \array_reverse($parentTypes);
+
+        // Restore initial order
+        \uksort($parentTypes, function ($a, $b) use ($parents) {
+            return \array_search($a, $parents, true) > \array_search($b, $parents, true);
+        });
+
         $mergedParentsConfig = \call_user_func_array('array_replace_recursive', \array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
@@ -113,11 +118,11 @@ final class InheritanceProcessor implements ProcessorInterface
         $typesTreated[$name] = true;
         $flattenInheritsTypes = [];
         foreach ($config[self::INHERITS_KEY] as $typeToInherit) {
-            $flattenInheritsTypes[] = $typeToInherit;
             $flattenInheritsTypes = \array_merge(
                 $flattenInheritsTypes,
                 self::flattenInherits($typeToInherit, $configs, $allowedTypes, $name, $typesTreated)
             );
+            $flattenInheritsTypes[] = $typeToInherit;
         }
 
         return $flattenInheritsTypes;
