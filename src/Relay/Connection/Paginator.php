@@ -97,7 +97,7 @@ class Paginator
      */
     public function auto(ArgumentInterface $args, $total, array $callableArgs = [])
     {
-        if (isset($args['last'])) {
+        if (isset($args['last']) && $args['last'] !== null) {
             $connection = $this->backward($args, $total, $callableArgs);
         } else {
             $connection = $this->forward($args);
