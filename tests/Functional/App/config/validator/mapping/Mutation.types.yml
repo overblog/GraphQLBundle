@@ -1,0 +1,62 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            createUser:
+                type: "Boolean"
+                resolve: '@=mutation("create_user", [args, validator])'
+                args:
+                    groups:
+                        type: "[String]"
+                    username:
+                        type: String!
+                        validation:
+                            - Length:
+                                  min: 6
+                                  max: 32
+                                  minMessage: 'create_user.username.length'  # will be translated
+                    password:
+                        type: String!
+                        validation:
+                            - Length: { min: 6, max: 32 }
+                            - IdenticalTo:
+                                  propertyPath: 'passwordRepeat'
+                                  message: 'Passwords are not equal!'
+                    passwordRepeat:
+                        type: String!
+                    birthday:
+                        type: String!
+                        validation:
+                            - Date: ~
+                            - Callback:
+                                  callback: ['Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator', 'greaterThan']
+                                  payload: -18 years
+                    emails:
+                        type: '[String]'
+                        validation:
+                            - Unique: ~
+                            - Count: { max: 3 }
+                            - All:
+                                  - Email:
+                                        message: 'The email "{{ value }}" is not a valid email.'
+                    about:
+                        type: String!
+                        validation:
+                            - NotBlank: ~
+                    extraConfig:
+                        type: String!
+                        validation:
+                            - Json: ~
+                    address:
+                        type: Address
+                        validation: cascade
+                    workPeriod:
+                        type: Period!
+                        validation:
+                            cascade:
+                                groups: [dwada]
+#                    university:
+#                        type: University
+#                        validation: cascade
+#                    coordinates:
+#                        type: Coordinates
