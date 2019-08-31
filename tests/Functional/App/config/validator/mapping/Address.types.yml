@@ -1,0 +1,25 @@
+Address:
+    type: input-object
+    config:
+        fields:
+            street:
+                type: String!
+                validation:
+                    - Length:
+                          min: 10
+                          minMessage: 'The street value should have minimum 10 characters'
+            city:
+                type: String!
+                validation:
+                    - Choice:
+                          groups: ['aloir']
+                          choices: ['New York', 'Berlin', 'Tokyo']
+                          message: 'You can only choose between Berlin, New York and Tokyo'
+            zipCode:
+                type: Int!
+                validation:
+                    - Positive: ~
+            residents:
+                type: '[String!]'
+                validation:
+                    - Expression: "'murtukov' in value"
