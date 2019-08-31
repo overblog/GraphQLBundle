@@ -13,3 +13,38 @@ QueryFooDecorator:
         fields:
             period:
                 type: Period
+
+InterfaceA:
+    type: interface
+    config:
+        fields:
+            a:
+                type: String
+
+InterfaceB:
+    type: interface
+    config:
+        fields:
+            b:
+                type: String
+
+DecoratorA:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - InterfaceA
+        fields:
+            a:
+                type: String
+
+AandB:
+    type: object
+    inherits:
+        - DecoratorA
+    config:
+        interfaces:
+            - InterfaceB
+        fields:
+            b:
+                type: String
