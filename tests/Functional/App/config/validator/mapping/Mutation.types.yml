@@ -2,61 +2,57 @@ Mutation:
     type: object
     config:
         fields:
-            createUser:
-                type: "Boolean"
-                resolve: '@=mutation("create_user", [args, validator])'
+            simpleValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
                 args:
-                    groups:
-                        type: "[String]"
                     username:
                         type: String!
                         validation:
-                            - Length:
-                                  min: 6
-                                  max: 32
-                                  minMessage: 'create_user.username.length'  # will be translated
-                    password:
+                            - Length: { min: 5 }
+
+            linkedConstraintsValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
+                validation:
+                    link: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity
+                    constraints:
+                        - Expression: "this.string2 == 'Dolor Sit Amet'"
+                args:
+                    string1:
                         type: String!
-                        validation:
-                            - Length: { min: 6, max: 32 }
-                            - IdenticalTo:
-                                  propertyPath: 'passwordRepeat'
-                                  message: 'Passwords are not equal!'
-                    passwordRepeat:
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::$string1
+                    string2:
                         type: String!
-                    birthday:
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::string2()
+                    string3:
                         type: String!
-                        validation:
-                            - Date: ~
-                            - Callback:
-                                  callback: ['Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator', 'greaterThan']
-                                  payload: -18 years
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::string3
+
+            collectionValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
+                args:
                     emails:
-                        type: '[String]'
+                        type: '[String]!'
                         validation:
                             - Unique: ~
-                            - Count: { max: 3 }
+                            - Count: { min: 3 }
                             - All:
-                                  - Email:
-                                        message: 'The email "{{ value }}" is not a valid email.'
-                    about:
-                        type: String!
-                        validation:
-                            - NotBlank: ~
-                    extraConfig:
-                        type: String!
-                        validation:
-                            - Json: ~
+                                - Email:
+                                    message: 'The email "{{ value }}" is not a valid email.'
+
+            cascadeValidationWithGroups:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    groups:
+                        type: "[String]!"
                     address:
-                        type: Address
+                        type: Address!
                         validation: cascade
-                    workPeriod:
-                        type: Period!
+                    birthdate:
+                        type: Birthdate
                         validation:
                             cascade:
-                                groups: [dwada]
-#                    university:
-#                        type: University
-#                        validation: cascade
-#                    coordinates:
-#                        type: Coordinates
+                                groups: ['group2']

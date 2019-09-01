@@ -1,0 +1,16 @@
+Birthdate:
+    type: input-object
+    config:
+        fields:
+            day:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 31, groups: ["group2"] }
+            month:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 12 }
+            year:
+                type: Int!
+                validation:
+                    - Range: { min: 1901, max: 2019 }
