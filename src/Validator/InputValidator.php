@@ -11,7 +11,6 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
-use RuntimeException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -201,8 +200,6 @@ class InputValidator
                         break;
                     case 'cascade':
                         break;
-                    default:
-                        throw new RuntimeException("Validation entry '$key' doesn't exist");
                 }
             }
         }

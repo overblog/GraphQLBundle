@@ -17,6 +17,16 @@ class InputValidatorTest extends TestCase
         static::bootKernel(['test_case' => 'validator']);
     }
 
+    public function testNoValidation()
+    {
+        $query = 'mutation { noValidation(username: "test") }';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue($result['data']['noValidation']);
+    }
+
     public function testSimpleValidationPasses()
     {
         $query = '
@@ -86,6 +96,15 @@ class InputValidatorTest extends TestCase
         $query = '
             mutation {
                 collectionValidation(
+                    addresses: [{
+                        city: "Berlin", 
+                        street: "Brettnacher-Str. 14a", 
+                        zipCode: 10546, 
+                        period: {
+                            startDate: "2016-01-01", 
+                            endDate: "2019-07-14"
+                        }
+                    }]
                     emails: ["murtukov@gmail.com", "equilibrium.90@mail.ru", "maxmustermann@berlin.de"]
                 )
             }
@@ -102,6 +121,15 @@ class InputValidatorTest extends TestCase
         $query = '
             mutation {
                 collectionValidation(
+                    addresses: [{
+                        city: "Moscow", 
+                        street: "ul. Lazo", 
+                        zipCode: -15, 
+                        period: {
+                            startDate: "2020-01-01", 
+                            endDate: "2019-07-14"
+                        }
+                    }]
                     emails: ["nonUniqueString", "nonUniqueString"]
                 )
             }
@@ -169,7 +197,7 @@ class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::CASCADE, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::CASCADE_WITH_GROUPS, $result['errors'][0]);
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
 }
