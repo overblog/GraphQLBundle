@@ -1,6 +1,8 @@
 Address:
     type: input-object
     config:
+        validation:
+            - GroupSequence: ['Address', 'group1', 'group2']
         fields:
             street:
                 type: String!
@@ -15,7 +17,7 @@ Address:
             zipCode:
                 type: Int!
                 validation:
-                    - Positive: ~
+                    - Expression: "service('service_validator').isZipCodeValid(value)"
             period:
                 type: Period!
                 validation: cascade

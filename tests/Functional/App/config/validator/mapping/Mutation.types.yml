@@ -2,6 +2,14 @@ Mutation:
     type: object
     config:
         fields:
+            noValidation:
+                type: Boolean
+                resolve: "@=mut('no_validation')"
+                args:
+                    username:
+                        type: String!
+                        validation: ~
+
             simpleValidation:
                 type: Boolean
                 resolve: "@=mut('mutation_mock', [args, validator])"
@@ -33,6 +41,9 @@ Mutation:
                 type: Boolean
                 resolve: "@=mut('mutation_mock', [args, validator])"
                 args:
+                    addresses:
+                        type: "[Address]!"
+                        validation: cascade
                     emails:
                         type: '[String]!'
                         validation:
