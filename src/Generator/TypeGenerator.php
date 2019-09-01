@@ -623,14 +623,14 @@ EOF;
         }
 
         // Merge class and field constraints
-        $classValidation = $this->configs[$this->currentlyGeneratedClass]['config']['validation'] ?? null;
+        $classValidation = $this->configs[$this->currentlyGeneratedClass]['config']['validation'] ?? [];
 
-        if ($classValidation && isset($value['validation'])) {
+        if (isset($value['validation'])) {
             $classValidation = array_replace_recursive($classValidation, $value['validation']);
         }
 
         return [
-            'class' => $classValidation,
+            'class' => empty($classValidation) ? null : $classValidation,
             'properties' => $properties,
         ];
     }

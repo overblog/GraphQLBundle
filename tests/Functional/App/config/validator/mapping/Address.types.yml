@@ -5,21 +5,17 @@ Address:
             street:
                 type: String!
                 validation:
-                    - Length:
-                          min: 10
-                          minMessage: 'The street value should have minimum 10 characters'
+                    - Length: {min: 10}
             city:
                 type: String!
                 validation:
                     - Choice:
-                          groups: ['aloir']
-                          choices: ['New York', 'Berlin', 'Tokyo']
-                          message: 'You can only choose between Berlin, New York and Tokyo'
+                        groups: ['group1']
+                        choices: ['New York', 'Berlin', 'Tokyo']
             zipCode:
                 type: Int!
                 validation:
                     - Positive: ~
-            residents:
-                type: '[String!]'
-                validation:
-                    - Expression: "'murtukov' in value"
+            period:
+                type: Period!
+                validation: cascade

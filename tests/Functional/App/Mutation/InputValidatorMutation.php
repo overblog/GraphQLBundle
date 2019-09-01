@@ -2,7 +2,7 @@
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
-use Overblog\GraphQLBundle\Definition\ArgumentInterface;
+use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
@@ -15,17 +15,16 @@ use Overblog\GraphQLBundle\Validator\InputValidator;
 class InputValidatorMutation implements MutationInterface
 {
     /**
-     * @param ArgumentInterface $args
-     * @param InputValidator    $validator
+     * @param Argument       $args
+     * @param InputValidator $validator
      *
      * @return bool
      * @throws ArgumentsValidationException
      */
-    public function createUser(ArgumentInterface $args, InputValidator $validator)
+    public function mutationMock(Argument $args, InputValidator $validator)
     {
-        $validator->validate();
+        $validator->validate($args['groups']);
 
         return true;
     }
-
 }

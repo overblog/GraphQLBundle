@@ -18,4 +18,11 @@ overblog_graphql:
 services:
     Overblog\GraphQLBundle\Tests\Functional\App\Mutation\InputValidatorMutation:
         tags:
-            - { name: "overblog_graphql.mutation", alias: "create_user", method: "createUser" }
+            - { name: "overblog_graphql.mutation", alias: "mutation_mock", method: "mutationMock" }
+
+    validator.expression:
+        class: Symfony\Component\Validator\Constraints\ExpressionValidator
+        arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
+        tags:
+            - name: validator.constraint_validator
+              alias: validator.expression

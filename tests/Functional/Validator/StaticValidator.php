@@ -3,6 +3,7 @@
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use DateTime;
+use Exception;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
@@ -17,7 +18,7 @@ class StaticValidator
      * @param ExecutionContextInterface $context
      * @param                           $payload
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function greaterThan($value, ExecutionContextInterface $context, $payload)
     {
@@ -26,6 +27,18 @@ class StaticValidator
 
         if ($value > $limit) {
             $context->buildViolation("You should be at least 18 years old!")->addViolation();
+        }
+    }
+
+    /**
+     * @param                           $object
+     * @param ExecutionContextInterface $context
+     * @param                           $payload
+     */
+    public static function validateClass($object, ExecutionContextInterface $context, $payload)
+    {
+        if ($object->string1 === "Lorem Ipsum") {
+            $context->buildViolation("Class is invalid");
         }
     }
 }
