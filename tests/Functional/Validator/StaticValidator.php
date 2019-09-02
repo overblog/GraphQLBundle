@@ -8,9 +8,6 @@ use DateTime;
 use Exception;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * Class StaticValidator.
- */
 class StaticValidator
 {
     /**

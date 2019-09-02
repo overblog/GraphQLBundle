@@ -10,9 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 
-/**
- * Class InputValidatorTest.
- */
 class InputValidatorTest extends TestCase
 {
     public function testNoDefaultValidatorException(): void
