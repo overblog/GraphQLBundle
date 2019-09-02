@@ -9,9 +9,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadataInterface;
 
-/**
- * @author Timur Murtukov <murtukov@gmail.com>
- */
 class ObjectMetadata extends ClassMetadata
 {
     public function __construct(ValidationNode $object)
@@ -34,7 +31,7 @@ class ObjectMetadata extends ClassMetadata
         return $this;
     }
 
-    private function addPropertyMetadata(PropertyMetadataInterface $metadata)
+    private function addPropertyMetadata(PropertyMetadataInterface $metadata): void
     {
         $property = $metadata->getPropertyName();
 

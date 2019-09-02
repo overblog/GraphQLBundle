@@ -19,7 +19,7 @@ class ServiceTest extends TestCase
 
         return [
             new Service($container),
-            new Service($container, 'serv')
+            new Service($container, 'serv'),
         ];
     }
 
@@ -37,9 +37,10 @@ class ServiceTest extends TestCase
 
     /**
      * @dataProvider getNames
+     *
      * @param string $name
      */
-    public function testServiceEvaluation(string $name)
+    public function testServiceEvaluation(string $name): void
     {
         $this->assertSame($this->evaluationObject, $this->expressionLanguage->evaluate($name.'("toto")'));
     }

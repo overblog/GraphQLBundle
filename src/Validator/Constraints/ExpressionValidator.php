@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator\Constraints;
 
@@ -21,7 +23,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     /**
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof Expression) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Expression');
@@ -36,9 +38,9 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         if ($object instanceof ValidationNode) {
             $variables['prevValue'] = $object->getResolverArg('value');
-            $variables['context']   = $object->getResolverArg('context');
-            $variables['args']      = $object->getResolverArg('args');
-            $variables['info']      = $object->getResolverArg('info');
+            $variables['context'] = $object->getResolverArg('context');
+            $variables['args'] = $object->getResolverArg('args');
+            $variables['info'] = $object->getResolverArg('info');
         }
 
         if (!$this->getExpressionLanguage()->evaluate($constraint->expression, $variables)) {
@@ -52,7 +54,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     private function getExpressionLanguage()
     {
         if (null === $this->expressionLanguage) {
-            if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
+            if (!\class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
                 throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $this->expressionLanguage = new ExpressionLanguage();

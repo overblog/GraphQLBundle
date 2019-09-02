@@ -22,14 +22,12 @@ use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * InputValidator
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * InputValidator.
  */
 class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
-    private const TYPE_GETTER   = 'getter';
+    private const TYPE_GETTER = 'getter';
 
     /**
      * @var array
@@ -72,7 +70,7 @@ class InputValidator
      * @param array                   $resolverArgs
      * @param ValidatorInterface|null $validator
      * @param ValidatorFactory        $factory
-     * @param array $mapping
+     * @param array                   $mapping
      */
     public function __construct(array $resolverArgs, ?ValidatorInterface $validator, ValidatorFactory $factory, array $mapping)
     {
@@ -83,27 +81,28 @@ class InputValidator
             );
         }
 
-        $this->resolverArgs      = $this->mapResolverArgs($resolverArgs);
-        $this->info              = $this->resolverArgs['info'];
+        $this->resolverArgs = $this->mapResolverArgs($resolverArgs);
+        $this->info = $this->resolverArgs['info'];
         $this->constraintMapping = $mapping;
-        $this->validator 	     = $validator;
-        $this->validatorFactory  = $factory;
-        $this->metadataFactory   = new MetadataFactory();
+        $this->validator = $validator;
+        $this->validatorFactory = $factory;
+        $this->metadataFactory = new MetadataFactory();
     }
 
     /**
      * Converts a numeric array of resolver args to an associative one.
      *
-     * @param array  $rawReolverArgs
+     * @param array $rawReolverArgs
+     *
      * @return array
      */
     private function mapResolverArgs(array $rawReolverArgs)
     {
         return [
-            'value'   => $rawReolverArgs[0],
-            'args'    => $rawReolverArgs[1],
+            'value' => $rawReolverArgs[0],
+            'args' => $rawReolverArgs[1],
             'context' => $rawReolverArgs[2],
-            'info'    => $rawReolverArgs[3],
+            'info' => $rawReolverArgs[3],
         ];
     }
 
@@ -112,6 +111,7 @@ class InputValidator
      * @param bool              $throw
      *
      * @return ConstraintViolationListInterface|null
+     *
      * @throws ArgumentsValidationException
      */
     public function validate($groups = null, bool $throw = true): ?ConstraintViolationListInterface
@@ -135,9 +135,10 @@ class InputValidator
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      *
-     * @param ValidationNode    $rootObject
-     * @param array             $constraintMapping
-     * @param array             $args
+     * @param ValidationNode $rootObject
+     * @param array          $constraintMapping
+     * @param array          $args
+     *
      * @return ValidationNode
      */
     protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
@@ -147,7 +148,6 @@ class InputValidator
         $this->applyClassConstraints($metadata, $constraintMapping['class']);
 
         foreach ($constraintMapping['properties'] as $property => $params) {
-
             if (!empty($params['cascade']) && isset($args[$property])) {
                 $options = $params['cascade'];
                 $type = $this->info->schema->getType($options['referenceType']);
@@ -170,13 +170,15 @@ class InputValidator
             }
 
             foreach ($params ?? [] as $key => $value) {
-                if (null === $value) continue;
+                if (null === $value) {
+                    continue;
+                }
 
                 switch ($key) {
                     case 'link':
                         [$FQCN, $property, $type] = $value;
 
-                        if (!in_array($FQCN, $this->cachedMetadata)) {
+                        if (!\in_array($FQCN, $this->cachedMetadata)) {
                             $this->cachedMetadata[$FQCN] = $this->validator->getMetadataFor($FQCN);
                         }
 
@@ -186,9 +188,13 @@ class InputValidator
                         foreach ($propertyMetadata as $memberMetadata) {
                             // Allow only constraints specified by the "link" matcher
                             if (self::TYPE_GETTER === $type) {
-                                if (!$memberMetadata instanceof GetterMetadata) continue;
-                            } else if (self::TYPE_PROPERTY === $type) {
-                                if (!$memberMetadata instanceof PropertyMetadata) continue;
+                                if (!$memberMetadata instanceof GetterMetadata) {
+                                    continue;
+                                }
+                            } elseif (self::TYPE_PROPERTY === $type) {
+                                if (!$memberMetadata instanceof PropertyMetadata) {
+                                    continue;
+                                }
                             }
 
                             $metadata->addPropertyConstraints($property, $memberMetadata->getConstraints());
@@ -212,7 +218,8 @@ class InputValidator
     /**
      * @param array                           $values
      * @param ObjectType|InputObjectType|Type $type
-     * @param ValidationNode $parent
+     * @param ValidationNode                  $parent
+     *
      * @return array
      */
     private function createCollectionNode(array $values, Type $type, ValidationNode $parent): array
@@ -230,6 +237,7 @@ class InputValidator
      * @param array                           $value
      * @param ObjectType|InputObjectType|Type $type
      * @param $parent
+     *
      * @return ValidationNode
      */
     private function createObjectNode(array $value, Type $type, ValidationNode $parent): ValidationNode
@@ -249,10 +257,12 @@ class InputValidator
      * @param ObjectMetadata $metadata
      * @param array          $constraints
      */
-    private function applyClassConstraints(ObjectMetadata $metadata, ?array $constraints)
+    private function applyClassConstraints(ObjectMetadata $metadata, ?array $constraints): void
     {
         foreach ($constraints ?? [] as $key => $value) {
-            if (null === $value) continue;
+            if (null === $value) {
+                continue;
+            }
 
             switch ($key) {
                 case 'link':
@@ -263,7 +273,7 @@ class InputValidator
                     foreach ($value as $constraint) {
                         if ($constraint instanceof Constraint) {
                             $metadata->addConstraint($constraint);
-                        } else if ($constraint instanceof GroupSequence) {
+                        } elseif ($constraint instanceof GroupSequence) {
                             $metadata->setGroupSequence($constraint);
                         }
                     }

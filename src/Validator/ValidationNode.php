@@ -8,11 +8,10 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use function in_array;
 use Overblog\GraphQLBundle\Definition\Argument;
 
 /**
- * ValidationNode
+ * ValidationNode.
  *
  * Holds the input data of the associated to it GraphQL type. Properties will be
  * created dinamically in runtime. In order to avoid name conflicts all built in
@@ -20,8 +19,6 @@ use Overblog\GraphQLBundle\Definition\Argument;
  *
  * It also contains variables of the resolver context, in which this class was
  * instantiated.
- *
- * @author Timur Murtukov <murtukov@gmail.com>
  */
 class ValidationNode
 {
@@ -53,7 +50,6 @@ class ValidationNode
      * @var array
      */
     private $__resolverArgs;
-
 
     public function __construct(Type $type, string $field = null, ?ValidationNode $parent = null, array $resolverArgs = [])
     {
@@ -108,17 +104,19 @@ class ValidationNode
 
     /**
      * @internal
+     *
      * @param ValidationNode $child
      */
-    public function addChild(ValidationNode $child)
+    public function addChild(ValidationNode $child): void
     {
         $this->__children[] = $child;
     }
 
     /**
-     * Traverses up through parent nodes and returns the first matching one
+     * Traverses up through parent nodes and returns the first matching one.
      *
      * @param string $name
+     *
      * @return ValidationNode|null
      */
     public function findParent(string $name): ?ValidationNode
@@ -126,7 +124,7 @@ class ValidationNode
         $current = $this->__parent;
 
         while (null !== $current) {
-            if($current->getName() === $name) {
+            if ($current->getName() === $name) {
                 return $current;
             } else {
                 $current = $current->getParent();
@@ -140,11 +138,12 @@ class ValidationNode
      * Returns an argument of the resolver, where this validation is being executed.
      *
      * @param string $name
+     *
      * @return ResolveInfo|Argument|mixed|null
      */
     public function getResolverArg(string $name)
     {
-        if (in_array($name, self::KNOWN_VAR_NAMES)) {
+        if (\in_array($name, self::KNOWN_VAR_NAMES)) {
             return $this->__resolverArgs[$name];
         }
 

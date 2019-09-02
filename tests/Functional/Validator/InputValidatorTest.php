@@ -1,13 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 /**
- * Class InputValidatorTest
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * Class InputValidatorTest.
  */
 class InputValidatorTest extends TestCase
 {
@@ -17,7 +17,7 @@ class InputValidatorTest extends TestCase
         static::bootKernel(['test_case' => 'validator']);
     }
 
-    public function testNoValidation()
+    public function testNoValidation(): void
     {
         $query = 'mutation { noValidation(username: "test") }';
 
@@ -27,7 +27,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['noValidation']);
     }
 
-    public function testSimpleValidationPasses()
+    public function testSimpleValidationPasses(): void
     {
         $query = '
             mutation {
@@ -41,7 +41,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['simpleValidation']);
     }
 
-    public function testSimpleValidationFails()
+    public function testSimpleValidationFails(): void
     {
         $query = '
             mutation {
@@ -55,7 +55,7 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['simpleValidation']);
     }
 
-    public function testLinkedConstraintsValidationPasses()
+    public function testLinkedConstraintsValidationPasses(): void
     {
         $query = '
             mutation {
@@ -73,7 +73,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['linkedConstraintsValidation']);
     }
 
-    public function testLinkedConstraintsValidationFails()
+    public function testLinkedConstraintsValidationFails(): void
     {
         $query = '
             mutation {
@@ -91,7 +91,7 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['linkedConstraintsValidation']);
     }
 
-    public function testCollectionValidationPasses()
+    public function testCollectionValidationPasses(): void
     {
         $query = '
             mutation {
@@ -116,7 +116,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['collectionValidation']);
     }
 
-    public function testCollectionValidationFails()
+    public function testCollectionValidationFails(): void
     {
         $query = '
             mutation {
@@ -141,7 +141,7 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['collectionValidation']);
     }
 
-    public function testCascadeValidationWithGroupsPasses()
+    public function testCascadeValidationWithGroupsPasses(): void
     {
         $query = '
             mutation {
@@ -171,7 +171,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['cascadeValidationWithGroups']);
     }
 
-    public function testCascadeValidationWithGroupsFails()
+    public function testCascadeValidationWithGroupsFails(): void
     {
         $query = '
             mutation {

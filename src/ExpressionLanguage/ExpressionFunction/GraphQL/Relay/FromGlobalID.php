@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\R
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
-use function sprintf;
 
 final class FromGlobalID extends ExpressionFunction
 {
@@ -15,7 +14,7 @@ final class FromGlobalID extends ExpressionFunction
         parent::__construct(
             $name,
             function (string $globalId): string {
-                return sprintf('\%s::fromGlobalId(%s)', GlobalId::class, $globalId);
+                return \sprintf('\%s::fromGlobalId(%s)', GlobalId::class, $globalId);
             },
             function ($arguments, $globalId): array {
                 return GlobalId::fromGlobalId($globalId);

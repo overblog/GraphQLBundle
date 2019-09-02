@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Validator;
 
@@ -10,19 +12,17 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ValidationNodeTest
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * Class ValidationNodeTest.
  */
 class ValidationNodeTest extends TestCase
 {
-    public function testValidationNode()
+    public function testValidationNode(): void
     {
         $parentType = new ObjectType(['name' => 'Mutation']);
         $parentNode = new ValidationNode($parentType, null, null, $this->createResolveArgs());
 
         $childType = new ObjectType(['name' => 'createUser']);
-        $childNode = new ValidationNode($childType, "createUser", $parentNode, $this->createResolveArgs());
+        $childNode = new ValidationNode($childType, 'createUser', $parentNode, $this->createResolveArgs());
 
         $deepestChild = new ObjectType(['name' => 'someField']);
         $deepestNode = new ValidationNode($deepestChild, null, $childNode, $this->createResolveArgs());
@@ -48,7 +48,7 @@ class ValidationNodeTest extends TestCase
             'value' => true,
             'args' => new Argument(),
             'context' => new ArrayObject(),
-            'info' => $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock()
+            'info' => $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock(),
         ];
     }
 }

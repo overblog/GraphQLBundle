@@ -11,9 +11,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * ValidatorFactory
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * ValidatorFactory.
  */
 class ValidatorFactory
 {

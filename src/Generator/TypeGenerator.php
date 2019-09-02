@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use function array_replace_recursive;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
@@ -15,8 +14,8 @@ use ReflectionException;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class TypeGenerator extends BaseTypeGenerator
 {
@@ -273,8 +272,8 @@ CODE;
                 continue;
             }
 
-            $field['validation']['isCollection']  = $this->isCollectionType($field['type']);
-            $field['validation']['referenceType'] = trim($field['type'], '[]!');
+            $field['validation']['isCollection'] = $this->isCollectionType($field['type']);
+            $field['validation']['referenceType'] = \trim($field['type'], '[]!');
         }
 
         return parent::generateInputFields($config);
@@ -284,14 +283,14 @@ CODE;
     {
         $resolve = $value['resolve'] ?? false;
 
-        if ($key === 'resolve' && $resolve && (false !== strpos($resolve->__toString(), 'validator'))) {
+        if ('resolve' === $key && $resolve && (false !== \strpos($resolve->__toString(), 'validator'))) {
             $compilerNames[] = 'validator';
             $mapping = $this->buildValidationMapping($value);
             $extraCode = $this->generateValidation($mapping);
             $this->addInternalUseStatement(InputValidator::class);
         }
 
-        return $extraCode ?? "";
+        return $extraCode ?? '';
     }
 
     protected function generateValidation(array $rules): string
@@ -299,14 +298,16 @@ CODE;
         $code = $this->processTemplatePlaceHoldersReplacements('ValidatorCode', $rules, self::DEFERRED_PLACEHOLDERS);
         $code = \ltrim($this->prefixCodeWithSpaces($code, 2));
 
-        return $code . "\n\n<spaces><spaces>";
+        return $code."\n\n<spaces><spaces>";
     }
 
     protected function generateClassValidation(array $config): string
     {
         $config = $config['class'] ?? $config['validation'] ?? null;
 
-        if(!$config) return 'null';
+        if (!$config) {
+            return 'null';
+        }
 
         $code = $this->processTemplatePlaceHoldersReplacements('ValidationConfig', $config, self::DEFERRED_PLACEHOLDERS);
         $code = \ltrim($this->prefixCodeWithSpaces($code, 2));
@@ -325,7 +326,7 @@ CODE;
     protected function generateValidationConfig($config): string
     {
         // If no validation configuration provided.
-        if (count($config) < 2 && 'name' === key($config)) {
+        if (\count($config) < 2 && 'name' === \key($config)) {
             return 'null';
         }
 
@@ -340,26 +341,26 @@ CODE;
             return 'null';
         }
 
-        if (false === strpos($link, '::')) {
-            return sprintf("'%s'", $link);
+        if (false === \strpos($link, '::')) {
+            return \sprintf("'%s'", $link);
         }
 
-        return sprintf("['%s', '%s', '%s']", ...$this->normalizeLink((string) $link));
+        return \sprintf("['%s', '%s', '%s']", ...$this->normalizeLink((string) $link));
     }
 
     protected function generateConstraints(array $values): ?string
     {
         $constraints = $values['constraints'] ?? $values['validation']['constraints'] ?? null;
 
-        if(!is_array($constraints)) {
+        if (!\is_array($constraints)) {
             return 'null';
         }
 
-        $this->addUseStatement(Assert::class . ' as Assert');
+        $this->addUseStatement(Assert::class.' as Assert');
 
         $code = '';
         foreach ($constraints as $key => $constraint) {
-            $code .= "\n".$this->processTemplatePlaceHoldersReplacements('RulesConfig', [key($constraint), current($constraint)]);
+            $code .= "\n".$this->processTemplatePlaceHoldersReplacements('RulesConfig', [\key($constraint), \current($constraint)]);
         }
 
         return '['.$this->prefixCodeWithSpaces($code, 2)."\n<spaces>]";
@@ -380,11 +381,13 @@ CODE;
      *          'max' => 25',
      *      ]),
      *  ]"
-     * ```
+     * ```.
      *
      * @param array $config
-     * @param int $offset
+     * @param int   $offset
+     *
      * @return string|null
+     *
      * @throws ReflectionException
      */
     protected function generateRule(array $config, $offset = 0): string
@@ -393,25 +396,25 @@ CODE;
 
         // Security constraint
         if ('UserPassword' === $name) {
-            $FQCN   = SecurityAssert::class . "\\$name";
+            $FQCN = SecurityAssert::class."\\$name";
             $prefix = 'SecurityAssert\\';
-            $this->addUseStatement(SecurityAssert::class . ' as SecurityAssert');
+            $this->addUseStatement(SecurityAssert::class.' as SecurityAssert');
         }
         // Custom constraint
-        else if (false !== strpos($name, '\\')) {
+        elseif (false !== \strpos($name, '\\')) {
             $prefix = '';
-            $FQCN   = ltrim($name, '\\');
-            $array  = explode('\\', $name);
-            $name   = end($array);
+            $FQCN = \ltrim($name, '\\');
+            $array = \explode('\\', $name);
+            $name = \end($array);
             $this->addUseStatement($FQCN);
         }
         // Standart constraint
         else {
             $prefix = 'Assert\\';
-            $FQCN   = Assert::class . "\\$name";
+            $FQCN = Assert::class."\\$name";
         }
 
-        if(!class_exists($FQCN)) {
+        if (!\class_exists($FQCN)) {
             throw new RuntimeException("Constraint class '$FQCN' doesn't exist.");
         }
 
@@ -425,14 +428,15 @@ CODE;
      *      'groups' => ['group1', 'group2'],
      *      'referenceType' => 'Author',
      *      'isCollection' => true
-     *  ]
+     *  ].
      *
      * @param $config
+     *
      * @return string
      */
     protected function generateCascade($config)
     {
-        $config  = $config['validation'] ?? $config;
+        $config = $config['validation'] ?? $config;
         $cascade = $config['cascade'] ?? null;
 
         if (null === $cascade) {
@@ -447,13 +451,13 @@ CODE;
 <spaces>],
 EOF;
 
-        $groups = !empty($cascade['groups']) ? sprintf("'%s'", implode("', '", $cascade['groups'])) : '';
+        $groups = !empty($cascade['groups']) ? \sprintf("'%s'", \implode("', '", $cascade['groups'])) : '';
 
-        return $cascade ? sprintf($template, $groups, $config['referenceType'], $config['isCollection'] ? 'true' : 'false') : 'null';
+        return $cascade ? \sprintf($template, $groups, $config['referenceType'], $config['isCollection'] ? 'true' : 'false') : 'null';
     }
 
     /**
-     * Converts variables of different types into string:
+     * Converts variables of different types into string:.
      *
      * Scalar values examples:
      *
@@ -471,19 +475,21 @@ EOF;
      *
      * @param $value
      * @param $offset
+     *
      * @return string|null
+     *
      * @throws ReflectionException
      */
     protected function stringifyValue($value, $offset): string
     {
-        switch (gettype($value)) {
+        switch (\gettype($value)) {
             case 'boolean':
                 return $value ? 'true' : 'false';
             case 'integer':
             case 'double':
                 return (string) $value;
             case 'string':
-                return sprintf("'%s'", $this->escapeSingleQuotes($value));
+                return \sprintf("'%s'", $this->escapeSingleQuotes($value));
             case 'NULL':
                 return '';
             case 'array':
@@ -495,25 +501,27 @@ EOF;
 
     protected function escapeSingleQuotes(string $string)
     {
-        return str_replace("'", "\'", $string);
+        return \str_replace("'", "\'", $string);
     }
 
     /**
      * Checks if the given array should be considered as an
-     * instantiation of a new assert or a normal array, e.g:
+     * instantiation of a new assert or a normal array, e.g:.
      *
      * - A normal array: `['min' => 15, 'max' => 25]`
      * - Instantiation of a new asser: `[[Length => ['min' => 15, 'max' => 25]]]`
      *
      * @param array $array
-     * @param int $offset
+     * @param int   $offset
+     *
      * @return string
+     *
      * @throws ReflectionException
      */
     protected function stringifyArray(array $array, $offset = 1): string
     {
-        if (1 === count($array) && ctype_upper(key($array)[0])) {
-            return $this->generateRule([key($array), current($array)], --$offset);
+        if (1 === \count($array) && \ctype_upper(\key($array)[0])) {
+            return $this->generateRule([\key($array), \current($array)], --$offset);
         } else {
             return $this->stringifyNormalArray($array, $offset);
         }
@@ -521,7 +529,7 @@ EOF;
 
     /**
      * Recursively converts an array into a php code.
-     * It can have one of 2 formats:
+     * It can have one of 2 formats:.
      *
      *  1) With keys (example):
      * ```
@@ -537,44 +545,51 @@ EOF;
      *       'createUser'
      *    ]
      * ```
+     *
      * @param $array
      * @param int $offset
+     *
      * @return string
+     *
      * @throws ReflectionException
      */
     protected function stringifyNormalArray($array, $offset = 1): string
     {
-        $spaces = implode('', array_fill(0, $offset, '<spaces>'));
-        $code = "";
+        $spaces = \implode('', \array_fill(0, $offset, '<spaces>'));
+        $code = '';
 
         foreach ($array as $key => $value) {
             $code .= "\n"
                 .$spaces
-                .($this->isNumericArray($array) ? "" : "'$key' => ")
+                .($this->isNumericArray($array) ? '' : "'$key' => ")
                 .$this->stringifyValue($value, $offset)
             ;
 
-            if ($value !== end($array)) {
-                $code .=  ', ';
+            if ($value !== \end($array)) {
+                $code .= ', ';
             }
         }
 
-        $spaces = substr_replace($spaces, '', 0, 8);
+        $spaces = \substr_replace($spaces, '', 0, 8);
 
         return "[$code\n$spaces]";
     }
 
     /**
-     * Checks whether an array contains only integer keys
+     * Checks whether an array contains only integer keys.
      *
      * @param array $array
+     *
      * @return bool
      */
     protected static function isNumericArray(array $array): bool
     {
         foreach ($array as $k => $a) {
-            if (!is_int($k)) return false;
+            if (!\is_int($k)) {
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -584,27 +599,30 @@ EOF;
      *  - "App\Entity\User::$firstName"  -> ['App\Entity\User', 'firstName', 'property']
      *  - "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
      *  - "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
-     * ```
+     * ```.
+     *
      * @param string $link
+     *
      * @return array
      */
     protected function normalizeLink(string $link): array
     {
-        [$FQCN, $classMember] = explode("::", $link);
+        [$FQCN, $classMember] = \explode('::', $link);
 
-        if ($classMember[0] === "$") {
-            return [$FQCN, ltrim($classMember, "$"), 'property'];
-        } else if (substr($classMember, -1) === ")") {
-            return [$FQCN, rtrim($classMember, "()"), 'getter'];
+        if ('$' === $classMember[0]) {
+            return [$FQCN, \ltrim($classMember, '$'), 'property'];
+        } elseif (')' === \substr($classMember, -1)) {
+            return [$FQCN, \rtrim($classMember, '()'), 'getter'];
         } else {
             return [$FQCN, $classMember, 'member'];
         }
     }
 
     /**
-     * Flattens validation configs and adds extra keys into every entry if required
+     * Flattens validation configs and adds extra keys into every entry if required.
      *
      * @param array $value
+     *
      * @return array
      */
     protected function buildValidationMapping(array $value): array
@@ -612,21 +630,21 @@ EOF;
         $properties = [];
 
         foreach ($value['args'] ?? [] as $name => $arg) {
-            if(empty($arg['validation'])) {
+            if (empty($arg['validation'])) {
                 $properties[$name] = null;
                 continue;
             }
 
             $properties[$name] = $arg['validation'];
-            $properties[$name]['isCollection']  = $this->isCollectionType($arg['type']);
-            $properties[$name]['referenceType'] = trim($arg['type'], '[]!');
+            $properties[$name]['isCollection'] = $this->isCollectionType($arg['type']);
+            $properties[$name]['referenceType'] = \trim($arg['type'], '[]!');
         }
 
         // Merge class and field constraints
         $classValidation = $this->configs[$this->currentlyGeneratedClass]['config']['validation'] ?? [];
 
         if (isset($value['validation'])) {
-            $classValidation = array_replace_recursive($classValidation, $value['validation']);
+            $classValidation = \array_replace_recursive($classValidation, $value['validation']);
         }
 
         return [
@@ -636,17 +654,18 @@ EOF;
     }
 
     /**
-     * Checks if a given type is a collection, e.g.:
+     * Checks if a given type is a collection, e.g.:.
      *
      *  - "[TypeName]"   - is a collection
      *  - "[TypeName!]!" - is a collection
      *  - "TypeName"     - is not a collection
      *
      * @param string $type
+     *
      * @return bool
      */
     protected function isCollectionType(string $type): bool
     {
-        return count(array_intersect(['[', ']'], str_split($type))) === 2;
+        return 2 === \count(\array_intersect(['[', ']'], \str_split($type)));
     }
 }

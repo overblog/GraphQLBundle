@@ -9,9 +9,6 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
-/**
- * @author Timur Murtukov <murtukov@gmail.com>
- */
 class PropertyMetadata extends MemberMetadata
 {
     public function __construct(string $name)
@@ -21,7 +18,9 @@ class PropertyMetadata extends MemberMetadata
 
     /**
      * @param  $object
+     *
      * @return ReflectionMethod|ReflectionProperty
+     *
      * @throws ReflectionException
      */
     protected function newReflectionMember($object)
@@ -31,7 +30,6 @@ class PropertyMetadata extends MemberMetadata
 
         return $member;
     }
-
 
     public function getPropertyValue($object)
     {

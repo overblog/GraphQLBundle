@@ -1,13 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class DummyEntity
+ * Class DummyEntity.
  *
- * @author Timur Murtukov <murtukov@gmail.com>
  *
  * @Assert\Callback({"Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator", "validateClass"})
  */
@@ -51,6 +52,4 @@ class DummyEntity
     {
         return $this->string3;
     }
-
-
 }

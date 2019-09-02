@@ -21,7 +21,7 @@ final class ResolveSingleInputCallback extends ExpressionFunction
                 return $code;
             },
             // TODO: finish this callback
-            function ($arguments, $mutateAndGetPayload) use ($globalVariables) {
+            function ($arguments, $mutateAndGetPayload) use ($globalVariables): void {
 //                [
 //                    'context' => $context,
 //                    'args'    => $args,
