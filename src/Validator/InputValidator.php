@@ -21,9 +21,6 @@ use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * InputValidator.
- */
 class InputValidator
 {
     private const TYPE_PROPERTY = 'property';

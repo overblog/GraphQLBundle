@@ -6,9 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-/**
- * Class InputValidatorTest.
- */
 class InputValidatorTest extends TestCase
 {
     protected function setUp(): void

@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class DummyEntity.
  *
- *
  * @Assert\Callback({"Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator", "validateClass"})
  */
 class DummyEntity

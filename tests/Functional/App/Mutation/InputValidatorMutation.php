@@ -9,9 +9,6 @@ use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 
-/**
- * Class InputValidatorMutation.
- */
 class InputValidatorMutation implements MutationInterface
 {
     /**

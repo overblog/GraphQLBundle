@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
-/**
- * Class ExpectedErrors.
- */
 class ExpectedErrors
 {
     public const SIMPLE_VALIDATION = [

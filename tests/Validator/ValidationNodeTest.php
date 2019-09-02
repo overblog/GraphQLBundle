@@ -11,9 +11,6 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ValidationNodeTest.
- */
 class ValidationNodeTest extends TestCase
 {
     public function testValidationNode(): void
