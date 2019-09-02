@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
@@ -8,9 +10,7 @@ use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 
 /**
- * Class InputValidatorMutation
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * Class InputValidatorMutation.
  */
 class InputValidatorMutation implements MutationInterface
 {
@@ -19,6 +19,7 @@ class InputValidatorMutation implements MutationInterface
      * @param InputValidator $validator
      *
      * @return bool
+     *
      * @throws ArgumentsValidationException
      */
     public function mutationMock(Argument $args, InputValidator $validator): bool

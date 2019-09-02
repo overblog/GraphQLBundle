@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Validator;
 
@@ -9,13 +11,11 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
 
 /**
- * Class InputValidatorTest
- *
- * @author Timur Murtukov <murtukov@gmail.com>
+ * Class InputValidatorTest.
  */
 class InputValidatorTest extends TestCase
 {
-    public function testNoDefaultValidatorException()
+    public function testNoDefaultValidatorException(): void
     {
         $factory = new ValidatorFactory(null, new ConstraintValidatorFactory(), null);
 

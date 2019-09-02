@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Validator\Mapping;
 
@@ -11,7 +13,7 @@ use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 
 class MetadataFactoryTest extends TestCase
 {
-    public function testMetadataFactoryHasObject()
+    public function testMetadataFactoryHasObject(): void
     {
         $metadataFactory = new MetadataFactory();
 
@@ -28,7 +30,7 @@ class MetadataFactoryTest extends TestCase
         $this->assertSame($objectMetadata, $metadata);
     }
 
-    public function testMetadataFactoryHasNoObject()
+    public function testMetadataFactoryHasNoObject(): void
     {
         $metadataFactory = new MetadataFactory();
 

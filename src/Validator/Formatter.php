@@ -7,19 +7,15 @@ namespace Overblog\GraphQLBundle\Validator;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
 
-/**
- * @author Timur Murtukov <murtukov@gmail.com>
- */
 class Formatter
 {
     public function onErrorFormatting(ErrorFormattingEvent $event): void
     {
         $error = $event->getError()->getPrevious();
 
-        if($error instanceof ArgumentsValidationException)
-        {
+        if ($error instanceof ArgumentsValidationException) {
             $state = [];
-            $code  = [];
+            $code = [];
 
             $violations = $error->getViolations();
             foreach ($violations as $violation) {
@@ -33,5 +29,4 @@ class Formatter
             $formattedError->offsetUnset('locations');
         }
     }
-
 }

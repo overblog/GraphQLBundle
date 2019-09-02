@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use ReflectionClass;
-use function sprintf;
 
 final class NewObject extends ExpressionFunction
 {

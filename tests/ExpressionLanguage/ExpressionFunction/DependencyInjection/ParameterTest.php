@@ -18,7 +18,7 @@ class ParameterTest extends TestCase
 
         return [
             new Parameter($parameterBag),
-            new Parameter($parameterBag, 'param')
+            new Parameter($parameterBag, 'param'),
         ];
     }
 

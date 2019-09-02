@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use function sprintf;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class IsGranted extends ExpressionFunction
