@@ -18,6 +18,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     public function __construct(ExpressionLanguage $expressionLanguage = null)
     {
         $this->expressionLanguage = $expressionLanguage;
+        parent::__construct(null, $expressionLanguage);
     }
 
     /**
