@@ -14,26 +14,21 @@ use ReflectionException;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class TypeGenerator extends BaseTypeGenerator
 {
     public const USE_FOR_CLOSURES = '$globalVariable';
-
     public const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
 
-    private $cacheDir;
-
-    private $configProcessor;
-
-    private $configs;
-
-    private $useClassMap;
-
-    private $baseCacheDir;
+    private const CONSTRAINTS_USE_STATEMENT = 'Symfony\Component\Validator\Constraints';
+    private const SECURITY_CONSTRAINTS_USE_STATEMENT = 'Symfony\Component\Security\Core\Validator\Constraints';
 
     private static $classMapLoaded = false;
+    private $cacheDir;
+    private $configProcessor;
+    private $configs;
+    private $useClassMap;
+    private $baseCacheDir;
 
     public function __construct(
         string $classNamespace,
@@ -356,7 +351,7 @@ CODE;
             return 'null';
         }
 
-        $this->addUseStatement(Assert::class.' as Assert');
+        $this->addUseStatement(self::CONSTRAINTS_USE_STATEMENT.' as Assert');
 
         $code = '';
         foreach ($constraints as $key => $constraint) {
@@ -396,9 +391,9 @@ CODE;
 
         // Security constraint
         if ('UserPassword' === $name) {
-            $FQCN = SecurityAssert::class."\\$name";
+            $FQCN = self::SECURITY_CONSTRAINTS_USE_STATEMENT."\\$name";
             $prefix = 'SecurityAssert\\';
-            $this->addUseStatement(SecurityAssert::class.' as SecurityAssert');
+            $this->addUseStatement(self::SECURITY_CONSTRAINTS_USE_STATEMENT.' as SecurityAssert');
         }
         // Custom constraint
         elseif (false !== \strpos($name, '\\')) {
@@ -411,7 +406,7 @@ CODE;
         // Standart constraint
         else {
             $prefix = 'Assert\\';
-            $FQCN = Assert::class."\\$name";
+            $FQCN = self::CONSTRAINTS_USE_STATEMENT."\\$name";
         }
 
         if (!\class_exists($FQCN)) {
