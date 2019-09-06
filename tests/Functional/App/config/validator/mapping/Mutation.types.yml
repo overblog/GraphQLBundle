@@ -18,6 +18,9 @@ Mutation:
                         type: String!
                         validation:
                             - Length: { min: 5 }
+                            - Regex:
+                                pattern: '/^[a-z]+$/i'
+                                htmlPattern: true
 
             linkedConstraintsValidation:
                 type: Boolean
@@ -67,3 +70,21 @@ Mutation:
                         validation:
                             cascade:
                                 groups: ['group2']
+
+            userPasswordValidation:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    oldPassword:
+                        type: "String"
+                        validation:
+                            - Symfony\Component\Security\Core\Validator\Constraints\UserPassword: ~
+
+            expressionVariablesValidation:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    username:
+                        type: "String"
+                        validation:
+                            - Expression: "service('service_validator').resolveVariablesAccessible(args, info)"

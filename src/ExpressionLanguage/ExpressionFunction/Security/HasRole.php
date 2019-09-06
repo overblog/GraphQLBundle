@@ -16,7 +16,7 @@ final class HasRole extends ExpressionFunction
             function ($role): string {
                 return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted($role)";
             },
-            function ($arguments, $role) use ($authorizationChecker): bool {
+            function ($_, $role) use ($authorizationChecker): bool {
                 return $authorizationChecker->isGranted($role);
             }
         );

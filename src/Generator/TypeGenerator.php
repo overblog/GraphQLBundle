@@ -20,8 +20,7 @@ class TypeGenerator extends BaseTypeGenerator
     public const USE_FOR_CLOSURES = '$globalVariable';
     public const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
 
-    private const CONSTRAINTS_USE_STATEMENT = 'Symfony\Component\Validator\Constraints';
-    private const SECURITY_CONSTRAINTS_USE_STATEMENT = 'Symfony\Component\Security\Core\Validator\Constraints';
+    private const CONSTRAINTS_NAMESPACE = 'Symfony\Component\Validator\Constraints';
 
     private static $classMapLoaded = false;
     private $cacheDir;
@@ -151,7 +150,7 @@ CODE;
     protected function generateComplexity(array $value): string
     {
         $resolveComplexity = parent::generateComplexity($value);
-        $resolveComplexity = \ltrim($this->prefixCodeWithSpaces($resolveComplexity));
+        $resolveComplexity = $this->prefixCodeWithSpaces($resolveComplexity);
 
         if ('null' === $resolveComplexity) {
             return $resolveComplexity;
@@ -267,8 +266,8 @@ CODE;
                 continue;
             }
 
-            $field['validation']['isCollection'] = $this->isCollectionType($field['type']);
-            $field['validation']['referenceType'] = \trim($field['type'], '[]!');
+            $field['validation']['cascade']['isCollection']  = $this->isCollectionType($field['type']);
+            $field['validation']['cascade']['referenceType'] = \trim($field['type'], '[]!');
         }
 
         return parent::generateInputFields($config);
@@ -277,21 +276,22 @@ CODE;
     protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): string
     {
         $resolve = $value['resolve'] ?? false;
+        $extraCode = "";
 
         if ('resolve' === $key && $resolve && (false !== \strpos($resolve->__toString(), 'validator'))) {
             $compilerNames[] = 'validator';
             $mapping = $this->buildValidationMapping($value);
-            $extraCode = $this->generateValidation($mapping);
+            $extraCode .= $this->generateValidation($mapping);
             $this->addInternalUseStatement(InputValidator::class);
         }
 
-        return $extraCode ?? '';
+        return $extraCode;
     }
 
     protected function generateValidation(array $rules): string
     {
         $code = $this->processTemplatePlaceHoldersReplacements('ValidatorCode', $rules, self::DEFERRED_PLACEHOLDERS);
-        $code = \ltrim($this->prefixCodeWithSpaces($code, 2));
+        $code = $this->prefixCodeWithSpaces($code, 2, false);
 
         return $code."\n\n<spaces><spaces>";
     }
@@ -305,7 +305,7 @@ CODE;
         }
 
         $code = $this->processTemplatePlaceHoldersReplacements('ValidationConfig', $config, self::DEFERRED_PLACEHOLDERS);
-        $code = \ltrim($this->prefixCodeWithSpaces($code, 2));
+        $code = $this->prefixCodeWithSpaces($code, 2);
 
         return $code;
     }
@@ -313,7 +313,7 @@ CODE;
     protected function generateValidationMapping(array $config): string
     {
         $code = $this->processFromArray($config['properties'], 'MappingEntry');
-        $code = \ltrim($this->prefixCodeWithSpaces($code, 1));
+        $code = $this->prefixCodeWithSpaces($code, 1);
 
         return $code;
     }
@@ -351,26 +351,26 @@ CODE;
             return 'null';
         }
 
-        $this->addUseStatement(self::CONSTRAINTS_USE_STATEMENT.' as Assert');
+        $this->addUseStatement(self::CONSTRAINTS_NAMESPACE.' as Assert');
 
         $code = '';
         foreach ($constraints as $key => $constraint) {
             $code .= "\n".$this->processTemplatePlaceHoldersReplacements('RulesConfig', [\key($constraint), \current($constraint)]);
         }
 
-        return '['.$this->prefixCodeWithSpaces($code, 2)."\n<spaces>]";
-    }
-
-    protected function generateRules(array $rules): ?string
-    {
-        return $this->processTemplatePlaceHoldersReplacements('RulesConfig', $rules);
+        return '['.$this->prefixCodeWithSpaces($code, 2, false)."\n<spaces>]";
     }
 
     /**
      *  Converts an array into php fragment and adds proper use statements, e.g.:
+     *
+     *  Input:
      *  ```
-     *  Input: ['Length', ['min' => 15, 'max' => 25]]
-     *  Output: "[
+     *  ['Length', ['min' => 15, 'max' => 25]]
+     *  ```
+     *  Output:
+     *  ```
+     * "[
      *      new Assert\Length([
      *          'min' => 15,
      *          'max' => 25',
@@ -379,8 +379,7 @@ CODE;
      * ```.
      *
      * @param array $config
-     * @param int   $offset
-     *
+     * @param int $offset
      * @return string|null
      *
      * @throws ReflectionException
@@ -389,24 +388,18 @@ CODE;
     {
         [$name, $params] = $config;
 
-        // Security constraint
-        if ('UserPassword' === $name) {
-            $FQCN = self::SECURITY_CONSTRAINTS_USE_STATEMENT."\\$name";
-            $prefix = 'SecurityAssert\\';
-            $this->addUseStatement(self::SECURITY_CONSTRAINTS_USE_STATEMENT.' as SecurityAssert');
-        }
         // Custom constraint
-        elseif (false !== \strpos($name, '\\')) {
+        if (false !== \strpos($name, '\\')) {
             $prefix = '';
             $FQCN = \ltrim($name, '\\');
             $array = \explode('\\', $name);
             $name = \end($array);
             $this->addUseStatement($FQCN);
         }
-        // Standart constraint
+        // Built-in constraint
         else {
             $prefix = 'Assert\\';
-            $FQCN = self::CONSTRAINTS_USE_STATEMENT."\\$name";
+            $FQCN = self::CONSTRAINTS_NAMESPACE."\\$name";
         }
 
         if (!\class_exists($FQCN)) {
@@ -419,36 +412,23 @@ CODE;
     /**
      * Generates the 'cascade' section of a type definition class.
      * Example:
-     *  [
+     * ```
+     *  "[
      *      'groups' => ['group1', 'group2'],
      *      'referenceType' => 'Author',
      *      'isCollection' => true
-     *  ].
+     *  ]"
+     * ```
      *
      * @param $config
-     *
      * @return string
+     * @throws ReflectionException
      */
     protected function generateCascade($config)
     {
-        $config = $config['validation'] ?? $config;
-        $cascade = $config['cascade'] ?? null;
+        $config  = $config['validation'] ?? $config;
 
-        if (null === $cascade) {
-            return 'null';
-        }
-
-        $template = <<<EOF
-[
-<spaces><spaces>'groups' => [%s],
-<spaces><spaces>'referenceType' => '%s',
-<spaces><spaces>'isCollection' => %s
-<spaces>],
-EOF;
-
-        $groups = !empty($cascade['groups']) ? \sprintf("'%s'", \implode("', '", $cascade['groups'])) : '';
-
-        return $cascade ? \sprintf($template, $groups, $config['referenceType'], $config['isCollection'] ? 'true' : 'false') : 'null';
+        return $this->stringifyValue($config['cascade'] ?? null, 1);
     }
 
     /**
@@ -463,19 +443,20 @@ EOF;
      * | integer  | 100            | "100"               |
      * | float    | 14.561         | "14.561"            |
      * | string   | "jeanne d'arc" | "'jeanne d\'arc'"   |
-     * | NULL     | null           | ""                  |
+     * | string   | "@null"        | ""                  |
+     * | NULL     | null           | "null"              |
      * ```
      *
      *  Arrays are delegated to **$this->stringifyArray()**
      *
-     * @param $value
-     * @param $offset
+     * @param mixed $value
+     * @param int   $offset - array offset
      *
      * @return string|null
      *
      * @throws ReflectionException
      */
-    protected function stringifyValue($value, $offset): string
+    protected function stringifyValue($value, $offset = 0): string
     {
         switch (\gettype($value)) {
             case 'boolean':
@@ -484,13 +465,14 @@ EOF;
             case 'double':
                 return (string) $value;
             case 'string':
+                if ('@null' === $value) {
+                    return "";
+                }
                 return \sprintf("'%s'", $this->escapeSingleQuotes($value));
             case 'NULL':
-                return '';
-            case 'array':
-                return $this->stringifyArray($value, ++$offset);
+                return 'null';
             default:
-                throw new RuntimeException('Unsupported data type passed to constraint parameters.');
+                return $this->stringifyArray($value, ++$offset);
         }
     }
 
@@ -631,8 +613,13 @@ EOF;
             }
 
             $properties[$name] = $arg['validation'];
-            $properties[$name]['isCollection'] = $this->isCollectionType($arg['type']);
-            $properties[$name]['referenceType'] = \trim($arg['type'], '[]!');
+
+            if (empty($arg['validation']['cascade'])) {
+                continue;
+            }
+
+            $properties[$name]['cascade']['isCollection'] = $this->isCollectionType($arg['type']);
+            $properties[$name]['cascade']['referenceType'] = \trim($arg['type'], '[]!');
         }
 
         // Merge class and field constraints

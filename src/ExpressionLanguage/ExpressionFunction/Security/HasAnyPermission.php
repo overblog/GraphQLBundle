@@ -19,8 +19,12 @@ final class HasAnyPermission extends ExpressionFunction
 
                 return $code;
             },
-            function ($arguments, $object, $permissions) use ($authorizationChecker) {
-                return $authorizationChecker->isGranted($permissions, $object);
+            function ($_, $object, $permissions) use ($authorizationChecker) {
+                return array_reduce(
+                    $permissions,
+                    function ($isGranted, $permission) use ($authorizationChecker, $object) { return $isGranted || $authorizationChecker->isGranted($permission, $object); },
+                    false
+                );
             }
         );
     }

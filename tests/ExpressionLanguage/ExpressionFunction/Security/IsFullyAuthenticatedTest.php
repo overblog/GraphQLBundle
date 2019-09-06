@@ -12,9 +12,18 @@ class IsFullyAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            'IS_AUTHENTICATED_FULLY',
+            $this->any()
+        );
 
         return [new IsFullyAuthenticated($authorizationChecker)];
+    }
+
+    public function testEvaluator()
+    {
+        $isFullyAuthenticated = $this->expressionLanguage->evaluate("isFullyAuthenticated()");
+        $this->assertTrue($isFullyAuthenticated);
     }
 
     public function testIsFullyAuthenticated(): void

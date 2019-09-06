@@ -15,8 +15,8 @@ overblog_graphql:
 
 services:
     validator.expression:
-        class: Symfony\Component\Validator\Constraints\ExpressionValidator
-        arguments: [null, '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
+        class: Overblog\GraphQLBundle\Validator\Constraints\ExpressionValidator
+        arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
         tags:
             - name: validator.constraint_validator
               alias: validator.expression

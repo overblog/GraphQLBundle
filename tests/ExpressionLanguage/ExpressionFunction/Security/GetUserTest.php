@@ -10,17 +10,25 @@ use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class GetUserTest extends TestCase
 {
     protected function getFunctions()
     {
-        $security = $this->getMockBuilder(Security::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $testUser = new User('testUser', 'testPassword');
+
+        $security = $this->createMock(Security::class);
+        $security->method('getUser')->willReturn($testUser);
 
         return [new GetUser($security)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $user = $this->expressionLanguage->evaluate('getUser()');
+        $this->assertInstanceOf(UserInterface::class, $user);
     }
 
     public function testGetUserNoTokenStorage(): void

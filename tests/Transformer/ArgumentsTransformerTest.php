@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +35,7 @@ class ArgumentsTransformerTest extends TestCase
         return $info;
     }
 
-    protected function getTypes()
+    public static function getTypes()
     {
         $t1 = new InputObjectType([
             'name' => 'InputType1',
@@ -71,13 +72,13 @@ class ArgumentsTransformerTest extends TestCase
 
     public function testPopulating(): void
     {
-        $builder = $this->getTransformer([
+        $transformer = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => InputType1::class],
             'InputType2' => ['type' => 'input', 'class' => InputType2::class],
             'InputType3' => ['type' => 'input', 'class' => InputType3::class],
         ]);
 
-        $info = $this->getResolveInfo($this->getTypes());
+        $info = $this->getResolveInfo(self::getTypes());
 
         $data = [
             'field1' => 'hello',
@@ -85,7 +86,7 @@ class ArgumentsTransformerTest extends TestCase
             'field3' => true,
         ];
 
-        $res = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $res = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
 
         $this->assertInstanceOf(InputType1::class, $res);
         $this->assertEquals($res->field1, $data['field1']);
@@ -100,7 +101,7 @@ class ArgumentsTransformerTest extends TestCase
             'field2' => 3,
         ];
 
-        $res = $builder->getInstanceAndValidate('InputType2', $data, $info, 'input2');
+        $res = $transformer->getInstanceAndValidate('InputType2', $data, $info, 'input2');
 
         $this->assertInstanceOf(InputType2::class, $res);
         $this->assertTrue(\is_array($res->field1));
@@ -118,7 +119,7 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ];
 
-        $res = $builder->getInstanceAndValidate('InputType3', $data, $info, 'input');
+        $res = $transformer->getInstanceAndValidate('InputType3', $data, $info, 'input');
 
         $this->assertInstanceOf(InputType3::class, $res);
         $this->assertArrayHasKey(0, $res->field1);
@@ -132,17 +133,17 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($data['field1'][1]['field2'], $res->field1[1]->field2);
         $this->assertEquals($data['field1'][1]['field3'], $res->field1[1]->field3);
 
-        $res = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
 
         $this->assertEquals(2, $res);
 
-        $builder = $this->getTransformer([
+        $transformer = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
             'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
         ]);
 
-        $res = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
         $this->assertInstanceOf(Enum1::class, $res);
         $this->assertEquals(2, $res->value);
 
@@ -155,7 +156,7 @@ class ArgumentsTransformerTest extends TestCase
             'string1' => 'test_string',
         ];
 
-        $res = $builder->getArguments($mapping, $data, $info);
+        $res = $transformer->getArguments($mapping, $data, $info);
         $this->assertInstanceOf(InputType1::class, $res[0]);
         $this->assertInstanceOf(InputType2::class, $res[1]);
         $this->assertInstanceOf(Enum1::class, $res[2]);
@@ -164,10 +165,10 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($res[4], 'test_string');
 
         $data = [];
-        $res = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $res = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
         $this->assertInstanceOf(InputType1::class, $res);
 
-        $res = $builder->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
+        $res = $transformer->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
         $this->assertInstanceOf(Enum1::class, $res->field3);
         $this->assertEquals('enum1', $res->field3->value);
     }
@@ -187,12 +188,12 @@ class ArgumentsTransformerTest extends TestCase
         ];
 
         try {
-            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo(self::getTypes()));
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
         } catch (\Exception $e) {
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
+            $this->assertInstanceOf(InvalidArgumentsError::class, $e);
             $first = $e->getErrors()[0];
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
+            $this->assertInstanceOf(InvalidArgumentError::class, $first);
             $this->assertEquals($first->getErrors()->get(0), $violation);
             $this->assertEquals($first->getName(), 'input1');
 
@@ -252,14 +253,14 @@ class ArgumentsTransformerTest extends TestCase
         ];
 
         try {
-            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo(self::getTypes()));
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
         } catch (\Exception $e) {
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
+            $this->assertInstanceOf(InvalidArgumentsError::class, $e);
             /** @var InvalidArgumentsError $e */
             $first = $e->getErrors()[0];
             $second = $e->getErrors()[1];
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
+            $this->assertInstanceOf(InvalidArgumentError::class, $first);
             $this->assertEquals($first->getErrors()->get(0), $violation1);
             $this->assertEquals($first->getName(), 'input1');
             $this->assertEquals($second->getErrors()->get(0), $violation2);
