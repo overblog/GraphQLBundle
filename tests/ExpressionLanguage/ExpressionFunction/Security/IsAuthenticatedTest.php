@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class IsAuthenticatedTest extends TestCase
 {
@@ -20,9 +19,9 @@ class IsAuthenticatedTest extends TestCase
         return [new IsAuthenticated($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
-        $isAuthenticated = $this->expressionLanguage->evaluate("isAuthenticated()");
+        $isAuthenticated = $this->expressionLanguage->evaluate('isAuthenticated()');
         $this->assertTrue($isAuthenticated);
     }
 

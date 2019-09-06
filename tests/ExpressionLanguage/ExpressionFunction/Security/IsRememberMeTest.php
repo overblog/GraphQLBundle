@@ -19,9 +19,9 @@ class IsRememberMeTest extends TestCase
         return [new IsRememberMe($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
-        $isRememberMe = $this->expressionLanguage->evaluate("isRememberMe()");
+        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()');
         $this->assertTrue($isRememberMe);
     }
 

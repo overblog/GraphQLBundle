@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class IsAnonymousTest extends TestCase
 {
@@ -20,9 +19,9 @@ class IsAnonymousTest extends TestCase
         return [new IsAnonymous($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
-        $isAnonymous = $this->expressionLanguage->evaluate("isAnonymous()");
+        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()');
         $this->assertTrue($isAnonymous);
     }
 

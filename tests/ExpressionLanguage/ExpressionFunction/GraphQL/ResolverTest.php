@@ -15,15 +15,15 @@ class ResolverTest extends TestCase
         return [new Resolver(), new Resolver('res')];
     }
 
-    public function testEvaluatorThrowsException()
+    public function testEvaluatorThrowsException(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate("resolver()");
+        $this->expressionLanguage->evaluate('resolver()');
     }
 
-    public function testEvaluatorThrowsExceptionByAlias()
+    public function testEvaluatorThrowsExceptionByAlias(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate("res()");
+        $this->expressionLanguage->evaluate('res()');
     }
 }
