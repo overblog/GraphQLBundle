@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HasAnyPermissionTest extends TestCase
 {
@@ -28,7 +27,7 @@ class HasAnyPermissionTest extends TestCase
         return [new HasAnyPermission($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $hasPermission = $this->expressionLanguage->evaluate($this->testedExpression, ['object' => $this->expectedObject]);
         $this->assertTrue($hasPermission);

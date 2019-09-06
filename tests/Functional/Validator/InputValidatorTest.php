@@ -198,7 +198,7 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
 
-    public function testUserPasswordMatches()
+    public function testUserPasswordMatches(): void
     {
         $query = '
             mutation {
@@ -214,7 +214,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($response['data']['userPasswordValidation']);
     }
 
-    public function testExpressionVariablesAccessible()
+    public function testExpressionVariablesAccessible(): void
     {
         $query = 'mutation { expressionVariablesValidation(username: "test") }';
 

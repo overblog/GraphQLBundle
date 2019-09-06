@@ -14,9 +14,9 @@ class ResolveSingleInputCallbackTest extends TestCase
         return [new ResolveSingleInputCallback()];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expressionLanguage->evaluate("resolveSingleInputCallback()");
+        $this->expressionLanguage->evaluate('resolveSingleInputCallback()');
     }
 }

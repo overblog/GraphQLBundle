@@ -15,15 +15,15 @@ class MutationTest extends TestCase
         return [new Mutation(), new Mutation('mut')];
     }
 
-    public function testEvaluatorThrowsException()
+    public function testEvaluatorThrowsException(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate("mutation()");
+        $this->expressionLanguage->evaluate('mutation()');
     }
 
-    public function testEvaluatorThrowsExceptionByAlias()
+    public function testEvaluatorThrowsExceptionByAlias(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate("mut()");
+        $this->expressionLanguage->evaluate('mut()');
     }
 }

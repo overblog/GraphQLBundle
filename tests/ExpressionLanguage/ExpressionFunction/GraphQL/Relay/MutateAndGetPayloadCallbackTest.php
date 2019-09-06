@@ -14,9 +14,9 @@ class MutateAndGetPayloadCallbackTest extends TestCase
         return [new MutateAndGetPayloadCallback()];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expressionLanguage->evaluate("mutateAndGetPayloadCallback()");
+        $this->expressionLanguage->evaluate('mutateAndGetPayloadCallback()');
     }
 }

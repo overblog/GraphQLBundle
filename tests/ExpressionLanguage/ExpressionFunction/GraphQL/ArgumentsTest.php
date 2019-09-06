@@ -46,7 +46,7 @@ class ArgumentsTest extends TestCase
         return new ArgumentsTransformer($validator, $classesMap);
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $info = $this->getResolveInfo(ArgumentsTransformerTest::getTypes());
 
@@ -59,10 +59,10 @@ class ArgumentsTest extends TestCase
             'string1' => 'test_string',
         ];
 
-        $res = $this->expressionLanguage->evaluate("arguments(mapping, data, info)", [
+        $res = $this->expressionLanguage->evaluate('arguments(mapping, data, info)', [
             'mapping' => $mapping,
             'data' => $data,
-            'info' => $info
+            'info' => $info,
         ]);
 
         $this->assertInstanceOf(InputType1::class, $res[0]);

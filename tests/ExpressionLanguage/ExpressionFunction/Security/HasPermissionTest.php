@@ -6,13 +6,11 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HasPermissionTest extends TestCase
 {
     private $expectedObject;
     private $testedExpression = 'hasPermission(object,"OWNER")';
-
 
     protected function getFunctions()
     {
@@ -29,7 +27,7 @@ class HasPermissionTest extends TestCase
         return [new HasPermission($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $hasPermission = $this->expressionLanguage->evaluate($this->testedExpression, ['object' => $this->expectedObject]);
         $this->assertTrue($hasPermission);

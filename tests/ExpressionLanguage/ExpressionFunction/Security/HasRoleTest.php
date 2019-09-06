@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class HasRoleTest extends TestCase
 {
@@ -20,7 +19,7 @@ class HasRoleTest extends TestCase
         return [new HasRole($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")');
         $this->assertTrue($hasRole);

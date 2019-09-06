@@ -14,9 +14,9 @@ class IdFetcherCallbackTest extends TestCase
         return [new IdFetcherCallback()];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expressionLanguage->evaluate("idFetcherCallback()");
+        $this->expressionLanguage->evaluate('idFetcherCallback()');
     }
 }

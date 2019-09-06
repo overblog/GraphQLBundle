@@ -19,7 +19,7 @@ class HasAnyRoleTest extends TestCase
         return [new HasAnyRole($authorizationChecker)];
     }
 
-    public function testEvaluator()
+    public function testEvaluator(): void
     {
         $hasRole = $this->expressionLanguage->evaluate('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])');
         $this->assertTrue($hasRole);

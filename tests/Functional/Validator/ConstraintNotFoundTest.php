@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class ConstraintNotFoundTest extends TestCase
 {
-    public function testExceptionThrown()
+    public function testExceptionThrown(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("Constraint class 'Symfony\Component\Validator\Constraints\BlahBlah' doesn't exist.");
