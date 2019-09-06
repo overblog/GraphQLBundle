@@ -16,7 +16,7 @@ final class HasPermission extends ExpressionFunction
             function ($object, $permission) {
                 return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted($permission, $object)";
             },
-            function ($arguments, $object, $permission) use ($authorizationChecker) {
+            function ($_, $object, $permission) use ($authorizationChecker) {
                 return $authorizationChecker->isGranted($permission, $object);
             }
         );

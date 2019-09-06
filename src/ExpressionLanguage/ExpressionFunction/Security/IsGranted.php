@@ -16,7 +16,7 @@ final class IsGranted extends ExpressionFunction
             function ($attributes, $object = null) {
                 return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted($attributes, $object)";
             },
-            function ($arguments, $attributes, $object = null) use ($authorizationChecker) {
+            function ($_, $attributes, $object = null) use ($authorizationChecker) {
                 return $authorizationChecker->isGranted($attributes, $object);
             }
         );

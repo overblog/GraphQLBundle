@@ -12,9 +12,18 @@ class HasRoleTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            'ROLE_USER',
+            $this->any()
+        );
 
         return [new HasRole($authorizationChecker)];
+    }
+
+    public function testEvaluator()
+    {
+        $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")');
+        $this->assertTrue($hasRole);
     }
 
     public function testHasRole(): void

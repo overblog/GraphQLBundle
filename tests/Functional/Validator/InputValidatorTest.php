@@ -197,4 +197,30 @@ class InputValidatorTest extends TestCase
         $this->assertSame(ExpectedErrors::CASCADE_WITH_GROUPS, $result['errors'][0]);
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
+
+    public function testUserPasswordMatches()
+    {
+        $query = '
+            mutation {
+                userPasswordValidation(oldPassword: "123")
+            }
+        ';
+
+        $jsonString = $this->query($query, 'Ryan', 'validator')->getResponse()->getContent();
+
+        $response = \json_decode($jsonString, true);
+
+        $this->assertTrue(empty($response['errors']));
+        $this->assertTrue($response['data']['userPasswordValidation']);
+    }
+
+    public function testExpressionVariablesAccessible()
+    {
+        $query = 'mutation { expressionVariablesValidation(username: "test") }';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue($result['data']['expressionVariablesValidation']);
+    }
 }

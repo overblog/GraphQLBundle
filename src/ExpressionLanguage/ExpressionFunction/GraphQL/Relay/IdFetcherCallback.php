@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Exception\EvaluatorIsNotAllowedException;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class IdFetcherCallback extends ExpressionFunction
 {
-    public function __construct(GlobalVariables $globalVariables, $name = 'idFetcherCallback')
+    public function __construct($name = 'idFetcherCallback')
     {
         parent::__construct(
             $name,
@@ -20,18 +20,9 @@ final class IdFetcherCallback extends ExpressionFunction
 
                 return $code;
             },
-            // TODO: finish this callback
-            function ($arguments, $idFetcher) use ($globalVariables): callable {
-//                [
-//                    'context' => $context,
-//                    'args'    => $args,
-//                    'info'    => $info
-//                ] = $arguments;
-//
-//                return function ($value) use ($idFetcher, $globalVariables, $args, $context, $info) {
-//                    return $idFetcher;
-//                };
-                throw new \RuntimeException("The expression function 'idFetcherCallback' is not yet finished and therefore is not allowed to be used.");
+            // This expression function is not designed to be used by it's evaluator
+            function () {
+                throw new EvaluatorIsNotAllowedException('idFetcherCallback');
             }
         );
     }

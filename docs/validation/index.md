@@ -830,18 +830,12 @@ This bundle comes with pre-registered [expression functions and variables](https
 
 ```yaml
 validator.expression:  
-    class: Symfony\Component\Validator\Constraints\ExpressionValidator  
+    class: Overblog\GraphQLBundle\Validator\Constraints\ExpressionValidator  
     arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']  
     tags:  
         - name: validator.constraint_validator  
           alias: validator.expression
 ```
-> **Note**
-> In some versions of Symfony the class `ExpressionValidator` expects 2 arguments, instead of one. In this case you should pass the service `@overblog_graphql.expression_language.default` as the second argument:
-> ```yaml
-> arguments:  [null, '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
-> ```
-> Check the constructor of the class `ExpressionValidator` to make it clear.
 
 This will make possible to use all functions, registered in this bundle:
 ```yaml

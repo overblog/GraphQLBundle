@@ -12,9 +12,18 @@ class IsAnonymousTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            'IS_AUTHENTICATED_ANONYMOUSLY',
+            $this->any()
+        );
 
         return [new IsAnonymous($authorizationChecker)];
+    }
+
+    public function testEvaluator()
+    {
+        $isAnonymous = $this->expressionLanguage->evaluate("isAnonymous()");
+        $this->assertTrue($isAnonymous);
     }
 
     public function testIsAnonymous(): void

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Exception\EvaluatorIsNotAllowedException;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class MutateAndGetPayloadCallback extends ExpressionFunction
 {
-    public function __construct(GlobalVariables $globalVariables, $name = 'mutateAndGetPayloadCallback')
+    public function __construct($name = 'mutateAndGetPayloadCallback')
     {
         parent::__construct(
             $name,
@@ -20,18 +20,9 @@ final class MutateAndGetPayloadCallback extends ExpressionFunction
 
                 return $code;
             },
-            // TODO: finish this callback
-            function ($arguments, $mutateAndGetPayload) use ($globalVariables): void {
-//                [
-//                    'context' => $context,
-//                    'args'    => $args,
-//                    'info'    => $info
-//                ] = $arguments;
-//
-//                return function($value) use ($mutateAndGetPayload, $globalVariables, $args, $context, $info) {
-//                    return $mutateAndGetPayload;
-//                };
-                throw new \RuntimeException("The expression function 'mutateAndGetPayloadCallback' is not yet finished and therefore is not allowed to be used.");
+            // This expression function is not designed to be used by it's evaluator
+            function () {
+                throw new EvaluatorIsNotAllowedException('mutateAndGetPayloadCallback');
             }
         );
     }

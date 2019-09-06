@@ -19,8 +19,14 @@ final class HasAnyRole extends ExpressionFunction
 
                 return $code;
             },
-            function ($arguments, $roles) use ($authorizationChecker): bool {
-                return $authorizationChecker->isGranted($roles);
+            function ($_, $roles) use ($authorizationChecker): bool {
+                return array_reduce(
+                    $roles,
+                    function ($isGranted, $role) use ($authorizationChecker) {
+                        return $isGranted || $authorizationChecker->isGranted($role);
+                    },
+                    false
+                );
             }
         );
     }

@@ -6,15 +6,23 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class IsRememberMeTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)->getMock();
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            'IS_AUTHENTICATED_REMEMBERED',
+            $this->any()
+        );
 
         return [new IsRememberMe($authorizationChecker)];
+    }
+
+    public function testEvaluator()
+    {
+        $isRememberMe = $this->expressionLanguage->evaluate("isRememberMe()");
+        $this->assertTrue($isRememberMe);
     }
 
     public function testIsRememberMe(): void
