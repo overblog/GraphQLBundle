@@ -35,6 +35,8 @@ final class RelayProcessor implements ProcessorInterface
     {
         foreach ($configs as $name => $config) {
             if (isset($config['type']) && \is_string($config['type']) && $typeName === $config['type']) {
+                $configInherits = isset($config['inherits']) && \is_array($config['inherits']) ? $config['inherits'] : [];
+
                 $config = isset($config['config']) && \is_array($config['config']) ? $config['config'] : [];
 
                 if (empty($config['class_name'])) {
@@ -48,6 +50,10 @@ final class RelayProcessor implements ProcessorInterface
                 $builder = new $definitionBuilderClass();
 
                 $connectionDefinition = $builder->toMappingDefinition($config);
+
+                if (!empty($configInherits)) {
+                    $connectionDefinition[$name]['inherits'] = $configInherits;
+                }
 
                 $configs = \array_replace($configs, $connectionDefinition);
             }

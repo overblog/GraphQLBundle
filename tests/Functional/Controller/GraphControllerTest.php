@@ -312,6 +312,6 @@ EOF;
         $this->assertSame('OPTIONS, GET, POST', $response->headers->get('Access-Control-Allow-Methods'));
         $this->assertSame('true', $response->headers->get('Access-Control-Allow-Credentials'));
         $this->assertSame('Content-Type, Authorization', $response->headers->get('Access-Control-Allow-Headers'));
-        $this->assertSame(3600, $response->headers->get('Access-Control-Max-Age'));
+        $this->assertSame('3600', $response->headers->get('Access-Control-Max-Age'));
     }
 }

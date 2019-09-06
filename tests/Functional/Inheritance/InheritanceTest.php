@@ -65,14 +65,36 @@ class InheritanceTest extends TestCase
                 'decorator' => false,
                 'config' => [
                     'values' => [
-                        'YEAR' => ['value' => 3],
-                        'MONTH' => ['value' => 2],
                         'DAY' => ['value' => 1],
+                        'MONTH' => ['value' => 2],
+                        'YEAR' => ['value' => 3],
                     ],
                     'name' => 'Period',
                 ],
             ],
             $this->config['Period']
+        );
+    }
+
+    public function testRelayInheritance(): void
+    {
+        $this->assertArrayHasKey('ChangeEventInput', $this->config);
+        $this->assertSame(
+            [
+                'type' => 'input-object',
+                InheritanceProcessor::INHERITS_KEY => ['AddEventInput'],
+                'class_name' => 'ChangeEventInputType',
+                'decorator' => false,
+                'config' => [
+                    'name' => 'ChangeEventInput',
+                    'fields' => [
+                        'title' => ['type' => 'String!'],
+                        'clientMutationId' => ['type' => 'String'],
+                        'id' => ['type' => 'ID!'],
+                    ],
+                ],
+            ],
+            $this->config['ChangeEventInput']
         );
     }
 

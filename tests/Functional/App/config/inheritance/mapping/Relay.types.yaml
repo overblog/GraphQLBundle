@@ -1,0 +1,15 @@
+AddEventInput:
+  type: relay-mutation-input
+  config:
+    fields:
+      title:
+        type: 'String!'
+
+ChangeEventInput:
+  type: relay-mutation-input
+  inherits:
+    - AddEventInput
+  config:
+    fields:
+      id:
+        type: 'ID!'
