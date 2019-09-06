@@ -266,7 +266,7 @@ CODE;
                 continue;
             }
 
-            $field['validation']['cascade']['isCollection']  = $this->isCollectionType($field['type']);
+            $field['validation']['cascade']['isCollection'] = $this->isCollectionType($field['type']);
             $field['validation']['cascade']['referenceType'] = \trim($field['type'], '[]!');
         }
 
@@ -276,7 +276,7 @@ CODE;
     protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): string
     {
         $resolve = $value['resolve'] ?? false;
-        $extraCode = "";
+        $extraCode = '';
 
         if ('resolve' === $key && $resolve && (false !== \strpos($resolve->__toString(), 'validator'))) {
             $compilerNames[] = 'validator';
@@ -362,7 +362,7 @@ CODE;
     }
 
     /**
-     *  Converts an array into php fragment and adds proper use statements, e.g.:
+     *  Converts an array into php fragment and adds proper use statements, e.g.:.
      *
      *  Input:
      *  ```
@@ -379,7 +379,8 @@ CODE;
      * ```.
      *
      * @param array $config
-     * @param int $offset
+     * @param int   $offset
+     *
      * @return string|null
      *
      * @throws ReflectionException
@@ -418,15 +419,17 @@ CODE;
      *      'referenceType' => 'Author',
      *      'isCollection' => true
      *  ]"
-     * ```
+     * ```.
      *
      * @param $config
+     *
      * @return string
+     *
      * @throws ReflectionException
      */
     protected function generateCascade($config)
     {
-        $config  = $config['validation'] ?? $config;
+        $config = $config['validation'] ?? $config;
 
         return $this->stringifyValue($config['cascade'] ?? null, 1);
     }
@@ -466,8 +469,9 @@ CODE;
                 return (string) $value;
             case 'string':
                 if ('@null' === $value) {
-                    return "";
+                    return '';
                 }
+
                 return \sprintf("'%s'", $this->escapeSingleQuotes($value));
             case 'NULL':
                 return 'null';

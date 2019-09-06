@@ -17,7 +17,7 @@ final class Mutation extends ExpressionFunction
                 return "\$globalVariable->get('mutationResolver')->resolve([$alias, $args])";
             },
             // This expression function is not designed to be used by it's evaluator
-            function () {
+            function (): void {
                 throw new EvaluatorIsNotAllowedException('resolveSingleInputCallback');
             }
         );

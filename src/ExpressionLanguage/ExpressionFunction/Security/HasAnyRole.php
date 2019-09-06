@@ -20,7 +20,7 @@ final class HasAnyRole extends ExpressionFunction
                 return $code;
             },
             function ($_, $roles) use ($authorizationChecker): bool {
-                return array_reduce(
+                return \array_reduce(
                     $roles,
                     function ($isGranted, $role) use ($authorizationChecker) {
                         return $isGranted || $authorizationChecker->isGranted($role);

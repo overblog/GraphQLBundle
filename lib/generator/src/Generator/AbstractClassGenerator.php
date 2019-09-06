@@ -321,7 +321,7 @@ abstract class AbstractClassGenerator
         }
 
         if ($skipFirst) {
-            $lines[0] = ltrim($lines[0]);
+            $lines[0] = \ltrim($lines[0]);
         }
 
         return \implode("\n", $lines);

@@ -21,7 +21,7 @@ final class ResolveSingleInputCallback extends ExpressionFunction
                 return $code;
             },
             // This expression function is not designed to be used by it's evaluator
-            function () {
+            function (): void {
                 throw new EvaluatorIsNotAllowedException('resolveSingleInputCallback');
             }
         );

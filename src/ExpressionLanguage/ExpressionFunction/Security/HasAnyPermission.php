@@ -20,7 +20,7 @@ final class HasAnyPermission extends ExpressionFunction
                 return $code;
             },
             function ($_, $object, $permissions) use ($authorizationChecker) {
-                return array_reduce(
+                return \array_reduce(
                     $permissions,
                     function ($isGranted, $permission) use ($authorizationChecker, $object) { return $isGranted || $authorizationChecker->isGranted($permission, $object); },
                     false

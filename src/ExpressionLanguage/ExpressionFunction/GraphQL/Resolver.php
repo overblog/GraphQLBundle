@@ -17,7 +17,7 @@ final class Resolver extends ExpressionFunction
                 return "\$globalVariable->get('resolverResolver')->resolve([$alias, $args])";
             },
             // This expression function is not designed to be used by it's evaluator
-            function () {
+            function (): void {
                 throw new EvaluatorIsNotAllowedException('resolveSingleInputCallback');
             }
         );
