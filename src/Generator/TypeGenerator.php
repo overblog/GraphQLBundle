@@ -291,7 +291,7 @@ CODE;
     protected function generateValidation(array $rules): string
     {
         $code = $this->processTemplatePlaceHoldersReplacements('ValidatorCode', $rules, self::DEFERRED_PLACEHOLDERS);
-        $code = $this->prefixCodeWithSpaces($code, 2, false);
+        $code = $this->prefixCodeWithSpaces($code, 2);
 
         return $code."\n\n<spaces><spaces>";
     }
@@ -358,7 +358,7 @@ CODE;
             $code .= "\n".$this->processTemplatePlaceHoldersReplacements('RulesConfig', [\key($constraint), \current($constraint)]);
         }
 
-        return '['.$this->prefixCodeWithSpaces($code, 2, false)."\n<spaces>]";
+        return '['.$this->prefixCodeWithSpaces($code, 2)."\n<spaces>]";
     }
 
     /**
