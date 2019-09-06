@@ -304,12 +304,13 @@ abstract class AbstractClassGenerator
     }
 
     /**
-     * @param string $code
-     * @param int $num
+     * @param string $code      Code to prefix
+     * @param int    $num       Number of indents
+     * @param bool   $skipFirst Skip first line
      *
      * @return string
      */
-    protected function prefixCodeWithSpaces(string $code, int $num = 1): string
+    protected function prefixCodeWithSpaces(string $code, int $num = 1, $skipFirst = true): string
     {
         $lines = \explode("\n", $code);
 
@@ -317,6 +318,10 @@ abstract class AbstractClassGenerator
             if (!empty($value)) {
                 $lines[$key] = \str_repeat($this->spaces, $num).$lines[$key];
             }
+        }
+
+        if ($skipFirst) {
+            $lines[0] = ltrim($lines[0]);
         }
 
         return \implode("\n", $lines);

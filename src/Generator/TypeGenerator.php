@@ -150,7 +150,7 @@ CODE;
     protected function generateComplexity(array $value): string
     {
         $resolveComplexity = parent::generateComplexity($value);
-        $resolveComplexity = $this->prefixCodeWithSpaces($resolveComplexity);
+        $resolveComplexity = $this->prefixCodeWithSpaces($resolveComplexity, 1, true);
 
         if ('null' === $resolveComplexity) {
             return $resolveComplexity;
