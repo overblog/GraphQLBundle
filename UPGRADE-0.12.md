@@ -21,22 +21,13 @@ UPGRADE FROM 0.11 to 0.12
         ```
    - use Symfony 4+ service configuration to tag your types, resolvers or mutation.
        ```yaml
-       # config/graphql.yaml
+       # config/services.yaml
        services:
            _defaults:
-               autowire: true
-               public: true
-       
-           _instanceof:
-               GraphQL\Type\Definition\Type:
-                   tags: ['overblog_graphql.type']
-               Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface:
-                   tags: ['overblog_graphql.resolver']
-               Overblog\GraphQLBundle\Definition\Resolver\MutationInterface:
-                   tags: ['overblog_graphql.mutation']
-       
+               autoconfigure: true
+
            App\GraphQL\:
-               resource: ../GraphQL
+               resource: ../src/GraphQL
        ```
 
 
