@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class IsAuthenticated extends ExpressionFunction
 {
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, $name = 'isAuthenticated')
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         parent::__construct(
-            $name,
+            'isAuthenticated',
             function () {
                 return "(\$globalVariable->get('container')->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED') || \$globalVariable->get('container')->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY'))";
             },

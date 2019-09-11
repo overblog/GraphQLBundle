@@ -10,8 +10,10 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class IdFetcherCallback extends ExpressionFunction
 {
-    public function __construct($name = 'idFetcherCallback')
+    public function __construct()
     {
+        $name = 'idFetcherCallback';
+
         parent::__construct(
             $name,
             function ($idFetcher) {

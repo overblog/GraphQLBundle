@@ -10,8 +10,10 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class ResolveSingleInputCallback extends ExpressionFunction
 {
-    public function __construct($name = 'resolveSingleInputCallback')
+    public function __construct()
     {
+        $name = 'resolveSingleInputCallback';
+
         parent::__construct(
             $name,
             function ($resolveSingleInput) {

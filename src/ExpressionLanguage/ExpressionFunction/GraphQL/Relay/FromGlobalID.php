@@ -9,10 +9,10 @@ use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 
 final class FromGlobalID extends ExpressionFunction
 {
-    public function __construct($name = 'fromGlobalId')
+    public function __construct()
     {
         parent::__construct(
-            $name,
+            'fromGlobalId',
             function (string $globalId): string {
                 return \sprintf('\%s::fromGlobalId(%s)', GlobalId::class, $globalId);
             },

@@ -10,8 +10,10 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class MutateAndGetPayloadCallback extends ExpressionFunction
 {
-    public function __construct($name = 'mutateAndGetPayloadCallback')
+    public function __construct()
     {
+        $name = 'mutateAndGetPayloadCallback';
+
         parent::__construct(
             $name,
             function ($mutateAndGetPayload) {

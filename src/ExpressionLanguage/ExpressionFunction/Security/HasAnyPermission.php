@@ -10,10 +10,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class HasAnyPermission extends ExpressionFunction
 {
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, $name = 'hasAnyPermission')
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         parent::__construct(
-            $name,
+            'hasAnyPermission',
             function ($object, $permissions) {
                 $code = \sprintf('array_reduce(%s, function ($isGranted, $permission) use (%s, $object) { return $isGranted || $globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, TypeGenerator::USE_FOR_CLOSURES, $object);
 

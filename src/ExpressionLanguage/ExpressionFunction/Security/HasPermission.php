@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class HasPermission extends ExpressionFunction
 {
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, $name = 'hasPermission')
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         parent::__construct(
-            $name,
+            'hasPermission',
             function ($object, $permission) {
                 return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted($permission, $object)";
             },

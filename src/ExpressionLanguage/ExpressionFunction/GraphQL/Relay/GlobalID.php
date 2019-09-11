@@ -9,10 +9,10 @@ use Overblog\GraphQLBundle\Relay\Node\GlobalId as GlobalIdHelper;
 
 final class GlobalID extends ExpressionFunction
 {
-    public function __construct($name = 'globalId')
+    public function __construct()
     {
         parent::__construct(
-            $name,
+            'globalId',
             function (string $id, string $typeName = null): string {
                 $typeName = $this->isTypeNameEmpty($typeName) ? '$info->parentType->name' : $typeName;
 
