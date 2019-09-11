@@ -46,8 +46,4 @@ class CallTest extends TestCase
         // Global function
         $this->assertEquals('AA', $this->expressionLanguage->evaluate('call("\implode", ["", ["A", "A"]])'));
     }
-
-    private function getClassName(): void
-    {
-    }
 }

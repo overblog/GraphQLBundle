@@ -21,9 +21,7 @@ final class IdFetcherCallback extends ExpressionFunction
                 return $code;
             },
             // This expression function is not designed to be used by it's evaluator
-            function (): void {
-                throw new EvaluatorIsNotAllowedException('idFetcherCallback');
-            }
+            new EvaluatorIsNotAllowedException($name)
         );
     }
 }

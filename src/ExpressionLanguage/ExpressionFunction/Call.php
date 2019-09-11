@@ -15,7 +15,7 @@ final class Call extends ExpressionFunction
             function (string $target, string $args = '[]') {
                 return "$target(...$args)";
             },
-            function ($arguments, callable $target, array $args) {
+            function ($_, callable $target, array $args) {
                 return $target(...$args);
             }
         );
