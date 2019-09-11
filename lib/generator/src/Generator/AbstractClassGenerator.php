@@ -310,7 +310,7 @@ abstract class AbstractClassGenerator
      *
      * @return string
      */
-    protected function prefixCodeWithSpaces(string $code, int $num = 1, $skipFirst = true): string
+    protected function prefixCodeWithSpaces(string $code, int $num = 1, bool $skipFirst = true): string
     {
         $lines = \explode("\n", $code);
 
