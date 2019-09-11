@@ -26,7 +26,7 @@ final class GlobalID extends ExpressionFunction
         );
     }
 
-    private function isTypeNameEmpty($typeName)
+    private function isTypeNameEmpty($typeName): bool
     {
         return null === $typeName || '""' === $typeName || 'null' === $typeName || 'false' === $typeName;
     }
