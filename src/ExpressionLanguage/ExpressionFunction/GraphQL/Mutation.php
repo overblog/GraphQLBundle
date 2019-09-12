@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL;
 
-use Overblog\GraphQLBundle\Exception\EvaluatorIsNotAllowedException;
+use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedException;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class Mutation extends ExpressionFunction

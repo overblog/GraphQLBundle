@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
+use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;

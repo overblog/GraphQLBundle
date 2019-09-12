@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Validator;
 
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
-use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
+use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 
 class Formatter
 {

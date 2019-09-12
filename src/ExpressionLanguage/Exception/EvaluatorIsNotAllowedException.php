@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Exception;
+namespace Overblog\GraphQLBundle\ExpressionLanguage\Exception;
 
 use Throwable;
 

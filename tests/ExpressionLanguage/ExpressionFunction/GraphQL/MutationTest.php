@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\GraphQL;
 
-use Overblog\GraphQLBundle\Exception\EvaluatorIsNotAllowedException;
+use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedException;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 

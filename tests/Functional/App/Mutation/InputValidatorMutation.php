@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Exception\ArgumentsValidationException;
+use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 
 class InputValidatorMutation implements MutationInterface

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Exception;
+namespace Overblog\GraphQLBundle\Validator\Exception;
 
 use GraphQL\Error\ClientAware;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
