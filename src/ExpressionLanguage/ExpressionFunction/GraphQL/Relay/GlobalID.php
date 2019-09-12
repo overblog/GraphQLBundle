@@ -19,7 +19,7 @@ final class GlobalID extends ExpressionFunction
                 return \sprintf('\%s::toGlobalId(%s, %s)', GlobalIdHelper::class, $typeName, $id);
             },
             function ($arguments, $id, $typeName = null) {
-                $typeName = $this->isTypeNameEmpty($typeName) ? $arguments['info']->parentType->name : $typeName;
+                $typeName = empty($typeName) ? $arguments['info']->parentType->name : $typeName;
 
                 return GlobalIdHelper::toGlobalId($typeName, $id);
             }
