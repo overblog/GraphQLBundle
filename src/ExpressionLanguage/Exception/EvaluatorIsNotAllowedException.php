@@ -16,6 +16,7 @@ class EvaluatorIsNotAllowedException extends \Exception
             $previous
         );
     }
+
     public function __invoke(): void
     {
         throw $this;
