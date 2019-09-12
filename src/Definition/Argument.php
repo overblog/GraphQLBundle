@@ -48,7 +48,7 @@ class Argument implements ArgumentInterface
 
     public function offsetExists($offset)
     {
-        return \array_key_exists($offset, $this->rawArguments);
+        return isset($this->rawArguments[$offset]);
     }
 
     public function offsetGet($offset)
