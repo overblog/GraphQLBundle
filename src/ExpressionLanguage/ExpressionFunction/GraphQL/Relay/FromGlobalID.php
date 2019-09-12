@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Overblog\GraphQLBundle\Relay\Node\GlobalId;
+use Overblog\GraphQLBundle\Relay\Node\GlobalId as GlobalIdHelper;
 
 final class FromGlobalID extends ExpressionFunction
 {
@@ -14,10 +14,10 @@ final class FromGlobalID extends ExpressionFunction
         parent::__construct(
             'fromGlobalId',
             function (string $globalId): string {
-                return \sprintf('\%s::fromGlobalId(%s)', GlobalId::class, $globalId);
+                return \sprintf('\%s::fromGlobalId(%s)', GlobalIdHelper::class, $globalId);
             },
-            function ($arguments, $globalId): array {
-                return GlobalId::fromGlobalId($globalId);
+            function ($_, $globalId): array {
+                return GlobalIdHelper::fromGlobalId($globalId);
             }
         );
     }
