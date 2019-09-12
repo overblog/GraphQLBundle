@@ -249,22 +249,6 @@ class PaginatorTest extends TestCase
         $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
     }
 
-    public function testAutoForwardWithArgumentLastToNull(): void
-    {
-        $paginator = new Paginator(function ($offset, $limit) {
-            $this->assertSame(0, $offset);
-            $this->assertSame(5, $limit);
-
-            return $this->getData($offset);
-        });
-
-        $result = $paginator->auto(new Argument(['first' => 4, 'last' => null]), 5);
-
-        $this->assertCount(4, $result->getEdges());
-        $this->assertSameEdgeNodeValue(['A', 'B', 'C', 'D'], $result);
-        $this->assertTrue($result->getPageInfo()->getHasNextPage());
-    }
-
     public function testTotalCallableWithArguments(): void
     {
         $paginatorBackend = new PaginatorBackend();
