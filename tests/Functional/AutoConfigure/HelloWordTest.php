@@ -6,6 +6,9 @@ namespace Overblog\GraphQLBundle\Tests\Functional\AutoConfigure;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
+/**
+ * @group legacy
+ */
 class HelloWordTest extends TestCase
 {
     protected function setUp(): void
