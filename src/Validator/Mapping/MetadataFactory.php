@@ -17,7 +17,7 @@ class MetadataFactory implements MetadataFactoryInterface
         $this->metadataPool = [];
     }
 
-    public function getMetadataFor($object)
+    public function getMetadataFor($object): ObjectMetadata
     {
         if ($object instanceof ValidationNode) {
             return $this->metadataPool[$object->getName()];

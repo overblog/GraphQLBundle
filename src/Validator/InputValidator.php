@@ -231,8 +231,8 @@ class InputValidator
     }
 
     /**
-     * @param array                           $value
-     * @param ObjectType|InputObjectType|Type $type
+     * @param array                      $value
+     * @param ObjectType|InputObjectType $type
      * @param $parent
      *
      * @return ValidationNode

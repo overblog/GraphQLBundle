@@ -19,11 +19,11 @@ class PropertyMetadata extends MemberMetadata
     /**
      * @param  $object
      *
-     * @return ReflectionMethod|ReflectionProperty
+     * @return ReflectionProperty
      *
      * @throws ReflectionException
      */
-    protected function newReflectionMember($object)
+    protected function newReflectionMember($object): ReflectionProperty
     {
         $member = new ReflectionProperty($object, $this->getName());
         $member->setAccessible(true);

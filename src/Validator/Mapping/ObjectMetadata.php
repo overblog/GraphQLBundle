@@ -16,7 +16,7 @@ class ObjectMetadata extends ClassMetadata
         parent::__construct($object->getName());
     }
 
-    public function addPropertyConstraint($property, Constraint $constraint)
+    public function addPropertyConstraint($property, Constraint $constraint): self
     {
         if (!isset($this->properties[$property])) {
             $this->properties[$property] = new PropertyMetadata($property);
