@@ -26,7 +26,7 @@ class MetadataFactory implements MetadataFactoryInterface
         throw new NoSuchMetadataException();
     }
 
-    public function hasMetadataFor($object)
+    public function hasMetadataFor($object): bool
     {
         if ($object instanceof ValidationNode) {
             return isset($this->metadataPool[$object->getName()]);
