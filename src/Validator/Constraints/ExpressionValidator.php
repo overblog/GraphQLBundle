@@ -8,14 +8,13 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Expression;
-use Symfony\Component\Validator\Exception\LogicException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
 {
     private $expressionLanguage;
 
-    public function __construct(ExpressionLanguage $expressionLanguage = null)
+    public function __construct(ExpressionLanguage $expressionLanguage)
     {
         $this->expressionLanguage = $expressionLanguage;
         parent::__construct(null, $expressionLanguage);
@@ -44,23 +43,11 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
             $variables['info'] = $object->getResolverArg('info');
         }
 
-        if (!$this->getExpressionLanguage()->evaluate($constraint->expression, $variables)) {
+        if (!$this->expressionLanguage->evaluate($constraint->expression, $variables)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
                 ->setCode(Expression::EXPRESSION_FAILED_ERROR)
                 ->addViolation();
         }
-    }
-
-    private function getExpressionLanguage()
-    {
-        if (null === $this->expressionLanguage) {
-            if (!\class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
-            }
-            $this->expressionLanguage = new ExpressionLanguage();
-        }
-
-        return $this->expressionLanguage;
     }
 }

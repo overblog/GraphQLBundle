@@ -392,19 +392,19 @@ CODE;
         // Custom constraint
         if (false !== \strpos($name, '\\')) {
             $prefix = '';
-            $FQCN = \ltrim($name, '\\');
+            $fqcn = \ltrim($name, '\\');
             $array = \explode('\\', $name);
             $name = \end($array);
-            $this->addUseStatement($FQCN);
+            $this->addUseStatement($fqcn);
         }
         // Built-in constraint
         else {
             $prefix = 'Assert\\';
-            $FQCN = self::CONSTRAINTS_NAMESPACE."\\$name";
+            $fqcn = self::CONSTRAINTS_NAMESPACE."\\$name";
         }
 
-        if (!\class_exists($FQCN)) {
-            throw new RuntimeException("Constraint class '$FQCN' doesn't exist.");
+        if (!\class_exists($fqcn)) {
+            throw new RuntimeException("Constraint class '$fqcn' doesn't exist.");
         }
 
         return "new {$prefix}{$name}({$this->stringifyValue($params, $offset)})";
@@ -588,14 +588,14 @@ CODE;
      */
     protected function normalizeLink(string $link): array
     {
-        [$FQCN, $classMember] = \explode('::', $link);
+        [$fqcn, $classMember] = \explode('::', $link);
 
         if ('$' === $classMember[0]) {
-            return [$FQCN, \ltrim($classMember, '$'), 'property'];
+            return [$fqcn, \ltrim($classMember, '$'), 'property'];
         } elseif (')' === \substr($classMember, -1)) {
-            return [$FQCN, \rtrim($classMember, '()'), 'getter'];
+            return [$fqcn, \rtrim($classMember, '()'), 'getter'];
         } else {
-            return [$FQCN, $classMember, 'member'];
+            return [$fqcn, $classMember, 'member'];
         }
     }
 
