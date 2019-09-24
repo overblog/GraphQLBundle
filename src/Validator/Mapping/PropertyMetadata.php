@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Validator\Mapping;
 
 use ReflectionException;
-use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
