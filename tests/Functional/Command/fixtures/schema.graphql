@@ -1,5 +1,8 @@
 """Information about pagination in a connection."""
 type PageInfo {
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+
   """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
 
@@ -8,9 +11,6 @@ type PageInfo {
 
   """When paginating backwards, the cursor to continue."""
   startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
 }
 
 type Query {
@@ -18,49 +18,48 @@ type Query {
 }
 
 type User {
+  friends(after: String, before: String, first: Int, last: Int): friendConnection
+  friendsBackward(before: String, last: Int): userConnection
+  friendsForward(after: String, first: Int): userConnection
+
   """the user name"""
   name: String
-  friends(after: String, first: Int, before: String, last: Int): friendConnection
-  friendsForward(after: String, first: Int): userConnection
-  friendsBackward(before: String, last: Int): userConnection
 }
 
 """A connection to a list of items."""
 type friendConnection {
-  totalCount: Int
+  """Information to aid in pagination."""
+  edges: [friendEdge]
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
-
-  """Information to aid in pagination."""
-  edges: [friendEdge]
+  totalCount: Int
 }
 
 """An edge in a connection."""
 type friendEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
   friendshipTime: String
 
   """The item at the end of the edge."""
   node: User
-
-  """A cursor for use in pagination."""
-  cursor: String!
 }
 
 """A connection to a list of items."""
 type userConnection {
   """Information to aid in pagination."""
-  pageInfo: PageInfo!
+  edges: [userEdge]
 
   """Information to aid in pagination."""
-  edges: [userEdge]
+  pageInfo: PageInfo!
 }
 
 """An edge in a connection."""
 type userEdge {
-  """The item at the end of the edge."""
-  node: User
-
   """A cursor for use in pagination."""
   cursor: String!
+
+  """The item at the end of the edge."""
+  node: User
 }

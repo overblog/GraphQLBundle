@@ -15,21 +15,33 @@ class TypeGenerator extends AbstractTypeGenerator
 {
     protected function generateOutputFields(array $config): string
     {
+        \ksort($config['fields']);
+
         return  \sprintf(static::CLOSURE_TEMPLATE, '', '', $this->processFromArray($config['fields'], 'OutputField'));
     }
 
     protected function generateInputFields(array $config): string
     {
+        \ksort($config['fields']);
+
         return \sprintf(static::CLOSURE_TEMPLATE, '', '', $this->processFromArray($config['fields'], 'InputField'));
     }
 
     protected function generateArgs(array $fields): string
     {
-        return isset($fields['args']) ? $this->processFromArray($fields['args'], 'Arg') : '[]';
+        if (isset($fields['args'])) {
+            \ksort($fields['args']);
+
+            return $this->processFromArray($fields['args'], 'Arg');
+        }
+
+        return '[]';
     }
 
     protected function generateValues(array $config): string
     {
+        \ksort($config['values']);
+
         return $this->processFromArray($config['values'], 'Value');
     }
 

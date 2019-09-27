@@ -159,16 +159,16 @@ EOF;
                 'kind' => 'OBJECT',
                 'fields' => [
                     [
-                        'name' => 'result',
+                        'name' => 'clientMutationId',
                         'type' => [
-                            'name' => 'Int',
+                            'name' => 'String',
                             'kind' => 'SCALAR',
                         ],
                     ],
                     [
-                        'name' => 'clientMutationId',
+                        'name' => 'result',
                         'type' => [
-                            'name' => 'String',
+                            'name' => 'Int',
                             'kind' => 'SCALAR',
                         ],
                     ],

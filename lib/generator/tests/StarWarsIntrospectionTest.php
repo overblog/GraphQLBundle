@@ -165,6 +165,20 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                 'name' => 'Droid',
                 'fields' => [
                     [
+                        'name' => 'appearsIn',
+                        'type' => [
+                            'name' => null,
+                            'kind' => 'LIST'
+                        ]
+                    ],
+                    [
+                        'name' => 'friends',
+                        'type' => [
+                            'name' => null,
+                            'kind' => 'LIST'
+                        ]
+                    ],
+                    [
                         'name' => 'id',
                         'type' => [
                             'name' => null,
@@ -176,20 +190,6 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                         'type' => [
                             'name' => 'String',
                             'kind' => 'SCALAR'
-                        ]
-                    ],
-                    [
-                        'name' => 'friends',
-                        'type' => [
-                            'name' => null,
-                            'kind' => 'LIST'
-                        ]
-                    ],
-                    [
-                        'name' => 'appearsIn',
-                        'type' => [
-                            'name' => null,
-                            'kind' => 'LIST'
                         ]
                     ],
                     [
@@ -231,6 +231,28 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                 'name' => 'Droid',
                 'fields' => [
                     [
+                        'name' => 'appearsIn',
+                        'type' => [
+                            'name' => null,
+                            'kind' => 'LIST',
+                            'ofType' => [
+                                'name' => 'Episode',
+                                'kind' => 'ENUM'
+                            ]
+                        ]
+                    ],
+                    [
+                        'name' => 'friends',
+                        'type' => [
+                            'name' => null,
+                            'kind' => 'LIST',
+                            'ofType' => [
+                                'name' => 'Character',
+                                'kind' => 'INTERFACE'
+                            ]
+                        ]
+                    ],
+                    [
                         'name' => 'id',
                         'type' => [
                             'name' => null,
@@ -247,28 +269,6 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                             'name' => 'String',
                             'kind' => 'SCALAR',
                             'ofType' => null
-                        ]
-                    ],
-                    [
-                        'name' => 'friends',
-                        'type' => [
-                            'name' => null,
-                            'kind' => 'LIST',
-                            'ofType' => [
-                                'name' => 'Character',
-                                'kind' => 'INTERFACE'
-                            ]
-                        ]
-                    ],
-                    [
-                        'name' => 'appearsIn',
-                        'type' => [
-                            'name' => null,
-                            'kind' => 'LIST',
-                            'ofType' => [
-                                'name' => 'Episode',
-                                'kind' => 'ENUM'
-                            ]
                         ]
                     ],
                     [
@@ -316,6 +316,40 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                 'queryType' => [
                     'fields' => [
                         [
+                            'name' => 'dateTime',
+                            'args' => [
+                                [
+                                    'name' => 'dateTime',
+                                    'description' => null,
+                                    'type' => [
+                                        'name' => 'DateTime',
+                                        'kind' => 'SCALAR',
+                                        'ofType' => null,
+                                    ],
+                                    'defaultValue' => null,
+                                ]
+                            ],
+                        ],
+                        [
+                            'name' => 'droid',
+                            'args' => [
+                                [
+                                    'name' => 'id',
+                                    'description' => 'id of the droid',
+                                    'type' => [
+                                        'kind' => 'NON_NULL',
+                                        'name' => null,
+                                        'ofType' =>
+                                            [
+                                                'kind' => 'SCALAR',
+                                                'name' => 'String',
+                                            ],
+                                    ],
+                                    'defaultValue' => null,
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'hero',
                             'args' => [
                                 [
@@ -346,40 +380,6 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
                                     ],
                                     'defaultValue' => null,
                                 ],
-                            ],
-                        ],
-                        [
-                            'name' => 'droid',
-                            'args' => [
-                                [
-                                    'name' => 'id',
-                                    'description' => 'id of the droid',
-                                    'type' => [
-                                        'kind' => 'NON_NULL',
-                                        'name' => null,
-                                        'ofType' =>
-                                            [
-                                                'kind' => 'SCALAR',
-                                                'name' => 'String',
-                                            ],
-                                    ],
-                                    'defaultValue' => null,
-                                ],
-                            ],
-                        ],
-                        [
-                            'name' => 'dateTime',
-                            'args' => [
-                                [
-                                    'name' => 'dateTime',
-                                    'description' => null,
-                                    'type' => [
-                                        'name' => 'DateTime',
-                                        'kind' => 'SCALAR',
-                                        'ofType' => null,
-                                    ],
-                                    'defaultValue' => null,
-                                ]
                             ],
                         ],
                     ],
