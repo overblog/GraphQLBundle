@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Resolver
 {
-    /** @var PropertyAccessor */
-    private static $accessor;
-
     public static function defaultResolveFn($objectOrArray, $args, $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
@@ -24,12 +19,14 @@ class Resolver
     public static function valueFromObjectOrArray($objectOrArray, $fieldName)
     {
         $value = null;
-        $index = \sprintf('[%s]', $fieldName);
-
-        if (self::isReadable($objectOrArray, $index)) {
-            $value = self::getAccessor()->getValue($objectOrArray, $index);
-        } elseif (\is_object($objectOrArray) && self::isReadable($objectOrArray, $fieldName)) {
-            $value = self::getAccessor()->getValue($objectOrArray, $fieldName);
+        if (\is_array($objectOrArray) && isset($objectOrArray[$fieldName])) {
+            $value = $objectOrArray[$fieldName];
+        } elseif (\is_object($objectOrArray)) {
+            if (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, 'get')) {
+                $value = $objectOrArray->$getter();
+            } elseif (isset($objectOrArray->$fieldName)) {
+                $value = $objectOrArray->$fieldName;
+            }
         }
 
         return $value;
@@ -37,31 +34,19 @@ class Resolver
 
     public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value): void
     {
-        $index = \sprintf('[%s]', $fieldName);
-
-        if (self::isWritable($objectOrArray, $index)) {
-            self::getAccessor()->setValue($objectOrArray, $index, $value);
-        } elseif (\is_object($objectOrArray) && self::isWritable($objectOrArray, $fieldName)) {
-            self::getAccessor()->setValue($objectOrArray, $fieldName, $value);
+        if (\is_array($objectOrArray)) {
+            $objectOrArray[$fieldName] = $value;
+        } elseif (\is_object($objectOrArray)) {
+            $objectOrArray->$fieldName = $value;
         }
     }
 
-    private static function isReadable($objectOrArray, $indexOrProperty)
+    private static function guessObjectMethod($object, string $fieldName, string $prefix): ?string
     {
-        return self::getAccessor()->isReadable($objectOrArray, $indexOrProperty);
-    }
-
-    private static function isWritable($objectOrArray, $indexOrProperty)
-    {
-        return self::getAccessor()->isWritable($objectOrArray, $indexOrProperty);
-    }
-
-    private static function getAccessor()
-    {
-        if (null === self::$accessor) {
-            self::$accessor = PropertyAccess::createPropertyAccessor();
+        if (\is_callable([$object, $method = $prefix.\str_replace(' ', '', \ucwords(\str_replace('_', ' ', $fieldName)))])) {
+            return $method;
         }
 
-        return self::$accessor;
+        return null;
     }
 }
