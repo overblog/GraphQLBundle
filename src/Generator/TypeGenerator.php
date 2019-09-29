@@ -431,6 +431,14 @@ CODE;
     {
         $config = $config['validation'] ?? $config;
 
+        if (isset($config['cascade'])) {
+            $type = \trim($config['cascade']['referenceType'], '[]!');
+
+            if (\in_array($type, ['ID', 'Int', 'String', 'Boolean', 'Float'])) {
+                throw new RuntimeException("Cascade validation cannot be applied to built-in types.");
+            }
+        }
+
         return $this->stringifyValue($config['cascade'] ?? null, 1);
     }
 
