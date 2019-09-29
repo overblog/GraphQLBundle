@@ -14,8 +14,13 @@ class GlobalIDTest extends TestCase
         return [new GlobalID()];
     }
 
-    public function testGlobalId(): void
+    public function testGlobalIdCompile(): void
     {
         $this->assertSame('VXNlcjoxNQ==', eval('return '.$this->expressionLanguage->compile('globalId(15, "User")').';'));
+    }
+
+    public function testGlobalIdEvaluate(): void
+    {
+        $this->assertSame('VXNlcjoxNQ==', $this->expressionLanguage->evaluate('globalId(15, "User")'));
     }
 }

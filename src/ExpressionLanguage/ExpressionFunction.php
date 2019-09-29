@@ -8,10 +8,4 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunction as BaseExpressionFun
 
 class ExpressionFunction extends BaseExpressionFunction
 {
-    public function __construct($name, callable $compiler)
-    {
-        parent::__construct($name, $compiler, function (): void {
-            throw new \RuntimeException('Evaluator is not needed');
-        });
-    }
 }

@@ -1,0 +1,15 @@
+Period:
+    type: input-object
+    config:
+        fields:
+            startDate:
+                type: String!
+                validation:
+                    - Date: ~
+            endDate:
+                type: String!
+                validation:
+                    - Expression: "this.getParent().getName() === 'Address'"
+                    - Date: ~
+                    - GreaterThan:
+                          propertyPath: 'startDate'

@@ -154,7 +154,7 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         $this->expectExceptionMessage(\sprintf(
             'Generator [%s::generateFake] for placeholder "fake" is not callable.',
             TypeGenerator::class
-            ));
+        ));
         $this->typeGenerator->setSkeletonDirs(__DIR__.'/../Resources/Skeleton');
 
         $this->generateClasses($this->getConfigs());

@@ -153,6 +153,6 @@ abstract class TestCase extends WebTestCase
 
         return new ExpressionFunction($phpFunctionName, function () use ($phpFunctionName) {
             return \sprintf('\%s(%s)', $phpFunctionName, \implode(', ', \func_get_args()));
-        });
+        }, function (): void {});
     }
 }

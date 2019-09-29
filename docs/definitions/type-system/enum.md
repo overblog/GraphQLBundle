@@ -51,5 +51,7 @@ class Episode
     const EMPIRE = 'constant("App\\StarWars\\Movies::MOVIE_EMPIRE")';
     const JEDI = 6;
     const FORCEAWAKENS = 'FORCEAWAKENS';
+    
+    public $value;
 }
 ```
