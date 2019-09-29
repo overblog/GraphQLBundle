@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL;
 
+use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedException;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class Resolver extends ExpressionFunction
@@ -12,9 +13,11 @@ final class Resolver extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function ($alias, $args = '[]') {
-                return \sprintf('$globalVariable->get(\'resolverResolver\')->resolve([%s, %s])', $alias, $args);
-            }
+            function (string $alias, string $args = '[]'): string {
+                return "\$globalVariable->get('resolverResolver')->resolve([$alias, $args])";
+            },
+            // This expression function is not designed to be used by it's evaluator
+            new EvaluatorIsNotAllowedException($name)
         );
     }
 }

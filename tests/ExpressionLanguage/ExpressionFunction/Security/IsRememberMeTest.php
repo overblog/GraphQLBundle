@@ -11,7 +11,18 @@ class IsRememberMeTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new IsRememberMe()];
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            'IS_AUTHENTICATED_REMEMBERED',
+            $this->any()
+        );
+
+        return [new IsRememberMe($authorizationChecker)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()');
+        $this->assertTrue($isRememberMe);
     }
 
     public function testIsRememberMe(): void

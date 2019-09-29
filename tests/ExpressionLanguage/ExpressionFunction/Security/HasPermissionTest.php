@@ -9,23 +9,40 @@ use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class HasPermissionTest extends TestCase
 {
+    private $expectedObject;
+    private $testedExpression = 'hasPermission(object,"OWNER")';
+
     protected function getFunctions()
     {
-        return [new HasPermission()];
+        $this->expectedObject = new \stdClass();
+
+        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+            [
+                'OWNER',
+                $this->identicalTo($this->expectedObject),
+            ],
+            $this->any()
+        );
+
+        return [new HasPermission($authorizationChecker)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $hasPermission = $this->expressionLanguage->evaluate($this->testedExpression, ['object' => $this->expectedObject]);
+        $this->assertTrue($hasPermission);
     }
 
     public function testHasPermission(): void
     {
-        $object = new \stdClass();
-
         $this->assertExpressionCompile(
-            'hasPermission(object,"OWNER")',
+            $this->testedExpression,
             [
                 'OWNER',
-                $this->identicalTo($object),
+                $this->identicalTo($this->expectedObject),
             ],
             [
-                'object' => $object,
+                'object' => $this->expectedObject,
             ]
         );
     }

@@ -46,7 +46,7 @@ abstract class TestCase extends BaseTestCase
         $this->$assertMethod(eval('return '.$code.';'));
     }
 
-    private function getAuthorizationCheckerIsGrantedWithExpectation($with, $expects = null, $return = true)
+    protected function getAuthorizationCheckerIsGrantedWithExpectation($with, $expects = null, $return = true)
     {
         if (null === $expects) {
             $expects = $this->once();

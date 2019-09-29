@@ -46,7 +46,8 @@
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
         "overblog/graphiql-bundle": "If you want to use graphiQL.",
-        "react/promise": "To use ReactPHP promise adapter"
+        "react/promise": "To use ReactPHP promise adapter",
+        "symfony/translation": "If you want validation error messages to be translated."
     },
     "require-dev": {
         "doctrine/orm": "^2.5",

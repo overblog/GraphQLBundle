@@ -14,8 +14,13 @@ class NewObjectTest extends TestCase
         return [new NewObject()];
     }
 
-    public function testNewObject(): void
+    public function testNewObjectCompile(): void
     {
-        $this->assertInstanceOf('stdClass', eval('return '.$this->expressionLanguage->compile(\sprintf('newObject("%s")', 'stdClass')).';'));
+        $this->assertInstanceOf('stdClass', eval('return '.$this->expressionLanguage->compile('newObject("stdClass")').';'));
+    }
+
+    public function testNewObjectEvaluate(): void
+    {
+        $this->assertInstanceOf('stdClass', $this->expressionLanguage->evaluate('newObject("stdClass")'));
     }
 }
