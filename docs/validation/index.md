@@ -754,7 +754,7 @@ Mutation:
 By default an `InputValidator` object throws an `ArgumentsValidationException`, which will be caught and serialized into 
 a readable response. The [GraphQL specification](https://graphql.github.io/graphql-spec/June2018/#sec-Errors) defines a 
 certain shape of all errors returned in the response. According to it all validation violations are to be found under
-the path `errors[index].extension.validation` of the response object. 
+the path `errors[index].extensions.validation` of the response object. 
 
 Example of a response with validation errors:
 
