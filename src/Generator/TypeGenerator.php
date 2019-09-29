@@ -435,7 +435,7 @@ CODE;
             $type = \trim($config['cascade']['referenceType'], '[]!');
 
             if (\in_array($type, ['ID', 'Int', 'String', 'Boolean', 'Float'])) {
-                throw new RuntimeException("Cascade validation cannot be applied to built-in types.");
+                throw new RuntimeException('Cascade validation cannot be applied to built-in types.');
             }
         }
 

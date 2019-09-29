@@ -61,7 +61,7 @@ class TypeGeneratorTest extends TestCase
     public function testCascadeOnScalarasThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("Cascade validation cannot be applied to built-in types.");
+        $this->expectExceptionMessage('Cascade validation cannot be applied to built-in types.');
 
         parent::setUp();
         static::bootKernel(['test_case' => 'cascadeOnScalars']);

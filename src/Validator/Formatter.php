@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 
 /**
- * Class Formatter
+ * Class Formatter.
  *
  * Adds validation errors to the response.
  *
@@ -29,7 +29,7 @@ class Formatter
             foreach ($error->getViolations() as $violation) {
                 $validation[$violation->getPropertyPath()][] = [
                     'message' => $violation->getMessage(),
-                    'code' => $violation->getCode()
+                    'code' => $violation->getCode(),
                 ];
             }
 
