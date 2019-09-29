@@ -15,7 +15,7 @@ class ArgumentsValidationException extends \Exception implements ClientAware
     public function __construct(ConstraintViolationListInterface $violations, Throwable $previous = null)
     {
         $this->violations = $violations;
-        parent::__construct('Invalid data set', 0, $previous);
+        parent::__construct('validation', 0, $previous);
     }
 
     public function isClientSafe(): bool
@@ -25,7 +25,7 @@ class ArgumentsValidationException extends \Exception implements ClientAware
 
     public function getCategory(): string
     {
-        return 'ArgumentsValidationException';
+        return 'arguments_validation_error';
     }
 
     public function getViolations(): ConstraintViolationListInterface

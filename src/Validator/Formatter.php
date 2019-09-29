@@ -7,26 +7,34 @@ namespace Overblog\GraphQLBundle\Validator;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 
+/**
+ * Class Formatter
+ *
+ * Adds validation errors to the response.
+ *
+ * @see https://github.com/overblog/GraphQLBundle/blob/master/docs/validation/index.md#error-messages
+ */
 class Formatter
 {
+    /**
+     * @param ErrorFormattingEvent $event
+     */
     public function onErrorFormatting(ErrorFormattingEvent $event): void
     {
         $error = $event->getError()->getPrevious();
 
         if ($error instanceof ArgumentsValidationException) {
-            $state = [];
-            $code = [];
+            $validation = [];
 
-            $violations = $error->getViolations();
-            foreach ($violations as $violation) {
-                $state[$violation->getPropertyPath()][] = $violation->getMessage();
-                $code[$violation->getPropertyPath()][] = $violation->getCode();
+            foreach ($error->getViolations() as $violation) {
+                $validation[$violation->getPropertyPath()][] = [
+                    'message' => $violation->getMessage(),
+                    'code' => $violation->getCode()
+                ];
             }
 
             $formattedError = $event->getFormattedError();
-            $formattedError->offsetSet('state', $state);
-            $formattedError->offsetSet('code', $code);
-            $formattedError->offsetUnset('locations');
+            $formattedError['extensions']['validation'] = $validation;
         }
     }
 }
