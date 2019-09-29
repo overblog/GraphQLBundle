@@ -21,11 +21,11 @@ class IsTypeOfTest extends TestCase
 
     /**
      * As evaluators of this bundle are used only by the Expression constraint
-     * the name 'value' was replaced by 'prevValue' to avoid a conflict,
+     * the name 'value' was replaced by 'parentValue' to avoid a conflict,
      * because constraints already use name 'value'.
      */
     public function testIsTypeOfEvaluate(): void
     {
-        $this->assertTrue($this->expressionLanguage->evaluate('isTypeOf("stdClass")', ['prevValue' => new \stdClass()]));
+        $this->assertTrue($this->expressionLanguage->evaluate('isTypeOf("stdClass")', ['parentValue' => new \stdClass()]));
     }
 }

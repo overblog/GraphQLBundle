@@ -16,7 +16,7 @@ final class IsTypeOf extends ExpressionFunction
                 return \sprintf('(($className = %s) && $value instanceof $className)', $className);
             },
             function ($arguments, $className): bool {
-                return $className && $arguments['prevValue'] instanceof $className;
+                return $className && $arguments['parentValue'] instanceof $className;
             }
         );
     }

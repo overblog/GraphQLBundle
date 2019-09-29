@@ -37,7 +37,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
         $variables['this'] = $object;
 
         if ($object instanceof ValidationNode) {
-            $variables['prevValue'] = $object->getResolverArg('value');
+            $variables['parentValue'] = $object->getResolverArg('value');
             $variables['context'] = $object->getResolverArg('context');
             $variables['args'] = $object->getResolverArg('args');
             $variables['info'] = $object->getResolverArg('info');
