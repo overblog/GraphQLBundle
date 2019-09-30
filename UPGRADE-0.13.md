@@ -3,7 +3,19 @@ UPGRADE FROM 0.12 to 0.13
 
 # Table of Contents
 
+- [Rename default_field config](#rename-default_field-config)
 - [Improve default field resolver](#improve-default-field-resolver)
+
+### Rename default_field config
+
+```diff
+overblog_graphql:
+    definitions:
+-       default_resolver: ~
++       default_field_resolver: ~
+```
+
+The new `default_field_resolver` config entry accepts callable service id.
 
 ### Improve default field resolver
 
@@ -20,7 +32,7 @@ Globally:
 ```yaml
 overblog_graphql:
     definitions:
-        default_resolver: 'App\GraphQL\CustomResolver::defaultFieldResolver'
+        default_field_resolver: 'App\GraphQL\CustomResolver'
 ```
 
 [see default field resolver for more details](https://webonyx.github.io/graphql-php/data-fetching/#default-field-resolver)

@@ -48,6 +48,7 @@ class OverblogGraphQLExtension extends Extension
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
         $this->registerForAutoconfiguration($container);
+        $this->setDefaultFieldResolver($config, $container);
 
         $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
@@ -89,6 +90,11 @@ class OverblogGraphQLExtension extends Extension
             ->addTag('overblog_graphql.type');
     }
 
+    private function setDefaultFieldResolver(array $config, ContainerBuilder $container): void
+    {
+        $container->setAlias($this->getAlias().'.default_field_resolver', $config['definitions']['default_field_resolver']);
+    }
+
     private function setCompilerCacheWarmer(array $config, ContainerBuilder $container): void
     {
         $container->register(CompileCacheWarmer::class)
@@ -118,7 +124,6 @@ class OverblogGraphQLExtension extends Extension
     private function setDefinitionParameters(array $config, ContainerBuilder $container): void
     {
         // generator and config
-        $container->setParameter($this->getAlias().'.default_resolver', $config['definitions']['default_resolver']);
         $container->setParameter($this->getAlias().'.class_namespace', $config['definitions']['class_namespace']);
         $container->setParameter($this->getAlias().'.cache_dir', $config['definitions']['cache_dir']);
         $container->setParameter($this->getAlias().'.cache_dir_permissions', $config['definitions']['cache_dir_permissions']);

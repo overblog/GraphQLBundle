@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Resolver\Resolver;
+use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use PHPUnit\Framework\TestCase;
 
-class ResolverTest extends TestCase
+class ResolverFieldTest extends TestCase
 {
     /**
      * @param $fieldName
@@ -17,24 +17,12 @@ class ResolverTest extends TestCase
      *
      * @dataProvider resolverProvider
      */
-    public function testDefaultResolveFn($fieldName, $source, $expected): void
+    public function testDefaultFieldResolveFn($fieldName, $source, $expected): void
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->fieldName = $fieldName;
 
-        $this->assertSame($expected, Resolver::defaultResolveFn($source, [], [], $info));
-    }
-
-    public function testSetObjectOrArrayValue(): void
-    {
-        $object = new \stdClass();
-        $object->foo = null;
-        Resolver::setObjectOrArrayValue($object, 'foo', 'bar');
-        $this->assertSame($object->foo, 'bar');
-
-        $data = ['foo' => null];
-        Resolver::setObjectOrArrayValue($data, 'foo', 'bar');
-        $this->assertSame($data['foo'], 'bar');
+        $this->assertSame($expected, (new FieldResolver())($source, [], [], $info));
     }
 
     public function resolverProvider()

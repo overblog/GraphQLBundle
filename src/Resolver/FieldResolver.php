@@ -6,14 +6,14 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 
-class Resolver
+class FieldResolver
 {
-    public static function defaultResolveFn($objectOrArray, $args, $context, ResolveInfo $info)
+    public function __invoke($parentValue, $args, $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        $value = static::valueFromObjectOrArray($objectOrArray, $fieldName);
+        $value = self::valueFromObjectOrArray($parentValue, $fieldName);
 
-        return $value instanceof \Closure ? $value($objectOrArray, $args, $context, $info) : $value;
+        return $value instanceof \Closure ? $value($parentValue, $args, $context, $info) : $value;
     }
 
     public static function valueFromObjectOrArray($objectOrArray, $fieldName)
@@ -30,15 +30,6 @@ class Resolver
         }
 
         return $value;
-    }
-
-    public static function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value): void
-    {
-        if (\is_array($objectOrArray)) {
-            $objectOrArray[$fieldName] = $value;
-        } elseif (\is_object($objectOrArray)) {
-            $objectOrArray->$fieldName = $value;
-        }
     }
 
     private static function guessObjectMethod($object, string $fieldName, string $prefix): ?string
