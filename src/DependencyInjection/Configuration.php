@@ -13,7 +13,7 @@ use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
-use Overblog\GraphQLBundle\Resolver\Resolver;
+use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
@@ -120,7 +120,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('argument_class')->defaultValue(Argument::class)->end()
                 ->scalarNode('use_experimental_executor')->defaultFalse()->end()
-                ->variableNode('default_resolver')->defaultValue([Resolver::class, 'defaultResolveFn'])->end()
+                ->scalarNode('default_field_resolver')->defaultValue(FieldResolver::class)->end()
                 ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
                 ->scalarNode('cache_dir')->defaultNull()->end()
                 ->scalarNode('cache_dir_permissions')->defaultNull()->end()
