@@ -37,7 +37,8 @@ class TypeGenerator extends BaseTypeGenerator
         bool $useClassMap = true,
         callable $configProcessor = null,
         ?string $baseCacheDir = null,
-        ?int $cacheDirMask = null
+        ?int $cacheDirMask = null,
+        bool $sort = true
     ) {
         $this->setCacheDir($cacheDir);
         $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
@@ -49,7 +50,7 @@ class TypeGenerator extends BaseTypeGenerator
             $cacheDirMask = null === $cacheDir ? 0777 : 0775;
         }
 
-        parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
+        parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask, $sort);
     }
 
     /**

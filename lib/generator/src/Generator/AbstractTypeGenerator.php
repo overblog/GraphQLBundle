@@ -74,15 +74,20 @@ EOF;
      */
     protected $currentlyGeneratedClass;
 
+    /** @var bool */
+    protected $sort;
+
     /**
      * @param string $classNamespace The namespace to use for the classes.
      * @param string[]|string $skeletonDirs
      * @param int $cacheDirMask
+     * @param bool $sort
      */
-    public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775)
+    public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775, bool $sort = false)
     {
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
+        $this->sort = $sort;
     }
 
     public function setExpressionLanguage(ExpressionLanguage $expressionLanguage = null): self
