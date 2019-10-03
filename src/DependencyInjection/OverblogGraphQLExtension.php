@@ -21,6 +21,7 @@ use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Request\Executor;
+use Overblog\GraphQLBundle\Validator\ValidatorFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,6 +50,7 @@ class OverblogGraphQLExtension extends Extension
         $this->setCompilerCacheWarmer($config, $container);
         $this->registerForAutoconfiguration($container);
         $this->setDefaultFieldResolver($config, $container);
+        $this->registerValidatorFactory($container);
 
         $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
@@ -88,6 +90,24 @@ class OverblogGraphQLExtension extends Extension
             ->addTag('overblog_graphql.resolver');
         $container->registerForAutoconfiguration(Type::class)
             ->addTag('overblog_graphql.type');
+    }
+
+    private function registerValidatorFactory(ContainerBuilder $container): void
+    {
+        if (\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $container->register(ValidatorFactory::class)
+                ->setArguments([
+                    new Reference('validator.validator_factory'),
+                    new Reference('translator.default', $container::NULL_ON_INVALID_REFERENCE),
+                ])
+                ->addTag(
+                    'overblog_graphql.global_variable',
+                    [
+                        'alias' => 'validatorFactory',
+                        'public' => false,
+                    ]
+                );
+        }
     }
 
     private function setDefaultFieldResolver(array $config, ContainerBuilder $container): void
