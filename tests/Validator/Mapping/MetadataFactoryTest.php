@@ -13,6 +13,14 @@ use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 
 class MetadataFactoryTest extends TestCase
 {
+    public function setUp(): void
+    {
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+        parent::setUp();
+    }
+
     public function testMetadataFactoryHasObject(): void
     {
         $metadataFactory = new MetadataFactory();
