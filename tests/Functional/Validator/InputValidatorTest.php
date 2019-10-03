@@ -11,6 +11,9 @@ class InputValidatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
         static::bootKernel(['test_case' => 'validator']);
     }
 

@@ -12,9 +12,17 @@ use Symfony\Component\Validator\ConstraintValidatorFactory;
 
 class InputValidatorTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+    }
+
     public function testNoDefaultValidatorException(): void
     {
-        $factory = new ValidatorFactory(null, new ConstraintValidatorFactory(), null);
+        $factory = new ValidatorFactory(new ConstraintValidatorFactory(), null);
 
         $this->expectException(ServiceNotFoundException::class);
 

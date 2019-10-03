@@ -19,6 +19,14 @@ class ArgumentsTest extends TestCase
 {
     private $transformer;
 
+    public function setUp(): void
+    {
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+        parent::setUp();
+    }
+
     protected function getFunctions()
     {
         $this->transformer = $this->getTransformer([

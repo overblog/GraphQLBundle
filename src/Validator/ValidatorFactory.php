@@ -12,13 +12,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ValidatorFactory
 {
-    private $defaultValidator;
     private $defaultTranslator;
     private $constraintValidatorFactory;
 
-    public function __construct(?ValidatorInterface $validator, ConstraintValidatorFactoryInterface $constraintValidatorFactory, ?TranslatorInterface $translator)
+    public function __construct(ConstraintValidatorFactoryInterface $constraintValidatorFactory, ?TranslatorInterface $translator)
     {
-        $this->defaultValidator = $validator;
         $this->defaultTranslator = $translator;
         $this->constraintValidatorFactory = $constraintValidatorFactory;
     }
@@ -27,8 +25,7 @@ class ValidatorFactory
     {
         $builder = Validation::createValidatorBuilder()
             ->setMetadataFactory($metadataFactory)
-            ->setConstraintValidatorFactory($this->constraintValidatorFactory)
-        ;
+            ->setConstraintValidatorFactory($this->constraintValidatorFactory);
 
         if (null !== $this->defaultTranslator) {
             $builder
