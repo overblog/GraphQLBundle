@@ -14,18 +14,46 @@ QueryFooDecorator:
             period:
                 type: Period
 
-InterfaceA:
+A:
     type: interface
     config:
         fields:
             a:
                 type: String
 
-InterfaceB:
+AA:
+    type: interface
+    config:
+        fields:
+            aa:
+                type: String
+
+B:
     type: interface
     config:
         fields:
             b:
+                type: String
+
+C:
+    type: interface
+    config:
+        fields:
+            c:
+                type: String
+
+D:
+    type: interface
+    config:
+        fields:
+            d:
+                type: String
+
+E:
+    type: interface
+    config:
+        fields:
+            e:
                 type: String
 
 DecoratorA:
@@ -33,18 +61,55 @@ DecoratorA:
     decorator: true
     config:
         interfaces:
-            - InterfaceA
+            - A
+            - AA
         fields:
             a:
                 type: String
+            aa:
+                type: String
 
-AandB:
+DecoratorB:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - B
+        fields:
+            b:
+                type: String
+
+DecoratorC:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - C
+        fields:
+            c:
+                type: String
+
+DecoratorD:
+    type: object
+    decorator: true
+    inherits:
+        - DecoratorC
+    config:
+        interfaces:
+            - D
+        fields:
+            d:
+                type: String
+
+ABCDE:
     type: object
     inherits:
         - DecoratorA
+        - DecoratorB
+        - DecoratorD
     config:
         interfaces:
-            - InterfaceB
+            - E
         fields:
-            b:
+            e:
                 type: String
