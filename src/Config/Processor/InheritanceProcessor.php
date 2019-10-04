@@ -88,7 +88,7 @@ final class InheritanceProcessor implements ProcessorInterface
             return \array_search($a, $parents, true) > \array_search($b, $parents, true);
         });
 
-        $mergedParentsConfig = \call_user_func_array('array_replace_recursive', \array_column($parentTypes, 'config'));
+        $mergedParentsConfig = self::mergeConfigs(...\array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
         if ('object' === $childType['type']) {
@@ -160,5 +160,21 @@ final class InheritanceProcessor implements ProcessorInterface
                 \json_encode($allowedTypes)
             ));
         }
+    }
+
+    private static function mergeConfigs(...$configs): array
+    {
+        $result = [];
+
+        foreach ($configs as $config) {
+            $interfaces = $result['interfaces'] ?? null;
+            $result = \array_replace_recursive($result, $config);
+
+            if (!empty($interfaces) && !empty($config['interfaces'])) {
+                $result['interfaces'] = \array_values(\array_unique(\array_merge($interfaces, $config['interfaces'])));
+            }
+        }
+
+        return $result;
     }
 }

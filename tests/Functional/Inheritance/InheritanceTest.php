@@ -106,17 +106,21 @@ class InheritanceTest extends TestCase
 
     public function testDecoratorInterfacesShouldMerge(): void
     {
-        $this->assertArrayHasKey('AandB', $this->config);
+        $this->assertArrayHasKey('ABCDE', $this->config);
         $this->assertSame(
             [
                 'type' => 'object',
-                InheritanceProcessor::INHERITS_KEY => ['DecoratorA'],
-                'class_name' => 'AandBType',
+                InheritanceProcessor::INHERITS_KEY => ['DecoratorA', 'DecoratorB', 'DecoratorD'],
+                'class_name' => 'ABCDEType',
                 'decorator' => false,
                 'config' => [
-                    'interfaces' => ['InterfaceA', 'InterfaceB'],
+                    'interfaces' => ['A', 'AA', 'B', 'C', 'D', 'E'],
                     'fields' => [
                         'a' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'aa' => [
                             'type' => 'String',
                             'args' => [],
                         ],
@@ -124,12 +128,24 @@ class InheritanceTest extends TestCase
                             'type' => 'String',
                             'args' => [],
                         ],
+                        'c' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'd' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'e' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
                     ],
-                    'name' => 'AandB',
+                    'name' => 'ABCDE',
                     'builders' => [],
                 ],
             ],
-            $this->config['AandB']
+            $this->config['ABCDE']
         );
     }
 }
