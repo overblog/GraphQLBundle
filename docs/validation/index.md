@@ -28,7 +28,6 @@ This bundle provides a tight integration with the [Symfony Validator Component](
 ## Overview
 Follow the example below to get a quick overview of the basic validation capabilities of this bundle. 
 ```yaml
-# config\graphql\types\Mutation.yaml
 Mutation:
     type: object
     config:
@@ -113,7 +112,7 @@ class UserResolver implements MutationInterface, AliasedInterface
 {
     public function register(Argument $args, InputValidator $validator): User
     {
-        // This line executes a validation process and throws MutationValidationException 
+        // This line executes a validation process and throws ArgumentsValidationException 
         // on fail. The client will then get a well formatted error message.
         $validator->validate();
         
@@ -132,19 +131,18 @@ class UserResolver implements MutationInterface, AliasedInterface
 ```
 ## How does it work?
 
-The Symfony Validator Component is designed to validate objects. For this reason the `validator` of this bundle creates  temporary objects from your GraphQL types during the validation process and populates them with the input data. The object properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class `ValidationNode`. See the [ValidationNode API](#validationnode-api) for more details about this class.
+The Symfony Validator Component is designed to validate objects. For this reason this bundle creates temporary objects for each of your GraphQL types during the validation process and populates them with the input data. Resulting objects will repeat the nesting structure of your GraphQL schema. The object properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class `ValidationNode` (see [ValidationNode API](#validationnode-api)). The resulting object composition will be then recursively validated, starting from the root object down to it's children.
 
-Any arguments of the type `input-object` marked for [cascade](#cascade) validation will also be converted to objects of class `ValidationNode` and embedded in the parent object. The resulting object composition will be then recursively validated, starting from the root object down to the children.
+> Please note, that the original arguments won't be altered in any way.
 
-Let's take the example from the chapter [Overview](#overview). When you call `$validator->validate()` in the `register` resolver, the following objects will be created:
+Let's take the example from the chapter [Overview](#overview). When you call `$validator->validate()` in the `register` resolver, two following objects will be created (for both GraphQL types):
 
 ![enter_image_description_here](img/diagram_1.svg)
 
-Notice, that the `birthday` argument is converted to an object, as it was marked for cascade validation.
+> If the `birthday` argument weren't marked as `cascade` it would remain an array and we would have only 1 object.
 
-Here is a complex example to better demonstrate the internal work of the `InputValidator`:
+Here is a more complex example to better demonstrate how the `InputValidator` creates objects from your GraphQL schema and embeds them in each other:
 ```yaml
-# config\graphql\types\Mutation.yaml
 Mutation:
     type: object
     config:
@@ -286,7 +284,7 @@ for the `registerUser` resolver:
 
 ![enter image description here](img/diagram_2.svg)
 
-> Note that the argument `address` in the object `Mutation` wasn't converted to an object of class `ValidationNode`, as it wasn't marked as `cascade`, but it will still be validated against the `Collection` constraint.
+> Note that the argument `address` in the object `Mutation` wasn't converted into an object, as it doesn't have the key `cascade`, but it will still be validated against the `Collection` constraint as an array.
 
 for the `registerAdmin` resolver:
 
@@ -294,16 +292,19 @@ for the `registerAdmin` resolver:
 
 ## Applying of validation constraints
 
-If you are familiar with Symfony Validator Сomponent, then you might know that constraints can have different [targets](https://symfony.com/doc/current/validation.html#constraint-targets) (class members or entire classes). This bundle provides the same technique in which you could declare property constraints as well as class constraints.
+If you are familiar with Symfony Validator Сomponent, then you might know that constraints can have different [targets](https://symfony.com/doc/current/validation.html#constraint-targets) (class members or entire classes). Since each of your GraphQL types is represented by an object during the validation, you can also declare member constraints as well as class constraints.
 
-Constraints can be listed directly in the type configurations or can be mapped from existent classes (e.g. Doctrine entities) with the `link` key. See [Linking to class constraints](#linking-to-class-constraints) section for more details.
+There are 3 different methods to apply validation constraints:
+- List them directly in the type definitions with the `constraints` key.
+- Link to an existing class with the `link` key.
+- Delegate validation to a child type (input-object) with the `cascade` key.
 
-Constraints can be applied to `object` and `input-object` types.
+All 3 methods can be mixed. If you use only 1 method you can omit the corresponding key (short form). Only definitions of type `object` and `input-object` can have validation rules.
 
 ### Listing constraints explicitly
 The most straightforward way to apply validation constraints to input data is to list them under the `constraints` key.
 In the chapter [Overview](#overview) this method has already been demonstrated. Follow the examples below to see how to use
-_only_ this method as well as in combinations with [linking](#linking-to-class-constraints):
+_only_ this method, as well as in combinations with [linking](#linking-to-class-constraints):
 
 #### object:
 Property constraints are applied to _arguments_:
@@ -318,7 +319,7 @@ Mutation:
                 args:
                     username:
                         type: String
-                        validation: # using an explicit list of constraints
+                        validation: # using an explicit list of constraints (short form)
                             - NotBlank: ~ 
                             - Length:
                                 min: 6
@@ -328,7 +329,7 @@ Mutation:
                             
                     email:
                         type: String
-                        validation: App\Entity\User::$email # using a link
+                        validation: App\Entity\User::$email # using a link (short form)
                     info:
                         type: String
                         validation: # mixing both
@@ -337,7 +338,7 @@ Mutation:
                                 - NotBlank: ~
                                 - App\Constraint\MyConstraint:  ~ # custom constraint
 ```
-Class constraints are applied on the _field_ level:
+Class constraints are applied to _fields_:
 ```yaml
 Mutation:
     type: object
@@ -353,7 +354,7 @@ Mutation:
                     email: String
                     info: String	
 ```
-It's also possible to declare validation constraint on the _type_ level. This is useful if you don't want to repeat the configuration for each field or if you want to move the entire validation logic into a function:
+It's also possible to declare validation constraints to the entire _type_. This is useful if you don't want to repeat the configuration for each field or if you want to move the entire validation logic into a function:
 ```yaml
 Mutation:
     type: object
@@ -379,7 +380,7 @@ Mutation:
 ```
 #### input-object:
 
-`input-object` types are designed to be used as arguments in other types. Basically, they are composite arguments, so the property constraints are declared for each _field_ unlike `object` types, where the property constraints are declared for each _argument_:
+`input-object` types are designed to be used as arguments in other types. Basically, they are composite arguments, so the *property* constraints are declared for each _field_ unlike `object` types, where the property constraints are declared for each _argument_:
 ```yaml
 User:
     type: input-object
@@ -400,7 +401,7 @@ User:
                     constraints:
                         - Email: ~
 ```
-class constraints are declared a level higher, under the `config` key:
+class constraints are declared 2 levels higher, under the `config` key:
 ```yaml
 User:
     type: input-object
@@ -416,19 +417,19 @@ User:
                 type: String!
 ```
 ### Linking to class constraints
-If you already have classes (e.g. Doctrine entities) with validation constraints applied to them, you can reuse these constraints in your configuration files by linking corresponding _properties_, _getters_ or entire _classes_.
+If you already have classes (e.g. Doctrine entities) with validation constraints applied to them, you can reuse these constraints in your configuration files by linking corresponding _properties_, _getters_ or entire _classes_. What the `link` key does is simply copy all constraints of the given target without any change and apply them to an argument/field.
 
-A `link` can have 4 different targets:
- - **property**: `<ClassName>::$<propertyName>`
- - **getters**:  `<ClassName>::<propertyName>()`
- - **property and getters**: `<ClassName>::<propertyName>`
- - **class**: `<ClassName>`
+A `link` can have 4 different forms, each of which targets different parts of a class:
+ - **property**: `<ClassName>::$<propertyName>` - the `$` symbol indicates a *single* class property.
+ - **getters**:  `<ClassName>::<propertyName>()` - the parentheses indicate *all* getters of the given property name.
+ - **property and getters**: `<ClassName>::<propertyName>` - the absence of the `$` and parentheses indicates a single property and all it's getters.
+ - **class**: `<ClassName>` - the absence of a class member indicates an entire class.
 
 for example:
- - **property**: `App\Entity\User::$username` links to a single property `$username` of the class `User`. 
- - **getters**:  `App\Entity\User::username()` links to `getUsername()`, `isUsername()` and `hasUsername()`.
- - **property and getters**: `App\Entity\User::username` links to a single property `$username` as well to `getUsername()`, `isUsername()`  and `hasUsername()`
- - **class**: `App\Entity\User` links to
+ - **property**: `App\Entity\User::$username` - copies constraints of the property `$username` of the class `User`. 
+ - **getters**:  `App\Entity\User::username()` - copies constraints of the getters `getUsername()`, `isUsername()` and `hasUsername()`.
+ - **property and getters**: `App\Entity\User::username` - copies constraints of the property `$username` and it's getters `getUsername()`, `isUsername()`  and `hasUsername()`.
+ - **class**: `App\Entity\User` - copies constraints applied to the entire class `User`.
 
 > **Note**:
 > If you target only getters, then prefixes must be omitted. For example, if you want to target getters of the class `User` with the names `isChild()` and `hasChildren()`, then the link would be `App\Entity\User::child()`.
@@ -436,10 +437,9 @@ for example:
 > Only getters with the prefix `get`, `has`, and `is` will be searched.
 
 > **Note**:
-> Linked constraints which work in a context (e.g. Expression or Callback) will NOT take the context of the linked 
->class, but instead will work in it's own. That means that the `$this` variable won't point to the linked class 
->instance, but will point to an object of the class `ValidationNode`. See the [How does it work?](#how-does-it-work) 
->section for more details about internal work of the validation process.
+> Linked constraints which work in a context (e.g. Expression or Callback) will NOT copy the context of the linked 
+>class, but instead will work in it's own. That means that the `this` variable won't point to the linked class 
+>instance, but will point to an object of the class `ValidationNode` representing your GraphQL type. See the [How does it work?](#how-does-it-work) section for more details about internal work of the validation process.
 
 #### Example:
 Suppose you have the following class:
@@ -522,11 +522,11 @@ or use the short form (omitting the `link` key), which is equal to the config ab
                             validation: App\Entity\Post::$text # only property
  # ...
 ```
-The argument `title` will get 3 assertions: `NotBlank()`, `Length(min=5, max=10)` and `EqualTo("Lorem Ipsum")`, whereas the argument `text` will only get `Length(max=512)`. The callback `validate` of the class `PostValidator` will also be called once.
+The argument `title` will get 3 assertions: `NotBlank()`, `Length(min=5, max=10)` and `EqualTo("Lorem Ipsum")`, whereas the argument `text` will only get `Length(max=512)`. The method `validate` of the class `PostValidator` will also be called once, given an object representing the current GraphQL type.
 
 #### Context of linked constraints
 
-When linking constraints, keep in mind that the validation context won't be inherited. For example, suppose you have the following Doctrine entity:
+When linking constraints, keep in mind that the validation context won't be inherited (copied). For example, suppose you have the following Doctrine entity:
 
 ```php
 namespace App\Entity;
@@ -553,12 +553,12 @@ Mutation:
                 resolve: "@=res('createUser', [args, validator])"
                 # ...
 ```
-Now, when you try to validate the arguments in your resolver, it will throw an exception, because it will try to call a method with name `validate` on the object of class `ValidationNode`, which doesn't have such. As explained in the section [How does it work?](#how-does-it-work) each GraphQL type gets _it's own_ object during the validation process.
+Now, when you try to validate the arguments in your resolver, it will throw an exception, because it will try to call a method with the name `validate` on the object of class `ValidationNode`, which doesn't have such. As explained in the section [How does it work?](#how-does-it-work) each GraphQL type is represented by an object of class `ValidationNode` during the validation process.
 
 ####  Validation groups of linked constraints
 
 Linked constraints will be used _as it is_. This means that it's not possible to change any of their params including _groups_.
-For example, if you link a _property_ on class `User`, then all its constraints will have groups `Default` and `User` (unless declared explicitly).
+For example, if you link a _property_ on class `User`, then all copied constraints will be in the groups `Default` and `User` (unless other groups declared explicitly in the linked class).
 
 
 ### Cascade
@@ -619,10 +619,11 @@ Period:
 
 ## Groups
 
-It is possible to organize constraints into [validation groups](https://symfony.com/doc/current/validation/groups.html). By default, if you don't declare groups explicitly, every constraint of your type gets 2 groups: **Default** and the name of the type. For example, if the type's name is **Mutation** and the declaration of constraint is `NotBlank: ~`, then it automatically falls into 2 default groups: **Default** and **Mutation**. These default groups will be removed, if you declare groups explicitly.
+It is possible to organize constraints into [validation groups](https://symfony.com/doc/current/validation/groups.html). By default, if you don't declare groups explicitly, every constraint of your type will be in 2 groups: **Default** and the name of the type. For example, if the type's name is **Mutation** and the declaration of constraint is `NotBlank: ~` (no explicit groups declared), then it automatically falls into 2 default groups: **Default** and **Mutation**. These default groups will be removed, if you declare groups explicitly. Follow the [link](https://symfony.com/doc/current/validation/groups.html) for more details about validation groups in the Symfony Validator Component.
 
-Let's take the example from the chapter [Overview](#overview) and edit the configuration to use groups:
+Let's take the example from the chapter [Overview](#overview) and edit the configuration to use validation groups:
 ```yaml
+# config\graphql\types\Mutation.yaml
 Mutation:
     type: object
     config:
@@ -873,7 +874,7 @@ To translate into other languages just create additional  translation resource w
 
 ## Using built-in expression functions
 
-This bundle comes with pre-registered [expression functions and variables](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md). By default the  [`Expression`](https://symfony.com/doc/current/reference/constraints/Expression.html) constraint has no access to the functions and variables of this bundle, as both of them use 2 different instances of `ExpressionLanguage`. In order to _tell_ the `Expression` constraint to use the instance of this bundle, add the following config to the `services.yaml` to rewrite the default service declaration:
+This bundle comes with pre-registered [expression functions and variables](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md). By default the  [`Expression`](https://symfony.com/doc/current/reference/constraints/Expression.html) constraint has no access to them, because it uses the default instance of the `ExpressionLanguage` class. In order to _tell_ the `Expression` constraint to use the instance of this bundle, add the following config to the `services.yaml` to rewrite the default service declaration:
 
 ```yaml
 validator.expression:  
@@ -909,7 +910,7 @@ args:
 >
 > As you might, know the `Expression` constraint has one built-in variable called [`value`](https://symfony.com/doc/current/reference/constraints/Expression.html#message). In order to avoid name conflicts, the resolver variable `value` is renamed to `parentValue`, when using in the `Expression` constraint.
 >
-> In short: the `value` represents currently validated input data, and `parentValue` represents the data returned by the previous resolver.
+> In short: the `value` represents currently validated input data, and `parentValue` represents the data returned by the parent resolver.
 
 
 ## ValidationNode API
@@ -937,7 +938,7 @@ This class has methods that may be useful when using such constraints as `Callba
 ### Examples
 
 #### Usage in the `Expression` constraints: 
-In this example we are checking if the value of the `shownEmail` is in the `emails` array. We are using the `getParent()` method to access the field of the type `Mutation` from the type `Profile`:
+In this example we are checking if the value of the field `shownEmail` is contained in the `emails` array. We are using the method `getParent()` to access a field of the type `Mutation` from within the type `Profile`:
 ```yaml
 Mutation:
     type: object
@@ -975,7 +976,7 @@ Profile:
 ```
 
 #### Usage with `Callback` constraints:
-In this example we are using a single validation method for both  `createUser` and `createAdmin` resolvers.
+In this example we are applying a same validation constraint to both `createUser` and `createAdmin` resolvers.
 ```yaml
 Mutation:
     type: object
@@ -1001,7 +1002,7 @@ Mutation:
                     email: String!
 ```
 
-To find out which of 2 fields is being validated inside the method, we can use `getFieldName`:
+To find out which of 2 fields is being validated inside the method, we can use method `getFieldName`:
 ```php
 namespace App\Validation;  
 
