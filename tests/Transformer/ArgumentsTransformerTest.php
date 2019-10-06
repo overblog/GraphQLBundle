@@ -19,6 +19,14 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ArgumentsTransformerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+    }
+
     private function getTransformer(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);

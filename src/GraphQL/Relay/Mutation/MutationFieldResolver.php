@@ -8,7 +8,6 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
-use Overblog\GraphQLBundle\Resolver\Resolver;
 
 final class MutationFieldResolver implements ResolverInterface, AliasedInterface
 {
@@ -28,7 +27,7 @@ final class MutationFieldResolver implements ResolverInterface, AliasedInterface
 
         return $this->promiseAdapter->createFulfilled($mutateAndGetPayloadCallback($input, $context, $info))
             ->then(function ($payload) use ($input) {
-                Resolver::setObjectOrArrayValue($payload, 'clientMutationId', $input['clientMutationId']);
+                $this->setObjectOrArrayValue($payload, 'clientMutationId', $input['clientMutationId']);
 
                 return $payload;
             });
@@ -40,5 +39,14 @@ final class MutationFieldResolver implements ResolverInterface, AliasedInterface
     public static function getAliases(): array
     {
         return ['__invoke' => 'relay_mutation_field'];
+    }
+
+    private function setObjectOrArrayValue(&$objectOrArray, $fieldName, $value): void
+    {
+        if (\is_array($objectOrArray)) {
+            $objectOrArray[$fieldName] = $value;
+        } elseif (\is_object($objectOrArray)) {
+            $objectOrArray->$fieldName = $value;
+        }
     }
 }
