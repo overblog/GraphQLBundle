@@ -28,6 +28,7 @@ This bundle provides a tight integration with the [Symfony Validator Component](
 ## Overview
 Follow the example below to get a quick overview of the basic validation capabilities of this bundle. 
 ```yaml
+# config\graphql\types\Mutation.yaml
 Mutation:
     type: object
     config:
@@ -80,7 +81,7 @@ Birthday:
             year:
                 type: Int!	
                 validation:
-                    - Range: { min: 1900, max: today }
+                    - Range: { min: 1900, max: 2019 }
 ```
 The configuration above ensures, that:
 - **username** 
@@ -96,7 +97,7 @@ The configuration above ensures, that:
 The `birthday` field is of type `input-object` and is marked as `cascade` so it's validation will happen according to the  constraints declared in the `Birthday` type:
 - **day** is between 1 and 31
 - **month** is between 1 and 12
-- **year** is between 1900 and today
+- **year** is between 1900 and 2019
 
 
 A configured `validator` will be then injected into the resolver defined in the `Mutation.yaml`:
