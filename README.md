@@ -13,7 +13,7 @@ This Symfony bundle provides integration of [GraphQL](https://facebook.github.io
 and [GraphQL Relay](https://facebook.github.io/relay/docs/en/graphql-server-specification.html).
 It also supports:
 * batching with [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer)
-* batching with [Apollo GraphQL](http://dev.apollodata.com/core/network.html#query-batching).
+* batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/networking/network-layer/#query-batching)
 * upload and batching upload with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client)
 
 Browse your version documentation:
