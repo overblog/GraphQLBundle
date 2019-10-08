@@ -18,6 +18,6 @@ class SimplePromiseMutation
 
     public function mutate()
     {
-        return $this->promiseAdapter->createFulfilled(['result' => 1]);
+        return $this->promiseAdapter->createFulfilled((object) ['result' => 1]);
     }
 }

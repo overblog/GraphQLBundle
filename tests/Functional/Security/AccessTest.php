@@ -48,7 +48,7 @@ EOF;
         // load types
         $this->loader = function ($class): void {
             if (\preg_match('@^'.\preg_quote('Overblog\GraphQLBundle\Access\__DEFINITIONS__\\').'(.*)$@', $class, $matches)) {
-                $file = '/tmp/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
+                $file = \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
                 if (\file_exists($file)) {
                     require $file;
                 }

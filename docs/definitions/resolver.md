@@ -48,7 +48,7 @@ class Greetings implements ResolverInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['sayHello' => 'say_hello'];
     }
@@ -162,7 +162,7 @@ class CalcMutation implements MutationInterface, AliasedInterface
     /**
      * {@inheritdoc}
      */
-    public static function getAliases()
+    public static function getAliases(): array
     {
         return ['addition' => 'add'];
     }
@@ -175,11 +175,8 @@ Here an example of how this can be done with DI `autoconfigure`:
 
 ```yaml
 services:
-    _instanceof:
-        Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface:
-            tags: ['overblog_graphql.resolver']
-        Overblog\GraphQLBundle\Definition\Resolver\MutationInterface:
-            tags: ['overblog_graphql.mutation']
+    _defaults:
+        autoconfigure: true
 
     Overblog\GraphQLBundle\GraphQL\Relay\:
         resource: ../../GraphQL/Relay/{Mutation,Node}
@@ -230,5 +227,17 @@ services:
 ```
 `addition` mutation can be access by using `App\GraphQL\Mutation\CalcMutation::addition` or
 `add` alias.
+
+### Default field resolver
+
+The default field resolver can be define using config:
+
+```yaml
+overblog_graphql:
+    definitions:
+       default_field_resolver: 'my_default_field_resolver_service'
+```
+
+Default field resolver should be a callable service (implementing `__invoker` method)
 
 Next step [solving N+1 problem](solving-n-plus-1-problem.md)

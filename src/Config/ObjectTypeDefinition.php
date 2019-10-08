@@ -14,6 +14,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
         $node
             ->children()
+                ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
                 ->append($this->nameSection())
                 ->append($this->outputFieldsSelection())
                 ->append($this->fieldsBuilderSection())

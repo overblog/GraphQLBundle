@@ -23,7 +23,7 @@ final class QueryType extends ObjectType implements AliasedInterface
                         'message' => ['type' => Type::string()],
                     ],
                     'resolve' => function ($root, $args) use ($resolver) {
-                        return $resolver->resolve([EchoResolver::class, [$args['message']]]);
+                        return $resolver->resolve([\sprintf('%s::display', EchoResolver::class), [$args['message']]]);
                     },
                 ],
             ],

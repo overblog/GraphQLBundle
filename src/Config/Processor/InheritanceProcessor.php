@@ -82,12 +82,21 @@ final class InheritanceProcessor implements ProcessorInterface
     private static function inheritsTypeConfig($child, array $parents, array $configs)
     {
         $parentTypes = \array_intersect_key($configs, \array_flip($parents));
-        $parentTypes = \array_reverse($parentTypes);
-        $mergedParentsConfig = \call_user_func_array('array_replace_recursive', \array_column($parentTypes, 'config'));
+
+        // Restore initial order
+        \uksort($parentTypes, function ($a, $b) use ($parents) {
+            return \array_search($a, $parents, true) > \array_search($b, $parents, true);
+        });
+
+        $mergedParentsConfig = self::mergeConfigs(...\array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
         if ('object' === $childType['type']) {
             unset($mergedParentsConfig['resolveType']);
+        }
+
+        if (isset($mergedParentsConfig['interfaces'], $childType['config']['interfaces'])) {
+            $childType['config']['interfaces'] = \array_merge($mergedParentsConfig['interfaces'], $childType['config']['interfaces']);
         }
 
         $configs = \array_replace_recursive(['config' => $mergedParentsConfig], $childType);
@@ -109,11 +118,11 @@ final class InheritanceProcessor implements ProcessorInterface
         $typesTreated[$name] = true;
         $flattenInheritsTypes = [];
         foreach ($config[self::INHERITS_KEY] as $typeToInherit) {
-            $flattenInheritsTypes[] = $typeToInherit;
             $flattenInheritsTypes = \array_merge(
                 $flattenInheritsTypes,
                 self::flattenInherits($typeToInherit, $configs, $allowedTypes, $name, $typesTreated)
             );
+            $flattenInheritsTypes[] = $typeToInherit;
         }
 
         return $flattenInheritsTypes;
@@ -151,5 +160,21 @@ final class InheritanceProcessor implements ProcessorInterface
                 \json_encode($allowedTypes)
             ));
         }
+    }
+
+    private static function mergeConfigs(...$configs): array
+    {
+        $result = [];
+
+        foreach ($configs as $config) {
+            $interfaces = $result['interfaces'] ?? null;
+            $result = \array_replace_recursive($result, $config);
+
+            if (!empty($interfaces) && !empty($config['interfaces'])) {
+                $result['interfaces'] = \array_values(\array_unique(\array_merge($interfaces, $config['interfaces'])));
+            }
+        }
+
+        return $result;
     }
 }

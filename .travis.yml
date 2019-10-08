@@ -20,7 +20,9 @@ cache:
 before_install:
     - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
     - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
+    - if [ "${SYMFONY_VERSION}" = "5.0.*" ]; then composer require "symfony/translation"; fi;
     - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
+    - if [ "${VALIDATOR}" = "0" ]; then  composer remove "symfony/validator" --dev --no-update; fi;
     - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
@@ -33,6 +35,8 @@ jobs:
     include:
         - php: 7.2
           env: SYMFONY_VERSION=4.3.* PHPUNIT_VERSION=^7.2 SYMFONY_DEPRECATIONS_HELPER=max[total]=0
+        - php: 7.3
+          env: SYMFONY_VERSION=4.3.* VALIDATOR=0 SYMFONY_DEPRECATIONS_HELPER=max[total]=0
         - php: 7.3
           env: SYMFONY_VERSION=4.3.* USE_EXPERIMENTAL_EXECUTOR=1 SYMFONY_DEPRECATIONS_HELPER=max[total]=0
         - php: 7.3

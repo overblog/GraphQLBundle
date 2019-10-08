@@ -15,17 +15,7 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
     {
         return [
             'Query' => [
-                self::RESOLVE_FIELD => function ($value, Argument $args, \ArrayObject $context, ResolveInfo $info) {
-                    if ('character' === $info->fieldName) {
-                        $characters = Characters::getCharacters();
-                        $id = (int) $args['id'];
-                        if (isset($characters[$id])) {
-                            return $characters[$id];
-                        }
-                    }
-
-                    return null;
-                },
+                self::RESOLVE_FIELD => $this,
                 'findHumansByDateOfBirth' => function ($value, Argument $args) {
                     $years = $args['years'];
 
@@ -63,5 +53,18 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
                 },
             ],
         ];
+    }
+
+    public function __invoke($value, Argument $args, \ArrayObject $context, ResolveInfo $info): ?array
+    {
+        if ('character' === $info->fieldName) {
+            $characters = Characters::getCharacters();
+            $id = (int) $args['id'];
+            if (isset($characters[$id])) {
+                return $characters[$id];
+            }
+        }
+
+        return null;
     }
 }

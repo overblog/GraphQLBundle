@@ -13,3 +13,103 @@ QueryFooDecorator:
         fields:
             period:
                 type: Period
+
+A:
+    type: interface
+    config:
+        fields:
+            a:
+                type: String
+
+AA:
+    type: interface
+    config:
+        fields:
+            aa:
+                type: String
+
+B:
+    type: interface
+    config:
+        fields:
+            b:
+                type: String
+
+C:
+    type: interface
+    config:
+        fields:
+            c:
+                type: String
+
+D:
+    type: interface
+    config:
+        fields:
+            d:
+                type: String
+
+E:
+    type: interface
+    config:
+        fields:
+            e:
+                type: String
+
+DecoratorA:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - A
+            - AA
+        fields:
+            a:
+                type: String
+            aa:
+                type: String
+
+DecoratorB:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - B
+        fields:
+            b:
+                type: String
+
+DecoratorC:
+    type: object
+    decorator: true
+    config:
+        interfaces:
+            - C
+        fields:
+            c:
+                type: String
+
+DecoratorD:
+    type: object
+    decorator: true
+    inherits:
+        - DecoratorC
+    config:
+        interfaces:
+            - D
+        fields:
+            d:
+                type: String
+
+ABCDE:
+    type: object
+    inherits:
+        - DecoratorA
+        - DecoratorB
+        - DecoratorD
+    config:
+        interfaces:
+            - E
+        fields:
+            e:
+                type: String

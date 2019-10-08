@@ -18,8 +18,11 @@ class ValidationErrorsListenerTest extends TestCase
     /** @var ValidationErrorsListener */
     private $listener;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
         $this->listener = new ValidationErrorsListener();
     }
 

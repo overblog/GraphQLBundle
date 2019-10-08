@@ -2,6 +2,7 @@ OverblogGraphQLBundle
 ======================
 
 [![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=master)](https://travis-ci.org/overblog/GraphQLBundle)
+[![Build status](https://ci.appveyor.com/api/projects/status/7ksxlcgwt40q74hv/branch/master?svg=true)](https://ci.appveyor.com/project/overblog/graphqlbundle/branch/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=master)](https://coveralls.io/github/overblog/GraphQLBundle?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/overblog/graphql-bundle/version)](https://packagist.org/packages/overblog/graphql-bundle)
@@ -12,7 +13,7 @@ This Symfony bundle provides integration of [GraphQL](https://facebook.github.io
 and [GraphQL Relay](https://facebook.github.io/relay/docs/en/graphql-server-specification.html).
 It also supports:
 * batching with [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer)
-* batching with [Apollo GraphQL](http://dev.apollodata.com/core/network.html#query-batching).
+* batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/networking/network-layer/#query-batching)
 * upload and batching upload with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client)
 
 Browse your version documentation:
@@ -21,9 +22,18 @@ Browse your version documentation:
 * [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
 * [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
 * [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
-* [0.12 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
+* [0.13 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
 
 [Versions requirements](docs/index.md#versions-requirements)
+
+Proof of Concept
+-----------------
+
+* [mcg-web/graphql-symfony-doctrine-sandbox](https://github.com/mcg-web/graphql-symfony-doctrine-sandbox)
+* [michaelperrin/blog-graphql-upload-demo](https://github.com/michaelperrin/blog-graphql-upload-demo)
+* [overblog/GraphQLBundleDemo](https://github.com/overblog/GraphQLBundleDemo)
+* [Samffy/graphql-poc](https://github.com/Samffy/graphql-poc)
 
 Documentation
 -------------
@@ -67,6 +77,7 @@ Documentation
   - [Query batching](docs/data-fetching/batching.md)
   - [Promise](docs/data-fetching/promise.md)
 - [Annotations](docs/annotations/index.md)
+- [Validation](docs/validation/index.md)
 - [Security](docs/security/index.md)
   - [Handle CORS](docs/security/handle-cors.md)
   - [Object access control](docs/security/object-access-control.md)

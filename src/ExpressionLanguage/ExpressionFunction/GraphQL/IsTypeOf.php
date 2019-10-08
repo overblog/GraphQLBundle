@@ -8,12 +8,15 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class IsTypeOf extends ExpressionFunction
 {
-    public function __construct($name = 'isTypeOf')
+    public function __construct()
     {
         parent::__construct(
-            $name,
+            'isTypeOf',
             function ($className) {
                 return \sprintf('(($className = %s) && $value instanceof $className)', $className);
+            },
+            function ($arguments, $className): bool {
+                return $className && $arguments['parentValue'] instanceof $className;
             }
         );
     }

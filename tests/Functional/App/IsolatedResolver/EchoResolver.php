@@ -12,7 +12,7 @@ final class EchoResolver implements ResolverInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    public function __invoke($message)
+    public function display($message): string
     {
         return $this->container->getParameter('echo.prefix').$message;
     }

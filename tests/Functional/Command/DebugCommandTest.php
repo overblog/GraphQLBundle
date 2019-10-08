@@ -35,7 +35,7 @@ class DebugCommandTest extends TestCase
                 )
             );
 
-            $this->logs[$category] = \trim($content);
+            $this->logs[$category] = \str_replace("\n", \PHP_EOL, \trim($content));
         }
     }
 
@@ -52,9 +52,9 @@ class DebugCommandTest extends TestCase
         $this->commandTester->execute(['--category' => $categories]);
         $this->assertSame(0, $this->commandTester->getStatusCode());
 
-        $expected = "\n";
+        $expected = \PHP_EOL;
         foreach ($categories as $category) {
-            $expected .= $this->logs[$category]." \n\n\n\n";
+            $expected .= $this->logs[$category].' '.\PHP_EOL.\PHP_EOL."\n\n";
         }
 
         $this->assertStringContainsString($expected, $this->commandTester->getDisplay());

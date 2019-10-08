@@ -65,9 +65,9 @@ class InheritanceTest extends TestCase
                 'decorator' => false,
                 'config' => [
                     'values' => [
-                        'YEAR' => ['value' => 3],
-                        'MONTH' => ['value' => 2],
                         'DAY' => ['value' => 1],
+                        'MONTH' => ['value' => 2],
+                        'YEAR' => ['value' => 3],
                     ],
                     'name' => 'Period',
                 ],
@@ -76,9 +76,76 @@ class InheritanceTest extends TestCase
         );
     }
 
+    public function testRelayInheritance(): void
+    {
+        $this->assertArrayHasKey('ChangeEventInput', $this->config);
+        $this->assertSame(
+            [
+                'type' => 'input-object',
+                InheritanceProcessor::INHERITS_KEY => ['AddEventInput'],
+                'class_name' => 'ChangeEventInputType',
+                'decorator' => false,
+                'config' => [
+                    'name' => 'ChangeEventInput',
+                    'fields' => [
+                        'title' => ['type' => 'String!'],
+                        'clientMutationId' => ['type' => 'String'],
+                        'id' => ['type' => 'ID!'],
+                    ],
+                ],
+            ],
+            $this->config['ChangeEventInput']
+        );
+    }
+
     public function testDecoratorTypeShouldRemovedFromFinalConfig(): void
     {
         $this->assertArrayNotHasKey('QueryBarDecorator', $this->config);
         $this->assertArrayNotHasKey('QueryFooDecorator', $this->config);
+    }
+
+    public function testDecoratorInterfacesShouldMerge(): void
+    {
+        $this->assertArrayHasKey('ABCDE', $this->config);
+        $this->assertSame(
+            [
+                'type' => 'object',
+                InheritanceProcessor::INHERITS_KEY => ['DecoratorA', 'DecoratorB', 'DecoratorD'],
+                'class_name' => 'ABCDEType',
+                'decorator' => false,
+                'config' => [
+                    'interfaces' => ['A', 'AA', 'B', 'C', 'D', 'E'],
+                    'fields' => [
+                        'a' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'aa' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'b' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'c' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'd' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                        'e' => [
+                            'type' => 'String',
+                            'args' => [],
+                        ],
+                    ],
+                    'name' => 'ABCDE',
+                    'builders' => [],
+                ],
+            ],
+            $this->config['ABCDE']
+        );
     }
 }

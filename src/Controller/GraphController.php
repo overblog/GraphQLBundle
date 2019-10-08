@@ -102,7 +102,7 @@ class GraphController
             $response->headers->set('Access-Control-Allow-Credentials', 'true', true);
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization', true);
             $response->headers->set('Access-Control-Allow-Methods', 'OPTIONS, GET, POST', true);
-            $response->headers->set('Access-Control-Max-Age', 3600, true);
+            $response->headers->set('Access-Control-Max-Age', '3600', true);
         }
     }
 

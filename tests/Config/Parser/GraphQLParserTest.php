@@ -12,7 +12,7 @@ class GraphQLParserTest extends TestCase
 {
     public function testParse(): void
     {
-        $fileName = __DIR__.'/fixtures/graphql/schema.graphql';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'fixtures'.\DIRECTORY_SEPARATOR.'graphql'.\DIRECTORY_SEPARATOR.'schema.graphql';
         $expected = include __DIR__.'/fixtures/graphql/schema.php';
 
         $this->assertContainerAddFileToResources($fileName);
@@ -22,7 +22,7 @@ class GraphQLParserTest extends TestCase
 
     public function testParseEmptyFile(): void
     {
-        $fileName = __DIR__.'/fixtures/graphql/empty.graphql';
+        $fileName = __DIR__.\DIRECTORY_SEPARATOR.'fixtures'.\DIRECTORY_SEPARATOR.'graphql'.\DIRECTORY_SEPARATOR.'empty.graphql';
 
         $this->assertContainerAddFileToResources($fileName);
 

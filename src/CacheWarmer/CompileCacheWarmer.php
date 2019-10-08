@@ -9,12 +9,20 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 class CompileCacheWarmer implements CacheWarmerInterface
 {
-    /** @var TypeGenerator */
     private $typeGenerator;
 
-    public function __construct(TypeGenerator $typeGenerator)
+    private $compiled;
+
+    /**
+     * CompileCacheWarmer constructor.
+     *
+     * @param TypeGenerator $typeGenerator
+     * @param bool          $compiled
+     */
+    public function __construct(TypeGenerator $typeGenerator, $compiled = true)
     {
         $this->typeGenerator = $typeGenerator;
+        $this->compiled = $compiled;
     }
 
     /**
@@ -22,7 +30,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
      */
     public function isOptional()
     {
-        return false;
+        return !$this->compiled;
     }
 
     /**
@@ -30,12 +38,14 @@ class CompileCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir): void
     {
-        // use warm up cache dir if type generator cache dir not already explicitly declare
-        $baseCacheDir = $this->typeGenerator->getBaseCacheDir();
-        if (null === $this->typeGenerator->getCacheDir(false)) {
-            $this->typeGenerator->setBaseCacheDir($cacheDir);
+        if ($this->compiled) {
+            // use warm up cache dir if type generator cache dir not already explicitly declare
+            $baseCacheDir = $this->typeGenerator->getBaseCacheDir();
+            if (null === $this->typeGenerator->getCacheDir(false)) {
+                $this->typeGenerator->setBaseCacheDir($cacheDir);
+            }
+            $this->typeGenerator->compile(TypeGenerator::MODE_WRITE | TypeGenerator::MODE_OVERRIDE);
+            $this->typeGenerator->setBaseCacheDir($baseCacheDir);
         }
-        $this->typeGenerator->compile(TypeGenerator::MODE_WRITE | TypeGenerator::MODE_OVERRIDE);
-        $this->typeGenerator->setBaseCacheDir($baseCacheDir);
     }
 }

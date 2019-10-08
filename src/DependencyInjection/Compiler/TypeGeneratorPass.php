@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Builder\TypeFactory;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class TypeGeneratorPass implements CompilerPassInterface
@@ -27,7 +25,7 @@ class TypeGeneratorPass implements CompilerPassInterface
 
     private function setTypeServiceDefinition(ContainerBuilder $container, $class, $alias): void
     {
-        $definition = $container->setDefinition($class, new Definition(Type::class));
+        $definition = $container->register($class);
         $definition->setFactory([new Reference(TypeFactory::class), 'create']);
         $definition->setPublic(false);
         $definition->setArguments([$class]);

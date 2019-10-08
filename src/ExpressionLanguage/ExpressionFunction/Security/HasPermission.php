@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class HasPermission extends ExpressionFunction
 {
-    public function __construct($name = 'hasPermission')
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
         parent::__construct(
-            $name,
+            'hasPermission',
             function ($object, $permission) {
-                $code = \sprintf('$globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
-
-                return $code;
+                return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted($permission, $object)";
+            },
+            function ($_, $object, $permission) use ($authorizationChecker) {
+                return $authorizationChecker->isGranted($permission, $object);
             }
         );
     }

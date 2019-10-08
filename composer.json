@@ -37,7 +37,6 @@
         "symfony/expression-language": "^4.3 || ~5.0",
         "symfony/framework-bundle": "^4.3 || ~5.0",
         "symfony/options-resolver": "^4.3 || ~5.0",
-        "symfony/property-access": "^4.3 || ~5.0",
         "webonyx/graphql-php": "^0.13.5"
     },
     "replace": {
@@ -46,11 +45,12 @@
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
         "overblog/graphiql-bundle": "If you want to use graphiQL.",
-        "react/promise": "To use ReactPHP promise adapter"
+        "react/promise": "To use ReactPHP promise adapter",
+        "symfony/translation": "If you want validation error messages to be translated."
     },
     "require-dev": {
         "doctrine/orm": "^2.5",
-        "phpunit/phpunit": "^7.2 || ^8.2",
+        "phpunit/phpunit": "<8.3",
         "react/promise": "^2.5",
         "symfony/asset": "^4.3 || ~5.0",
         "symfony/browser-kit": "^4.3 || ~5.0",
