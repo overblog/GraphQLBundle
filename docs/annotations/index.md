@@ -14,7 +14,7 @@ overblog_graphql:
 
 This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
 
-## Use Annotations as your only Mapping
+## Using Annotations as your only Mapping
 
 If you only use annotations as mappings you need to add an empty `RootQuery` type.
 Your config should look like this:
