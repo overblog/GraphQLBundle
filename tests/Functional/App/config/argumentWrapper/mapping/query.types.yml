@@ -6,12 +6,12 @@ RootQuery:
             fieldWithResolverAndArgument:
                 type: String!
                 args:
-                    name: {type: String!}
+                    name: String!
                 resolve: '@="Field resolver Arguments: " ~ json_encode(args.getArrayCopy()) ~ " | InstanceOf: " ~ json_encode(is_a(args, "Overblog\\GraphQLBundle\\Definition\\Argument"))'
             fieldWithDefaultResolverAndArgument:
                 type: String!
                 args:
-                    name: {type: String!}
+                    name: String!
             fieldWithAccess:
                 type: String!
                 access: "@=true"
