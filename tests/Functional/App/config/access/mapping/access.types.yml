@@ -24,16 +24,14 @@ Human:
     type: interface
     config:
         fields:
-            name:
-                type: String
+            name: String
 
 User:
     type: object
     config:
         fieldsDefaultAccess: "@=isFullyAuthenticated()"
         fields:
-            name:
-                type: String
+            name: String
             roles:
                 type: '[String]'
                 access: "@=hasRole('ROLE_ADMIN')"
@@ -104,7 +102,7 @@ simpleMutationWithThunkFieldsInput:
     type: relay-mutation-input
     config:
         fields:
-            inputData : { type: "Int" }
+            inputData : "Int"
 
 simpleMutationWithThunkFieldsPayload:
     type: relay-mutation-payload

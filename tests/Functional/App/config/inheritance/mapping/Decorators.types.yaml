@@ -4,57 +4,49 @@ QueryBarDecorator:
     config:
         interfaces: [QueryHelloWord]
         fields:
-            bar:
-                type: String
+            bar: String
 
 QueryFooDecorator:
     decorator: true
     config:
         fields:
-            period:
-                type: Period
+            period: Period
 
 A:
     type: interface
     config:
         fields:
-            a:
-                type: String
+            a: String
 
 AA:
     type: interface
     config:
         fields:
-            aa:
-                type: String
+            aa: String
 
 B:
     type: interface
     config:
         fields:
-            b:
-                type: String
+            b: String
 
 C:
     type: interface
     config:
         fields:
-            c:
-                type: String
+            c: String
 
 D:
     type: interface
     config:
         fields:
-            d:
-                type: String
+            d: String
 
 E:
     type: interface
     config:
         fields:
-            e:
-                type: String
+            e: String
 
 DecoratorA:
     type: object
@@ -64,10 +56,8 @@ DecoratorA:
             - A
             - AA
         fields:
-            a:
-                type: String
-            aa:
-                type: String
+            a: String
+            aa: String
 
 DecoratorB:
     type: object
@@ -76,8 +66,7 @@ DecoratorB:
         interfaces:
             - B
         fields:
-            b:
-                type: String
+            b: String
 
 DecoratorC:
     type: object
@@ -86,8 +75,7 @@ DecoratorC:
         interfaces:
             - C
         fields:
-            c:
-                type: String
+            c: String
 
 DecoratorD:
     type: object
@@ -98,8 +86,7 @@ DecoratorD:
         interfaces:
             - D
         fields:
-            d:
-                type: String
+            d: String
 
 ABCDE:
     type: object
@@ -111,5 +98,4 @@ ABCDE:
         interfaces:
             - E
         fields:
-            e:
-                type: String
+            e: String
