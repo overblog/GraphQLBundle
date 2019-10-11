@@ -94,7 +94,9 @@ callback to pick the first suitable one. This is obviously less efficient than s
 recommended to define `resolveType` whenever possible.
 
 
-Take a look at the example of using the `resolveType` method below. Suppose we have 2 classes: `Human` and `Droid`:
+##### Using `resolveType` 
+
+Suppose we have classes `Human` and `Droid`:
 
 ```php
 class Human 
