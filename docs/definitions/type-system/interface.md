@@ -159,7 +159,7 @@ class MyResolver implements ResolverInterface, AliasedInterface
         // Get an array of Droid objects from DB
         $droids = $this->droidRepository->getAll();
 
-        // We return an array of mixed results. The 'characterType'
+        // We return an array of mixed results. The 'resolveType'
         // method will map each object to it's GraphQL type.
         return \array_merge($humans, $droids);
     }
@@ -171,7 +171,7 @@ class MyResolver implements ResolverInterface, AliasedInterface
      * @param Human|Droid  $value        Value returned by parent resolver
      * @param TypeResolver $typeResolver Helper service to resolve GraphQL type objects
      */
-    public function characterType($value, TypeResolver $typeResolver): ObjectType
+    public function resolveType($value, TypeResolver $typeResolver): ObjectType
     {
         if ($value instanceof Human) {
             return $typeResolver->resolve('Human');
@@ -188,7 +188,7 @@ class MyResolver implements ResolverInterface, AliasedInterface
     {
         return [
             'allCharacters' => 'all_characters',
-            'characterType' => 'character_type',
+            'resolveType' => 'character_type',
         ];
     }
 }
@@ -293,8 +293,7 @@ abstract class Character
 services:
     my.graph.resolver.character:
         class: MyBundle\GraphQL\Resolver\CharacterResolver
-        arguments:
-            - "@overblog_graphql.type_resolver"
+        arguments: ["@overblog_graphql.type_resolver"]
         tags:
             - { name: overblog_graphql.resolver, alias: "character_type", method: "resolveType" }
             - { name: overblog_graphql.resolver, alias: "character_friends", method: "resolveFriends" }
@@ -305,8 +304,8 @@ services:
 
 ```php
 <?php
-// src/MyBundle/GraphQL/Resolver
-namespace MyBundle\GraphQL\Resolver;
+
+namespace App\GraphQL\Resolver;
 
 require_once __DIR__ . '/../../../../vendor/webonyx/graphql-php/tests/StarWarsData.php';
 
@@ -315,9 +314,6 @@ use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 class CharacterResolver
 {
-    /**
-     * @var TypeResolver
-     */
     private $typeResolver;
 
     public function __construct(TypeResolver $typeResolver)
@@ -325,19 +321,22 @@ class CharacterResolver
         $this->typeResolver = $typeResolver;
     }
 
-    public function resolveType($data)
+    public function resolveType($value)
     {
         $humanType = $this->typeResolver->resolve('Human');
         $droidType = $this->typeResolver->resolve('Droid');
 
         $humans = StarWarsData::humans();
         $droids = StarWarsData::droids();
-        if (isset($humans[$data['id']])) {
+
+        if (isset($humans[$value['id']])) {
             return $humanType;
         }
-        if (isset($droids[$data['id']])) {
+
+        if (isset($droids[$value['id']])) {
             return $droidType;
         }
+
         return null;
     }
 
@@ -348,19 +347,21 @@ class CharacterResolver
 
     public function resolveHero($args)
     {
-        return StarWarsData::getHero(isset($args['episode']) ? $args['episode'] : null);
+        return StarWarsData::getHero($args['episode'] ?? null);
     }
 
     public function resolveHuman($args)
     {
         $humans = StarWarsData::humans();
-        return isset($humans[$args['id']]) ? $humans[$args['id']] : null;
+
+        return $humans[$args['id']] ?? null;
     }
 
     public function resolveDroid($args)
     {
         $droids = StarWarsData::droids();
-        return isset($droids[$args['id']]) ? $droids[$args['id']] : null;
+
+        return $droids[$args['id']] ?? null;
     }
 }
 ```
