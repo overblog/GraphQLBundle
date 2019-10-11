@@ -34,7 +34,7 @@ type Droid implements Character {
 We'll show you how the schema above can be implemented with this bundle. There are two main ways to do 
 it: with **yaml** config files and with **annotations**. Lets take a look at both.
 
-#### With YAML
+## With YAML
 ```yaml
 # config/graphql/types/Character.yml
 Character:
@@ -247,7 +247,7 @@ Human:
 
 All expression functions in the `isTypeOf` option have access to the [params](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md#registered-variables): `value`, `context` and `info`.
 
-#### With Annotations
+## With Annotations
 
 ```php
 <?php
