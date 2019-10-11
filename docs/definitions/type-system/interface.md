@@ -154,9 +154,9 @@ class MyResolver implements ResolverInterface, AliasedInterface
 {
     public function allCharacters(): array
     {
-        // Get an array of Human objects
+        // Get an array of Human objects from DB
         $humans = $this->humanRepository->getAll();
-        // Get an array of Droid objects
+        // Get an array of Droid objects from DB
         $droids = $this->droidRepository->getAll();
 
         // We return an array of mixed results. The 'characterType'
@@ -166,11 +166,10 @@ class MyResolver implements ResolverInterface, AliasedInterface
 
     /**
      * In this example we resolve types by checking the class of the value, but 
-     * it's completely up to you, how you distinguish one value from another.
+     * it's completely up to you how you distinguish one value from another.
      *
      * @param Human|Droid  $value        Value returned by parent resolver
      * @param TypeResolver $typeResolver Helper service to resolve GraphQL type objects
-     * @return ObjectType
      */
     public function characterType($value, TypeResolver $typeResolver): ObjectType
     {
@@ -208,9 +207,9 @@ This happens because the types `Human` and `Droid` are never referenced in field
 
 ##### Using `isTypeOf`
 
-If you omit the `resolveType` option (which is [not recomendet](https://webonyx.github.io/graphql-php/type-system/interfaces/#interface-role-in-data-fetching)) 
+If you omit the `resolveType` option (which is [not recommended](https://webonyx.github.io/graphql-php/type-system/interfaces/#interface-role-in-data-fetching)) 
 then you must define the `isTypeOf` option on each type implementing the interface. The value of the `isTypeOf` must be
-of type `Boolean`. You can use the [expression language](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md) 
+a `boolean`. You can use the [Expression Language](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md) 
 to resolve a correct value, namely the [`isTypeOf`](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md#istypeof) function which was create especially for this purpose: 
 
 ```yaml
@@ -233,13 +232,14 @@ Droid:
 ```
 
 The system will loop through each implementing type, call it's `isTypeOf` and stop on the first type that returns `true`.
+
 The `isTypeOf` function is not required, you can use any of the [preregistered expression functions](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md#registered-functions):
 ```yaml
 Human:
     type: object
     config:
         # Call a static method and pass the 'value' param to check its type
-        isTypeOf: '@=call("App\\Util\\Validator::email", [value])'
+        isTypeOf: '@=call("App\\GraphQL\\TypeResolver::isHuman", [value])'
         
         # ... or even use a service
         isTypeOf: '@=service("my_service").isTypeOfHuman(value)'
