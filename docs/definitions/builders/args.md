@@ -3,7 +3,7 @@ Args builder
 
 Builder is a way to don't repeat args definition.
 
-Define your custom args builder
+Define your custom args builder:
 
 ```yaml
 #app/config/config.yml
@@ -20,7 +20,7 @@ overblog_graphql:
 #               Pager: "MyBundle\\GraphQL\\Args\\Pager"
 ```
 
-Builder class must implements `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
+Builder class must implement `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
 
 ```php
 <?php
@@ -31,7 +31,7 @@ use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 class Pager implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
         $defaultLimit = isset($config['defaultLimit']) ? (int)$config['defaultLimit'] : 20;
 
