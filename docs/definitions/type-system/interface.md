@@ -54,6 +54,7 @@ Character:
 Human:
     type: object
     config:
+        interfaces: [Character] # multiple interfaces allowed
         fields:
             id: "ID!"
             name: 
@@ -69,6 +70,7 @@ Human:
 Droid:
     type: object
     config:
+        interfaces: [Character] # multiple interfaces allowed
         fields:
             id: "ID!"
             name: 
