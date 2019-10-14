@@ -16,7 +16,7 @@ overblog_graphql:
                   class: "MyBundle\\GraphQL\\Fields\\TimestampFields"
 ```
 
-Builder class must implements `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
+Builder class must implement `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
 
 ```php
 <?php
@@ -27,21 +27,21 @@ use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 class TimestampFields implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
-        $propertyCreatedAt = isset($config['propertyCreatedAt']) ? $config['propertyCreatedAt'] : 'createdAt';
-        $propertyUpdatedAt = isset($config['propertyUpdatedAt']) ? $config['propertyUpdatedAt'] : 'updatedAt';
+        $propertyCreatedAt = $config['propertyCreatedAt'] ?? 'createdAt';
+        $propertyUpdatedAt = $config['propertyUpdatedAt'] ?? 'updatedAt';
 
         return [
             'createdAt' => [
                 'description' => 'The creation date of the object',
                 'type' => 'Int!',
-                'resolve' => '@=value.' . $propertyCreatedAt,
+                'resolve' => "@=value.$propertyCreatedAt",
             ],
             'updatedAt' => [
                 'description' => 'The update date of the object',
                 'type' => 'Int!',
-                'resolve' => '@=value.'. $propertyUpdatedAt,
+                'resolve' => "@=value.$propertyUpdatedAt",
             ],
         ];
     }
