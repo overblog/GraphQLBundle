@@ -70,9 +70,9 @@
     "scripts": {
         "test": "bin/phpunit --color=always -v --debug",
         "static-analysis": [
-            "@composer req --ansi --dev 'phpstan/phpstan:^0.10.3' 'phpstan/phpstan-phpunit:^0.10.0'",
+            "@composer req --ansi --dev 'phpstan/phpstan:^0.11.16' 'phpstan/phpstan-phpunit:^0.11.2' 'phpstan/extension-installer:^1.0.2'",
             "phpstan analyse --ansi",
-            "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit"
+            "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit phpstan/extension-installer"
         ],
         "bench": [
             "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
