@@ -17,6 +17,15 @@ class InputObjectTypeDefinition extends TypeDefinition
                 ->arrayNode('fields')
                     ->useAttributeAsKey('name', false)
                     ->prototype('array')
+                        // Allow field type short syntax (Field: Type => Field: {type: Type})
+                        ->beforeNormalization()
+                            ->ifTrue(function ($options) {
+                                return \is_string($options);
+                            })
+                            ->then(function ($options) {
+                                return ['type' => $options];
+                            })
+                        ->end()
                         ->append($this->typeSelection(true))
                         ->append($this->descriptionSection())
                         ->append($this->defaultValueSection())

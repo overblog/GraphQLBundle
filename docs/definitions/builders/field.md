@@ -19,7 +19,7 @@ overblog_graphql:
 #               RawId: "MyBundle\\GraphQL\\Field\\RawIdField"
 ```
 
-Builder class must implements `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
+Builder class must implement `Overblog\GraphQLBundle\Definition\Builder\MappingInterface`
 
 ```php
 <?php
@@ -30,15 +30,15 @@ use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 class RawIdField implements MappingInterface
 {
-    public function toMappingDefinition(array $config)
+    public function toMappingDefinition(array $config): array
     {
-        $name = isset($config['name']) ? $config['name'] : 'id';
-        $type = isset($config['type']) ? $config['type'] : 'Int!';
+        $name = $config['name'] ?? 'id';
+        $type = $config['type'] ?? 'Int!';
 
         return [
             'description' => 'The raw ID of an object',
             'type' => $type,
-            'resolve' => '@=value.'.$name,
+            'resolve' => "@=value.$name",
         ];
     }
 }
@@ -51,7 +51,6 @@ User:
     type: object
     config:
         fields:
-            # equivalent to => rawId: { description: "The user raw id", type: 'Int!', resolve: "@=value.id"  }
             rawId:
                 builder: "RawId"
                 description: "The user raw id"
@@ -60,7 +59,6 @@ Post:
     type: object
     config:
         fields:
-            # equivalent to => rawId: { description: "The raw ID of an object", type: 'String', resolve: "@=value.photoID"  }
             rawId: 
                 builder: "RawId"
                 #config your builder
@@ -77,9 +75,9 @@ User:
     config:
         fields:
             rawId:
-                description: "The user raw id"
+                description: 'The user raw id'
                 type: 'Int!'
-                resolve: "@=value.id"
+                resolve: '@=value.id'
 
 Post:
     type: object
