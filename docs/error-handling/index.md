@@ -107,7 +107,7 @@ overblog_graphql:
                 - "InvalidArgumentException"
 ```
 
-The mapping is handled inside the ``Overblog\GraphQLBundle\Error\ErrorHandler`
+The mapping is handled inside the `Overblog\GraphQLBundle\Error\ErrorHandler`
 class using an instance of the `Overblog\GraphQLBundle\Error\ExceptionConverter`
 class. Since this class implements an interface and is registered as a service
 in the dependency container, you can easily swap it and customize the logic.
