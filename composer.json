@@ -63,7 +63,9 @@
         "symfony/process": "^4.3 || ~5.0",
         "symfony/security-bundle": "^4.3 || ~5.0",
         "symfony/validator": "^4.3 || ~5.0",
-        "symfony/yaml": "^4.3 || ~5.0"
+        "symfony/var-dumper": "^4.3 || ~5.0",
+        "symfony/yaml": "^4.3 || ~5.0",
+        "twig/twig": "^1.34|^2.12"
     },
     "extra": {
         "branch-alias": {
