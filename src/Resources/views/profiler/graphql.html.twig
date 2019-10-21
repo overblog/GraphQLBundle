@@ -1,0 +1,173 @@
+<style>
+    .label.schema {
+        background: #e536ab;
+    }
+
+    .graphql-batch {
+        padding: 3px;
+        border: 1px solid #EEE;
+        align-items: start;
+        position: relative;
+    }
+
+    .graphql-operation {
+        padding: 3px 0px;
+        border-radius: 2px;
+    }
+
+    .graphql-query {
+        color: #35e21e;
+        font-weight: bold;
+    }
+
+    .graphql-mutation {
+        color: #1612fb;
+        font-weight: bold;
+    }
+
+    .graphql-field {
+        font-weight: bold;
+    }
+
+    .graphql-details {
+        display: flex;
+    }
+
+    .graphql-details > div {
+        flex: 50%;
+        margin: 5px;
+        border: 1px solid #BBB;
+    }
+    
+    .graphql-gql {
+        background: #F0F0F0;
+    }
+
+    .graphql-variables {
+        background: #ebf4ff;
+        padding: 6px;
+        margin: 0;
+    }
+
+    .graphql-result.success {
+        background: #ebffeb;
+    }
+
+    .graphql-result.error {
+        background: #ffebeb;
+    }
+
+    .graphql-error .error {
+        background: #ea1533ba;
+        color: #FFF;
+        display: block;
+        padding: 3px;
+    }
+
+    .schema {
+        border: 1px solid #BBB;
+    }
+</style>
+
+<div class="sf-tabs">
+    <div class="tab">
+        <h3 class="tab-title">GraphQL requests</h3>
+        <div class="tab-content">
+            <h2>{{ tokens ? tokens|length : 'No' }} HTTP queries on GraphQL enpoint(s)</h2>
+
+            {% if tokens %}
+                <table id="search-results">
+                    <thead>
+                        <tr>
+                            <th scope="col" width="70">Time</th>
+                            <th scope="col">GQL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in tokens %}
+                            {% set graphql = result.graphql %}
+                            {% set css_class = result.status_code|default(0) > 399 ? 'status-error' : result.status_code|default(0) > 299 ? 'status-warning' : 'status-success' %}
+
+                            <tr class="{% if result.token == token %}status-success{% endif %}">
+                                <td class="text-small text-center">
+                                    <a href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}">
+                                        <span class="nowrap newline">{{ result.time|date('H:i:s') }}</span>
+                                        <span class="label {{ css_class }}">{{ result.status_code|default('n/a') }}</span>
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if schemas|length > 1 %}
+                                        <div class="text-right">
+                                            <small>Schema</small> <span class="label schema">{{ graphql.schema }}</span>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% for idx, batch in graphql.batches %}
+                                        <div class="graphql-batch">
+                                            {% if batch.error is defined %}
+                                                <div class="graphql-error">
+                                                    <span class="error">
+                                                        {% if batch.error.location is defined %}
+                                                            <i>At line {{ batch.error.location.line}}, column {{ batch.error.location.column}}</i><br />
+                                                        {% endif %}
+                                                        {{ batch.error.message }}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+                                            {% if batch.graphql.operation is defined %}
+                                                {% set operation = batch.graphql.operation %}
+                                                {% set fields = batch.graphql.fields %}
+
+                                                {% for field in fields %}
+                                                    <div class="graphql-operation">
+                                                        <span class="graphql-{{ operation }}">
+                                                            {{ operation }}
+                                                        </span>
+                                                        <span class="graphql-field">{{ field.name}}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+
+                                            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#details-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide details">Show details</a>
+                                            <div id="details-{{result.token}}-{{idx}}">
+                                                <div class="graphql-details">
+                                                    <div class="graphql-gql">
+                                                        <div class="graphql-variables">
+                                                            Variables: {{ profiler_dump(batch.variables, maxDepth=2) }}
+                                                        </div>
+                                                        <pre class="line-numbers"><code class="language-graphql">{{ batch.queryString }}</code></pre>
+                                                    </div>
+                                                    <div class="graphql-result {{ batch.error is defined ? 'error' : 'success' }}">
+                                                        {{ profiler_dump(batch.result, maxDepth=3) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty">
+                    <p>No GraphQL queries stored.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% for name, schema in schemas %}
+        <div class="tab">
+            <h3 class="tab-title">Schema: <strong>{{ name }}</strong></h3>
+            <div class="tab-content schema">
+                <pre><code class="language-graphql">{{schema}}</code></pre>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/themes/prism.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/plugins/line-numbers/prism-line-numbers.min.js"></script>
