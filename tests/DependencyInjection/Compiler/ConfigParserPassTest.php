@@ -138,6 +138,47 @@ class ConfigParserPassTest extends TestCase
     /**
      * @runInSeparateProcess
      */
+    public function testTypesConfigurationCallback(): void
+    {
+        $this->processCompilerPass(
+            [
+                'definitions' => [
+                    'mappings' => [
+                        'types_callback' => FakeTypesConfigurationCallback::class,
+                        'types' => [
+                            [
+                                'types' => ['yaml'],
+                                'dir' => __DIR__.'/../mapping/types_configuration_callback',
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        );
+
+        $this->assertEquals(
+            [
+                'Foo' => [
+                    'type' => 'enum',
+                    'class_name' => 'FooType',
+                    'inherits' => [],
+                    'decorator' => false,
+                    'config' => [
+                        'values' => [
+                            'foo' => ['value' => 'FOO'],
+                            'bar' => ['value' => 'BAR', 'description' => 'baz'],
+                        ],
+                        'name' => 'Foo',
+                    ],
+                ],
+            ],
+            $this->container->getParameter('overblog_graphql_types.config')
+        );
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();

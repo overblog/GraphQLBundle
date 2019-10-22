@@ -95,3 +95,10 @@ Types can be define 3 different ways:
             tags:
                 - { name: overblog_graphql.type, alias: DateTime }
     ```
+
+Types configuration callback
+----------------------------
+
+This callback can be used to alter the type configuration after building it.
+
+It can be used to create custom types or enhance existing ones. See [here](types-configuration-callback.md) for an example.

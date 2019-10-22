@@ -50,6 +50,7 @@ Documentation
     - [Input Object](docs/definitions/type-system/input-object.md)
     - [Lists](docs/definitions/type-system/lists.md)
     - [Non-Null](docs/definitions/type-system/non-null.md)
+    - [Types configuration callback](docs/definitions/type-system/types-configuration-callback.md)
   - [Type Inheritance](docs/definitions/type-inheritance.md)
   - [GraphQL schema language](docs/definitions/graphql-schema-language.md)
   - [Schema](docs/definitions/schema.md)

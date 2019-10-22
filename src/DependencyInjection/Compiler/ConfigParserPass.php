@@ -93,6 +93,10 @@ class ConfigParserPass implements CompilerPassInterface
         // flatten config is a requirement to support inheritance
         $flattenTypeConfig = \array_merge(...$typeConfigs);
 
+        if (!empty($typesCallback = $config['definitions']['mappings']['types_callback'] ?? null)) {
+            $flattenTypeConfig = $typesCallback::processTypesConfiguration($flattenTypeConfig, $container, $config);
+        }
+
         return $flattenTypeConfig;
     }
 

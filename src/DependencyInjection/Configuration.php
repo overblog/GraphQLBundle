@@ -238,6 +238,24 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('root_dir')->defaultFalse()->end()
                     ->end()
                 ->end()
+                ->scalarNode('types_callback')
+                    ->defaultNull()
+                    ->validate()
+                        ->ifTrue(function ($callback) {
+                            if (!empty($callback)) {
+                                return !\is_subclass_of((string) $callback, TypesConfigurationCallbackInterface::class);
+                            }
+
+                            return false;
+                        })
+                        ->thenInvalid(
+                            \sprintf(
+                                'Types callback should be an instance of %s.',
+                                TypesConfigurationCallbackInterface::class
+                            )
+                        )
+                    ->end()
+                ->end()
                 ->arrayNode('types')
                     ->prototype('array')
                         ->addDefaultsIfNotSet()
