@@ -284,6 +284,7 @@ CODE;
      * @param array|null  $compilerNames
      *
      * @return string
+     *
      * @throws GeneratorException
      */
     protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): string
