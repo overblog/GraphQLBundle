@@ -311,7 +311,7 @@ CODE;
                 $autoThrow = false;
                 $this->addUseStatement(ResolveErrors::class);
 
-                $extraCode .= '$errors = new ResolveErrors();' . "\n\n<spaces><spaces>";
+                $extraCode .= '$errors = new ResolveErrors();'."\n\n<spaces><spaces>";
             }
 
             if ($mapping) {
@@ -319,9 +319,9 @@ CODE;
                 $this->addInternalUseStatement(InputValidator::class);
             } elseif (false === $autoValidation) {
                 throw new GeneratorException(
-                    "Unable to inject an instance of the InputValidator. No validation constraints provided. " .
-                    "Please remove the InputValidator argument from the list of dependencies of your " .
-                    "resolver or provide validation configs."
+                    'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
+                    'Please remove the InputValidator argument from the list of dependencies of your '.
+                    'resolver or provide validation configs.'
                 );
             }
         }
@@ -348,9 +348,9 @@ CODE;
             $code .= "\n\n<spaces><spaces>";
 
             if ($groups) {
-                $groups = "[" . \implode(",", \array_map(function($value) { return "'$value'"; }, $groups)) . "]";
+                $groups = '['.\implode(',', \array_map(function ($value) { return "'$value'"; }, $groups)).']';
             } else {
-                $groups = "null";
+                $groups = 'null';
             }
 
             if ($autoThrow) {

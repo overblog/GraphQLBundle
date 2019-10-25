@@ -102,11 +102,12 @@ class ExpectedErrors
                     'column' => 17,
                 ],
             ],
-            'path' => [$fieldName]
+            'path' => [$fieldName],
         ];
     }
 
-    public static function cascadeWithGroups($fieldName) {
+    public static function cascadeWithGroups($fieldName)
+    {
         return [
             'message' => 'validation',
             'extensions' => [
@@ -145,7 +146,7 @@ class ExpectedErrors
                 ],
             ],
             'locations' => [['line' => 3, 'column' => 17]],
-            'path' => [$fieldName]
+            'path' => [$fieldName],
         ];
     }
 }

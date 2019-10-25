@@ -34,7 +34,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                 })
             ->end()
             ->validate()
-                ->always(function($value){
+                ->always(function ($value) {
                     if (empty($value['validationGroups'])) {
                         unset($value['validationGroups']);
                     }

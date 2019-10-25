@@ -227,7 +227,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['expressionVariablesValidation']);
     }
 
-    public function testAutoValidationAutoThrowPasses()
+    public function testAutoValidationAutoThrowPasses(): void
     {
         $query = '
             mutation {
@@ -241,7 +241,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['autoValidationAutoThrow']);
     }
 
-    public function testAutoValidationAutoThrowFails()
+    public function testAutoValidationAutoThrowFails(): void
     {
         $query = '
             mutation {
@@ -256,9 +256,9 @@ class InputValidatorTest extends TestCase
     }
 
     /**
-     * Checks if the injected variable `errors` contains 0 violations
+     * Checks if the injected variable `errors` contains 0 violations.
      */
-    public function testAutoValidationNoThrowNoErrors()
+    public function testAutoValidationNoThrowNoErrors(): void
     {
         $query = 'mutation { autoValidationNoThrow(username: "Andrew") }';
         $result = $this->executeGraphQLRequest($query);
@@ -268,9 +268,9 @@ class InputValidatorTest extends TestCase
     }
 
     /**
-     * Checks if the injected variable `errors` contains exactly 1 violation
+     * Checks if the injected variable `errors` contains exactly 1 violation.
      */
-    public function testAutoValidationNoThrowHasErrors()
+    public function testAutoValidationNoThrowHasErrors(): void
     {
         $query = 'mutation { autoValidationNoThrow(username: "Tim") }';
         $result = $this->executeGraphQLRequest($query);
@@ -279,7 +279,7 @@ class InputValidatorTest extends TestCase
         $this->assertTrue(true === $result['data']['autoValidationNoThrow']);
     }
 
-    public function testAutoValidationAutoThrowWithGroupsPasses()
+    public function testAutoValidationAutoThrowWithGroupsPasses(): void
     {
         $query = '
             mutation {

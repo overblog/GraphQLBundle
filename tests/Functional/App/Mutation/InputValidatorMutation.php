@@ -36,9 +36,9 @@ class InputValidatorMutation implements MutationInterface
     {
         $violations = $errors->getValidationErrors();
 
-        if ($violations->count() === 1) {
+        if ($violations && 1 == $violations->count()) {
             return true;
-        } elseif ($violations->count() === 0) {
+        } elseif ($violations && 0 === $violations->count()) {
             return false;
         }
 
