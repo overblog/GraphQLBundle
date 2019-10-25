@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Overblog\GraphQLGenerator\Exception\GeneratorException;
 
 class TypeGeneratorTest extends TestCase
 {
@@ -55,24 +56,45 @@ class TypeGeneratorTest extends TestCase
     }
 
     /**
-     * Defining the `cascade` validation option on
-     * scalar types should throw an exception.
+     * Defining the `cascade` validation option on scalar types
+     * should throw an exception.
      */
     public function testCascadeOnScalarasThrowsException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(GeneratorException::class);
         $this->expectExceptionMessage('Cascade validation cannot be applied to built-in types.');
 
         parent::setUp();
         static::bootKernel(['test_case' => 'cascadeOnScalars']);
     }
 
+    /**
+     * Defining a validation constraint which doesn't exist should
+     * throw an exception.
+     */
     public function testNonExistentConstraintThrowsException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(GeneratorException::class);
         $this->expectExceptionMessage("Constraint class 'Symfony\Component\Validator\Constraints\BlahBlah' doesn't exist.");
 
         parent::setUp();
         static::bootKernel(['test_case' => 'nonexistentConstraint']);
+    }
+
+    /**
+     * Injecting the `validator` constraint into a resolver without having
+     * any constraints defined in the type should throw an exception.
+     */
+    public function testInjectValidatorWithoutConstraintsThrowsException(): void
+    {
+        $this->expectException(GeneratorException::class);
+        $this->expectExceptionMessage(
+            "Unable to inject an instance of the InputValidator. No validation constraints provided. " .
+            "Please remove the InputValidator argument from the list of dependencies of your " .
+            "resolver or provide validation configs."
+        );
+
+        parent::setUp();
+        static::bootKernel(['test_case' => 'validatorWithoutConstraints']);
     }
 }

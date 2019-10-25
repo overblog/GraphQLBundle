@@ -15,6 +15,8 @@ This bundle provides a tight integration with the [Symfony Validator Component](
     - [Cascade](#cascade)
 - [Groups](#groups)
 - [Group Sequences](#group-sequences)
+- [Validating inside resolvers](#validating-inside-resolvers)
+- [Injecting errors](#injecting-errors)
 - [Error messages](#error-messages)
    - [Customizing the response](#customizing-the-response)
 - [Translations](#translations)
@@ -26,7 +28,12 @@ This bundle provides a tight integration with the [Symfony Validator Component](
 
 
 ## Overview
-Follow the example below to get a quick overview of the basic validation capabilities of this bundle. 
+In order to validate input data the only thing you need to do is to apply [constraints](https://symfony.com/doc/current/reference/constraints.html) 
+in your `yaml` type definitions (`args` by `object` types and `fields` by `input-object` types). The bundle will then 
+automatically validate the data and throw an exception, which will be caught and returned in the response back to the 
+client.
+
+Follow the example below to get a quick overview of the most basic validation capabilities of this bundle. 
 ```yaml
 # config\graphql\types\Mutation.yaml
 Mutation:
@@ -35,17 +42,17 @@ Mutation:
         fields:
             register:
                 type: User
-                resolve: "@=mutation('register', [args, validator])"
+                resolve: "@=mutation('register', [args])"
                 args:
                     username:
                         type: String!
-                        validation:
+                        validation: # applying constraints to `username`
                             - Length:
                                 min: 6
                                 max: 32
-                     password:
+                    password:
                         type: String!
-                        validation:
+                        validation: # applying constraints to `password`
                             - Length:
                                 min: 8
                                 max: 32
@@ -55,7 +62,7 @@ Mutation:
                         type: String!
                     emails:
                         type: "[String]"
-                        validation:
+                        validation: # applying constraints to `emails`
                             - Unique: ~
                             - Count:
                                 min: 1
@@ -64,7 +71,7 @@ Mutation:
                                 - Email: ~
                     birthdate:
                         type: Birthdate
-                        validation: cascade
+                        validation: cascade # delegating validation to the embedded type
                         
 Birthday:
     type: input-object
@@ -83,7 +90,7 @@ Birthday:
                 validation:
                     - Range: { min: 1900, max: 2019 }
 ```
-The configuration above ensures, that:
+The configuration above checks, that:
 - **username** 
     - has length between 6 and 32
 - **password** 
@@ -100,43 +107,24 @@ The `birthday` field is of type `input-object` and is marked as `cascade` so it'
 - **year** is between 1900 and 2019
 
 
-A configured `validator` will be then injected into the resolver defined in the `Mutation.yaml`:
-```php
-namespace App\GraphQL\Mutation\Mutation
+The validation system ensures, that all arguments in your resolver are always valid. If validation fails, your resolver 
+will never be called.
 
-use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Validator\InputValidator;
 
-class UserResolver implements MutationInterface, AliasedInterface
-{
-    public function register(Argument $args, InputValidator $validator): User
-    {
-        // This line executes a validation process and throws ArgumentsValidationException 
-        // on fail. The client will then get a well formatted error message.
-        $validator->validate();
-        
-        // This line won't be reached if the validation fails
-        $user = $this->userManager->createUser($args);
-        $this->userManager->save($user);
-        
-        return $user;
-    }
-
-    public static function getAliases(): array
-    {
-        return ['register' => 'register'];
-    }	
-}
-```
 ## How does it work?
 
-The Symfony Validator Component is designed to validate objects. For this reason this bundle creates temporary objects for each of your GraphQL types during the validation process and populates them with the input data. Resulting objects will repeat the nesting structure of your GraphQL schema. The object properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class `ValidationNode` (see [ValidationNode API](#validationnode-api)). The resulting object composition will be then recursively validated, starting from the root object down to it's children.
+The Symfony Validator Component is designed to validate objects. For this reason this bundle creates temporary objects 
+for each of your GraphQL types during the validation process and populates them with the input data. Resulting objects 
+will repeat the nesting structure of your GraphQL schema. The object properties are created dynamically in runtime with 
+the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` 
+respectively). All newly created objects will be instances of the class `ValidationNode` 
+(see [ValidationNode API](#validationnode-api)). The resulting object composition will be then recursively validated, 
+starting from the root object down to it's children.
 
 > Please note, that the original arguments won't be altered in any way.
 
-Let's take the example from the chapter [Overview](#overview). When you call `$validator->validate()` in the `register` resolver, two following objects will be created (for both GraphQL types):
+Let's take the example from the chapter [Overview](#overview). When a user requests the `register` field, two following 
+objects will be created (for both GraphQL types):
 
 ![enter_image_description_here](img/diagram_1.svg)
 
@@ -150,7 +138,7 @@ Mutation:
         fields:
             registerUser:
                 type: User
-                resolve: "@=mutation('registerUser', [args, validator])"
+                resolve: "@=mutation('registerUser', [args])"
                 args:
                     username:
                         type: String!
@@ -195,7 +183,7 @@ Mutation:
                                         - Positive: ~
             registerAdmin:
                 type: User
-                resolve: "@=mutation('registerAdmin', [args, validator])"
+                resolve: "@=mutation('registerAdmin', [args])"
                 args:
                     username:
                         type: String!
@@ -316,7 +304,7 @@ Mutation:
         fields:
             updateUser:
                 type: User
-                resolve: "@=mutation('updateUser', [args, validator])"
+                resolve: "@=mutation('updateUser', [args])"
                 args:
                     username:
                         type: String
@@ -347,7 +335,7 @@ Mutation:
         fields:
             updateUser:
                 type: User
-                resolve: "@=mutation('updateUser', [args, validator])"
+                resolve: "@=mutation('updateUser', [args])"
                 validation:
                     - Callback: [App\Validation\UserValidator, updateUser]
                 args:
@@ -365,14 +353,14 @@ Mutation:
         fields:
             createUser:
                 type: User
-                resolve: "@=mutation('createUser', [args, validator])"
+                resolve: "@=mutation('createUser', [args])"
                 args:
                     username: String						
                     email: String
                     info: String
             updateUser:
                 type: User
-                resolve: "@=mutation('updateUser', [args, validator])"
+                resolve: "@=mutation('updateUser', [args])"
                 args:
                     username: String						
                     email: String
@@ -381,7 +369,9 @@ Mutation:
 ```
 #### input-object:
 
-`input-object` types are designed to be used as arguments in other types. Basically, they are composite arguments, so the *property* constraints are declared for each _field_ unlike `object` types, where the property constraints are declared for each _argument_:
+`input-object` types are designed to be used as arguments in other types. Basically, they are composite arguments, so 
+the *property* constraints are declared for each _field_ unlike `object` types, where the property constraints are 
+declared for each _argument_:
 ```yaml
 User:
     type: input-object
@@ -497,7 +487,7 @@ Mutation:
             fields:
                 editPost:
                     type: Post
-                    resolve: "@=mutation('edit_post', [args, validator])"
+                    resolve: "@=mutation('edit_post', [args])"
                     validation:
                         link: App\Entity\Post # targeting the class
                     args:
@@ -551,7 +541,7 @@ Mutation:
         fields:
             createUser:
                 validation: App\Entity\User # linking
-                resolve: "@=res('createUser', [args, validator])"
+                resolve: "@=res('createUser', [args])"
                 # ...
 ```
 Now, when you try to validate the arguments in your resolver, it will throw an exception, because it will try to call a method with the name `validate` on the object of class `ValidationNode`, which doesn't have such. As explained in the section [How does it work?](#how-does-it-work) each GraphQL type is represented by an object of class `ValidationNode` during the validation process.
@@ -574,7 +564,7 @@ Mutation:
             fields:
                 updateUser:
                     type: Post
-                    resolve: "@=mutation('update_user', [args, validator])"
+                    resolve: "@=mutation('update_user', [args])"
                     args:
                         id: 
                             type: ID!
@@ -620,9 +610,62 @@ Period:
 
 ## Groups
 
-It is possible to organize constraints into [validation groups](https://symfony.com/doc/current/validation/groups.html). By default, if you don't declare groups explicitly, every constraint of your type will be in 2 groups: **Default** and the name of the type. For example, if the type's name is **Mutation** and the declaration of constraint is `NotBlank: ~` (no explicit groups declared), then it automatically falls into 2 default groups: **Default** and **Mutation**. These default groups will be removed, if you declare groups explicitly. Follow the [link](https://symfony.com/doc/current/validation/groups.html) for more details about validation groups in the Symfony Validator Component.
+It is possible to organize constraints into [validation groups](https://symfony.com/doc/current/validation/groups.html). 
+By default, if you don't declare groups explicitly, every constraint of your type will be in 2 groups: **Default** and 
+the name of the type. For example, if the type's name is **Mutation** and the declaration of constraint is `NotBlank: ~`
+ (no explicit groups declared), then it automatically falls into 2 default groups: **Default** and **Mutation**. These 
+ default groups will be removed, if you declare groups explicitly. Follow the 
+ [link](https://symfony.com/doc/current/validation/groups.html) for more details about validation groups in the Symfony 
+ Validator Component.
 
-Let's take the example from the chapter [Overview](#overview) and edit the configuration to use validation groups:
+Validation groups could be useful if you use a same `input-object` type in different contexts and want it to be 
+validated differently (with different groups). Take a look at the following example:
+```yaml
+Mutation:
+    type: object
+    config:
+        fields:
+            registerUser: 
+                type: User
+                resolve: "@=('register_user')"
+                validationGroups: ['User']
+                args:
+                    input:
+                        type: UserInput!
+                        validation: cascade
+            registerAdmin: 
+                type: User
+                resolve: "@=('register_admin')"
+                validationGroups: ['Admin']
+                args:
+                    input:
+                        type: UserInput!
+                        validation: cascade
+
+UserInput:
+    type: input-object
+    config:
+        fields:
+            username:
+                type: String!
+                validation:
+                    - Length: {min: 3, max: 15}
+            password:
+                type: String
+                validation:
+                    - Length: {min: 4, max: 32, groups: 'User'}
+                    - Length: {min: 10, max: 32, groups: 'Admin'}
+```
+As you can see the `password` field of the `UserInput` type has a same constraint applied to it twice, but with 
+different groups. The `validationGroups` option ensures that validation will only use the onstraints that are listed 
+in it.
+
+In case you inject the validator into the resolver (as described [here](#validating-inside-resolvers)), the `validationGroups`
+option will be ignored. Instead you should pass groups directly to the injected validator. This approach could be 
+necessary in some few cases.
+
+Let's take the example from the chapter [Overview](#overview) and edit the configuration to inject the `validator` and 
+to use validation groups:
 ```yaml
 # config\graphql\types\Mutation.yaml
 Mutation:
@@ -631,7 +674,7 @@ Mutation:
         fields:
             register:
                 type: User
-                resolve: "@=mutation('register', [args, validator])"
+                resolve: "@=mut('register', [args, validator])" # injecting validator
                 args:
                     username:
                         type: String!
@@ -640,7 +683,7 @@ Mutation:
                                 min: 6
                                 max: 32
                                 groups: ['registration']
-                     password:
+                    password:
                         type: String!
                         validation:
                             - Length:
@@ -660,9 +703,9 @@ Mutation:
                                 max: 3
                             - All:
                                 - Email: ~
-                     birthday:
-                         type: Birthday
-                         validation: cascade
+                    birthday:
+                        type: Birthday
+                        validation: cascade
                          
 Birthday:
     type: input-object
@@ -681,40 +724,58 @@ Birthday:
                 validation:
                     - Range: { min: 1900, max: today }
 ```
-The configuration above could be used in a resolver as follows:
+Here we injected the `validator` variable into the `register` resolver. By doing so we are turning the automatic 
+validation off to perform it inside the resolver (see [Validating inside resolvers](#validating-inside-resolvers)). The 
+injected instance of the `InputValidator` class could be used in a resolver as follows:
 ```php
-public function register(Argument $args, InputValidator $validator)
+namespace App\GraphQL\Mutation\Mutation
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Validator\InputValidator;
+
+class UserResolver implements MutationInterface, AliasedInterface
 {
-    /* 
-     * Validates:
-     *   - username against 'Length'
-     *   - password againt 'IdenticalTo'
-     */
-    $validator->validate('registration');
 
-    /* 
-     * Validates:
-     *   - password against 'Length'
-     *   - emails against 'Unique', 'Count' and 'All'
-     *   - birthday against 'Valid' (cascade).
-     *       - day against 'Range'
-     *       - month against 'Range'
-     *       - year against 'Range'
-     */ 
-    $validator->validate('Default');
-    // ... which is in this case equal to:
-    $validator->validate(); 
+    public function register(Argument $args, InputValidator $validator)
+    {
+        /* 
+         * Validates:
+         *   - username against 'Length'
+         *   - password againt 'IdenticalTo'
+         */
+        $validator->validate('registration');
+    
+        /* 
+         * Validates:
+         *   - password against 'Length'
+         *   - emails against 'Unique', 'Count' and 'All'
+         *   - birthday against 'Valid' (cascade).
+         *       - day against 'Range'
+         *       - month against 'Range'
+         *       - year against 'Range'
+         */ 
+        $validator->validate('Default');
+        // ... which is in this case equal to:
+        $validator->validate(); 
+    
+        /** 
+         * Validates only arguments in the 'Birthday' type 
+         * against constraints with no explicit groups.
+         */
+        $validator->validate('Birthdate');	
+    
+        // Validates all arguments in each type against all constraints.
+        $validator->validate(['registration', 'Default']);
+        // ... which is in this case equal to:
+        $validator->validate(['registration', 'Mutation', 'Birthdate']);
+    }
 
-    /** 
-     * Validates only arguments in the 'Birthday' type 
-     * against constraints with no explicit groups.
-     */
-    $validator->validate('Birthdate');	
-
-    // Validates all arguments in each type against all constraints.
-    $validator->validate(['registration', 'Default']);
-    // ... which is in this case equal to:
-    $validator->validate(['registration', 'Mutation', 'Birthdate']);
+    public static function getAliases(): array
+    {
+        return ['register' => 'register'];
+    }	
 }
 ```
 > **Note**:
@@ -752,8 +813,106 @@ Mutation:
                 # ...
 ```
 
+## Validating inside resolvers
+You can turn the auto-validation off by injecting the validator into your resolver. This can be useful if you want to 
+do something before the actual validation happens or customize other aspects, for example validate data multiple times 
+with different groups or make the validation conditional.
+
+Here is how you can inject the validator:
+```yaml
+Mutation:
+    type: object
+    config:
+        fields:
+            register:
+                resolve: "@=mutation('register', [args, validator])"
+                # ...
+```
+resolver:
+```php
+namespace App\GraphQL\Mutation\Mutation
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Validator\InputValidator;
+
+class UserResolver implements MutationInterface, AliasedInterface
+{
+    public function register(Argument $args, InputValidator $validator): User
+    {
+        // This line executes a validation process and throws ArgumentsValidationException 
+        // on fail. The client will then get a well formatted error message.
+        $validator->validate();
+
+        // To validate with groups just pass a string or an array
+        $validator->validate(['my_group', 'group2']);
+
+        // Or use a short syntax, which is equal to $validator->validate().
+        // This is possible thanks to the __invoke magic method.
+        $validator();
+        
+        // The code below won't be reached if one of the validations above fails
+        $user = $this->userManager->createUser($args);
+        $this->userManager->save($user);
+        
+        return $user;
+    }
+
+    public static function getAliases(): array
+    {
+        return ['register' => 'register'];
+    }	
+}
+```
+If you want to prevent the validator to automatically throw an exception just pass `false` as the second argument. It 
+will return an instance of the `ConstraintViolationList` class instead:
+```php
+$errors = $validator->validate('my_group', false);
+
+// Do something with errors
+if ($errors->count() > 0) {
+    // ...
+}
+```
+
+## Injecting `errors`
+It's possible to inject the `errors` variable with all validation violations instead of automatic exception throw:
+```yaml
+Mutation:
+    type: object
+    config:
+        fields:
+            register:
+                resolve: "@=mutation('register', [args, errors])"
+                # ...
+```
+```php
+namespace App\GraphQL\Mutation\Mutation
+
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Error\ResolveErrors;
+
+class UserResolver implements MutationInterface, AliasedInterface
+{
+    public function register(Argument $args, ResolveErrors $errors): User
+    {
+        $violations = $errors->getValidationErrors();
+        
+        // ...
+    }
+
+    public static function getAliases(): array
+    {
+        return ['register' => 'register'];
+    }	
+}
+```
+
 ## Error Messages
-By default an `InputValidator` object throws an `ArgumentsValidationException`, which will be caught and serialized into 
+By default the `InputValidator` throws an `ArgumentsValidationException`, which will be caught and serialized into 
 a readable response. The [GraphQL specification](https://graphql.github.io/graphql-spec/June2018/#sec-Errors) defines a 
 certain shape of all errors returned in the response. According to it all validation violations are to be found under
 the path `errors[index].extensions.validation` of the response object. 

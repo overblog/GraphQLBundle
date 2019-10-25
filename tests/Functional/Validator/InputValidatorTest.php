@@ -51,7 +51,7 @@ class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::SIMPLE_VALIDATION, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::simpleValidation('simpleValidation'), $result['errors'][0]);
         $this->assertNull($result['data']['simpleValidation']);
     }
 
@@ -197,7 +197,7 @@ class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::CASCADE_WITH_GROUPS, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::cascadeWithGroups('cascadeValidationWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
 
@@ -225,5 +225,115 @@ class InputValidatorTest extends TestCase
 
         $this->assertTrue(empty($result['errors']));
         $this->assertTrue($result['data']['expressionVariablesValidation']);
+    }
+
+    public function testAutoValidationAutoThrowPasses()
+    {
+        $query = '
+            mutation {
+                autoValidationAutoThrow(username: "Andrew")
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue($result['data']['autoValidationAutoThrow']);
+    }
+
+    public function testAutoValidationAutoThrowFails()
+    {
+        $query = '
+            mutation {
+                autoValidationAutoThrow(username: "Tim")
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertSame(ExpectedErrors::simpleValidation('autoValidationAutoThrow'), $result['errors'][0]);
+        $this->assertNull($result['data']['autoValidationAutoThrow']);
+    }
+
+    /**
+     * Checks if the injected variable `errors` contains 0 violations
+     */
+    public function testAutoValidationNoThrowNoErrors()
+    {
+        $query = 'mutation { autoValidationNoThrow(username: "Andrew") }';
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue(false === $result['data']['autoValidationNoThrow']);
+    }
+
+    /**
+     * Checks if the injected variable `errors` contains exactly 1 violation
+     */
+    public function testAutoValidationNoThrowHasErrors()
+    {
+        $query = 'mutation { autoValidationNoThrow(username: "Tim") }';
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue(true === $result['data']['autoValidationNoThrow']);
+    }
+
+    public function testAutoValidationAutoThrowWithGroupsPasses()
+    {
+        $query = '
+            mutation {
+                autoValidationAutoThrowWithGroups(
+                    birthdate: {
+                        day: 15
+                        month: 315
+                        year: 3146
+                    }
+                    address: {
+                        street: "Washington Street"
+                        city: "New York"
+                        zipCode: 10006
+                        period: {
+                            startDate: "2016-01-01"
+                            endDate: "2019-07-14"
+                        }
+                    }
+                )
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertTrue(empty($result['errors']));
+        $this->assertTrue($result['data']['autoValidationAutoThrowWithGroups']);
+    }
+
+    public function testAutoValidationAutoThrowWithGroupsFails(): void
+    {
+        $query = '
+            mutation {
+                autoValidationAutoThrowWithGroups(
+                    birthdate: {
+                        day: 699
+                        month: 315
+                        year: 3146
+                    }
+                    address: {
+                        street: "ul. Lazo"
+                        city: "Moscow"
+                        zipCode: -215
+                        period: {
+                            startDate: "2020-01-01"
+                            endDate: "2019-07-14"
+                        }
+                    }
+                )
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+
+        $this->assertSame(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
+        $this->assertNull($result['data']['autoValidationAutoThrowWithGroups']);
     }
 }
