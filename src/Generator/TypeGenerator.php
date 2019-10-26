@@ -349,7 +349,7 @@ CODE;
             $code .= "\n\n<spaces><spaces>";
 
             if (null !== $groups) {
-                $groups = '['.\implode(',', \array_map(function ($value) { return "'$value'"; }, $groups)).']';
+                $groups = \json_encode($groups);
             } else {
                 $groups = 'null';
             }
