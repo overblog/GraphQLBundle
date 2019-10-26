@@ -348,7 +348,7 @@ CODE;
         if ($autoValidation) {
             $code .= "\n\n<spaces><spaces>";
 
-            if ($groups) {
+            if (null !== $groups) {
                 $groups = '['.\implode(',', \array_map(function ($value) { return "'$value'"; }, $groups)).']';
             } else {
                 $groups = 'null';
