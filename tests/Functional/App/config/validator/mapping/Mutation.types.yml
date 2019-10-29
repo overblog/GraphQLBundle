@@ -88,3 +88,41 @@ Mutation:
                         type: "String"
                         validation:
                             - Expression: "service('service_validator').resolveVariablesAccessible(args, info)"
+
+            autoValidationAutoThrow:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args])'
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 5 }
+                            - Regex:
+                                  pattern: '/^[a-z]+$/i'
+                                  htmlPattern: true
+
+            autoValidationNoThrow:
+                type: Boolean
+                resolve: '@=mut("mutation_errors", [errors])'
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 5 }
+                            - Regex:
+                                  pattern: '/^[a-z]+$/i'
+                                  htmlPattern: true
+
+            autoValidationAutoThrowWithGroups:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args])'
+                validationGroups: ["Default", "Address", "Period", "group1", "group2"]
+                args:
+                    address:
+                        type: Address!
+                        validation: cascade
+                    birthdate:
+                        type: Birthdate
+                        validation:
+                            cascade:
+                                groups: ['group2']
