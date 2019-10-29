@@ -982,7 +982,7 @@ Mutation:
         fields:
             register:
                 type: User
-                resolve: "@=mutation('register', [args, validator])"
+                resolve: "@=mutation('register', [args])"
                 args:
                     username:
                         type: String!
@@ -1106,7 +1106,7 @@ Mutation:
         fields:
             registerUser:
                 type: User
-                resolve: "@=resolver('register_user', [args, validator])"
+                resolve: "@=resolver('register_user', [args])"
                 args:
                     username: String!
                     password: String!
@@ -1146,7 +1146,7 @@ Mutation:
         fields:
             createUser:
                 type: User
-                resolve: "@=resolver('createUser', [args, validator])"
+                resolve: "@=resolver('createUser', [args])"
                 args:
                     username: String!
                     password: String!
@@ -1154,7 +1154,7 @@ Mutation:
                     email: String!
             createAdmin:
                 type: User
-                resolve: "@=resolver('createAdmin', [args, validator])"
+                resolve: "@=resolver('createAdmin', [args])"
                 args:
                     username: String!
                     password: String!
