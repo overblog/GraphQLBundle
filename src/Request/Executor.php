@@ -88,15 +88,12 @@ class Executor
             throw new \RuntimeException('At least one schema should be declare.');
         }
 
-        if (null === $name) {
-            // TODO(mcg-web): Replace by array_key_first PHP 7 >= 7.3.0.
-            foreach ($this->schemas as $name => $schema) {
-                break;
-            }
-        }
+        $name = $this->getSchemaNameOrDefault($name);
+
         if (!isset($this->schemas[$name])) {
             throw new NotFoundHttpException(\sprintf('Could not found "%s" schema.', $name));
         }
+
         $schema = $this->schemas[$name];
         if (\is_callable($schema)) {
             $schema = $schema();
@@ -141,7 +138,9 @@ class Executor
     {
         $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
 
+        $schemaName = $this->getSchemaNameOrDefault($schemaName);
         $executorArgumentsEvent = $this->preExecute(
+            $schemaName,
             $this->getSchema($schemaName),
             $request[ParserInterface::PARAM_QUERY] ?? null,
             new \ArrayObject(),
@@ -168,7 +167,25 @@ class Executor
         return $result;
     }
 
+    /**
+     * @param string|null $name
+     *
+     * @return string
+     */
+    private function getSchemaNameOrDefault(?string $name)
+    {
+        if (null === $name) {
+            // TODO(mcg-web): Replace by array_key_first PHP 7 >= 7.3.0.
+            foreach ($this->schemas as $name => $schema) {
+                break;
+            }
+        }
+
+        return $name;
+    }
+
     private function preExecute(
+        string $schemaName,
         Schema $schema,
         ?string $requestString,
         \ArrayObject $contextValue,
@@ -182,7 +199,7 @@ class Executor
         );
 
         return $this->dispatcher->dispatch(
-            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
+            ExecutorArgumentsEvent::create($schemaName, $schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
             Events::PRE_EXECUTOR
         );
     }

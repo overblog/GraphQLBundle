@@ -9,6 +9,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExecutorArgumentsEvent extends Event
 {
+    /** @var string */
+    private $schemaName;
+
     /** @var ExtensibleSchema */
     private $schema;
 
@@ -28,6 +31,7 @@ final class ExecutorArgumentsEvent extends Event
     private $operationName;
 
     public static function create(
+            string $schemaName,
             ExtensibleSchema $schema,
             $requestString,
             \ArrayObject $contextValue,
@@ -36,6 +40,7 @@ final class ExecutorArgumentsEvent extends Event
             $operationName = null
         ) {
         $instance = new static();
+        $instance->setSchemaName($schemaName);
         $instance->setSchema($schema);
         $instance->setRequestString($requestString);
         $instance->setContextValue($contextValue);
@@ -78,6 +83,19 @@ final class ExecutorArgumentsEvent extends Event
     public function setVariableValue(array $variableValue = null): void
     {
         $this->variableValue = $variableValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchemaName()
+    {
+        return $this->schemaName;
+    }
+
+    public function setSchemaName(string $schemaName)
+    {
+        $this->schemaName = $schemaName;
     }
 
     public function setSchema(ExtensibleSchema $schema): void
