@@ -366,7 +366,7 @@ parameters:
 			path: src/Controller/GraphController.php
 
 		-
-			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string, array\\<string\\>\\|string\\|null given\\.$#"
+			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string, string\\|null given\\.$#"
 			count: 1
 			path: src/Controller/GraphController.php
 
@@ -736,29 +736,9 @@ parameters:
 			path: src/Request/BatchParser.php
 
 		-
-			message: "#^Cannot cast array\\<string\\>\\|string\\|null to string\\.$#"
-			count: 1
-			path: src/Request/BatchParser.php
-
-		-
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, resource\\|string given\\.$#"
-			count: 1
-			path: src/Request/BatchParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$schema of static method Overblog\\\\GraphQLBundle\\\\Event\\\\ExecutorArgumentsEvent\\:\\:create\\(\\) expects Overblog\\\\GraphQLBundle\\\\Definition\\\\Type\\\\ExtensibleSchema, GraphQL\\\\Type\\\\Schema given\\.$#"
 			count: 1
 			path: src/Request/Executor.php
-
-		-
-			message: "#^Cannot cast array\\<string\\>\\|string\\|null to string\\.$#"
-			count: 1
-			path: src/Request/Parser.php
-
-		-
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, resource\\|string given\\.$#"
-			count: 1
-			path: src/Request/Parser.php
 
 		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$input\\)\\: Unexpected token \"\\$input\", expected TOKEN_IDENTIFIER at offset 18$#"
@@ -1359,3 +1339,5 @@ parameters:
 			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected TOKEN_IDENTIFIER at offset 52$#"
 			count: 1
 			path: tests/Upload/Type/GraphQLUploadTypeTest.php
+
+
