@@ -12,6 +12,7 @@
 namespace Overblog\GraphQLGenerator\Generator;
 
 use Overblog\GraphQLGenerator\ClassUtils;
+use Overblog\GraphQLGenerator\Exception\GeneratorException;
 
 abstract class AbstractClassGenerator
 {
@@ -205,7 +206,13 @@ abstract class AbstractClassGenerator
             }
 
             if (!isset(self::$templates[$path])) {
-                $content = \trim(\file_get_contents($path));
+                $fileContent = \file_get_contents($path);
+
+                if ($fileContent === false) {
+                    throw new GeneratorException(sprintf('Unable to get content for %s', $path));
+                }
+
+                $content = \trim($fileContent);
 
                 self::$templates[$path] = $content;
             }
@@ -242,6 +249,11 @@ abstract class AbstractClassGenerator
         $shortName = ClassUtils::shortenClassName($definition);
 
         $useStatement = \preg_replace('@\:\:.*$@i', '', $definition);
+
+        if ($useStatement === null) {
+            throw new GeneratorException(sprintf('Unable to get use statement for %s', $definition));
+        }
+
         if ($isInternal) {
             $this->addInternalUseStatement($useStatement);
         } else {
@@ -251,7 +263,7 @@ abstract class AbstractClassGenerator
         return $shortName;
     }
 
-    protected function shortenClassFromCode(?string $code): string
+    protected function shortenClassFromCode(string $code): string
     {
         $codeParsed = ClassUtils::shortenClassFromCode(
             $code,
@@ -364,12 +376,8 @@ abstract class AbstractClassGenerator
         return $traits ? $traits."\n" : $traits;
     }
 
-    protected function tokenizeUseStatements(array $useStatements, $prefix = ''): ?string
+    protected function tokenizeUseStatements(array $useStatements, $prefix = ''): string
     {
-        if (empty($useStatements)) {
-            return null;
-        }
-
         $code = '';
 
         foreach ($useStatements as $useStatement) {

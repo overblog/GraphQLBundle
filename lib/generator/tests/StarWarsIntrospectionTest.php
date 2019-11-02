@@ -60,7 +60,7 @@ class StarWarsIntrospectionTest extends AbstractStarWarsTest
         $this->sortSchemaEntry($actual, 'types', 'name');
         $this->sortSchemaEntry($expected, 'types', 'name');
         $expected = ['data' => $expected];
-        $this->assertEquals($expected, $actual, \json_encode($actual));
+        $this->assertEquals($expected, $actual);
     }
 
     // it('Allows querying the schema for query type')

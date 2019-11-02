@@ -16,12 +16,12 @@ use Overblog\GraphQLGenerator\ClassUtils;
 class ClassUtilsTest extends TestCase
 {
     /**
-     * @param $code
-     * @param $expected
+     * @param string $code
+     * @param string $expected
      *
      * @dataProvider shortenClassFromCodeDataProvider
      */
-    public function testShortenClassFromCode($code, $expected): void
+    public function testShortenClassFromCode(string $code, string $expected): void
     {
         $actual = ClassUtils::shortenClassFromCode($code);
 
@@ -30,9 +30,7 @@ class ClassUtilsTest extends TestCase
 
     public function shortenClassFromCodeDataProvider(): iterable
     {
-        return [
-            ['$toto, \Toto\Tata $test', '$toto, Tata $test'],
-            ['\Tata $test', 'Tata $test'],
-        ];
+        yield ['$toto, \Toto\Tata $test', '$toto, Tata $test'];
+        yield ['\Tata $test', 'Tata $test'];
     }
 }

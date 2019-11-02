@@ -20,6 +20,7 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -70,7 +71,7 @@ EOF;
     protected $cacheDirMask;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $currentlyGeneratedClass;
 
@@ -95,6 +96,10 @@ EOF;
 
     public function getExpressionLanguage(): ExpressionLanguage
     {
+        if ($this->expressionLanguage === null) {
+            throw new GeneratorException('Expression language is not defined');
+        }
+
         return $this->expressionLanguage;
     }
 
@@ -143,7 +148,7 @@ EOF;
             return $default;
         }
 
-        $code = $this->varExport($values[$key], $default, $compilerNames);
+        $code = $this->varExport($values[$key], $default, $compilerNames) ?? '';
 
         return $code;
     }

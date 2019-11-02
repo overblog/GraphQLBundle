@@ -70,7 +70,16 @@ abstract class AbstractTypeGeneratorTest extends TestCase
     protected function prepareTypeConfigs(): array
     {
         $yaml = new \Symfony\Component\Yaml\Parser();
-        $typeConfigs = $yaml->parse(\file_get_contents(__DIR__.'/../starWarsSchema.yml'));
+
+        $data = \file_get_contents(__DIR__.'/../starWarsSchema.yml');
+
+        if ($data === false) {
+            $this->fail('Unable to get YAML content');
+
+            return [];
+        }
+
+        $typeConfigs = $yaml->parse($data);
 
         return $this->processConfig($typeConfigs);
     }

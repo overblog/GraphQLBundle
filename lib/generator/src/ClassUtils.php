@@ -11,6 +11,8 @@
 
 namespace Overblog\GraphQLGenerator;
 
+use Overblog\GraphQLGenerator\Exception\GeneratorException;
+
 abstract class ClassUtils
 {
     /**
@@ -20,17 +22,23 @@ abstract class ClassUtils
     {
     }
 
-    public static function shortenClassName($definition)
+    public static function shortenClassName(string $definition): string
     {
-        $shortName = \substr($definition, \strrpos($definition, '\\') + 1);
+        $position = \strrpos($definition, '\\');
+
+        if ($position === false) {
+            throw new GeneratorException(sprintf('Unable to extract the position in %s', $definition));
+        }
+
+        $shortName = \substr($definition, $position + 1);
 
         return $shortName;
     }
 
-    public static function shortenClassFromCode($code, callable $callback = null)
+    public static function shortenClassFromCode(string $code, callable $callback = null)
     {
         if (null === $callback) {
-            $callback = function ($matches) {
+            $callback = static function (array $matches): string {
                 return static::shortenClassName($matches[1]);
             };
         }
@@ -40,7 +48,7 @@ abstract class ClassUtils
         return $codeParsed;
     }
 
-    public static function cleanClasseName($use)
+    public static function cleanClasseName(string $use): string
     {
         return \ltrim($use, '\\');
     }

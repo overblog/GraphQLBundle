@@ -41,7 +41,7 @@ abstract class AbstractStarWarsTest extends AbstractTypeGeneratorTest
         $actual = GraphQL::executeQuery($this->schema, $query, null, null, $variables)
             ->toArray(Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE);
         $expected = ['data' => $expected];
-        $this->assertEquals($expected, $actual, \json_encode($actual));
+        $this->assertEquals($expected, $actual);
     }
 
     protected function sortSchemaEntry(array &$entries, string $entryKey, string $sortBy): void

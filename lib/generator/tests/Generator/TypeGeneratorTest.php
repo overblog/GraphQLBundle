@@ -141,7 +141,11 @@ class TypeGeneratorTest extends AbstractTypeGeneratorTest
         /** @var ObjectType $type */
         $type = $this->getType('W');
 
-        $this->assertNull($type->getField('resolveObject')->resolveFn);
+        /** @see https://github.com/webonyx/graphql-php/pull/571 */
+        /** @var callable|null */
+        $resolveObjectResolveFn = $type->getField('resolveObject')->resolveFn;
+
+        $this->assertNull($resolveObjectResolveFn);
         $this->assertNull($type->getField('resolveObject')->description);
         $resolveFn = $type->getField('resolveAnyNotObject')->resolveFn;
         $this->assertInstanceOf(\Closure::class, $resolveFn);

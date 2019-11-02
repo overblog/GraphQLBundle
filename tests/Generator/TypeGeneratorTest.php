@@ -15,7 +15,7 @@ class TypeGeneratorTest extends TestCase
      *
      * @dataProvider getPermissionsProvider
      */
-    public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask): void
+    public function testCacheDirPermissions(int $expectedMask, ?string $cacheDir, ?int $cacheDirMask): void
     {
         $mask = (new TypeGenerator(
             'App', [], $cacheDir, [], true, null, null, $cacheDirMask

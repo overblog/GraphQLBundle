@@ -131,7 +131,8 @@ class StarWarsData
         if (isset($droids[$id])) {
             return $droids[$id];
         }
-        return null;
+
+        return [];
     }
 
     /**
