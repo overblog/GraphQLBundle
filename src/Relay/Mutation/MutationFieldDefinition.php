@@ -19,6 +19,7 @@ final class MutationFieldDefinition implements MappingInterface
             'type' => $this->extractPayloadType($config),
             'args' => [
                 'input' => ['type' => $this->extractInputType($config)],
+                'validation' => $config['validation'] ?? null,
             ],
             'resolve' => "@=resolver('relay_mutation_field', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
         ];
