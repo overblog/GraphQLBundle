@@ -75,10 +75,9 @@
             "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer.phar",
+        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.15.3/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar self-update",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi",
             "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --diff -v --allow-risky=yes --ansi"
         ],
