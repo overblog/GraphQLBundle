@@ -16,6 +16,7 @@ type Starship {
 
 enum Episode {
   NEWHOPE
+  # Star Wars: Episode V – The Empire Strikes Back
   EMPIRE
   JEDI @deprecated
 }

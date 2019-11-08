@@ -8,27 +8,27 @@ class EnumNode implements NodeInterface
 {
     public static function toConfig(Node $node)
     {
-        $config = [
-            'description' => DescriptionNode::toConfig($node),
-        ];
-
         $values = [];
+
         foreach ($node->values as $value) {
             $values[$value->name->value] = [
-                'description' => DescriptionNode::toConfig($node),
+                'description' => DescriptionNode::toConfig($value),
                 'value' => $value->name->value,
             ];
 
             $directiveConfig = DirectiveNode::toConfig($value);
+
             if (isset($directiveConfig['deprecationReason'])) {
                 $values[$value->name->value]['deprecationReason'] = $directiveConfig['deprecationReason'];
             }
         }
-        $config['values'] = $values;
 
         return [
             'type' => 'enum',
-            'config' => $config,
+            'config' => [
+                'description' => DescriptionNode::toConfig($node),
+                'values' => $values,
+            ],
         ];
     }
 }
