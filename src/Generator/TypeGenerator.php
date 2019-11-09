@@ -73,9 +73,9 @@ class TypeGenerator extends BaseTypeGenerator
     {
         if ($useDefault) {
             return $this->cacheDir ?: $this->baseCacheDir.'/overblog/graphql-bundle/__definitions__';
-        } else {
-            return $this->cacheDir;
         }
+
+        return $this->cacheDir;
     }
 
     public function setCacheDir(?string $cacheDir): self
@@ -184,9 +184,9 @@ CODE;
     {
         if ('custom-scalar' === $config['type']) {
             return $this->shortenClassName(CustomScalarType::class);
-        } else {
-            return parent::generateParentClassName($config);
         }
+
+        return parent::generateParentClassName($config);
     }
 
     protected function generateTypeName(array $config): string

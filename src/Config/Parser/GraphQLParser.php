@@ -42,12 +42,12 @@ class GraphQLParser implements ParserInterface
         }
 
         foreach ($ast->definitions as $typeDef) {
-            if (isset($typeDef->kind) && \in_array($typeDef->kind, \array_keys(self::DEFINITION_TYPE_MAPPING))) {
-                $class = \sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, \ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
-                $typesConfig[$typeDef->name->value] = \call_user_func([$class, 'toConfig'], $typeDef);
-            } else {
+            if (!isset($typeDef->kind) || !\in_array($typeDef->kind, \array_keys(self::DEFINITION_TYPE_MAPPING))) {
                 self::throwUnsupportedDefinitionNode($typeDef);
             }
+
+            $class = \sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, \ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
+            $typesConfig[$typeDef->name->value] = \call_user_func([$class, 'toConfig'], $typeDef);
         }
 
         return $typesConfig;

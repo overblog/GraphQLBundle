@@ -490,16 +490,17 @@ class AnnotationParser implements PreParserInterface
         if ($unionAnnotation->resolveType) {
             $unionConfiguration['resolveType'] = self::formatExpression($unionAnnotation->resolveType);
         } else {
-            if (isset($methods['resolveType'])) {
-                $method = $methods['resolveType']['method'];
-                if ($method->isStatic() && $method->isPublic()) {
-                    $unionConfiguration['resolveType'] = self::formatExpression(\sprintf("@=call('%s::%s', [service('overblog_graphql.type_resolver'), value], true)", self::formatNamespaceForExpression($className), 'resolveType'));
-                } else {
-                    throw new InvalidArgumentException(\sprintf('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.'));
-                }
-            } else {
-                throw new InvalidArgumentException(\sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
+            if (!isset($methods['resolveType'])) {
+              throw new InvalidArgumentException(\sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
             }
+
+            $method = $methods['resolveType']['method'];
+
+            if (!$method->isStatic() ||!$method->isPublic()) {
+                throw new InvalidArgumentException(\sprintf('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.'));
+            }
+
+            $unionConfiguration['resolveType'] = self::formatExpression(\sprintf("@=call('%s::%s', [service('overblog_graphql.type_resolver'), value], true)", self::formatNamespaceForExpression($className), 'resolveType'));
         }
 
         return ['type' => 'union', 'config' => $unionConfiguration];
@@ -851,12 +852,12 @@ class AnnotationParser implements PreParserInterface
         $columnAnnotation = self::getFirstAnnotationMatching($annotations, Column::class);
         if ($columnAnnotation) {
             $type = self::resolveTypeFromDoctrineType($columnAnnotation->type);
-            $nullable = $columnAnnotation->nullable;
-            if ($type) {
-                return $nullable ? $type : \sprintf('%s!', $type);
-            } else {
+            if (!$type) {
                 throw new \RuntimeException(\sprintf('Unable to auto-guess GraphQL type from Doctrine type "%s"', $columnAnnotation->type));
             }
+            $nullable = $columnAnnotation->nullable;
+
+            return $nullable ? $type : \sprintf('%s!', $type);
         }
 
         $associationAnnotations = [
@@ -871,22 +872,23 @@ class AnnotationParser implements PreParserInterface
             $target = self::fullyQualifiedClassName($associationAnnotation->targetEntity, $namespace);
             $type = self::resolveTypeFromClass($target, ['type']);
 
-            if ($type) {
-                $isMultiple = $associationAnnotations[\get_class($associationAnnotation)];
-                if ($isMultiple) {
-                    return \sprintf('[%s]!', $type);
-                } else {
-                    $isNullable = false;
-                    $joinColumn = self::getFirstAnnotationMatching($annotations, JoinColumn::class);
-                    if ($joinColumn) {
-                        $isNullable = $joinColumn->nullable;
-                    }
-
-                    return \sprintf('%s%s', $type, $isNullable ? '' : '!');
-                }
-            } else {
-                throw new \RuntimeException(\sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @GQL\Type annotation).', $target));
+            if (!$type) {
+              throw new \RuntimeException(\sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @GQL\Type annotation).', $target));
             }
+
+            $isMultiple = $associationAnnotations[\get_class($associationAnnotation)];
+
+            if ($isMultiple) {
+                return \sprintf('[%s]!', $type);
+            }
+
+            $isNullable = false;
+            $joinColumn = self::getFirstAnnotationMatching($annotations, JoinColumn::class);
+            if ($joinColumn) {
+                $isNullable = $joinColumn->nullable;
+            }
+
+            return \sprintf('%s%s', $type, $isNullable ? '' : '!');
         }
 
         throw new InvalidArgumentException(\sprintf('No Doctrine ORM annotation found.'));

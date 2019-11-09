@@ -116,12 +116,10 @@ class GraphController
     private function processQuery(Request $request, string $schemaName = null, bool $batched): array
     {
         if ($batched) {
-            $payload = $this->processBatchQuery($request, $schemaName);
-        } else {
-            $payload = $this->processNormalQuery($request, $schemaName);
+            return $this->processBatchQuery($request, $schemaName);
         }
 
-        return $payload;
+        return $this->processNormalQuery($request, $schemaName);
     }
 
     /**

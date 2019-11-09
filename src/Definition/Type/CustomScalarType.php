@@ -76,8 +76,8 @@ class CustomScalarType extends BaseCustomScalarType
             return $this->config['scalarType'];
         } elseif (\is_callable($this->config['scalarType'])) {
             return $this->config['scalarType'] = $this->config['scalarType']();
-        } else {
-            return $this->config['scalarType'];
         }
+
+        return $this->config['scalarType'];
     }
 }

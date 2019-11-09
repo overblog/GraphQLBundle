@@ -73,13 +73,13 @@ final class AclConfigProcessor implements ConfigProcessorInterface
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable
     {
         if (isset($field['resolve'])) {
-            $resolver = $field['resolve'];
-        } elseif (isset($info->parentType->config['resolveField'])) {
-            $resolver = $info->parentType->config['resolveField'];
-        } else {
-            $resolver = $defaultResolver;
+            return $field['resolve'];
+        } 
+
+        if (isset($info->parentType->config['resolveField'])) {
+            return $info->parentType->config['resolveField'];
         }
 
-        return $resolver;
+        return $defaultResolver;
     }
 }

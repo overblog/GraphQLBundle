@@ -76,16 +76,16 @@ class Paginator
             return $this->handleEntities($entities, function ($entities) use ($args) {
                 return $this->connectionBuilder->connectionFromArray($entities, $args);
             });
-        } else {
-            $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
-
-            return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
-                return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
-                    'sliceStart' => $offset,
-                    'arrayLength' => $offset + \count($entities),
-                ]);
-            });
         }
+        
+        $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
+
+        return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
+            return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
+                'sliceStart' => $offset,
+                'arrayLength' => $offset + \count($entities),
+            ]);
+        });
     }
 
     /**
@@ -109,11 +109,11 @@ class Paginator
 
                 return $connection;
             });
-        } else {
-            $connection->setTotalCount($this->computeTotalCount($total, $callableArgs));
-
-            return $connection;
         }
+
+        $connection->setTotalCount($this->computeTotalCount($total, $callableArgs));
+
+        return $connection;
     }
 
     /**
