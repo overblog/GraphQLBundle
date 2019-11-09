@@ -77,7 +77,6 @@ class Paginator
                 return $this->connectionBuilder->connectionFromArray($entities, $args);
             });
         }
-        
         $entities = \call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
 
         return $this->handleEntities($entities, function ($entities) use ($args, $offset) {

@@ -496,7 +496,7 @@ class AnnotationParser implements PreParserInterface
 
             $method = $methods['resolveType']['method'];
 
-            if (!$method->isStatic() ||!$method->isPublic()) {
+            if (!$method->isStatic() || !$method->isPublic()) {
                 throw new InvalidArgumentException(\sprintf('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.'));
             }
 
@@ -873,7 +873,7 @@ class AnnotationParser implements PreParserInterface
             $type = self::resolveTypeFromClass($target, ['type']);
 
             if (!$type) {
-              throw new \RuntimeException(\sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @GQL\Type annotation).', $target));
+                throw new \RuntimeException(\sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @GQL\Type annotation).', $target));
             }
 
             $isMultiple = $associationAnnotations[\get_class($associationAnnotation)];

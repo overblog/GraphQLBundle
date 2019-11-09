@@ -74,7 +74,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
     {
         if (isset($field['resolve'])) {
             return $field['resolve'];
-        } 
+        }
 
         if (isset($info->parentType->config['resolveField'])) {
             return $info->parentType->config['resolveField'];
