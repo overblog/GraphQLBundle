@@ -491,7 +491,7 @@ class AnnotationParser implements PreParserInterface
             $unionConfiguration['resolveType'] = self::formatExpression($unionAnnotation->resolveType);
         } else {
             if (!isset($methods['resolveType'])) {
-              throw new InvalidArgumentException(\sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
+                throw new InvalidArgumentException(\sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
             }
 
             $method = $methods['resolveType']['method'];
