@@ -58,8 +58,14 @@ return [
         'config' => [
             'description' => null,
             'values' => [
-                'NEWHOPE' => ['description' => null, 'value' => 'NEWHOPE'],
-                'EMPIRE' => ['description' => null, 'value' => 'EMPIRE'],
+                'NEWHOPE' => [
+                    'description' => null,
+                    'value' => 'NEWHOPE',
+                ],
+                'EMPIRE' => [
+                    'description' => 'Star Wars: Episode V – The Empire Strikes Back',
+                    'value' => 'EMPIRE',
+                ],
                 'JEDI' => [
                     'description' => null,
                     'value' => 'JEDI',
