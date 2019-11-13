@@ -30,16 +30,6 @@ in files `config/graphql/types/*.graphql`
 
 4. Define schema Resolvers ([more details](resolver-map.md))
 
-```yaml
-# config/packages/graphql.yaml
-overblog_graphql:
-    definitions:
-        schema:
-            # ...
-            resolver_maps:
-                - App\Resolver\MyResolverMap
-```
-
 ```php
 <?php
 
