@@ -262,6 +262,13 @@ class OverblogGraphQLExtension extends Extension
                         [
                             $schemaName,
                             \array_map(function ($id) {
+                                if (!is_string($id)) {
+                                    throw new \InvalidArgumentException(sprintf(
+                                        'Schema resolver maps must be string class references, got %s instead. Check your resolver config.',
+                                        gettype($id)
+                                    ));
+                                }
+
                                 return new Reference($id);
                             }, $schemaConfig['resolver_maps']),
                         ]
