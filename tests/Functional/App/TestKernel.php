@@ -42,6 +42,11 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         return $this->basePath().'logs';
     }
 
+    public function getProjectDir()
+    {
+        return __DIR__;
+    }
+
     public function getRootDir()
     {
         return __DIR__;
@@ -82,5 +87,16 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     private function basePath()
     {
         return \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.($this->testCase ? $this->testCase.'/' : '');
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        if (!$container->hasParameter('kernel.root_dir')) {
+            $container->setParameter('kernel.root_dir', $this->getRootDir());
+        }
+
+        if (!$container->hasParameter('kernel.project_dir')) {
+            $container->setParameter('kernel.project_dir', $this->getProjectDir());
+        }
     }
 }

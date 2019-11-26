@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class TestCase extends WebTestCase
 {
+    use ForwardCompatTestCaseTrait;
+
     const USER_RYAN = 'ryan';
     const USER_ADMIN = 'admin';
     const ANONYMOUS_USER = null;
@@ -53,14 +55,6 @@ abstract class TestCase extends WebTestCase
     {
         $fs = new Filesystem();
         $fs->remove(\sys_get_temp_dir().'/OverblogGraphQLBundle/');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        static::$kernel = null;
     }
 
     protected static function executeGraphQLRequest($query, $rootValue = [], $schemaName = null)
@@ -106,6 +100,8 @@ abstract class TestCase extends WebTestCase
 
     protected static function createClientAuthenticated($username, $testCase, $password = self::DEFAULT_PASSWORD)
     {
+        static::ensureKernelShutdown();
+        static::$kernel = null;
         $client = static::createClient(['test_case' => $testCase]);
 
         if ($username) {
@@ -153,5 +149,15 @@ abstract class TestCase extends WebTestCase
         return new ExpressionFunction($phpFunctionName, function () use ($phpFunctionName) {
             return \sprintf('\%s(%s)', $phpFunctionName, \implode(', ', \func_get_args()));
         });
+    }
+
+    /**
+     * @param Client|KernelBrowser $client
+     */
+    protected function disableCatchExceptions($client)
+    {
+        if (\is_callable([$client, 'catchExceptions'])) {
+            $client->catchExceptions(false);
+        }
     }
 }

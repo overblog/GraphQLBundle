@@ -68,6 +68,8 @@ final class GraphQLDumpSchemaCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $file = $this->createFile($input);
         $io->success(\sprintf('GraphQL schema "%s" was successfully dumped.', \realpath($file)));
+
+        return 0;
     }
 
     private function createFile(InputInterface $input)
@@ -75,7 +77,7 @@ final class GraphQLDumpSchemaCommand extends Command
         $format = \strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
 
-        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
