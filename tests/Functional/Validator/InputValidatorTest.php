@@ -27,6 +27,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['noValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSimpleValidationPasses(): void
     {
         $query = '
@@ -41,6 +44,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['simpleValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSimpleValidationFails(): void
     {
         $query = '
@@ -91,6 +97,9 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['linkedConstraintsValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testCollectionValidationPasses(): void
     {
         $query = '
@@ -116,6 +125,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['collectionValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testCollectionValidationFails(): void
     {
         $query = '
@@ -141,6 +153,9 @@ class InputValidatorTest extends TestCase
         $this->assertNull($result['data']['collectionValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testCascadeValidationWithGroupsPasses(): void
     {
         $query = '
@@ -171,6 +186,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['cascadeValidationWithGroups']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testCascadeValidationWithGroupsFails(): void
     {
         $query = '
@@ -227,6 +245,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['expressionVariablesValidation']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testAutoValidationAutoThrowPasses(): void
     {
         $query = '
@@ -241,6 +262,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['autoValidationAutoThrow']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testAutoValidationAutoThrowFails(): void
     {
         $query = '
@@ -256,6 +280,7 @@ class InputValidatorTest extends TestCase
     }
 
     /**
+     * @group legacy
      * Checks if the injected variable `errors` contains 0 violations.
      */
     public function testAutoValidationNoThrowNoErrors(): void
@@ -268,6 +293,7 @@ class InputValidatorTest extends TestCase
     }
 
     /**
+     * @group legacy
      * Checks if the injected variable `errors` contains exactly 1 violation.
      */
     public function testAutoValidationNoThrowHasErrors(): void
@@ -279,6 +305,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue(true === $result['data']['autoValidationNoThrow']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testAutoValidationAutoThrowWithGroupsPasses(): void
     {
         $query = '
@@ -308,6 +337,9 @@ class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['autoValidationAutoThrowWithGroups']);
     }
 
+    /**
+     * @group legacy
+     */
     public function testAutoValidationAutoThrowWithGroupsFails(): void
     {
         $query = '
