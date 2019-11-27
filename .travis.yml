@@ -55,7 +55,7 @@ jobs:
 
         - stage: Code Quality
           php: 7.2
-          env: COVERAGE
+          env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
             - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
             - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
