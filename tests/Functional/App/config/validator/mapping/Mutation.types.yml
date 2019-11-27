@@ -17,7 +17,7 @@ Mutation:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5, allowEmptyString: true }
+                            - Length: { min: 5 }
                             - Regex:
                                 pattern: '/^[a-z]+$/i'
                                 htmlPattern: true
@@ -96,7 +96,7 @@ Mutation:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5, allowEmptyString: true }
+                            - Length: { min: 5 }
                             - Regex:
                                   pattern: '/^[a-z]+$/i'
                                   htmlPattern: true
@@ -108,7 +108,7 @@ Mutation:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5, allowEmptyString: true }
+                            - Length: { min: 5 }
                             - Regex:
                                   pattern: '/^[a-z]+$/i'
                                   htmlPattern: true
