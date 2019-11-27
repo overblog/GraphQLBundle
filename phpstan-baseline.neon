@@ -91,24 +91,9 @@ parameters:
 			path: lib/generator/tests/StarWarsIntrospectionTest.php
 
 		-
-			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\Command\\\\CompileCommand\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: src/Command/CompileCommand.php
-
-		-
-			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\Command\\\\DebugCommand\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: src/Command/DebugCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$id of method Overblog\\\\GraphQLBundle\\\\Resolver\\\\FluentResolverInterface\\:\\:getSolutionAliases\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: src/Command/DebugCommand.php
-
-		-
-			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\Command\\\\GraphQLDumpSchemaCommand\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
 
 		-
 			message: "#^Parameter \\#1 \\$str of function strtolower expects string, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
@@ -139,11 +124,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$file of function file_put_contents expects string, \\(array\\<string\\>\\)\\|string\\|true given\\.$#"
 			count: 1
 			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\Command\\\\ValidateCommand\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: src/Command/ValidateCommand.php
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Overblog\\\\GraphQLBundle\\\\Request\\\\Executor\\:\\:getSchema\\(\\) expects string\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
@@ -1054,11 +1034,6 @@ parameters:
 			message: "#^Cannot call method getParameter\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
 			count: 1
 			path: tests/Functional/Inheritance/InheritanceTest.php
-
-		-
-			message: "#^Static property Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\KernelTestCase\\:\\:\\$kernel \\(Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface\\) does not accept null\\.$#"
-			count: 1
-			path: tests/Functional/TestCase.php
 
 		-
 			message: "#^Parameter \\#3 \\$message of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) expects string, string\\|false given\\.$#"
