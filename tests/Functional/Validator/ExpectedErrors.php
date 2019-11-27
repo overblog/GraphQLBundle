@@ -137,17 +137,17 @@ class ExpectedErrors
             ],
             'birthdate.day' => [
                 [
-                    'message' => 'This value should be between 1 and 31.',
-                    'code' => '04b91c99-a946-4221-afc5-e65ebac401eb',
+                    'message' => 'This value should be 31 or less.',
+                    'code' => '2d28afcb-e32e-45fb-a815-01c431a86a69',
                 ],
             ],
         ];
 
-        if (Kernel::VERSION_ID >= 50000) {
+        if (Kernel::VERSION_ID >= 40400) {
             $validation['birthdate.day'] = [
                 [
-                    'message' => 'This value should be 31 or less.',
-                    'code' => '2d28afcb-e32e-45fb-a815-01c431a86a69',
+                    'message' => 'This value should be between 1 and 31.',
+                    'code' => '04b91c99-a946-4221-afc5-e65ebac401eb',
                 ],
             ];
         }
