@@ -59,7 +59,6 @@ abstract class TestCase extends WebTestCase
     protected function tearDown(): void
     {
         static::ensureKernelShutdown();
-        static::$kernel = null;
     }
 
     protected static function executeGraphQLRequest(string $query, $rootValue = [], string $schemaName = null)
@@ -106,7 +105,6 @@ abstract class TestCase extends WebTestCase
     protected static function createClientAuthenticated($username, $testCase, $password = self::DEFAULT_PASSWORD)
     {
         static::ensureKernelShutdown();
-        static::$kernel = null;
         $client = static::createClient(['test_case' => $testCase]);
 
         if ($username) {
