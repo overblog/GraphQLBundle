@@ -41,5 +41,7 @@ final class CompileCommand extends Command
             }
             $io->table(['class', 'path'], $rows);
         }
+
+        return 0;
     }
 }

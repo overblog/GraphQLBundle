@@ -77,6 +77,8 @@ class DebugCommand extends Command
             $resolver = $this->{$category.'Resolver'};
             $this->renderTable($resolver, $tableHeaders, $io);
         }
+
+        return 0;
     }
 
     /**

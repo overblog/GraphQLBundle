@@ -85,6 +85,7 @@ EOF;
     public function testEndpointWithEmptyQuery()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/', []);
         $client->getResponse()->getContent();
     }
@@ -96,6 +97,7 @@ EOF;
     public function testEndpointWithEmptyJsonBodyQuery()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json']);
         $client->getResponse()->getContent();
     }
@@ -107,6 +109,7 @@ EOF;
     public function testEndpointWithInvalidBodyQuery()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
     }
@@ -143,6 +146,7 @@ EOF;
     public function testEndpointActionWithInvalidVariables()
     {
         $client = static::createClient(['test_case' => 'connection']);
+        $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
 query {
@@ -160,6 +164,7 @@ EOF;
     public function testMultipleEndpointActionWithUnknownSchemaName()
     {
         $client = static::createClient(['test_case' => 'connection']);
+        $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
 query {
@@ -225,6 +230,7 @@ EOF;
     public function testBatchEndpointWithEmptyQuery()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
         $client->getResponse()->getContent();
     }
@@ -236,6 +242,7 @@ EOF;
     public function testBatchEndpointWrongContentType()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/batch');
         $client->getResponse()->getContent();
     }
@@ -247,6 +254,7 @@ EOF;
     public function testBatchEndpointWithInvalidJson()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
     }
@@ -258,6 +266,7 @@ EOF;
     public function testBatchEndpointWithInvalidQuery()
     {
         $client = static::createClient();
+        $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();
     }
