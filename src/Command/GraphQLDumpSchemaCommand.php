@@ -79,11 +79,13 @@ final class GraphQLDumpSchemaCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $file = $this->createFile($input);
         $io->success(\sprintf('GraphQL schema "%s" was successfully dumped.', \realpath($file)));
+
+        return 0;
     }
 
     private function createFile(InputInterface $input)
@@ -92,7 +94,7 @@ final class GraphQLDumpSchemaCommand extends Command
         $schemaName = $input->getOption('schema');
         $includeDescription = $input->getOption('with-descriptions');
 
-        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/../var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
