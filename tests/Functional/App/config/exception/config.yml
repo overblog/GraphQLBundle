@@ -16,4 +16,4 @@ overblog_graphql:
             types:
                 -
                     type: yaml
-                    dir: '%kernel.root_dir%/config/exception/mapping'
+                    dir: '%kernel.project_dir%/config/exception/mapping'

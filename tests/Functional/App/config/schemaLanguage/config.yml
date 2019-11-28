@@ -19,7 +19,7 @@ overblog_graphql:
             types:
                 -
                     type: graphql
-                    dir: "%kernel.root_dir%/config/schemaLanguage/mapping"
+                    dir: "%kernel.project_dir%/config/schemaLanguage/mapping"
                     suffix: ~
 
 services:
