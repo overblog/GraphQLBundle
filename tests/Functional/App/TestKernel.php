@@ -88,15 +88,4 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     {
         return \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.($this->testCase ? $this->testCase.'/' : '');
     }
-
-    protected function build(ContainerBuilder $container): void
-    {
-        if (!$container->hasParameter('kernel.root_dir')) {
-            $container->setParameter('kernel.root_dir', $this->getRootDir());
-        }
-
-        if (!$container->hasParameter('kernel.project_dir')) {
-            $container->setParameter('kernel.project_dir', $this->getProjectDir());
-        }
-    }
 }
