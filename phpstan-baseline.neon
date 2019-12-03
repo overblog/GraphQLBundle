@@ -586,11 +586,6 @@ parameters:
 			path: src/Generator/TypeGenerator.php
 
 		-
-			message: "#^Parameter \\#1 \\$c of function ctype_upper expects int\\|string, string\\|null given\\.$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$array\\)\\: Unexpected token \"\\$array\", expected TOKEN_IDENTIFIER at offset 393$#"
 			count: 1
 			path: src/Generator/TypeGenerator.php
