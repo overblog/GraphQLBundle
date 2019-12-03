@@ -11,7 +11,7 @@ overblog_graphql:
         mappings:
             types:
                 - type: yaml
-                  dir: "%kernel.root_dir%/config/validator/mapping"
+                  dir: "%kernel.project_dir%/config/validator/mapping"
 
 services:
     validator.expression:
