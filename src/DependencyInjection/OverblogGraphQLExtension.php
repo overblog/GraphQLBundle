@@ -21,7 +21,6 @@ use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
-use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Validator\ValidatorFactory;
 use Symfony\Component\Config\FileLocator;
@@ -89,8 +88,10 @@ class OverblogGraphQLExtension extends Extension
     {
         $container->registerForAutoconfiguration(MutationInterface::class)
             ->addTag('overblog_graphql.mutation');
+
         $container->registerForAutoconfiguration(ResolverInterface::class)
             ->addTag('overblog_graphql.resolver');
+
         $container->registerForAutoconfiguration(Type::class)
             ->addTag('overblog_graphql.type');
     }
@@ -235,41 +236,36 @@ class OverblogGraphQLExtension extends Extension
 
     private function setSchemaArguments(array $config, ContainerBuilder $container): void
     {
-        if (isset($config['definitions']['schema'])) {
-            $executorDefinition = $container->getDefinition(Executor::class);
-            $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
-
-            foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
-                // builder
-                $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
-                $definition = $container->register($schemaBuilderID, \Closure::class);
-                $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
-                $definition->setArguments([
-                    $schemaName,
-                    $schemaConfig['query'],
-                    $schemaConfig['mutation'],
-                    $schemaConfig['subscription'],
-                    $schemaConfig['types'],
-                ]);
-                // schema
-                $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
-                $definition = $container->register($schemaID, Schema::class);
-                $definition->setFactory([new Reference($schemaBuilderID), 'call']);
-
-                if (!empty($schemaConfig['resolver_maps'])) {
-                    $typeDecoratorListenerDefinition->addMethodCall(
-                        'addSchemaResolverMaps',
-                        [
-                            $schemaName,
-                            \array_map(function ($id) {
-                                return new Reference($id);
-                            }, $schemaConfig['resolver_maps']),
-                        ]
-                    );
-                }
-                $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
-            }
+        if (!isset($config['definitions']['schema'])) {
+            return;
         }
+
+        $executorDefinition = $container->getDefinition(Executor::class);
+        $resolverMapsBySchema = [];
+
+        foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
+            // builder
+            $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
+            $definition = $container->register($schemaBuilderID, \Closure::class);
+            $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
+            $definition->setArguments([
+                $schemaName,
+                $schemaConfig['query'],
+                $schemaConfig['mutation'],
+                $schemaConfig['subscription'],
+                $schemaConfig['types'],
+            ]);
+            // schema
+            $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+            $definition = $container->register($schemaID, Schema::class);
+            $definition->setFactory([new Reference($schemaBuilderID), 'call']);
+
+            $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
+
+            $resolverMapsBySchema[$schemaName] = \array_fill_keys($schemaConfig['resolver_maps'], 0);
+        }
+
+        $container->setParameter(\sprintf('%s.resolver_maps', $this->getAlias()), $resolverMapsBySchema);
     }
 
     private function setServicesAliases(array $config, ContainerBuilder $container): void

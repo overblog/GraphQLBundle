@@ -8,13 +8,8 @@ overblog_graphql:
             main:
                 query: Query
                 mutation: Mutation
-                resolver_maps:
-                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap
-                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap
             empty:
                 query: Query
-                resolver_maps:
-                    - Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NullResolverMap
         mappings:
             types:
                 -
@@ -23,6 +18,14 @@ overblog_graphql:
                     suffix: ~
 
 services:
-    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NullResolverMap: ~
-    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap: ~
-    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap: ~
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\NullResolverMap:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: empty }
+
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageQueryResolverMap:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: main, priority: 10 }
+
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\SchemaLanguageMutationResolverMap:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: main }

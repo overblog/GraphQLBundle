@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigProcessorPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ExpressionFunctionPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\GlobalVariablesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationTaggedServiceMappingTaggedPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverMapTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverMethodAliasesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\TypeGeneratorPass;
@@ -43,6 +44,7 @@ class OverblogGraphQLBundle extends Bundle
         $container->addCompilerPass(new ExpressionFunctionPass());
         $container->addCompilerPass(new ResolverMethodAliasesPass());
         $container->addCompilerPass(new AliasedPass());
+        $container->addCompilerPass(new ResolverMapTaggedServiceMappingPass());
         $container->addCompilerPass(new TypeGeneratorPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new TypeTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new ResolverTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
