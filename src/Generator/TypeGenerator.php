@@ -580,7 +580,8 @@ CODE;
      */
     protected function stringifyArray(array $array, $offset = 1): string
     {
-        if (1 === \count($array) && \ctype_upper(\key($array)[0])) {
+        $key = \key($array);
+        if (\is_string($key) && 1 === \count($array) && \ctype_upper($key[0])) {
             return $this->generateRule([\key($array), \current($array)], --$offset);
         } else {
             return $this->stringifyNormalArray($array, $offset);
