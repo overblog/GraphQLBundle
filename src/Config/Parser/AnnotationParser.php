@@ -959,7 +959,7 @@ class AnnotationParser implements PreParserInterface
 
     private static function resolveGraphQLTypeFromReflectionType(\ReflectionType $type, array $filterGraphQLTypes = null, bool $isOptional = false): string
     {
-        $sType = (string) $type;
+        $sType = $type->getName();
         if ($type->isBuiltin()) {
             $gqlType = self::resolveTypeFromPhpType($sType);
             if (null === $gqlType) {
