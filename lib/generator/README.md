@@ -7,10 +7,6 @@ GraphQL PHP types generator...
 [![Code Coverage](https://scrutinizer-ci.com/g/overblog/GraphQLPhpGenerator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLPhpGenerator/?branch=master)
 [![Build Status](https://travis-ci.org/overblog/GraphQLPhpGenerator.svg?branch=master)](https://travis-ci.org/overblog/GraphQLPhpGenerator)
 
-Requirements
-------------
-PHP >= 5.4
-
 Installation
 ------------
 
