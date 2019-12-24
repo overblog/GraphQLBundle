@@ -57,7 +57,7 @@ class Executor
         return $this;
     }
 
-    public function addSchemaBuilder(string $name, callable $builder): self
+    public function addSchemaBuilder(string $name, \Closure $builder): self
     {
         $this->schemas[$name] = $builder;
 
