@@ -57,7 +57,7 @@ class TypeGeneratorModeTest extends TestCase
         $this->assertGenerateClassesMode(TypeGenerator::MODE_MAPPING_ONLY);
     }
 
-    private function assertGenerateClassesMode($mode): void
+    private function assertGenerateClassesMode(int $mode): void
     {
         $classes = $this->typeGenerator->generateClasses(self::CONFIG, $this->dir, $mode);
         $file = $this->dir.'/QueryType.php';

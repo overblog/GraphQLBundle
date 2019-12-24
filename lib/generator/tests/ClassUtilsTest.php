@@ -28,6 +28,9 @@ class ClassUtilsTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return iterable<array<string>>
+     */
     public function shortenClassFromCodeDataProvider(): iterable
     {
         yield ['$toto, \Toto\Tata $test', '$toto, Tata $test'];

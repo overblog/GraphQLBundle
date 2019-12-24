@@ -35,7 +35,7 @@ abstract class ClassUtils
         return $shortName;
     }
 
-    public static function shortenClassFromCode(string $code, callable $callback = null)
+    public static function shortenClassFromCode(string $code, callable $callback = null): ?string
     {
         if (null === $callback) {
             $callback = static function (array $matches): string {

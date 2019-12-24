@@ -30,18 +30,35 @@ abstract class AbstractClassGenerator
      */
     private $classNamespace;
 
+    /**
+     * @var array<string>
+     */
     private $internalUseStatements = [];
 
+    /**
+     * @var array<string>
+     */
     private $useStatements = [];
 
+    /**
+     * @var array<string>
+     */
     private $traits = [];
 
+    /**
+     * @var array<string>
+     */
     private $implements = [];
 
+    /**
+     * @var array<string>
+     */
     private $skeletonDirs = [];
 
     /**
      * Number of spaces to use for indention in generated code.
+     *
+     * @var int
      */
     private $numSpaces;
 
@@ -52,6 +69,9 @@ abstract class AbstractClassGenerator
      */
     private $spaces;
 
+    /**
+     * @var array<string>
+     */
     private static $templates = [];
 
     /**
@@ -70,13 +90,16 @@ abstract class AbstractClassGenerator
         return $this->classNamespace;
     }
 
-    public function setClassNamespace($classNamespace): self
+    public function setClassNamespace(string $classNamespace): self
     {
         $this->classNamespace = ClassUtils::cleanClasseName($classNamespace);
 
         return $this;
     }
 
+    /**
+     * @param string|array<string> $skeletonDirs
+     */
     public function setSkeletonDirs($skeletonDirs): self
     {
         $this->skeletonDirs = [];
@@ -98,6 +121,9 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSkeletonDirs(bool $withDefault = true): array
     {
         $skeletonDirs = $this->skeletonDirs ;
@@ -109,6 +135,9 @@ abstract class AbstractClassGenerator
         return $skeletonDirs;
     }
 
+    /**
+     * @param string|object $skeletonDir
+     */
     public function addSkeletonDir($skeletonDir): self
     {
         if (!\is_string($skeletonDir) && !\is_object($skeletonDir) && !\is_callable([$skeletonDir, '__toString'])) {
@@ -194,7 +223,7 @@ abstract class AbstractClassGenerator
         return $this;
     }
 
-    public function getSkeletonContent(string $skeleton, bool $withDefault = true)
+    public function getSkeletonContent(string $skeleton, bool $withDefault = true): string
     {
         $skeletonDirs = $this->getSkeletonDirs($withDefault);
 
@@ -271,6 +300,10 @@ abstract class AbstractClassGenerator
                 return $this->shortenClassName($matches[1]);
             }
         );
+
+        if ($codeParsed === null) {
+            throw new GeneratorException(sprintf('Unable to get class for shortened code %s', $code));
+        }
 
         return $codeParsed;
     }
