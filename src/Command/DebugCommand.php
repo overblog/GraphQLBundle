@@ -16,6 +16,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class DebugCommand extends Command
 {
+    /**
+     * @var array<string>
+     */
     private static $categories = ['type', 'mutation', 'resolver'];
 
     /**
@@ -60,6 +63,7 @@ class DebugCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string|array<string> $categoriesOption */
         $categoriesOption = $input->getOption('category');
         $categoriesOption = \is_array($categoriesOption) ? $categoriesOption : [$categoriesOption];
         $notAllowed = \array_diff($categoriesOption, self::$categories);
@@ -94,7 +98,7 @@ class DebugCommand extends Command
         $solutionIDs = \array_keys($resolver->getSolutions());
         \sort($solutionIDs);
         foreach ($solutionIDs as $solutionID) {
-            $aliases = $resolver->getSolutionAliases($solutionID);
+            $aliases = $resolver->getSolutionAliases((string) $solutionID);
             $tableRows[$solutionID] = [$solutionID, self::serializeAliases($aliases)];
         }
         \ksort($tableRows);
@@ -102,6 +106,11 @@ class DebugCommand extends Command
         $io->write("\n\n");
     }
 
+    /**
+     * @param array<string> $aliases
+     *
+     * @return string
+     */
     private static function serializeAliases(array $aliases)
     {
         \ksort($aliases);
@@ -109,7 +118,10 @@ class DebugCommand extends Command
         return \implode("\n", $aliases);
     }
 
-    public static function getCategories()
+    /**
+     * @return array<string>
+     */
+    public static function getCategories(): array
     {
         return self::$categories;
     }
