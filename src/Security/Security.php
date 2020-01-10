@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Security;
 
 use Symfony\Component\Security\Core\Security as CoreSecurity;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class Security
 {
@@ -26,7 +25,7 @@ final class Security
         };
     }
 
-    public function getUser(): ?UserInterface
+    public function getUser()
     {
         return $this->coreSecurity->getUser();
     }
