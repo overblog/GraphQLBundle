@@ -871,18 +871,13 @@ parameters:
 			path: tests/Executor/Promise/Adapter/ReactPromiseAdapterTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$container of class Overblog\\\\GraphQLBundle\\\\ExpressionLanguage\\\\ExpressionFunction\\\\DependencyInjection\\\\Service constructor expects Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface, Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null given\\.$#"
-			count: 2
-			path: tests/ExpressionLanguage/ExpressionFunction/DependencyInjection/ServiceTest.php
-
-		-
 			message: "#^Call to method disableOriginalConstructor\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
 			count: 1
 			path: tests/ExpressionLanguage/ExpressionFunction/GraphQL/ArgumentsTest.php
 
 		-
 			message: "#^Call to method getMock\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
-			count: 5
+			count: 4
 			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
 
 		-
