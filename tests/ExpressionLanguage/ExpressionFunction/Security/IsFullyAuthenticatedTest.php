@@ -11,7 +11,7 @@ class IsFullyAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
             'IS_AUTHENTICATED_FULLY',
             $this->any()
         );

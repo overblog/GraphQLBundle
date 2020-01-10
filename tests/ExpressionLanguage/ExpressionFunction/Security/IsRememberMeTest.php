@@ -11,7 +11,7 @@ class IsRememberMeTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );

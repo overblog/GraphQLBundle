@@ -16,7 +16,7 @@ class HasPermissionTest extends TestCase
     {
         $this->expectedObject = new \stdClass();
 
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
             [
                 'OWNER',
                 $this->identicalTo($this->expectedObject),

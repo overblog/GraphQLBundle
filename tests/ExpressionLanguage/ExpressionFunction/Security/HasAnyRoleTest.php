@@ -11,7 +11,7 @@ class HasAnyRoleTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
             'ROLE_ADMIN',
             $this->any()
         );
