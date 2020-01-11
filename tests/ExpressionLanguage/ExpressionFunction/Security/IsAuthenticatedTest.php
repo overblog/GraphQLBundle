@@ -11,12 +11,12 @@ class IsAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
+        $Security = $this->getSecurityIsGrantedWithExpectation(
             $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'),
             $this->any()
         );
 
-        return [new IsAuthenticated($authorizationChecker)];
+        return [new IsAuthenticated($Security)];
     }
 
     public function testEvaluator(): void

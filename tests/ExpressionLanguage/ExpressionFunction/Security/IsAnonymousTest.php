@@ -11,12 +11,12 @@ class IsAnonymousTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getSecurityIsGrantedWithExpectation(
+        $Security = $this->getSecurityIsGrantedWithExpectation(
             'IS_AUTHENTICATED_ANONYMOUSLY',
             $this->any()
         );
 
-        return [new IsAnonymous($authorizationChecker)];
+        return [new IsAnonymous($Security)];
     }
 
     public function testEvaluator(): void

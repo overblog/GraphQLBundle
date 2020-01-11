@@ -16,7 +16,7 @@ class HasAnyPermissionTest extends TestCase
     {
         $this->expectedObject = new \stdClass();
 
-        $security = parent::getSecurityIsGrantedWithExpectation(
+        $security = $this->getSecurityIsGrantedWithExpectation(
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
                 $this->identicalTo($this->expectedObject),
