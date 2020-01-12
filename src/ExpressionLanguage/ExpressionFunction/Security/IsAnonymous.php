@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Overblog\GraphQLBundle\Security\Security;
 
 final class IsAnonymous extends ExpressionFunction
 {
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(Security $security)
     {
         parent::__construct(
             'isAnonymous',
-            function () {
-                return "\$globalVariable->get('container')->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_ANONYMOUSLY')";
+            static function (): string {
+                return '$globalVariable->get(\'security\')->isAnonymous()';
             },
-            function () use ($authorizationChecker) {
-                return $authorizationChecker->isGranted('IS_AUTHENTICATED_ANONYMOUSLY');
+            static function () use ($security): bool {
+                return $security->isAnonymous();
             }
         );
     }

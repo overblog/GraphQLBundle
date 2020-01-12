@@ -98,3 +98,9 @@ services:
     Overblog\GraphQLBundle\Validator\Formatter:
         tags:
             - { name: kernel.event_listener, event: graphql.error_formatting, method: onErrorFormatting }
+
+    Overblog\GraphQLBundle\Security\Security:
+        arguments:
+            - '@?security.helper'
+        tags:
+            - { name: overblog_graphql.global_variable, alias: security, public: false }
