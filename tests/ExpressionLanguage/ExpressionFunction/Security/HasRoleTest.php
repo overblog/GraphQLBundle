@@ -11,12 +11,12 @@ class HasRoleTest extends TestCase
 {
     protected function getFunctions()
     {
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $Security = $this->getSecurityIsGrantedWithExpectation(
             'ROLE_USER',
             $this->any()
         );
 
-        return [new HasRole($authorizationChecker)];
+        return [new HasRole($Security)];
     }
 
     public function testEvaluator(): void
