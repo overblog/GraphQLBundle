@@ -51,12 +51,12 @@ class AccessResolver
     {
         $promiseOrHasAccess = $this->hasAccess($accessChecker, $resolveArgs);
         $callback = function ($hasAccess) use ($resolveArgs, $resolveCallback) {
-            if (!$hasAccess) {
-                $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
-                throw new $exceptionClassName('Access denied to this field.');
+            if (true === $hasAccess) {
+                return \call_user_func_array($resolveCallback, $resolveArgs);
             }
 
-            return \call_user_func_array($resolveCallback, $resolveArgs);
+            $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
+            throw new $exceptionClassName('Access denied to this field.');
         };
 
         if ($this->isThenable($promiseOrHasAccess)) {
