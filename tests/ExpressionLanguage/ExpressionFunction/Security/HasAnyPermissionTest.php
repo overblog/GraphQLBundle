@@ -16,7 +16,7 @@ class HasAnyPermissionTest extends TestCase
     {
         $this->expectedObject = new \stdClass();
 
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $security = $this->getSecurityIsGrantedWithExpectation(
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
                 $this->identicalTo($this->expectedObject),
@@ -24,7 +24,7 @@ class HasAnyPermissionTest extends TestCase
             $this->any()
         );
 
-        return [new HasAnyPermission($authorizationChecker)];
+        return [new HasAnyPermission($security)];
     }
 
     public function testEvaluator(): void

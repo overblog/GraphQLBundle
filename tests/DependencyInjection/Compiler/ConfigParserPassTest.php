@@ -8,6 +8,7 @@ use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
+use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
@@ -131,8 +132,9 @@ class ConfigParserPassTest extends TestCase
             \InvalidArgumentException::class => UserError::class,
         ];
 
-        $definition = $this->container->getDefinition('overblog_graphql.error_handler');
-        $this->assertSame($expectedExceptionMap, $definition->getArgument(2));
+        $definition = $this->container->getDefinition(ExceptionConverter::class);
+
+        $this->assertSame($expectedExceptionMap, $definition->getArgument(0));
     }
 
     /**

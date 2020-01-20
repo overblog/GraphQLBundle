@@ -8,26 +8,39 @@ use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Error\ExceptionConverter;
+use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ErrorHandlerTest extends TestCase
+final class ErrorHandlerTest extends TestCase
 {
     /** @var ErrorHandler */
     private $errorHandler;
 
-    /** @var EventDispatcher|MockObject */
+    /** @var EventDispatcherInterface&MockObject */
     private $dispatcher;
+
+    /** @var ExceptionConverterInterface&MockObject */
+    private $exceptionConverter;
 
     public function setUp(): void
     {
-        $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
-        $this->dispatcher->expects($this->any())->method('dispatch')->willReturnArgument(0);
-        $this->errorHandler = new ErrorHandler($this->dispatcher);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->exceptionConverter = $this->createMock(ExceptionConverterInterface::class);
+        $this->errorHandler = new ErrorHandler($this->dispatcher, $this->exceptionConverter);
+
+        $this->dispatcher->expects($this->any())
+            ->method('dispatch')
+            ->willReturnArgument(0);
+
+        $this->exceptionConverter->expects($this->any())
+            ->method('convertException')
+            ->willReturnArgument(0);
     }
 
     public function testMaskErrorWithThrowExceptionSetToFalse(): void
@@ -187,14 +200,18 @@ class ErrorHandlerTest extends TestCase
 
     public function testConvertExceptionToUserWarning(): void
     {
-        $errorHandler = new ErrorHandler($this->dispatcher, null, [\InvalidArgumentException::class => UserWarning::class]);
-
-        $executionResult = new ExecutionResult(
-            null,
-            [
-                new GraphQLError('Error with invalid argument exception', null, null, null, null, new \InvalidArgumentException('Invalid argument exception')),
-            ]
-        );
+        $exceptionConverter = new ExceptionConverter([\InvalidArgumentException::class => UserWarning::class]);
+        $errorHandler = new ErrorHandler($this->dispatcher, $exceptionConverter);
+        $executionResult = new ExecutionResult(null, [
+            new GraphQLError(
+                'Error with invalid argument exception',
+                null,
+                null,
+                null,
+                null,
+                new \InvalidArgumentException('Invalid argument exception')
+            ),
+        ]);
 
         $errorHandler->handleErrors($executionResult, true);
 
@@ -221,8 +238,8 @@ class ErrorHandlerTest extends TestCase
      */
     public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError): void
     {
-        $errorHandler = new ErrorHandler($this->dispatcher, null, $exceptionMap, $mapExceptionsToParent);
-
+        $exceptionConverter = new ExceptionConverter($exceptionMap, $mapExceptionsToParent);
+        $errorHandler = new ErrorHandler($this->dispatcher, $exceptionConverter);
         $executionResult = new ExecutionResult(
             null,
             [

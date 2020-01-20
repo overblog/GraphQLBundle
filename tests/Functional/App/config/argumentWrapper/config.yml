@@ -12,7 +12,7 @@ overblog_graphql:
             types:
                 -
                     type: yaml
-                    dir: "%kernel.root_dir%/config/argumentWrapper/mapping"
+                    dir: "%kernel.project_dir%/config/argumentWrapper/mapping"
 services:
     expression_function_instance_of:
         class: Symfony\Component\ExpressionLanguage\ExpressionFunction

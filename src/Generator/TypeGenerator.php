@@ -7,11 +7,12 @@ namespace Overblog\GraphQLBundle\Generator;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
+use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Validator\InputValidator;
+use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use ReflectionException;
-use RuntimeException;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -273,25 +274,92 @@ CODE;
         return parent::generateInputFields($config);
     }
 
+    /**
+     * Generates additional custom code in the resolver callback.
+     *
+     * @param array       $value
+     * @param string      $key
+     * @param string|null $argDefinitions
+     * @param string      $default
+     * @param array|null  $compilerNames
+     *
+     * @return string
+     *
+     * @throws GeneratorException
+     */
     protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): string
     {
         $resolve = $value['resolve'] ?? false;
+        $groups = $value['validationGroups'] ?? null;
         $extraCode = '';
 
-        if ('resolve' === $key && $resolve && (false !== \strpos($resolve->__toString(), 'validator'))) {
-            $compilerNames[] = 'validator';
+        // Generate validation code for the resolver callback
+        if ('resolve' === $key) {
+            $autoValidation = true;
+            $autoThrow = true;
+
             $mapping = $this->buildValidationMapping($value);
-            $extraCode .= $this->generateValidation($mapping);
-            $this->addInternalUseStatement(InputValidator::class);
+
+            // If `validator` injected
+            if (false !== \strpos($resolve->__toString(), 'validator')) {
+                $compilerNames[] = 'validator';
+                $autoValidation = false;
+            }
+
+            // If `errors` injected
+            if (false !== \strpos($resolve->__toString(), 'errors')) {
+                $compilerNames[] = 'errors';
+                $autoThrow = false;
+                $this->addUseStatement(ResolveErrors::class);
+
+                $extraCode .= '$errors = new ResolveErrors();'."\n\n<spaces><spaces>";
+            }
+
+            if ($mapping) {
+                $extraCode .= $this->generateValidation($mapping, $autoValidation, $autoThrow, $groups);
+                $this->addInternalUseStatement(InputValidator::class);
+            } elseif (false === $autoValidation) {
+                throw new GeneratorException(
+                    'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
+                    'Please remove the InputValidator argument from the list of dependencies of your '.
+                    'resolver or provide validation configs.'
+                );
+            }
         }
 
         return $extraCode;
     }
 
-    protected function generateValidation(array $rules): string
+    /**
+     * Generates validation code in the resolver callback.
+     *
+     * @param array      $rules
+     * @param bool       $autoValidation
+     * @param bool       $autoThrow
+     * @param array|null $groups
+     *
+     * @return string
+     */
+    protected function generateValidation(array $rules, bool $autoValidation, bool $autoThrow, ?array $groups): string
     {
         $code = $this->processTemplatePlaceHoldersReplacements('ValidatorCode', $rules, self::DEFERRED_PLACEHOLDERS);
         $code = $this->prefixCodeWithSpaces($code, 2);
+
+        if ($autoValidation) {
+            $code .= "\n\n<spaces><spaces>";
+
+            if (null !== $groups) {
+                $groups = \json_encode($groups);
+            } else {
+                $groups = 'null';
+            }
+
+            if ($autoThrow) {
+                $code .= "\$validator->validate($groups);";
+            } else {
+                $code .= "\$errors->setValidationErrors(\$validator->validate($groups, false));";
+            }
+        }
 
         return $code."\n\n<spaces><spaces>";
     }
@@ -383,6 +451,7 @@ CODE;
      *
      * @return string|null
      *
+     * @throws GeneratorException
      * @throws ReflectionException
      */
     protected function generateRule(array $config, $offset = 0): string
@@ -404,7 +473,7 @@ CODE;
         }
 
         if (!\class_exists($fqcn)) {
-            throw new RuntimeException("Constraint class '$fqcn' doesn't exist.");
+            throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
         }
 
         return "new {$prefix}{$name}({$this->stringifyValue($params, $offset)})";
@@ -425,6 +494,7 @@ CODE;
      *
      * @return string
      *
+     * @throws GeneratorException
      * @throws ReflectionException
      */
     protected function generateCascade($config)
@@ -435,7 +505,7 @@ CODE;
             $type = \trim($config['cascade']['referenceType'], '[]!');
 
             if (\in_array($type, ['ID', 'Int', 'String', 'Boolean', 'Float'])) {
-                throw new RuntimeException('Cascade validation cannot be applied to built-in types.');
+                throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
         }
 
@@ -505,11 +575,13 @@ CODE;
      *
      * @return string
      *
+     * @throws GeneratorException
      * @throws ReflectionException
      */
     protected function stringifyArray(array $array, $offset = 1): string
     {
-        if (1 === \count($array) && \ctype_upper(\key($array)[0])) {
+        $key = \key($array);
+        if (\is_string($key) && 1 === \count($array) && \ctype_upper($key[0])) {
             return $this->generateRule([\key($array), \current($array)], --$offset);
         } else {
             return $this->stringifyNormalArray($array, $offset);
@@ -612,9 +684,9 @@ CODE;
      *
      * @param array $value
      *
-     * @return array
+     * @return array|null
      */
-    protected function buildValidationMapping(array $value): array
+    protected function buildValidationMapping(array $value): ?array
     {
         $properties = [];
 
@@ -641,10 +713,16 @@ CODE;
             $classValidation = \array_replace_recursive($classValidation, $value['validation']);
         }
 
-        return [
+        $mapping = [
             'class' => empty($classValidation) ? null : $classValidation,
             'properties' => $properties,
         ];
+
+        if (empty($classValidation) && !\array_filter($properties)) {
+            return null;
+        } else {
+            return $mapping;
+        }
     }
 
     /**

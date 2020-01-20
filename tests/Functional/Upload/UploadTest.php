@@ -166,6 +166,7 @@ class UploadTest extends TestCase
     private function uploadRequest(array $parameters, array $files, $uri = '/')
     {
         $client = static::createClient(['test_case' => 'upload']);
+        $this->disableCatchExceptions($client);
         $client->request(
             'POST',
             $uri,

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
     /**
      * @param string $name
      *
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @return ArrayNodeDefinition|NodeDefinition
      */
     protected function outputFieldsSelection(string $name = 'fields')
     {
@@ -32,9 +33,23 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     return ['type' => $options];
                 })
             ->end()
+            ->validate()
+                ->always(function ($value) {
+                    if (empty($value['validationGroups'])) {
+                        unset($value['validationGroups']);
+                    }
+
+                    return $value;
+                })
+            ->end()
             ->children()
                 ->append($this->typeSelection())
                 ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
+                ->arrayNode('validationGroups')
+                    ->prototype('scalar')
+                        ->info('List of validation groups')
+                    ->end()
+                ->end()
                 ->arrayNode('args')
                     ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
                     ->useAttributeAsKey('name', false)

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase as BaseTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends WebTestCase
 {
     /** @var ContainerBuilder|MockObject */
     protected $containerBuilder;
