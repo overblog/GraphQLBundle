@@ -42,7 +42,7 @@ class GraphQLCollector extends DataCollector
     /**
      * Check if we have an error.
      *
-     * @return boolean
+     * @return bool
      */
     public function getError()
     {
