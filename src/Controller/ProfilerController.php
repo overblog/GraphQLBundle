@@ -44,7 +44,7 @@ class ProfilerController
             $tokenData['graphql'] = $graphql;
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->endpointUrl, 100, null, null, null, null));
+        }, $this->profiler->find(null, $this->endpointUrl, "100", null, null, null, null));
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
