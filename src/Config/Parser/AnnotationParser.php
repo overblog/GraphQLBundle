@@ -289,8 +289,22 @@ class AnnotationParser implements PreParserInterface
         $isRootMutation = ($rootMutationType && $gqlName === $rootMutationType);
         $currentValue = ($isRootQuery || $isRootMutation) ? \sprintf("service('%s')", self::formatNamespaceForExpression($reflectionEntity->getName())) : 'value';
 
+        $queryType = $isRootMutation ? 'Mutation' : 'Query';
+
+        if (isset($configs['definitions']['schema'])) {
+            $mutationTypes = [];
+
+            foreach ($configs['definitions']['schema'] as $key => $value) {
+                if (isset($configs['definitions']['schema'][$key]['mutation'])) {
+                    $mutationTypes[] = $configs['definitions']['schema'][$key]['mutation'];
+                }
+            }
+
+            $queryType = \in_array($gqlName, $mutationTypes) ? 'Mutation' : 'Query';
+        }
+
         $gqlConfiguration = self::graphQLTypeConfigFromAnnotation($classAnnotation, $classAnnotations, $properties, $methods, $reflectionEntity->getNamespaceName(), $currentValue);
-        $providerFields = self::getGraphQLFieldsFromProviders($reflectionEntity->getNamespaceName(), $isRootMutation ? 'Mutation' : 'Query', $gqlName, ($isRootQuery || $isRootMutation));
+        $providerFields = self::getGraphQLFieldsFromProviders($reflectionEntity->getNamespaceName(), $queryType, $gqlName, ($isRootQuery || $isRootMutation));
         $gqlConfiguration['config']['fields'] = $providerFields + $gqlConfiguration['config']['fields'];
 
         if ($classAnnotation instanceof GQL\Relay\Edge) {
@@ -673,7 +687,7 @@ class AnnotationParser implements PreParserInterface
                     continue;
                 }
 
-                $annotationTarget = 'Query' === $annotationName ? $annotation->targetType : null;
+                $annotationTarget = \in_array($annotationName, ['Query', 'Mutation']) ? $annotation->targetType : null;
                 if (!$annotationTarget && $isRoot) {
                     $annotationTarget = $targetType;
                 }

@@ -12,4 +12,10 @@ namespace Overblog\GraphQLBundle\Annotation;
  */
 final class Mutation extends Field
 {
+    /**
+     * The target type to attach this mutation to.
+     *
+     * @var string
+     */
+    public $targetType;
 }

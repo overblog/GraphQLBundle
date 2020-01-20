@@ -14,6 +14,7 @@ class AnnotationParserTest extends TestCase
         'definitions' => [
             'schema' => [
                 'default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation'],
+                'alternative' => ['query' => 'AlternativeQuery', 'mutation' => 'AlternativeMutation'],
             ],
         ],
         'doctrine' => [
@@ -224,6 +225,30 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=override_public',
+                ],
+            ],
+        ]);
+
+        $this->expect('AlternativeQuery', 'object', [
+            'fields' => [
+                'planet_sortPlanets' => [
+                    'type' => '[Planet]',
+                    'args' => ['direction' => ['type' => 'String!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').sortPlanets, arguments({direction: \"String!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
+            ],
+        ]);
+
+        $this->expect('AlternativeMutation', 'object', [
+            'fields' => [
+                'planet_destroyPlanet' => [
+                    'type' => 'Planet',
+                    'args' => ['planetInput' => ['type' => 'PlanetInput!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=override_public',
                 ],

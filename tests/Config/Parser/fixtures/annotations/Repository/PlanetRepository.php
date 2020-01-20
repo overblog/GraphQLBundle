@@ -24,12 +24,33 @@ class PlanetRepository
     }
 
     /**
+     * @GQL\Query(type="[Planet]", targetType="AlternativeQuery", args={
+     *    @GQL\Arg(type="String!", name="direction")
+     * })
+     */
+    public function sortPlanets(string $direction)
+    {
+        return [];
+    }
+
+    /**
      * @GQL\Mutation(type="Planet", args={
      *    @GQL\Arg(type="PlanetInput!", name="planetInput")
      * })
      * @GQL\IsPublic("override_public")
      */
     public function createPlanet(array $planetInput)
+    {
+        return [];
+    }
+
+    /**
+     * @GQL\Mutation(type="Planet", targetType="AlternativeMutation", args={
+     *    @GQL\Arg(type="PlanetInput!", name="planetInput")
+     * })
+     * @GQL\IsPublic("override_public")
+     */
+    public function destroyPlanet(array $planetInput)
     {
         return [];
     }

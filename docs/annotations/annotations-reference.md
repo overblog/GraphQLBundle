@@ -384,6 +384,10 @@ This annotation applies on methods for classes tagged with the `@Provider` annot
 The resulting field is added to the root Mutation type (defined in configuration at key `overblog_graphql.definitions.schema.mutation`).  
 The class exposing the mutation(s) must be declared as a [service](https://symfony.com/doc/current/service_container.html).
 
+Optional attributes:
+
+-   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Mutation type).
+
 Example:
 
 This will add an `updateUserEmail` mutation, with as resolver `@=service('App\Graphql\MutationProvider').updateUserEmail(...)`.
