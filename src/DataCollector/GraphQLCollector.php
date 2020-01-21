@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DataCollector;
 
 use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\DocumentNode;
+use GraphQL\Language\AST\FieldNode;
 use GraphQL\Language\AST\OperationDefinitionNode;
 use GraphQL\Language\Parser;
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
@@ -140,8 +141,6 @@ class GraphQLCollector extends DataCollector
      * Extract GraphQL Information from the documentNode².
      *
      * @param DocumentNode $document
-     * @param array        $result
-     * @param array        $variables
      *
      * @return array
      */
@@ -154,13 +153,15 @@ class GraphQLCollector extends DataCollector
             if ($definition instanceof OperationDefinitionNode) {
                 $operation = $definition->operation;
                 foreach ($definition->selectionSet->selections as $selection) {
-                    $name = $selection->name->value;
-                    $alias = $selection->alias ? $selection->alias->value : null;
+                    if ($selection instanceof FieldNode) {
+                        $name = $selection->name->value;
+                        $alias = $selection->alias ? $selection->alias->value : null;
 
-                    $fields[] = [
-                        'name' => $name,
-                        'alias' => $alias,
-                    ];
+                        $fields[] = [
+                            'name' => $name,
+                            'alias' => $alias,
+                        ];
+                    }
                 }
             }
         }
