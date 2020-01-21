@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\DataCollector;
 
 use GraphQL\Executor\ExecutionResult;
+use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
+use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
+use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
+use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
-use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
-use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
-use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Symfony\Component\VarDumper\Cloner\Data;
 
 class GraphQLCollectorTest extends TestCase
 {
-    public function testCollect()
+    public function testCollect(): void
     {
         $collector = new GraphQLCollector();
 
@@ -48,15 +50,19 @@ class GraphQLCollectorTest extends TestCase
         $this->assertEquals($batchSuccess['count'], 1);
         $this->assertFalse(isset($batchSuccess['error']));
         $this->assertTrue($batchSuccess['variables'] instanceof Data);
-        $this->assertEquals($batchSuccess['variables']->getValue()['variable1']->getValue(), 'v1');
+        $variables = $batchSuccess['variables']->getValue();
+        $this->assertIsArray($variables);
+        $this->assertTrue(isset($variables['variable1']));
+
+        $this->assertNotNull($variables);
         $this->assertEquals($batchSuccess['graphql'], [
-            "operation" => "query",
-            "fields" =>  [
+            'operation' => 'query',
+            'fields' => [
                 [
-                    "name" => "test",
-                    "alias" => "myalias"
-                ]
-            ]
+                    'name' => 'test',
+                    'alias' => 'myalias',
+                ],
+            ],
         ]);
     }
 }
