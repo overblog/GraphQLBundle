@@ -81,6 +81,9 @@ class ArgumentsTransformer
     private function populateObject(Type $type, $data, bool $multiple, ResolveInfo $info)
     {
         if (null === $data) {
+            if ($type instanceof InputObjectType) {
+                return $this->getTypeClassInstance($type->name) ?: null;
+            }
             return $data;
         }
 
@@ -129,9 +132,9 @@ class ArgumentsTransformer
             }
 
             return $instance;
-        } else {
-            return $data;
         }
+
+        return $data;
     }
 
     /**
@@ -170,9 +173,9 @@ class ArgumentsTransformer
 
         if (\count($errors) > 0) {
             throw new InvalidArgumentError($argName, $errors);
-        } else {
-            return $result;
         }
+
+        return $result;
     }
 
     /**
