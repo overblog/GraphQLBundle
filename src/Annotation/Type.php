@@ -27,6 +27,13 @@ class Type implements Annotation
     public $interfaces;
 
     /**
+     * Inherited Types.
+     *
+     * @var string[]
+     */
+    public $inherits;
+
+    /**
      * Is the type a relay payload.
      *
      * @var bool

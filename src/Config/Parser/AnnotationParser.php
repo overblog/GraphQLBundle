@@ -355,7 +355,7 @@ class AnnotationParser implements PreParserInterface
             $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
         }
 
-        return ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration];
+        return ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration, 'inherits' => $typeAnnotation->inherits];
     }
 
     /**
