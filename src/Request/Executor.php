@@ -106,9 +106,6 @@ class Executor
         return $schema;
     }
 
-    /**
-     * @return string[]
-     */
     public function getSchemasNames(): array
     {
         return \array_keys($this->schemas);
