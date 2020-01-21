@@ -47,12 +47,15 @@ class AnnotationParserTest extends TestCase
         }
     }
 
-    private function expect($name, $type, $config = []): void
+    private function expect($name, $type, $config = [], $inherits = null): void
     {
         $expected = [
             'type' => $type,
             'config' => $config,
         ];
+        if ($inherits !== null) {
+            $expected['inherits'] = $inherits;
+        }
 
         $this->assertArrayHasKey($name, $this->config, \sprintf("The GraphQL type '%s' doesn't exist", $name));
         $this->assertEquals($expected, $this->config[$name]);
@@ -154,6 +157,15 @@ class AnnotationParserTest extends TestCase
             ],
             'builders' => [['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']]],
         ]);
+
+        // Test a type extending another type
+        $this->expect('Cat', 'object', [
+            'description' => 'The Cat type',
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
+                'lives' => ['type' => 'Int!'],
+            ]
+        ], ['Animal']);
     }
 
     public function testInput(): void
