@@ -29,9 +29,9 @@ class Type implements Annotation
     /**
      * Inherited Types.
      *
-     * @var string[]
+     * @var string[]|null
      */
-    public $inherits;
+    public $inherits = null;
 
     /**
      * Is the type a relay payload.

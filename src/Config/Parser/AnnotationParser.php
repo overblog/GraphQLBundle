@@ -356,7 +356,7 @@ class AnnotationParser implements PreParserInterface
         }
 
         $type = ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration];
-        if ($typeAnnotation->inherits) {
+        if ($typeAnnotation->inherits !== null) {
             $type['inherits'] = $typeAnnotation->inherits;
         }
 
