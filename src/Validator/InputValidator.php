@@ -278,4 +278,12 @@ class InputValidator
             }
         }
     }
+
+    /**
+     * @throws ArgumentsValidationException
+     */
+    public function __invoke($groups = null, bool $throw = true): ?ConstraintViolationListInterface
+    {
+        return $this->validate($groups, $throw);
+    }
 }

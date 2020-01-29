@@ -16,7 +16,7 @@ class HasPermissionTest extends TestCase
     {
         $this->expectedObject = new \stdClass();
 
-        $authorizationChecker = parent::getAuthorizationCheckerIsGrantedWithExpectation(
+        $Security = $this->getSecurityIsGrantedWithExpectation(
             [
                 'OWNER',
                 $this->identicalTo($this->expectedObject),
@@ -24,7 +24,7 @@ class HasPermissionTest extends TestCase
             $this->any()
         );
 
-        return [new HasPermission($authorizationChecker)];
+        return [new HasPermission($Security)];
     }
 
     public function testEvaluator(): void

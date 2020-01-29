@@ -7,6 +7,10 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @deprecated since 0.13 will be remove in 0.14
+ * @codeCoverageIgnore
+ */
 final class Helper
 {
     /**

@@ -13,13 +13,14 @@ use Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
+use Overblog\GraphQLBundle\Error\ExceptionConverter;
+use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\EventListener\ClassLoaderListener;
 use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
-use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Validator\ValidatorFactory;
 use Symfony\Component\Config\FileLocator;
@@ -27,6 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OverblogGraphQLExtension extends Extension
@@ -86,8 +88,10 @@ class OverblogGraphQLExtension extends Extension
     {
         $container->registerForAutoconfiguration(MutationInterface::class)
             ->addTag('overblog_graphql.mutation');
+
         $container->registerForAutoconfiguration(ResolverInterface::class)
             ->addTag('overblog_graphql.resolver');
+
         $container->registerForAutoconfiguration(Type::class)
             ->addTag('overblog_graphql.type');
     }
@@ -193,31 +197,34 @@ class OverblogGraphQLExtension extends Extension
 
     private function setErrorHandler(array $config, ContainerBuilder $container): void
     {
-        if ($config['errors_handler']['enabled']) {
-            $id = $this->getAlias().'.error_handler';
-            $container->register($id, ErrorHandler::class)
-                ->setArguments(
-                    [
-                        new Reference('event_dispatcher'),
-                        $config['errors_handler']['internal_error_message'],
-                        $this->buildExceptionMap($config['errors_handler']['exceptions']),
-                        $config['errors_handler']['map_exceptions_to_parent'],
-                    ]
-                );
+        if (!$config['errors_handler']['enabled']) {
+            return;
+        }
 
-            $errorHandlerListenerDefinition = $container->register(ErrorHandlerListener::class);
-            $errorHandlerListenerDefinition->setPublic(true)
-                ->setArguments([new Reference($id), $config['errors_handler']['rethrow_internal_exceptions'], $config['errors_handler']['debug']])
-                ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
+        $container->register(ExceptionConverter::class)
+            ->setArgument(0, $this->buildExceptionMap($config['errors_handler']['exceptions']))
+            ->setArgument(1, $config['errors_handler']['map_exceptions_to_parent']);
 
-            if ($config['errors_handler']['log']) {
-                $loggerServiceId = $config['errors_handler']['logger_service'];
-                $invalidBehavior = ErrorLoggerListener::DEFAULT_LOGGER_SERVICE === $loggerServiceId ? ContainerInterface::NULL_ON_INVALID_REFERENCE : ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
-                $container->register(ErrorLoggerListener::class)
-                    ->setPublic(true)
-                    ->setArguments([new Reference($loggerServiceId, $invalidBehavior)])
-                    ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting']);
-            }
+        $container->register(ErrorHandler::class)
+            ->setArgument(0, new Reference(EventDispatcherInterface::class))
+            ->setArgument(1, new Reference(ExceptionConverterInterface::class));
+
+        $container->register(ErrorHandlerListener::class)
+            ->setArgument(0, new Reference(ErrorHandler::class))
+            ->setArgument(1, $config['errors_handler']['rethrow_internal_exceptions'])
+            ->setArgument(2, $config['errors_handler']['debug'])
+            ->addTag('kernel.event_listener', ['event' => Events::POST_EXECUTOR, 'method' => 'onPostExecutor']);
+
+        $container->setAlias(ExceptionConverterInterface::class, ExceptionConverter::class);
+
+        if ($config['errors_handler']['log']) {
+            $loggerServiceId = $config['errors_handler']['logger_service'];
+            $invalidBehavior = ErrorLoggerListener::DEFAULT_LOGGER_SERVICE === $loggerServiceId ? ContainerInterface::NULL_ON_INVALID_REFERENCE : ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE;
+
+            $container->register(ErrorLoggerListener::class)
+                ->setPublic(true)
+                ->addArgument(new Reference($loggerServiceId, $invalidBehavior))
+                ->addTag('kernel.event_listener', ['event' => Events::ERROR_FORMATTING, 'method' => 'onErrorFormatting']);
         }
     }
 
@@ -229,41 +236,36 @@ class OverblogGraphQLExtension extends Extension
 
     private function setSchemaArguments(array $config, ContainerBuilder $container): void
     {
-        if (isset($config['definitions']['schema'])) {
-            $executorDefinition = $container->getDefinition(Executor::class);
-            $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
-
-            foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
-                // builder
-                $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
-                $definition = $container->register($schemaBuilderID, \Closure::class);
-                $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
-                $definition->setArguments([
-                    $schemaName,
-                    $schemaConfig['query'],
-                    $schemaConfig['mutation'],
-                    $schemaConfig['subscription'],
-                    $schemaConfig['types'],
-                ]);
-                // schema
-                $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
-                $definition = $container->register($schemaID, Schema::class);
-                $definition->setFactory([new Reference($schemaBuilderID), 'call']);
-
-                if (!empty($schemaConfig['resolver_maps'])) {
-                    $typeDecoratorListenerDefinition->addMethodCall(
-                        'addSchemaResolverMaps',
-                        [
-                            $schemaName,
-                            \array_map(function ($id) {
-                                return new Reference($id);
-                            }, $schemaConfig['resolver_maps']),
-                        ]
-                    );
-                }
-                $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
-            }
+        if (!isset($config['definitions']['schema'])) {
+            return;
         }
+
+        $executorDefinition = $container->getDefinition(Executor::class);
+        $resolverMapsBySchema = [];
+
+        foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
+            // builder
+            $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
+            $definition = $container->register($schemaBuilderID, \Closure::class);
+            $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
+            $definition->setArguments([
+                $schemaName,
+                $schemaConfig['query'],
+                $schemaConfig['mutation'],
+                $schemaConfig['subscription'],
+                $schemaConfig['types'],
+            ]);
+            // schema
+            $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+            $definition = $container->register($schemaID, Schema::class);
+            $definition->setFactory([new Reference($schemaBuilderID), 'call']);
+
+            $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
+
+            $resolverMapsBySchema[$schemaName] = \array_fill_keys($schemaConfig['resolver_maps'], 0);
+        }
+
+        $container->setParameter(\sprintf('%s.resolver_maps', $this->getAlias()), $resolverMapsBySchema);
     }
 
     private function setServicesAliases(array $config, ContainerBuilder $container): void
@@ -279,11 +281,11 @@ class OverblogGraphQLExtension extends Extension
     /**
      * Returns a list of custom exceptions mapped to error/warning classes.
      *
-     * @param array $exceptionConfig
+     * @param array<string, string[]> $exceptionConfig
      *
-     * @return array Custom exception map, [exception => UserError/UserWarning]
+     * @return array<string, string> Custom exception map, [exception => UserError/UserWarning]
      */
-    private function buildExceptionMap(array $exceptionConfig)
+    private function buildExceptionMap(array $exceptionConfig): array
     {
         $exceptionMap = [];
         $errorsMapping = [

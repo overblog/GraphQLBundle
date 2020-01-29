@@ -20,5 +20,5 @@ overblog_graphql:
             auto_discover: true
             types:
                 -
-                    dir: "%kernel.root_dir%/config/node/mapping"
+                    dir: "%kernel.project_dir%/config/node/mapping"
                     suffix: _type

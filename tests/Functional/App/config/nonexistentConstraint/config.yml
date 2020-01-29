@@ -11,4 +11,4 @@ overblog_graphql:
         mappings:
             types:
                 - type: yaml
-                  dir: "%kernel.root_dir%/config/nonexistentConstraint/mapping"
+                  dir: "%kernel.project_dir%/config/nonexistentConstraint/mapping"

@@ -14,6 +14,34 @@ overblog_graphql:
 
 This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
 
+## Using Annotations as your only Mapping
+
+If you only use annotations as mappings you need to add an empty `RootQuery` type.
+Your config should look like this:
+```yaml
+# config/packages/graphql.yaml
+overblog_graphql:
+  definitions:
+    schema:
+      query: RootQuery
+    mappings:
+      types:
+        - type: annotation
+          dir: "%kernel.project_dir%/src/GraphQL"
+          suffix: ~
+```
+Your `RootQuery` class should look like this:
+```php
+namespace App\GraphQL\Query;
+
+/**
+ * @GQL\Type
+ */
+class RootQuery
+{
+}
+```
+If you use mutations, you need a `RootMutation` type as well.
 ## Annotations reference
 - [Annotations reference](annotations-reference.md)
 

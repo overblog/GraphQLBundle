@@ -22,8 +22,7 @@ User:
         fields:
             id:
                 builder: "Relay::GlobalId"
-            name:
-                type: String
+            name: String
         interfaces: [NodeInterface]
 
 Photo:
@@ -35,8 +34,7 @@ Photo:
                 builderConfig:
                     typeName: Photo
                     idFetcher: '@=value["photoId"]'
-            width:
-                type: Int
+            width: Int
         interfaces: [NodeInterface]
 
 Post:
@@ -45,10 +43,8 @@ Post:
         fields:
             id:
                 builder: "Relay::GlobalId"
-            text:
-                type: String
-            status:
-                type: Status
+            text: String
+            status: Status
         interfaces: [NodeInterface]
 
 PhotoAndPost:

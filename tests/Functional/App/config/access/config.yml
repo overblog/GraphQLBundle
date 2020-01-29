@@ -14,11 +14,11 @@ overblog_graphql:
             types:
                 -
                     type: yaml
-                    dir: "%kernel.root_dir%/config/access/mapping"
+                    dir: "%kernel.project_dir%/config/access/mapping"
                 # include the same files twice
                 -
                     type: yaml
-                    dir: "%kernel.root_dir%/config/access/mapping"
+                    dir: "%kernel.project_dir%/config/access/mapping"
 
 services:
     overblog_graphql.test.private:
