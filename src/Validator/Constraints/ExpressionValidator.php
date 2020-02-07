@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Validator\Constraints;
 
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -17,7 +18,11 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     public function __construct(ExpressionLanguage $expressionLanguage)
     {
         $this->expressionLanguage = $expressionLanguage;
-        parent::__construct(null, $expressionLanguage);
+        if (Kernel::VERSION_ID >= 40400) {
+            parent::__construct($expressionLanguage);
+        } else {
+            parent::__construct(null, $expressionLanguage);
+        }
     }
 
     /**

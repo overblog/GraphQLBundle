@@ -3,6 +3,5 @@ QueryHelloWord:
     heirs: [Query]
     config:
         fields:
-            sayHello:
-                type: String
+            sayHello: String
         resolveType: true

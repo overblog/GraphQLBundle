@@ -1,5 +1,5 @@
 $validator = new InputValidator(
-<spaces>func_get_args(),
+<spaces>\func_get_args(),
 <spaces>$globalVariable->get('container')->get('validator'),
 <spaces>$globalVariable->get('validatorFactory'),
 <spaces>[

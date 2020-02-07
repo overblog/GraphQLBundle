@@ -55,7 +55,7 @@ class ValidateCommandTest extends TestCase
         $this->command->setRequestExecutor($executor);
 
         $this->commandTester->execute(['--schema' => 'foo']);
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
+        $this->assertEquals(1, $this->commandTester->getStatusCode());
         $this->assertEquals('broken schema', \trim($this->commandTester->getDisplay()));
     }
 }

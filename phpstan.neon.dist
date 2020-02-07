@@ -1,11 +1,10 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
-  level: 1
+  level: 7
   paths:
     - %currentWorkingDirectory%/lib/generator/src
     - %currentWorkingDirectory%/lib/generator/tests
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/tests
-
-includes:
-	- vendor/phpstan/phpstan-phpunit/extension.neon
-	- vendor/phpstan/phpstan-phpunit/rules.neon

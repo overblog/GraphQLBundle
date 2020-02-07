@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Overblog\GraphQLBundle\Security\Security;
 
 final class GetUser extends ExpressionFunction
 {
@@ -14,10 +13,10 @@ final class GetUser extends ExpressionFunction
     {
         parent::__construct(
             'getUser',
-            function (): string {
-                return \sprintf('\%s::getUser($globalVariable)', Helper::class);
+            static function (): string {
+                return '$globalVariable->get(\'security\')->getUser()';
             },
-            function () use ($security): ?UserInterface {
+            static function () use ($security) {
                 return $security->getUser();
             }
         );

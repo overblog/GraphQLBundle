@@ -47,7 +47,7 @@ final class ValidateCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         Warning::suppress(true);
 
@@ -59,8 +59,10 @@ final class ValidateCommand extends Command
         } catch (InvariantViolation $e) {
             $output->writeln('<comment>'.$e->getMessage().'</comment>');
 
-            return;
+            return 1;
         }
         $output->writeln('<info>No error</info>');
+
+        return 0;
     }
 }

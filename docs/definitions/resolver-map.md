@@ -118,19 +118,21 @@ class MyResolverMap extends ResolverMap
 }
 ```
 
-Declare resolverMap to current schema
+Each resolver map must be tagged with the `overblog_graphql.resolver_map` tag
+that defines at which priority it should run for the given schema. The priority
+is an optional attribute and it has a default value of 0. The higher the number,
+the earlier the resolver map is executed.
 
 ```yaml
-overblog_graphql:
-    definitions:
-        schema:
-            # ...
-            # resolver maps services IDs
-            resolver_maps:
-                - App\Resolver\MyResolverMap
-
+# config/services.yaml
 services:
-    App\Resolver\MyResolverMap: ~
+    App\Resolver\MyResolverMap1:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: default }
+    
+    App\Resolver\MyResolverMap2:
+        tags:
+            - { name: overblog_graphql.resolver_map, schema: default, priority: 10 }
 ```
 
 **Notes:**

@@ -28,6 +28,7 @@ final class ErrorHandlerListener
     public function onPostExecutor(ExecutorResultEvent $executorResultEvent): void
     {
         $result = $executorResultEvent->getResult();
+
         $this->errorHandler->handleErrors($result, $this->throwException, $this->debug);
     }
 }

@@ -42,6 +42,11 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         return $this->basePath().'logs';
     }
 
+    public function getProjectDir()
+    {
+        return __DIR__;
+    }
+
     public function getRootDir()
     {
         return __DIR__;
