@@ -115,25 +115,27 @@ will never be called.
 
 The [Symfony Validator Component](https://symfony.com/doc/current/components/validator.html) is designed to validate 
 objects. For this reason, when a request occurs, all input data is first converted into objects of class `ValidationNode` 
-and then validated. This happens automatically during the validation process.
+and then validated. These objects are only used for validation and won't be passed into resolvers. This process is 
+performed automatically by the bundle **before** any resolver is called.  If validation fails a corresponding resolver 
+will not be called.
 
-Objects are created differently depending of the GraphQL type. Take a look at the following scheme:
+Validation objects are created differently depending of the GraphQL type. Take a look at the following scheme:
 
 ![enter_description](img/schema_1.png)
 
 As you can see, there are 2 GraphQL types: **Mutation** and **DateInput** (`object` and `input-object` respectively). In 
 the case of **Mutation**, this bundle creates an object **per each field** (`createUser` and `createPost`), but in the 
 case of the `DateInput` it creates an object for the entire type. Embedded `input-object` types must be always 
-explicitly set to `cascade` in order to be converted in objects. The key `cascade` tells the Validator, that the 
+explicitly set to `cascade` in order to be converted into objects. The key `cascade` tells the Validator, that the 
 validation should be delegated to the embedded GraphQL type. If you don't mark `input-object` types for cascade 
-validation, they won't be converted into objects, but will remain arrays and will still be available for validation
+validation, they will remain arrays and will still be available for validation, which will be shown in the following 
+examples.
 
 All object properties are created dynamically and then the validation constraints are applied.
 
-If you embed an `input-object` type into another and set `cascade` for the `validation` key, it will create a sub-object
-
 > **Note**: 
-> Though it's possible to validate raw arguments, but objects provide the best flexibility.
+> Although it is possible to validate raw arguments, objects provide the best flexibility, especially when it comes
+>to conditional validation with groups.
 
 
 Resulting objects will be similar to the nesting structure of your GraphQL schema (if all child types are marked with `cascade`). The object 
