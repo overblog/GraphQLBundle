@@ -113,13 +113,42 @@ will never be called.
 
 ## How does it work?
 
-The Symfony Validator Component is designed to validate objects. For this reason this bundle creates temporary objects 
-for each of your GraphQL types during the validation process and populates them with the input data. Resulting objects 
-will repeat the nesting structure of your GraphQL schema. The object properties are created dynamically in runtime with 
-the same names as the corresponding `args` or `fields`, depending on GraphQL type (`object` and `input-object` 
-respectively). All newly created objects will be instances of the class `ValidationNode` 
-(see [ValidationNode API](#validationnode-api)). The resulting object composition will be then recursively validated, 
-starting from the root object down to it's children.
+The [Symfony Validator Component](https://symfony.com/doc/current/components/validator.html) is designed to validate 
+objects. For this reason, when a request occurs, all input data is first converted into objects of class `ValidationNode` 
+and then validated. This happens automatically during the validation process.
+
+Objects are created differently depending of the GraphQL type. Take a look at the following scheme:
+
+![enter_description](img/schema_1.png)
+
+As you can see, there are 2 GraphQL types: **Mutation** and **DateInput** (`object` and `input-object` respectively). In 
+the case of **Mutation**, this bundle creates an object **per each field** (`createUser` and `createPost`), but in the 
+case of the `DateInput` it creates an object for the entire type. Embedded `input-object` types must be always 
+explicitly set to `cascade` in order to be converted in objects. The key `cascade` tells the Validator, that the 
+validation should be delegated to the embedded GraphQL type. If you don't mark `input-object` types for cascade 
+validation, they won't be converted into objects, but will remain arrays and will still be available for validation
+
+All object properties are created dynamically and then the validation constraints are applied.
+
+If you embed an `input-object` type into another and set `cascade` for the `validation` key, it will create a sub-object
+
+> **Note**: 
+> Though it's possible to validate raw arguments, but objects provide the best flexibility.
+
+
+Resulting objects will be similar to the nesting structure of your GraphQL schema (if all child types are marked with `cascade`). The object 
+properties are created dynamically in runtime with the same names as the corresponding `args` or `fields`, depending on 
+GraphQL type (`object` and `input-object` respectively). All newly created objects will be instances of the class 
+`ValidationNode` (see [ValidationNode API](#validationnode-api)). The resulting object composition will be then 
+recursively validated, starting from the root object down to it's children.
+
+Here is a visual representation of how the `ValidationNode` objects are created from your types. On the left side is 
+`Mutation` type with 2 fields: `createUser` and `createPost`. On the right side are shown 2 classes that are as if you would create them manually:
+
+
+
+This process happens in the background and you usually shouldn't worry about it, but understanding this will help you to
+apply constraints in the right place of your GraphQL types.
 
 > Please note, that the original arguments won't be altered in any way.
 
