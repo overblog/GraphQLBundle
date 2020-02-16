@@ -131,11 +131,11 @@ the case of **Mutation**, this bundle creates an object **per each field** (`cre
 case of the **DateInput**, it creates an object for the entire type. 
 
 Keep in mind that objects are not created recursively by default. As you can see, the argument `createdAt` has its
-validation set to `cascade`. It is a special key which degelates the validation to the embedded type and does the 
+validation set to `cascade`. It is a special value, which degelates the validation to the embedded type by doing the 
 following:
- - coverts the subtype (`DateInput`) into an object.
- - embeds the resulting object into its parent, making it a sub-object.
- - applies to it the [`Valid`](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint (for a
+ - covert the subtype (`DateInput`) into an object.
+ - embed the resulting object into its parent, making it a sub-object.
+ - apply to it the [`Valid`](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint (for a
   recursive validation). 
  
 If you don't mark embedded types as `cascade`, they will stay arrays, which can still be validated, as shown in the 
@@ -145,13 +145,10 @@ All object properties are created dynamically and then the validation constraint
 object composition will be then recursively validated, starting from the root object down to it's children.
 
 > **Note**: 
-> Although it is possible to validate raw arguments, objects provide the better flexibility and more features.
-
-This process happens in the background and you usually shouldn't worry about it, but understanding this will help you to
-apply constraints in the right place of your GraphQL types.
+> Although it would have been possible to validate raw arguments, objects provide a better flexibility and more features.
 
 Here is a more complex example to better demonstrate how the `InputValidator` creates objects from your GraphQL schema 
-and embeds them in each other:
+and embeds them into each other:
 ```yaml
 Mutation:
     type: object
