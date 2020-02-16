@@ -603,10 +603,10 @@ Mutation:
                         id: 
                             type: ID!
                         address:
-                            type: Address
+                            type: AddressInput
                             validation: cascade # delegate to AddressInput
                         workPeriod:
-                            type: Period
+                            type: PeriodInput
                             validation: cascade # delegate to PeriodInput
 
 AddressInput:
