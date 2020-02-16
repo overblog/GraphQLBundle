@@ -326,7 +326,7 @@ Mutation:
                                 - NotBlank: ~
                                 - App\Constraint\MyConstraint:  ~ # custom constraint
 ```
-Class level constraints are applied to _fields_:
+Class-level constraints are applied to _fields_:
 ```yaml
 Mutation:
     type: object
@@ -418,7 +418,7 @@ User:
                     constraints:
                         - Email: ~
 ```
-class constraints are declared 2 levels higher, under the `config` key:
+Class-level constraints are declared 2 levels higher, under the `config` key:
 ```yaml
 User:
     type: input-object
