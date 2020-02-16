@@ -134,14 +134,10 @@ As you can see, there are 2 GraphQL types: **Mutation** and **DateInput** (`obje
 the case of **Mutation**, this bundle creates an object **per each field** (`createUser` and `createPost`), but in the 
 case of the `DateInput`, it creates an object for the entire type. 
 
-Take a look at the argument `createdAt`. Its validation is set to: `cascade`, 
-
-because embedded types (`input-object`) are 
-not converted into objects automatically. You must first mark them for cascade validation   
-
-The `cascade` key delegates the validation to the subtype: 
- - delegates the validation to the subtype (`DateInput` in this case) 
- - coverts the subtype into an object
+Keep in mind that objects are not created recursively by default. As you can see, the argument `cratedAt` has its
+validation set to `cascade`. It is a special key which degelates the validation to the embedded type and does the 
+following:
+ - coverts the subtype (`DateInput`) into an object.
  - embeds the resulting object into it's parent, making it a sub-object.
  - applies to it the [`Valid`](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint (for a
   recursive validation). 
