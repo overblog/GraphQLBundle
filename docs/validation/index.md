@@ -9,7 +9,7 @@ to validate user input data. It currently supports only GraphQL schemas defined 
 - [Overview](#overview)
 - [How does it work?](#how-does-it-work)
 - [Applying of validation constraints](#applying-of-validation-constraints)
-    - [Listing constraints directly](#listing-constraints-explicitly)
+    - [Listing constraints directly](#listing-constraints-directly)
         - [object](#object)
         - [input-object](#input-object)
     - [Linking to class constraints](#linking-to-class-constraints)
