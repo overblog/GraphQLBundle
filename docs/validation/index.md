@@ -27,7 +27,7 @@ to validate user input data. It currently supports only GraphQL schemas defined 
 - [ValidationNode API](#validationnode-api)
 - [Limitations](#limitations)
     - [Annotations and GraphQL Schema language](#annotations-and-graphql-schema-language)
-    - [Unsupported constraints](#unsupported-constraints)
+    - [Unsupported/Irrelevant constraints](#unsupportedirrelevant-constraints)
 
 
 ## Overview
