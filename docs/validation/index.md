@@ -131,9 +131,9 @@ the case of **Mutation**, this bundle creates an object **per each field** (`cre
 case of the **DateInput**, it creates an object for the entire type. 
 
 Keep in mind that objects are not created recursively by default. As you can see, the argument `createdAt` has its
-validation set to `cascade`. It is a special value, which degelates the validation to the embedded type by doing the 
+validation set to `cascade`. It is a special value, which delegates the validation to the embedded type by doing the 
 following:
- - covert the subtype (`DateInput`) into an object.
+ - convert the subtype (`DateInput`) into an object.
  - embed the resulting object into its parent, making it a sub-object.
  - apply to it the [`Valid`](https://symfony.com/doc/current/reference/constraints/Valid.html) constraint (for a
   recursive validation). 
