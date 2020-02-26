@@ -52,7 +52,7 @@ class ArgumentsTransformer
     {
         $classname = isset($this->classesMap[$type]) ? $this->classesMap[$type]['class'] : false;
 
-        return $classname ? new $classname() : false;
+        return $classname ? (new \ReflectionClass($classname))->newInstanceWithoutConstructor() : false;
     }
 
     /**
