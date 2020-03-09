@@ -14,7 +14,7 @@ final class IsRememberMe extends ExpressionFunction
         parent::__construct(
             'isRememberMe',
             static function (): string {
-                return '$globalVariable->get(\'security\')->isRememberMe()';
+                return '$globalVariables->get(\'security\')->isRememberMe()';
             },
             static function () use ($security): bool {
                 return $security->isRememberMe();

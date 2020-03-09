@@ -1,9 +1,0 @@
-$validator = new InputValidator(
-<spaces>\func_get_args(),
-<spaces>$globalVariable->get('container')->get('validator'),
-<spaces>$globalVariable->get('validatorFactory'),
-<spaces>[
-<spaces><spaces>'class' => <classValidation>,
-<spaces><spaces>'properties' => <validationMapping>
-]
-);

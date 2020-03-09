@@ -28,8 +28,8 @@ class ParameterTest extends TestCase
      */
     public function testParameterCompilation($name): void
     {
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
-        $globalVariable->get('container');
+        $globalVariables = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        $globalVariables->get('container');
         $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
     }
 

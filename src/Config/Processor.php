@@ -23,14 +23,14 @@ class Processor implements ProcessorInterface
             NamedConfigProcessor::class,
             InheritanceProcessor::class,
         ],
-        self::NORMALIZATION => [ExpressionProcessor::class],
+        self::NORMALIZATION => [],
     ];
 
     public static function process(array $configs, $type = self::NORMALIZATION): array
     {
         /** @var ProcessorInterface $processor */
         foreach (static::PROCESSORS[$type] as $processor) {
-            $configs = \call_user_func([$processor, 'process'], $configs);
+            $configs = $processor::process($configs);
         }
 
         return $configs;

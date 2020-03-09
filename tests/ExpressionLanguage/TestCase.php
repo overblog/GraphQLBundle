@@ -36,10 +36,10 @@ abstract class TestCase extends BaseTestCase
     protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue'): void
     {
         $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
-        $globalVariable = new GlobalVariables([
+        $globalVariables = new GlobalVariables([
             'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        $globalVariable->get('security');
+        $globalVariables->get('security');
         \extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));

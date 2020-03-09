@@ -41,10 +41,8 @@ abstract class TypeDefinition
         $node = self::createNode('name', 'scalar');
         $node->isRequired();
         $node->validate()
-            ->ifTrue(function ($name) {
-                return !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name);
-            })
-                ->thenInvalid('Invalid type name "%s". (see https://facebook.github.io/graphql/October2016/#Name)')
+            ->ifTrue(fn($name) => !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name))
+            ->thenInvalid('Invalid type name "%s". (see http://spec.graphql.org/June2018/#sec-Names)')
         ->end();
 
         return $node;
@@ -52,9 +50,7 @@ abstract class TypeDefinition
 
     protected function defaultValueSection()
     {
-        $node = self::createNode('defaultValue', 'variable');
-
-        return $node;
+        return self::createNode('defaultValue', 'variable');
     }
 
     /**
@@ -71,7 +67,7 @@ abstract class TypeDefinition
             ->beforeNormalization()
                 ->always(function ($value) {
                     if (\is_string($value)) {
-                        // cascade or link
+                        // shorthand: cascade or link
                         return 'cascade' === $value ? ['cascade' => null] : ['link' => $value];
                     }
 
@@ -82,7 +78,7 @@ abstract class TypeDefinition
                                 return $value;
                             }
                         }
-                        // validation: [<validation constraints>]
+                        // validation: [list of constraints]
                         return ['constraints' => $value];
                     }
 
@@ -91,7 +87,7 @@ abstract class TypeDefinition
             ->end()
             ->children()
                 ->scalarNode('link')
-                    ->defaultNull()
+//                    ->defaultNull()
                     ->validate()
                         ->ifTrue(function ($link) use ($level) {
                             if (self::VALIDATION_LEVEL_PROPERTY === $level) {
@@ -103,10 +99,7 @@ abstract class TypeDefinition
                         ->thenInvalid('Invalid link provided: "%s".')
                     ->end()
                 ->end()
-
-                ->variableNode('constraints')
-                    ->defaultNull()
-                ->end()
+                ->variableNode('constraints')->end()
             ->end();
 
         // Add the 'cascade' option if it's a property level validation section
@@ -136,7 +129,7 @@ abstract class TypeDefinition
         return $node;
     }
 
-    protected function deprecationReasonSelection()
+    protected function deprecationReasonSection()
     {
         $node = self::createNode('deprecationReason', 'scalar');
 
@@ -145,7 +138,7 @@ abstract class TypeDefinition
         return $node;
     }
 
-    protected function typeSelection($isRequired = false)
+    protected function typeSection($isRequired = false)
     {
         $node = self::createNode('type', 'scalar');
 
@@ -164,7 +157,7 @@ abstract class TypeDefinition
      *
      * @return ArrayNodeDefinition|NodeDefinition
      *
-     *@internal
+     * @internal
      */
     protected static function createNode(string $name, string $type = 'array')
     {
