@@ -18,8 +18,22 @@ use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
+use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
+use Murtukov\PHPCodeGenerator\CustomCode;
+use Murtukov\PHPCodeGenerator\Functions\Argument;
+use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
+use Murtukov\PHPCodeGenerator\Functions\Closure;
+use Murtukov\PHPCodeGenerator\Functions\Method;
+use Murtukov\PHPCodeGenerator\Literal;
+use Murtukov\PHPCodeGenerator\PhpFile;
+use Murtukov\PHPCodeGenerator\Structures\PhpClass;
+use Overblog\GraphQLBundle\Definition\ConfigProcessor;
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -367,6 +381,9 @@ EOF;
     {
         $this->currentlyGeneratedClass = $config['config']['name'];
 
+        // new generator
+        $test = $this->buildClass($config);
+
         $className = $this->generateClassName($config);
         $path = $outputDirectory.'/'.$className.'.php';
 
@@ -389,6 +406,72 @@ EOF;
         $this->currentlyGeneratedClass = null;
 
         return [$this->getClassNamespace().'\\'.$className => $path];
+    }
+
+    public function buildClass(array $config)
+    {
+        switch ($config['type']) {
+            case 'object':
+                return $this->buildObjectTypeClass($config);
+            case 'input-boject':
+                return $this->buildInputObjectTypeClass($config);
+        }
+    }
+
+    public function buildObjectTypeClass(array $config)
+    {
+        $file = new PhpFile($config['config']['name']);
+
+        $class = $file->createClass($config['class_name'])
+            ->setFinal()
+            ->setExtends(ObjectType::class)
+            ->addImplement(GeneratedTypeInterface::class)
+            ->addConst('NAME', "'{$config['config']['name']}'")
+        ;
+
+        // Constructor
+        $class->createConstructor()
+            ->addArgument(Argument::create('configProcessor', ConfigProcessor::class))
+            ->addArgument(Argument::create('globalVariables', GlobalVariables::class, 'null'))
+            ->appendVar('configLoader', ArrowFunction::create()
+                ->setExpression(AssocArray::createMultiline()
+                    ->addItem('name', new Literal('self::NAME'))
+                    ->addIfNotNull('description', @$config['config']['description'])
+                    ->addItem('field', ArrowFunction::create()
+                        ->setExpression(AssocArray::mapMultiline($config['config']['fields'], fn($_, $fieldConfig) => AssocArray::createMultiline()
+                                ->addItem('type', new Literal($this->getTypeResolveCode($fieldConfig['type'])))
+                                ->addItem('args', NumericArray::mapMultiline($fieldConfig['args'], fn($argName, $argConfig) =>
+                                    AssocArray::createMultiline()
+                                        ->addItem('name', $argName)
+                                        ->addItem('type', new Literal($this->getTypeResolveCode($argConfig['type'])))
+                                        ->addItem('description', $argConfig['description'])
+                                ))
+                                ->addItem('resolve', Closure::create()
+                                    ->addArgument(Argument::create('value'))
+                                    ->addArgument(Argument::create('args'))
+                                    ->addArgument(Argument::create('context'))
+                                    ->addArgument(Argument::create('info', ResolveInfo::class))
+                                    ->setReturn(new Literal($this->getExpressionLanguage()->compile($fieldConfig['resolve'], ['value', 'args', 'context', 'info'])))
+                                )
+                        ))
+                    )
+                )
+            )
+            ->append(new Literal('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()'))
+            ->append(new Literal('parent::__construct($config)'))
+        ;
+
+        return $file->generate();
+    }
+
+    function getTypeResolveCode($arg)
+    {
+        return "Type::nonNull(\$globalVariables->get('typeResolver')->resolve('$arg'))";
+    }
+
+    public function buildInputObjectTypeClass($config)
+    {
+
     }
 
     /**
