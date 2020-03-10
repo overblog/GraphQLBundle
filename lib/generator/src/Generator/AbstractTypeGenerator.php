@@ -27,10 +27,8 @@ use Murtukov\PHPCodeGenerator\CustomCode;
 use Murtukov\PHPCodeGenerator\Functions\Argument;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Functions\Closure;
-use Murtukov\PHPCodeGenerator\Functions\Method;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
-use Murtukov\PHPCodeGenerator\Structures\PhpClass;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
@@ -420,7 +418,13 @@ EOF;
 
     public function buildObjectTypeClass(array $config)
     {
+
+    }
+
+    public function buildObjectTfypeClass(array $config)
+    {
         $file = new PhpFile($config['config']['name']);
+        $file->setNamespace($this->defaultNamespace);
 
         $class = $file->createClass($config['class_name'])
             ->setFinal()
@@ -460,6 +464,8 @@ EOF;
             ->append(new Literal('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()'))
             ->append(new Literal('parent::__construct($config)'))
         ;
+
+        $class->createDocBlock("This class was generated and should not be changed manually.");
 
         return $file->generate();
     }
