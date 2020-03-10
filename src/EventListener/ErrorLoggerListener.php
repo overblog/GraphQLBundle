@@ -64,6 +64,6 @@ final class ErrorLoggerListener
             $exception->getLine()
         );
 
-        $this->logger->log($errorLevel, $message, ['exception' => $exception]);
+        $this->logger->log($errorLevel, $message, ['exception' => $exception, 'throwable' => $exception]);
     }
 }
