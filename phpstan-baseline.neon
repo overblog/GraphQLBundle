@@ -531,7 +531,7 @@ parameters:
 			path: src/Event/TypeLoadedEvent.php
 
 		-
-			message: "#^Parameter \\#1 \\$throwable of method Overblog\\\\GraphQLBundle\\\\EventListener\\\\ErrorLoggerListener\\:\\:log\\(\\) expects Throwable, Throwable\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$exception of method Overblog\\\\GraphQLBundle\\\\EventListener\\\\ErrorLoggerListener\\:\\:log\\(\\) expects Throwable, Throwable\\|null given\\.$#"
 			count: 2
 			path: src/EventListener/ErrorLoggerListener.php
 
