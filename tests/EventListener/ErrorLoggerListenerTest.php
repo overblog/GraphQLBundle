@@ -79,7 +79,7 @@ final class ErrorLoggerListenerTest extends TestCase
             [
                 LogLevel::CRITICAL,
                 \sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
-                ['exception' => $exception, 'throwable' => $exception],
+                ['exception' => $exception],
             ],
         ];
 
@@ -89,7 +89,7 @@ final class ErrorLoggerListenerTest extends TestCase
             [
                 LogLevel::ERROR,
                 \sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
-                ['exception' => $exception, 'throwable' => $exception],
+                ['exception' => $exception],
             ],
         ];
 
@@ -99,7 +99,7 @@ final class ErrorLoggerListenerTest extends TestCase
             [
                 LogLevel::ERROR,
                 \sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
-                ['exception' => $exception, 'throwable' => $exception],
+                ['exception' => $exception],
             ],
         ];
 
@@ -109,7 +109,7 @@ final class ErrorLoggerListenerTest extends TestCase
             [
                 LogLevel::WARNING,
                 \sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
-                ['exception' => $exception, 'throwable' => $exception],
+                ['exception' => $exception],
             ],
         ];
     }
