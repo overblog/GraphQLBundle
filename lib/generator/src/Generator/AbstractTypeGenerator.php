@@ -23,22 +23,17 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
 use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
+use Murtukov\PHPCodeGenerator\CustomCode;
 use Murtukov\PHPCodeGenerator\Functions\Argument;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Functions\Closure;
-use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
-use Murtukov\PHPCodeGenerator\Text;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\ObjectTypeBuilder;
 use Symfony\Component\ExpressionLanguage\Expression;
-use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
@@ -364,7 +359,7 @@ EOF;
         $classesMap = [];
 
         foreach ($configs as $name => $config) {
-            $config['config']['name'] ??= $name;
+            $config['config']['name'] = $config['config']['name'] ?? $name;
             $classMap = $this->generateClass($config, $outputDirectory, $mode);
 
             $classesMap = \array_merge($classesMap, $classMap);
@@ -373,6 +368,13 @@ EOF;
         return $classesMap;
     }
 
+    /**
+     * @param array    $config
+     * @param string   $outputDirectory
+     * @param int      $mode
+     *
+     * @return array
+     */
     public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
         $this->currentlyGeneratedClass = $config['config']['name'];
@@ -381,7 +383,7 @@ EOF;
         $test = $this->buildClass($config);
 
         $className = $this->generateClassName($config);
-        $path = "$outputDirectory/$className.php";
+        $path = $outputDirectory.'/'.$className.'.php';
 
         if (!($mode & self::MODE_MAPPING_ONLY)) {
             $this->clearInternalUseStatements();
@@ -404,58 +406,78 @@ EOF;
         return [$this->getClassNamespace().'\\'.$className => $path];
     }
 
-    /**
-     * @param array $config
-     * @return GeneratorInterface
-     * @throws \Exception
-     */
     public function buildClass(array $config)
     {
         switch ($config['type']) {
             case 'object':
-                return ObjectTypeBuilder::build($config['config'], $this->getClassNamespace());
-            case 'input-object':
-                return InputTypeBuilder::build($config['config'], $this->getClassNamespace());
-            case 'custom-scalar':
-                return CustomScalarTypeBuilder::build($config['config'], $this->getClassNamespace());
-            case 'interface':
-                return InterfaceTypeBuilder::build($config['config'], $this->getClassNamespace());
-            default:
-                throw new \Exception("Config type is not recognized.");
-
+                return $this->buildObjectTypeClass($config);
+            case 'input-boject':
+                return $this->buildInputObjectTypeClass($config);
         }
     }
 
-    /**
-     * @param string $resolveString - A raw unprocessed resolve string
-     * @return GeneratorInterface
-     */
-    private function buildResolve(string $resolveString): GeneratorInterface
+    public function buildObjectTypeClass(array $config)
     {
-        $closure = Closure::create()
-            ->addArgument(Argument::create('value'))
-            ->addArgument(Argument::create('args'))
-            ->addArgument(Argument::create('context'))
-            ->addArgument(Argument::create('info', ResolveInfo::class))
+
+    }
+
+    public function buildObjectTfypeClass(array $config)
+    {
+        $file = new PhpFile($config['config']['name']);
+        $file->setNamespace($this->defaultNamespace);
+
+        $class = $file->createClass($config['class_name'])
+            ->setFinal()
+            ->setExtends(ObjectType::class)
+            ->addImplement(GeneratedTypeInterface::class)
+            ->addConst('NAME', "'{$config['config']['name']}'")
         ;
 
-        if ($this->hasExpressionTrigger($resolveString)) {
-            $expression = new Expression(\substr($resolveString, 2));
-            $compiled = $this->getExpressionLanguage()->compile($expression);
-            $closure->setReturn(new Literal($compiled));
-        } else {
-            $closure->setReturn(new Text($resolveString));
-        }
+        // Constructor
+        $class->createConstructor()
+            ->addArgument(Argument::create('configProcessor', ConfigProcessor::class))
+            ->addArgument(Argument::create('globalVariables', GlobalVariables::class, 'null'))
+            ->appendVar('configLoader', ArrowFunction::create()
+                ->setExpression(AssocArray::createMultiline()
+                    ->addItem('name', new Literal('self::NAME'))
+                    ->addIfNotNull('description', @$config['config']['description'])
+                    ->addItem('field', ArrowFunction::create()
+                        ->setExpression(AssocArray::mapMultiline($config['config']['fields'], fn($_, $fieldConfig) => AssocArray::createMultiline()
+                                ->addItem('type', new Literal($this->getTypeResolveCode($fieldConfig['type'])))
+                                ->addItem('args', NumericArray::mapMultiline($fieldConfig['args'], fn($argName, $argConfig) =>
+                                    AssocArray::createMultiline()
+                                        ->addItem('name', $argName)
+                                        ->addItem('type', new Literal($this->getTypeResolveCode($argConfig['type'])))
+                                        ->addItem('description', $argConfig['description'])
+                                ))
+                                ->addItem('resolve', Closure::create()
+                                    ->addArgument(Argument::create('value'))
+                                    ->addArgument(Argument::create('args'))
+                                    ->addArgument(Argument::create('context'))
+                                    ->addArgument(Argument::create('info', ResolveInfo::class))
+                                    ->setReturn(new Literal($this->getExpressionLanguage()->compile($fieldConfig['resolve'], ['value', 'args', 'context', 'info'])))
+                                )
+                        ))
+                    )
+                )
+            )
+            ->append(new Literal('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()'))
+            ->append(new Literal('parent::__construct($config)'))
+        ;
 
-        return $closure;
+        $class->createDocBlock("This class was generated and should not be changed manually.");
+
+        return $file->generate();
     }
 
-    /**
-     * Checks if given string contains an expression prefix
-     */
-    private function hasExpressionTrigger(string $maybeExpression): bool
+    function getTypeResolveCode($arg)
     {
-        return 0 === \strpos($maybeExpression, ExpressionLanguage::EXPRESSION_LANGUAGE_TRIGGER);
+        return "Type::nonNull(\$globalVariables->get('typeResolver')->resolve('$arg'))";
+    }
+
+    public function buildInputObjectTypeClass($config)
+    {
+
     }
 
     /**
