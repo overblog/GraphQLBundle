@@ -18,12 +18,13 @@ It also supports:
 
 Browse your version documentation:
 
-* [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
-* [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
-* [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
-* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [1.0 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.13 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.13/README.md)
 * [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
-* [0.13 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
+* [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
+* [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
 
 [Versions requirements](docs/index.md#versions-requirements)
 
