@@ -112,7 +112,7 @@ Community
 
 * Get support on [Symfony devs Slack](https://symfony.com/slack-invite)
   on the dedicated channel **overblog-graphql**.
-* Get support on Telegram group [Overblog GraphQL](https://t.me/overblog_graphql)
+* Get support in Telegram group [Overblog GraphQL](https://t.me/overblog_graphql)
 * Follow us on [GitHub](https://github.com/overblog)
 
 Contributing
