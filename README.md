@@ -110,8 +110,9 @@ Talks and slides to help you start
 Community
 ---------
 
-* Get some support on [Symfony devs Slack](https://symfony.com/slack-invite)
+* Get support on [Symfony devs Slack](https://symfony.com/slack-invite)
   on the dedicated channel **overblog-graphql**.
+* Get support on Telegram group [Overblog GraphQL](https://t.me/overblog_graphql)
 * Follow us on [GitHub](https://github.com/overblog)
 
 Contributing
