@@ -269,10 +269,10 @@ abstract class AbstractClassGenerator
 
         foreach ($placeHolders as $placeHolder) {
             $generator = [$this, 'generate'.\ucfirst($placeHolder)];
-            $name = '<'.$placeHolder.'>';
+            $name = "<$placeHolder>";
 
             if (\is_callable($generator)) {
-                $replacements[$name] = \call_user_func_array($generator, [$values]);
+                $replacements[$name] = $generator($values);
             } else {
                 throw new \RuntimeException(
                     \sprintf(
@@ -342,9 +342,7 @@ abstract class AbstractClassGenerator
         $statements = \array_merge($this->internalUseStatements, $this->useStatements);
         \sort($statements);
 
-        $useStatements = $this->tokenizeUseStatements($statements);
-
-        return $useStatements;
+        return $this->tokenizeUseStatements($statements);
     }
 
     protected function generateClassType(): string

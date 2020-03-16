@@ -41,7 +41,7 @@ class TypeGenerator extends BaseTypeGenerator
         ?int $cacheDirMask = null
     ) {
         $this->setCacheDir($cacheDir);
-        $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
+        $this->configProcessor = $configProcessor ?? static::DEFAULT_CONFIG_PROCESSOR;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
@@ -219,7 +219,7 @@ CODE;
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
-        $configs = \call_user_func($this->configProcessor, $this->configs);
+        $configs = ($this->configProcessor)($this->configs);
         $classes = $this->generateClasses($configs, $cacheDir, $mode);
 
         if ($writeMode && $this->useClassMap) {
