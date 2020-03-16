@@ -13,10 +13,10 @@ namespace Overblog\GraphQLGenerator\Tests\Generator;
 
 use Composer\Autoload\ClassLoader;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator;
 use Overblog\GraphQLGenerator\Tests\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractTypeGeneratorTest extends TestCase
@@ -80,7 +80,7 @@ abstract class AbstractTypeGeneratorTest extends TestCase
         return \array_map(
             function ($v) {
                 if (\is_array($v)) {
-                    return \call_user_func([$this, 'processConfig'], $v);
+                    return $this->processConfig($v);
                 } elseif (\is_string($v) && 0 === \strpos($v, '@=')) {
                     return new Expression(\substr($v, 2));
                 }
@@ -93,6 +93,6 @@ abstract class AbstractTypeGeneratorTest extends TestCase
 
     protected function getType($type): Type
     {
-        return \call_user_func(["\\".$this->typeGenerator->getClassNamespace().'\\'.$type.'Type', 'getInstance']);
+        return ${"\\{$this->typeGenerator->getClassNamespace()}\\{$type}Type"}::getInstance();
     }
 }

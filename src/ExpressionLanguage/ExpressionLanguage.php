@@ -9,8 +9,9 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLan
 class ExpressionLanguage extends BaseExpressionLanguage
 {
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors'];
+    public const EXPRESSION_LANGUAGE_TRIGGER = '@=';
 
-    private $globalNames = [];
+    private array $globalNames = [];
 
     /**
      * @param $index
