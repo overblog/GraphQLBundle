@@ -35,7 +35,7 @@ Example:
 
 See: `Overblog\GraphQLBundle\Relay\Connection\Paginator`
 
-The purpose if this helper is to provide an easy way to paginate in a data set provided by a backend.
+The purpose of this helper is to provide an easy way to paginate in a data set provided by a backend.
 
 When constructing the paginator, you need to pass a callable which will be responsible for providing the sliced data set.
 
