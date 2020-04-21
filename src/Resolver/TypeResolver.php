@@ -69,7 +69,7 @@ class TypeResolver extends AbstractResolver
         $type = $this->getSolution($alias);
         if (null === $type) {
             throw new UnresolvableException(
-                \sprintf('Could not found type with alias "%s". Do you forget to define it?', $alias)
+                \sprintf('Could not find type with alias "%s". Did you forget to define it?', $alias)
             );
         }
 
