@@ -98,19 +98,19 @@ class GraphQLCollector extends DataCollector
 
     /**
      * Hook into the GraphQL events to populate the collector.
-     *
-     * @param ExecutorResultEvent $event
      */
     public function onPostExecutor(ExecutorResultEvent $event): void
     {
         $executorArgument = $event->getExecutorArguments();
         $queryString = $executorArgument->getRequestString();
         $variables = $executorArgument->getVariableValue();
+        $queryTime = microtime(true) - $executorArgument->getStartTime();
 
         $result = $event->getResult()->toArray();
 
         $batch = [
             'queryString' => $queryString,
+            'queryTime' => $queryTime,
             'variables' => $this->cloneVar($variables),
             'result' => $this->cloneVar($result),
             'count' => 0,
@@ -140,17 +140,17 @@ class GraphQLCollector extends DataCollector
     /**
      * Extract GraphQL Information from the documentNode².
      *
-     * @param DocumentNode $document
-     *
      * @return array
      */
     protected function extractGraphql(DocumentNode $document)
     {
         $operation = null;
+        $operationName = null;
         $fields = [];
 
         foreach ($document->definitions as $definition) {
             if ($definition instanceof OperationDefinitionNode) {
+                $operationName = $definition->name ? $definition->name->value : null;
                 $operation = $definition->operation;
                 foreach ($definition->selectionSet->selections as $selection) {
                     if ($selection instanceof FieldNode) {
@@ -168,6 +168,7 @@ class GraphQLCollector extends DataCollector
 
         return [
             'operation' => $operation,
+            'operationName' => $operationName,
             'fields' => $fields,
         ];
     }

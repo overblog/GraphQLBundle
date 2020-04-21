@@ -3,12 +3,20 @@
         background: #e536ab;
     }
 
-    .graphql-batch {
-        padding: 3px;
-        border: 1px solid #EEE;
-        align-items: start;
-        position: relative;
+    .query {
+        margin-bottom: 40px;
     }
+
+    .query-details {
+        display: flex;
+        align-items: center;
+    }
+
+    .query-details > * {
+        margin-right: 10px;
+    }
+
+    .graphql-batch {}
 
     .graphql-operation {
         padding: 3px 0px;
@@ -16,17 +24,23 @@
     }
 
     .graphql-query {
-        color: #35e21e;
-        font-weight: bold;
+        color: #8959A8;
     }
 
     .graphql-mutation {
         color: #1612fb;
-        font-weight: bold;
     }
 
     .graphql-field {
-        font-weight: bold;
+        margin-left: 20px;
+    }
+
+    .graphql-time {
+        border: 1px solid;
+        padding: 2px 6px;
+        color: #FFF;
+        background: #333;
+        font-size: 12px;
     }
 
     .graphql-details {
@@ -34,7 +48,7 @@
     }
 
     .graphql-details > div {
-        flex: 50%;
+        flex: 1;
         margin: 5px;
         border: 1px solid #BBB;
     }
@@ -73,36 +87,34 @@
     <div class="tab">
         <h3 class="tab-title">GraphQL requests</h3>
         <div class="tab-content">
-            <h2>{{ tokens ? tokens|length : 'No' }} HTTP queries on GraphQL enpoint(s)</h2>
+            <h2>{{ tokens ? tokens|length : 'No' }} HTTP queries on GraphQL endpoint(s)</h2>
 
             {% if tokens %}
-                <table id="search-results">
-                    <thead>
-                        <tr>
-                            <th scope="col" width="70">Time</th>
-                            <th scope="col">GQL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for result in tokens %}
-                            {% set graphql = result.graphql %}
-                            {% set css_class = result.status_code|default(0) > 399 ? 'status-error' : result.status_code|default(0) > 299 ? 'status-warning' : 'status-success' %}
-
-                            <tr class="{% if result.token == token %}status-success{% endif %}">
-                                <td class="text-small text-center">
-                                    <a href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}">
-                                        <span class="nowrap newline">{{ result.time|date('H:i:s') }}</span>
-                                        <span class="label {{ css_class }}">{{ result.status_code|default('n/a') }}</span>
-                                    </a>
-                                </td>
-                                <td>
-                                    {% if schemas|length > 1 %}
-                                        <div class="text-right">
-                                            <small>Schema</small> <span class="label schema">{{ graphql.schema }}</span>
-                                        </div>
-                                    {% endif %}
-                                    
-                                    {% for idx, batch in graphql.batches %}
+                {% for result in tokens %}
+                    {% set graphql = result.graphql %}
+                    {% set css_class = result.status_code|default(0) > 399 ? 'status-error' : result.status_code|default(0) > 299 ? 'status-warning' : 'status-success' %}
+                    <div class="query">
+                        <div class="query-details">
+                            <span class="label {{ css_class }}">{{ result.status_code|default('n/a') }}</span> 
+                            <span class="nowrap newline">{{ result.time|date }}</span>
+                            {% if schemas|length > 0 %}
+                                <span class="label schema">Schema: {{ graphql.schema }}</span>
+                            {% endif %}
+                            <a href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}">{{ result.token }}</a>
+                        </div>
+                        <table>
+                            <thead>
+                                <th scope="col" width="20">#</th>
+                                <th scope="col" width="80">Time</th>
+                                <th scope="col">Info</th>
+                            </thead>
+                            {% for idx, batch in graphql.batches %}
+                                <tr class="{% if result.token == token %}status-success{% endif %}">
+                                    <td>{{ idx + 1}}</td>
+                                    <td class="text-center">
+                                        {{ (batch.queryTime*1000)|round(0) }} ms
+                                    </td>
+                                    <td>
                                         <div class="graphql-batch">
                                             {% if batch.error is defined %}
                                                 <div class="graphql-error">
@@ -116,39 +128,45 @@
                                             {% endif %}
                                             {% if batch.graphql.operation is defined %}
                                                 {% set operation = batch.graphql.operation %}
+                                                {% set operationName = batch.graphql.operationName %}
                                                 {% set fields = batch.graphql.fields %}
-
-                                                {% for field in fields %}
-                                                    <div class="graphql-operation">
-                                                        <span class="graphql-{{ operation }}">
-                                                            {{ operation }}
-                                                        </span>
-                                                        <span class="graphql-field">{{ field.name}}</span>
-                                                    </div>
-                                                {% endfor %}
+                                                <div class="graphql-operation">
+                                                    <span class="graphql-{{ operation }}">
+                                                        {{ operation }} {% if operationName %}{{ operationName }}(...){% endif %} {
+                                                    </span>
+                                                    {% for field in fields %}
+                                                        <div class="graphql-field">
+                                                            {% if field.alias %}{{field.alias }}: {% endif %}<u>{{ field.name}}</u>(...)
+                                                        </div>                                                    
+                                                    {% endfor %}
+                                                    <span class="graphql-{{ operation }}">
+                                                    }
+                                                    </span>
+                                                </div>
                                             {% endif %}
-
-                                            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#details-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide details">Show details</a>
-                                            <div id="details-{{result.token}}-{{idx}}">
-                                                <div class="graphql-details">
-                                                    <div class="graphql-gql">
-                                                        <div class="graphql-variables">
-                                                            Variables: {{ profiler_dump(batch.variables, maxDepth=2) }}
-                                                        </div>
-                                                        <pre class="line-numbers"><code class="language-graphql">{{ batch.queryString }}</code></pre>
+                                            <div class="text-small font-normal">
+                                                <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#query-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide query">View full query</a>
+                                                &nbsp;&nbsp;
+                                                <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#result-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide result">View result</a>
+                                            </div>
+                                            <div class="graphql-details">
+                                                <div class="graphql-gql" id="query-{{result.token}}-{{idx}}">
+                                                    <div class="graphql-variables">
+                                                        Variables: {{ profiler_dump(batch.variables, maxDepth=2) }}
                                                     </div>
-                                                    <div class="graphql-result {{ batch.error is defined ? 'error' : 'success' }}">
-                                                        {{ profiler_dump(batch.result, maxDepth=3) }}
-                                                    </div>
+                                                    <pre class="line-numbers"><code class="language-graphql">{{ batch.queryString }}</code></pre>
+                                                </div>
+                                                <div class="graphql-result {{ batch.error is defined ? 'error' : 'success' }}" id="result-{{result.token}}-{{idx}}">
+                                                    {{ profiler_dump(batch.result, maxDepth=3) }}
                                                 </div>
                                             </div>
                                         </div>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% endfor %}
             {% else %}
                 <div class="empty">
                     <p>No GraphQL queries stored.</p>

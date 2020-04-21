@@ -27,14 +27,17 @@ final class ExecutorArgumentsEvent extends Event
     /** @var string|null */
     private $operationName;
 
+    /** @var float */
+    private $startTime;
+
     public static function create(
-            ExtensibleSchema $schema,
-            $requestString,
-            \ArrayObject $contextValue,
-            $rootValue = null,
-            array $variableValue = null,
-            $operationName = null
-        ) {
+        ExtensibleSchema $schema,
+        $requestString,
+        \ArrayObject $contextValue,
+        $rootValue = null,
+        array $variableValue = null,
+        $operationName = null
+    ) {
         $instance = new static();
         $instance->setSchema($schema);
         $instance->setRequestString($requestString);
@@ -42,6 +45,7 @@ final class ExecutorArgumentsEvent extends Event
         $instance->setRootValue($rootValue);
         $instance->setVariableValue($variableValue);
         $instance->setOperationName($operationName);
+        $instance->setStartTime(microtime(true));
 
         return $instance;
     }
@@ -85,6 +89,14 @@ final class ExecutorArgumentsEvent extends Event
         $this->schema = $schema;
     }
 
+    public function setStartTime(float $startTime): void
+    {
+        $this->startTime = $startTime;
+    }
+
+    /**
+     * @return ExtensibleSchema
+     */
     public function getSchema(): ExtensibleSchema
     {
         return $this->schema;
@@ -122,5 +134,13 @@ final class ExecutorArgumentsEvent extends Event
     public function getOperationName()
     {
         return $this->operationName;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
     }
 }
