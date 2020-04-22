@@ -103,6 +103,7 @@ class GraphQLCollector extends DataCollector
     {
         $executorArgument = $event->getExecutorArguments();
         $queryString = $executorArgument->getRequestString();
+        $operationName = $executorArgument->getOperationName();
         $variables = $executorArgument->getVariableValue();
         $queryTime = microtime(true) - $executorArgument->getStartTime();
 
@@ -118,7 +119,7 @@ class GraphQLCollector extends DataCollector
 
         try {
             $parsed = Parser::parse($queryString);
-            $batch['graphql'] = $this->extractGraphql($parsed);
+            $batch['graphql'] = $this->extractGraphql($parsed, $operationName);
             if (isset($batch['graphql']['fields'])) {
                 $batch['count'] += \count($batch['graphql']['fields']);
             }
@@ -142,15 +143,18 @@ class GraphQLCollector extends DataCollector
      *
      * @return array
      */
-    protected function extractGraphql(DocumentNode $document)
+    protected function extractGraphql(DocumentNode $document, ?string $operationName)
     {
         $operation = null;
-        $operationName = null;
         $fields = [];
 
         foreach ($document->definitions as $definition) {
             if ($definition instanceof OperationDefinitionNode) {
-                $operationName = $definition->name ? $definition->name->value : null;
+                $definitionOperation = $definition->name ? $definition->name->value : null;
+                if ($operationName != $definitionOperation) {
+                    continue;
+                }
+
                 $operation = $definition->operation;
                 foreach ($definition->selectionSet->selections as $selection) {
                     if ($selection instanceof FieldNode) {
