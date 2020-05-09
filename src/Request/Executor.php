@@ -12,7 +12,6 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
-use Overblog\GraphQLBundle\Event\EventDispatcherVersionHelper;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -177,14 +176,12 @@ class Executor
         ?array $variableValue = null,
         ?string $operationName = null
     ): ExecutorArgumentsEvent {
-        EventDispatcherVersionHelper::dispatch(
-            $this->dispatcher,
+        $this->dispatcher->dispatch(
             new ExecutorContextEvent($contextValue),
             Events::EXECUTOR_CONTEXT
         );
 
-        return EventDispatcherVersionHelper::dispatch(
-            $this->dispatcher,
+        return $this->dispatcher->dispatch(
             ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
             Events::PRE_EXECUTOR
         );
@@ -192,8 +189,7 @@ class Executor
 
     private function postExecute(ExecutionResult $result): ExecutionResult
     {
-        return EventDispatcherVersionHelper::dispatch(
-            $this->dispatcher,
+        return $this->dispatcher->dispatch(
             new ExecutorResultEvent($result),
             Events::POST_EXECUTOR
         )->getResult();

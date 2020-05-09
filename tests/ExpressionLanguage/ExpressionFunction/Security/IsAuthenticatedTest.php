@@ -11,7 +11,18 @@ class IsAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new IsAuthenticated()];
+        $Security = $this->getSecurityIsGrantedWithExpectation(
+            $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'),
+            $this->any()
+        );
+
+        return [new IsAuthenticated($Security)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $isAuthenticated = $this->expressionLanguage->evaluate('isAuthenticated()');
+        $this->assertTrue($isAuthenticated);
     }
 
     public function testIsAuthenticated(): void

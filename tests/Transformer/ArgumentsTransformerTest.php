@@ -9,6 +9,8 @@ use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Error\InvalidArgumentError;
+use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -17,6 +19,14 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 
 class ArgumentsTransformerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+    }
+
     private function getTransformer(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
@@ -33,7 +43,7 @@ class ArgumentsTransformerTest extends TestCase
         return $info;
     }
 
-    protected function getTypes()
+    public static function getTypes()
     {
         $t1 = new InputObjectType([
             'name' => 'InputType1',
@@ -58,17 +68,25 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        return [$t1, $t2, $t3];
+        $t4 = new InputObjectType([
+            'name' => 'InputType3',
+            'fields' => [
+                'field1' => Type::nonNull(Type::listOf($t1)),
+            ],
+        ]);
+
+        return [$t1, $t2, $t3, $t4];
     }
 
     public function testPopulating(): void
     {
-        $builder = $this->getTransformer([
-            'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
-            'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
+        $transformer = $this->getTransformer([
+            'InputType1' => ['type' => 'input', 'class' => InputType1::class],
+            'InputType2' => ['type' => 'input', 'class' => InputType2::class],
+            'InputType3' => ['type' => 'input', 'class' => InputType3::class],
         ]);
 
-        $info = $this->getResolveInfo($this->getTypes());
+        $info = $this->getResolveInfo(self::getTypes());
 
         $data = [
             'field1' => 'hello',
@@ -76,7 +94,7 @@ class ArgumentsTransformerTest extends TestCase
             'field3' => true,
         ];
 
-        $res = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $res = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
 
         $this->assertInstanceOf(InputType1::class, $res);
         $this->assertEquals($res->field1, $data['field1']);
@@ -91,28 +109,51 @@ class ArgumentsTransformerTest extends TestCase
             'field2' => 3,
         ];
 
-        $res2 = $builder->getInstanceAndValidate('InputType2', $data, $info, 'input2');
+        $res = $transformer->getInstanceAndValidate('InputType2', $data, $info, 'input2');
 
-        $this->assertInstanceOf(InputType2::class, $res2);
-        $this->assertTrue(\is_array($res2->field1));
-        $this->assertArrayHasKey(0, $res2->field1);
-        $this->assertArrayHasKey(1, $res2->field1);
-        $this->assertInstanceOf(InputType1::class, $res2->field1[0]);
-        $this->assertInstanceOf(InputType1::class, $res2->field1[1]);
+        $this->assertInstanceOf(InputType2::class, $res);
+        $this->assertTrue(\is_array($res->field1));
+        $this->assertArrayHasKey(0, $res->field1);
+        $this->assertArrayHasKey(1, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[0]);
+        $this->assertInstanceOf(InputType1::class, $res->field1[1]);
 
-        $res3 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        // InputType3
+        $data = [
+            // [InputType1]!
+            'field1' => [
+                ['field1' => 'string 1', 'field2' => 1, 'field3' => true],
+                ['field1' => 'string 2', 'field2' => 2, 'field3' => false],
+            ],
+        ];
 
-        $this->assertEquals(2, $res3);
+        $res = $transformer->getInstanceAndValidate('InputType3', $data, $info, 'input');
 
-        $builder = $this->getTransformer([
+        $this->assertInstanceOf(InputType3::class, $res);
+        $this->assertArrayHasKey(0, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[0]);
+        $this->assertEquals($data['field1'][0]['field1'], $res->field1[0]->field1);
+        $this->assertEquals($data['field1'][0]['field2'], $res->field1[0]->field2);
+        $this->assertEquals($data['field1'][0]['field3'], $res->field1[0]->field3);
+        $this->assertArrayHasKey(1, $res->field1);
+        $this->assertInstanceOf(InputType1::class, $res->field1[1]);
+        $this->assertEquals($data['field1'][1]['field1'], $res->field1[1]->field1);
+        $this->assertEquals($data['field1'][1]['field2'], $res->field1[1]->field2);
+        $this->assertEquals($data['field1'][1]['field3'], $res->field1[1]->field3);
+
+        $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+
+        $this->assertEquals(2, $res);
+
+        $transformer = $this->getTransformer([
             'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
             'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
             'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
         ]);
 
-        $res4 = $builder->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
-        $this->assertInstanceOf(Enum1::class, $res4);
-        $this->assertEquals(2, $res4->value);
+        $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
+        $this->assertInstanceOf(Enum1::class, $res);
+        $this->assertEquals(2, $res->value);
 
         $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2', 'enum1' => 'Enum1', 'int1' => 'Int!', 'string1' => 'String!'];
         $data = [
@@ -123,21 +164,21 @@ class ArgumentsTransformerTest extends TestCase
             'string1' => 'test_string',
         ];
 
-        $res5 = $builder->getArguments($mapping, $data, $info);
-        $this->assertInstanceOf(InputType1::class, $res5[0]);
-        $this->assertInstanceOf(InputType2::class, $res5[1]);
-        $this->assertInstanceOf(Enum1::class, $res5[2]);
-        $this->assertEquals(2, \count($res5[1]->field1));
-        $this->assertIsInt($res5[3]);
-        $this->assertEquals($res5[4], 'test_string');
+        $res = $transformer->getArguments($mapping, $data, $info);
+        $this->assertInstanceOf(InputType1::class, $res[0]);
+        $this->assertInstanceOf(InputType2::class, $res[1]);
+        $this->assertInstanceOf(Enum1::class, $res[2]);
+        $this->assertEquals(2, \count($res[1]->field1));
+        $this->assertIsInt($res[3]);
+        $this->assertEquals($res[4], 'test_string');
 
         $data = [];
-        $res6 = $builder->getInstanceAndValidate('InputType1', $data, $info, 'input1');
-        $this->assertInstanceOf(InputType1::class, $res6);
+        $res = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $this->assertInstanceOf(InputType1::class, $res);
 
-        $res7 = $builder->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
-        $this->assertInstanceOf(Enum1::class, $res7->field3);
-        $this->assertEquals('enum1', $res7->field3->value);
+        $res = $transformer->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
+        $this->assertInstanceOf(Enum1::class, $res->field3);
+        $this->assertEquals('enum1', $res->field3->value);
     }
 
     public function testRaisedErrors(): void
@@ -155,12 +196,12 @@ class ArgumentsTransformerTest extends TestCase
         ];
 
         try {
-            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo($this->getTypes()));
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo(self::getTypes()));
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
         } catch (\Exception $e) {
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentsError::class, $e);
+            $this->assertInstanceOf(InvalidArgumentsError::class, $e);
             $first = $e->getErrors()[0];
-            $this->assertInstanceOf(\Overblog\GraphQLBundle\Error\InvalidArgumentError::class, $first);
+            $this->assertInstanceOf(InvalidArgumentError::class, $first);
             $this->assertEquals($first->getErrors()->get(0), $violation);
             $this->assertEquals($first->getName(), 'input1');
 
@@ -175,6 +216,79 @@ class ArgumentsTransformerTest extends TestCase
                     'message' => 'validation_error',
                     'code' => null,
                 ]],
+            ];
+
+            $this->assertEquals($e->toState(), $expected);
+        }
+    }
+
+    /**
+     * Validate array of input values annotated with Constraints, for example [InputTypeWithConstraints!].
+     */
+    public function testRaisedErrorsForMultipleInputs(): void
+    {
+        $violation1 = new ConstraintViolation(
+            'validation_error1',
+            'validation_error',
+            [],
+            'invalid',
+            'field2',
+            'invalid'
+        );
+        $violation2 = new ConstraintViolation(
+            'validation_error2',
+            'validation_error',
+            [],
+            'invalid',
+            'field2',
+            'invalid'
+        );
+
+        $validator = $this->createMock(RecursiveValidator::class);
+        $validator->method('validate')->willReturnOnConsecutiveCalls(
+            new ConstraintViolationList([$violation1]),
+            new ConstraintViolationList([$violation2])
+        );
+        $builder = new ArgumentsTransformer($validator, [
+            'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
+            'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
+        ]);
+
+        $mapping = ['input1' => '[InputType1]', 'input2' => '[InputType2]'];
+        $data = [
+            'input1' => [['field1' => 'hello', 'field2' => 12, 'field3' => true]],
+            'input2' => [['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12]],
+        ];
+
+        try {
+            $res = $builder->getArguments($mapping, $data, $this->getResolveInfo(self::getTypes()));
+            $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
+        } catch (\Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentsError::class, $e);
+            /** @var InvalidArgumentsError $e */
+            $first = $e->getErrors()[0];
+            $second = $e->getErrors()[1];
+            $this->assertInstanceOf(InvalidArgumentError::class, $first);
+            $this->assertEquals($first->getErrors()->get(0), $violation1);
+            $this->assertEquals($first->getName(), 'input1');
+            $this->assertEquals($second->getErrors()->get(0), $violation2);
+            $this->assertEquals($second->getName(), 'input2');
+
+            $expected = [
+                'input1' => [
+                    [
+                        'path' => 'field2',
+                        'message' => 'validation_error1',
+                        'code' => null,
+                    ],
+                ],
+                'input2' => [
+                    [
+                        'path' => 'field2',
+                        'message' => 'validation_error2',
+                        'code' => null,
+                    ],
+                ],
             ];
 
             $this->assertEquals($e->toState(), $expected);

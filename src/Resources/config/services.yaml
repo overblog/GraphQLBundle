@@ -8,13 +8,14 @@ services:
     Overblog\GraphQLBundle\Definition\GlobalVariables: ~
     GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter: ~
     Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter: ~
+    Overblog\GraphQLBundle\Resolver\FieldResolver: ~
 
     Overblog\GraphQLBundle\Request\Executor:
         arguments:
             - "@overblog_graphql.executor"
             - "@overblog_graphql.promise_adapter"
             - "@event_dispatcher"
-            - '%overblog_graphql.default_resolver%'
+            - '@overblog_graphql.default_field_resolver'
             - "%overblog_graphql.use_experimental_executor%"
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
@@ -93,3 +94,13 @@ services:
     Overblog\GraphQLBundle\Definition\ConfigProcessor: ~
 
     GraphQL\Executor\Promise\PromiseAdapter: "@overblog_graphql.promise_adapter"
+
+    Overblog\GraphQLBundle\Validator\Formatter:
+        tags:
+            - { name: kernel.event_listener, event: graphql.error_formatting, method: onErrorFormatting }
+
+    Overblog\GraphQLBundle\Security\Security:
+        arguments:
+            - '@?security.helper'
+        tags:
+            - { name: overblog_graphql.global_variable, alias: security, public: false }

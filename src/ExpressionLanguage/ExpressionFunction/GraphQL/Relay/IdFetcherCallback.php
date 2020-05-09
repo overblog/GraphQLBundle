@@ -9,10 +9,10 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class IdFetcherCallback extends ExpressionFunction
 {
-    public function __construct($name = 'idFetcherCallback')
+    public function __construct()
     {
         parent::__construct(
-            $name,
+            'idFetcherCallback',
             function ($idFetcher) {
                 $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $context, $info) { ';
                 $code .= 'return '.$idFetcher.'; }';

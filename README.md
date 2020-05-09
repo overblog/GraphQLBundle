@@ -13,7 +13,7 @@ This Symfony bundle provides integration of [GraphQL](https://facebook.github.io
 and [GraphQL Relay](https://facebook.github.io/relay/docs/en/graphql-server-specification.html).
 It also supports:
 * batching with [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer)
-* batching with [Apollo GraphQL](http://dev.apollodata.com/core/network.html#query-batching).
+* batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/networking/network-layer/#query-batching)
 * upload and batching upload with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client)
 
 Browse your version documentation:
@@ -26,6 +26,14 @@ Browse your version documentation:
 * [0.13 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
 
 [Versions requirements](docs/index.md#versions-requirements)
+
+Proof of Concept
+-----------------
+
+* [mcg-web/graphql-symfony-doctrine-sandbox](https://github.com/mcg-web/graphql-symfony-doctrine-sandbox)
+* [michaelperrin/blog-graphql-upload-demo](https://github.com/michaelperrin/blog-graphql-upload-demo)
+* [overblog/GraphQLBundleDemo](https://github.com/overblog/GraphQLBundleDemo)
+* [Samffy/graphql-poc](https://github.com/Samffy/graphql-poc)
 
 Documentation
 -------------
@@ -69,6 +77,7 @@ Documentation
   - [Query batching](docs/data-fetching/batching.md)
   - [Promise](docs/data-fetching/promise.md)
 - [Annotations](docs/annotations/index.md)
+- [Validation](docs/validation/index.md)
 - [Security](docs/security/index.md)
   - [Handle CORS](docs/security/handle-cors.md)
   - [Object access control](docs/security/object-access-control.md)

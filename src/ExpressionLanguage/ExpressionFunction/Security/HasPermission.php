@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
+use Overblog\GraphQLBundle\Security\Security;
 
 final class HasPermission extends ExpressionFunction
 {
-    public function __construct($name = 'hasPermission')
+    public function __construct(Security $security)
     {
         parent::__construct(
-            $name,
-            function ($object, $permission) {
-                $code = \sprintf('$globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted(%s, %s)', $permission, $object);
-
-                return $code;
+            'hasPermission',
+            static function ($object, $permission): string {
+                return \sprintf('$globalVariable->get(\'security\')->hasPermission(%s, %s)', $object, $permission);
+            },
+            static function ($_, $object, $permission) use ($security): bool {
+                return $security->hasPermission($object, $permission);
             }
         );
     }

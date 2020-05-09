@@ -6,7 +6,7 @@ services:
     Overblog\GraphQLBundle\Definition\ConfigProcessor\AclConfigProcessor:
         arguments:
             - '@Overblog\GraphQLBundle\Resolver\AccessResolver'
-            - "%overblog_graphql.default_resolver%"
+            - "@overblog_graphql.default_field_resolver"
         tags:
             - { name: overblog_graphql.definition_config_processor, priority: 512 }
 

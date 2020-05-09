@@ -98,6 +98,8 @@ class AnnotationParserTest extends TestCase
                 'planet_allowedPlanets' => [
                     'type' => '[Planet]',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
+                    'access' => '@=override_access',
+                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -219,6 +221,8 @@ class AnnotationParserTest extends TestCase
                     'type' => '[Planet]',
                     'args' => ['keyword' => ['type' => 'String!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -229,6 +233,8 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=override_public',
                 ],
             ],
         ]);

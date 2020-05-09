@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
     /**
      * @param string $name
      *
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     * @return ArrayNodeDefinition|NodeDefinition
      */
     protected function outputFieldsSelection(string $name = 'fields')
     {
@@ -23,8 +24,32 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 
         $prototype
+            // Allow field type short syntax (Field: Type => Field: {type: Type})
+            ->beforeNormalization()
+                ->ifTrue(function ($options) {
+                    return \is_string($options);
+                })
+                ->then(function ($options) {
+                    return ['type' => $options];
+                })
+            ->end()
+            ->validate()
+                ->always(function ($value) {
+                    if (empty($value['validationGroups'])) {
+                        unset($value['validationGroups']);
+                    }
+
+                    return $value;
+                })
+            ->end()
             ->children()
                 ->append($this->typeSelection())
+                ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
+                ->arrayNode('validationGroups')
+                    ->prototype('scalar')
+                        ->info('List of validation groups')
+                    ->end()
+                ->end()
                 ->arrayNode('args')
                     ->info('Array of possible type arguments. Each entry is expected to be an array with following keys: name (string), type')
                     ->useAttributeAsKey('name', false)
@@ -42,19 +67,20 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                             ->append($this->typeSelection(true))
                             ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
+                            ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
                         ->end()
                     ->end()
                 ->end()
                 ->variableNode('resolve')
-                    ->info('Value resolver (expression language can be use here)')
+                    ->info('Value resolver (expression language can be used here)')
                 ->end()
                 ->append($this->descriptionSection())
                 ->append($this->deprecationReasonSelection())
                 ->variableNode('access')
-                    ->info('Access control to field (expression language can be use here)')
+                    ->info('Access control to field (expression language can be used here)')
                 ->end()
                 ->variableNode('public')
-                    ->info('Visibility control to field (expression language can be use here)')
+                    ->info('Visibility control to field (expression language can be used here)')
                 ->end()
                 ->variableNode('complexity')
                     ->info('Custom complexity calculator.')

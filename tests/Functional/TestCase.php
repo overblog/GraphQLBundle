@@ -56,12 +56,9 @@ abstract class TestCase extends WebTestCase
         $fs->remove(\sys_get_temp_dir().'/OverblogGraphQLBundle/');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown(): void
     {
-        static::$kernel = null;
+        static::ensureKernelShutdown();
     }
 
     protected static function executeGraphQLRequest(string $query, $rootValue = [], string $schemaName = null)
@@ -107,6 +104,7 @@ abstract class TestCase extends WebTestCase
 
     protected static function createClientAuthenticated($username, $testCase, $password = self::DEFAULT_PASSWORD)
     {
+        static::ensureKernelShutdown();
         $client = static::createClient(['test_case' => $testCase]);
 
         if ($username) {
@@ -153,6 +151,16 @@ abstract class TestCase extends WebTestCase
 
         return new ExpressionFunction($phpFunctionName, function () use ($phpFunctionName) {
             return \sprintf('\%s(%s)', $phpFunctionName, \implode(', ', \func_get_args()));
-        });
+        }, function (): void {});
+    }
+
+    /**
+     * @param Client|KernelBrowser $client
+     */
+    protected function disableCatchExceptions($client): void
+    {
+        if (\is_callable([$client, 'catchExceptions'])) {
+            $client->catchExceptions(false);
+        }
     }
 }

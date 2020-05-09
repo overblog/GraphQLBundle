@@ -8,16 +8,15 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class Call extends ExpressionFunction
 {
-    public function __construct($name = 'call')
+    public function __construct()
     {
         parent::__construct(
-            $name,
-            function ($target, $args = '[]', $static = false) {
-                if ($static) {
-                    return \sprintf('\call_user_func_array(%s, %s)', $target, $args);
-                } else {
-                    return \sprintf('%s(...%s)', $target, $args);
-                }
+            'call',
+            function (string $target, string $args = '[]') {
+                return "$target(...$args)";
+            },
+            function ($_, callable $target, array $args) {
+                return $target(...$args);
             }
         );
     }

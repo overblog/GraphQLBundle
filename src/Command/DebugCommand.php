@@ -58,7 +58,7 @@ class DebugCommand extends Command
             ->setDescription('Display current GraphQL services (types, resolvers and mutations)');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $categoriesOption = $input->getOption('category');
         $categoriesOption = \is_array($categoriesOption) ? $categoriesOption : [$categoriesOption];
@@ -79,6 +79,8 @@ class DebugCommand extends Command
             $resolver = $this->{$category.'Resolver'};
             $this->renderTable($resolver, $tableHeaders, $io);
         }
+
+        return 0;
     }
 
     /**

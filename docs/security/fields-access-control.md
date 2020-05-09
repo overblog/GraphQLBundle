@@ -1,6 +1,6 @@
 # Fields access Control
 
-## With Annotations
+## With YAML
 
 An access control can be added on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.

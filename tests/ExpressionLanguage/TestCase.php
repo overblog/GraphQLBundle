@@ -6,11 +6,12 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security as CoreSecurity;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -36,22 +37,20 @@ abstract class TestCase extends BaseTestCase
     {
         $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
         $globalVariable = new GlobalVariables([
-            'container' => $this->getDIContainerMock(
-                ['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]
-            ),
+            'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        $globalVariable->get('container');
+        $globalVariable->get('security');
         \extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
     }
 
-    private function getAuthorizationCheckerIsGrantedWithExpectation($with, $expects = null, $return = true)
+    protected function getSecurityIsGrantedWithExpectation($with, $expects = null, $return = true): Security
     {
         if (null === $expects) {
             $expects = $this->once();
         }
-        $authChecker = $this->getAuthorizationCheckerMock();
+        $security = $this->getCoreSecurityMock();
 
         if ($return instanceof Stub) {
             $returnValue = $return;
@@ -59,7 +58,7 @@ abstract class TestCase extends BaseTestCase
             $returnValue = $this->returnValue($return);
         }
 
-        $methodExpectation = $authChecker
+        $methodExpectation = $security
             ->expects($expects)
             ->method('isGranted');
 
@@ -67,17 +66,15 @@ abstract class TestCase extends BaseTestCase
 
         $methodExpectation->will($returnValue);
 
-        return $authChecker;
+        return new Security($security);
     }
 
-    private function getAuthorizationCheckerMock()
+    private function getCoreSecurityMock()
     {
-        $AuthorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)
+        return $this->getMockBuilder(CoreSecurity::class)
             ->disableOriginalConstructor()
             ->setMethods(['isGranted'])
             ->getMock()
-        ;
-
-        return $AuthorizationChecker;
+            ;
     }
 }

@@ -11,7 +11,18 @@ class HasAnyRoleTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new HasAnyRole()];
+        $Security = $this->getSecurityIsGrantedWithExpectation(
+            'ROLE_ADMIN',
+            $this->any()
+        );
+
+        return [new HasAnyRole($Security)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $hasRole = $this->expressionLanguage->evaluate('hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])');
+        $this->assertTrue($hasRole);
     }
 
     public function testHasAnyRole(): void

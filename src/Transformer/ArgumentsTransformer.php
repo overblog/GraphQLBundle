@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ArgumentsTransformer
@@ -112,11 +113,16 @@ class ArgumentsTransformer
 
             foreach ($fields as $name => $field) {
                 $fieldData = $this->accessor->getValue($data, \sprintf('[%s]', $name));
+                $fieldType = $field->getType();
 
-                if ($field->getType() instanceof ListOfType) {
-                    $fieldValue = $this->populateObject($field->getType()->getWrappedType(), $fieldData, true, $info);
+                if ($fieldType instanceof NonNull) {
+                    $fieldType = $fieldType->getWrappedType();
+                }
+
+                if ($fieldType instanceof ListOfType) {
+                    $fieldValue = $this->populateObject($fieldType->getWrappedType(), $fieldData, true, $info);
                 } else {
-                    $fieldValue = $this->populateObject($field->getType(), $fieldData, false, $info);
+                    $fieldValue = $this->populateObject($fieldType, $fieldData, false, $info);
                 }
 
                 $this->accessor->setValue($instance, $name, $fieldValue);
@@ -146,9 +152,20 @@ class ArgumentsTransformer
         $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
-        $errors = [];
-        if (\is_object($result) && $this->validator) {
-            $errors = $this->validator->validate($result);
+        $errors = new ConstraintViolationList();
+        if ($this->validator) {
+            if (\is_object($result)) {
+                $errors = $this->validator->validate($result);
+            }
+            if (\is_array($result) && $isMultiple) {
+                foreach ($result as $element) {
+                    if (\is_object($element)) {
+                        $errors->addAll(
+                            $this->validator->validate($element)
+                        );
+                    }
+                }
+            }
         }
 
         if (\count($errors) > 0) {

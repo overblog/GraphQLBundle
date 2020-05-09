@@ -9,34 +9,51 @@ use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class HasAnyPermissionTest extends TestCase
 {
+    private $expectedObject;
+    private $testedExpression = 'hasAnyPermission(object,["OWNER", "WRITER"])';
+
     protected function getFunctions()
     {
-        return [new HasAnyPermission()];
+        $this->expectedObject = new \stdClass();
+
+        $security = $this->getSecurityIsGrantedWithExpectation(
+            [
+                $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
+                $this->identicalTo($this->expectedObject),
+            ],
+            $this->any()
+        );
+
+        return [new HasAnyPermission($security)];
+    }
+
+    public function testEvaluator(): void
+    {
+        $hasPermission = $this->expressionLanguage->evaluate($this->testedExpression, ['object' => $this->expectedObject]);
+        $this->assertTrue($hasPermission);
     }
 
     public function testHasAnyPermission(): void
     {
-        $object = new \stdClass();
-
         $this->assertExpressionCompile(
-            'hasAnyPermission(object,["OWNER", "WRITER"])',
+            $this->testedExpression,
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
-                $this->identicalTo($object),
+                $this->identicalTo($this->expectedObject),
             ],
             [
-                'object' => $object,
+                'object' => $this->expectedObject,
             ]
         );
 
         $this->assertExpressionCompile(
-            'hasAnyPermission(object,["OWNER", "WRITER"])',
+            $this->testedExpression,
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
-                $this->identicalTo($object),
+                $this->identicalTo($this->expectedObject),
             ],
             [
-                'object' => $object,
+                'object' => $this->expectedObject,
             ],
             $this->exactly(2),
             false,

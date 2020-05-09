@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
+use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedException;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction as BaseExpressionFunction;
 
 class ExpressionFunction extends BaseExpressionFunction
 {
-    public function __construct($name, callable $compiler)
+    public function __construct(string $name, callable $compiler, ?callable $evaluator = null)
     {
-        parent::__construct($name, $compiler, function (): void {
-            throw new \RuntimeException('Evaluator is not needed');
-        });
+        if (null === $evaluator) {
+            $evaluator = new EvaluatorIsNotAllowedException($name);
+        }
+
+        parent::__construct($name, $compiler, $evaluator);
     }
 }
