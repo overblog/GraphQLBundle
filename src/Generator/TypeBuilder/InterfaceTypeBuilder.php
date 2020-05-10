@@ -10,9 +10,12 @@ use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\PhpFile;
+use Overblog\GraphQLBundle\Definition\ConfigProcessor;
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
-class InterfaceTypeBuilder implements TypeBuilderInterface
+class InterfaceTypeBuilder extends BaseBuilder
 {
     public static function build(array $config, string $namespace): GeneratorInterface
     {
@@ -26,11 +29,13 @@ class InterfaceTypeBuilder implements TypeBuilderInterface
             ->addImplement(GeneratedTypeInterface::class);
 
         $class->createProperty('NAME')
-            ->setPrivate()
+            ->setPublic()
             ->setConst()
             ->setDefaulValue('Character');
 
         $constructor = $class->createConstructor();
+        $constructor->createArgument('configProcessor', ConfigProcessor::class);
+        $constructor->createArgument('globalVariables', GlobalVariables::class);
 
         $configLoader = ArrowFunction::create(
             AssocArray::createMultiline()
@@ -46,36 +51,42 @@ class InterfaceTypeBuilder implements TypeBuilderInterface
             ->append('parent::__construct($config)')
         ;
 
+        $file->addUseStatement(LazyConfig::class);
+
         return $file;
     }
 
     private static function buildFieldsClosure(array $fields): GeneratorInterface
     {
         return ArrowFunction::create(
-            AssocArray::mapMultiline($fields, fn($name, $config) =>
-                AssocArray::createMultiline()
+            AssocArray::mapMultiline($fields, function($name, $config) {
+                $assocArray = AssocArray::createMultiline()
                     ->addItem('type', self::buildType($config['type']))
                     ->addIfNotNull('description', $config['description'] ?? null)
                     ->addIfNotNull('deprecationReason', $config['deprecationReason'] ?? null)
-                    ->ifTrue(!empty($config['args']))
-                        ->addItem('args', NumericArray::mapMultiline($config['args'], ['self', 'buildArg']))
-            )
+                ;
+
+                if (!empty($config['args'])) {
+                    $assocArray->addItem('args', self::buildArg($config['args']));
+                }
+
+                return $assocArray;
+            })
         );
     }
 
-    private static function buildType(array $config)
+    private static function buildArg(array $config)
     {
+        $callback = function(string $name, array $config) {
+            return AssocArray::createMultiline()
+                ->addItem('name', $name)
+                ->addItem('type', self::buildType($config['type']))
+                ->addIfNotNull('description', $config['description'] ?? null)
+                ->addIfNotNull('defaultValue', $config['defaultValue'] ?? null)
+            ;
+        };
 
-    }
-
-    private static function buildArg(string $name, array $config)
-    {
-        return AssocArray::createMultiline()
-            ->addItem('name', $name)
-            ->addItem('type', self::buildType($config['type']))
-            ->addIfNotNull('description', $config['description'] ?? null)
-            ->addIfNotNull('defaultValue', $config['defaultValue'] ?? null)
-        ;
+        return NumericArray::mapMultiline($config['args'], $callback);
     }
 
     private static function resolveTypeClosure($closure)
