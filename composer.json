@@ -13,7 +13,8 @@
     "autoload": {
         "psr-4": {
             "Overblog\\GraphQLBundle\\": "src/",
-            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
+            "Overblog\\GraphQLGenerator\\": "lib/generator/src/",
+            "Murtukov\\PHPCodeGenerator\\": "lib/php-code-generator/src/"
         }
     },
     "autoload-dev": {
@@ -30,7 +31,6 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
-        "murtukov/php-code-generator": "dev-dev",
         "psr/log": "^1.0",
         "symfony/config": "^4.3 || ^5.0",
         "symfony/dependency-injection": "^4.3 || ^5.0",

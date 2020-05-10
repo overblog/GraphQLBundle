@@ -1,0 +1,21 @@
+{
+    "name": "murtukov/php-code-generator",
+    "description": "A library to generate php code",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Timur Murtukov",
+            "email": "murtukov@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Murtukov\\PHPCodeGenerator\\": "src/"
+        }
+    }
+}
