@@ -5,9 +5,9 @@ namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 use GraphQL\Type\Definition\CustomScalarType;
 use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
-use Murtukov\PHPCodeGenerator\Functions\Closure;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\PhpFile;
+use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
 class CustomScalarTypeBuilder implements TypeBuilderInterface
@@ -51,6 +51,8 @@ class CustomScalarTypeBuilder implements TypeBuilderInterface
         $constructor->append('$configLoader = ', ArrowFunction::create($configArray));
         $constructor->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()');
         $constructor->append('parent::__construct($config)');
+
+        $file->addUseStatement(LazyConfig::class);
 
         return $file;
     }
