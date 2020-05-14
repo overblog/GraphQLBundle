@@ -161,7 +161,7 @@ class AnnotationParserTest extends TestCase
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
                 'lives' => ['type' => 'Int!'],
-            ]
+            ],
         ]);
     }
 
