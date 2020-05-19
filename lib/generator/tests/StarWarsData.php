@@ -121,7 +121,7 @@ class StarWarsData
     /**
      * Helper function to get a character by ID.
      */
-    public static function getCharacter(string $id): array
+    public static function getCharacter(string $id): ?array
     {
         $humans = self::humans();
         $droids = self::droids();

@@ -146,4 +146,9 @@ abstract class AbstractArray extends DependencyAwareGenerator
     {
         return !empty($value) ? $this : Mock::getInstance($this);
     }
+
+    public static function getStringifiers()
+    {
+        return [];
+    }
 }

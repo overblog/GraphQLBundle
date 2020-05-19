@@ -81,7 +81,7 @@ abstract class Resolver
         return $humans[$args['id']] ?? null;
     }
 
-    public static function getDroid($root, $args): array
+    public static function getDroid($root, $args): ?array
     {
         $droids = StarWarsData::droids();
 

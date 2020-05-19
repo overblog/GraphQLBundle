@@ -25,17 +25,24 @@ class Utils
     private static bool $skipNullValues = false;
 
     /**
+     * @var array Custom converters registered by users
+     */
+    private static array $userConverters = [];
+
+    /**
      * @param mixed $value
      * @param bool $multiline
      * @param bool $withKeys
+     * @param array $converters
      * @return false|string
      * @throws UnrecognizedValueTypeException
      */
-    public static function stringify($value, bool $multiline = false, bool $withKeys = false)
+    public static function stringify($value, bool $multiline = false, bool $withKeys = false, array $converters = [])
     {
         // Common options to avoid passing them recursively
         self::$multiline = $multiline;
         self::$withKeys = $withKeys;
+        self::$userConverters = $converters;
 
         return self::stringifyValue($value);
     }
@@ -47,6 +54,10 @@ class Utils
      */
     private static function stringifyValue($value)
     {
+        // User converters
+
+
+        // Default converters
         switch (gettype($value)) {
             case 'boolean':
             case 'integer':
