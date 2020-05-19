@@ -64,6 +64,7 @@ services:
             - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql_types.config%"
+            - '@Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier'
             - "%overblog_graphql.use_classloader_listener%"
             - ~
             - "%kernel.cache_dir%"
@@ -104,3 +105,7 @@ services:
             - '@?security.helper'
         tags:
             - { name: overblog_graphql.global_variable, alias: security, public: false }
+
+    Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier:
+        arguments:
+            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'

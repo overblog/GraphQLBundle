@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
+use Murtukov\PHPCodeGenerator\Config;
+use Murtukov\PHPCodeGenerator\StringifierInterface;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
@@ -35,6 +38,7 @@ class TypeGenerator extends BaseTypeGenerator
         array $skeletonDirs,
         ?string $cacheDir,
         array $configs,
+        ExpressionStringifier $expressionStringifier,
         bool $useClassMap = true,
         callable $configProcessor = null,
         ?string $baseCacheDir = null,
@@ -49,6 +53,9 @@ class TypeGenerator extends BaseTypeGenerator
             // we apply permission 0777 for default cache dir otherwise we apply 0775.
             $cacheDirMask = null === $cacheDir ? 0777 : 0775;
         }
+
+        // Register additional stringifier for the php code generator
+        Config::registerStringifier($expressionStringifier, StringifierInterface::TYPE_STRING);
 
         parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
     }
