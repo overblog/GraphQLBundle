@@ -12,6 +12,7 @@ interface StringifierInterface
     const TYPE_BOOL = 'boolean';
     const TYPE_DOUBLE = 'double';
     const TYPE_OBJECT = 'object';
+    const TYPE_ARRAY = 'array';
 
     /**
      *

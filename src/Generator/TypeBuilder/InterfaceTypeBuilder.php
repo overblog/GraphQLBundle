@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use GraphQL\Type\Definition\InterfaceType;
-use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
+use Overblog\GraphQLBundle\Generator\AssocArray;
 use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;

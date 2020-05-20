@@ -25,7 +25,7 @@ class PhpFile extends DependencyAwareGenerator
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->dependencyAwareChildren = [&$this->classes];
+        $this->dependencyAwareChildren = [$this->classes];
     }
 
     public static function create(string $name): self
@@ -39,7 +39,7 @@ class PhpFile extends DependencyAwareGenerator
         $classes = implode("\n\n", $this->classes);
 
         return <<<CODE
-        <?php 
+        <?php
         $namespace{$this->buildUseStatements()}
         $classes
         CODE;
@@ -118,9 +118,11 @@ class PhpFile extends DependencyAwareGenerator
     public function save(string $path)
     {
         $dir = dirname($path);
+
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
+
         if (!file_exists($path)) {
             file_put_contents($path, $this);
         }

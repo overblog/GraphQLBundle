@@ -9,6 +9,13 @@ use function json_encode;
 
 class Utils
 {
+    const TYPE_STRING = 'string';
+    const TYPE_INT = 'integer';
+    const TYPE_BOOL = 'boolean';
+    const TYPE_DOUBLE = 'double';
+    const TYPE_OBJECT = 'object';
+    const TYPE_ARRAY = 'array';
+
     /**
      * @var bool Whether arrays should be split into multiple lines
      */
@@ -27,22 +34,22 @@ class Utils
     /**
      * @var array Custom converters registered by users
      */
-    private static array $userConverters = [];
+    private static array $customStringifiers = [];
 
     /**
      * @param mixed $value
      * @param bool $multiline
      * @param bool $withKeys
-     * @param array $converters
+     * @param array $stringifiers
      * @return false|string
      * @throws UnrecognizedValueTypeException
      */
-    public static function stringify($value, bool $multiline = false, bool $withKeys = false, array $converters = [])
+    public static function stringify($value, bool $multiline = false, bool $withKeys = false, array $stringifiers = [])
     {
         // Common options to avoid passing them recursively
         self::$multiline = $multiline;
         self::$withKeys = $withKeys;
-        self::$userConverters = $converters;
+        self::$customStringifiers = $stringifiers;
 
         return self::stringifyValue($value);
     }
@@ -54,11 +61,20 @@ class Utils
      */
     private static function stringifyValue($value)
     {
-        // User converters
+        $type = gettype($value);
 
+        // Custom stringifiers
+        if (!empty(self::$customStringifiers)) {
+            foreach (Config::getStringifierClasses($type) as $fqcn) {
+                $stringifier = Config::getStringifier($fqcn);
+                if ($stringifier->check($value)) {
+                    return $stringifier->stringify($value);
+                }
+            }
+        }
 
-        // Default converters
-        switch (gettype($value)) {
+        // Default stringifiers
+        switch ($type) {
             case 'boolean':
             case 'integer':
             case 'double':
@@ -165,7 +181,7 @@ class Utils
             case '$':
                 return $string;
             default:
-                return "'$string'";
+                return json_encode($string);
         }
     }
 
