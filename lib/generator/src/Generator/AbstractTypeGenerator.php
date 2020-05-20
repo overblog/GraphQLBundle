@@ -20,7 +20,10 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
+use Murtukov\PHPCodeGenerator\StringifierInterface;
+use Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
@@ -86,6 +89,8 @@ EOF;
      */
     public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775)
     {
+        Config::registerStringifier(new ExpressionStringifier(new ExpressionLanguage()), StringifierInterface::TYPE_STRING);
+
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
     }
@@ -366,7 +371,11 @@ EOF;
         $this->currentlyGeneratedClass = $config['config']['name'];
 
         // new generator
-        $test = $this->buildClass($config);
+        try {
+            $phpFile = $this->buildClass($config);
+        } catch (\Exception $e) {
+
+        }
 
         $className = $this->generateClassName($config);
         $path = "$outputDirectory/$className.php";
