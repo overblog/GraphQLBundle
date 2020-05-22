@@ -17,11 +17,11 @@ abstract class AbstractConnectionBuilderTest extends TestCase
     protected function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage): ConnectionInterface
     {
         $edges = [
-            'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
-            'B' => new Edge('YXJyYXljb25uZWN0aW9uOjE=', 'B'),
-            'C' => new Edge('YXJyYXljb25uZWN0aW9uOjI=', 'C'),
-            'D' => new Edge('YXJyYXljb25uZWN0aW9uOjM=', 'D'),
-            'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
+            'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA', 'A'),
+            'B' => new Edge('YXJyYXljb25uZWN0aW9uOjE', 'B'),
+            'C' => new Edge('YXJyYXljb25uZWN0aW9uOjI', 'C'),
+            'D' => new Edge('YXJyYXljb25uZWN0aW9uOjM', 'D'),
+            'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ', 'E'),
         ];
 
         $expectedEdges = \array_values(\array_intersect_key($edges, \array_flip($wantedEdges)));

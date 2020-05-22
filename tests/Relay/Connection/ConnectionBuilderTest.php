@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
@@ -63,7 +64,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjE']
         );
 
         $expected = $this->getExpectedConnection(['C', 'D'], false, true);
@@ -75,7 +76,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['first' => 10, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']
+            ['first' => 10, 'after' => 'YXJyYXljb25uZWN0aW9uOjE']
         );
 
         $expected = $this->getExpectedConnection(['C', 'D', 'E'], false, false);
@@ -87,7 +88,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['last' => 2, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']
+            ['last' => 2, 'before' => 'YXJyYXljb25uZWN0aW9uOjM']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C'], true, false);
@@ -99,7 +100,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['last' => 10, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']
+            ['last' => 10, 'before' => 'YXJyYXljb25uZWN0aW9uOjM']
         );
 
         $expected = $this->getExpectedConnection(['A', 'B', 'C'], false, false);
@@ -111,7 +112,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C'], false, true);
@@ -123,7 +124,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['first' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['first' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
@@ -135,7 +136,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
@@ -147,7 +148,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['last' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['last' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['C', 'D'], true, false);
@@ -159,7 +160,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['last' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['last' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
@@ -171,7 +172,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['last' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['last' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ']
         );
 
         $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
@@ -242,7 +243,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArray'],
             $this->letters,
-            ['before' => 'YXJyYXljb25uZWN0aW9uOjI=', 'after' => 'YXJyYXljb25uZWN0aW9uOjQ=']
+            ['before' => 'YXJyYXljb25uZWN0aW9uOjI', 'after' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
         $expected = $this->getExpectedConnection([], false, false);
@@ -257,7 +258,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 1, 2), // equals to letters.slice(1,3) in JS
-            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA'],
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
@@ -273,7 +274,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 0, 3), // equals to letters.slice(0,3) in JS
-            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA='],
+            ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA'],
             ['sliceStart' => 0, 'arrayLength' => 5]
         );
 
@@ -289,7 +290,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
-            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE'],
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
@@ -305,7 +306,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 1, 3), // equals to letters.slice(1,4) in JS
-            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['first' => 1, 'after' => 'YXJyYXljb25uZWN0aW9uOjE'],
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
@@ -321,7 +322,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 3, 2), // equals to letters.slice(3,5) in JS
-            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE'],
             ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
@@ -337,7 +338,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 2, 2), // equals to letters.slice(2,4) in JS
-            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE'],
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
@@ -353,7 +354,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $actual = \call_user_func([static::getBuilder(), 'connectionFromArraySlice'],
             \array_slice($this->letters, 3, 1), // equals to letters.slice(3,4) in JS
-            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE='],
+            ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjE'],
             ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
@@ -366,7 +367,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
     {
         $letterCursor = \call_user_func([static::getBuilder(), 'cursorForObjectInConnection'], $this->letters, 'B');
 
-        $this->assertSame('YXJyYXljb25uZWN0aW9uOjE=', $letterCursor);
+        $this->assertSame('YXJyYXljb25uZWN0aW9uOjE', $letterCursor);
     }
 
     public function testReturnsAnEdgesCursorGivenAnArrayAndANonMemberObject(): void
@@ -376,9 +377,29 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertNull($letterCursor);
     }
 
+    public function testCursorEncoder(): void
+    {
+        $cursorEncoder = $this->createMock(CursorEncoderInterface::class);
+        $cursorEncoder->expects($this->exactly(4))
+            ->method('encode')
+            ->willReturnArgument(0);
+
+        $cursorEncoder->expects($this->exactly(1))
+            ->method('decode')
+            ->willReturnArgument(0);
+
+        $connectionBuilder = new ConnectionBuilder($cursorEncoder);
+        $edges = $connectionBuilder->connectionFromArray($this->letters, ['after' => 'arrayconnection:0'])->getEdges();
+
+        $this->assertSame($edges[0]->getCursor(), 'arrayconnection:1');
+        $this->assertSame($edges[1]->getCursor(), 'arrayconnection:2');
+        $this->assertSame($edges[2]->getCursor(), 'arrayconnection:3');
+        $this->assertSame($edges[3]->getCursor(), 'arrayconnection:4');
+    }
+
     public function testConnectionCallback(): void
     {
-        $connectionBuilder = new ConnectionBuilder(function ($edges, $pageInfo) {
+        $connectionBuilder = new ConnectionBuilder(null, function ($edges, $pageInfo) {
             $connection = new fixtures\CustomConnection($edges, $pageInfo);
             $connection->averageAge = 10;
 
@@ -392,7 +413,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
     public function testEdgeCallback(): void
     {
-        $connectionBuilder = new ConnectionBuilder(null, function ($cursor, $value, $index) {
+        $connectionBuilder = new ConnectionBuilder(null, null, function ($cursor, $value, $index) {
             $edge = new fixtures\CustomEdge($cursor, $value);
             $edge->customProperty = 'edge'.$index;
 
@@ -403,8 +424,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertInstanceOf(fixtures\CustomEdge::class, $actualEdges[0]);
         $this->assertInstanceOf(fixtures\CustomEdge::class, $actualEdges[1]);
 
-        $this->assertEquals($actualEdges[0]->getCursor(), 'YXJyYXljb25uZWN0aW9uOjA=');
-        $this->assertEquals($actualEdges[1]->getCursor(), 'YXJyYXljb25uZWN0aW9uOjE=');
+        $this->assertEquals($actualEdges[0]->getCursor(), 'YXJyYXljb25uZWN0aW9uOjA');
+        $this->assertEquals($actualEdges[1]->getCursor(), 'YXJyYXljb25uZWN0aW9uOjE');
 
         $this->assertEquals($actualEdges[0]->customProperty, 'edge0');
         $this->assertEquals($actualEdges[1]->customProperty, 'edge1');
