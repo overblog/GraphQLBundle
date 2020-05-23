@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64CursorEncoder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
@@ -17,6 +19,11 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 class ConnectionBuilder
 {
     public const PREFIX = 'arrayconnection:';
+
+    /**
+     * @var CursorEncoderInterface
+     */
+    protected $cursorEncoder;
 
     /**
      * If set, used to generate the connection object.
@@ -32,8 +39,9 @@ class ConnectionBuilder
      */
     protected $edgeCallback;
 
-    public function __construct(callable $connectionCallback = null, callable $edgeCallback = null)
+    public function __construct(?CursorEncoderInterface $cursorEncoder = null, callable $connectionCallback = null, callable $edgeCallback = null)
     {
+        $this->cursorEncoder = $cursorEncoder ?? new Base64CursorEncoder();
         $this->connectionCallback = $connectionCallback;
         $this->edgeCallback = $edgeCallback;
     }
@@ -245,7 +253,7 @@ class ConnectionBuilder
      */
     public function offsetToCursor($offset): string
     {
-        return \base64_encode(static::PREFIX.$offset);
+        return $this->cursorEncoder->encode(self::PREFIX.$offset);
     }
 
     /**
@@ -257,11 +265,14 @@ class ConnectionBuilder
      */
     public function cursorToOffset($cursor): string
     {
+        // Returning an empty string is required to not break the Paginator
+        // class. Ideally, we should throw an exception or not call this
+        // method if $cursor is empty
         if (null === $cursor) {
             return '';
         }
 
-        return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
+        return \str_replace(static::PREFIX, '', $this->cursorEncoder->decode($cursor));
     }
 
     private function createEdges(iterable $slice, int $startOffset): array
