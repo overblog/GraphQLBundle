@@ -9,14 +9,14 @@ use Overblog\GraphQLBundle\Util\Base64Encoder;
 /**
  * @phpstan-implements CursorEncoderInterface<string>
  */
-final class Base64CursorEncoder implements CursorEncoderInterface
+final class Base64UrlSafeCursorEncoder implements CursorEncoderInterface
 {
     /**
      * {@inheritdoc}
      */
     public function encode($value): string
     {
-        return Base64Encoder::encode($value);
+        return Base64Encoder::encodeUrlSafe($value);
     }
 
     /**
@@ -24,6 +24,6 @@ final class Base64CursorEncoder implements CursorEncoderInterface
      */
     public function decode(string $cursor)
     {
-        return Base64Encoder::decode($cursor);
+        return Base64Encoder::decodeUrlSafe($cursor);
     }
 }

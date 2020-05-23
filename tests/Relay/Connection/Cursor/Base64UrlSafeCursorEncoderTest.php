@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Cursor;
 
-use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64CursorEncoder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64UrlSafeCursorEncoder;
 use PHPUnit\Framework\TestCase;
 
-final class Base64CursorEncoderTest extends TestCase
+final class Base64UrlSafeCursorEncoderTest extends TestCase
 {
     /**
-     * @var Base64CursorEncoder
+     * @var Base64UrlSafeCursorEncoder
      */
     private $encoder;
 
     protected function setUp(): void
     {
-        $this->encoder = new Base64CursorEncoder();
+        $this->encoder = new Base64UrlSafeCursorEncoder();
     }
 
     /**
@@ -40,49 +40,41 @@ final class Base64CursorEncoderTest extends TestCase
         yield [
             '000000',
             'MDAwMDAw',
-            false,
         ];
 
         yield [
             "\0\0\0\0",
-            'AAAAAA==',
-            false,
+            'AAAAAA',
         ];
 
         yield [
             "\xff",
-            '/w==',
-            false,
+            '_w',
         ];
 
         yield [
             "\xff\xff",
-            '//8=',
-            false,
+            '__8',
         ];
 
         yield [
             "\xff\xff\xff",
-            '////',
-            false,
+            '____',
         ];
 
         yield [
             "\xff\xff\xff\xff",
-            '/////w==',
-            false,
+            '_____w',
         ];
 
         yield [
             "\xfb",
-            '+w==',
-            false,
+            '-w',
         ];
 
         yield [
             '',
             '',
-            false,
         ];
     }
 }

@@ -6,6 +6,22 @@ namespace Overblog\GraphQLBundle\Util;
 
 final class Base64Encoder
 {
+    public static function encode(string $value): string
+    {
+        return \base64_encode($value);
+    }
+
+    public static function decode(string $value, bool $strict = true): string
+    {
+        $result = \base64_decode($value, $strict);
+
+        if (false === $result) {
+            throw new \InvalidArgumentException(\sprintf('The "%s" value failed to be decoded from base64 format.', $value));
+        }
+
+        return $result;
+    }
+
     public static function encodeUrlSafe(string $value, bool $padding = false): string
     {
         $result = \base64_encode($value);
@@ -22,7 +38,7 @@ final class Base64Encoder
     {
         $value = \str_replace(['-', '_'], ['+', '/'], $value);
 
-        if (0 === \strrpos($value, '=', -1) && 0 !== \strlen($value) % 4) {
+        if (0 === \substr_compare($value, '=', -1) && 0 !== \strlen($value) % 4) {
             $value = \str_pad($value, (\strlen($value) + 3) & ~3, '=');
         }
 

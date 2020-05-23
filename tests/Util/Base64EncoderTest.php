@@ -12,17 +12,17 @@ final class Base64EncoderTest extends TestCase
     /**
      * @dataProvider valuesDataProvider
      */
-    public function testEncodeUrlSafe(string $value, string $encodedValue, bool $usePadding): void
+    public function testEncode(string $value, string $encodedValue): void
     {
-        $this->assertSame($encodedValue, Base64Encoder::encodeUrlSafe($value, $usePadding));
+        $this->assertSame($encodedValue, Base64Encoder::encode($value));
     }
 
     /**
      * @dataProvider valuesDataProvider
      */
-    public function testDecodeUrlSafe(string $value, string $encodedValue): void
+    public function testDecode(string $value, string $encodedValue): void
     {
-        $this->assertSame($value, Base64Encoder::decodeUrlSafe($encodedValue));
+        $this->assertSame($value, Base64Encoder::decode($encodedValue));
     }
 
     public function valuesDataProvider(): \Generator
@@ -35,37 +35,37 @@ final class Base64EncoderTest extends TestCase
 
         yield [
             "\0\0\0\0",
-            'AAAAAA',
+            'AAAAAA==',
             false,
         ];
 
         yield [
             "\xff",
-            '_w',
+            '/w==',
             false,
         ];
 
         yield [
             "\xff\xff",
-            '__8',
+            '//8=',
             false,
         ];
 
         yield [
             "\xff\xff\xff",
-            '____',
+            '////',
             false,
         ];
 
         yield [
             "\xff\xff\xff\xff",
-            '_____w',
+            '/////w==',
             false,
         ];
 
         yield [
             "\xfb",
-            '-w',
+            '+w==',
             false,
         ];
 
@@ -73,50 +73,14 @@ final class Base64EncoderTest extends TestCase
             '',
             '',
             false,
-        ];
-
-        yield [
-            'f',
-            'Zg==',
-            true,
-        ];
-
-        yield [
-            'fo',
-            'Zm8=',
-            true,
-        ];
-
-        yield [
-            'foo',
-            'Zm9v',
-            true,
-        ];
-
-        yield [
-            'foob',
-            'Zm9vYg==',
-            true,
-        ];
-
-        yield [
-            'fooba',
-            'Zm9vYmE=',
-            true,
-        ];
-
-        yield [
-            'foobar',
-            'Zm9vYmFy',
-            true,
         ];
     }
 
-    public function testDecodeUrlSafeThrowsOnInvalidValue(): void
+    public function testDecodeThrowsOnInvalidValue(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The "cxr0fdsezrewklerewxoz423ocfsa3bw432yjydsa9lhdsalw" value failed to be decoded from base64 format.');
 
-        Base64Encoder::decodeUrlSafe('cxr0fdsezrewklerewxoz423ocfsa3bw432yjydsa9lhdsalw');
+        Base64Encoder::decode('cxr0fdsezrewklerewxoz423ocfsa3bw432yjydsa9lhdsalw');
     }
 }
