@@ -25,7 +25,7 @@ class PhpFile extends DependencyAwareGenerator
     public function __construct(string $name)
     {
         $this->name = $name;
-        $this->dependencyAwareChildren = [$this->classes];
+        $this->dependencyAwareChildren = [&$this->classes];
     }
 
     public static function create(string $name): self

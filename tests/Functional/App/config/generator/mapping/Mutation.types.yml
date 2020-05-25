@@ -1,0 +1,57 @@
+# Todo: remove this configuration after the generator is finished
+Mutation:
+    type: object
+    config:
+        fields:
+            createStudent:
+                type: String
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    username:
+                        type: "String"
+                        validation:
+                            - BlahBlah: ~
+
+
+Person:
+    type: interface
+    config:
+        description: "A person"
+        fields:
+            firstName:
+                type: String!
+                description: "Person's first name."
+                deprecationReason: "This field will be soon removed!"
+                access: false
+                complexity: 15
+                public: true
+            lastName:
+                type: String!
+                description: "Person's last name."
+#                defaultValue: "Mark Wahlberg"
+
+
+Student:
+    type: object
+    config:
+        interfaces: [Person]
+        fields:
+            faculty: String!
+
+
+Professor:
+    type: object
+    config:
+        interfaces: [Person]
+        fields:
+            classes:
+                type: "[String!]!"
+                access: false
+                complexity: "@=15 + 15"
+                public: true
+                args:
+                    semester:
+                        type: Int!
+                        defaultValue: 1
+                        description: "The semester pf the class"
+                    year: Int

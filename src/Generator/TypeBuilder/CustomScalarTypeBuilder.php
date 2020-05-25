@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use GraphQL\Type\Definition\CustomScalarType;
 use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
-use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
-class CustomScalarTypeBuilder implements TypeBuilderInterface
+class CustomScalarTypeBuilder extends BaseBuilder
 {
 
-    public static function build(array $config, string $namespace): GeneratorInterface
+    public function build(array $config): PhpFile
     {
         $className = $config['name'].'Type';
 
-        $file = PhpFile::create($className.'php')->setNamespace($namespace);
+        $file = PhpFile::create($className.'php')->setNamespace($this->namespace);
 
         $class = $file->createClass($className)
             ->setExtends(CustomScalarType::class)

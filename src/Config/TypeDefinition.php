@@ -52,9 +52,7 @@ abstract class TypeDefinition
 
     protected function defaultValueSection()
     {
-        $node = self::createNode('defaultValue', 'variable');
-
-        return $node;
+        return self::createNode('defaultValue', 'variable');
     }
 
     /**
@@ -164,7 +162,7 @@ abstract class TypeDefinition
      *
      * @return ArrayNodeDefinition|NodeDefinition
      *
-     *@internal
+     * @internal
      */
     protected static function createNode(string $name, string $type = 'array')
     {

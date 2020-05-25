@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
-use Murtukov\PHPCodeGenerator\Config;
-use Murtukov\PHPCodeGenerator\StringifierInterface;
+use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
-use Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\ObjectTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\TypeBuilderInterface;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
 use ReflectionException;
+use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -26,19 +31,21 @@ class TypeGenerator extends BaseTypeGenerator
 
     private const CONSTRAINTS_NAMESPACE = 'Symfony\Component\Validator\Constraints';
 
-    private static $classMapLoaded = false;
-    private $cacheDir;
+    private static bool $classMapLoaded = false;
+    private ?string $cacheDir;
     private $configProcessor;
-    private $configs;
-    private $useClassMap;
-    private $baseCacheDir;
+    private array $configs;
+    private bool $useClassMap;
+    private ?string $baseCacheDir;
+
+    private ServiceLocator $typeBuilders;
 
     public function __construct(
         string $classNamespace,
         array $skeletonDirs,
         ?string $cacheDir,
         array $configs,
-        ExpressionStringifier $expressionStringifier,
+        ServiceLocator $typeBuilders,
         bool $useClassMap = true,
         callable $configProcessor = null,
         ?string $baseCacheDir = null,
@@ -49,13 +56,12 @@ class TypeGenerator extends BaseTypeGenerator
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
+        $this->typeBuilders = $typeBuilders;
+
         if (null === $cacheDirMask) {
             // we apply permission 0777 for default cache dir otherwise we apply 0775.
             $cacheDirMask = null === $cacheDir ? 0777 : 0775;
         }
-
-        // Register additional stringifier for the php code generator
-        Config::registerStringifier($expressionStringifier, StringifierInterface::TYPE_STRING);
 
         parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
     }
@@ -746,5 +752,32 @@ CODE;
     protected function isCollectionType(string $type): bool
     {
         return 2 === \count(\array_intersect(['[', ']'], \str_split($type)));
+    }
+
+    # =================== NEW GENERATOR CODE =======================================
+
+    /**
+     * @param array $config
+     * @param string $type
+     * @return GeneratorInterface
+     */
+    public function buildClass(array $config, string $type): GeneratorInterface
+    {
+        foreach ($this->typeBuilders as $b) {
+            $x = $b;
+        }
+
+        switch ($type) {
+            case 'object':
+                return $this->typeBuilders->get(ObjectTypeBuilder::class)->build($config);
+            case 'input-object':
+                return $this->typeBuilders->get(InputTypeBuilder::class)->build($config);
+            case 'custom-scalar':
+                return $this->typeBuilders->get(CustomScalarTypeBuilder::class)->build($config);
+            case 'interface':
+                return $this->typeBuilders->get(InterfaceTypeBuilder::class)->build($config);
+            default:
+                throw new \RuntimeException("GraphQL config type is not recognized: $type");
+        }
     }
 }

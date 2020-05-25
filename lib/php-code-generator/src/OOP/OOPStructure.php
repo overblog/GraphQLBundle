@@ -74,12 +74,12 @@ abstract class OOPStructure extends DependencyAwareGenerator
 
     public function createConst(string $name, string $value, string $modifier = 'public'): Property
     {
-        return $this->createProperty($name, $modifier, $value)->setConst();
+        return $this->createProperty($name, $modifier, '', $value)->setConst();
     }
 
     public function addConst(string $name, string $value, string $modifier = 'public'): self
     {
-        $this->createProperty($name, $modifier, $value)->setConst();
+        $this->createProperty($name, $modifier, '', $value)->setConst();
         return $this;
     }
 
@@ -128,5 +128,11 @@ abstract class OOPStructure extends DependencyAwareGenerator
     public function createDocBlock(string $text): DocBlock
     {
         return $this->docBlock = new DocBlock($text);
+    }
+
+    public function addDocBlock(string $text): self
+    {
+        $this->docBlock = new DocBlock($text);
+        return $this;
     }
 }

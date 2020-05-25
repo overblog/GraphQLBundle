@@ -29,12 +29,11 @@ class Closure extends DependencyAwareGenerator
 
     public function generate(): string
     {
-        $code = <<<CODE
+        return <<<CODE
         function ({$this->generateArgs()}){$this->buildUses()}{$this->buildReturnType()} {
         {$this->generateContent()}
         }
         CODE;
-        return $code;
     }
 
     private function buildUses(): string

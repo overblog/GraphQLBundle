@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Generator\Stringifier;
+namespace Overblog\GraphQLBundle\Generator\Converter;
 
-use Murtukov\PHPCodeGenerator\StringifierInterface;
+use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
 use function strpos;
 
-class ExpressionStringifier implements StringifierInterface
+class ExpressionConverter implements ConverterInterface
 {
     private ExpressionLanguage $expressionLanguage;
 
@@ -18,13 +18,22 @@ class ExpressionStringifier implements StringifierInterface
         $this->expressionLanguage = $expressionLanguage;
     }
 
-    function stringify($value): string
+    function convert($value): string
     {
-        return $this->expressionLanguage->compile(new Expression(\substr($value, 2)));
+        return (string) $this->expressionLanguage->evaluate(new Expression(\substr($value, 2)));
     }
 
     function check($value): bool
     {
         return strpos($value, ExpressionLanguage::EXPRESSION_LANGUAGE_TRIGGER) === 0;
+    }
+
+    function maybeConvert(string $value)
+    {
+        if ($this->check($value)) {
+            return $this->convert($value);
+        } else {
+            return $value;
+        }
     }
 }

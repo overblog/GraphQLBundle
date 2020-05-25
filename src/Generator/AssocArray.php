@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier;
+use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Murtukov\PHPCodeGenerator\Arrays\AssocArray as BaseArray;
 
 /**
@@ -19,6 +19,6 @@ class AssocArray extends BaseArray
      */
     public static function getStringifiers()
     {
-        return [ExpressionStringifier::class];
+        return [ExpressionConverter::class];
     }
 }
