@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Murtukov\PHPCodeGenerator;
 
 
-interface StringifierInterface
+interface ConverterInterface
 {
     const TYPE_STRING = 'string';
     const TYPE_INT = 'integer';
@@ -19,10 +19,10 @@ interface StringifierInterface
      * @param $value
      * @return string
      */
-    function stringify($value): string;
+    function convert($value): string;
 
     /**
-     * Checks, whether the values should be stringified.
+     * Checks, whether the value should be converted.
      *
      * @param $value
      * @return bool

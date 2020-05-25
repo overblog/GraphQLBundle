@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use GraphQL\Type\Definition\ObjectType;
-use Murtukov\PHPCodeGenerator\Arrays\AssocArray;
+use Murtukov\PHPCodeGenerator\Functions\Closure;
+use Murtukov\PHPCodeGenerator\Literal;
+use Overblog\GraphQLBundle\Definition\LazyConfig;
+use Overblog\GraphQLBundle\Generator\AssocArray;
 use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
 use Murtukov\PHPCodeGenerator\Functions\Argument;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
@@ -15,60 +18,131 @@ use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
-class ObjectTypeBuilder implements TypeBuilderInterface
+class ObjectTypeBuilder extends BaseBuilder
 {
-
-    public static function build(array $config, string $namespace): GeneratorInterface
+    public function build(array $config): GeneratorInterface
     {
-        $className = $config['name'].'Type';
+        /**
+         * @var string      $name
+         * @var string|null $description
+         * @var array       $fields
+         */
+        extract($config);
 
-        $file = new PhpFile($className.'php');
+        $className = $name.'Type';
+
+        $file = PhpFile::create($className.'php')->setNamespace($this->namespace);
 
         $class = $file->createClass($className)
             ->setFinal()
             ->setExtends(ObjectType::class)
             ->addImplement(GeneratedTypeInterface::class)
-            ->addConst('NAME', "'{$config['config']['name']}'");
-
-        $class->createDocBlock("This class was generated and should not be edited manually.");
+            ->addConst('NAME', $name)
+            ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()
             ->addArgument(Argument::create('configProcessor', ConfigProcessor::class))
-            ->addArgument(Argument::create('globalVariables', GlobalVariables::class, 'null'))
-            ->append('$configLoader = ', ArrowFunction::create()
-                ->setExpression(AssocArray::createMultiline()
-                    ->addItem('name', 'self::NAME')
-                    ->addIfNotNull('description', $config['config']['description'] ?? null)
-                    ->addItem('fields', ArrowFunction::create()
-                        ->setExpression(AssocArray::mapMultiline($config['config']['fields'],
-                            fn($_, $fieldConfig) => (
-                                AssocArray::createMultiline()
-                                    ->addItem('type', self::getTypeResolveCode($fieldConfig['type']))
-                                    ->ifTrue(fn() => !empty($fieldConfig['args']))
-                                        ->addItem('args', NumericArray::mapMultiline($fieldConfig['args'],
-                                            fn($argName, $argConfig) => (
-                                                AssocArray::createMultiline()
-                                                    ->addItem('name', $argName)
-                                                    ->addItem('type', $this->getTypeResolveCode($argConfig['type']))
-                                                    ->addIfNotEmpty('description', $argConfig['description'] ?? null)
-                                            )
-                                        )
-                                        ->addItem('resolve', $this->buildResolve($fieldConfig['resolve']))
-                                    )
-                            )
-                        ))
-                    )
-                )
-            )
+            ->addArgument(Argument::create('globalVariables', GlobalVariables::class, null))
+            ->append('$configLoader = ', $this->buildConfigLoader($config))
             ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
             ->append('parent::__construct($config)')
         ;
 
+        $file->addUseStatement(LazyConfig::class);
+
         return $file;
     }
 
-    private static function getTypeResolveCode($arg): string
+    public function buildConfigLoader($config)
     {
-        return "Type::nonNull(\$globalVariables->get('typeResolver')->resolve('$arg'))";
+        /**
+         * @var string|null $description
+         * @var array       $fields
+         */
+        extract($config);
+
+        $expression = AssocArray::createMultiline()
+            ->addItem('name', new Literal('self::NAME'));
+
+        if (isset($description)) {
+            $expression->addItem('description', $description);
+        }
+
+        if (!empty($fields)) {
+            $expression->addItem('fields', ArrowFunction::create()
+                ->setExpression(AssocArray::mapMultiline($fields, [$this, 'buildField']))
+            );
+        }
+
+        return new ArrowFunction($expression);
+    }
+
+    public static function buildResolve($config)
+    {
+        $closure = Closure::create();
+
+        return $closure;
+    }
+
+    public function buildField($fieldConfig /*, $fieldname */): AssocArray
+    {
+        /**
+         * @var string      $type
+         * @var string|null $resolve
+         * @var string|null $description
+         * @var array|null  $args
+         * @var string|null $complexity
+         * @var string|null $deprecationReason
+         */
+        extract($fieldConfig);
+
+        $field = AssocArray::createMultiline()
+            ->addItem('type', self::buildType($type));
+
+        if (isset($resolve)) {
+            $field->addItem('resolve', self::buildResolve($resolve));
+        }
+
+        if (isset($description)) {
+            $field->addItem('deprecationReason', $deprecationReason);
+        }
+
+        if (isset($description)) {
+            $field->addItem('description', $description);
+        }
+
+        if (!empty($args)) {
+            $field->addItem('args', NumericArray::mapMultiline($args, [$this, 'buildArg']));
+        }
+
+        if (isset($complexity)) {
+            $field->addItem('complexity', $complexity);
+        }
+
+        return $field;
+    }
+
+    public function buildArg($argConfig, $argName)
+    {
+        /**
+         * @var string      $type
+         * @var string|null $description
+         * @var string|null $defaultValue
+         */
+        extract($argConfig);
+
+        $arg = AssocArray::createMultiline()
+            ->addItem('name', $argName)
+            ->addItem('type', self::buildType($type));
+
+        if (isset($description)) {
+            $arg->addIfNotEmpty('description', $description);
+        }
+
+        if (isset($defaultValue)) {
+            $arg->addIfNotEmpty('defaultValue', $defaultValue);
+        }
+
+        return $arg;
     }
 }

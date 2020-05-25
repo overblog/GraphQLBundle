@@ -6,5 +6,5 @@ use Murtukov\PHPCodeGenerator\GeneratorInterface;
 
 interface TypeBuilderInterface
 {
-    public static function build(array $config, string $namespace): GeneratorInterface;
+    public function build(array $config): GeneratorInterface;
 }

@@ -14,24 +14,27 @@ use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
+use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 
 class InterfaceTypeBuilder extends BaseBuilder
 {
-    public static function build(array $config, string $namespace): GeneratorInterface
+    public function build(array $config): GeneratorInterface
     {
-        $className = $config['name'].'Type';
+        /**
+         * @var string      $name
+         * @var string|null $resolveType
+         * @var array       $fields
+         * @var string|null $description
+         */
+        extract($config);
 
-        $file = PhpFile::create($className.'php')->setNamespace($namespace);
+        $file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
 
-        $class = $file->createClass($className)
+        $class = $file->createClass($name.'Type')
             ->setFinal()
             ->setExtends(InterfaceType::class)
-            ->addImplement(GeneratedTypeInterface::class);
-
-        $class->createProperty('NAME')
-            ->setPublic()
-            ->setConst()
-            ->setDefaulValue('Character');
+            ->addImplement(GeneratedTypeInterface::class)
+            ->addConst('NAME', $name);
 
         $constructor = $class->createConstructor();
         $constructor->createArgument('configProcessor', ConfigProcessor::class);
@@ -39,10 +42,10 @@ class InterfaceTypeBuilder extends BaseBuilder
 
         $configLoader = ArrowFunction::create(
             AssocArray::createMultiline()
-                ->addItem('name', $config['name'])
-                ->addIfNotNull('description', $config['description'] ?? null)
-                ->addIfNotNull('resolveType', self::resolveTypeClosure($config['resolveType'] ?? null))
-                ->addItem('fields', self::buildFieldsClosure($config['fields']))
+                ->addItem('name', $name)
+                ->addIfNotNull('description', $description ?? null)
+                ->addIfNotNull('resolveType', self::resolveTypeClosure($resolveType ?? null))
+                ->addItem('fields', self::buildFieldsClosure($fields))
         );
 
         $constructor
@@ -59,7 +62,7 @@ class InterfaceTypeBuilder extends BaseBuilder
     private static function buildFieldsClosure(array $fields): GeneratorInterface
     {
         return ArrowFunction::create(
-            AssocArray::mapMultiline($fields, function($name, $config) {
+            AssocArray::mapMultiline($fields, function($config /*, $name */) {
                 $assocArray = AssocArray::createMultiline()
                     ->addItem('type', self::buildType($config['type']))
                     ->addIfNotNull('description', $config['description'] ?? null)

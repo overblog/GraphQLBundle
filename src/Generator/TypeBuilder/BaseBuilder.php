@@ -8,12 +8,28 @@ use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
 use GraphQL\Type\Definition\Type;
 use Murtukov\PHPCodeGenerator\Call;
+use Murtukov\PHPCodeGenerator\Config;
+use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
+use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 
 abstract class BaseBuilder implements TypeBuilderInterface
 {
+    protected const DOCBLOCK_TEXT = "This file was generated and should not be edited manually.";
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
+
+    protected ExpressionConverter $expressionConverter;
+    protected string $namespace;
+
+    public function __construct(ExpressionConverter $expressionConverter, string $namespace)
+    {
+        $this->expressionConverter = $expressionConverter;
+        $this->namespace = $namespace;
+
+        // Register additional stringifier for the php code generator
+        Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
+    }
 
     /**
      * @param $typeDefinition

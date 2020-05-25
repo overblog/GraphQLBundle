@@ -40,7 +40,7 @@ class Method extends DependencyAwareGenerator
         $this->modifier = $modifier;
         $this->returnType = $returnType;
 
-        $this->dependencyAwareChildren = [$this->args];
+        $this->dependencyAwareChildren = [&$this->args];
     }
 
     public function generate(): string

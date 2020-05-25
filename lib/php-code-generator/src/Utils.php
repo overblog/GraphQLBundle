@@ -34,22 +34,22 @@ class Utils
     /**
      * @var array Custom converters registered by users
      */
-    private static array $customStringifiers = [];
+    private static array $customConverters = [];
 
     /**
      * @param mixed $value
      * @param bool $multiline
      * @param bool $withKeys
-     * @param array $stringifiers
+     * @param array $converters
      * @return false|string
      * @throws UnrecognizedValueTypeException
      */
-    public static function stringify($value, bool $multiline = false, bool $withKeys = false, array $stringifiers = [])
+    public static function stringify($value, bool $multiline = false, bool $withKeys = false, array $converters = [])
     {
         // Common options to avoid passing them recursively
         self::$multiline = $multiline;
         self::$withKeys = $withKeys;
-        self::$customStringifiers = $stringifiers;
+        self::$customConverters = $converters;
 
         return self::stringifyValue($value);
     }
@@ -63,17 +63,17 @@ class Utils
     {
         $type = gettype($value);
 
-        // Custom stringifiers
-        if (!empty(self::$customStringifiers)) {
-            foreach (Config::getStringifierClasses($type) as $fqcn) {
-                $stringifier = Config::getStringifier($fqcn);
-                if ($stringifier->check($value)) {
-                    return $stringifier->stringify($value);
+        // Custom converters
+        if (!empty(self::$customConverters)) {
+            foreach (Config::getConverterClasses($type) as $fqcn) {
+                $converter = Config::getConverter($fqcn);
+                if ($converter->check($value)) {
+                    return $converter->convert($value);
                 }
             }
         }
 
-        // Default stringifiers
+        // Default converters
         switch ($type) {
             case 'boolean':
             case 'integer':

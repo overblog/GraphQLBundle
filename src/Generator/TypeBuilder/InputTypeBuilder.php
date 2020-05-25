@@ -6,10 +6,10 @@ namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 
-class InputTypeBuilder implements TypeBuilderInterface
+class InputTypeBuilder extends BaseBuilder
 {
 
-    public static function build(array $config, string $namespace): GeneratorInterface
+    public function build(array $config): GeneratorInterface
     {
         // TODO: Implement build() method.
     }

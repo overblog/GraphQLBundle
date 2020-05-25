@@ -48,7 +48,7 @@ abstract class AbstractArray extends DependencyAwareGenerator
         $array->multiline = true;
 
         foreach ($items as $key => $value) {
-            $array->items[$key] = ($array->map)($key, $value);
+            $array->items[$key] = ($array->map)($value, $key);
 
             if ($array->items[$key] instanceof DependencyAwareGenerator) {
                 $array->dependencyAwareChildren[] = $array->items[$key];

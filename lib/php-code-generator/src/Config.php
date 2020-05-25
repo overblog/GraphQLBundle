@@ -15,7 +15,7 @@ class Config
     public static string $suppressSymbol = "@";
 
     /**
-     * @var StringifierInterface[]
+     * @var ConverterInterface[]
      */
     private static array $customStringifiers = [
         // e.g.: 'App\Stringifiers\ExpressionStringifier' => object,
@@ -31,10 +31,10 @@ class Config
     /**
      * Registers user defined stringifiers.
      *
-     * @param StringifierInterface $stringifierInstance
+     * @param ConverterInterface $stringifierInstance
      * @param string $type
      */
-    public static function registerStringifier(StringifierInterface $stringifierInstance, string $type)
+    public static function registerConverter(ConverterInterface $stringifierInstance, string $type)
     {
         $fqcn = get_class($stringifierInstance);
 
@@ -60,14 +60,14 @@ class Config
      * Returns an instance of registered custom stringifier.
      *
      * @param string $fqcn
-     * @return StringifierInterface|null
+     * @return ConverterInterface|null
      */
-    public static function getStringifier(string $fqcn): ?object
+    public static function getConverter(string $fqcn): ?object
     {
         return self::$customStringifiers[$fqcn] ?? null;
     }
 
-    public static function getStringifierClasses(string $type): ?array
+    public static function getConverterClasses(string $type): ?array
     {
         return self::$customStringifiersTypeMap[$type] ?? [];
     }

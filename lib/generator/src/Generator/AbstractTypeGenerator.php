@@ -22,8 +22,8 @@ use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
-use Murtukov\PHPCodeGenerator\StringifierInterface;
-use Overblog\GraphQLBundle\Generator\Stringifier\ExpressionStringifier;
+use Murtukov\PHPCodeGenerator\ConverterInterface;
+use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
@@ -89,7 +89,7 @@ EOF;
      */
     public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775)
     {
-        Config::registerStringifier(new ExpressionStringifier(new ExpressionLanguage()), StringifierInterface::TYPE_STRING);
+        Config::registerConverter(new ExpressionConverter(new ExpressionLanguage()), ConverterInterface::TYPE_STRING);
 
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
@@ -370,22 +370,23 @@ EOF;
     {
         $this->currentlyGeneratedClass = $config['config']['name'];
 
-        // new generator
-        try {
-            $phpFile = $this->buildClass($config);
-        } catch (\Exception $e) {
-
-        }
-
         $className = $this->generateClassName($config);
         $path = "$outputDirectory/$className.php";
 
-        if (!($mode & self::MODE_MAPPING_ONLY)) {
+        // new generator
+        try {
+            $phpFile = $this->buildClass($config['config'], $config['type']);
+            $phpFile->save("C:\Users\TimurMurtukov\Desktop\Generated\\$className.php");
+        } catch (\Exception $e) {
+            $x = $e;
+        }
+
+//        if (!($mode & self::MODE_MAPPING_ONLY)) {
             $this->clearInternalUseStatements();
             $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::DEFERRED_PLACEHOLDERS);
             $code = $this->processPlaceHoldersReplacements(static::DEFERRED_PLACEHOLDERS, $code, $config)."\n";
 
-            if ($mode & self::MODE_WRITE) {
+//            if ($mode & self::MODE_WRITE) {
                 $dir = \dirname($path);
                 if (!\is_dir($dir)) {
                     \mkdir($dir, $this->cacheDirMask, true);
@@ -393,35 +394,12 @@ EOF;
                 if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
                     \file_put_contents($path, $code);
                 }
-            }
-        }
+//            }
+//        }
 
         $this->currentlyGeneratedClass = null;
 
         return [$this->getClassNamespace().'\\'.$className => $path];
-    }
-
-    /**
-     * @param array $config
-     * @return GeneratorInterface
-     * @throws \Exception
-     */
-    public function buildClass(array $config)
-    {
-        $namespace = $this->getClassNamespace();
-
-        switch ($config['type']) {
-            case 'object':
-                return ObjectTypeBuilder::build($config['config'], $namespace);
-            case 'input-object':
-                return InputTypeBuilder::build($config['config'], $namespace);
-            case 'custom-scalar':
-                return CustomScalarTypeBuilder::build($config['config'], $namespace);
-            case 'interface':
-                return InterfaceTypeBuilder::build($config['config'], $namespace);
-            default:
-                throw new \Exception("Config type is not recognized.");
-        }
     }
 
     /**

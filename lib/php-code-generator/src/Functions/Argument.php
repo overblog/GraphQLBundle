@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Murtukov\PHPCodeGenerator\Functions;
 
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
+use Murtukov\PHPCodeGenerator\Utils;
 
 class Argument extends DependencyAwareGenerator
 {
@@ -12,19 +13,35 @@ class Argument extends DependencyAwareGenerator
     private string  $name;
     private bool    $isSpread = false;
     private bool    $isByReference = false;
+
+    /**
+     * @var mixed
+     */
     private $defaultValue;
 
-    public function __construct(string $name, string $type = '', $defaultValue = '')
+    /**
+     * Argument constructor.
+     * @param string $name
+     * @param string $type
+     * @param mixed $defaultValue
+     */
+    public function __construct(string $name, string $type = '', $defaultValue = null)
     {
         $this->name = $name;
-        $this->type = $type ? $this->resolveQualifier($type) : $type;
+        $this->type = $this->resolveQualifier($type);
 
-        $this->setDefaultValue($defaultValue);
+        if (func_num_args() > 2) {
+            $this->setDefaultValue($defaultValue);
+        }
     }
 
-    public static function create(string $name, string $type = '', $defaultValue = ''): self
+    public static function create(string $name, string $type = '', $defaultValue = null): self
     {
-        return new self($name, $type, $defaultValue);
+        if (func_num_args() === 2) {
+            return new self($name, $type);
+        } else {
+            return new self($name, $type, $defaultValue);
+        }
     }
 
     public function generate(): string
@@ -85,11 +102,7 @@ class Argument extends DependencyAwareGenerator
 
     public function setDefaultValue($value): self
     {
-        if ('string' === $this->type) {
-            $this->defaultValue = "'$value'";
-        } else {
-            $this->defaultValue = $value;
-        }
+        $this->defaultValue = Utils::stringify($value);
 
         return $this;
     }

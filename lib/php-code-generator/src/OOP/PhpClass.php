@@ -44,7 +44,7 @@ class PhpClass extends OOPStructure
         return $prefix;
     }
 
-    public function buildDocBlock()
+    private function buildDocBlock()
     {
         return $this->docBlock ? "$this->docBlock\n" : '';
     }
