@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator\Converter;
 
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\Expression;
 use function strpos;
 
 class ExpressionConverter implements ConverterInterface
@@ -18,22 +17,36 @@ class ExpressionConverter implements ConverterInterface
         $this->expressionLanguage = $expressionLanguage;
     }
 
-    function convert($value): string
+    function convert($value)
     {
-        return (string) $this->expressionLanguage->evaluate(new Expression(\substr($value, 2)));
+        return $this->expressionLanguage->compile(substr($value, 2), ExpressionLanguage::KNOWN_NAMES);
     }
 
     function check($value): bool
     {
-        return strpos($value, ExpressionLanguage::EXPRESSION_LANGUAGE_TRIGGER) === 0;
+        if (is_string($value)) {
+            return strpos($value, ExpressionLanguage::EXPRESSION_LANGUAGE_TRIGGER) === 0;
+        }
+
+        return false;
     }
 
-    function maybeConvert(string $value)
+    function maybeConvert($value)
     {
         if ($this->check($value)) {
             return $this->convert($value);
         } else {
             return $value;
         }
+    }
+
+    public function __invoke($value)
+    {
+        return $this->maybeConvert($value);
+    }
+
+    public function getExpressionLanguage()
+    {
+        return $this->expressionLanguage;
     }
 }

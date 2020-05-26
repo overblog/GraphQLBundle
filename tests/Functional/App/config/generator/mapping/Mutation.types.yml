@@ -17,6 +17,7 @@ Person:
     type: interface
     config:
         description: "A person"
+        resolveType: "@=res('person_type', [value, typeResolver])"
         fields:
             firstName:
                 type: String!
@@ -46,9 +47,10 @@ Professor:
         fields:
             classes:
                 type: "[String!]!"
-                access: false
-                complexity: "@=15 + 15"
-                public: true
+                access: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
+                complexity: '@=15 + childrenComplexity'
+#                complexity: '@=call(["Overblog\\GraphQLBundle\\Tests\\Functional\\App\\Mutation", "complexityCallable"], args)'
+                public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN', typeName, fieldName)"
                 args:
                     semester:
                         type: Int!
