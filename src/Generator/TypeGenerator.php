@@ -763,13 +763,10 @@ CODE;
      */
     public function buildClass(array $config, string $type): GeneratorInterface
     {
-        foreach ($this->typeBuilders as $b) {
-            $x = $b;
-        }
-
         switch ($type) {
             case 'object':
                 return $this->typeBuilders->get(ObjectTypeBuilder::class)->build($config);
+            case 'input':
             case 'input-object':
                 return $this->typeBuilders->get(InputTypeBuilder::class)->build($config);
             case 'custom-scalar':

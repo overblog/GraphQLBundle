@@ -31,6 +31,10 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
      */
     public function resolveQualifier(string $path, $alias = ''): string
     {
+        if (empty($path)) {
+            return $path;
+        }
+
         if (false === Config::$shortenQualifiers) {
             return $path;
         }
@@ -39,7 +43,7 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
             return substr($path, 1);
         }
 
-        if (empty($path) || '\\' === $path[0]) {
+        if ('\\' === $path[0]) {
             return $path;
         }
 

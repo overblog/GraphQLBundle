@@ -375,7 +375,7 @@ EOF;
 
         // new generator
         try {
-            $phpFile = $this->buildClass($config['config'], $config['type']);
+           $phpFile = $this->buildClass($config['config'], $config['type']);
             $phpFile->save("C:\Users\TimurMurtukov\Desktop\Generated\\$className.php");
         } catch (\Exception $e) {
             $x = $e;

@@ -17,9 +17,9 @@ interface ConverterInterface
     /**
      *
      * @param $value
-     * @return string
+     * @return mixed
      */
-    function convert($value): string;
+    function convert($value);
 
     /**
      * Checks, whether the value should be converted.

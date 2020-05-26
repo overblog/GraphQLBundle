@@ -55,6 +55,11 @@ class TypeResolver extends AbstractResolver
         return $this->cache[$alias];
     }
 
+    public function resolveMultiple()
+    {
+
+    }
+
     private function string2Type(string $alias): Type
     {
         if (null !== ($type = $this->wrapTypeIfNeeded($alias))) {
