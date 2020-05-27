@@ -7,13 +7,10 @@ namespace Murtukov\PHPCodeGenerator\OOP;
 use Murtukov\PHPCodeGenerator\Comments\DocBlock;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Functions\Method;
-use Murtukov\PHPCodeGenerator\Traits\IndentableTrait;
 use Murtukov\PHPCodeGenerator\Utils;
 
 abstract class OOPStructure extends DependencyAwareGenerator
 {
-    use IndentableTrait;
-
     /** @var Method[] */
     protected array $methods = [];
 
@@ -40,9 +37,15 @@ abstract class OOPStructure extends DependencyAwareGenerator
         return $this;
     }
 
-    public function addImplement(string $name): self
+    /**
+     * @param string ...$classNames
+     * @return $this
+     */
+    public function addImplements(string ...$classNames): self
     {
-        $this->implements[] = $this->resolveQualifier($name);
+        foreach ($classNames as $name) {
+            $this->implements[] = $this->resolveQualifier($name);
+        }
 
         return $this;
     }
@@ -108,7 +111,11 @@ abstract class OOPStructure extends DependencyAwareGenerator
     protected function buildContent(): string
     {
         $code = implode("\n", $this->props);
-        $code .= "\n\n";
+
+        if (!empty($code)) {
+            $code .= "\n\n";
+        }
+
         $code .= implode("\n\n", $this->methods);
 
         return Utils::indent($code);

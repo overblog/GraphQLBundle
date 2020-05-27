@@ -6,23 +6,21 @@ namespace Murtukov\PHPCodeGenerator\Functions;
 
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Traits\FunctionTrait;
-use Murtukov\PHPCodeGenerator\Traits\IndentableTrait;
 use Murtukov\PHPCodeGenerator\Traits\ScopedContentTrait;
 
 class Closure extends DependencyAwareGenerator
 {
     use FunctionTrait;
     use ScopedContentTrait;
-    use IndentableTrait;
 
-    private array   $uses = []; // variables of parent scope
+    private array $uses = []; // variables of parent scope
 
     public function __construct()
     {
         $this->dependencyAwareChildren = [&$this->args];
     }
 
-    public static function create()
+    public static function new()
     {
         return new self();
     }

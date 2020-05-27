@@ -31,25 +31,15 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
      */
     public function resolveQualifier(string $path, $alias = ''): string
     {
-        if (empty($path)) {
+        if (empty($path) || false === Config::$shortenQualifiers || '\\' === $path[0]) {
             return $path;
         }
 
-        if (false === Config::$shortenQualifiers) {
-            return $path;
-        }
-
-        if (Config::$suppressSymbol === $path[0]) {
+        if ($path[0] === Config::$suppressSymbol) {
             return substr($path, 1);
         }
 
-        if ('\\' === $path[0]) {
-            return $path;
-        }
-
-        $portion = strrchr($path, '\\');
-
-        if ($portion) {
+        if ($portion = strrchr($path, '\\')) {
             $this->usePaths[$path] = $alias;
             $path = substr($portion, 1);
         }
@@ -69,6 +59,10 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
         foreach ($this->dependencyAwareChildren as $child) {
             if (is_array($child)) {
                 foreach ($child as $subchild) {
+                    if (!$subchild instanceof self) {
+                        continue;
+                    }
+
                     $mergedPaths = array_replace($mergedPaths, $subchild->getUsePaths());
                 }
             } else {

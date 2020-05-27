@@ -93,10 +93,10 @@ abstract class BaseBuilder implements TypeBuilderInterface
          */
         extract($config);
 
-        $configLoader = AssocArray::createMultiline()
+        $configLoader = AssocArray::multiline()
             ->addItem('name', new Literal('self::NAME'))
-            ->addItem('fields', ArrowFunction::create(
-                AssocArray::mapMultiline($fields, [$this, 'buildField'])
+            ->addItem('fields', ArrowFunction::new(
+                AssocArray::map($fields, [$this, 'buildField'])
             ));
 
         if (isset($description)) {
@@ -107,12 +107,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $items = array_map(fn($type) => "\$globalVariable->get('typeResolver')->resolve('$type')", $interfaces);
 
             if (count($interfaces) > 1) {
-                $array = NumericArray::createMultiline($items);
+                $array = NumericArray::multiline($items);
             } else {
-                $array = NumericArray::create($items);
+                $array = NumericArray::new($items);
             }
 
-            $configLoader->addItem('interfaces', ArrowFunction::create($array));
+            $configLoader->addItem('interfaces', ArrowFunction::new($array));
         }
 
         if (isset($resolveType)) {
@@ -122,11 +122,19 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return new ArrowFunction($configLoader);
     }
 
-    public static function buildResolve($config)
+    public function buildResolve($resolve)
     {
-        $closure = Closure::create();
+        if ($this->expressionConverter->check($resolve)) {
+            $expression = $this->expressionConverter->convert($resolve);
+            return Closure::new()
+                ->addArgument('value')
+                ->addArgument('args')
+                ->addArgument('context')
+                ->addArgument('info', ResolveInfo::class)
+                ->append('return = ', $expression);
+        }
 
-        return $closure;
+        return $resolve;
     }
 
     public function buildField($fieldConfig /*, $fieldname */): AssocArray
@@ -141,11 +149,11 @@ abstract class BaseBuilder implements TypeBuilderInterface
          */
         extract($fieldConfig);
 
-        $field = AssocArray::createMultiline()
+        $field = AssocArray::multiline()
             ->addItem('type', self::buildType($type));
 
         if (isset($resolve)) {
-            $field->addItem('resolve', self::buildResolve($resolve));
+            $field->addItem('resolve', $this->buildResolve($resolve));
         }
 
         if (isset($deprecationReason)) {
@@ -157,7 +165,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         if (!empty($args)) {
-            $field->addItem('args', NumericArray::mapMultiline($args, [$this, 'buildArg']));
+            $field->addItem('args', NumericArray::map($args, [$this, 'buildArg']));
         }
 
         if (isset($complexity)) {
@@ -184,7 +192,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
          */
         extract($argConfig);
 
-        $arg = AssocArray::createMultiline()
+        $arg = AssocArray::multiline()
             ->addItem('name', $argName)
             ->addItem('type', self::buildType($type));
 
@@ -210,15 +218,15 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
             // todo: add use() to closure
             if (strpos($complexity, 'args') !== false) {
-                return Closure::create()
-                    ->addArgument(new Argument('childrenComplexity'))
-                    ->addArgument(new Argument('arguments', '', []))
+                return Closure::new()
+                    ->addArgument('childrenComplexity')
+                    ->addArgument('arguments', '', [])
                     ->append('$args = $globalVariable->get(\'argumentFactory\')->create($arguments)')
                     ->append('return ', $expression)
                 ;
             }
 
-            return ArrowFunction::create($expression)->addArgument(new Argument('childrenComplexity'));
+            return ArrowFunction::new($expression)->addArgument('childrenComplexity');
         }
 
         return $complexity;
@@ -229,9 +237,9 @@ abstract class BaseBuilder implements TypeBuilderInterface
         if ($this->expressionConverter->check($public)) {
             $expression = $this->expressionConverter->convert($public);
 
-            return ArrowFunction::create($expression)
-                ->addArgument(new Argument('fieldName'))
-                ->addArgument(new Argument('fieldName', '', new Literal('self::NAME')))
+            return ArrowFunction::new($expression)
+                ->addArgument('fieldName')
+                ->addArgument('fieldName', '', new Literal('self::NAME'))
             ;
         }
 
@@ -243,12 +251,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
         if ($this->expressionConverter->check($access)) {
             $expression = $this->expressionConverter->convert($access);
 
-            return ArrowFunction::create()
-                ->addArgument(new Argument('value'))
-                ->addArgument(new Argument('args'))
-                ->addArgument(new Argument('context'))
-                ->addArgument(new Argument('info', ResolveInfo::class))
-                ->addArgument(new Argument('object'))
+            return ArrowFunction::new()
+                ->addArgument('value')
+                ->addArgument('args')
+                ->addArgument('context')
+                ->addArgument('info', ResolveInfo::class)
+                ->addArgument('object')
                 ->setExpression($expression);
         }
 
@@ -260,18 +268,13 @@ abstract class BaseBuilder implements TypeBuilderInterface
         if ($this->expressionConverter->check($resolveType)) {
             $expression = $this->expressionConverter->convert($resolveType);
 
-            return ArrowFunction::create()
-                ->addArgument(new Argument('value'))
-                ->addArgument(new Argument('context'))
-                ->addArgument(new Argument('info', ResolveInfo::class))
+            return ArrowFunction::new()
+                ->addArgument('value')
+                ->addArgument('context')
+                ->addArgument('info', ResolveInfo::class)
                 ->setExpression($expression);
         }
 
         return $resolveType;
-    }
-
-    public function buildResolver($resolver)
-    {
-
     }
 }

@@ -24,13 +24,13 @@ class InterfaceTypeBuilder extends BaseBuilder
         $class = $file->createClass($name.'Type')
             ->setFinal()
             ->setExtends(InterfaceType::class)
-            ->addImplement(GeneratedTypeInterface::class)
+            ->addImplements(GeneratedTypeInterface::class)
             ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()
-            ->addArgument(Argument::create('configProcessor', ConfigProcessor::class))
-            ->addArgument(Argument::create('globalVariables', GlobalVariables::class, null))
+            ->addArgument('configProcessor', ConfigProcessor::class)
+            ->addArgument('globalVariables', GlobalVariables::class, null)
             ->append('$configLoader = ', $this->buildConfigLoader($config))
             ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
             ->append('parent::__construct($config)');

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Murtukov\PHPCodeGenerator\Traits;
 
 use Murtukov\PHPCodeGenerator\Functions\Argument;
+use Murtukov\PHPCodeGenerator\Functions\FunctionMemberInterface;
 
 trait FunctionTrait
 {
     protected string  $returnType = '';
     protected array   $args = [];
-
 
     protected function generateArgs(): string
     {
@@ -28,12 +28,30 @@ trait FunctionTrait
         return $this;
     }
 
-    public function getArguments(): array
+    /**
+     * Some arguments are stored as simple strings for performance.
+     * If they are requested, they are first converted into objects
+     * then returned back.
+     *
+     * @param int $index
+     * @return Argument
+     */
+    public function getArgument(int $index): ?Argument
     {
-        return $this->args;
+        if (isset($this->args[$index])) {
+            $arg = $this->args[$index];
+
+            if (is_string($arg)) {
+                return $this->args[$index] = new Argument($arg);
+            }
+
+            return $arg;
+        }
+
+        return null;
     }
 
-    public function removeArgumentAt(int $index): self
+    public function removeArgument(int $index): self
     {
         unset($this->args[$index]);
         return $this;
@@ -44,9 +62,22 @@ trait FunctionTrait
         return $this->args[] = new Argument($name, $type, $defaultValue);
     }
 
-    public function addArgument(Argument $argument): self
+    public function addArgument(string $name, string $type = '', $defaultValue = ''): self
     {
-        $this->args[] = $argument;
+        if (func_num_args() === 1) {
+            $this->args[] = "$$name";
+        } else {
+            $this->args[] = new Argument($name, $type, $defaultValue);
+        }
+
+        return $this;
+    }
+
+    public function add(FunctionMemberInterface $member): self
+    {
+        if ($member instanceof Argument) {
+            $this->args[] = $member;
+        }
 
         return $this;
     }

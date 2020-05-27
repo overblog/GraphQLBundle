@@ -31,7 +31,7 @@ class CustomScalarTypeBuilder extends BaseBuilder
 
         $constructor = $class->createConstructor();
 
-        $configArray = AssocArray::createMultiline()
+        $configArray = AssocArray::multiline()
             ->addItem('name', $config['name'])
             ->addIfNotNull('descriprion', $config['description'] ?? null)
             ->addIfNotNull('scalarType', $config['scalarType'] ?? null)
@@ -49,7 +49,7 @@ class CustomScalarTypeBuilder extends BaseBuilder
             $configArray->addItem($value, $closure);
         }
 
-        $constructor->append('$configLoader = ', ArrowFunction::create($configArray));
+        $constructor->append('$configLoader = ', ArrowFunction::new($configArray));
         $constructor->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()');
         $constructor->append('parent::__construct($config)');
 

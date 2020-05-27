@@ -24,7 +24,7 @@ abstract class AbstractArray extends DependencyAwareGenerator
         $this->multiline = $multiline;
     }
 
-    public static function create(array $items = [], bool $multiline = false): self
+    public static function new(array $items = [], bool $multiline = false): self
     {
         return new static($items, $multiline);
     }
@@ -35,12 +35,12 @@ abstract class AbstractArray extends DependencyAwareGenerator
      * @param GeneratorInterface[]|string[] $items
      * @return AbstractArray
      */
-    public static function createMultiline(array $items = []): self
+    public static function multiline(array $items = []): self
     {
         return new static($items, true);
     }
 
-    public static function mapMultiline(array $items, callable $map): self
+    public static function map(array $items, callable $map): self
     {
         $array = new static();
         $array->map = $map;
@@ -150,5 +150,17 @@ abstract class AbstractArray extends DependencyAwareGenerator
     public static function getStringifiers()
     {
         return [];
+    }
+
+    public function setMultiline(): self
+    {
+        $this->multiline = true;
+        return $this;
+    }
+
+    public function unsetMultiline(): self
+    {
+        $this->multiline = false;
+        return $this;
     }
 }
