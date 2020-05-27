@@ -7,7 +7,7 @@ namespace Murtukov\PHPCodeGenerator\Functions;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Utils;
 
-class Argument extends DependencyAwareGenerator
+class Argument extends DependencyAwareGenerator implements FunctionMemberInterface
 {
     private string  $type;
     private string  $name;
@@ -35,7 +35,7 @@ class Argument extends DependencyAwareGenerator
         }
     }
 
-    public static function create(string $name, string $type = '', $defaultValue = null): self
+    public static function new(string $name, string $type = '', $defaultValue = null): self
     {
         if (func_num_args() === 2) {
             return new self($name, $type);

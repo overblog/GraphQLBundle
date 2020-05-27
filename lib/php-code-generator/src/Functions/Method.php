@@ -6,12 +6,10 @@ namespace Murtukov\PHPCodeGenerator\Functions;
 
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Traits\FunctionTrait;
-use Murtukov\PHPCodeGenerator\Traits\IndentableTrait;
 use Murtukov\PHPCodeGenerator\Traits\ScopedContentTrait;
 
 class Method extends DependencyAwareGenerator
 {
-    use IndentableTrait;
     use ScopedContentTrait;
     use FunctionTrait;
 

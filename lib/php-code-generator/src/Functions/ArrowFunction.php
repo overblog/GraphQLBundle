@@ -23,7 +23,7 @@ class ArrowFunction extends DependencyAwareGenerator
         $this->dependencyAwareChildren[] = $this->args;
     }
 
-    public static function create($expression = '', string $returnType = '')
+    public static function new($expression = '', string $returnType = '')
     {
         return new self($expression, $returnType);
     }

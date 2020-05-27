@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Murtukov\PHPCodeGenerator;
 
 use Murtukov\PHPCodeGenerator\OOP\PhpClass;
-use Murtukov\PHPCodeGenerator\Traits\IndentableTrait;
+use function dirname;
+use function file_put_contents;
+use function implode;
+use function is_int;
+use function ksort;
+use function mkdir;
 
 class PhpFile extends DependencyAwareGenerator
 {
-    use IndentableTrait;
-
     /** @var PhpClass[]  */
     private array $classes = [];
 
@@ -18,17 +21,15 @@ class PhpFile extends DependencyAwareGenerator
     private array $declares;
 
     protected string $namespace = '';
+    private   string $name;
 
-    private string $name;
-
-
-    public function __construct(string $name)
+    public function __construct(string $name = '')
     {
         $this->name = $name;
         $this->dependencyAwareChildren = [&$this->classes];
     }
 
-    public static function create(string $name): self
+    public static function create(string $name = ''): self
     {
         return new self($name);
     }
@@ -96,6 +97,10 @@ class PhpFile extends DependencyAwareGenerator
         $code = '';
 
         $paths = $this->getUsePaths();
+
+        if (empty($paths)) {
+            return $code;
+        }
 
         if (!empty(ksort($paths))) {
             $code = "\n";

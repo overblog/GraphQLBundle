@@ -375,7 +375,8 @@ EOF;
 
         // new generator
         try {
-           $phpFile = $this->buildClass($config['config'], $config['type']);
+            $phpFile = $this->buildClass($config['config'], $config['type']);
+//            echo $phpFile;
             $phpFile->save("C:\Users\TimurMurtukov\Desktop\Generated\\$className.php");
         } catch (\Exception $e) {
             $x = $e;
@@ -413,4 +414,6 @@ EOF;
      * @return string|null
      */
     abstract protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): ?string;
+
+//    abstract function buildClass(array $config, string $type);
 }
