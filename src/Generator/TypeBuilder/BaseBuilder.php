@@ -13,14 +13,19 @@ use Murtukov\PHPCodeGenerator\Call;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
-use Murtukov\PHPCodeGenerator\Functions\Argument;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Functions\Closure;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Literal;
-use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\AssocArray;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
+use RuntimeException;
+use Symfony\Component\ExpressionLanguage\Lexer;
+use Symfony\Component\ExpressionLanguage\Token;
+use function array_map;
+use function count;
+use function extract;
+use function strpos;
 
 abstract class BaseBuilder implements TypeBuilderInterface
 {
@@ -42,7 +47,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
     /**
      * @param $typeDefinition
      * @return GeneratorInterface|string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected static function buildType($typeDefinition)
     {
@@ -53,7 +58,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
     /**
      * @param $typeNode
      * @return DependencyAwareGenerator|string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private static function wrapTypeRecursive($typeNode)
     {
@@ -77,7 +82,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
                     $type = "\$globalVariables->get('typeResolver')->resolve('$name')";
                 }
                 break;
-            default: throw new \RuntimeException('Unrecognized node kind.');
+            default: throw new RuntimeException('Unrecognized node kind.');
         }
 
         return $type;
@@ -122,8 +127,14 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return new ArrowFunction($configLoader);
     }
 
+    /**
+     * @param mixed $resolve
+     * @return Closure
+     */
     public function buildResolve($resolve)
     {
+        $contains = $this->expressionContainsVar('validator', substr($resolve, 2));
+
         if ($this->expressionConverter->check($resolve)) {
             $expression = $this->expressionConverter->convert($resolve);
             return Closure::new()
@@ -135,6 +146,34 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         return $resolve;
+    }
+
+    /**
+     * Checks if an expression string containst specific variable
+     *
+     * @param string $name       - Name of the searched variable
+     * @param string $expression - Expression string to search in
+     */
+    public function expressionContainsVar(string $name, string $expression): bool
+    {
+        $stream = (new Lexer())->tokenize($expression);
+        $current = &$stream->current;
+
+        while (!$stream->isEOF()) {
+            if ($name === $current->value && Token::NAME_TYPE === $current->type) {
+                // Also check that it's not a functions name
+                $stream->next();
+                if ("(" !== $current->value) {
+                    $contained = true;
+                    break;
+                }
+                continue;
+            }
+
+            $stream->next();
+        }
+
+        return $contained ?? false;
     }
 
     public function buildField($fieldConfig /*, $fieldname */): AssocArray

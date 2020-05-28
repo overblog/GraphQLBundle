@@ -7,12 +7,16 @@ namespace Murtukov\PHPCodeGenerator\Traits;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Utils;
 use function array_unshift;
+use function func_num_args;
+use function implode;
 
 trait ScopedContentTrait
 {
     private array $content = [];
 
     /**
+     * Append contents to body.
+     *
      * @param GeneratorInterface[]|string[] $values
      * @return self
      */

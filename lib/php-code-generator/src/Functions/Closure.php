@@ -36,19 +36,8 @@ class Closure extends DependencyAwareGenerator
 
     private function buildUses(): string
     {
-        if (!empty($this->uses) > 0) {
-            $last = array_key_last($this->uses);
-
-            $code = '';
-            foreach ($this->uses as $key => $var) {
-                $code .= "$$var";
-
-                if ($key !== $last) {
-                    $code .= ', ';
-                }
-            }
-
-            return " use ($code)";
+        if (!empty($this->uses)) {
+            return ' use (' .implode(', ', $this->uses). ')';
         }
 
         return '';
@@ -59,8 +48,18 @@ class Closure extends DependencyAwareGenerator
         return $this->returnType ? ": $this->returnType" : '';
     }
 
-    public function __toString(): string
+    public function addUse(string $name, bool $isByReference = false): self
     {
-        return $this->generate();
+        $this->uses[] = $isByReference ? "&$$name" : "$$name";
+        return $this;
+    }
+
+    /**
+     * Remove all use-variables
+     */
+    public function removeUses()
+    {
+        $this->uses = [];
+        return $this;
     }
 }
