@@ -6,7 +6,9 @@ namespace Overblog\GraphQLBundle\Generator\Converter;
 
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use function is_string;
 use function strpos;
+use function substr;
 
 class ExpressionConverter implements ConverterInterface
 {

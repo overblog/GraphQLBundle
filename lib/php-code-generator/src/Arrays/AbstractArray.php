@@ -15,9 +15,6 @@ abstract class AbstractArray extends DependencyAwareGenerator
     protected array $items = [];
     protected bool  $isMap = false;
 
-    /** @var callable */
-    protected $map;
-
     public function __construct(array $items = [], bool $multiline = false)
     {
         $this->items = $items;
@@ -43,16 +40,10 @@ abstract class AbstractArray extends DependencyAwareGenerator
     public static function map(array $items, callable $map): self
     {
         $array = new static();
-        $array->map = $map;
-        $array->isMap = true;
         $array->multiline = true;
 
         foreach ($items as $key => $value) {
-            $array->items[$key] = ($array->map)($value, $key);
-
-            if ($array->items[$key] instanceof DependencyAwareGenerator) {
-                $array->dependencyAwareChildren[] = $array->items[$key];
-            }
+            $array->addItem($key, $map($value, $key));
         }
 
         return $array;
@@ -61,9 +52,10 @@ abstract class AbstractArray extends DependencyAwareGenerator
     public static function mapInline(array $items, callable $map)
     {
         $array = new static();
-        $array->items = $items;
-        $array->map = $map;
-        $array->isMap = true;
+
+        foreach ($items as $key => $value) {
+            $array->addItem($key, $map($value, $key));
+        }
 
         return $array;
     }

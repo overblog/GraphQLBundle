@@ -57,12 +57,12 @@ trait FunctionTrait
         return $this;
     }
 
-    public function createArgument(string $name, string $type = '', $defaultValue = ''): Argument
+    public function createArgument(string $name, string $type = '', $defaultValue = Argument::NO_PARAM): Argument
     {
         return $this->args[] = new Argument($name, $type, $defaultValue);
     }
 
-    public function addArgument(string $name, string $type = '', $defaultValue = ''): self
+    public function addArgument(string $name, string $type = '', $defaultValue = Argument::NO_PARAM): self
     {
         if (func_num_args() === 1) {
             $this->args[] = "$$name";

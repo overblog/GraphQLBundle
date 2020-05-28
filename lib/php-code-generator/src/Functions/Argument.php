@@ -9,10 +9,16 @@ use Murtukov\PHPCodeGenerator\Utils;
 
 class Argument extends DependencyAwareGenerator implements FunctionMemberInterface
 {
+    /**
+     * Special value to represent that there is no argument passed
+     */
+    public const NO_PARAM = INF;
+
     private string  $type;
     private string  $name;
     private bool    $isSpread = false;
     private bool    $isByReference = false;
+    private bool    $isNullable = false;
 
     /**
      * @var mixed
@@ -25,23 +31,19 @@ class Argument extends DependencyAwareGenerator implements FunctionMemberInterfa
      * @param string $type
      * @param mixed $defaultValue
      */
-    public function __construct(string $name, string $type = '', $defaultValue = null)
+    public function __construct(string $name, string $type = '', $defaultValue = self::NO_PARAM)
     {
         $this->name = $name;
         $this->type = $this->resolveQualifier($type);
 
-        if (func_num_args() > 2) {
+        if (INF !== $defaultValue) {
             $this->setDefaultValue($defaultValue);
         }
     }
 
-    public static function new(string $name, string $type = '', $defaultValue = null): self
+    public static function new(string $name, string $type = '', $defaultValue = self::NO_PARAM): self
     {
-        if (func_num_args() === 2) {
-            return new self($name, $type);
-        } else {
-            return new self($name, $type, $defaultValue);
-        }
+        return new self($name, $type, $defaultValue);
     }
 
     public function generate(): string
@@ -49,6 +51,9 @@ class Argument extends DependencyAwareGenerator implements FunctionMemberInterfa
         $code = '';
 
         if ($this->type) {
+            if ($this->isNullable && '?' !== $this->type[0]) {
+                $code .= '?';
+            }
             $code .= $this->type . ' ';
         }
         if ($this->isByReference) {
@@ -104,6 +109,18 @@ class Argument extends DependencyAwareGenerator implements FunctionMemberInterfa
     {
         $this->defaultValue = Utils::stringify($value);
 
+        return $this;
+    }
+
+    public function unsetNullable(): self
+    {
+        $this->isNullable = false;
+        return $this;
+    }
+
+    public function setNullable(): self
+    {
+        $this->isNullable = true;
         return $this;
     }
 }
