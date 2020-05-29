@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Murtukov\PHPCodeGenerator;
 
 use Murtukov\PHPCodeGenerator\OOP\PhpClass;
+use function array_replace;
 use function dirname;
 use function file_put_contents;
 use function implode;
-use function is_int;
 use function ksort;
 use function mkdir;
 
@@ -74,24 +74,6 @@ class PhpFile extends DependencyAwareGenerator
         return $this;
     }
 
-    public function addUseStatement(string $fqcn, string $alias = ''): self
-    {
-        $this->usePaths[$fqcn] = $alias;
-
-        return $this;
-    }
-
-    public function addUseStatements(array $paths)
-    {
-        foreach ($paths as $key => $value) {
-            if (is_int($key)) {
-                $this->usePaths[$value] = '';
-            } else {
-                $this->usePaths[$key] = $value;
-            }
-        }
-    }
-
     public function buildUseStatements(): string
     {
         $code = '';
@@ -105,11 +87,11 @@ class PhpFile extends DependencyAwareGenerator
         if (!empty(ksort($paths))) {
             $code = "\n";
 
-            foreach ($paths as $path => $alias) {
+            foreach ($paths as $path => $aliases) {
                 $code .= "use $path";
 
-                if ($alias) {
-                    $code .= " as $alias";
+                if ($aliases) {
+                    $code .= " as $aliases";
                 }
 
                 $code .= ";\n";
@@ -128,8 +110,8 @@ class PhpFile extends DependencyAwareGenerator
             mkdir($dir, 0777, true);
         }
 
-        if (!file_exists($path)) {
+//        if (!file_exists($path)) {
             file_put_contents($path, $this);
-        }
+//        }
     }
 }

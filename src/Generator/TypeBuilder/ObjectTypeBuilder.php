@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
-use Murtukov\PHPCodeGenerator\Functions\Argument;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
@@ -18,15 +17,14 @@ class ObjectTypeBuilder extends BaseBuilder
     public function build(array $config): GeneratorInterface
     {
         $name = $config['name'];
-        self::$config = $config;
+        $this->config = $config;
 
-        $file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
+        $this->file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
 
-        $class = $file->createClass($name.'Type')
+        $class = $this->file->createClass($name.'Type')
             ->setFinal()
             ->setExtends(ObjectType::class)
             ->addImplements(GeneratedTypeInterface::class)
-            ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()
@@ -36,8 +34,8 @@ class ObjectTypeBuilder extends BaseBuilder
             ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
             ->append('parent::__construct($config)');
 
-        $file->addUseStatement(LazyConfig::class);
+        $this->file->addUse(LazyConfig::class);
 
-        return $file;
+        return $this->file;
     }
 }

@@ -18,15 +18,24 @@ use Murtukov\PHPCodeGenerator\Functions\Closure;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
+use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\AssocArray;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use RuntimeException;
-use Symfony\Component\Validator\Constraints\Length;
+use function array_filter;
+use function array_intersect;
 use function array_map;
+use function array_replace_recursive;
 use function count;
+use function explode;
 use function extract;
+use function ltrim;
+use function rtrim;
+use function str_split;
+use function substr;
+use function trim;
 
 abstract class BaseBuilder implements TypeBuilderInterface
 {
@@ -35,11 +44,8 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
     protected ExpressionConverter $expressionConverter;
     protected string $namespace;
-
-    /**
-     * Config of the currently built GraphQL type.
-     */
-    protected static array $config;
+    protected array $config;
+    protected PhpFile $file;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -147,7 +153,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 ->addArgument('args')
                 ->addArgument('context')
                 ->addArgument('info', ResolveInfo::class)
-                ->addUse('globalVariables');
+                ->bindVar('globalVariables');
 
             if (null !== $validationConfig) {
                 $this->buildValidator($validationConfig, $closure);
@@ -168,29 +174,119 @@ abstract class BaseBuilder implements TypeBuilderInterface
             ->addArgument(new Literal("func_get_args()"))
             ->addArgument("\$globalVariables->get('container')->get('validator')")
             ->addArgument("\$globalVariables->get('validatorFactory')")
-            ->addArgument($this->buildValidationConstraints($mapping))
+            ->addArgument($this->buildValidationMapping($mapping))
         ;
         $closure->append('$validator = ', $validator);
     }
 
-    public function buildValidationConstraints(array $mapping)
+    public function buildValidationMapping(array $mapping)
     {
-        return AssocArray::multiline()
-            ->addItem('class', null)
-            ->addItem('properties', AssocArray::multiline()
-                ->addItem('firstName', AssocArray::multiline()
-                    ->addItem('link', null)
-                    ->addItem('constraints', NumericArray::multiline()
-                        ->push(Instance::new(Length::class, AssocArray::multiline([
-                            'min' => 6,
-                            'max' => 32,
-                            'minMessage' => 'createUser.username.length.min'
-                        ])))
-                    )
-                )
-            )
-            ->addItem('class', null)
-        ;
+        $mappingArray = AssocArray::multiline();
+
+        // Class validation rules
+        if (!empty($mapping['class'])) {
+            $mappingArray->addItem('class', $this->buildValidationRules($mapping['class']));
+        }
+
+        // Properties validation rules
+        $mappingArray->addItem('properties', $this->buildProperties($mapping['properties']));
+
+        return $mappingArray;
+    }
+
+    public function buildValidationRules($mapping)
+    {
+        /**
+         * @var array  $constraints
+         * @var string $link
+         * @var array  $cascade
+         */
+        extract($mapping);
+
+        $array = AssocArray::multiline();
+
+        if (!empty($constraints)) {
+            $array->addItem('constraints', $this->buildConstraints($constraints));
+        }
+
+        if (!empty($link)) {
+            $array->addItem('link', NumericArray::new($this->normalizeLink($link)));
+        }
+
+        if (!empty($cascade)) {
+            $array->addItem('cascade', $this->buildCascade($cascade));
+        }
+
+        return $array;
+    }
+
+    /**
+     * <code>
+     * [
+     *     new NotNull(),
+     *     new Length(['min' => 5, 'max' => 10]),
+     *     ...
+     * ]
+     * </code>
+     */
+    public function buildConstraints(array $constraints = [])
+    {
+        $result = NumericArray::multiline();
+
+        foreach ($constraints as $wrapper) {
+            $name = key($wrapper);
+            $args = reset($wrapper);
+
+            $instance = Instance::new($name);
+
+            if (is_array($args)) {
+                // Numeric or Assoc array?
+                $instance->addArgument(isset($args[0]) ? $args : AssocArray::new($args));
+            }
+
+            $result->push($instance);
+            $this->file->addUseGroup('Symfony\Component\Validator\Constraints', $name);
+        }
+
+        return $result;
+    }
+
+    public function buildCascade(array $cascade)
+    {
+        if (empty($cascade)) {
+            return null;
+        }
+
+        /**
+         * @var string $referenceType
+         * @var array  $groups
+         * @var bool   $isCollection
+         */
+        extract($cascade);
+
+        $result = AssocArray::multiline()
+            ->addIfNotEmpty('groups', $groups);
+
+        if (isset($isCollection)) {
+            $result->addItem('isCollection', $isCollection);
+        }
+
+        if (isset($referenceType)) {
+            $result->addIfNotNull('referenceType', "\$globalVariables->get('typeResolver')->resolve('$referenceType')");
+        }
+
+        return $result;
+    }
+
+    public function buildProperties(?array $properties)
+    {
+        $array = AssocArray::multiline();
+
+        foreach ($properties as $name => $props) {
+            $array->addItem($name, $this->buildValidationRules($props));
+        }
+
+        return $array;
     }
 
     /**
@@ -217,7 +313,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
             ->addItem('type', self::buildType($type));
 
         if (isset($resolve)) {
-            $validationConfig = $this->processValidationCOnfig($fieldConfig);
+            $validationConfig = $this->processValidationConfig($fieldConfig);
             $field->addItem('resolve', $this->buildResolve($resolve, $validationConfig));
         }
 
@@ -243,6 +339,10 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
         if (isset($access)) {
             $field->addItem('access', $this->buildAccess($access));
+        }
+
+        if (isset($validation)) {
+            $field->addItem('validation', $this->buildValidationRules($validation));
         }
 
         return $field;
@@ -285,7 +385,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 return Closure::new()
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
-                    ->addUse('globalVariables')
+                    ->bindVar('globalVariables')
                     ->append('$args = $globalVariables->get(\'argumentFactory\')->create($arguments)')
                     ->append('return ', $expression)
                 ;
@@ -345,7 +445,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
     // Optimize methods below
 
-    protected function processValidationCOnfig(array $fieldConfig): ?array
+    protected function processValidationConfig(array $fieldConfig): ?array
     {
         $properties = [];
 
@@ -362,14 +462,14 @@ abstract class BaseBuilder implements TypeBuilderInterface
             }
 
             $properties[$name]['cascade']['isCollection'] = $this->isCollectionType($arg['type']);
-            $properties[$name]['cascade']['referenceType'] = \trim($arg['type'], '[]!');
+            $properties[$name]['cascade']['referenceType'] = trim($arg['type'], '[]!');
         }
 
         // Merge class and field constraints
-        $classValidation = self::$config['validation'] ?? [];
+        $classValidation = $this->config['validation'] ?? [];
 
         if (isset($fieldConfig['validation'])) {
-            $classValidation = \array_replace_recursive($classValidation, $fieldConfig['validation']);
+            $classValidation = array_replace_recursive($classValidation, $fieldConfig['validation']);
         }
 
         $mapping = [
@@ -377,7 +477,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
             'properties' => $properties,
         ];
 
-        if (empty($classValidation) && !\array_filter($properties)) {
+        if (empty($classValidation) && !array_filter($properties)) {
             return null;
         } else {
             return $mapping;
@@ -386,6 +486,31 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
     protected function isCollectionType(string $type): bool
     {
-        return 2 === \count(\array_intersect(['[', ']'], \str_split($type)));
+        return 2 === count(array_intersect(['[', ']'], str_split($type)));
+    }
+
+    /**
+     * Creates and array from a formatted string, e.g.:
+     * ```
+     *  "App\Entity\User::$firstName"  -> ['App\Entity\User', 'firstName', 'property']
+     *  "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
+     *  "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
+     * ```.
+     *
+     * @param string $link
+     *
+     * @return array
+     */
+    protected function normalizeLink(string $link): array
+    {
+        [$fqcn, $classMember] = explode('::', $link);
+
+        if ('$' === $classMember[0]) {
+            return [$fqcn, ltrim($classMember, '$'), 'property'];
+        } elseif (')' === substr($classMember, -1)) {
+            return [$fqcn, rtrim($classMember, '()'), 'getter'];
+        } else {
+            return [$fqcn, $classMember, 'member'];
+        }
     }
 }

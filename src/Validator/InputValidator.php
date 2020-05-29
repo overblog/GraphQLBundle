@@ -73,7 +73,7 @@ class InputValidator
     {
         if (null === $validator) {
             throw new ServiceNotFoundException(
-                "The 'validator' service is not found. To use the 'InputValidator' you need to install the 
+                "The 'validator' service is not found. To use the 'InputValidator' you need to install the
                 Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
             );
         }
@@ -147,7 +147,7 @@ class InputValidator
         foreach ($constraintMapping['properties'] as $property => $params) {
             if (!empty($params['cascade']) && isset($args[$property])) {
                 $options = $params['cascade'];
-                $type = $this->info->schema->getType($options['referenceType']);
+                $type = $options['referenceType'];
 
                 if ($options['isCollection']) {
                     $rootObject->$property = $this->createCollectionNode($args[$property], $type, $rootObject);
