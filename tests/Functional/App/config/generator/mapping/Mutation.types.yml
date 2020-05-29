@@ -3,14 +3,62 @@ Mutation:
     type: object
     config:
         fields:
+#            validation:
+#                - Callback: [App\Validation\UserValidator, validate]
             createStudent:
                 type: String
                 resolve: '@=mut("mutation_mock", [args, validator])'
+                validation:
+                    - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, greaterThan]
                 args:
                     username:
                         type: "String"
                         validation:
-                            - BlahBlah: ~
+                            - NotNull: ~
+                            - Length:
+                                  min: 15
+                                  max: 19
+                    data:
+                        type: PersonInput
+                        validation: cascade
+
+PersonInput:
+    type: input-object
+    config:
+        fields:
+            firstName:
+                type: String!
+                validation:
+                    - NonNull: ~
+                    - Length: { min: 6 }
+            lastName:
+                type: String!
+                validation:
+                    link: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::$string1
+            password:
+                type: String!
+                validation:
+                    - IdenticalTo: passwordRepeat
+            dateOfBirth:
+                type: Date
+                validation: cascade
+
+Date:
+    type: input-object
+    config:
+        fields:
+            day:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 31 }
+            month:
+                type: Int!
+                validation:
+                    - Range: { min: 1, max: 12 }
+            year:
+                type: Int!
+                validation:
+                    - Range: { min: 1900, max: 2020 }
 
 
 Person:

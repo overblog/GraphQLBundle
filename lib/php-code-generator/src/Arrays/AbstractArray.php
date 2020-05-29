@@ -13,7 +13,6 @@ abstract class AbstractArray extends DependencyAwareGenerator
 {
     protected bool  $multiline = false;
     protected array $items = [];
-    protected bool  $isMap = false;
 
     public function __construct(array $items = [], bool $multiline = false)
     {

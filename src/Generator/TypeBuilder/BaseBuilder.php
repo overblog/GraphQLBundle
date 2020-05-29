@@ -16,16 +16,17 @@ use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Functions\Closure;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
+use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\AssocArray;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
+use Overblog\GraphQLBundle\Validator\InputValidator;
 use RuntimeException;
-use Symfony\Component\ExpressionLanguage\Lexer;
-use Symfony\Component\ExpressionLanguage\Token;
+use Symfony\Component\Validator\Constraints\Length;
 use function array_map;
 use function count;
 use function extract;
-use function strpos;
 
 abstract class BaseBuilder implements TypeBuilderInterface
 {
@@ -34,6 +35,11 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
     protected ExpressionConverter $expressionConverter;
     protected string $namespace;
+
+    /**
+     * Config of the currently built GraphQL type.
+     */
+    protected static array $config;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -99,7 +105,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         extract($config);
 
         $configLoader = AssocArray::multiline()
-            ->addItem('name', new Literal('self::NAME'))
+            ->addItem('name', new Literal('$this->name'))
             ->addItem('fields', ArrowFunction::new(
                 AssocArray::map($fields, [$this, 'buildField'])
             ));
@@ -109,7 +115,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         if (!empty($interfaces)) {
-            $items = array_map(fn($type) => "\$globalVariable->get('typeResolver')->resolve('$type')", $interfaces);
+            $items = array_map(fn($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $interfaces);
 
             if (count($interfaces) > 1) {
                 $array = NumericArray::multiline($items);
@@ -128,55 +134,70 @@ abstract class BaseBuilder implements TypeBuilderInterface
     }
 
     /**
-     * @param mixed $resolve
+     * @param mixed      $resolve
+     * @param array|null $validationConfig
      * @return Closure
      */
-    public function buildResolve($resolve)
+    public function buildResolve($resolve, ?array $validationConfig = null)
     {
-        $contains = $this->expressionContainsVar('validator', substr($resolve, 2));
-
+        // TODO: replace usage of converter with ExpressionLanguage static method
         if ($this->expressionConverter->check($resolve)) {
-            $expression = $this->expressionConverter->convert($resolve);
-            return Closure::new()
+            $closure = Closure::new()
                 ->addArgument('value')
                 ->addArgument('args')
                 ->addArgument('context')
                 ->addArgument('info', ResolveInfo::class)
-                ->append('return = ', $expression);
+                ->addUse('globalVariables');
+
+            if (null !== $validationConfig) {
+                $this->buildValidator($validationConfig, $closure);
+            }
+
+            $closure->append('return = ', $this->expressionConverter->convert($resolve));
+
+            return $closure;
         }
 
         return $resolve;
     }
 
-    /**
-     * Checks if an expression string containst specific variable
-     *
-     * @param string $name       - Name of the searched variable
-     * @param string $expression - Expression string to search in
-     */
-    public function expressionContainsVar(string $name, string $expression): bool
+    public function buildValidator(array $mapping, Closure $closure)
     {
-        $stream = (new Lexer())->tokenize($expression);
-        $current = &$stream->current;
-
-        while (!$stream->isEOF()) {
-            if ($name === $current->value && Token::NAME_TYPE === $current->type) {
-                // Also check that it's not a functions name
-                $stream->next();
-                if ("(" !== $current->value) {
-                    $contained = true;
-                    break;
-                }
-                continue;
-            }
-
-            $stream->next();
-        }
-
-        return $contained ?? false;
+        $validator = Instance::new(InputValidator::class)
+            ->setMultiline()
+            ->addArgument(new Literal("func_get_args()"))
+            ->addArgument("\$globalVariables->get('container')->get('validator')")
+            ->addArgument("\$globalVariables->get('validatorFactory')")
+            ->addArgument($this->buildValidationConstraints($mapping))
+        ;
+        $closure->append('$validator = ', $validator);
     }
 
-    public function buildField($fieldConfig /*, $fieldname */): AssocArray
+    public function buildValidationConstraints(array $mapping)
+    {
+        return AssocArray::multiline()
+            ->addItem('class', null)
+            ->addItem('properties', AssocArray::multiline()
+                ->addItem('firstName', AssocArray::multiline()
+                    ->addItem('link', null)
+                    ->addItem('constraints', NumericArray::multiline()
+                        ->push(Instance::new(Length::class, AssocArray::multiline([
+                            'min' => 6,
+                            'max' => 32,
+                            'minMessage' => 'createUser.username.length.min'
+                        ])))
+                    )
+                )
+            )
+            ->addItem('class', null)
+        ;
+    }
+
+    /**
+     * @param array $fieldConfig
+     * @return GeneratorInterface|AssocArray|string
+     */
+    public function buildField(array $fieldConfig /*, $fieldname */)
     {
         /**
          * @var string      $type
@@ -188,11 +209,16 @@ abstract class BaseBuilder implements TypeBuilderInterface
          */
         extract($fieldConfig);
 
+        if (count($fieldConfig) === 1 && isset($type)) {
+            return self::buildType($type);
+        }
+
         $field = AssocArray::multiline()
             ->addItem('type', self::buildType($type));
 
         if (isset($resolve)) {
-            $field->addItem('resolve', $this->buildResolve($resolve));
+            $validationConfig = $this->processValidationCOnfig($fieldConfig);
+            $field->addItem('resolve', $this->buildResolve($resolve, $validationConfig));
         }
 
         if (isset($deprecationReason)) {
@@ -255,12 +281,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
         if ($this->expressionConverter->check($complexity)) {
             $expression = $this->expressionConverter->convert($complexity);
 
-            // todo: add use() to closure
-            if (strpos($complexity, 'args') !== false) {
+            if (ExpressionLanguage::expressionContainsVar('args', $complexity)) {
                 return Closure::new()
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
-                    ->append('$args = $globalVariable->get(\'argumentFactory\')->create($arguments)')
+                    ->addUse('globalVariables')
+                    ->append('$args = $globalVariables->get(\'argumentFactory\')->create($arguments)')
                     ->append('return ', $expression)
                 ;
             }
@@ -315,5 +341,51 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         return $resolveType;
+    }
+
+    // Optimize methods below
+
+    protected function processValidationCOnfig(array $fieldConfig): ?array
+    {
+        $properties = [];
+
+        foreach ($fieldConfig['args'] ?? [] as $name => $arg) {
+            if (empty($arg['validation'])) {
+                $properties[$name] = null;
+                continue;
+            }
+
+            $properties[$name] = $arg['validation'];
+
+            if (empty($arg['validation']['cascade'])) {
+                continue;
+            }
+
+            $properties[$name]['cascade']['isCollection'] = $this->isCollectionType($arg['type']);
+            $properties[$name]['cascade']['referenceType'] = \trim($arg['type'], '[]!');
+        }
+
+        // Merge class and field constraints
+        $classValidation = self::$config['validation'] ?? [];
+
+        if (isset($fieldConfig['validation'])) {
+            $classValidation = \array_replace_recursive($classValidation, $fieldConfig['validation']);
+        }
+
+        $mapping = [
+            'class' => empty($classValidation) ? null : $classValidation,
+            'properties' => $properties,
+        ];
+
+        if (empty($classValidation) && !\array_filter($properties)) {
+            return null;
+        } else {
+            return $mapping;
+        }
+    }
+
+    protected function isCollectionType(string $type): bool
+    {
+        return 2 === \count(\array_intersect(['[', ']'], \str_split($type)));
     }
 }
