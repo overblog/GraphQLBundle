@@ -8,6 +8,9 @@ use Closure;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Mock;
+use function count;
+use function is_bool;
+use function is_callable;
 
 abstract class AbstractArray extends DependencyAwareGenerator
 {
@@ -40,17 +43,6 @@ abstract class AbstractArray extends DependencyAwareGenerator
     {
         $array = new static();
         $array->multiline = true;
-
-        foreach ($items as $key => $value) {
-            $array->addItem($key, $map($value, $key));
-        }
-
-        return $array;
-    }
-
-    public static function mapInline(array $items, callable $map)
-    {
-        $array = new static();
 
         foreach ($items as $key => $value) {
             $array->addItem($key, $map($value, $key));
@@ -153,5 +145,10 @@ abstract class AbstractArray extends DependencyAwareGenerator
     {
         $this->multiline = false;
         return $this;
+    }
+
+    public function count()
+    {
+        return count($this->items);
     }
 }

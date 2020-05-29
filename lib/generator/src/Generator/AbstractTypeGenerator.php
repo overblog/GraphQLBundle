@@ -377,7 +377,7 @@ EOF;
         try {
             $phpFile = $this->buildClass($config['config'], $config['type']);
 //            echo $phpFile;
-            $phpFile->save("C:\Users\TimurMurtukov\Desktop\Generated\\$className.php");
+            $phpFile->save("/home/murtukov/Generated/$className.php");
         } catch (\Exception $e) {
             $x = $e;
         }

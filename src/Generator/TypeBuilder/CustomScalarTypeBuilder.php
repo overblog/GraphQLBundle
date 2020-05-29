@@ -53,7 +53,7 @@ class CustomScalarTypeBuilder extends BaseBuilder
         $constructor->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()');
         $constructor->append('parent::__construct($config)');
 
-        $file->addUseStatement(LazyConfig::class);
+        $file->addUse(LazyConfig::class);
 
         return $file;
     }

@@ -17,15 +17,14 @@ class InterfaceTypeBuilder extends BaseBuilder
     public function build(array $config): GeneratorInterface
     {
         $name = $config['name'];
-        self::$config = $config;
+        $this->config = $config;
 
-        $file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
+        $this->file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
 
-        $class = $file->createClass($name.'Type')
+        $class = $this->file->createClass($name.'Type')
             ->setFinal()
             ->setExtends(InterfaceType::class)
             ->addImplements(GeneratedTypeInterface::class)
-            ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()
@@ -35,8 +34,8 @@ class InterfaceTypeBuilder extends BaseBuilder
             ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
             ->append('parent::__construct($config)');
 
-        $file->addUseStatement(LazyConfig::class);
+        $this->file->addUse(LazyConfig::class);
 
-        return $file;
+        return $this->file;
     }
 }

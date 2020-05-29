@@ -16,7 +16,7 @@ use function substr;
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
-    // TODO: make names
+    // TODO: make names conditional
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];
     public const EXPRESSION_TRIGGER = '@=';
 

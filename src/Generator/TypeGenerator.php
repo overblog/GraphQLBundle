@@ -484,7 +484,7 @@ CODE;
         }
 
         if (!\class_exists($fqcn)) {
-            throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
+//            throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
         }
 
         return "new {$prefix}{$name}({$this->stringifyValue($params, $offset)})";

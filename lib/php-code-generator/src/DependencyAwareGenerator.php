@@ -6,15 +6,9 @@ namespace Murtukov\PHPCodeGenerator;
 
 abstract class DependencyAwareGenerator extends AbstractGenerator
 {
-    /**
-     * @var bool
-     */
-    protected bool $shortenQualifiers = true;
-
-    /**
-     * @var array
-     */
+    protected bool  $shortenQualifiers = true;
     protected array $usePaths = [];
+    protected array $useGroups = [];
 
     /**
      * List of all generator children, which maintain their own use dependencies.
@@ -47,6 +41,33 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
         return $path;
     }
 
+    public function addUse(string $fqcn, string ...$aliases): self
+    {
+        $this->usePaths[$fqcn] = implode(', ', $aliases);
+        return $this;
+    }
+
+    public function addUseGroup(string $fqcn, string ...$classNames)
+    {
+        foreach ($classNames as $name) {
+            if (empty($this->useGroups[$fqcn]) || !in_array($name, $this->useGroups[$fqcn])) {
+                $this->useGroups[$fqcn][] = $name;
+            }
+        }
+        return $this;
+    }
+
+    public function useGroupsToArray()
+    {
+        $result = [];
+
+        foreach ($this->useGroups as $path => $classNames) {
+            $result[rtrim($path, '\\') . '\{'.implode(', ', $classNames).'}'] = '';
+        }
+
+        return $result;
+    }
+
     /**
      * Returns all use-qualifiers used in this object and all it's children.
      *
@@ -54,7 +75,8 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
      */
     public function getUsePaths(): array
     {
-        $mergedPaths = $this->usePaths;
+        // Merge self use paths and use groups
+        $mergedPaths = $this->usePaths + $this->useGroupsToArray();
 
         foreach ($this->dependencyAwareChildren as $child) {
             if (is_array($child)) {
@@ -62,11 +84,10 @@ abstract class DependencyAwareGenerator extends AbstractGenerator
                     if (!$subchild instanceof self) {
                         continue;
                     }
-
-                    $mergedPaths = array_replace($mergedPaths, $subchild->getUsePaths());
+                    $mergedPaths = $mergedPaths + $subchild->getUsePaths();
                 }
             } else {
-                $mergedPaths = array_replace($mergedPaths, $child->getUsePaths());
+                $mergedPaths = $mergedPaths + $child->getUsePaths();
             }
         }
 

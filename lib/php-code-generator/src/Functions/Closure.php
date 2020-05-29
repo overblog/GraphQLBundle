@@ -48,7 +48,7 @@ class Closure extends DependencyAwareGenerator
         return $this->returnType ? ": $this->returnType" : '';
     }
 
-    public function addUse(string $name, bool $isByReference = false): self
+    public function bindVar(string $name, bool $isByReference = false): self
     {
         $this->uses[] = $isByReference ? "&$$name" : "$$name";
         return $this;

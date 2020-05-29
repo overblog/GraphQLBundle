@@ -6,28 +6,15 @@ namespace Murtukov\PHPCodeGenerator;
 
 class Instance extends DependencyAwareGenerator
 {
-    private array $args = [];
+    private array  $args;
     private string $qualifier;
+    public  bool   $multiline = false;
 
-    public bool $multiline = false;
-    public bool $skipNullArgs = true;
 
     public function __construct(string $qualifier, ...$args)
     {
         $this->qualifier = $this->resolveQualifier($qualifier);
         $this->args = $args;
-    }
-
-    public function acceptNullArgs(): self
-    {
-        $this->skipNullArgs = false;
-        return $this;
-    }
-
-    public function skipNullArgs(): self
-    {
-        $this->skipNullArgs = true;
-        return $this;
     }
 
     /**
@@ -49,7 +36,7 @@ class Instance extends DependencyAwareGenerator
         }
 
         foreach ($this->args as $arg) {
-            $args .= Utils::stringify($arg).$suffix;
+            $args .= Utils::stringify($arg) . $suffix;
         }
 
         if ($this->multiline) {
@@ -67,7 +54,7 @@ class Instance extends DependencyAwareGenerator
         return $this;
     }
 
-    public static function createMultiline(string $qualifier, ...$args)
+    public static function multiline(string $qualifier, ...$args)
     {
         $instance = new self($qualifier, ...$args);
         $instance->multiline = true;
