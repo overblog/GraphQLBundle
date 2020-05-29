@@ -414,6 +414,4 @@ EOF;
      * @return string|null
      */
     abstract protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): ?string;
-
-//    abstract function buildClass(array $config, string $type);
 }

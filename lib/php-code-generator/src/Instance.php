@@ -75,8 +75,14 @@ class Instance extends DependencyAwareGenerator
         return $instance;
     }
 
-    public static function create(string $qualifier, ...$args)
+    public static function new(string $qualifier, ...$args)
     {
         return new self($qualifier, ...$args);
+    }
+
+    public function setMultiline(): self
+    {
+        $this->multiline = true;
+        return $this;
     }
 }

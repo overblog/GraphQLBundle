@@ -17,6 +17,7 @@ class InterfaceTypeBuilder extends BaseBuilder
     public function build(array $config): GeneratorInterface
     {
         $name = $config['name'];
+        self::$config = $config;
 
         $file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
 

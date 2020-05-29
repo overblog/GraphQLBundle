@@ -4,13 +4,39 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
+use GraphQL\Type\Definition\InputType;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
+use Murtukov\PHPCodeGenerator\PhpFile;
+use Overblog\GraphQLBundle\Definition\ConfigProcessor;
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\LazyConfig;
+use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
 class InputTypeBuilder extends BaseBuilder
 {
-
     public function build(array $config): GeneratorInterface
     {
-        // TODO: Implement build() method.
+        $name = $config['name'];
+        self::$config = $config;
+
+        $file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
+
+        $class = $file->createClass($name.'Type')
+            ->setFinal()
+            ->setExtends(InputType::class)
+            ->addImplements(GeneratedTypeInterface::class)
+//            ->addConst('NAME', $name)
+            ->addDocBlock(self::DOCBLOCK_TEXT);
+
+        $class->createConstructor()
+            ->addArgument('configProcessor', ConfigProcessor::class)
+            ->addArgument('globalVariables', GlobalVariables::class, null)
+            ->append('$configLoader = ', $this->buildConfigLoader($config))
+            ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
+            ->append('parent::__construct($config)');
+
+        $file->addUseStatement(LazyConfig::class);
+
+        return $file;
     }
 }
