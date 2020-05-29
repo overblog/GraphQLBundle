@@ -34,7 +34,7 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
     private static function wrapFieldsArgument(array $fields)
     {
         foreach ($fields as &$field) {
-            if (isset($field['resolve']) && \is_callable($field['resolve'])) {
+            if (\is_array($field) && isset($field['resolve']) && \is_callable($field['resolve'])) {
                 $field['resolve'] = Resolver::wrapArgs($field['resolve']);
             }
         }
