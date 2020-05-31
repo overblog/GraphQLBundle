@@ -22,7 +22,7 @@ class CustomScalarTypeBuilder extends BaseBuilder
 
         $class = $file->createClass($className)
             ->setExtends(CustomScalarType::class)
-            ->addImplement(GeneratedTypeInterface::class)
+            ->addImplements(GeneratedTypeInterface::class)
             ->setFinal();
 
         $class->createProperty('NAME')

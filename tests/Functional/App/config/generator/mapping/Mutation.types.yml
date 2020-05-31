@@ -7,7 +7,8 @@ Mutation:
 #                - Callback: [App\Validation\UserValidator, validate]
             createStudent:
                 type: String
-                resolve: '@=mut("mutation_mock", [args, validator])'
+                resolve: '@=mut("mutation_mock", [args, errors])'
+                validationGroups: 'User'
                 validation:
                     - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, greaterThan]
                 args:
@@ -25,11 +26,13 @@ Mutation:
 PersonInput:
     type: input-object
     config:
+        validation:
+            -   Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, greaterThan]
         fields:
             firstName:
                 type: String!
                 validation:
-                    - NonNull: ~
+                    - NotNull: ~
                     - Length: { min: 6 }
             lastName:
                 type: String!
@@ -74,9 +77,8 @@ Person:
                 access: false
                 complexity: 15
                 public: true
-            lastName:
-                type: String!
-                description: "Person's last name."
+            lastName: String!
+#                description: "Person's last name."
 #                defaultValue: "Mark Wahlberg"
 
 
