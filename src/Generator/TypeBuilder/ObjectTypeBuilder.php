@@ -25,6 +25,7 @@ class ObjectTypeBuilder extends BaseBuilder
             ->setFinal()
             ->setExtends(ObjectType::class)
             ->addImplements(GeneratedTypeInterface::class)
+            ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()

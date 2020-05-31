@@ -43,16 +43,16 @@ abstract class BaseBuilder implements TypeBuilderInterface
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
 
     protected ExpressionConverter $expressionConverter;
+    protected PhpFile $file;
     protected string $namespace;
     protected array $config;
-    protected PhpFile $file;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
         $this->expressionConverter = $expressionConverter;
         $this->namespace = $namespace;
 
-        // Register additional stringifier for the php code generator
+        // Register additional converter in the php code generator
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
     }
 
@@ -107,18 +107,25 @@ abstract class BaseBuilder implements TypeBuilderInterface
          * @var string|null $description
          * @var array|null  $interfaces
          * @var string|null $resolveType
+         * @var string|null $validation  - InputType class level validation
          */
         extract($config);
 
-        $configLoader = AssocArray::multiline()
-            ->addItem('name', new Literal('$this->name'))
-            ->addItem('fields', ArrowFunction::new(
-                AssocArray::map($fields, [$this, 'buildField'])
-            ));
+        $configLoader = AssocArray::multiline();
+        $configLoader->addItem('name', new Literal('self::NAME'));
 
         if (isset($description)) {
             $configLoader->addItem('description', $description);
         }
+
+        // only by InputType (class level validation)
+        if (isset($validation)) {
+            $configLoader->addItem('validation', $this->buildValidationRules($validation));
+        }
+
+        $configLoader->addItem('fields', ArrowFunction::new(
+            AssocArray::map($fields, [$this, 'buildField'])
+        ));
 
         if (!empty($interfaces)) {
             $items = array_map(fn($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $interfaces);
@@ -156,10 +163,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 ->bindVar('globalVariables');
 
             if (null !== $validationConfig) {
-                $this->buildValidator($validationConfig, $closure);
+                $autoValidation = !ExpressionLanguage::expressionContainsVar('validator', $resolve);
+                $injectErrors = ExpressionLanguage::expressionContainsVar('errors', $resolve);
+                $this->buildValidator($closure, $validationConfig, $autoValidation, $injectErrors);
             }
 
-            $closure->append('return = ', $this->expressionConverter->convert($resolve));
+            $closure->append('return ', $this->expressionConverter->convert($resolve));
 
             return $closure;
         }
@@ -167,16 +176,32 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $resolve;
     }
 
-    public function buildValidator(array $mapping, Closure $closure)
+    public function buildValidator(Closure $closure, array $mapping, bool $autoValidation, bool $injectErrors)
     {
         $validator = Instance::new(InputValidator::class)
             ->setMultiline()
-            ->addArgument(new Literal("func_get_args()"))
+            ->addArgument(new Literal("\\func_get_args()"))
             ->addArgument("\$globalVariables->get('container')->get('validator')")
             ->addArgument("\$globalVariables->get('validatorFactory')")
-            ->addArgument($this->buildValidationMapping($mapping))
-        ;
+            ->addArgument($this->buildValidationMapping($mapping));
+
         $closure->append('$validator = ', $validator);
+
+        // TODO: onsider all use cases
+        // If auto-validation on or
+        if ($autoValidation || $injectErrors) {
+            $validationGroups = NumericArray::new($mapping['validationGroups']);
+
+            $closure->emptyLine();
+
+            if ($injectErrors) {
+                $closure->append('$errors = $validator->validate(', $validationGroups, ', false)');
+            } else {
+                $closure->append('$validator->validate(', $validationGroups, ')');
+            }
+
+            $closure->emptyLine();
+        }
     }
 
     public function buildValidationMapping(array $mapping)
@@ -205,16 +230,20 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
         $array = AssocArray::multiline();
 
-        if (!empty($constraints)) {
-            $array->addItem('constraints', $this->buildConstraints($constraints));
-        }
-
         if (!empty($link)) {
             $array->addItem('link', NumericArray::new($this->normalizeLink($link)));
         }
 
         if (!empty($cascade)) {
             $array->addItem('cascade', $this->buildCascade($cascade));
+        }
+
+        if (!empty($constraints)) {
+            // If there are only constarainst, dont use an additional nesting
+            if ($array->count() === 0) {
+                return $this->buildConstraints($constraints);
+            }
+            $array->addItem('constraints', $this->buildConstraints($constraints));
         }
 
         return $array;
@@ -242,10 +271,17 @@ abstract class BaseBuilder implements TypeBuilderInterface
             if (is_array($args)) {
                 // Numeric or Assoc array?
                 $instance->addArgument(isset($args[0]) ? $args : AssocArray::new($args));
+            } elseif(null !== $args) {
+                $instance->addArgument($args);
             }
 
             $result->push($instance);
+            // TODO: add custom and security paths
             $this->file->addUseGroup('Symfony\Component\Validator\Constraints', $name);
+        }
+
+        if ($result->count() === 1) {
+            return $result->getFirstItem();
         }
 
         return $result;
@@ -305,6 +341,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
          */
         extract($fieldConfig);
 
+        // If there is only 'type', use shorthand
         if (count($fieldConfig) === 1 && isset($type)) {
             return self::buildType($type);
         }
@@ -312,8 +349,9 @@ abstract class BaseBuilder implements TypeBuilderInterface
         $field = AssocArray::multiline()
             ->addItem('type', self::buildType($type));
 
+        // only for object types
         if (isset($resolve)) {
-            $validationConfig = $this->processValidationConfig($fieldConfig);
+            $validationConfig = $this->restructureObjectValidationConfig($fieldConfig, $field);
             $field->addItem('resolve', $this->buildResolve($resolve, $validationConfig));
         }
 
@@ -341,8 +379,9 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $field->addItem('access', $this->buildAccess($access));
         }
 
-        if (isset($validation)) {
-            $field->addItem('validation', $this->buildValidationRules($validation));
+        if ($this instanceof InputTypeBuilder && isset($validation)) {
+            $this->restructureInputValidationConfig($fieldConfig);
+            $field->addItem('validation', $this->buildValidationRules($fieldConfig['validation']));
         }
 
         return $field;
@@ -404,7 +443,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
             return ArrowFunction::new($expression)
                 ->addArgument('fieldName')
-                ->addArgument('fieldName', '', new Literal('self::NAME'))
+                ->addArgument('typeName', '', new Literal('self::NAME'))
             ;
         }
 
@@ -444,8 +483,17 @@ abstract class BaseBuilder implements TypeBuilderInterface
     }
 
     // Optimize methods below
+    private function restructureInputValidationConfig(array &$fieldConfig)
+    {
+        if (empty($fieldConfig['validation']['cascade'])) {
+            return;
+        }
 
-    protected function processValidationConfig(array $fieldConfig): ?array
+        $fieldConfig['validation']['cascade']['isCollection'] = $this->isCollectionType($fieldConfig['type']);
+        $fieldConfig['validation']['cascade']['referenceType'] = trim($fieldConfig['type'], '[]!');
+    }
+
+    protected function restructureObjectValidationConfig(array $fieldConfig, AssocArray $field): ?array
     {
         $properties = [];
 
@@ -456,6 +504,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
             }
 
             $properties[$name] = $arg['validation'];
+
 
             if (empty($arg['validation']['cascade'])) {
                 continue;
@@ -468,15 +517,23 @@ abstract class BaseBuilder implements TypeBuilderInterface
         // Merge class and field constraints
         $classValidation = $this->config['validation'] ?? [];
 
-        if (isset($fieldConfig['validation'])) {
+        if (!empty($fieldConfig['validation'])) {
             $classValidation = array_replace_recursive($classValidation, $fieldConfig['validation']);
         }
 
-        $mapping = [
-            'class' => empty($classValidation) ? null : $classValidation,
-            'properties' => $properties,
-        ];
+        $mapping = ['properties' => $properties];
 
+        // class
+        if (!empty($classValidation)) {
+            $mapping['class'] = $classValidation;
+        }
+
+        // validationGroups
+        if (!empty($fieldConfig['validationGroups'])) {
+            $mapping['validationGroups'] = $fieldConfig['validationGroups'];
+        }
+
+        // TODO: filter unnecessary nesting
         if (empty($classValidation) && !array_filter($properties)) {
             return null;
         } else {

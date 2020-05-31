@@ -13,6 +13,7 @@ use function implode;
 trait ScopedContentTrait
 {
     private array $content = [];
+    private int $emptyLinesBuffer = 0;
 
     /**
      * Append contents to body.
@@ -22,16 +23,21 @@ trait ScopedContentTrait
      */
     public function append(...$values): self
     {
-        $argNum = func_num_args();
+        $valNum = func_num_args() + $this->emptyLinesBuffer;
 
-        if ($argNum === 0) {
+        if (0 === $valNum) {
             return $this;
         }
 
-        if ($argNum === 1) {
+        if (1 === $valNum) {
             $this->content[] = $values[0];
         } else {
-            $this->content[] = self::createBlock(...$values);
+            $this->content[] = self::createBlock(
+                ...array_fill(0, $this->emptyLinesBuffer, "\n"),
+                ...$values
+            );
+            // Reset empty lines buffer
+            $this->emptyLinesBuffer = 0;
         }
 
         foreach ($values as $value) {
@@ -63,6 +69,12 @@ trait ScopedContentTrait
             }
         }
 
+        return $this;
+    }
+
+    public function emptyLine()
+    {
+        $this->emptyLinesBuffer++;
         return $this;
     }
 

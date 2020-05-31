@@ -29,7 +29,7 @@ abstract class AbstractArray extends DependencyAwareGenerator
     }
 
     /**
-     * Shorthand for new AssocArray([], true)
+     * Shorthand for `new AssocArray($items, true)`
      *
      * @param GeneratorInterface[]|string[] $items
      * @return AbstractArray
@@ -150,5 +150,13 @@ abstract class AbstractArray extends DependencyAwareGenerator
     public function count()
     {
         return count($this->items);
+    }
+
+    /**
+     * @return GeneratorInterface|string|null
+     */
+    public function getFirstItem()
+    {
+        return $this->items[0] ?? null;
     }
 }

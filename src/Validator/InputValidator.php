@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator;
 
-use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
@@ -26,48 +25,18 @@ class InputValidator
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
 
-    /**
-     * @var array
-     */
-    private $resolverArgs;
+    private array $resolverArgs;
+    private array $constraintMapping;
+    private ValidatorInterface $validator;
+    private MetadataFactory $metadataFactory;
+    private ResolveInfo $info;
+    private ValidatorFactory $validatorFactory;
 
-    /**
-     * @var array
-     */
-    private $constraintMapping;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
-
-    /**
-     * @var ResolveInfo
-     */
-    private $info;
-
-    /**
-     * @var ValidatorFactory
-     */
-    private $validatorFactory;
-
-    /**
-     * @var ClassMetadataInterface[]
-     */
-    private $cachedMetadata = [];
+    /** @var ClassMetadataInterface[] */
+    private array $cachedMetadata = [];
 
     /**
      * InputValidator constructor.
-     *
-     * @param array                   $resolverArgs
-     * @param ValidatorInterface|null $validator
-     * @param ValidatorFactory        $factory
-     * @param array                   $mapping
      */
     public function __construct(array $resolverArgs, ?ValidatorInterface $validator, ValidatorFactory $factory, array $mapping)
     {
@@ -78,7 +47,7 @@ class InputValidator
             );
         }
 
-        $this->resolverArgs = $this->mapResolverArgs($resolverArgs);
+        $this->resolverArgs = $this->mapResolverArgs(...$resolverArgs);
         $this->info = $this->resolverArgs['info'];
         $this->constraintMapping = $mapping;
         $this->validator = $validator;
@@ -89,17 +58,19 @@ class InputValidator
     /**
      * Converts a numeric array of resolver args to an associative one.
      *
-     * @param array $rawReolverArgs
-     *
+     * @param mixed             $value
+     * @param ArgumentInterface $args
+     * @param mixed             $context
+     * @param ResolveInfo       $info
      * @return array
      */
-    private function mapResolverArgs(array $rawReolverArgs)
+    private function mapResolverArgs($value, ArgumentInterface $args, $context, ResolveInfo $info): array
     {
         return [
-            'value' => $rawReolverArgs[0],
-            'args' => $rawReolverArgs[1],
-            'context' => $rawReolverArgs[2],
-            'info' => $rawReolverArgs[3],
+            'value' => $value,
+            'args' => $args,
+            'context' => $context,
+            'info' => $info,
         ];
     }
 
@@ -131,12 +102,6 @@ class InputValidator
     /**
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
-     *
-     * @param ValidationNode $rootObject
-     * @param array          $constraintMapping
-     * @param array          $args
-     *
-     * @return ValidationNode
      */
     protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
     {
@@ -212,13 +177,6 @@ class InputValidator
         return $rootObject;
     }
 
-    /**
-     * @param array                      $values
-     * @param ObjectType|InputObjectType $type
-     * @param ValidationNode             $parent
-     *
-     * @return array
-     */
     private function createCollectionNode(array $values, Type $type, ValidationNode $parent): array
     {
         $collection = [];
@@ -230,13 +188,6 @@ class InputValidator
         return $collection;
     }
 
-    /**
-     * @param array                      $value
-     * @param ObjectType|InputObjectType $type
-     * @param $parent
-     *
-     * @return ValidationNode
-     */
     private function createObjectNode(array $value, Type $type, ValidationNode $parent): ValidationNode
     {
         $mapping = [
@@ -250,10 +201,6 @@ class InputValidator
         return $this->buildValidationTree(new ValidationNode($type, null, $parent, $this->resolverArgs), $mapping, $value);
     }
 
-    /**
-     * @param ObjectMetadata $metadata
-     * @param array          $constraints
-     */
     private function applyClassConstraints(ObjectMetadata $metadata, ?array $constraints): void
     {
         foreach ($constraints ?? [] as $key => $value) {

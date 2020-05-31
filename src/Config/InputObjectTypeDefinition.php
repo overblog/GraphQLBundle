@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+
 class InputObjectTypeDefinition extends TypeDefinition
 {
-    public function getDefinition()
+    public function getDefinition(): ArrayNodeDefinition
     {
         $node = self::createNode('_input_object_config');
 
@@ -19,14 +21,10 @@ class InputObjectTypeDefinition extends TypeDefinition
                     ->prototype('array')
                         // Allow field type short syntax (Field: Type => Field: {type: Type})
                         ->beforeNormalization()
-                            ->ifTrue(function ($options) {
-                                return \is_string($options);
-                            })
-                            ->then(function ($options) {
-                                return ['type' => $options];
-                            })
+                            ->ifTrue(fn($options) =>\is_string($options))
+                            ->then(fn($options) => ['type' => $options])
                         ->end()
-                        ->append($this->typeSelection(true))
+                        ->append($this->typeSection(true))
                         ->append($this->descriptionSection())
                         ->append($this->defaultValueSection())
                         ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))

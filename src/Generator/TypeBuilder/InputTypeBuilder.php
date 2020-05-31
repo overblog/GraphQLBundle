@@ -25,6 +25,7 @@ class InputTypeBuilder extends BaseBuilder
             ->setFinal()
             ->setExtends(InputType::class)
             ->addImplements(GeneratedTypeInterface::class)
+            ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()

@@ -25,6 +25,7 @@ class InterfaceTypeBuilder extends BaseBuilder
             ->setFinal()
             ->setExtends(InterfaceType::class)
             ->addImplements(GeneratedTypeInterface::class)
+            ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
 
         $class->createConstructor()

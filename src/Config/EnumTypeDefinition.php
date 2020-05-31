@@ -16,9 +16,7 @@ class EnumTypeDefinition extends TypeDefinition
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()
-                        ->ifTrue(function ($v) {
-                            return \is_array($v);
-                        })
+                        ->ifTrue(fn($v) => \is_array($v))
                         ->then(function ($v) {
                             foreach ($v as $name => &$options) {
                                 // short syntax NAME: VALUE
@@ -40,7 +38,7 @@ class EnumTypeDefinition extends TypeDefinition
                         ->children()
                             ->scalarNode('value')->isRequired()->end()
                             ->append($this->descriptionSection())
-                            ->append($this->deprecationReasonSelection())
+                            ->append($this->deprecationReasonSection())
                         ->end()
                     ->end()
                     ->isRequired()
