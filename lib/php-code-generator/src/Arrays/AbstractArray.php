@@ -53,7 +53,7 @@ abstract class AbstractArray extends DependencyAwareGenerator
 
     /**
      * @param string $key
-     * @param string|GeneratorInterface $value
+     * @param mixed  $value
      * @return $this
      */
     public function addItem(string $key, $value): self

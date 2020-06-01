@@ -90,15 +90,15 @@ class TypeGeneratorTest extends TestCase
         $this->expectException(GeneratorException::class);
         $this->expectExceptionMessage(
             'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
-            'Please remove the InputValidator argument from the list of dependencies of your '.
-            'resolver or provide validation configs.'
+            'Please remove the "validator" argument from the list of dependencies of your resolver '.
+            'or provide validation configs.'
         );
 
         parent::setUp();
         static::bootKernel(['test_case' => 'validatorWithoutConstraints']);
     }
 
-    // todo: remove this
+    // TODO (murtukov): remove this
     public function testGeneratorTemporary(): void
     {
         parent::setUp();
