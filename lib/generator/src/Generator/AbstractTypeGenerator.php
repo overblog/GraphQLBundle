@@ -35,14 +35,6 @@ abstract class AbstractTypeGenerator extends AbstractClassGenerator
 {
     public const DEFAULT_CLASS_NAMESPACE = 'Overblog\\CG\\GraphQLGenerator\\__Schema__';
 
-    protected const DEFERRED_PLACEHOLDERS = ['useStatement', 'spaces', 'closureUseStatements'];
-
-    protected const CLOSURE_TEMPLATE = <<<EOF
-function (%s) <closureUseStatements>{
-<spaces><spaces>%sreturn %s;
-<spaces>}
-EOF;
-
     private const TYPE_SYSTEMS = [
         'object' => ObjectType::class,
         'interface' => InterfaceType::class,
@@ -78,19 +70,12 @@ EOF;
     protected $cacheDirMask;
 
     /**
-     * @var string
-     */
-    protected $currentlyGeneratedClass;
-
-    /**
      * @param string $classNamespace The namespace to use for the classes.
      * @param string[]|string $skeletonDirs
      * @param int $cacheDirMask
      */
     public function __construct(string $classNamespace = self::DEFAULT_CLASS_NAMESPACE, $skeletonDirs = [], int $cacheDirMask = 0775)
     {
-        Config::registerConverter(new ExpressionConverter(new ExpressionLanguage()), ConverterInterface::TYPE_STRING);
-
         parent::__construct($classNamespace, $skeletonDirs);
         $this->cacheDirMask = $cacheDirMask;
     }
@@ -359,7 +344,6 @@ EOF;
         foreach ($configs as $name => $config) {
             $config['config']['name'] ??= $name;
             $classMap = $this->generateClass($config, $outputDirectory, $mode);
-
             $classesMap = \array_merge($classesMap, $classMap);
         }
 
@@ -368,37 +352,15 @@ EOF;
 
     public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
-        $this->currentlyGeneratedClass = $config['config']['name'];
-
         $className = $this->generateClassName($config);
         $path = "$outputDirectory/$className.php";
 
-        // new generator
         try {
             $phpFile = $this->buildClass($config['config'], $config['type']);
-//            echo $phpFile;
-            $phpFile->save("/home/murtukov/Generated/$className.php");
+            $phpFile->save("C:\Users\TimurMurtukov\Desktop\Generated\\$className.php");
         } catch (\Exception $e) {
             $x = $e;
         }
-
-//        if (!($mode & self::MODE_MAPPING_ONLY)) {
-            $this->clearInternalUseStatements();
-            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::DEFERRED_PLACEHOLDERS);
-            $code = $this->processPlaceHoldersReplacements(static::DEFERRED_PLACEHOLDERS, $code, $config)."\n";
-
-//            if ($mode & self::MODE_WRITE) {
-                $dir = \dirname($path);
-                if (!\is_dir($dir)) {
-                    \mkdir($dir, $this->cacheDirMask, true);
-                }
-                if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
-                    \file_put_contents($path, $code);
-                }
-//            }
-//        }
-
-        $this->currentlyGeneratedClass = null;
 
         return [$this->getClassNamespace().'\\'.$className => $path];
     }

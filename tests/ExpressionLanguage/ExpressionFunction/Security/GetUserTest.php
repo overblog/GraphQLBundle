@@ -34,20 +34,20 @@ class GetUserTest extends TestCase
 
     public function testGetUserNoTokenStorage(): void
     {
-        $globalVariable = new GlobalVariables(['security' => new Security($this->createMock(CoreSecurity::class))]);
-        $globalVariable->get('security');
+        $globalVariables = new GlobalVariables(['security' => new Security($this->createMock(CoreSecurity::class))]);
+        $globalVariables->get('security');
         $this->assertNull(eval($this->getCompileCode()));
     }
 
     public function testGetUserNoToken(): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
-        $globalVariable = new GlobalVariables([
+        $globalVariables = new GlobalVariables([
             'security' => new Security(new CoreSecurity(
                 $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
             )),
         ]);
-        $globalVariable->get('security');
+        $globalVariables->get('security');
 
         $this->getDIContainerMock(['security.token_storage' => $tokenStorage]);
         $this->assertNull(eval($this->getCompileCode()));
@@ -63,12 +63,12 @@ class GetUserTest extends TestCase
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
-        $globalVariable = new GlobalVariables([
+        $globalVariables = new GlobalVariables([
             'security' => new Security(new CoreSecurity(
                 $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
             )),
         ]);
-        $globalVariable->get('security');
+        $globalVariables->get('security');
 
         $token
             ->expects($this->once())

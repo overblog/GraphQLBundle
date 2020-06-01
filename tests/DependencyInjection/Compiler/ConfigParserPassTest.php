@@ -253,25 +253,21 @@ class ConfigParserPassTest extends TestCase
                                 'description' => 'The creation date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.createdAt',
-                                'args' => [],
                             ],
                             'updatedAt' => [
                                 'description' => 'The update date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.updatedAt',
-                                'args' => [],
                             ],
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
-                                'args' => [],
                             ],
                             'rawID' => [
                                 'description' => 'The raw ID of an object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
-                                'args' => [],
                             ],
                             'rawIDs' => [
                                 'type' => '[RawID!]!',
@@ -325,8 +321,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'foo' => ['type' => 'FooBox!', 'args' => []],
-                            'bar' => ['type' => 'BarBox!', 'args' => []],
+                            'foo' => ['type' => 'FooBox!'],
+                            'bar' => ['type' => 'BarBox!'],
                         ],
                         'name' => 'Boxes',
                         'builders' => [],
@@ -360,8 +356,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
-                            'item' => ['type' => 'Foo', 'args' => []],
+                            'isEmpty' => ['type' => 'Boolean!'],
+                            'item' => ['type' => 'Foo'],
                         ],
                         'name' => 'FooBox',
                         'builders' => [],
@@ -375,8 +371,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
-                            'item' => ['type' => 'Bar', 'args' => []],
+                            'isEmpty' => ['type' => 'Boolean!'],
+                            'item' => ['type' => 'Bar'],
                         ],
                         'name' => 'BarBox',
                         'builders' => [],
@@ -413,7 +409,7 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'fooString' => ['type' => 'String!', 'args' => []],
+                            'fooString' => ['type' => 'String!'],
                         ],
                         'name' => 'FooSuccessPayload',
                         'builders' => [],
@@ -427,8 +423,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            '_error' => ['type' => 'String', 'args' => []],
-                            'bar' => ['type' => 'String', 'args' => []],
+                            '_error' => ['type' => 'String'],
+                            'bar' => ['type' => 'String'],
                         ],
                         'name' => 'FooFailurePayload',
                         'builders' => [],

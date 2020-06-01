@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Generator;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class TypeGeneratorTest extends TestCase
 {
@@ -18,7 +19,8 @@ class TypeGeneratorTest extends TestCase
     public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask): void
     {
         $mask = (new TypeGenerator(
-            'App', [], $cacheDir, [], true, null, null, $cacheDirMask
+            // TODO (murtukov): replace service locator
+            'App', $cacheDir, [], new ServiceLocator([]), true, null, $cacheDirMask
         ))->getCacheDirMask();
 
         $this->assertSame($expectedMask, $mask);

@@ -14,7 +14,7 @@ final class GetUser extends ExpressionFunction
         parent::__construct(
             'getUser',
             static function (): string {
-                return '$globalVariable->get(\'security\')->getUser()';
+                return '$globalVariables->get(\'security\')->getUser()';
             },
             static function () use ($security) {
                 return $security->getUser();

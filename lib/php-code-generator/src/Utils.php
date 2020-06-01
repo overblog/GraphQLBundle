@@ -181,7 +181,7 @@ class Utils
             case '$':
                 return $string;
             default:
-                return json_encode($string);
+                return var_export($string, true);
         }
     }
 
