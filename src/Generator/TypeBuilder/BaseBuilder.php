@@ -94,7 +94,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 break;
             case NodeKind::NAMED_TYPE:
                 if (in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
-                    $name = lcfirst($typeNode->name->value);
+                    $name = strtolower($typeNode->name->value);
                     $type = $call(Type::class)::$name();
                 } else {
                     $name = $typeNode->name->value;

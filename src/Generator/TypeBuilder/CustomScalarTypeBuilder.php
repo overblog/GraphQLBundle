@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
-use GraphQL\Type\Definition\CustomScalarType;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Definition\LazyConfig;
+use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 
 class CustomScalarTypeBuilder extends BaseBuilder
