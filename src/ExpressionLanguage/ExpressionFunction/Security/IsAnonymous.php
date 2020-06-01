@@ -14,7 +14,7 @@ final class IsAnonymous extends ExpressionFunction
         parent::__construct(
             'isAnonymous',
             static function (): string {
-                return '$globalVariable->get(\'security\')->isAnonymous()';
+                return '$globalVariables->get(\'security\')->isAnonymous()';
             },
             static function () use ($security): bool {
                 return $security->isAnonymous();

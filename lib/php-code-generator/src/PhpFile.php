@@ -102,16 +102,14 @@ class PhpFile extends DependencyAwareGenerator
     }
 
 
-    public function save(string $path)
+    public function save(string $path, int $mask = 0777)
     {
         $dir = dirname($path);
 
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, $mask, true);
         }
 
-//        if (!file_exists($path)) {
-            file_put_contents($path, $this);
-//        }
+        file_put_contents($path, $this);
     }
 }

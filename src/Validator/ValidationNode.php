@@ -24,7 +24,7 @@ class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
-    private ?ValidationNode $__parent;
+    private ?ValidationNode $__parent = null;
     private ?string $__fieldName;
 
     /**

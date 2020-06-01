@@ -30,8 +30,8 @@ class ServiceTest extends TestCase
     public function testServiceCompilation(string $name): void
     {
         $object = new \stdClass();
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
-        $globalVariable->get('container');
+        $globalVariables = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $globalVariables->get('container');
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 

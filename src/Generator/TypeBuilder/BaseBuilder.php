@@ -19,6 +19,7 @@ use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
+use Murtukov\PHPCodeGenerator\Utils;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\AssocArray;
@@ -26,6 +27,7 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use RuntimeException;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use function array_filter;
 use function array_intersect;
 use function array_map;
@@ -45,6 +47,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
 {
     protected const DOCBLOCK_TEXT = "This file was generated and should not be edited manually.";
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
+    protected const CONSTRAINTS_NAMESPACE = "Symfony\Component\Validator\Constraints";
 
     protected ExpressionConverter $expressionConverter;
     protected PhpFile $file;
@@ -83,7 +86,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         switch ($typeNode->kind) {
             case NodeKind::NON_NULL_TYPE:
                 $innerType = self::wrapTypeRecursive($typeNode->type);
-                $type = $call(Type::class)::notNull($innerType);
+                $type = $call(Type::class)::nonNull($innerType);
                 break;
             case NodeKind::LIST_TYPE:
                 $innerType = self::wrapTypeRecursive($typeNode->type);
@@ -140,17 +143,36 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $configLoader->addItem('interfaces', ArrowFunction::new(NumericArray::multiline($items)));
         }
 
-        if (isset($resolveType)) {
-            $configLoader->addItem('resolveType', $this->buildResolveType($resolveType));
-        }
-
         if (isset($types)) {
             $items = array_map(fn($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $types);
             $configLoader->addItem('types', ArrowFunction::new(NumericArray::multiline($items)));
         }
 
+        if (isset($resolveType)) {
+            $configLoader->addItem('resolveType', $this->buildResolveType($resolveType));
+        }
+
+        if (isset($resolveField)) {
+            $configLoader->addItem('resolveField', $this->buildResolve($resolveField));
+        }
+
         if (isset($values)) {
             $configLoader->addItem('values', AssocArray::multiline($values));
+        }
+
+        if ($this instanceof CustomScalarTypeBuilder) {
+            $configLoader->addItem('scalarType', null);
+            foreach (['serialize', 'parseValue', 'parseLiteral'] as $value) {
+                $closure = new ArrowFunction();
+
+                if (is_array($config[$value])) {
+                    $closure->setExpression("{$config[$value][0]}::{$config[$value][1]}(...\\func_get_args())");
+                } else {
+                    $closure->setExpression($config[$value] . '(...\\func_get_args())');
+                }
+
+                $configLoader->addItem($value, $closure);
+            }
         }
 
         return new ArrowFunction($configLoader);
@@ -163,15 +185,15 @@ abstract class BaseBuilder implements TypeBuilderInterface
      */
     public function buildResolve($resolve, ?array $validationConfig = null)
     {
+        $closure = Closure::new()
+            ->addArgument('value')
+            ->addArgument('args')
+            ->addArgument('context')
+            ->addArgument('info', ResolveInfo::class)
+            ->bindVar('globalVariables');
+
         // TODO (murtukov): replace usage of converter with ExpressionLanguage static method
         if ($this->expressionConverter->check($resolve)) {
-            $closure = Closure::new()
-                ->addArgument('value')
-                ->addArgument('args')
-                ->addArgument('context')
-                ->addArgument('info', ResolveInfo::class)
-                ->bindVar('globalVariables');
-
             $injectErrors = ExpressionLanguage::expressionContainsVar('errors', $resolve);
 
             if ($injectErrors) {
@@ -191,11 +213,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
             }
 
             $closure->append('return ', $this->expressionConverter->convert($resolve));
-
             return $closure;
         }
 
-        return $resolve;
+        $closure->append('return ', Utils::stringify($resolve));
+
+        return $closure;
     }
 
     public function buildValidator(Closure $closure, array $mapping, bool $injectValidator, bool $injectErrors)
@@ -204,8 +227,17 @@ abstract class BaseBuilder implements TypeBuilderInterface
             ->setMultiline()
             ->addArgument(new Literal("\\func_get_args()"))
             ->addArgument("\$globalVariables->get('container')->get('validator')")
-            ->addArgument("\$globalVariables->get('validatorFactory')")
-            ->addArgument($this->buildValidationMapping($mapping));
+            ->addArgument("\$globalVariables->get('validatorFactory')");
+
+        if (!empty($mapping['properties'])) {
+            $validator->addArgument($this->buildProperties($mapping['properties']));
+        } else {
+            $validator->addArgument([]);
+        }
+
+        if (!empty($mapping['class'])){
+            $validator->addArgument($this->buildValidationRules($mapping['class']));
+        }
 
         $closure->append('$validator = ', $validator);
 
@@ -229,28 +261,6 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
     }
 
-    public function buildValidationMapping(array $mapping)
-    {
-        $mappingArray = AssocArray::multiline();
-
-        // Class validation rules
-        if (!empty($mapping['class'])) {
-            $mappingArray->addItem('class', $this->buildValidationRules($mapping['class']));
-        }
-
-        // Properties validation rules
-        if (!empty($mapping['properties'])) {
-            // If there are only properties, don't create unnecessary nesting
-            if ($mappingArray->count() === 0) {
-                return $this->buildProperties($mapping['properties']);
-            }
-
-            $mappingArray->addItem('properties', $this->buildProperties($mapping['properties']));
-        }
-
-        return $mappingArray;
-    }
-
     public function buildValidationRules($mapping)
     {
         /**
@@ -263,7 +273,13 @@ abstract class BaseBuilder implements TypeBuilderInterface
         $array = AssocArray::multiline();
 
         if (!empty($link)) {
-            $array->addItem('link', NumericArray::new($this->normalizeLink($link)));
+            if (strpos($link, '::') === false) {
+                // e.g.: App\Entity\Droid
+                $array->addItem('link', $link);
+            } else {
+                // e.g. App\Entity\Droid::$id
+                $array->addItem('link', NumericArray::new($this->normalizeLink($link)));
+            }
         }
 
         if (!empty($cascade)) {
@@ -271,7 +287,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         if (!empty($constraints)) {
-            // If there are only constarainst, dont use an additional nesting
+            // If there are only constarainst, dont use additional nesting
             if ($array->count() === 0) {
                 return $this->buildConstraints($constraints);
             }
@@ -305,14 +321,23 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 $this->file->addUse($fqcn);
             } else {
                 // Symfony constraint
-                $this->file->addUseGroup('Symfony\Component\Validator\Constraints', $name);
+                $this->file->addUseGroup(self::CONSTRAINTS_NAMESPACE, $name);
+                $fqcn = self::CONSTRAINTS_NAMESPACE . "\\$name";
+            }
+
+            if (!\class_exists($fqcn)) {
+                throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
             }
 
             $instance = Instance::new($name);
 
             if (is_array($args)) {
-                // Numeric or Assoc array?
-                $instance->addArgument(isset($args[0]) ? $args : AssocArray::new($args));
+                if (isset($args[0]) && is_array($args[0])) {
+                    $instance->addArgument($this->buildConstraints($args));
+                } else {
+                    // Numeric or Assoc array?
+                    $instance->addArgument(isset($args[0]) ? $args : AssocArray::new($args));
+                }
             } elseif(null !== $args) {
                 $instance->addArgument($args);
             }
@@ -320,13 +345,14 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $result->push($instance);
         }
 
-        if ($result->count() === 1) {
-            return $result->getFirstItem();
-        }
+//        if ($result->count() === 1) {
+//            return $result->getFirstItem();
+//        }
 
         return $result;
     }
 
+    // TODO: throw on scalar types
     public function buildCascade(array $cascade)
     {
         if (empty($cascade)) {
@@ -423,6 +449,9 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $this->restructureInputValidationConfig($fieldConfig);
             $field->addItem('validation', $this->buildValidationRules($fieldConfig['validation']));
         }
+
+        // TODO: ind out where this is used. Maybe in onjunction with resolveField?
+        $field->addItem('useStrictAccess', true);
 
         return $field;
     }
@@ -591,11 +620,12 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
     /**
      * Creates and array from a formatted string, e.g.:
-     * ```
-     *  "App\Entity\User::$firstName"  -> ['App\Entity\User', 'firstName', 'property']
-     *  "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
-     *  "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
-     * ```.
+     *
+     * <code>
+     *    "App\Entity\User::$firstName"  -> ['App\Entity\User', 'firstName', 'property']
+     *    "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
+     *    "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
+     * </code>
      *
      * @param string $link
      *

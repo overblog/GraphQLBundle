@@ -14,7 +14,7 @@ final class IsGranted extends ExpressionFunction
         parent::__construct(
             'isGranted',
             static function ($attributes, $object = 'null'): string {
-                return \sprintf('$globalVariable->get(\'security\')->isGranted(%s, %s)', $attributes, $object);
+                return \sprintf('$globalVariables->get(\'security\')->isGranted(%s, %s)', $attributes, $object);
             },
             static function ($_, $attributes, $object = null) use ($security): bool {
                 return $security->isGranted($attributes, $object);

@@ -29,7 +29,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
             throw new UserWarning('Access denied to this field.');
         };
         foreach ($fields as &$field) {
-            if (isset($field['access']) && true !== $field['access']) {
+            if (\is_array($field) && isset($field['access']) && true !== $field['access']) {
                 $accessChecker = $field['access'];
                 if (false === $accessChecker) {
                     $field['resolve'] = $deniedAccess;

@@ -14,7 +14,7 @@ final class Service extends ExpressionFunction
         parent::__construct(
             $name,
             function (string $serviceId): string {
-                return "\$globalVariable->get('container')->get($serviceId)";
+                return "\$globalVariables->get('container')->get($serviceId)";
             },
             function ($arguments, $serviceId) use ($container): ?object {
                 return $container->get($serviceId);

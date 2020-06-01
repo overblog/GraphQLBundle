@@ -14,7 +14,7 @@ final class HasAnyRole extends ExpressionFunction
         parent::__construct(
             'hasAnyRole',
             static function ($roles): string {
-                return \sprintf('$globalVariable->get(\'security\')->hasAnyRole(%s)', $roles);
+                return \sprintf('$globalVariables->get(\'security\')->hasAnyRole(%s)', $roles);
             },
             static function ($_, $roles) use ($security): bool {
                 return $security->hasAnyRole($roles);

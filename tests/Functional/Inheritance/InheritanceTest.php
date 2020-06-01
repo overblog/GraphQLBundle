@@ -34,15 +34,12 @@ class InheritanceTest extends TestCase
                     'fields' => [
                         'sayHello' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'period' => [
                             'type' => 'Period',
-                            'args' => [],
                         ],
                         'bar' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                     ],
                     'name' => 'Query',
@@ -118,27 +115,21 @@ class InheritanceTest extends TestCase
                     'fields' => [
                         'a' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'aa' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'b' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'c' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'd' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                         'e' => [
                             'type' => 'String',
-                            'args' => [],
                         ],
                     ],
                     'name' => 'ABCDE',

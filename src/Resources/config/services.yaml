@@ -61,21 +61,12 @@ services:
     Overblog\GraphQLBundle\Generator\TypeGenerator:
         arguments:
             - "%overblog_graphql.class_namespace%"
-            - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql_types.config%"
             - !tagged_locator 'overblog_graphql.type_builder'
             - "%overblog_graphql.use_classloader_listener%"
-            - ~
             - "%kernel.cache_dir%"
             - "%overblog_graphql.cache_dir_permissions%"
-        calls:
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\LazyConfig']]
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
-            - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
-
-            - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     Overblog\GraphQLBundle\Definition\ArgumentFactory:
         arguments:

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
-use GraphQL\Type\Definition\InputType;
+use GraphQL\Type\Definition\InputObjectType;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
@@ -23,7 +23,7 @@ class InputTypeBuilder extends BaseBuilder
 
         $class = $this->file->createClass($name.'Type')
             ->setFinal()
-            ->setExtends(InputType::class)
+            ->setExtends(InputObjectType::class)
             ->addImplements(GeneratedTypeInterface::class)
             ->addConst('NAME', $name)
             ->addDocBlock(self::DOCBLOCK_TEXT);
