@@ -14,10 +14,8 @@ class AssocArray extends BaseArray
 {
     /**
      * Mark additional stringifiers to be used by the convertion of array values.
-     *
-     * @return array|string[]
      */
-    public static function getStringifiers()
+    public static function getStringifiers(): array
     {
         return [ExpressionConverter::class];
     }

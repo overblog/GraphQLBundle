@@ -7,10 +7,10 @@ Mutation:
 #                - Callback: [App\Validation\UserValidator, validate]
             createStudent:
                 type: String
-                resolve: '@=mut("mutation_mock", [args, errors])'
+                resolve: '@=mut("mutation_mock", [args])'
                 validationGroups: 'User'
-                validation:
-                    - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, greaterThan]
+#                validation:
+#                    - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, greaterThan]
                 args:
                     username:
                         type: "String"
@@ -21,7 +21,7 @@ Mutation:
                                   max: 19
                     data:
                         type: PersonInput
-                        validation: cascade
+#                        validation: cascade
 
 PersonInput:
     type: input-object
@@ -107,3 +107,26 @@ Professor:
                         defaultValue: 1
                         description: "The semester pf the class"
                     year: Int
+
+DateTime:
+    type: custom-scalar
+    config:
+        serialize: ["AppBundle\\DateTimeType", "serialize"]
+        parseValue: ["AppBundle\\DateTimeType", "parseValue"]
+        parseLiteral: ["AppBundle\\DateTimeType", "parseLiteral"]
+
+Episode:
+    type: enum
+    config:
+        description: "One of the films in the Star Wars Trilogy"
+        values:
+            NEWHOPE:
+                value: 4
+                description: "Released in 1977."
+                deprecationReason: "It's just old"
+            EMPIRE:
+                value: 5
+                description: "Released in 1980."
+            JEDI:
+                value: '@=constant("App\\StarWars\\Movies::MOVIE_EMPIRE")'
+                description: "Released in 1983."

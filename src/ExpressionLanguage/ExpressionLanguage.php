@@ -16,7 +16,7 @@ use function substr;
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
-    // TODO: make names conditional
+    // TODO (murtukov): make names conditional
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];
     public const EXPRESSION_TRIGGER = '@=';
 
@@ -65,7 +65,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
 
         while (!$stream->isEOF()) {
             if ($name === $current->value && Token::NAME_TYPE === $current->type) {
-                // Also check that it's not a functions name
+                // Also check that it's not a function's name
                 $stream->next();
                 if ("(" !== $current->value) {
                     $contained = true;
@@ -89,7 +89,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
     {
         return strpos($maybeExpression, self::EXPRESSION_TRIGGER) === 0;
     }
-//
+
     /**
      * Removes the expression trigger prefix from a string. If no prefix found,
      * returns the initial string.
@@ -101,6 +101,6 @@ class ExpressionLanguage extends BaseExpressionLanguage
     {
         $string = substr($expression, strlen(self::EXPRESSION_TRIGGER));
 
-        return (false !== $string) ? $string : $expression;
+        return $string ?: $expression;
     }
 }

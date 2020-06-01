@@ -11,9 +11,11 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\EnumTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeBuilder\ObjectTypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeBuilder\UnionTypeBuilder;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
@@ -771,6 +773,10 @@ CODE;
                 return $this->typeBuilders->get(CustomScalarTypeBuilder::class)->build($config);
             case 'interface':
                 return $this->typeBuilders->get(InterfaceTypeBuilder::class)->build($config);
+            case 'union':
+                return $this->typeBuilders->get(UnionTypeBuilder::class)->build($config);
+            case 'enum':
+                return $this->typeBuilders->get(EnumTypeBuilder::class)->build($config);
             default:
                 throw new \RuntimeException("GraphQL config type is not recognized: $type");
         }
