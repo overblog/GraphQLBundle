@@ -112,6 +112,7 @@ class TypeGenerator
         $classes = [];
         foreach ($configs as $name => $config) {
             $config['config']['name'] ??= $name;
+            $config['config']['class_name'] = $config['class_name'];
             $classMap = $this->generateClass($config, $cacheDir, $mode);
             $classes = \array_merge($classes, $classMap);
         }
@@ -132,7 +133,7 @@ class TypeGenerator
 
     public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
     {
-        $className = $config['config']['name'].'Type';
+        $className = $config['config']['class_name'];
         $path = "$outputDirectory/$className.php";
 
         $phpFile = $this->buildClass($config['config'], $config['type']);

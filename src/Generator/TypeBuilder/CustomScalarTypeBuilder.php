@@ -18,9 +18,9 @@ class CustomScalarTypeBuilder extends BaseBuilder
         $name = $config['name'];
         $this->config = $config;
 
-        $this->file = PhpFile::create($name.'Type.php')->setNamespace($this->namespace);
+        $this->file = PhpFile::create("{$config['class_name']}.php")->setNamespace($this->namespace);
 
-        $class = $this->file->createClass($name.'Type')
+        $class = $this->file->createClass($config['class_name'])
             ->setFinal()
             ->setExtends(CustomScalarType::class)
             ->addImplements(GeneratedTypeInterface::class)

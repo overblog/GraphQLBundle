@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
 
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
-use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
 use Murtukov\PHPCodeGenerator\Call;
@@ -27,7 +26,6 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use RuntimeException;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use function array_filter;
 use function array_intersect;
 use function array_map;
@@ -161,35 +159,55 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
 
         if ($this instanceof CustomScalarTypeBuilder) {
-            $configLoader->addItem('scalarType', null);
-            foreach (['serialize', 'parseValue', 'parseLiteral'] as $value) {
-                $closure = new ArrowFunction();
+            if (isset($scalarType)) {
+                $configLoader->addItem('scalarType', $scalarType);
+            }
 
-                if (is_array($config[$value])) {
-                    $closure->setExpression("{$config[$value][0]}::{$config[$value][1]}(...\\func_get_args())");
-                } else {
-                    $closure->setExpression($config[$value] . '(...\\func_get_args())');
-                }
+            if (isset($serialize)) {
+                $configLoader->addItem('serialize', $this->buildScalarField($serialize));
+            }
 
-                $configLoader->addItem($value, $closure);
+            if (isset($parseValue)) {
+                $configLoader->addItem('parseValue', $this->buildScalarField($parseValue));
+            }
+
+            if (isset($parseLiteral)) {
+                $configLoader->addItem('parseLiteral', $this->buildScalarField($parseLiteral));
             }
         }
 
         return new ArrowFunction($configLoader);
     }
 
+    private function buildScalarField($value)
+    {
+        $closure = new ArrowFunction();
+
+        if (is_array($value)) {
+            $closure->setExpression("{$value[0]}::{$value[1]}(...\\func_get_args())");
+        } else {
+            $closure->setExpression($value . '(...\\func_get_args())');
+        }
+
+        return $closure;
+    }
+
     /**
      * @param mixed      $resolve
      * @param array|null $validationConfig
-     * @return Closure
+     * @return Closure|NumericArray
      */
     public function buildResolve($resolve, ?array $validationConfig = null)
     {
+        if (is_callable($resolve)) {
+            return NumericArray::new($resolve);
+        }
+
         $closure = Closure::new()
             ->addArgument('value')
             ->addArgument('args')
             ->addArgument('context')
-            ->addArgument('info', ResolveInfo::class)
+            ->addArgument('info')
             ->bindVar('globalVariables');
 
         // TODO (murtukov): replace usage of converter with ExpressionLanguage static method
@@ -213,6 +231,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
             }
 
             $closure->append('return ', $this->expressionConverter->convert($resolve));
+
             return $closure;
         }
 
@@ -528,7 +547,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
                 ->addArgument('value')
                 ->addArgument('args')
                 ->addArgument('context')
-                ->addArgument('info', ResolveInfo::class)
+                ->addArgument('info')
                 ->addArgument('object')
                 ->setExpression($expression);
         }
@@ -544,7 +563,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
             return ArrowFunction::new()
                 ->addArgument('value')
                 ->addArgument('context')
-                ->addArgument('info', ResolveInfo::class)
+                ->addArgument('info')
                 ->setExpression($expression);
         }
 
