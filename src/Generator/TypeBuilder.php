@@ -39,6 +39,7 @@ use function array_filter;
 use function array_intersect;
 use function array_map;
 use function array_replace_recursive;
+use function class_exists;
 use function count;
 use function explode;
 use function extract;
@@ -385,6 +386,8 @@ class TypeBuilder
      *     ...
      * ]
      * </code>
+     *
+     * @throws GeneratorException
      */
     protected function buildConstraints(array $constraints = [])
     {
@@ -397,7 +400,7 @@ class TypeBuilder
             if (false !== strpos($name, '\\')) {
                 // Custom constraint
                 $fqcn = ltrim($name, '\\');
-                $name = ltrim(strrchr($name, '\\'));
+                $name = ltrim(strrchr($name, '\\'), '\\');
                 $this->file->addUse($fqcn);
             } else {
                 // Symfony constraint
@@ -405,7 +408,7 @@ class TypeBuilder
                 $fqcn = self::CONSTRAINTS_NAMESPACE . "\\$name";
             }
 
-            if (!\class_exists($fqcn)) {
+            if (!class_exists($fqcn)) {
                 throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
             }
 
@@ -413,6 +416,7 @@ class TypeBuilder
 
             if (is_array($args)) {
                 if (isset($args[0]) && is_array($args[0])) {
+                    // Another instance?
                     $instance->addArgument($this->buildConstraints($args));
                 } else {
                     // Numeric or Assoc array?
