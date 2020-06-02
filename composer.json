@@ -12,15 +12,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": "src/",
-            "Murtukov\\PHPCodeGenerator\\": "lib/php-code-generator/src/"
+            "Overblog\\GraphQLBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
-            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
-            "Overblog\\GraphQLGenerator\\Tests\\": "lib/php-code-generator/tests/"
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/"
         }
     },
     "config": {
@@ -30,6 +28,7 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
+        "murtukov/php-code-generator": "dev-master",
         "psr/log": "^1.0",
         "symfony/config": "^4.3 || ^5.0",
         "symfony/dependency-injection": "^4.3 || ^5.0",
