@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
@@ -376,9 +377,29 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
         $this->assertNull($letterCursor);
     }
 
+    public function testCursorEncoder(): void
+    {
+        $cursorEncoder = $this->createMock(CursorEncoderInterface::class);
+        $cursorEncoder->expects($this->exactly(4))
+            ->method('encode')
+            ->willReturnArgument(0);
+
+        $cursorEncoder->expects($this->exactly(1))
+            ->method('decode')
+            ->willReturnArgument(0);
+
+        $connectionBuilder = new ConnectionBuilder($cursorEncoder);
+        $edges = $connectionBuilder->connectionFromArray($this->letters, ['after' => 'arrayconnection:0'])->getEdges();
+
+        $this->assertSame($edges[0]->getCursor(), 'arrayconnection:1');
+        $this->assertSame($edges[1]->getCursor(), 'arrayconnection:2');
+        $this->assertSame($edges[2]->getCursor(), 'arrayconnection:3');
+        $this->assertSame($edges[3]->getCursor(), 'arrayconnection:4');
+    }
+
     public function testConnectionCallback(): void
     {
-        $connectionBuilder = new ConnectionBuilder(function ($edges, $pageInfo) {
+        $connectionBuilder = new ConnectionBuilder(null, function ($edges, $pageInfo) {
             $connection = new fixtures\CustomConnection($edges, $pageInfo);
             $connection->averageAge = 10;
 
@@ -392,7 +413,7 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
 
     public function testEdgeCallback(): void
     {
-        $connectionBuilder = new ConnectionBuilder(null, function ($cursor, $value, $index) {
+        $connectionBuilder = new ConnectionBuilder(null, null, function ($cursor, $value, $index) {
             $edge = new fixtures\CustomEdge($cursor, $value);
             $edge->customProperty = 'edge'.$index;
 

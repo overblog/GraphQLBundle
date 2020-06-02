@@ -18,12 +18,13 @@ It also supports:
 
 Browse your version documentation:
 
-* [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
-* [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
-* [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
-* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [1.0 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.13 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.13/README.md)
 * [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
-* [0.13 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
+* [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
+* [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)
 
 [Versions requirements](docs/index.md#versions-requirements)
 
@@ -109,8 +110,9 @@ Talks and slides to help you start
 Community
 ---------
 
-* Get some support on [Symfony devs Slack](https://symfony.com/slack-invite)
+* Get support on [Symfony devs Slack](https://symfony.com/slack-invite)
   on the dedicated channel **overblog-graphql**.
+* Get support in Telegram group [Overblog GraphQL](https://t.me/overblog_graphql)
 * Follow us on [GitHub](https://github.com/overblog)
 
 Contributing
