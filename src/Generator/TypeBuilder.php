@@ -43,6 +43,7 @@ use function count;
 use function explode;
 use function extract;
 use function in_array;
+use function is_string;
 use function ltrim;
 use function rtrim;
 use function str_split;
@@ -427,7 +428,10 @@ class TypeBuilder
         return $result;
     }
 
-    protected function buildCascade(array $cascade)
+    /**
+     * @throws GeneratorException
+     */
+    protected function buildCascade(array $cascade): ?AssocArray
     {
         if (empty($cascade)) {
             return null;
@@ -472,8 +476,8 @@ class TypeBuilder
     }
 
     /**
-     * @param array $fieldConfig
      * @return GeneratorInterface|AssocArray|string
+     * @throws GeneratorException
      */
     public function buildField(array $fieldConfig /*, $fieldname */)
     {
@@ -525,13 +529,16 @@ class TypeBuilder
             $field->addItem('access', $this->buildAccess($access));
         }
 
+        if (!empty($access) && is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {
+            $field->addItem('useStrictAccess', false);
+        } else {
+            $field->addItem('useStrictAccess', true);
+        }
+
         if ('input-object' === $this->type && isset($validation)) {
             $this->restructureInputValidationConfig($fieldConfig);
             $field->addItem('validation', $this->buildValidationRules($fieldConfig['validation']));
         }
-
-        // TODO (murtukov): ind out where this is used. Maybe in onjunction with resolveField?
-        $field->addItem('useStrictAccess', true);
 
         return $field;
     }
