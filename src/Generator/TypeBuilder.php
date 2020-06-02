@@ -32,6 +32,7 @@ use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
+use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use RuntimeException;
 use function array_filter;
@@ -41,6 +42,7 @@ use function array_replace_recursive;
 use function count;
 use function explode;
 use function extract;
+use function in_array;
 use function ltrim;
 use function rtrim;
 use function str_split;
@@ -60,6 +62,7 @@ class TypeBuilder
     protected const CONSTRAINTS_NAMESPACE = "Symfony\Component\Validator\Constraints";
     protected const DOCBLOCK_TEXT = "THIS FILE WAS GENERATED AND SHOULD NOT BE EDITED MANUALLY.";
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
+
     protected const EXTENDS = [
         'object'        => ObjectType::class,
         'input-object'  => InputObjectType::class,
@@ -235,7 +238,7 @@ class TypeBuilder
         return new ArrowFunction($configLoader);
     }
 
-    protected function buildScalarCallback(callable $callback)
+    protected function buildScalarCallback($callback)
     {
         $closure = new ArrowFunction();
 
@@ -424,7 +427,6 @@ class TypeBuilder
         return $result;
     }
 
-    // TODO (murtukov): throw on scalar types
     protected function buildCascade(array $cascade)
     {
         if (empty($cascade)) {
@@ -446,7 +448,13 @@ class TypeBuilder
         }
 
         if (isset($referenceType)) {
-            $result->addIfNotNull('referenceType', "\$globalVariables->get('typeResolver')->resolve('$referenceType')");
+            $type = trim($referenceType, '[]!');
+
+            if (in_array($type, self::BUILT_IN_TYPES)) {
+                throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
+            }
+
+            $result->addItem('referenceType', "\$globalVariables->get('typeResolver')->resolve('$referenceType')");
         }
 
         return $result;
