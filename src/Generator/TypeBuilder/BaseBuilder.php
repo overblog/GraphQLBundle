@@ -179,14 +179,15 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return new ArrowFunction($configLoader);
     }
 
-    private function buildScalarField($value)
+    private function buildScalarField($callback)
     {
         $closure = new ArrowFunction();
 
-        if (is_array($value)) {
-            $closure->setExpression("{$value[0]}::{$value[1]}(...\\func_get_args())");
+        if (is_array($callback)) {
+            [$class, $method] = $callback;
+            $closure->setExpression("\\$class::$method(...\\func_get_args())");
         } else {
-            $closure->setExpression($value . '(...\\func_get_args())');
+            $closure->setExpression("\\$callback(...\\func_get_args())");
         }
 
         return $closure;
