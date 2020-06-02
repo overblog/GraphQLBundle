@@ -129,10 +129,30 @@ class TypeGenerator
         $className = $config['config']['class_name'];
         $path = "$outputDirectory/$className.php";
 
+        // ORIGINAL CODE
+//        if (!($mode & self::MODE_MAPPING_ONLY)) {
+//            $this->clearInternalUseStatements();
+//            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::DEFERRED_PLACEHOLDERS);
+//            $code = $this->processPlaceHoldersReplacements(static::DEFERRED_PLACEHOLDERS, $code, $config)."\n";
+//
+//            if ($mode & self::MODE_WRITE) {
+//                $dir = \dirname($path);
+//                if (!\is_dir($dir)) {
+//                    \mkdir($dir, $this->cacheDirMask, true);
+//                }
+//                if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
+//                    \file_put_contents($path, $code);
+//                }
+//            }
+//        }
+
+        // TODO (mcg-web): please review this code. You can see the original code above (commented).
+        //                 It seems that there are too many mode-checks here.
         if (!($mode & self::MODE_MAPPING_ONLY)) {
+            $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
+
             if ($mode & self::MODE_WRITE) {
                 if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
-                    $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
                     $phpFile->save($path);
                 }
             }
