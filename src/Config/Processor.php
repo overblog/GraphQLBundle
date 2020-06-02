@@ -23,7 +23,7 @@ class Processor implements ProcessorInterface
             NamedConfigProcessor::class,
             InheritanceProcessor::class,
         ],
-        self::NORMALIZATION => [/*ExpressionProcessor::class*/],
+        self::NORMALIZATION => [],
     ];
 
     public static function process(array $configs, $type = self::NORMALIZATION): array

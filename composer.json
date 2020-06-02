@@ -13,7 +13,6 @@
     "autoload": {
         "psr-4": {
             "Overblog\\GraphQLBundle\\": "src/",
-            "Overblog\\GraphQLGenerator\\": "lib/generator/src/",
             "Murtukov\\PHPCodeGenerator\\": "lib/php-code-generator/src/"
         }
     },
@@ -21,7 +20,7 @@
         "psr-4": {
             "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
             "Overblog\\GraphQLBundle\\Tests\\": "tests/",
-            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+            "Overblog\\GraphQLGenerator\\Tests\\": "lib/php-code-generator/tests/"
         }
     },
     "config": {

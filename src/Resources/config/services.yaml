@@ -63,7 +63,7 @@ services:
             - "%overblog_graphql.class_namespace%"
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql_types.config%"
-            - !tagged_locator 'overblog_graphql.type_builder'
+            - '@Overblog\GraphQLBundle\Generator\TypeBuilder'
             - "%overblog_graphql.use_classloader_listener%"
             - "%kernel.cache_dir%"
             - "%overblog_graphql.cache_dir_permissions%"
@@ -96,3 +96,12 @@ services:
             - '@?security.helper'
         tags:
             - { name: overblog_graphql.global_variable, alias: security, public: false }
+
+    Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter:
+        arguments:
+            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'
+
+    Overblog\GraphQLBundle\Generator\TypeBuilder:
+        arguments:
+            - '@Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter'
+            - '%overblog_graphql.class_namespace%'

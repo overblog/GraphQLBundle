@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Generator\TypeBuilder;
+namespace Overblog\GraphQLBundle\Generator;
 
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
+use GraphQL\Type\Definition\EnumType;
+use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\InterfaceType;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\UnionType;
 use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
 use Murtukov\PHPCodeGenerator\Call;
 use Murtukov\PHPCodeGenerator\Config;
@@ -19,9 +24,13 @@ use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
+use Overblog\GraphQLBundle\Definition\ConfigProcessor;
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\LazyConfig;
+use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
+use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
-use Overblog\GraphQLBundle\Generator\AssocArray;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use Overblog\GraphQLGenerator\Exception\GeneratorException;
@@ -41,16 +50,31 @@ use function strrchr;
 use function substr;
 use function trim;
 
-abstract class BaseBuilder implements TypeBuilderInterface
+/**
+ * TODO:
+ *  1. Replace hard-coded '$globalVariables' with chain builder
+ *  2. Add <code> docblocks for every method
+ *  3. Replace hard-coded string types with constants ('object', 'input-object' etc.)
+ */
+class TypeBuilder
 {
-    protected const DOCBLOCK_TEXT = "This file was generated and should not be edited manually.";
-    protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
     protected const CONSTRAINTS_NAMESPACE = "Symfony\Component\Validator\Constraints";
+    protected const DOCBLOCK_TEXT = "THIS FILE WAS GENERATED AND SHOULD NOT BE EDITED MANUALLY.";
+    protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
+    protected const EXTENDS = [
+        'object'        => ObjectType::class,
+        'input-object'  => InputObjectType::class,
+        'interface'     => InterfaceType::class,
+        'union'         => UnionType::class,
+        'enum'          => EnumType::class,
+        'custom-scalar' => CustomScalarType::class
+    ];
 
     protected ExpressionConverter $expressionConverter;
     protected PhpFile $file;
     protected string $namespace;
     protected array $config;
+    protected string $type;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -59,6 +83,36 @@ abstract class BaseBuilder implements TypeBuilderInterface
 
         // Register additional converter in the php code generator
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
+    }
+
+    /**
+     * TODO (murtukov). Implement file prototype to increase performance
+     */
+    public function build(array $config, string $type): GeneratorInterface
+    {
+        $this->config = $config;
+        $this->type = $type;
+
+        // TODO (murtukov): use the file name for save
+        $this->file = PhpFile::create("{$config['class_name']}.php")->setNamespace($this->namespace);
+
+        $class = $this->file->createClass($config['class_name'])
+            ->setFinal()
+            ->setExtends(self::EXTENDS[$type])
+            ->addImplements(GeneratedTypeInterface::class)
+            ->addConst('NAME', $config['name'])
+            ->addDocBlock(self::DOCBLOCK_TEXT);
+
+        $class->createConstructor()
+            ->addArgument('configProcessor', ConfigProcessor::class)
+            ->addArgument('globalVariables', GlobalVariables::class, null)
+            ->append('$configLoader = ', $this->buildConfigLoader($config))
+            ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
+            ->append('parent::__construct($config)');
+
+        $this->file->addUse(LazyConfig::class);
+
+        return $this->file;
     }
 
     /**
@@ -77,7 +131,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
      * @return DependencyAwareGenerator|string
      * @throws RuntimeException
      */
-    private static function wrapTypeRecursive($typeNode)
+    protected static function wrapTypeRecursive($typeNode)
     {
         $call = new Call();
 
@@ -105,16 +159,19 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $type;
     }
 
-    public function buildConfigLoader(array $config)
+    protected function buildConfigLoader(array $config)
     {
         /**
-         * @var array       $fields
-         * @var string|null $description
-         * @var array|null  $interfaces
-         * @var string|null $resolveType
-         * @var string|null $validation  - only by InputType
-         * @var array|null  $types       - only by UnionType
-         * @var array|null  $values      - only by EnumType
+         * @var array           $fields
+         * @var string|null     $description
+         * @var array|null      $interfaces
+         * @var string|null     $resolveType
+         * @var string|null     $validation   - only by InputType
+         * @var array|null      $types        - only by UnionType
+         * @var array|null      $values       - only by EnumType
+         * @var callback|null   $serialize    - only by CustomScalarType
+         * @var callback|null   $parseValue   - only by CustomScalarType
+         * @var callback|null   $parseLiteral - only by CustomScalarType
          */
         extract($config);
 
@@ -158,28 +215,28 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $configLoader->addItem('values', AssocArray::multiline($values));
         }
 
-        if ($this instanceof CustomScalarTypeBuilder) {
+        if ('custom-scalar' === $this->type) {
             if (isset($scalarType)) {
                 $configLoader->addItem('scalarType', $scalarType);
             }
 
             if (isset($serialize)) {
-                $configLoader->addItem('serialize', $this->buildScalarField($serialize));
+                $configLoader->addItem('serialize', $this->buildScalarCallback($serialize));
             }
 
             if (isset($parseValue)) {
-                $configLoader->addItem('parseValue', $this->buildScalarField($parseValue));
+                $configLoader->addItem('parseValue', $this->buildScalarCallback($parseValue));
             }
 
             if (isset($parseLiteral)) {
-                $configLoader->addItem('parseLiteral', $this->buildScalarField($parseLiteral));
+                $configLoader->addItem('parseLiteral', $this->buildScalarCallback($parseLiteral));
             }
         }
 
         return new ArrowFunction($configLoader);
     }
 
-    private function buildScalarField($callback)
+    protected function buildScalarCallback(callable $callback)
     {
         $closure = new ArrowFunction();
 
@@ -198,7 +255,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
      * @param array|null $validationConfig
      * @return Closure|NumericArray
      */
-    public function buildResolve($resolve, ?array $validationConfig = null)
+    protected function buildResolve($resolve, ?array $validationConfig = null)
     {
         if (is_callable($resolve)) {
             return NumericArray::new($resolve);
@@ -241,7 +298,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $closure;
     }
 
-    public function buildValidator(Closure $closure, array $mapping, bool $injectValidator, bool $injectErrors)
+    protected function buildValidator(Closure $closure, array $mapping, bool $injectValidator, bool $injectErrors)
     {
         $validator = Instance::new(InputValidator::class)
             ->setMultiline()
@@ -281,7 +338,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         }
     }
 
-    public function buildValidationRules($mapping)
+    protected function buildValidationRules($mapping)
     {
         /**
          * @var array  $constraints
@@ -326,7 +383,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
      * ]
      * </code>
      */
-    public function buildConstraints(array $constraints = [])
+    protected function buildConstraints(array $constraints = [])
     {
         $result = NumericArray::multiline();
 
@@ -365,15 +422,11 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $result->push($instance);
         }
 
-//        if ($result->count() === 1) {
-//            return $result->getFirstItem();
-//        }
-
         return $result;
     }
 
-    // TODO: throw on scalar types
-    public function buildCascade(array $cascade)
+    // TODO (murtukov): throw on scalar types
+    protected function buildCascade(array $cascade)
     {
         if (empty($cascade)) {
             return null;
@@ -400,7 +453,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $result;
     }
 
-    public function buildProperties(?array $properties)
+    protected function buildProperties(?array $properties)
     {
         $array = AssocArray::multiline();
 
@@ -415,7 +468,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
      * @param array $fieldConfig
      * @return GeneratorInterface|AssocArray|string
      */
-    public function buildField(array $fieldConfig /*, $fieldname */)
+    protected function buildField(array $fieldConfig /*, $fieldname */)
     {
         /**
          * @var string      $type
@@ -465,18 +518,18 @@ abstract class BaseBuilder implements TypeBuilderInterface
             $field->addItem('access', $this->buildAccess($access));
         }
 
-        if ($this instanceof InputTypeBuilder && isset($validation)) {
+        if ('input-object' === $this->type && isset($validation)) {
             $this->restructureInputValidationConfig($fieldConfig);
             $field->addItem('validation', $this->buildValidationRules($fieldConfig['validation']));
         }
 
-        // TODO: ind out where this is used. Maybe in onjunction with resolveField?
+        // TODO (murtukov): ind out where this is used. Maybe in onjunction with resolveField?
         $field->addItem('useStrictAccess', true);
 
         return $field;
     }
 
-    public function buildArg($argConfig, $argName)
+    protected function buildArg($argConfig, $argName)
     {
         /**
          * @var string      $type
@@ -504,7 +557,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
      * @param string|int $complexity
      * @return Closure|mixed
      */
-    public function buildComplexity($complexity)
+    protected function buildComplexity($complexity)
     {
         if ($this->expressionConverter->check($complexity)) {
             $expression = $this->expressionConverter->convert($complexity);
@@ -525,7 +578,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $complexity;
     }
 
-    public function buildPublic($public)
+    protected function buildPublic($public)
     {
         if ($this->expressionConverter->check($public)) {
             $expression = $this->expressionConverter->convert($public);
@@ -539,7 +592,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $public;
     }
 
-    public function buildAccess($access)
+    protected function buildAccess($access)
     {
         if ($this->expressionConverter->check($access)) {
             $expression = $this->expressionConverter->convert($access);
@@ -556,7 +609,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
         return $access;
     }
 
-    public function buildResolveType($resolveType)
+    protected function buildResolveType($resolveType)
     {
         if ($this->expressionConverter->check($resolveType)) {
             $expression = $this->expressionConverter->convert($resolveType);
@@ -572,7 +625,7 @@ abstract class BaseBuilder implements TypeBuilderInterface
     }
 
     // TODO (murtukov): rework this method to use builders
-    private function restructureInputValidationConfig(array &$fieldConfig)
+    protected function restructureInputValidationConfig(array &$fieldConfig)
     {
         if (empty($fieldConfig['validation']['cascade'])) {
             return;
@@ -641,11 +694,11 @@ abstract class BaseBuilder implements TypeBuilderInterface
     /**
      * Creates and array from a formatted string, e.g.:
      *
-     * <code>
+     * ```
      *    "App\Entity\User::$firstName"  -> ['App\Entity\User', 'firstName', 'property']
      *    "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
      *    "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
-     * </code>
+     * ```.
      *
      * @param string $link
      *

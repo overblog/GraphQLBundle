@@ -34,14 +34,13 @@ class TypeGenerator
     private bool $useClassMap;
     private ?string $baseCacheDir;
     private string $classNamespace;
-
-    private ServiceLocator $typeBuilders;
+    private TypeBuilder $typeBuilder;
 
     public function __construct(
         string $classNamespace,
         ?string $cacheDir,
         array $configs,
-        ServiceLocator $typeBuilders,
+        TypeBuilder $typeBuilder,
         bool $useClassMap = true,
         ?string $baseCacheDir = null,
         ?int $cacheDirMask = null
@@ -51,11 +50,11 @@ class TypeGenerator
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
-        $this->typeBuilders = $typeBuilders;
+        $this->typeBuilder = $typeBuilder;
         $this->classNamespace = $classNamespace;
 
         if (null === $cacheDirMask) {
-            // we apply permission 0777 for default cache dir otherwise we apply 0775.
+            // Apply permission 0777 for default cache dir otherwise apply 0775.
             $cacheDirMask = null === $cacheDir ? 0777 : 0775;
         }
 
@@ -106,7 +105,7 @@ class TypeGenerator
         }
 
         // Process configs
-        $configs = ($this->configProcessor)($this->configs);
+        $configs = (self::DEFAULT_CONFIG_PROCESSOR)($this->configs);
 
         // Generate classes
         $classes = [];
@@ -120,7 +119,8 @@ class TypeGenerator
         // Create class map file
         if ($writeMode && $this->useClassMap) {
             $content = "<?php\nreturn ".\var_export($classes, true).';';
-            // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
+            // replaced hard-coded absolute paths by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
+            $content = \str_replace(" => '$cacheDir", " => __DIR__ . '", $content);
             $content = \str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
 
             \file_put_contents($this->getClassesMap(), $content);
@@ -136,7 +136,7 @@ class TypeGenerator
         $className = $config['config']['class_name'];
         $path = "$outputDirectory/$className.php";
 
-        $phpFile = $this->buildClass($config['config'], $config['type']);
+        $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
         $phpFile->save($path);
 
         return ["$this->classNamespace\\$className" => $path];
@@ -168,27 +168,5 @@ class TypeGenerator
     private function getClassesMap(): string
     {
         return $this->getCacheDir().'/__classes.map';
-    }
-
-
-    public function buildClass(array $config, string $type): GeneratorInterface
-    {
-        switch ($type) {
-            case 'object':
-                return $this->typeBuilders->get(ObjectTypeBuilder::class)->build($config);
-            case 'input':
-            case 'input-object':
-                return $this->typeBuilders->get(InputTypeBuilder::class)->build($config);
-            case 'custom-scalar':
-                return $this->typeBuilders->get(CustomScalarTypeBuilder::class)->build($config);
-            case 'interface':
-                return $this->typeBuilders->get(InterfaceTypeBuilder::class)->build($config);
-            case 'union':
-                return $this->typeBuilders->get(UnionTypeBuilder::class)->build($config);
-            case 'enum':
-                return $this->typeBuilders->get(EnumTypeBuilder::class)->build($config);
-            default:
-                throw new \RuntimeException("GraphQL config type is not recognized: '$type'");
-        }
     }
 }

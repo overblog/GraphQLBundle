@@ -13,9 +13,9 @@ use Murtukov\PHPCodeGenerator\Arrays\AssocArray as BaseArray;
 class AssocArray extends BaseArray
 {
     /**
-     * Mark additional stringifiers to be used by the convertion of array values.
+     * Mark additional converters to be used by convertion of array values.
      */
-    public static function getStringifiers(): array
+    public static function getConverters(): array
     {
         return [ExpressionConverter::class];
     }
