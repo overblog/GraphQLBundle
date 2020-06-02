@@ -33,7 +33,6 @@ use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Validator\InputValidator;
-use Overblog\GraphQLGenerator\Exception\GeneratorException;
 use RuntimeException;
 use function array_filter;
 use function array_intersect;
@@ -468,7 +467,7 @@ class TypeBuilder
      * @param array $fieldConfig
      * @return GeneratorInterface|AssocArray|string
      */
-    protected function buildField(array $fieldConfig /*, $fieldname */)
+    public function buildField(array $fieldConfig /*, $fieldname */)
     {
         /**
          * @var string      $type
@@ -529,7 +528,7 @@ class TypeBuilder
         return $field;
     }
 
-    protected function buildArg($argConfig, $argName)
+    public function buildArg($argConfig, $argName)
     {
         /**
          * @var string      $type
