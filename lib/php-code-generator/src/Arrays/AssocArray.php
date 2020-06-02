@@ -15,6 +15,6 @@ class AssocArray extends AbstractArray
      */
     public function generate(): string
     {
-        return Utils::stringify($this->items, $this->multiline, true, static::getStringifiers());
+        return Utils::stringify($this->items, $this->multiline, true, static::getConverters());
     }
 }
