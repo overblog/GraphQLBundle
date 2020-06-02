@@ -92,7 +92,7 @@ class TypeBuilder
     /**
      * TODO (murtukov). Implement file prototype to increase performance
      */
-    public function build(array $config, string $type): GeneratorInterface
+    public function build(array $config, string $type): PhpFile
     {
         $this->config = $config;
         $this->type = $type;

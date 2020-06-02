@@ -129,8 +129,14 @@ class TypeGenerator
         $className = $config['config']['class_name'];
         $path = "$outputDirectory/$className.php";
 
-        $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
-        $phpFile->save($path);
+        if (!($mode & self::MODE_MAPPING_ONLY)) {
+            if ($mode & self::MODE_WRITE) {
+                if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
+                    $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
+                    $phpFile->save($path);
+                }
+            }
+        }
 
         return ["$this->classNamespace\\$className" => $path];
     }
