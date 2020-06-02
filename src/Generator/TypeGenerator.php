@@ -5,15 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
-use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Overblog\GraphQLBundle\Config\Processor;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\CustomScalarTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\EnumTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\InputTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\InterfaceTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\ObjectTypeBuilder;
-use Overblog\GraphQLBundle\Generator\TypeBuilder\UnionTypeBuilder;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
 class TypeGenerator
@@ -119,9 +111,10 @@ class TypeGenerator
         // Create class map file
         if ($writeMode && $this->useClassMap) {
             $content = "<?php\nreturn ".\var_export($classes, true).';';
-            // replaced hard-coded absolute paths by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
+
+            // replaced hard-coded absolute paths by __DIR__
+            // (see https://github.com/overblog/GraphQLBundle/issues/167)
             $content = \str_replace(" => '$cacheDir", " => __DIR__ . '", $content);
-            $content = \str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
 
             \file_put_contents($this->getClassesMap(), $content);
 
