@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the OverblogGraphQLPhpGenerator package.
@@ -29,6 +31,7 @@ class DateTimeType
 
     /**
      * @param mixed $value
+     *
      * @throws Exception
      */
     public static function parseValue($value): DateTime
@@ -38,6 +41,7 @@ class DateTimeType
 
     /**
      * @param Node $valueNode
+     *
      * @throws Exception
      */
     public static function parseLiteral($valueNode): DateTime
@@ -45,7 +49,7 @@ class DateTimeType
         return new DateTime($valueNode->value);
     }
 
-    public static function getDateTime($root, $args): ?\DateTime
+    public static function getDateTime($root, $args): ?DateTime
     {
         return $args['dateTime'] ?? new \DateTime('2016-11-28 12:00:00');
     }

@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Generator;
 
 use Overblog\GraphQLBundle\Generator\TypeBuilder;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class TypeGeneratorTest extends TestCase
 {

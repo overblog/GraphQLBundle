@@ -71,7 +71,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
     {
         $node->validate()
-            ->ifTrue(fn($v) => \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'])
+            ->ifTrue(fn ($v) => \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'])
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
                     if (\array_key_exists('public', $field) && null !== $field['public']) {

@@ -152,7 +152,7 @@ class TypeGenerator
             $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
 
             if ($mode & self::MODE_WRITE) {
-                if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
+                if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
                     $phpFile->save($path);
                 }
             }

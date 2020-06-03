@@ -9,10 +9,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLan
 use Symfony\Component\ExpressionLanguage\Lexer;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\Token;
-use function array_merge;
-use function strlen;
-use function strpos;
-use function substr;
 
 class ExpressionLanguage extends BaseExpressionLanguage
 {
@@ -38,7 +34,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
 
     public function compile($expression, $names = [])
     {
-        return parent::compile($expression, array_merge($names, $this->globalNames));
+        return parent::compile($expression, \array_merge($names, $this->globalNames));
     }
 
     /**
@@ -67,7 +63,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
             if ($name === $current->value && Token::NAME_TYPE === $current->type) {
                 // Also check that it's not a function's name
                 $stream->next();
-                if ("(" !== $current->value) {
+                if ('(' !== $current->value) {
                     $contained = true;
                     break;
                 }
@@ -87,7 +83,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function stringHasTrigger(string $maybeExpression): bool
     {
-        return strpos($maybeExpression, self::EXPRESSION_TRIGGER) === 0;
+        return 0 === \strpos($maybeExpression, self::EXPRESSION_TRIGGER);
     }
 
     /**
@@ -95,11 +91,12 @@ class ExpressionLanguage extends BaseExpressionLanguage
      * returns the initial string.
      *
      * @param string $expression - String expression with a trigger prefix
+     *
      * @return false|string
      */
     public static function unprefixExpression(string $expression)
     {
-        $string = substr($expression, strlen(self::EXPRESSION_TRIGGER));
+        $string = \substr($expression, \strlen(self::EXPRESSION_TRIGGER));
 
         return $string ?: $expression;
     }

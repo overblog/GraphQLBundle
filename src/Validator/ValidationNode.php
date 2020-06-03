@@ -42,7 +42,6 @@ class ValidationNode
      */
     private array $__resolverArgs;
 
-
     public function __construct(Type $type, string $field = null, ?ValidationNode $parent = null, array $resolverArgs = [])
     {
         $this->__type = $type;

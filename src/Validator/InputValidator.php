@@ -45,8 +45,7 @@ class InputValidator
         ValidatorFactory $factory,
         array $propertiesMapping = [],
         array $classMapping = []
-    )
-    {
+    ) {
         if (null === $validator) {
             throw new ServiceNotFoundException(
                 "The 'validator' service is not found. To use the 'InputValidator' you need to install the
@@ -70,6 +69,7 @@ class InputValidator
      * @param ArgumentInterface $args
      * @param mixed             $context
      * @param ResolveInfo       $info
+     *
      * @return array
      */
     private function mapResolverArgs($value, ArgumentInterface $args, $context, ResolveInfo $info): array
@@ -252,7 +252,7 @@ class InputValidator
     /**
      * @param array $rules
      */
-    private function restructureShortForm(array &$rules)
+    private function restructureShortForm(array &$rules): void
     {
         if (isset($rules[0])) {
             $rules = ['constraints' => $rules];
@@ -261,6 +261,7 @@ class InputValidator
 
     /**
      * @param string|array|null $groups
+     *
      * @throws ArgumentsValidationException
      */
     public function __invoke($groups = null, bool $throw = true): ?ConstraintViolationListInterface
