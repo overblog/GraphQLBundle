@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
@@ -21,12 +20,12 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $prototype
             ->beforeNormalization()
                 // Allow field type short syntax (Field: Type => Field: {type: Type})
-                ->ifTrue(fn($options) => \is_string($options))
-                ->then(fn($options) => ['type' => $options])
+                ->ifTrue(fn ($options) => \is_string($options))
+                ->then(fn ($options) => ['type' => $options])
             ->end()
             ->validate()
                 // Remove empty entries
-                ->always(function($value) {
+                ->always(function ($value) {
                     if (empty($value['validationGroups'])) {
                         unset($value['validationGroups']);
                     }
@@ -55,8 +54,8 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->prototype('array')
                         // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
                         ->beforeNormalization()
-                            ->ifTrue(fn($options) => \is_string($options))
-                            ->then(fn($options) => ['type' => $options])
+                            ->ifTrue(fn ($options) => \is_string($options))
+                            ->then(fn ($options) => ['type' => $options])
                         ->end()
                         ->children()
                             ->append($this->typeSection(true))

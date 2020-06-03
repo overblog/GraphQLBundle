@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
-
 interface ConnectionInterface
 {
     /**

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Murtukov\PHPCodeGenerator\Arrays\AssocArray as BaseArray;
+use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 
 /**
  * Extends the default AssocArray to properly convert expressions.

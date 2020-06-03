@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
-use Overblog\GraphQLBundle\Config\Processor\ExpressionProcessor;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\Config\Processor\NamedConfigProcessor;
 use Overblog\GraphQLBundle\Config\Processor\ProcessorInterface;

@@ -41,7 +41,7 @@ abstract class TypeDefinition
         $node = self::createNode('name', 'scalar');
         $node->isRequired();
         $node->validate()
-            ->ifTrue(fn($name) => !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name))
+            ->ifTrue(fn ($name) => !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name))
             ->thenInvalid('Invalid type name "%s". (see http://spec.graphql.org/June2018/#sec-Names)')
         ->end();
 

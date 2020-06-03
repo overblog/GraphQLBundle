@@ -16,7 +16,7 @@ class EnumTypeDefinition extends TypeDefinition
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()
-                        ->ifTrue(fn($v) => \is_array($v))
+                        ->ifTrue(fn ($v) => \is_array($v))
                         ->then(function ($v) {
                             foreach ($v as $name => &$options) {
                                 // short syntax NAME: VALUE

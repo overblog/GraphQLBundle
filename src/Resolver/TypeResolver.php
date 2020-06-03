@@ -55,9 +55,8 @@ class TypeResolver extends AbstractResolver
         return $this->cache[$alias];
     }
 
-    public function resolveMultiple()
+    public function resolveMultiple(): void
     {
-
     }
 
     private function string2Type(string $alias): Type
