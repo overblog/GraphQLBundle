@@ -582,7 +582,8 @@ class TypeBuilder
                 ;
             }
 
-            return ArrowFunction::new($expression)->addArgument('childrenComplexity');
+            return ArrowFunction::new(Literal::new($expression))
+                ->addArgument('childrenComplexity');
         }
 
         return $complexity;
@@ -613,7 +614,7 @@ class TypeBuilder
                 ->addArgument('context')
                 ->addArgument('info')
                 ->addArgument('object')
-                ->setExpression($expression);
+                ->setExpression(Literal::new($expression));
         }
 
         return $access;
@@ -628,7 +629,7 @@ class TypeBuilder
                 ->addArgument('value')
                 ->addArgument('context')
                 ->addArgument('info')
-                ->setExpression($expression);
+                ->setExpression(Literal::new($expression));
         }
 
         return $resolveType;
