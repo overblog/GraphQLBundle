@@ -12,13 +12,11 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
-use Murtukov\PHPCodeGenerator\Arrays\NumericArray;
-use Murtukov\PHPCodeGenerator\Call;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
-use Murtukov\PHPCodeGenerator\Functions\ArrowFunction;
-use Murtukov\PHPCodeGenerator\Functions\Closure;
+use Murtukov\PHPCodeGenerator\ArrowFunction;
+use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
@@ -81,7 +79,7 @@ class TypeBuilder
         $this->type = $type;
 
         // TODO (murtukov): use the file name for save
-        $this->file = PhpFile::create("{$config['class_name']}.php")->setNamespace($this->namespace);
+        $this->file = PhpFile::new("{$config['class_name']}.php")->setNamespace($this->namespace);
 
         $class = $this->file->createClass($config['class_name'])
             ->setFinal()
@@ -89,6 +87,8 @@ class TypeBuilder
             ->addImplements(GeneratedTypeInterface::class)
             ->addConst('NAME', $config['name'])
             ->addDocBlock(self::DOCBLOCK_TEXT);
+
+        $class->emptyLine();
 
         $class->createConstructor()
             ->addArgument('configProcessor', ConfigProcessor::class)
@@ -109,11 +109,11 @@ class TypeBuilder
      *
      * @throws RuntimeException
      */
-    protected static function buildType($typeDefinition)
+    protected function buildType($typeDefinition)
     {
         $typeNode = Parser::parseType($typeDefinition);
 
-        return self::wrapTypeRecursive($typeNode);
+        return $this->wrapTypeRecursive($typeNode);
     }
 
     /**
@@ -123,23 +123,24 @@ class TypeBuilder
      *
      * @throws RuntimeException
      */
-    protected static function wrapTypeRecursive($typeNode)
+    protected function wrapTypeRecursive($typeNode)
     {
-        $call = new Call();
-
         switch ($typeNode->kind) {
             case NodeKind::NON_NULL_TYPE:
-                $innerType = self::wrapTypeRecursive($typeNode->type);
-                $type = $call(Type::class)::nonNull($innerType);
+                $innerType = $this->wrapTypeRecursive($typeNode->type);
+                $type = Literal::new("Type::nonNull($innerType)");
+                $this->file->addUse(Type::class);
                 break;
             case NodeKind::LIST_TYPE:
-                $innerType = self::wrapTypeRecursive($typeNode->type);
-                $type = $call(Type::class)::listOf($innerType);
+                $innerType = $this->wrapTypeRecursive($typeNode->type);
+                $type = Literal::new("Type::listOf($innerType)");
+                $this->file->addUse(Type::class);
                 break;
             case NodeKind::NAMED_TYPE:
                 if (\in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
                     $name = \strtolower($typeNode->name->value);
-                    $type = $call(Type::class)::$name();
+                    $type = Literal::new("Type::$name()");
+                    $this->file->addUse(Type::class);
                 } else {
                     $name = $typeNode->name->value;
                     $type = "\$globalVariables->get('typeResolver')->resolve('$name')";
@@ -153,7 +154,7 @@ class TypeBuilder
 
     protected function buildConfigLoader(array $config)
     {
-        /*
+        /**
          * @var array           $fields
          * @var string|null     $description
          * @var array|null      $interfaces
@@ -167,7 +168,7 @@ class TypeBuilder
          */
         \extract($config);
 
-        $configLoader = AssocArray::multiline();
+        $configLoader = Collection::assoc();
         $configLoader->addItem('name', new Literal('self::NAME'));
 
         if (isset($description)) {
@@ -181,18 +182,18 @@ class TypeBuilder
 
         if (!empty($fields)) {
             $configLoader->addItem('fields', ArrowFunction::new(
-                AssocArray::map($fields, [$this, 'buildField'])
+                Collection::map($fields, [$this, 'buildField'])
             ));
         }
 
         if (!empty($interfaces)) {
             $items = \array_map(fn ($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $interfaces);
-            $configLoader->addItem('interfaces', ArrowFunction::new(NumericArray::multiline($items)));
+            $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (isset($types)) {
             $items = \array_map(fn ($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $types);
-            $configLoader->addItem('types', ArrowFunction::new(NumericArray::multiline($items)));
+            $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (isset($resolveType)) {
@@ -204,7 +205,7 @@ class TypeBuilder
         }
 
         if (isset($values)) {
-            $configLoader->addItem('values', AssocArray::multiline($values));
+            $configLoader->addItem('values', Collection::assoc($values));
         }
 
         if ('custom-scalar' === $this->type) {
@@ -246,12 +247,12 @@ class TypeBuilder
      * @param mixed      $resolve
      * @param array|null $validationConfig
      *
-     * @return Closure|NumericArray
+     * @return Closure|Collection
      */
     protected function buildResolve($resolve, ?array $validationConfig = null)
     {
         if (\is_callable($resolve)) {
-            return NumericArray::new($resolve);
+            return Collection::numeric($resolve);
         }
 
         $closure = Closure::new()
@@ -314,7 +315,7 @@ class TypeBuilder
         // If auto-validation on or errors are injected
         if (!$injectValidator || $injectErrors) {
             if (!empty($mapping['validationGroups'])) {
-                $validationGroups = NumericArray::new($mapping['validationGroups']);
+                $validationGroups = Collection::numeric($mapping['validationGroups']);
             } else {
                 $validationGroups = 'null';
             }
@@ -333,14 +334,14 @@ class TypeBuilder
 
     protected function buildValidationRules($mapping)
     {
-        /*
+        /**
          * @var array  $constraints
          * @var string $link
          * @var array  $cascade
          */
         \extract($mapping);
 
-        $array = AssocArray::multiline();
+        $array = Collection::assoc();
 
         if (!empty($link)) {
             if (false === \strpos($link, '::')) {
@@ -348,7 +349,7 @@ class TypeBuilder
                 $array->addItem('link', $link);
             } else {
                 // e.g. App\Entity\Droid::$id
-                $array->addItem('link', NumericArray::new($this->normalizeLink($link)));
+                $array->addItem('link', Collection::numeric($this->normalizeLink($link)));
             }
         }
 
@@ -380,7 +381,7 @@ class TypeBuilder
      */
     protected function buildConstraints(array $constraints = [])
     {
-        $result = NumericArray::multiline();
+        $result = Collection::numeric()->setMultiline();
 
         foreach ($constraints as $wrapper) {
             $name = \key($wrapper);
@@ -409,7 +410,7 @@ class TypeBuilder
                     $instance->addArgument($this->buildConstraints($args));
                 } else {
                     // Numeric or Assoc array?
-                    $instance->addArgument(isset($args[0]) ? $args : AssocArray::new($args));
+                    $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
                 }
             } elseif (null !== $args) {
                 $instance->addArgument($args);
@@ -424,20 +425,20 @@ class TypeBuilder
     /**
      * @throws GeneratorException
      */
-    protected function buildCascade(array $cascade): ?AssocArray
+    protected function buildCascade(array $cascade): ?Collection
     {
         if (empty($cascade)) {
             return null;
         }
 
-        /*
+        /**
          * @var string $referenceType
          * @var array  $groups
          * @var bool   $isCollection
          */
         \extract($cascade);
 
-        $result = AssocArray::multiline()
+        $result = Collection::assoc()
             ->addIfNotEmpty('groups', $groups);
 
         if (isset($isCollection)) {
@@ -459,7 +460,7 @@ class TypeBuilder
 
     protected function buildProperties(?array $properties)
     {
-        $array = AssocArray::multiline();
+        $array = Collection::assoc();
 
         foreach ($properties as $name => $props) {
             $array->addItem($name, $this->buildValidationRules($props));
@@ -469,13 +470,13 @@ class TypeBuilder
     }
 
     /**
-     * @return GeneratorInterface|AssocArray|string
+     * @return GeneratorInterface|Collection|string
      *
      * @throws GeneratorException
      */
     public function buildField(array $fieldConfig /*, $fieldname */)
     {
-        /*
+        /**
          * @var string      $type
          * @var string|null $resolve
          * @var string|null $description
@@ -487,11 +488,11 @@ class TypeBuilder
 
         // If there is only 'type', use shorthand
         if (1 === \count($fieldConfig) && isset($type)) {
-            return self::buildType($type);
+            return $this->buildType($type);
         }
 
-        $field = AssocArray::multiline()
-            ->addItem('type', self::buildType($type));
+        $field = Collection::assoc()
+            ->addItem('type', $this->buildType($type));
 
         // only for object types
         if (isset($resolve)) {
@@ -508,7 +509,7 @@ class TypeBuilder
         }
 
         if (!empty($args)) {
-            $field->addItem('args', NumericArray::map($args, [$this, 'buildArg']));
+            $field->addItem('args', Collection::map($args, [$this, 'buildArg']));
         }
 
         if (isset($complexity)) {
@@ -539,16 +540,16 @@ class TypeBuilder
 
     public function buildArg($argConfig, $argName)
     {
-        /*
+        /**
          * @var string      $type
          * @var string|null $description
          * @var string|null $defaultValue
          */
         \extract($argConfig);
 
-        $arg = AssocArray::multiline()
+        $arg = Collection::assoc()
             ->addItem('name', $argName)
-            ->addItem('type', self::buildType($type));
+            ->addItem('type', $this->buildType($type));
 
         if (isset($description)) {
             $arg->addIfNotEmpty('description', $description);
@@ -645,7 +646,7 @@ class TypeBuilder
     }
 
     // TODO (murtukov): rework this method to use builders
-    protected function restructureObjectValidationConfig(array $fieldConfig, AssocArray $field): ?array
+    protected function restructureObjectValidationConfig(array $fieldConfig, Collection $field): ?array
     {
         $properties = [];
 
