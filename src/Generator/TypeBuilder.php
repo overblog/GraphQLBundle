@@ -17,6 +17,7 @@ use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Closure;
+use Murtukov\PHPCodeGenerator\Exception\UnrecognizedValueTypeException;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
@@ -214,40 +215,58 @@ class TypeBuilder
             }
 
             if (isset($serialize)) {
-                $configLoader->addItem('serialize', $this->buildScalarCallback($serialize));
+                $configLoader->addItem('serialize', $this->buildScalarCallback($serialize, 'serialize'));
             }
 
             if (isset($parseValue)) {
-                $configLoader->addItem('parseValue', $this->buildScalarCallback($parseValue));
+                $configLoader->addItem('parseValue', $this->buildScalarCallback($parseValue, 'parseValue'));
             }
 
             if (isset($parseLiteral)) {
-                $configLoader->addItem('parseLiteral', $this->buildScalarCallback($parseLiteral));
+                $configLoader->addItem('parseLiteral', $this->buildScalarCallback($parseLiteral, 'parseLiteral'));
             }
         }
 
         return new ArrowFunction($configLoader);
     }
 
-    protected function buildScalarCallback($callback)
+    protected function buildScalarCallback($callback, string $fieldName)
     {
+        if (!is_callable($callback)) {
+            throw new GeneratorException("Value of '$fieldName' is not callable.");
+        }
+
         $closure = new ArrowFunction();
 
         if (\is_array($callback)) {
             [$class, $method] = $callback;
-            $closure->setExpression("\\$class::$method(...\\func_get_args())");
         } else {
-            $closure->setExpression("\\$callback(...\\func_get_args())");
+            [$class, $method] = explode('::', $callback);
         }
+
+        $className = Utils::resolveQualifier($class);
+
+        if ($className === $this->config['class_name']) {
+            // Create alias if name of serializer is same as type name
+            $className = 'Base'.$className;
+            $this->file->addUse($class, $className);
+        } else {
+            $this->file->addUse($class);
+        }
+
+        $closure->setExpression(Literal::new("$className::$method(...\\func_get_args())"));
 
         return $closure;
     }
 
     /**
-     * @param mixed      $resolve
+     * @param mixed $resolve
      * @param array|null $validationConfig
      *
      * @return Closure|Collection
+     *
+     * @throws GeneratorException
+     * @throws UnrecognizedValueTypeException
      */
     protected function buildResolve($resolve, ?array $validationConfig = null)
     {
@@ -582,7 +601,9 @@ class TypeBuilder
                 ;
             }
 
-            return ArrowFunction::new($expression)->addArgument('childrenComplexity');
+            return ArrowFunction::new()
+                ->addArgument('childrenComplexity')
+                ->setExpression(Literal::new($expression));
         }
 
         return $complexity;
@@ -593,9 +614,10 @@ class TypeBuilder
         if ($this->expressionConverter->check($public)) {
             $expression = $this->expressionConverter->convert($public);
 
-            return ArrowFunction::new($expression)
+            return ArrowFunction::new()
                 ->addArgument('fieldName')
                 ->addArgument('typeName', '', new Literal('self::NAME'))
+                ->setExpression(Literal::new($expression))
             ;
         }
 
@@ -613,7 +635,7 @@ class TypeBuilder
                 ->addArgument('context')
                 ->addArgument('info')
                 ->addArgument('object')
-                ->setExpression($expression);
+                ->setExpression(Literal::new($expression));
         }
 
         return $access;
@@ -628,7 +650,7 @@ class TypeBuilder
                 ->addArgument('value')
                 ->addArgument('context')
                 ->addArgument('info')
-                ->setExpression($expression);
+                ->setExpression(Literal::new($expression));
         }
 
         return $resolveType;
