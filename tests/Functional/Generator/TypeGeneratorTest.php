@@ -97,11 +97,4 @@ class TypeGeneratorTest extends TestCase
         parent::setUp();
         static::bootKernel(['test_case' => 'validatorWithoutConstraints']);
     }
-
-    // TODO (murtukov): remove this
-    public function testGeneratorTemporary(): void
-    {
-        parent::setUp();
-        static::bootKernel(['test_case' => 'generator']);
-    }
 }
