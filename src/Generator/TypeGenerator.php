@@ -8,6 +8,9 @@ use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * @final
+ */
 class TypeGenerator
 {
     public const MODE_DRY_RUN = 1;
