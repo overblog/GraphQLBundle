@@ -12,11 +12,11 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use Murtukov\PHPCodeGenerator\ArrowFunction;
+use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
-use Murtukov\PHPCodeGenerator\ArrowFunction;
-use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\Exception\UnrecognizedValueTypeException;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
@@ -104,13 +104,11 @@ class TypeBuilder
     }
 
     /**
-     * @param $typeDefinition
-     *
      * @return GeneratorInterface|string
      *
      * @throws RuntimeException
      */
-    protected function buildType($typeDefinition)
+    protected function buildType(string $typeDefinition)
     {
         $typeNode = Parser::parseType($typeDefinition);
 
@@ -118,7 +116,7 @@ class TypeBuilder
     }
 
     /**
-     * @param $typeNode
+     * @param mixed $typeNode
      *
      * @return DependencyAwareGenerator|string
      *
@@ -156,16 +154,16 @@ class TypeBuilder
     protected function buildConfigLoader(array $config)
     {
         /**
-         * @var array           $fields
-         * @var string|null     $description
-         * @var array|null      $interfaces
-         * @var string|null     $resolveType
-         * @var string|null     $validation   - only by InputType
-         * @var array|null      $types        - only by UnionType
-         * @var array|null      $values       - only by EnumType
-         * @var callback|null   $serialize    - only by CustomScalarType
-         * @var callback|null   $parseValue   - only by CustomScalarType
-         * @var callback|null   $parseLiteral - only by CustomScalarType
+         * @var array         $fields
+         * @var string|null   $description
+         * @var array|null    $interfaces
+         * @var string|null   $resolveType
+         * @var string|null   $validation   - only by InputType
+         * @var array|null    $types        - only by UnionType
+         * @var array|null    $values       - only by EnumType
+         * @var callback|null $serialize    - only by CustomScalarType
+         * @var callback|null $parseValue   - only by CustomScalarType
+         * @var callback|null $parseLiteral - only by CustomScalarType
          */
         \extract($config);
 
@@ -230,18 +228,25 @@ class TypeBuilder
         return new ArrowFunction($configLoader);
     }
 
+    /**
+     * @param callable $callback
+     * @param string $fieldName
+     *
+     * @return ArrowFunction
+     * @throws GeneratorException
+     */
     protected function buildScalarCallback($callback, string $fieldName)
     {
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             throw new GeneratorException("Value of '$fieldName' is not callable.");
         }
 
         $closure = new ArrowFunction();
 
-        if (\is_array($callback)) {
+        if (!\is_string($callback)) {
             [$class, $method] = $callback;
         } else {
-            [$class, $method] = explode('::', $callback);
+            [$class, $method] = \explode('::', $callback);
         }
 
         $className = Utils::resolveQualifier($class);
@@ -260,17 +265,17 @@ class TypeBuilder
     }
 
     /**
-     * @param mixed $resolve
+     * @param mixed      $resolve
      * @param array|null $validationConfig
      *
-     * @return Closure|Collection
+     * @return GeneratorInterface
      *
      * @throws GeneratorException
      * @throws UnrecognizedValueTypeException
      */
     protected function buildResolve($resolve, ?array $validationConfig = null)
     {
-        if (\is_callable($resolve)) {
+        if (\is_callable($resolve) && \is_array($resolve)) {
             return Collection::numeric($resolve);
         }
 
@@ -444,7 +449,7 @@ class TypeBuilder
     /**
      * @throws GeneratorException
      */
-    protected function buildCascade(array $cascade): ?Collection
+    protected function buildCascade(array $cascade)
     {
         if (empty($cascade)) {
             return null;
@@ -477,7 +482,7 @@ class TypeBuilder
         return $result;
     }
 
-    protected function buildProperties(?array $properties)
+    protected function buildProperties(array $properties)
     {
         $array = Collection::assoc();
 
@@ -582,7 +587,7 @@ class TypeBuilder
     }
 
     /**
-     * @param string|int $complexity
+     * @param string $complexity
      *
      * @return Closure|mixed
      */

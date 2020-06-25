@@ -142,8 +142,8 @@ query FriendsQuery($firstFriends: Int) {
 }
 EOF;
 
-        $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], \json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']));
-
+        $content = \json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']) ?: null;
+        $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], $content);
         $this->assertSame(200, $client->getResponse()->getStatusCode());
     }
 
@@ -211,7 +211,8 @@ EOF;
             ],
         ];
 
-        $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], \json_encode($data));
+        $content = \json_encode($data) ?: null;
+        $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], $content);
         $result = $client->getResponse()->getContent();
 
         $expected = [
@@ -306,7 +307,7 @@ EOF;
     }
 
     /**
-     * @param Client|KernelBrowser $client
+     * @param KernelBrowser $client
      */
     private function assertCORSHeadersNotExists($client): void
     {
@@ -319,7 +320,7 @@ EOF;
     }
 
     /**
-     * @param Client|KernelBrowser $client
+     * @param KernelBrowser $client
      */
     private function assertCORSHeadersExists($client): void
     {

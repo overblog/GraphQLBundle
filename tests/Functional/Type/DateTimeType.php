@@ -15,7 +15,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 
 use DateTime;
 use Exception;
-use GraphQL\Language\AST\Node;
+use GraphQL\Language\AST\StringValueNode;
 
 class DateTimeType
 {
@@ -40,7 +40,7 @@ class DateTimeType
     }
 
     /**
-     * @param Node $valueNode
+     * @param StringValueNode $valueNode
      *
      * @throws Exception
      */

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
-    protected function outputFieldsSection(): ArrayNodeDefinition
+    protected function outputFieldsSection(): NodeDefinition
     {
         $node = self::createNode('fields');
         $node

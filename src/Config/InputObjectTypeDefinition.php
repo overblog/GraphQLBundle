@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 class InputObjectTypeDefinition extends TypeDefinition
 {
-    public function getDefinition(): ArrayNodeDefinition
+    public function getDefinition(): NodeDefinition
     {
         $node = self::createNode('_input_object_config');
 

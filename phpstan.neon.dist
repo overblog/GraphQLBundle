@@ -3,6 +3,7 @@ includes:
 
 parameters:
   level: 7
+  reportUnmatchedIgnoredErrors: false
   paths:
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/tests
