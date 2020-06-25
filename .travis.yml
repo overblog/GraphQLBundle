@@ -32,23 +32,13 @@ script: composer test
 
 jobs:
     include:
-        - php: 7.2
-          env: SYMFONY_VERSION=4.3.* PHPUNIT_VERSION=^7.2
-        - php: 7.3
-          env: SYMFONY_VERSION=4.3.* VALIDATOR=0
-        - php: 7.3
-          env: SYMFONY_VERSION=4.3.* USE_EXPERIMENTAL_EXECUTOR=1
-        - php: 7.3
-          env: SYMFONY_VERSION=4.4.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
-        - php: 7.3
-          env: SYMFONY_VERSION=5.0.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
         - php: 7.4snapshot
           env: SYMFONY_VERSION=4.3.*
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
             - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
@@ -59,18 +49,18 @@ jobs:
             - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: STATIC_ANALYSIS SYMFONY_VERSION=4.3.*
           install: travis_retry composer install --prefer-dist
           script: composer static-analysis
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: CODING_STANDARDS
           script: composer check-cs
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: BENCHMARK
           script: composer bench
 
