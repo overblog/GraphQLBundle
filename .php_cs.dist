@@ -23,7 +23,8 @@ return PhpCsFixer\Config::create()
             'native_function_invocation' => true,
             'fully_qualified_strict_types' => true,
             'single_line_throw' => false,
-            'no_superfluous_phpdoc_tags' => false
+            'no_superfluous_phpdoc_tags' => false,
+            'phpdoc_to_comment' => false,
 #            'no_superfluous_phpdoc_tags' => ['allow_mixed' => true],
 #            'global_namespace_import' => ['import_functions' => true, 'import_classes' => true],
         ]

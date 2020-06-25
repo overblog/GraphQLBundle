@@ -378,6 +378,7 @@ class Configuration implements ConfigurationInterface
      * @param string      $type
      *
      * @return ArrayNodeDefinition|NodeDefinition
+     *
      * @internal
      */
     public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, string $name, string $type = 'array')

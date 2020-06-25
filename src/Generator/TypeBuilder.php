@@ -230,9 +230,10 @@ class TypeBuilder
 
     /**
      * @param callable $callback
-     * @param string $fieldName
+     * @param string   $fieldName
      *
      * @return ArrowFunction
+     *
      * @throws GeneratorException
      */
     protected function buildScalarCallback($callback, string $fieldName)
