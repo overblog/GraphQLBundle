@@ -1254,3 +1254,8 @@ parameters:
 			message: "#^Method Symfony\\\\Component\\\\Validator\\\\Constraints\\\\ExpressionValidator::__construct.*$#"
 			count: 1
 			path: src/Validator/Constraints/ExpressionValidator.php
+
+		-
+			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\CacheWarmer\\\\CompileCacheWarmer::warmUp.*$#"
+			count: 2
+			path: src/CacheWarmer/CompileCacheWarmer.php
