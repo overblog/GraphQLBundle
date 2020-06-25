@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator;
 
+use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
@@ -194,7 +195,10 @@ class InputValidator
         return $rootObject;
     }
 
-    private function createCollectionNode(array $values, Type $type, ValidationNode $parent): array
+    /**
+     * @param ObjectType|InputObjectType $type
+     */
+    private function createCollectionNode(array $values, $type, ValidationNode $parent): array
     {
         $collection = [];
 
@@ -205,7 +209,10 @@ class InputValidator
         return $collection;
     }
 
-    private function createObjectNode(array $value, Type $type, ValidationNode $parent): ValidationNode
+    /**
+     * @param ObjectType|InputObjectType $type
+     */
+    private function createObjectNode(array $value, $type, ValidationNode $parent): ValidationNode
     {
         $classMapping = $type->config['validation'] ?? [];
         $propertiesMapping = [];

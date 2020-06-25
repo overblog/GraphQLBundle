@@ -56,6 +56,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
             $expression = self::unprefixExpression($expression);
         }
 
+        /** @var string $expression */
         $stream = (new Lexer())->tokenize($expression);
         $current = &$stream->current;
 
@@ -92,7 +93,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
      *
      * @param string $expression - String expression with a trigger prefix
      *
-     * @return false|string
+     * @return string
      */
     public static function unprefixExpression(string $expression)
     {

@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -128,10 +127,10 @@ abstract class TestCase extends WebTestCase
     }
 
     /**
-     * @param Client|KernelBrowser $client
-     * @param $query
-     * @param bool       $isDecoded
-     * @param array|null $variables
+     * @param KernelBrowser $client
+     * @param string        $query
+     * @param bool          $isDecoded
+     * @param array|null    $variables
      *
      * @return mixed
      */
@@ -155,7 +154,7 @@ abstract class TestCase extends WebTestCase
     }
 
     /**
-     * @param Client|KernelBrowser $client
+     * @param KernelBrowser $client
      */
     protected function disableCatchExceptions($client): void
     {
