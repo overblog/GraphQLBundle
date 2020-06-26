@@ -53,18 +53,12 @@ class TypeGenerator
         $this->cacheDirMask = $cacheDirMask;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBaseCacheDir(): ?string
     {
         return $this->baseCacheDir;
     }
 
-    /**
-     * @param string|null $baseCacheDir
-     */
-    public function setBaseCacheDir($baseCacheDir): void
+    public function setBaseCacheDir(string $baseCacheDir): void
     {
         $this->baseCacheDir = $baseCacheDir;
     }
