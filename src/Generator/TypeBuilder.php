@@ -521,7 +521,7 @@ class TypeBuilder
 
         // only for object types
         if (isset($resolve)) {
-            $validationConfig = $this->restructureObjectValidationConfig($fieldConfig, $field);
+            $validationConfig = $this->restructureObjectValidationConfig($fieldConfig);
             $field->addItem('resolve', $this->buildResolve($resolve, $validationConfig));
         }
 
@@ -674,7 +674,7 @@ class TypeBuilder
     }
 
     // TODO (murtukov): rework this method to use builders
-    protected function restructureObjectValidationConfig(array $fieldConfig, Collection $field): ?array
+    protected function restructureObjectValidationConfig(array $fieldConfig): ?array
     {
         $properties = [];
 
