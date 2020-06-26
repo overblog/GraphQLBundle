@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
 use PHPUnit\Framework\MockObject\Stub;
@@ -36,10 +37,10 @@ abstract class TestCase extends BaseTestCase
     protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue'): void
     {
         $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
-        $globalVariables = new GlobalVariables([
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
             'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        $globalVariables->get('security');
+        ${TypeGenerator::GLOBAL_VARS}->get('security');
         \extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));

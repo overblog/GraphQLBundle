@@ -13,12 +13,8 @@ final class IsAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isAuthenticated',
-            static function (): string {
-                return '$globalVariables->get(\'security\')->isAuthenticated()';
-            },
-            static function () use ($security): bool {
-                return $security->isAuthenticated();
-            }
+            fn () => "$this->globalVars->get('security')->isAuthenticated()",
+            fn () => $security->isAuthenticated()
         );
     }
 }

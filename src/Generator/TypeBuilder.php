@@ -37,9 +37,8 @@ use RuntimeException;
 
 /**
  * TODO:
- *  1. Replace hard-coded '$globalVariables' with chain builder
- *  2. Add <code> docblocks for every method
- *  3. Replace hard-coded string types with constants ('object', 'input-object' etc.).
+ *  1. Add <code> docblocks for every method
+ *  2. Replace hard-coded string types with constants ('object', 'input-object' etc.).
  */
 class TypeBuilder
 {
@@ -61,6 +60,7 @@ class TypeBuilder
     protected string $namespace;
     protected array $config;
     protected string $type;
+    protected string $globalVars = '$'.TypeGenerator::GLOBAL_VARS;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -93,9 +93,9 @@ class TypeBuilder
 
         $class->createConstructor()
             ->addArgument('configProcessor', ConfigProcessor::class)
-            ->addArgument('globalVariables', GlobalVariables::class, null)
+            ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class, null)
             ->append('$configLoader = ', $this->buildConfigLoader($config))
-            ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, $globalVariables))->load()')
+            ->append("\$config = \$configProcessor->process(LazyConfig::create(\$configLoader, $this->globalVars))->load()")
             ->append('parent::__construct($config)');
 
         $this->file->addUse(LazyConfig::class);
@@ -142,7 +142,7 @@ class TypeBuilder
                     $this->file->addUse(Type::class);
                 } else {
                     $name = $typeNode->name->value;
-                    $type = "\$globalVariables->get('typeResolver')->resolve('$name')";
+                    $type = "$this->globalVars->get('typeResolver')->resolve('$name')";
                 }
                 break;
             default: throw new RuntimeException('Unrecognized node kind.');
@@ -186,12 +186,12 @@ class TypeBuilder
         }
 
         if (!empty($interfaces)) {
-            $items = \array_map(fn ($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $interfaces);
+            $items = \array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $interfaces);
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (isset($types)) {
-            $items = \array_map(fn ($type) => "\$globalVariables->get('typeResolver')->resolve('$type')", $types);
+            $items = \array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
@@ -281,11 +281,8 @@ class TypeBuilder
         }
 
         $closure = Closure::new()
-            ->addArgument('value')
-            ->addArgument('args')
-            ->addArgument('context')
-            ->addArgument('info')
-            ->bindVar('globalVariables');
+            ->addArguments('value', 'args', 'context', 'info')
+            ->bindVar(TypeGenerator::GLOBAL_VARS);
 
         // TODO (murtukov): replace usage of converter with ExpressionLanguage static method
         if ($this->expressionConverter->check($resolve)) {
@@ -322,8 +319,8 @@ class TypeBuilder
         $validator = Instance::new(InputValidator::class)
             ->setMultiline()
             ->addArgument(new Literal('\\func_get_args()'))
-            ->addArgument("\$globalVariables->get('container')->get('validator')")
-            ->addArgument("\$globalVariables->get('validatorFactory')");
+            ->addArgument("$this->globalVars->get('container')->get('validator')")
+            ->addArgument("$this->globalVars->get('validatorFactory')");
 
         if (!empty($mapping['properties'])) {
             $validator->addArgument($this->buildProperties($mapping['properties']));
@@ -477,7 +474,7 @@ class TypeBuilder
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
-            $result->addItem('referenceType', "\$globalVariables->get('typeResolver')->resolve('$referenceType')");
+            $result->addItem('referenceType', "$this->globalVars->get('typeResolver')->resolve('$referenceType')");
         }
 
         return $result;
@@ -601,8 +598,8 @@ class TypeBuilder
                 return Closure::new()
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
-                    ->bindVar('globalVariables')
-                    ->append('$args = $globalVariables->get(\'argumentFactory\')->create($arguments)')
+                    ->bindVar(TypeGenerator::GLOBAL_VARS)
+                    ->append('$args = ', "$this->globalVars->get('argumentFactory')->create(\$arguments)")
                     ->append('return ', $expression)
                 ;
             }
@@ -636,11 +633,7 @@ class TypeBuilder
             $expression = $this->expressionConverter->convert($access);
 
             return ArrowFunction::new()
-                ->addArgument('value')
-                ->addArgument('args')
-                ->addArgument('context')
-                ->addArgument('info')
-                ->addArgument('object')
+                ->addArguments('value', 'args', 'context', 'info', 'object')
                 ->setExpression(Literal::new($expression));
         }
 
@@ -653,9 +646,7 @@ class TypeBuilder
             $expression = $this->expressionConverter->convert($resolveType);
 
             return ArrowFunction::new()
-                ->addArgument('value')
-                ->addArgument('context')
-                ->addArgument('info')
+                ->addArguments('value', 'context', 'info')
                 ->setExpression(Literal::new($expression));
         }
 

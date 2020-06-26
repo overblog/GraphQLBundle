@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class ServiceTest extends TestCase
@@ -30,8 +31,8 @@ class ServiceTest extends TestCase
     public function testServiceCompilation(string $name): void
     {
         $object = new \stdClass();
-        $globalVariables = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
-        $globalVariables->get('container');
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 

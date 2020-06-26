@@ -18,13 +18,11 @@ class TypeGenerator
     public const MODE_WRITE = 4;
     public const MODE_OVERRIDE = 8;
 
-    public const USE_FOR_CLOSURES = '$globalVariables';
-    public const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
+    public const GLOBAL_VARS = 'globalVariables';
 
     private static bool $classMapLoaded = false;
     private ?string $cacheDir;
     protected int $cacheDirMask;
-    private $configProcessor;
     private array $configs;
     private bool $useClassMap;
     private ?string $baseCacheDir;
@@ -40,8 +38,7 @@ class TypeGenerator
         ?string $baseCacheDir = null,
         ?int $cacheDirMask = null
     ) {
-        $this->setCacheDir($cacheDir);
-        $this->configProcessor = static::DEFAULT_CONFIG_PROCESSOR;
+        $this->cacheDir = $cacheDir;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
@@ -100,7 +97,7 @@ class TypeGenerator
         }
 
         // Process configs
-        $configs = (self::DEFAULT_CONFIG_PROCESSOR)($this->configs);
+        $configs = Processor::process($this->configs);
 
         // Generate classes
         $classes = [];
