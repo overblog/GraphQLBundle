@@ -36,9 +36,10 @@ use Overblog\GraphQLBundle\Validator\InputValidator;
 use RuntimeException;
 
 /**
- * TODO:
+ * TODO (murtukov):
  *  1. Add <code> docblocks for every method
  *  2. Replace hard-coded string types with constants ('object', 'input-object' etc.).
+ *  3. Change formatting of generated arguments.
  */
 class TypeBuilder
 {
@@ -95,7 +96,7 @@ class TypeBuilder
             ->addArgument('configProcessor', ConfigProcessor::class)
             ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class, null)
             ->append('$configLoader = ', $this->buildConfigLoader($config))
-            ->append("\$config = \$configProcessor->process(LazyConfig::create(\$configLoader, $this->globalVars))->load()")
+            ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, '.$this->globalVars.'))->load()')
             ->append('parent::__construct($config)');
 
         $this->file->addUse(LazyConfig::class);
@@ -190,7 +191,7 @@ class TypeBuilder
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
-        if (isset($types)) {
+        if (!empty($types)) {
             $items = \array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
