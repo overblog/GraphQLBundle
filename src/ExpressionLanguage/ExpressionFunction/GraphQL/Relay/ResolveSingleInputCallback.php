@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay;
 
+use Murtukov\PHPCodeGenerator\Closure;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
@@ -13,12 +14,13 @@ final class ResolveSingleInputCallback extends ExpressionFunction
     {
         parent::__construct(
             'resolveSingleInputCallback',
-            function ($resolveSingleInput) {
-                $code = 'function ($value) use ('.TypeGenerator::USE_FOR_CLOSURES.', $args, $context, $info) { ';
-                $code .= 'return '.$resolveSingleInput.'; }';
-
-                return $code;
-            }
+            static fn ($resolveSingleInput) => (
+                Closure::new()
+                    ->addArgument('value')
+                    ->bindVars(TypeGenerator::GLOBAL_VARS, 'args', 'context', 'info')
+                    ->append("return $resolveSingleInput")
+                    ->generate()
+            )
         );
     }
 }

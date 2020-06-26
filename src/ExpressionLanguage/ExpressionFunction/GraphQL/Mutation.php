@@ -12,9 +12,7 @@ final class Mutation extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function ($alias, $args = '[]') {
-                return "\$globalVariables->get('mutationResolver')->resolve([$alias, $args])";
-            }
+            fn ($alias, $args = '[]') => "$this->globalVars->get('mutationResolver')->resolve([$alias, $args])"
         );
     }
 }

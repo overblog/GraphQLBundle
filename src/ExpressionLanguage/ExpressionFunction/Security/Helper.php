@@ -21,7 +21,7 @@ final class Helper
     private static function getToken(GlobalVariables $globalVariable)
     {
         if (!$globalVariable->get('container')->has('security.token_storage')) {
-            return;
+            return null;
         }
 
         return $globalVariable->get('container')->get('security.token_storage')->getToken();
@@ -30,12 +30,12 @@ final class Helper
     public static function getUser(GlobalVariables $globalVariable)
     {
         if (!$token = self::getToken($globalVariable)) {
-            return;
+            return null;
         }
 
         $user = $token->getUser();
         if (!\is_object($user)) {
-            return;
+            return null;
         }
 
         return $user;

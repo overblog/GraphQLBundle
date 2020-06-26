@@ -13,12 +13,8 @@ final class IsRememberMe extends ExpressionFunction
     {
         parent::__construct(
             'isRememberMe',
-            static function (): string {
-                return '$globalVariables->get(\'security\')->isRememberMe()';
-            },
-            static function () use ($security): bool {
-                return $security->isRememberMe();
-            }
+            fn () => "$this->globalVars->get('security')->isRememberMe()",
+            fn () => $security->isRememberMe()
         );
     }
 }

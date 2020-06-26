@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 final class Parameter extends ExpressionFunction
@@ -13,12 +14,8 @@ final class Parameter extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function (string $value) {
-                return "\$globalVariables->get('container')->getParameter($value)";
-            },
-            function ($arguments, $paramName) use ($parameterBag) {
-                return $parameterBag->get($paramName);
-            }
+            fn (string $value) => "$this->globalVars->get('container')->getParameter($value)",
+            fn ($arguments, $paramName) => $parameterBag->get($paramName)
         );
     }
 }
