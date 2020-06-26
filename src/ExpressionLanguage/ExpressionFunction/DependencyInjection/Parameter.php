@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 final class Parameter extends ExpressionFunction
