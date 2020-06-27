@@ -691,7 +691,7 @@ UserInput:
                     - Length: {min: 10, max: 32, groups: 'Admin'}
 ```
 As you can see the `password` field of the `UserInput` type has a same constraint applied to it twice, but with 
-different groups. The `validationGroups` option ensures that validation will only use the onstraints that are listed 
+different groups. The `validationGroups` option ensures that validation will only use the constraints that are listed 
 in it.
 
 In case you inject the validator into the resolver (as described [here](#validating-inside-resolvers)), the `validationGroups`

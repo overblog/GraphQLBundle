@@ -269,18 +269,22 @@ Sometimes, you want to add fields to your Connection or Edges. In order to do so
 
 ```php
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64CursorEncoder;
 
 public function resolveSomething(Argument $args)
 {
-    $connectionBuilder = new ConnectionBuilder( 
+    $connectionBuilder = new ConnectionBuilder(
+        new Base64CursorEncoder(),
         function(iterable $edges, PageInfo $pageInfo) : FriendsConnection {
-            $connection = new FriendsConnection($edges, $pageInfo)
+            $connection = new FriendsConnection($edges, $pageInfo);
             $connection->setAverageAge(calculateAverage($edges));
+
             return $connection;
         },
-        function(string $cursor, UserFriend $entity, int $index):FriendEdge {
+        function(string $cursor, UserFriend $entity, int $index): FriendEdge {
             $edge = new FriendEdge($cursor, $entity->getUser());
             $edge->setFriendshipTime($entity->getCreatedAt());
+
             return $edge;
         }
     );
@@ -291,7 +295,7 @@ public function resolveSomething(Argument $args)
 }
 ```
 
-The `ConnectionBuilder` constructor accepts two parameters. The first one is a callback to build the Connection object, and the second one is a callback to build an Edge object.  
+The `ConnectionBuilder` constructor accepts three parameters. The first one is an encoder that will be used to encode the cursor of the edges, the second is a callback to build the Connection object and the last one is a callback to build an Edge object.
 
 The connection callback will be call with the following parameters :
 
