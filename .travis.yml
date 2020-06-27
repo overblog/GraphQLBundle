@@ -22,7 +22,6 @@ before_install:
     - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
     - if [ "${VALIDATOR}" = "0" ]; then  composer remove "symfony/validator" --dev --no-update; fi;
-    - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
