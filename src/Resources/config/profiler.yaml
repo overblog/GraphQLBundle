@@ -2,16 +2,16 @@ services:
     Overblog\GraphQLBundle\Controller\ProfilerController:
         public: true
         arguments:
-            - '@?profiler'
-            - '@?twig'
-            - '@router'
+            - "@?profiler"
+            - "@?twig"
+            - "@router"
             - '@Overblog\GraphQLBundle\Request\Executor'
+            - "%overblog_graphql.profiler.query_match%"
 
     Overblog\GraphQLBundle\DataCollector\GraphQLCollector:
         public: false
         tags:
-            -
-                name:     data_collector
-                template: "@OverblogGraphQL/profiler/panel.html.twig"
-                id:       graphql
+            - name: data_collector
+              template: "@OverblogGraphQL/profiler/panel.html.twig"
+              id: graphql
             - { name: kernel.event_listener, event: graphql.post_executor, method: onPostExecutor }

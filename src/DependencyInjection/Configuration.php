@@ -33,8 +33,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Constructor.
      *
-     * @param bool        $debug    Whether to use the debug mode
-     * @param string|null $cacheDir
+     * @param bool $debug Whether to use the debug mode
      */
     public function __construct(bool $debug, string $cacheDir = null)
     {
@@ -56,6 +55,7 @@ class Configuration implements ConfigurationInterface
                 ->append($this->servicesSection())
                 ->append($this->securitySection())
                 ->append($this->doctrineSection())
+                ->append($this->profilerSection())
             ->end();
 
         return $treeBuilder;
@@ -290,6 +290,21 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    private function profilerSection()
+    {
+        $builder = new TreeBuilder('profiler');
+        /** @var ArrayNodeDefinition $node */
+        $node = self::getRootNodeWithoutDeprecation($builder, 'profiler');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('query_match')->defaultValue(null)->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
     /**
      * @param string $name
      *
@@ -374,9 +389,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @internal
      *
-     * @param TreeBuilder $builder
      * @param string|null $name
-     * @param string      $type
      *
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */

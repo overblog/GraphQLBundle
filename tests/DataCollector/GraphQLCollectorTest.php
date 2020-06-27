@@ -57,6 +57,7 @@ class GraphQLCollectorTest extends TestCase
         $this->assertNotNull($variables);
         $this->assertEquals($batchSuccess['graphql'], [
             'operation' => 'query',
+            'operationName' => null,
             'fields' => [
                 [
                     'name' => 'test',
