@@ -41,9 +41,8 @@ jobs:
           php: 7.4
           env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
-            - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
-            - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
-          script: bin/phpunit --color=always -v --debug -d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml
+            - pecl install pcov
+          script: bin/phpunit --color=always -v -d pcov.enabled=1 --coverage-clover=build/logs/clover.xml
           after_script:
             - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
             - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
