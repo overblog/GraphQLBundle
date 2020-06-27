@@ -211,7 +211,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('resolver_maps')
                         ->defaultValue([])
                         ->prototype('scalar')->end()
-                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 0.14. Add the "overblog_graphql.resolver_map" tag to the services instead.')
+                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 0.14. Add the "overblog_graphql.resolver_map" tag to the services instead.', '0.13')
                     ->end()
                     ->arrayNode('types')
                         ->defaultValue([])
