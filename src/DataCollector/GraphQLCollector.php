@@ -105,7 +105,7 @@ class GraphQLCollector extends DataCollector
         $queryString = $executorArgument->getRequestString();
         $operationName = $executorArgument->getOperationName();
         $variables = $executorArgument->getVariableValue();
-        $queryTime = microtime(true) - $executorArgument->getStartTime();
+        $queryTime = \microtime(true) - $executorArgument->getStartTime();
 
         $result = $event->getResult()->toArray();
 
@@ -150,7 +150,7 @@ class GraphQLCollector extends DataCollector
 
         foreach ($document->definitions as $definition) {
             if ($definition instanceof OperationDefinitionNode) {
-                $definitionOperation = $definition->name ? $definition->name->value : null;
+                $definitionOperation = $definition->name->value;
                 if ($operationName != $definitionOperation) {
                     continue;
                 }

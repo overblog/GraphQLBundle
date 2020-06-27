@@ -299,7 +299,7 @@ class Configuration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
             ->children()
-                ->scalarNode('query_match')->defaultValue(null)->end()
+                ->scalarNode('query_match')->defaultNull()->end()
             ->end()
         ;
 
