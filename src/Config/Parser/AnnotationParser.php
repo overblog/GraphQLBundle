@@ -259,9 +259,15 @@ class AnnotationParser implements PreParserInterface
             $classAnnotations = $annotationReader->getClassAnnotations($reflectionEntity);
 
             $properties = [];
-            foreach ($reflectionEntity->getProperties() as $property) {
-                $properties[$property->getName()] = ['property' => $property, 'annotations' => $annotationReader->getPropertyAnnotations($property)];
-            }
+            $reflectionClass = new \ReflectionClass($className);
+            do {
+                foreach ($reflectionClass->getProperties() as $property) {
+                    if (isset($properties[$property->getName()])) {
+                        continue;
+                    }
+                    $properties[$property->getName()] = ['property' => $property, 'annotations' => $annotationReader->getPropertyAnnotations($property)];
+                }
+            } while ($reflectionClass = $reflectionClass->getParentClass());
 
             $methods = [];
             foreach ($reflectionEntity->getMethods() as $method) {
