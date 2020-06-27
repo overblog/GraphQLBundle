@@ -1,6 +1,11 @@
 <style>
-    .label.schema {
-        background: #e536ab;
+    .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .label.schema-name {
+        background: #E10098;
     }
 
     .query {
@@ -24,11 +29,11 @@
     }
 
     .graphql-query {
-        color: #8959A8;
+        color: #1976d2;
     }
 
     .graphql-mutation {
-        color: #1612fb;
+        color: #388e3c;
     }
 
     .graphql-field {
@@ -44,13 +49,20 @@
     }
 
     .graphql-details {
+        display: block;
+    }
+    .graphql-details > div {
+        border: 1px solid #BBB;
+        margin: 2px;
+    }
+    
+    .graphql-details.sf-toggle-hidden {
         display: flex;
+        justify-content: space-between;
     }
 
-    .graphql-details > div {
-        flex: 1;
-        margin: 5px;
-        border: 1px solid #BBB;
+    .graphql-details.sf-toggle-hidden > div {
+        width: 50%;
     }
     
     .graphql-gql {
@@ -87,20 +99,25 @@
     <div class="tab">
         <h3 class="tab-title">GraphQL requests</h3>
         <div class="tab-content">
-            <h2>{{ tokens ? tokens|length : 'No' }} HTTP queries on GraphQL endpoint(s)</h2>
+            <div class="tab-header">
+                <h2>{{ tokens ? tokens|length : 'No' }} HTTP queries on GraphQL endpoint(s)</h2>
+                <a class="btn" href="{{ path('_profiler', { token: 'latest', panel: 'graphql' }) }}">Refresh with latest query</a>
+            </div>
 
             {% if tokens %}
                 {% for result in tokens %}
                     {% set graphql = result.graphql %}
                     {% set css_class = result.status_code|default(0) > 399 ? 'status-error' : result.status_code|default(0) > 299 ? 'status-warning' : 'status-success' %}
-                    <div class="query">
+                    <div class="query" id="{{ result.token }}">
                         <div class="query-details">
-                            <span class="label {{ css_class }}">{{ result.status_code|default('n/a') }}</span> 
+                            <span class="label {{ css_class }}">
+                                {{ result.status_code|default('n/a') }}
+                            </span> 
                             <span class="nowrap newline">{{ result.time|date }}</span>
                             {% if schemas|length > 0 %}
-                                <span class="label schema">Schema: {{ graphql.schema }}</span>
+                                <span class="label schema-name">schema: {{ graphql.schema }}</span>
                             {% endif %}
-                            <a href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}">{{ result.token }}</a>
+                            <a  href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}#{{result.token}}">{{ result.token }}</a>
                         </div>
                         <table>
                             <thead>
@@ -109,7 +126,8 @@
                                 <th scope="col">Info</th>
                             </thead>
                             {% for idx, batch in graphql.batches %}
-                                <tr class="{% if result.token == token %}status-success{% endif %}">
+                                {% set isCurrentToken = result.token == token %}
+                                <tr class="{% if isCurrentToken %}status-success{% endif %}">
                                     <td>{{ idx + 1}}</td>
                                     <td class="text-center">
                                         {{ (batch.queryTime*1000)|round(0) }} ms
@@ -144,22 +162,28 @@
                                                     </span>
                                                 </div>
                                             {% endif %}
-                                            <div class="text-small font-normal">
-                                                <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#query-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide query">View full query</a>
-                                                &nbsp;&nbsp;
-                                                <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#result-{{result.token}}-{{idx}}" data-toggle-alt-content="Hide result">View result</a>
-                                            </div>
-                                            <div class="graphql-details">
-                                                <div class="graphql-gql" id="query-{{result.token}}-{{idx}}">
-                                                    <div class="graphql-variables">
-                                                        Variables: {{ profiler_dump(batch.variables, maxDepth=2) }}
+                                            {% if isCurrentToken %}
+                                                <div class="text-right text-small font-normal">
+                                                    <a href="#" class="sf-toggle link-inverse" data-toggle-selector="#graphql-details" data-toggle-alt-content="View side by side">View as list</a>
+                                                </div>
+                                                <div class="graphql-details" id="graphql-details">
+                                                    <div class="graphql-gql">
+                                                        <div class="graphql-variables">
+                                                            Variables: {{ profiler_dump(batch.variables, maxDepth=2) }}
+                                                        </div>
+                                                        <pre class="line-numbers"><code class="language-graphql">{{ batch.queryString }}</code></pre>
                                                     </div>
-                                                    <pre class="line-numbers"><code class="language-graphql">{{ batch.queryString }}</code></pre>
+                                                    <div class="graphql-result {{ batch.error is defined ? 'error' : 'success' }}">
+                                                        {{ profiler_dump(batch.result, maxDepth=3) }}
+                                                    </div>
                                                 </div>
-                                                <div class="graphql-result {{ batch.error is defined ? 'error' : 'success' }}" id="result-{{result.token}}-{{idx}}">
-                                                    {{ profiler_dump(batch.result, maxDepth=3) }}
+                                            {% else %}
+                                                <div class="text-small font-normal">
+                                                    <a href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}#{{result.token}}" class="text-small" >
+                                                        View details
+                                                    </a>
                                                 </div>
-                                            </div>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>

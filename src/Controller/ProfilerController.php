@@ -19,13 +19,15 @@ class ProfilerController
     private $twig;
     private $endpointUrl;
     private $requestExecutor;
+    private $queryMatch;
 
-    public function __construct(Profiler $profiler = null, Environment $twig = null, RouterInterface $router, RequestExecutor $requestExecutor)
+    public function __construct(Profiler $profiler = null, Environment $twig = null, RouterInterface $router, RequestExecutor $requestExecutor, string $queryMatch = null)
     {
         $this->profiler = $profiler;
         $this->twig = $twig;
         $this->endpointUrl = $router->generate('overblog_graphql_endpoint');
         $this->requestExecutor = $requestExecutor;
+        $this->queryMatch = $queryMatch;
     }
 
     public function __invoke(Request $request, $token)
@@ -44,7 +46,7 @@ class ProfilerController
             $tokenData['graphql'] = $graphql;
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->endpointUrl, '100', null, null, null, null));
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', null, null, null, null));
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {

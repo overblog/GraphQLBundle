@@ -56,6 +56,7 @@ class Configuration implements ConfigurationInterface
                 ->append($this->servicesSection())
                 ->append($this->securitySection())
                 ->append($this->doctrineSection())
+                ->append($this->profilerSection())
             ->end();
 
         return $treeBuilder;
@@ -290,6 +291,21 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
+    private function profilerSection()
+    {
+        $builder = new TreeBuilder('profiler');
+        /** @var ArrayNodeDefinition $node */
+        $node = self::getRootNodeWithoutDeprecation($builder, 'profiler');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('query_match')->defaultValue(null)->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
     /**
      * @param string $name
      *
@@ -373,7 +389,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @return ArrayNodeDefinition|NodeDefinition
-     *
      * @internal
      */
     public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, string $name, string $type = 'array')

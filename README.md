@@ -89,6 +89,7 @@ Documentation
   - [Disable introspection](docs/security/disable_introspection.md)
 - [Errors handling](docs/error-handling/index.md)
 - [Events](docs/events/index.md)
+- [Profiler](docs/profiler/index.md)
 
 Talks and slides to help you start
 ----------------------------------
