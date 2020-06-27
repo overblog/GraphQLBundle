@@ -3,6 +3,7 @@ framework:
     secret: test
     router:
         resource: "%kernel.project_dir%/config/routing.yml"
+        utf8: false
     profiler:
         enabled: false
 
@@ -42,3 +43,5 @@ services:
     #disable twig error pages
     twig.exception_listener:
         class: stdClass
+    Symfony\Component\DependencyInjection\ContainerInterface:
+        alias: "service_container"
