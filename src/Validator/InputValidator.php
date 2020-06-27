@@ -7,7 +7,6 @@ namespace Overblog\GraphQLBundle\Validator;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
@@ -63,17 +62,12 @@ class InputValidator
 
     /**
      * InputValidator constructor.
-     *
-     * @param array                   $resolverArgs
-     * @param ValidatorInterface|null $validator
-     * @param ValidatorFactory        $factory
-     * @param array                   $mapping
      */
     public function __construct(array $resolverArgs, ?ValidatorInterface $validator, ValidatorFactory $factory, array $mapping)
     {
         if (null === $validator) {
             throw new ServiceNotFoundException(
-                "The 'validator' service is not found. To use the 'InputValidator' you need to install the 
+                "The 'validator' service is not found. To use the 'InputValidator' you need to install the
                 Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
             );
         }
@@ -89,8 +83,6 @@ class InputValidator
     /**
      * Converts a numeric array of resolver args to an associative one.
      *
-     * @param array $rawReolverArgs
-     *
      * @return array
      */
     private function mapResolverArgs(array $rawReolverArgs)
@@ -105,9 +97,6 @@ class InputValidator
 
     /**
      * @param string|array|null $groups
-     * @param bool              $throw
-     *
-     * @return ConstraintViolationListInterface|null
      *
      * @throws ArgumentsValidationException
      */
@@ -131,12 +120,6 @@ class InputValidator
     /**
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
-     *
-     * @param ValidationNode $rootObject
-     * @param array          $constraintMapping
-     * @param array          $args
-     *
-     * @return ValidationNode
      */
     protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
     {
@@ -147,7 +130,13 @@ class InputValidator
         foreach ($constraintMapping['properties'] as $property => $params) {
             if (!empty($params['cascade']) && isset($args[$property])) {
                 $options = $params['cascade'];
+
+                /** @var ObjectType|InputObjectType|null $type */
                 $type = $this->info->schema->getType($options['referenceType']);
+
+                if (null === $type) {
+                    continue;
+                }
 
                 if ($options['isCollection']) {
                     $rootObject->$property = $this->createCollectionNode($args[$property], $type, $rootObject);
@@ -213,13 +202,9 @@ class InputValidator
     }
 
     /**
-     * @param array                      $values
      * @param ObjectType|InputObjectType $type
-     * @param ValidationNode             $parent
-     *
-     * @return array
      */
-    private function createCollectionNode(array $values, Type $type, ValidationNode $parent): array
+    private function createCollectionNode(array $values, $type, ValidationNode $parent): array
     {
         $collection = [];
 
@@ -231,13 +216,9 @@ class InputValidator
     }
 
     /**
-     * @param array                      $value
      * @param ObjectType|InputObjectType $type
-     * @param $parent
-     *
-     * @return ValidationNode
      */
-    private function createObjectNode(array $value, Type $type, ValidationNode $parent): ValidationNode
+    private function createObjectNode(array $value, $type, ValidationNode $parent): ValidationNode
     {
         $mapping = [
             'class' => $type->config['validation'] ?? null,
@@ -251,8 +232,7 @@ class InputValidator
     }
 
     /**
-     * @param ObjectMetadata $metadata
-     * @param array          $constraints
+     * @param array $constraints
      */
     private function applyClassConstraints(ObjectMetadata $metadata, ?array $constraints): void
     {

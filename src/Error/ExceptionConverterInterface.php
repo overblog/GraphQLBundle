@@ -9,10 +9,6 @@ interface ExceptionConverterInterface
     /**
      * Tries to convert a raw exception into a user warning or error
      * that is displayed to the user.
-     *
-     * @param \Throwable $exception
-     *
-     * @return \Throwable
      */
     public function convertException(\Throwable $exception): \Throwable;
 }

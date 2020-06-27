@@ -40,7 +40,6 @@ class DebugCommandTest extends TestCase
     }
 
     /**
-     * @param array $categories
      * @dataProvider categoryDataProvider
      */
     public function testProcess(array $categories): void

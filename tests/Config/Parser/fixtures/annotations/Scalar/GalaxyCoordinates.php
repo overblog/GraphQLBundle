@@ -34,8 +34,6 @@ class GalaxyCoordinates
     }
 
     /**
-     * @param Node $valueNode
-     *
      * @return \DateTimeInterface
      */
     public static function parseLiteral(Node $valueNode)

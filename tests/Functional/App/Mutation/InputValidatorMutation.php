@@ -13,11 +13,6 @@ use Overblog\GraphQLBundle\Validator\InputValidator;
 class InputValidatorMutation implements MutationInterface
 {
     /**
-     * @param Argument            $args
-     * @param InputValidator|null $validator
-     *
-     * @return bool
-     *
      * @throws ArgumentsValidationException
      */
     public function mutationMock(Argument $args, ?InputValidator $validator = null): bool

@@ -51,9 +51,6 @@ class GraphController
     }
 
     /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     *
      * @return JsonResponse|Response
      */
     public function endpointAction(Request $request, string $schemaName = null)
@@ -62,9 +59,6 @@ class GraphController
     }
 
     /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     *
      * @return JsonResponse|Response
      */
     public function batchEndpointAction(Request $request, string $schemaName = null)
@@ -73,10 +67,6 @@ class GraphController
     }
 
     /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     * @param bool        $batched
-     *
      * @return JsonResponse|Response
      */
     private function createResponse(Request $request, string $schemaName = null, bool $batched)
@@ -106,13 +96,6 @@ class GraphController
         }
     }
 
-    /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     * @param bool        $batched
-     *
-     * @return array
-     */
     private function processQuery(Request $request, string $schemaName = null, bool $batched): array
     {
         if ($batched) {
@@ -124,12 +107,6 @@ class GraphController
         return $payload;
     }
 
-    /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     *
-     * @return array
-     */
     private function processBatchQuery(Request $request, string $schemaName = null): array
     {
         $queries = $this->batchParser->parse($request);
@@ -148,12 +125,6 @@ class GraphController
         return $payloads;
     }
 
-    /**
-     * @param Request     $request
-     * @param string|null $schemaName
-     *
-     * @return array
-     */
     private function processNormalQuery(Request $request, string $schemaName = null): array
     {
         $params = $this->requestParser->parse($request);

@@ -188,11 +188,6 @@ final class BuilderProcessor implements ProcessorInterface
     }
 
     /**
-     * @param string $builderName
-     * @param string $builderType
-     * @param array  $builderConfig
-     * @param array  $reservedTypesMap
-     *
      * @return array
      *
      * @throws InvalidConfigurationException

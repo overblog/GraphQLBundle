@@ -18,8 +18,6 @@ class PropertyMetadata extends MemberMetadata
     /**
      * @param  $object
      *
-     * @return ReflectionProperty
-     *
      * @throws ReflectionException
      */
     protected function newReflectionMember($object): ReflectionProperty

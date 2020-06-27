@@ -34,7 +34,6 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     /**
      * Synchronously wait when promise completes.
      *
-     * @param Promise  $promise
      * @param callable $onProgress
      *
      * @return ExecutionResult
