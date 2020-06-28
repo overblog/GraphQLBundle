@@ -6,22 +6,22 @@ namespace Overblog\GraphQLBundle\Controller;
 
 use GraphQL\Utils\SchemaPrinter;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 class ProfilerController
 {
-    private $profiler;
-    private $twig;
-    private $endpointUrl;
-    private $requestExecutor;
-    private $queryMatch;
+    private ?Profiler $profiler;
+    private ?Environment $twig;
+    private string $endpointUrl;
+    private RequestExecutor $requestExecutor;
+    private ?string $queryMatch;
 
-    public function __construct(Profiler $profiler = null, Environment $twig = null, RouterInterface $router, RequestExecutor $requestExecutor, string $queryMatch = null)
+    public function __construct(?Profiler $profiler, ?Environment $twig, RouterInterface $router, RequestExecutor $requestExecutor, ?string $queryMatch)
     {
         $this->profiler = $profiler;
         $this->twig = $twig;
@@ -30,10 +30,17 @@ class ProfilerController
         $this->queryMatch = $queryMatch;
     }
 
-    public function __invoke(Request $request, $token)
+    /**
+     * @throws ServiceNotFoundException
+     */
+    public function __invoke(Request $request, string $token): Response
     {
         if (null === $this->profiler) {
-            throw new NotFoundHttpException('The profiler must be enabled.');
+            throw new ServiceNotFoundException('The profiler must be enabled.');
+        }
+
+        if (null === $this->twig) {
+            throw new ServiceNotFoundException('The GraphQL Profiler require twig');
         }
 
         $this->profiler->disable();
