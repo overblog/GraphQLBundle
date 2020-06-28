@@ -150,7 +150,7 @@ class GraphQLCollector extends DataCollector
 
         foreach ($document->definitions as $definition) {
             if ($definition instanceof OperationDefinitionNode) {
-                $definitionOperation = $definition->name ? $definition->name->value : null;
+                $definitionOperation = (null !== $definition->name) ? $definition->name->value : null;
                 if ($operationName != $definitionOperation) {
                     continue;
                 }
