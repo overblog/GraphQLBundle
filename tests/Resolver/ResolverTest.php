@@ -25,6 +25,9 @@ class ResolverTest extends TestCase
         $this->assertSame($expected, Resolver::defaultResolveFn($source, [], [], $info));
     }
 
+    /**
+     * @group legacy
+     */
     public function testSetObjectOrArrayValue(): void
     {
         $object = new \stdClass();
