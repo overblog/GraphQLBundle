@@ -15,7 +15,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
             function ($field, $fieldName) {
                 $exposed = true;
 
-                if (isset($field['public']) && \is_callable($field['public'])) {
+                if (\is_array($field) && isset($field['public']) && \is_callable($field['public'])) {
                     $exposed = (bool) \call_user_func($field['public'], $fieldName);
                 }
 
