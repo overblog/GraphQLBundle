@@ -45,7 +45,7 @@ final class ExecutorArgumentsEvent extends Event
         $instance->setRootValue($rootValue);
         $instance->setVariableValue($variableValue);
         $instance->setOperationName($operationName);
-        $instance->setStartTime(microtime(true));
+        $instance->setStartTime(\microtime(true));
 
         return $instance;
     }

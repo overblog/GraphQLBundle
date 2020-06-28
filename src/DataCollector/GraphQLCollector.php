@@ -19,7 +19,7 @@ class GraphQLCollector extends DataCollector
     /**
      * GraphQL Batchs executed.
      */
-    protected $batches = [];
+    protected array $batches = [];
 
     public function collect(Request $request, Response $response, \Throwable $exception = null): void
     {
@@ -42,40 +42,32 @@ class GraphQLCollector extends DataCollector
 
     /**
      * Check if we have an error.
-     *
-     * @return bool
      */
-    public function getError()
+    public function getError(): bool
     {
         return $this->data['error'] ?? false;
     }
 
     /**
      * Count the number of executed queries.
-     *
-     * @return int
      */
-    public function getCount()
+    public function getCount(): int
     {
         return $this->data['count'] ?? 0;
     }
 
     /**
      * Return the targeted schema.
-     *
-     * @return string
      */
-    public function getSchema()
+    public function getSchema(): string
     {
         return $this->data['schema'] ?? 'default';
     }
 
     /**
      * Return the list of executed batch.
-     *
-     * @return array
      */
-    public function getBatches()
+    public function getBatches(): array
     {
         return $this->data['batches'] ?? [];
     }
@@ -139,18 +131,16 @@ class GraphQLCollector extends DataCollector
     }
 
     /**
-     * Extract GraphQL Information from the documentNode².
-     *
-     * @return array
+     * Extract GraphQL Information from the documentNode.
      */
-    protected function extractGraphql(DocumentNode $document, ?string $operationName)
+    protected function extractGraphql(DocumentNode $document, ?string $operationName): array
     {
         $operation = null;
         $fields = [];
 
         foreach ($document->definitions as $definition) {
             if ($definition instanceof OperationDefinitionNode) {
-                $definitionOperation = (null !== $definition->name) ? $definition->name->value : null;
+                $definitionOperation = $definition->name->value ?? null;
                 if ($operationName != $definitionOperation) {
                     continue;
                 }
