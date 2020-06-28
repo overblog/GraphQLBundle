@@ -70,7 +70,8 @@
     "scripts": {
         "test": "bin/phpunit --color=always -v --debug",
         "static-analysis": [
-            "@composer req --ansi --dev 'phpstan/phpstan:^0.10.3' 'phpstan/phpstan-phpunit:^0.10.0'",
+            "@composer req --ansi --dev --no-update 'phpstan/phpstan:^0.11' 'phpstan/phpstan-phpunit:*'",
+            "@composer update --ansi",
             "phpstan analyse --ansi",
             "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit"
         ],
