@@ -37,6 +37,7 @@
         "symfony/expression-language": "^4.3 || ^5.0",
         "symfony/framework-bundle": "^4.3 || ^5.0",
         "symfony/options-resolver": "^4.3 || ^5.0",
+        "symfony/property-access": "^4.3 || ^5.0",
         "webonyx/graphql-php": "^0.13.5"
     },
     "replace": {

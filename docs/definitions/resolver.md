@@ -238,6 +238,6 @@ overblog_graphql:
        default_field_resolver: 'my_default_field_resolver_service'
 ```
 
-Default field resolver should be a callable service (implementing `__invoker` method)
+Default field resolver should be a callable service (implementing `__invoke` method)
 
 Next step [solving N+1 problem](solving-n-plus-1-problem.md)
