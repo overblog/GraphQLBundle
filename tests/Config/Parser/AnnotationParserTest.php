@@ -154,6 +154,15 @@ class AnnotationParserTest extends TestCase
             ],
             'builders' => [['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']]],
         ]);
+
+        // Test a type extending another type
+        $this->expect('Cat', 'object', [
+            'description' => 'The Cat type',
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
+                'lives' => ['type' => 'Int!'],
+            ],
+        ]);
     }
 
     public function testInput(): void

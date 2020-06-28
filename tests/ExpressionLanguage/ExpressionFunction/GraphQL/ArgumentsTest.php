@@ -54,6 +54,9 @@ class ArgumentsTest extends TestCase
         return new ArgumentsTransformer($validator, $classesMap);
     }
 
+    /**
+     * @group legacy
+     */
     public function testEvaluator(): void
     {
         $info = $this->getResolveInfo(ArgumentsTransformerTest::getTypes());
