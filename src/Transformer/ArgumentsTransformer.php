@@ -167,7 +167,7 @@ class ArgumentsTransformer
                     }
                 }
             }
-            
+
             if (\count($errors) > 0) {
                 throw new InvalidArgumentError($argName, $errors);
             }
