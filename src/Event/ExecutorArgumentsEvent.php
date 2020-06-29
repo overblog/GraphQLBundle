@@ -85,17 +85,11 @@ final class ExecutorArgumentsEvent extends Event
         $this->schema = $schema;
     }
 
-    /**
-     * @return ExtensibleSchema
-     */
     public function getSchema(): ExtensibleSchema
     {
         return $this->schema;
     }
 
-    /**
-     * @return string
-     */
     public function getRequestString(): string
     {
         return $this->requestString;
@@ -109,9 +103,6 @@ final class ExecutorArgumentsEvent extends Event
         return $this->rootValue;
     }
 
-    /**
-     * @return \ArrayObject
-     */
     public function getContextValue(): \ArrayObject
     {
         return $this->contextValue;

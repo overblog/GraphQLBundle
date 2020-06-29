@@ -44,8 +44,6 @@ class ArgumentsTransformer
     /**
      * Get the PHP class for a given type.
      *
-     * @param string $type
-     *
      * @return object|false
      */
     private function getTypeClassInstance(string $type)
@@ -57,11 +55,6 @@ class ArgumentsTransformer
 
     /**
      * Extract given type from Resolve Info.
-     *
-     * @param string      $type
-     * @param ResolveInfo $info
-     *
-     * @return Type
      */
     private function getType(string $type, ResolveInfo $info): Type
     {
@@ -71,10 +64,7 @@ class ArgumentsTransformer
     /**
      * Populate an object based on type with given data.
      *
-     * @param Type        $type
-     * @param mixed       $data
-     * @param bool        $multiple
-     * @param ResolveInfo $info
+     * @param mixed $data
      *
      * @return mixed
      */
@@ -138,9 +128,7 @@ class ArgumentsTransformer
      * Given a GraphQL type and an array of data, populate corresponding object recursively
      * using annoted classes.
      *
-     * @param string      $argType
-     * @param mixed       $data
-     * @param ResolveInfo $info
+     * @param mixed $data
      *
      * @return mixed
      */
@@ -178,9 +166,7 @@ class ArgumentsTransformer
     /**
      * Transform a list of arguments into their corresponding php class and validate them.
      *
-     * @param array       $mapping
-     * @param mixed       $data
-     * @param ResolveInfo $info
+     * @param mixed $data
      *
      * @return array
      */

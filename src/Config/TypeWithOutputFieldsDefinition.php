@@ -10,8 +10,6 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
     /**
-     * @param string $name
-     *
      * @return ArrayNodeDefinition|NodeDefinition
      */
     protected function outputFieldsSelection(string $name = 'fields')

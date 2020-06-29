@@ -16,8 +16,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     /**
      * CompileCacheWarmer constructor.
      *
-     * @param TypeGenerator $typeGenerator
-     * @param bool          $compiled
+     * @param bool $compiled
      */
     public function __construct(TypeGenerator $typeGenerator, $compiled = true)
     {

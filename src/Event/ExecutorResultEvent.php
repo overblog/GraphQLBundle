@@ -17,9 +17,6 @@ final class ExecutorResultEvent extends Event
         $this->result = $result;
     }
 
-    /**
-     * @return ExecutionResult
-     */
     public function getResult(): ExecutionResult
     {
         return $this->result;

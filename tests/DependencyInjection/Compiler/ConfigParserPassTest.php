@@ -81,11 +81,6 @@ class ConfigParserPassTest extends TestCase
     /**
      * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
      * @runInSeparateProcess
-     *
-     * @param array  $builders
-     * @param array  $configs
-     * @param string $exceptionClass
-     * @param string $exceptionMessage
      */
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {

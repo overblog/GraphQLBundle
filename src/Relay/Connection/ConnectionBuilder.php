@@ -51,10 +51,7 @@ class ConnectionBuilder
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
      *
-     * @param array                   $data
      * @param array|ArgumentInterface $args
-     *
-     * @return ConnectionInterface
      */
     public function connectionFromArray(array $data, $args = []): ConnectionInterface
     {
@@ -95,11 +92,7 @@ class ConnectionBuilder
      * to materialize the entire array, and instead wish pass in a slice of the
      * total result large enough to cover the range specified in `args`.
      *
-     * @param array                   $arraySlice
      * @param array|ArgumentInterface $args
-     * @param array                   $meta
-     *
-     * @return ConnectionInterface
      */
     public function connectionFromArraySlice(array $arraySlice, $args, array $meta): ConnectionInterface
     {
@@ -182,7 +175,6 @@ class ConnectionBuilder
      *
      * @param mixed                   $dataPromise a promise
      * @param array|ArgumentInterface $args
-     * @param array                   $meta
      *
      * @return mixed a promise
      */
@@ -198,10 +190,7 @@ class ConnectionBuilder
     /**
      * Return the cursor associated with an object in an array.
      *
-     * @param array $data
      * @param mixed $object
-     *
-     * @return string|null
      */
     public function cursorForObjectInConnection(array $data, $object): ? string
     {
@@ -228,11 +217,6 @@ class ConnectionBuilder
      * Given an optional cursor and a default offset, returns the offset
      * to use; if the cursor contains a valid offset, that will be used,
      * otherwise it will be the default.
-     *
-     * @param string|null $cursor
-     * @param int         $defaultOffset
-     *
-     * @return int
      */
     public function getOffsetWithDefault(?string $cursor, int $defaultOffset): int
     {
@@ -248,8 +232,6 @@ class ConnectionBuilder
      * Creates the cursor string from an offset.
      *
      * @param $offset
-     *
-     * @return string
      */
     public function offsetToCursor($offset): string
     {
@@ -260,8 +242,6 @@ class ConnectionBuilder
      * Redefines the offset from the cursor string.
      *
      * @param $cursor
-     *
-     * @return string
      */
     public function cursorToOffset($cursor): string
     {

@@ -56,9 +56,6 @@ abstract class AbstractResolver implements FluentResolverInterface
         return $this->loadSolution($id);
     }
 
-    /**
-     * @return array
-     */
     public function getSolutions(): array
     {
         return $this->loadSolutions();
@@ -86,8 +83,6 @@ abstract class AbstractResolver implements FluentResolverInterface
     }
 
     /**
-     * @param string $id
-     *
      * @return mixed
      */
     private function loadSolution(string $id)
@@ -140,8 +135,6 @@ abstract class AbstractResolver implements FluentResolverInterface
 
     /**
      * @param mixed $solution
-     *
-     * @return bool
      */
     protected function supportsSolution($solution): bool
     {

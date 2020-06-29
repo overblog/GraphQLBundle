@@ -76,8 +76,6 @@ class ValidationNode
     /**
      * Gets the name of the associated GraphQL type.
      * Shortcut for `getType()->name`.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -86,17 +84,12 @@ class ValidationNode
 
     /**
      * Returns the field name of the type (only for root type).
-     *
-     * @return string|null
      */
     public function getFieldName(): ?string
     {
         return $this->__fieldName;
     }
 
-    /**
-     * @return ValidationNode|null
-     */
     public function getParent(): ?ValidationNode
     {
         return $this->__parent;
@@ -104,8 +97,6 @@ class ValidationNode
 
     /**
      * @internal
-     *
-     * @param ValidationNode $child
      */
     public function addChild(ValidationNode $child): void
     {
@@ -114,10 +105,6 @@ class ValidationNode
 
     /**
      * Traverses up through parent nodes and returns the first matching one.
-     *
-     * @param string $name
-     *
-     * @return ValidationNode|null
      */
     public function findParent(string $name): ?ValidationNode
     {
@@ -136,8 +123,6 @@ class ValidationNode
 
     /**
      * Returns an argument of the resolver, where this validation is being executed.
-     *
-     * @param string $name
      *
      * @return ResolveInfo|Argument|mixed|null
      */

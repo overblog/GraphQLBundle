@@ -230,7 +230,6 @@ final class ErrorHandlerTest extends TestCase
     }
 
     /**
-     * @param array        $exceptionMap
      * @param bool         $mapExceptionsToParent
      * @param array|string $expectedUserError
      *

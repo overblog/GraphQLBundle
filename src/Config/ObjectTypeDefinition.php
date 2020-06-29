@@ -40,8 +40,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
     /**
      * set empty fields.access with fieldsDefaultAccess values if is set?
-     *
-     * @param ArrayNodeDefinition $node
      */
     private function treatFieldsDefaultAccess(ArrayNodeDefinition $node): void
     {
@@ -65,8 +63,6 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
     /**
      * set empty fields.public with fieldsDefaultPublic values if is set?
-     *
-     * @param ArrayNodeDefinition $node
      */
     private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
     {

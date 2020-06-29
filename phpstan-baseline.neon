@@ -766,26 +766,6 @@ parameters:
 			path: src/Transformer/ArgumentsTransformer.php
 
 		-
-			message: "#^Parameter \\#2 \\$type of method Overblog\\\\GraphQLBundle\\\\Validator\\\\InputValidator\\:\\:createCollectionNode\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\InputObjectType\\|GraphQL\\\\Type\\\\Definition\\\\ObjectType, GraphQL\\\\Type\\\\Definition\\\\Type\\|null given\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^Parameter \\#2 \\$type of method Overblog\\\\GraphQLBundle\\\\Validator\\\\InputValidator\\:\\:createObjectNode\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\InputObjectType\\|GraphQL\\\\Type\\\\Definition\\\\ObjectType, GraphQL\\\\Type\\\\Definition\\\\Type\\|null given\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parent\\)\\: Unexpected token \"\\$parent\", expected TOKEN_IDENTIFIER at offset 113$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\PropertyMetadata\\>\\) does not accept Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\.$#"
 			count: 1
 			path: src/Validator/Mapping/ObjectMetadata.php
@@ -1061,26 +1041,6 @@ parameters:
 			path: tests/Functional/Upload/UploadTest.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$payload\\)\\: Unexpected token \"\\$payload\", expected TOKEN_IDENTIFIER at offset 140$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$value\\)\\: Unexpected token \"\\$value\", expected TOKEN_IDENTIFIER at offset 44$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected TOKEN_IDENTIFIER at offset 44$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$payload\\)\\: Unexpected token \"\\$payload\", expected TOKEN_IDENTIFIER at offset 141$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
 			message: "#^Cannot call method getCursor\\(\\) on Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\|false\\.$#"
 			count: 1
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
@@ -1310,4 +1270,7 @@ parameters:
 			count: 1
 			path: tests/Upload/Type/GraphQLUploadTypeTest.php
 
-
+		-
+			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
+			count: 1
+			path: src/Validator/InputValidator.php

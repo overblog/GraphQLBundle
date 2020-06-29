@@ -130,8 +130,7 @@ abstract class TestCase extends WebTestCase
     /**
      * @param Client|KernelBrowser $client
      * @param $query
-     * @param bool       $isDecoded
-     * @param array|null $variables
+     * @param bool $isDecoded
      *
      * @return mixed
      */

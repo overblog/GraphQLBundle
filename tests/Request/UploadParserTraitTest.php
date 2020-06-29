@@ -25,10 +25,6 @@ class UploadParserTraitTest extends TestCase
     }
 
     /**
-     * @param array  $operations
-     * @param array  $map
-     * @param array  $files
-     * @param array  $expected
      * @param string $message
      *
      * @dataProvider payloadProvider

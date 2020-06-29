@@ -21,10 +21,8 @@ use PHPUnit\Framework\TestCase;
 class TypeDecoratorListenerTest extends TestCase
 {
     /**
-     * @param string        $fieldName
-     * @param Type          $typeWithSpecialField
-     * @param callable|null $fieldValueRetriever
-     * @param bool          $strict
+     * @param string $fieldName
+     * @param bool   $strict
      *
      * @dataProvider specialTypeFieldProvider
      */
@@ -294,8 +292,6 @@ class TypeDecoratorListenerTest extends TestCase
     }
 
     /**
-     * @param array $map
-     *
      * @return \PHPUnit\Framework\MockObject\MockObject|ResolverMap
      */
     private function createResolverMapMock(array $map = [])

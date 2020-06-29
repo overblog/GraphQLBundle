@@ -20,7 +20,6 @@ interface ResolverMapInterface
     /**
      * Returns the resolver for type category if exists.
      *
-     * @param string $typeName
      * @param string $fieldName the field name of the resolver to retrieve
      *
      * @return callable|mixed
@@ -32,10 +31,7 @@ interface ResolverMapInterface
     /**
      * Is the entry mapped?
      *
-     * @param string $typeName
      * @param string $fieldName the field name of the resolver to retrieve
-     *
-     * @return bool
      */
     public function isResolvable(string $typeName, string $fieldName): bool;
 
@@ -43,8 +39,6 @@ interface ResolverMapInterface
      * Returns the names of the types covered
      * if $typeName equal to null or return the type fields covered
      * by the resolverMap.
-     *
-     * @param string|null $typeName
      *
      * @return array
      */
