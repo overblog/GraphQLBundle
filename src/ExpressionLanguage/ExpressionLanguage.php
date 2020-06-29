@@ -16,20 +16,11 @@ class ExpressionLanguage extends BaseExpressionLanguage
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];
     public const EXPRESSION_TRIGGER = '@=';
 
-    private array $globalNames = [];
+    public array $globalNames = [];
 
-    /**
-     * @param $index
-     * @param $name
-     */
-    public function addGlobalName($index, $name): void
+    public function addGlobalName(string $index, string $name): void
     {
         $this->globalNames[$index] = $name;
-    }
-
-    public function getGlobalNames()
-    {
-        return $this->globalNames;
     }
 
     public function compile($expression, $names = [])

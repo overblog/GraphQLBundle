@@ -85,9 +85,6 @@ class InputValidator
 
     /**
      * @param string|array|null $groups
-     * @param bool              $throw
-     *
-     * @return ConstraintViolationListInterface|null
      *
      * @throws ArgumentsValidationException
      */
@@ -128,6 +125,8 @@ class InputValidator
         foreach ($propertiesMapping as $property => $params) {
             if (!empty($params['cascade']) && isset($args[$property])) {
                 $options = $params['cascade'];
+
+                /** @var ObjectType|InputObjectType $type */
                 $type = $options['referenceType'];
 
                 if ($options['isCollection']) {
