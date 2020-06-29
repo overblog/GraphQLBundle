@@ -11,17 +11,10 @@ use GraphQL\Type\Schema;
 interface ExecutorInterface
 {
     /**
-     * @param PromiseAdapter $promiseAdapter
-     * @param Schema         $schema
-     * @param string         $requestString
-     * @param mixed          $rootValue
-     * @param array|null     $contextValue
-     * @param array|null     $variableValues
-     * @param string|null    $operationName
-     * @param callable|null  $fieldResolver
-     * @param array|null     $validationRules
-     *
-     * @return ExecutionResult
+     * @param mixed       $rootValue
+     * @param array|null  $contextValue
+     * @param array|null  $variableValues
+     * @param string|null $operationName
      */
     public function execute(
         PromiseAdapter $promiseAdapter,

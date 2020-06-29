@@ -58,8 +58,6 @@ abstract class TypeDefinition
     }
 
     /**
-     * @param int $level
-     *
      * @return ArrayNodeDefinition|NodeDefinition
      */
     protected function validationSection(int $level): NodeParentInterface
@@ -159,9 +157,6 @@ abstract class TypeDefinition
     }
 
     /**
-     * @param string $name
-     * @param string $type
-     *
      * @return ArrayNodeDefinition|NodeDefinition
      *
      *@internal

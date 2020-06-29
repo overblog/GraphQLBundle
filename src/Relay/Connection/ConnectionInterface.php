@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
-use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
-
 interface ConnectionInterface
 {
     /**
@@ -31,8 +29,6 @@ interface ConnectionInterface
 
     /**
      * Set the page info.
-     *
-     * @param PageInfoInterface $pageInfo
      */
     public function setPageInfo(PageInfoInterface $pageInfo);
 
@@ -45,8 +41,6 @@ interface ConnectionInterface
 
     /**
      * Set the total count.
-     *
-     * @param int $totalCount
      */
     public function setTotalCount(int $totalCount);
 }

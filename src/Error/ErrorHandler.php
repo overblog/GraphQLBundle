@@ -69,9 +69,6 @@ class ErrorHandler
 
     /**
      * @param GraphQLError[] $errors
-     * @param bool           $throwRawException
-     *
-     * @return array
      *
      * @throws \Error|\Exception
      */

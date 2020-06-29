@@ -28,8 +28,6 @@ class Argument implements ArgumentInterface
     }
 
     /**
-     * @return array
-     *
      * @deprecated This method is deprecated since 0.12 and will be removed in 0.13. You should use getArrayCopy method instead.
      */
     public function getRawArguments(): array

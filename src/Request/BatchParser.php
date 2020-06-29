@@ -19,11 +19,6 @@ class BatchParser implements ParserInterface
         self::PARAM_VARIABLES => null,
     ];
 
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
     public function parse(Request $request): array
     {
         // Extracts the GraphQL request parameters
@@ -46,10 +41,6 @@ class BatchParser implements ParserInterface
 
     /**
      * Gets the body from the request.
-     *
-     * @param Request $request
-     *
-     * @return array
      */
     private function getParsedBody(Request $request): array
     {

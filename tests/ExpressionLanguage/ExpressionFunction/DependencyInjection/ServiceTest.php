@@ -24,7 +24,6 @@ class ServiceTest extends TestCase
     }
 
     /**
-     * @param string $name
      * @dataProvider getNames
      */
     public function testServiceCompilation(string $name): void
@@ -37,8 +36,6 @@ class ServiceTest extends TestCase
 
     /**
      * @dataProvider getNames
-     *
-     * @param string $name
      */
     public function testServiceEvaluation(string $name): void
     {

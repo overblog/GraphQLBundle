@@ -29,7 +29,6 @@ class BuilderProcessorTest extends TestCase
     /**
      * @dataProvider processApiAbuseProvider
      *
-     * @param array  $config
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */

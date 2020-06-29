@@ -33,8 +33,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Constructor.
      *
-     * @param bool        $debug    Whether to use the debug mode
-     * @param string|null $cacheDir
+     * @param bool $debug Whether to use the debug mode
      */
     public function __construct(bool $debug, string $cacheDir = null)
     {
@@ -374,9 +373,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @internal
      *
-     * @param TreeBuilder $builder
      * @param string|null $name
-     * @param string      $type
      *
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */

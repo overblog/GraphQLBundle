@@ -26,9 +26,6 @@ final class ErrorFormattingEvent extends Event
         return $this->error;
     }
 
-    /**
-     * @return \ArrayObject
-     */
     public function getFormattedError(): \ArrayObject
     {
         return $this->formattedError;

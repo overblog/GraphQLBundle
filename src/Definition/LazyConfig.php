@@ -28,9 +28,6 @@ final class LazyConfig
         return new self($loader, $globalVariables);
     }
 
-    /**
-     * @return array
-     */
     public function load(): array
     {
         $loader = $this->loader;

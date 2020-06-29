@@ -53,9 +53,6 @@ class TypeGenerator extends BaseTypeGenerator
         parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
     }
 
-    /**
-     * @return string|null
-     */
     public function getBaseCacheDir(): ?string
     {
         return $this->baseCacheDir;
@@ -143,11 +140,6 @@ CODE;
         return $this->callableCallbackFromArrayValue($value, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
     }
 
-    /**
-     * @param array $value
-     *
-     * @return string
-     */
     protected function generateComplexity(array $value): string
     {
         $resolveComplexity = parent::generateComplexity($value);
@@ -170,11 +162,6 @@ CODE;
         return $code;
     }
 
-    /**
-     * @param array $value
-     *
-     * @return string
-     */
     protected function generateScalarType(array $value): string
     {
         return $this->callableCallbackFromArrayValue($value, 'scalarType');
@@ -277,14 +264,6 @@ CODE;
     /**
      * Generates additional custom code in the resolver callback.
      *
-     * @param array       $value
-     * @param string      $key
-     * @param string|null $argDefinitions
-     * @param string      $default
-     * @param array|null  $compilerNames
-     *
-     * @return string
-     *
      * @throws GeneratorException
      */
     protected function generateExtraCode(array $value, string $key, ?string $argDefinitions = null, string $default = 'null', array &$compilerNames = null): string
@@ -332,13 +311,6 @@ CODE;
 
     /**
      * Generates validation code in the resolver callback.
-     *
-     * @param array      $rules
-     * @param bool       $autoValidation
-     * @param bool       $autoThrow
-     * @param array|null $groups
-     *
-     * @return string
      */
     protected function generateValidation(array $rules, bool $autoValidation, bool $autoThrow, ?array $groups): string
     {
@@ -446,8 +418,7 @@ CODE;
      *  ]"
      * ```.
      *
-     * @param array $config
-     * @param int   $offset
+     * @param int $offset
      *
      * @return string|null
      *
@@ -570,10 +541,7 @@ CODE;
      * - A normal array: `['min' => 15, 'max' => 25]`
      * - Instantiation of a new asser: `[[Length => ['min' => 15, 'max' => 25]]]`
      *
-     * @param array $array
-     * @param int   $offset
-     *
-     * @return string
+     * @param int $offset
      *
      * @throws GeneratorException
      * @throws ReflectionException
@@ -610,8 +578,6 @@ CODE;
      * @param $array
      * @param int $offset
      *
-     * @return string
-     *
      * @throws ReflectionException
      */
     protected function stringifyNormalArray($array, $offset = 1): string
@@ -638,10 +604,6 @@ CODE;
 
     /**
      * Checks whether an array contains only integer keys.
-     *
-     * @param array $array
-     *
-     * @return bool
      */
     protected static function isNumericArray(array $array): bool
     {
@@ -661,10 +623,6 @@ CODE;
      *  - "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
      *  - "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
      * ```.
-     *
-     * @param string $link
-     *
-     * @return array
      */
     protected function normalizeLink(string $link): array
     {
@@ -681,10 +639,6 @@ CODE;
 
     /**
      * Flattens validation configs and adds extra keys into every entry if required.
-     *
-     * @param array $value
-     *
-     * @return array|null
      */
     protected function buildValidationMapping(array $value): ?array
     {
@@ -731,10 +685,6 @@ CODE;
      *  - "[TypeName]"   - is a collection
      *  - "[TypeName!]!" - is a collection
      *  - "TypeName"     - is not a collection
-     *
-     * @param string $type
-     *
-     * @return bool
      */
     protected function isCollectionType(string $type): bool
     {

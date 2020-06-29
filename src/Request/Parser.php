@@ -11,11 +11,6 @@ class Parser implements ParserInterface
 {
     use UploadParserTrait;
 
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
     public function parse(Request $request): array
     {
         // Extracts the GraphQL request parameters
@@ -27,10 +22,6 @@ class Parser implements ParserInterface
 
     /**
      * Gets the body from the request based on Content-Type header.
-     *
-     * @param Request $request
-     *
-     * @return array
      */
     private function getParsedBody(Request $request): array
     {
@@ -80,11 +71,6 @@ class Parser implements ParserInterface
 
     /**
      * Gets the GraphQL parameters from the request.
-     *
-     * @param Request $request
-     * @param array   $data
-     *
-     * @return array
      */
     private function getParams(Request $request, array $data = []): array
     {

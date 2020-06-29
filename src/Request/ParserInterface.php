@@ -19,10 +19,6 @@ interface ParserInterface
 
     /**
      * Parses the HTTP request and extracts the GraphQL request parameters.
-     *
-     * @param Request $request
-     *
-     * @return array
      */
     public function parse(Request $request): array;
 }

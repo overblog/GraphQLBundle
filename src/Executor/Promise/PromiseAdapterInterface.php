@@ -12,10 +12,6 @@ interface PromiseAdapterInterface extends PromiseAdapter
 {
     /**
      * Synchronously wait when promise completes.
-     *
-     * @param Promise $promise
-     *
-     * @return ExecutionResult|null
      */
     public function wait(Promise $promise): ?ExecutionResult;
 }
