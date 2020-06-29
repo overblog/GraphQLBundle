@@ -136,7 +136,7 @@ class TypeBuilder
                 $type = Literal::new("Type::listOf($innerType)");
                 $this->file->addUse(Type::class);
                 break;
-            case NodeKind::NAMED_TYPE:
+            default:
                 if (\in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
                     $name = \strtolower($typeNode->name->value);
                     $type = Literal::new("Type::$name()");
@@ -146,7 +146,6 @@ class TypeBuilder
                     $type = "$this->globalVars->get('typeResolver')->resolve('$name')";
                 }
                 break;
-            default: throw new RuntimeException('Unrecognized node kind.');
         }
 
         return $type;
@@ -325,8 +324,6 @@ class TypeBuilder
 
         if (!empty($mapping['properties'])) {
             $validator->addArgument($this->buildProperties($mapping['properties']));
-        } else {
-            $validator->addArgument([]);
         }
 
         if (!empty($mapping['class'])) {
@@ -450,10 +447,6 @@ class TypeBuilder
      */
     protected function buildCascade(array $cascade)
     {
-        if (empty($cascade)) {
-            return null;
-        }
-
         /**
          * @var string $referenceType
          * @var array  $groups
@@ -605,24 +598,34 @@ class TypeBuilder
                 ;
             }
 
-            return ArrowFunction::new()
-                ->addArgument('childrenComplexity')
-                ->setExpression(Literal::new($expression));
+            $arrow = ArrowFunction::new(\is_string($expression) ? new Literal($expression) : $expression);
+
+            if (ExpressionLanguage::expressionContainsVar('childrenComplexity', $complexity)) {
+                $arrow->addArgument('childrenComplexity');
+            }
+
+            return $arrow;
         }
 
-        return $complexity;
+        return new ArrowFunction(0);
     }
 
     protected function buildPublic($public)
     {
         if ($this->expressionConverter->check($public)) {
             $expression = $this->expressionConverter->convert($public);
+            $arrow = ArrowFunction::new(Literal::new($expression));
 
-            return ArrowFunction::new()
-                ->addArgument('fieldName')
-                ->addArgument('typeName', '', new Literal('self::NAME'))
-                ->setExpression(Literal::new($expression))
-            ;
+            if (ExpressionLanguage::expressionContainsVar('fieldName', $public)) {
+                $arrow->addArgument('fieldName');
+            }
+
+            if (ExpressionLanguage::expressionContainsVar('typeName', $public)) {
+                $arrow->addArgument('fieldName');
+                $arrow->addArgument('typeName', '', new Literal('self::NAME'));
+            }
+
+            return $arrow;
         }
 
         return $public;

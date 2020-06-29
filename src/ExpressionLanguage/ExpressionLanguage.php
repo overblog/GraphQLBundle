@@ -90,6 +90,6 @@ class ExpressionLanguage extends BaseExpressionLanguage
     {
         $string = \substr($expression, \strlen(self::EXPRESSION_TRIGGER));
 
-        return $string ?: $expression;
+        return '' !== $string ? $string : $expression;
     }
 }

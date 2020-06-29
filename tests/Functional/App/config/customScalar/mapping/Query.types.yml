@@ -4,7 +4,7 @@ DateTime:
         description: "The DateTime type"
         serialize: ['Overblog\GraphQLBundle\Tests\Functional\Type\DateTimeType', "serialize"]
         parseValue: ['Overblog\GraphQLBundle\Tests\Functional\Type\DateTimeType', "parseValue"]
-        parseLiteral: ['Overblog\GraphQLBundle\Tests\Functional\Type\DateTimeType', "parseLiteral"]
+        parseLiteral: 'Overblog\GraphQLBundle\Tests\Functional\Type\DateTimeType::parseLiteral'
 
 Query:
     type: object

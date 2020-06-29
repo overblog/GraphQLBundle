@@ -149,10 +149,6 @@ class InputValidator
             $this->restructureShortForm($params);
 
             foreach ($params ?? [] as $key => $value) {
-                if (null === $value) {
-                    continue;
-                }
-
                 switch ($key) {
                     case 'link':
                         [$fqcn, $property, $type] = $value;
@@ -233,10 +229,6 @@ class InputValidator
         $this->restructureShortForm($rules);
 
         foreach ($rules as $key => $value) {
-            if (null === $value) {
-                continue;
-            }
-
             switch ($key) {
                 case 'link':
                     $linkedMetadata = $this->validator->getMetadataFor($value);

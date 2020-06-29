@@ -23,7 +23,7 @@ class InputValidatorMutation implements MutationInterface
     public function mutationMock(Argument $args, ?InputValidator $validator = null): bool
     {
         if (null !== $validator) {
-            $validator->validate($args['groups']);
+            $validator($args['groups']);
         }
 
         return true;
