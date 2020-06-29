@@ -20,7 +20,6 @@ before_install:
     - if [ "${STABILITY}" != "" ]; then perl -pi -e 's/^}$/,"minimum-stability":"'"${STABILITY}"'"}/' composer.json; fi;
     - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
-    - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
@@ -57,9 +56,8 @@ jobs:
           php: 7.2
           env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
-            - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
-            - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
-          script: bin/phpunit --color=always -v --debug -d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml
+              - pecl install pcov
+          script: bin/phpunit --color=always -v --debug -d pcov.enabled=1 --coverage-clover=build/logs/clover.xml
           after_script:
             - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
             - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
