@@ -129,6 +129,10 @@ class InputValidator
                 /** @var ObjectType|InputObjectType $type */
                 $type = $options['referenceType'];
 
+                if (null === $type) {
+                    continue;
+                }
+
                 if ($options['isCollection']) {
                     $rootObject->$property = $this->createCollectionNode($args[$property], $type, $rootObject);
                 } else {

@@ -29,8 +29,6 @@ interface ConnectionInterface
 
     /**
      * Set the page info.
-     *
-     * @param PageInfoInterface $pageInfo
      */
     public function setPageInfo(PageInfoInterface $pageInfo);
 
@@ -43,8 +41,6 @@ interface ConnectionInterface
 
     /**
      * Set the total count.
-     *
-     * @param int $totalCount
      */
     public function setTotalCount(int $totalCount);
 }

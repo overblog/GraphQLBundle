@@ -37,9 +37,6 @@ class ExtensibleSchema extends Schema
         return $this;
     }
 
-    /**
-     * @param SchemaExtensionInterface $extension
-     */
     public function addExtension(SchemaExtensionInterface $extension): void
     {
         $this->extensions[] = $extension;

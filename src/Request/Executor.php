@@ -64,12 +64,6 @@ class Executor
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param Schema $schema
-     *
-     * @return self
-     */
     public function addSchema(string $name, Schema $schema): self
     {
         $this->schemas[$name] = $schema;
@@ -77,11 +71,6 @@ class Executor
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     *
-     * @return Schema
-     */
     public function getSchema(?string $name = null): Schema
     {
         if (empty($this->schemas)) {
@@ -131,11 +120,7 @@ class Executor
     }
 
     /**
-     * @param string|null                    $schemaName
-     * @param array                          $request
      * @param array|\ArrayObject|object|null $rootValue
-     *
-     * @return ExecutionResult
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {

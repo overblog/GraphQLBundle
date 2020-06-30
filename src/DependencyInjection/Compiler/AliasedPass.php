@@ -49,9 +49,6 @@ final class AliasedPass implements CompilerPassInterface
         });
     }
 
-    /**
-     * @param Definition $definition
-     */
     private function addDefinitionTagsFromAliases(Definition $definition): void
     {
         $aliases = \call_user_func([$definition->getClass(), 'getAliases']);

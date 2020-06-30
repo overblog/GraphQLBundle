@@ -73,13 +73,6 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param array  $attributes
-     * @param string $id
-     * @param bool   $withMethod
-     *
-     * @return array
-     */
     private static function resolveAttributes(array $attributes, string $id, bool $withMethod): array
     {
         $default = ['id' => $id, 'aliases' => []];
@@ -91,10 +84,6 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         return $attributes;
     }
 
-    /**
-     * @param Definition $solutionDefinition
-     * @param bool       $isGenerated
-     */
     private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, bool $isGenerated): void
     {
         $methods = \array_map(

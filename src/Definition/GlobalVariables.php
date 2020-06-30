@@ -15,8 +15,6 @@ final class GlobalVariables
     }
 
     /**
-     * @param string $name
-     *
      * @return mixed
      */
     public function get(string $name)
@@ -28,11 +26,6 @@ final class GlobalVariables
         return $this->services[$name];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function has(string $name): bool
     {
         return isset($this->services[$name]);

@@ -34,8 +34,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Constructor.
      *
-     * @param bool        $debug    Whether to use the debug mode
-     * @param string|null $cacheDir
+     * @param bool $debug Whether to use the debug mode
      */
     public function __construct(bool $debug, string $cacheDir = null)
     {
@@ -373,15 +372,13 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param TreeBuilder $builder
      * @param string|null $name
-     * @param string      $type
      *
      * @return ArrayNodeDefinition|NodeDefinition
      *
      * @internal
      */
-    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, string $name, string $type = 'array')
+    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, ?string $name, string $type = 'array')
     {
         // BC layer for symfony/config 4.1 and older
         return \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, $type);

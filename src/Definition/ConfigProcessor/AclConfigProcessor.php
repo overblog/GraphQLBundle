@@ -63,13 +63,6 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $lazyConfig;
     }
 
-    /**
-     * @param array       $field
-     * @param ResolveInfo $info
-     * @param callable    $defaultResolver
-     *
-     * @return callable
-     */
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable
     {
         if (isset($field['resolve'])) {

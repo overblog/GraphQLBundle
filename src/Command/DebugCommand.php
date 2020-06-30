@@ -83,11 +83,6 @@ class DebugCommand extends Command
         return 0;
     }
 
-    /**
-     * @param FluentResolverInterface $resolver
-     * @param array                   $tableHeaders
-     * @param SymfonyStyle            $io
-     */
     private function renderTable(FluentResolverInterface $resolver, array $tableHeaders, SymfonyStyle $io): void
     {
         $tableRows = [];

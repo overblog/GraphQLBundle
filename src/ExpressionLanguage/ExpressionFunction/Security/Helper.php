@@ -14,8 +14,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 final class Helper
 {
     /**
-     * @param GlobalVariables $globalVariable
-     *
      * @return TokenInterface|null
      */
     private static function getToken(GlobalVariables $globalVariable)

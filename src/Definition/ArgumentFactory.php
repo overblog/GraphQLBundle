@@ -13,11 +13,6 @@ class ArgumentFactory
         $this->className = $className;
     }
 
-    /**
-     * @param array|null $rawArguments
-     *
-     * @return ArgumentInterface
-     */
     public function create(?array $rawArguments): ArgumentInterface
     {
         $className = $this->className;

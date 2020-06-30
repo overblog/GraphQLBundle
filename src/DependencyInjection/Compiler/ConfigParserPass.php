@@ -108,10 +108,7 @@ class ConfigParserPass implements CompilerPassInterface
 
     /**
      * @param $type
-     * @param SplFileInfo[]    $files
-     * @param ContainerBuilder $container
-     * @param array            $configs
-     * @param bool             $preParse
+     * @param SplFileInfo[] $files
      *
      * @return array
      */

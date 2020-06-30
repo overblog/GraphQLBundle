@@ -22,7 +22,6 @@ class ResolverMapsTest extends TestCase
     /**
      * @dataProvider invalidResolverMapDataProvider
      *
-     * @param array  $resolverMaps
      * @param string $type
      */
     public function testInvalidResolverMap(array $resolverMaps, $type): void

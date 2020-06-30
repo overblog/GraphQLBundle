@@ -23,10 +23,6 @@ class Paginator
     /** @var ConnectionBuilder */
     private $connectionBuilder;
 
-    /**
-     * @param callable $fetcher
-     * @param bool     $promise
-     */
     public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR, ConnectionBuilder $connectionBuilder = null)
     {
         $this->fetcher = $fetcher;
@@ -35,9 +31,7 @@ class Paginator
     }
 
     /**
-     * @param ArgumentInterface $args
-     * @param int|callable      $total
-     * @param array             $callableArgs
+     * @param int|callable $total
      *
      * @return ConnectionInterface|object A connection or a promise
      */
@@ -59,8 +53,6 @@ class Paginator
     }
 
     /**
-     * @param ArgumentInterface $args
-     *
      * @return ConnectionInterface|object A connection or a promise
      */
     public function forward(ArgumentInterface $args)
@@ -89,9 +81,7 @@ class Paginator
     }
 
     /**
-     * @param ArgumentInterface $args
-     * @param int|callable      $total
-     * @param array             $callableArgs
+     * @param int|callable $total
      *
      * @return ConnectionInterface|object A connection or a promise
      */
@@ -118,7 +108,6 @@ class Paginator
 
     /**
      * @param array|object $entities An array of entities to paginate or a promise
-     * @param callable     $callback
      *
      * @return ConnectionInterface|object A connection or a promise
      */
@@ -133,7 +122,6 @@ class Paginator
 
     /**
      * @param int|callable $total
-     * @param array        $callableArgs
      *
      * @return int|mixed
      */

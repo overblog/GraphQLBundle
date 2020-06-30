@@ -81,7 +81,6 @@ final class TypeDecoratorListener
 
     /**
      * @param InterfaceType|UnionType $type
-     * @param ResolverMapInterface    $resolverMap
      */
     private function decorateInterfaceOrUnionType($type, ResolverMapInterface $resolverMap): void
     {

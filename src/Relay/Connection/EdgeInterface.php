@@ -29,8 +29,6 @@ interface EdgeInterface
 
     /**
      * Set the edge cursor.
-     *
-     * @param string $cursor
      */
     public function setCursor(string $cursor);
 }

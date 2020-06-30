@@ -17,8 +17,6 @@ class ResolveErrors
 
     /**
      * Returns a collection of validation violations or null.
-     *
-     * @return ConstraintViolationListInterface|null
      */
     public function getValidationErrors(): ?ConstraintViolationListInterface
     {

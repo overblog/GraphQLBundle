@@ -36,13 +36,7 @@ class SchemaBuilder
     }
 
     /**
-     * @param string      $name
-     * @param string|null $queryAlias
-     * @param string|null $mutationAlias
-     * @param string|null $subscriptionAlias
-     * @param string[]    $types
-     *
-     * @return ExtensibleSchema
+     * @param string[] $types
      */
     public function create(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): ExtensibleSchema
     {
