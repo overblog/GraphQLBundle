@@ -19,20 +19,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ArgumentsTransformer
 {
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validator;
+    protected ValidatorInterface $validator;
 
-    /**
-     * @var array
-     */
-    protected $classesMap;
+    protected array $classesMap;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $accessor;
+    protected PropertyAccessor $accessor;
 
     public function __construct(ValidatorInterface $validator = null, $classesMap = [])
     {
