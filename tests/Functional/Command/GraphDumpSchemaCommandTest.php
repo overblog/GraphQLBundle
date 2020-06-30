@@ -4,38 +4,35 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use function file_get_contents;
+use function json_decode;
+use function strcmp;
+use function trim;
+use function usort;
 
 class GraphDumpSchemaCommandTest extends TestCase
 {
-    /** @var Command */
-    private $command;
-
-    /** @var CommandTester */
-    private $commandTester;
-
-    /** @var string */
-    private $cacheDir;
+    private CommandTester $commandTester;
+    private string $cacheDir;
 
     public function setUp(): void
     {
         parent::setUp();
         static::bootKernel(['test_case' => 'connection']);
 
-        $this->command = static::$kernel->getContainer()->get(GraphQLDumpSchemaCommand::class);
-        $this->commandTester = new CommandTester($this->command);
+        $command = static::$kernel->getContainer()->get(GraphQLDumpSchemaCommand::class);
+        $this->commandTester = new CommandTester($command);
         $this->cacheDir = static::$kernel->getCacheDir();
     }
 
     /**
-     * @param $format
-     * @param bool $withFormatOption
      * @dataProvider formatDataProvider
      */
-    public function testDump($format, $withFormatOption = true): void
+    public function testDump(string $format, bool $withFormatOption = true): void
     {
         $file = $this->cacheDir.'/schema.'.$format;
 
@@ -100,7 +97,7 @@ class GraphDumpSchemaCommandTest extends TestCase
 
     public function testInvalidFormat(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown format "fake"');
         $this->commandTester->execute([
             '--format' => 'fake',
@@ -109,7 +106,7 @@ class GraphDumpSchemaCommandTest extends TestCase
 
     public function testInvalidModernAndClassicUsedTogether(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('"modern" and "classic" options should not be used together.');
         $this->commandTester->execute([
             '--format' => 'json',
@@ -118,7 +115,7 @@ class GraphDumpSchemaCommandTest extends TestCase
         ]);
     }
 
-    public function formatDataProvider()
+    public function formatDataProvider(): array
     {
         return [
             ['json', false],
@@ -127,23 +124,23 @@ class GraphDumpSchemaCommandTest extends TestCase
         ];
     }
 
-    private function assertCommandExecution(array $input, $expectedFile, $actualFile, $format, $expectedStatusCode = 0): void
+    private function assertCommandExecution(array $input, string $expectedFile, string $actualFile, string $format, int $expectedStatusCode = 0): void
     {
         $this->commandTester->execute($input);
 
         $this->assertSame($expectedStatusCode, $this->commandTester->getStatusCode());
-        $expected = \trim(\file_get_contents($expectedFile));
-        $actual = \trim(\file_get_contents($actualFile));
+        $expected = trim(file_get_contents($expectedFile));
+        $actual = trim(file_get_contents($actualFile));
         if ('json' === $format) {
-            $expected = \json_decode($expected, true);
-            $actual = \json_decode($actual, true);
+            $expected = json_decode($expected, true);
+            $actual = json_decode($actual, true);
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
         }
         $this->assertSame($expected, $actual);
     }
 
-    private function sortSchemaEntry(array &$entries, $entryKey, $sortBy): void
+    private function sortSchemaEntry(array &$entries, string $entryKey, string $sortBy): void
     {
         if (isset($entries['data']['__schema'][$entryKey])) {
             $data = &$entries['data']['__schema'][$entryKey];
@@ -151,8 +148,8 @@ class GraphDumpSchemaCommandTest extends TestCase
             $data = &$entries['__schema'][$entryKey];
         }
 
-        \usort($data, function ($data1, $data2) use ($sortBy) {
-            return \strcmp($data1[$sortBy], $data2[$sortBy]);
+        usort($data, function ($data1, $data2) use ($sortBy) {
+            return strcmp($data1[$sortBy], $data2[$sortBy]);
         });
     }
 }

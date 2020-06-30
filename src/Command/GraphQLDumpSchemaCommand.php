@@ -6,22 +6,26 @@ namespace Overblog\GraphQLBundle\Command;
 
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use function file_put_contents;
+use function json_encode;
+use function realpath;
+use function sprintf;
+use function strtolower;
+use const JSON_PRETTY_PRINT;
 
 final class GraphQLDumpSchemaCommand extends Command
 {
-    /** @var RequestExecutor */
-    private $requestExecutor;
+    private RequestExecutor $requestExecutor;
+    private string $baseExportPath;
 
-    /** @var string */
-    private $baseExportPath;
-
-    public function __construct($baseExportPath, RequestExecutor $requestExecutor)
+    public function __construct(string $baseExportPath, RequestExecutor $requestExecutor)
     {
         parent::__construct();
         $this->baseExportPath = $baseExportPath;
@@ -83,18 +87,20 @@ final class GraphQLDumpSchemaCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $file = $this->createFile($input);
-        $io->success(\sprintf('GraphQL schema "%s" was successfully dumped.', \realpath($file)));
+        $io->success(sprintf('GraphQL schema "%s" was successfully dumped.', realpath($file)));
 
         return 0;
     }
 
-    private function createFile(InputInterface $input)
+    private function createFile(InputInterface $input): string
     {
-        $format = \strtolower($input->getOption('format'));
+        $format = strtolower($input->getOption('format'));
         $schemaName = $input->getOption('schema');
+
+        /** @var bool $includeDescription */
         $includeDescription = $input->getOption('with-descriptions');
 
-        $file = $input->getOption('file') ?: $this->baseExportPath.\sprintf('/var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+        $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
@@ -110,7 +116,7 @@ final class GraphQLDumpSchemaCommand extends Command
                     ->execute($schemaName, $request)
                     ->toArray();
 
-                $content = \json_encode($modern ? $result : $result['data'], \JSON_PRETTY_PRINT);
+                $content = json_encode($modern ? $result : $result['data'], JSON_PRETTY_PRINT);
                 break;
 
             case 'graphql':
@@ -118,20 +124,21 @@ final class GraphQLDumpSchemaCommand extends Command
                 break;
 
             default:
-                throw new \InvalidArgumentException(\sprintf('Unknown format %s.', \json_encode($format)));
+                throw new InvalidArgumentException(sprintf('Unknown format %s.', json_encode($format)));
         }
 
-        \file_put_contents($file, $content);
+        file_put_contents($file, $content);
 
+        // @phpstan-ignore-next-line
         return $file;
     }
 
-    private function useModernJsonFormat(InputInterface $input)
+    private function useModernJsonFormat(InputInterface $input): bool
     {
         $modern = $input->getOption('modern');
         $classic = $input->getOption('classic');
         if ($modern && $classic) {
-            throw new \InvalidArgumentException('"modern" and "classic" options should not be used together.');
+            throw new InvalidArgumentException('"modern" and "classic" options should not be used together.');
         }
 
         return true === $modern;

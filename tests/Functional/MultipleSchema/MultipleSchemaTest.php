@@ -26,14 +26,15 @@ class MultipleSchemaTest extends TestCase
         $this->assertSame([['node' => ['username' => 'user1']]], $result['data']['users']['edges']);
 
         $query = <<<'EOF'
-mutation M {
-  addUser(input: {username: "user1"}) {
-    user {
-      username
-    }
-  }
-}
-EOF;
+        mutation M {
+          addUser(input: {username: "user1"}) {
+            user {
+              username
+            }
+          }
+        }
+        EOF;
+
         $expectedData = [
             'addUser' => [
                 'user' => ['username' => 'user1'],
@@ -54,15 +55,16 @@ EOF;
         $this->assertSame([['node' => ['username' => 'user1', 'email' => 'topsecret']]], $result['data']['users']['edges']);
 
         $query = <<<'EOF'
-mutation M {
-  addUser(input: {username: "user1"}) {
-    user {
-      username
-      email
-    }
-  }
-}
-EOF;
+        mutation M {
+          addUser(input: {username: "user1"}) {
+            user {
+              username
+              email
+            }
+          }
+        }
+        EOF;
+
         $expectedData = [
             'addUser' => [
                 'user' => ['username' => 'user1', 'email' => 'email1'],
@@ -74,14 +76,16 @@ EOF;
 
     public function testUnknownTypeShouldNotInfinityLoop(): void
     {
+        // @phpstan-ignore-next-line
         $schema = $this->getContainer()->get('overblog_graphql.request_executor')->getSchema('public');
         $this->expectException(InvariantViolation::class);
-        $this->expectExceptionMessage('Type loader is expected to return valid type "unknown", but it returned null');
+        $this->expectExceptionMessage('Type loader is expected to return a callable or valid type "unknown", but it returned null');
         $schema->getType('unknown');
     }
 
-    private function assertSchemaQueryTypeName($typeName): void
+    private function assertSchemaQueryTypeName(string $typeName): void
     {
+        // @phpstan-ignore-next-line
         $query = $this->getContainer()->get('overblog_graphql.type_resolver')->resolve($typeName);
         $this->assertSame('Query', $query->name);
     }

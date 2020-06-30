@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ResolveErrors
 {
-    private ConstraintViolationListInterface $validationErrors;
+    private ?ConstraintViolationListInterface $validationErrors = null;
 
     public function setValidationErrors(ConstraintViolationListInterface $errors): void
     {

@@ -13,15 +13,15 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
 {
-    private $expressionLanguage;
+    private ExpressionLanguage $expressionLanguage;
 
     public function __construct(ExpressionLanguage $expressionLanguage)
     {
         $this->expressionLanguage = $expressionLanguage;
-        if (Kernel::VERSION_ID >= 40400) {
+        if (Kernel::VERSION_ID >= 40400) {  // @phpstan-ignore-line
             parent::__construct($expressionLanguage);
-        } else {
-            parent::__construct(null, $expressionLanguage);
+        } else {                            // @phpstan-ignore-line
+            parent::{'__construct'}(null, $expressionLanguage);
         }
     }
 

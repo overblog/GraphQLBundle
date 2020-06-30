@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Util;
 
+use Generator;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Util\Base64Encoder;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +27,7 @@ final class Base64UrlSafeEncoderTest extends TestCase
         $this->assertSame($value, Base64Encoder::decodeUrlSafe($encodedValue));
     }
 
-    public function urlSafeValuesDataProvider(): \Generator
+    public function urlSafeValuesDataProvider(): Generator
     {
         yield [
             '000000',
@@ -119,7 +121,7 @@ final class Base64UrlSafeEncoderTest extends TestCase
 
     public function testDecodeUrlSafeThrowsOnInvalidValue(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "cxr0fdsezrewklerewxoz423ocfsa3bw432yjydsa9lhdsalw" value failed to be decoded from base64 format.');
 
         Base64Encoder::decodeUrlSafe('cxr0fdsezrewklerewxoz423ocfsa3bw432yjydsa9lhdsalw');

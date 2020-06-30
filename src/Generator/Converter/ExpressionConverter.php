@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Generator\Converter;
 
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use function is_string;
 
 class ExpressionConverter implements ConverterInterface
 {
@@ -16,6 +17,11 @@ class ExpressionConverter implements ConverterInterface
         $this->expressionLanguage = $expressionLanguage;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return mixed|string
+     */
     public function convert($value)
     {
         return $this->expressionLanguage->compile(
@@ -24,9 +30,12 @@ class ExpressionConverter implements ConverterInterface
         );
     }
 
+    /**
+     * @param mixed $maybeExpression
+     */
     public function check($maybeExpression): bool
     {
-        if (\is_string($maybeExpression)) {
+        if (is_string($maybeExpression)) {
             return ExpressionLanguage::stringHasTrigger($maybeExpression);
         }
 

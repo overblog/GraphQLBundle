@@ -10,17 +10,10 @@ class PageInfo implements PageInfoInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
 
-    /** @var string */
-    protected $startCursor;
-
-    /** @var string */
-    protected $endCursor;
-
-    /** @var bool */
-    protected $hasPreviousPage;
-
-    /** @var bool */
-    protected $hasNextPage;
+    protected ?string $startCursor;
+    protected ?string $endCursor;
+    protected ?bool $hasPreviousPage;
+    protected ?bool $hasNextPage;
 
     public function __construct(string $startCursor = null, string $endCursor = null, bool $hasPreviousPage = null, bool $hasNextPage = null)
     {

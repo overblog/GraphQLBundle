@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\ClientAware;
+use RuntimeException;
 
-/**
- * Class UserWarning.
- */
-class UserWarning extends \RuntimeException implements ClientAware
+class UserWarning extends RuntimeException implements ClientAware
 {
     /**
      * {@inheritdoc}

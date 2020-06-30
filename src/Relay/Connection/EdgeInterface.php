@@ -16,9 +16,9 @@ interface EdgeInterface
     /**
      * Set the edge node.
      *
-     * @param mixed node
+     * @param mixed $node
      */
-    public function setNode($node);
+    public function setNode($node): void;
 
     /**
      * Get the edge cursor.
@@ -30,5 +30,5 @@ interface EdgeInterface
     /**
      * Set the edge cursor.
      */
-    public function setCursor(string $cursor);
+    public function setCursor(string $cursor): void;
 }

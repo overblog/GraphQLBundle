@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
 use PHPUnit\Framework\TestCase;
 
 class NodeFieldDefinitionTest extends TestCase
 {
-    /** @var NodeFieldDefinition */
-    private $definition;
+    private NodeFieldDefinition $definition;
 
     public function setUp(): void
     {
@@ -19,26 +19,22 @@ class NodeFieldDefinitionTest extends TestCase
 
     public function testUndefinedIdFetcherConfig(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Node "idFetcher" config is invalid.');
         $this->definition->toMappingDefinition([]);
     }
 
     public function testIdFetcherConfigSetButIsNotString(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Node "idFetcher" config is invalid.');
         $this->definition->toMappingDefinition(['idFetcher' => 45]);
     }
 
     /**
      * @dataProvider validConfigProvider
-     *
-     * @param $idFetcher
-     * @param $idFetcherCallbackArg
-     * @param $nodeInterfaceType
      */
-    public function testValidConfig($idFetcher, $idFetcherCallbackArg, $nodeInterfaceType = 'node'): void
+    public function testValidConfig(string $idFetcher, string $idFetcherCallbackArg, string $nodeInterfaceType = 'node'): void
     {
         $config = [
             'idFetcher' => $idFetcher,
@@ -56,7 +52,7 @@ class NodeFieldDefinitionTest extends TestCase
         $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
-    public function validConfigProvider()
+    public function validConfigProvider(): array
     {
         return [
             ['@=user.username', 'user.username'],

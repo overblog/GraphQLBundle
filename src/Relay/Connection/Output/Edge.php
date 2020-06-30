@@ -10,12 +10,14 @@ class Edge implements EdgeInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
 
-    /** @var string */
-    protected $cursor;
+    protected ?string $cursor;
 
     /** @var mixed */
     protected $node;
 
+    /**
+     * @param mixed $node
+     */
     public function __construct(string $cursor = null, $node = null)
     {
         $this->cursor = $cursor;

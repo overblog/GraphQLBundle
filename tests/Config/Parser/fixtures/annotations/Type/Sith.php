@@ -18,18 +18,18 @@ class Sith extends Character
      * @GQL\Field(type="String!")
      * @GQL\Access("hasRole('SITH_LORD')")
      */
-    protected $realName;
+    protected string $realName;
 
     /**
      * @GQL\Field(type="String!")
      * @GQL\IsPublic("hasRole('SITH_LORD')")
      */
-    protected $location;
+    protected string $location;
 
     /**
      * @GQL\Field(type="Sith", resolve="service('master_resolver').getMaster(value)")
      */
-    protected $currentMaster;
+    protected Sith $currentMaster;
 
     /**
      * @GQL\Field(
@@ -40,7 +40,7 @@ class Sith extends Character
      *   }
      * )
      */
-    public function getVictims(bool $jediOnly = false)
+    public function getVictims(bool $jediOnly = false): array
     {
         return [];
     }

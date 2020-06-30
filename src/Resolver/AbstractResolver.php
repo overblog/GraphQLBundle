@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Type\Definition\Type;
+use function array_keys;
+use function call_user_func_array;
+use function get_class;
+use function is_array;
+use function is_callable;
+use function sprintf;
+
 abstract class AbstractResolver implements FluentResolverInterface
 {
-    /** @var array */
-    private $solutions = [];
+    private array $solutions = [];
+    private array $aliases = [];
+    private array $solutionOptions = [];
+    private array $fullyLoadedSolutions = [];
 
-    private $aliases = [];
-
-    /** @var array */
-    private $solutionOptions = [];
-
-    /** @var array */
-    private $fullyLoadedSolutions = [];
-
-    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = [])
+    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = []): self
     {
         $this->fullyLoadedSolutions[$id] = false;
         $this->addAliases($id, $aliases);
@@ -28,7 +30,7 @@ abstract class AbstractResolver implements FluentResolverInterface
                 if (!isset($solutionOrFactory[1])) {
                     $solutionOrFactory[1] = [];
                 }
-                $solution = \call_user_func_array(...$solutionOrFactory);
+                $solution = call_user_func_array(...$solutionOrFactory);
             }
             $this->checkSolution($id, $solution);
 
@@ -39,7 +41,7 @@ abstract class AbstractResolver implements FluentResolverInterface
         return $this;
     }
 
-    public function hasSolution(string $id)
+    public function hasSolution(string $id): bool
     {
         $id = $this->resolveAlias($id);
 
@@ -47,8 +49,6 @@ abstract class AbstractResolver implements FluentResolverInterface
     }
 
     /**
-     * @param $id
-     *
      * @return mixed
      */
     public function getSolution(string $id)
@@ -61,14 +61,12 @@ abstract class AbstractResolver implements FluentResolverInterface
         return $this->loadSolutions();
     }
 
-    public function getSolutionAliases(string $id)
+    public function getSolutionAliases(string $id): array
     {
-        return \array_keys($this->aliases, $id);
+        return array_keys($this->aliases, $id);
     }
 
     /**
-     * @param $id
-     *
      * @return mixed
      */
     public function getSolutionOptions(string $id)
@@ -78,6 +76,9 @@ abstract class AbstractResolver implements FluentResolverInterface
         return isset($this->solutionOptions[$id]) ? $this->solutionOptions[$id] : [];
     }
 
+    /**
+     * @param mixed $solution
+     */
     protected function onLoadSolution($solution): void
     {
     }
@@ -111,12 +112,15 @@ abstract class AbstractResolver implements FluentResolverInterface
         }
     }
 
-    private static function isSolutionFactory($solutionOrFactory)
+    /**
+     * @param object|array $solutionOrFactory
+     */
+    private static function isSolutionFactory($solutionOrFactory): bool
     {
-        return \is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && \is_callable($solutionOrFactory[0]);
+        return is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && is_callable($solutionOrFactory[0]);
     }
 
-    private function resolveAlias(string $alias)
+    private function resolveAlias(string $alias): string
     {
         return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
     }
@@ -143,11 +147,14 @@ abstract class AbstractResolver implements FluentResolverInterface
         return  null === $supportedClass || $solution instanceof $supportedClass;
     }
 
+    /**
+     * @param mixed $solution
+     */
     protected function checkSolution(string $id, $solution): void
     {
         if (!$this->supportsSolution($solution)) {
             throw new UnsupportedResolverException(
-                \sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), \get_class($solution))
+                sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), get_class($solution))
             );
         }
     }

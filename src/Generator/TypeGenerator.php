@@ -7,6 +7,11 @@ namespace Overblog\GraphQLBundle\Generator;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Symfony\Component\Filesystem\Filesystem;
+use function array_merge;
+use function file_exists;
+use function file_put_contents;
+use function str_replace;
+use function var_export;
 
 /**
  * @final
@@ -85,7 +90,7 @@ class TypeGenerator
         $writeMode = $mode & self::MODE_WRITE;
 
         // Configure write mode
-        if ($writeMode && \file_exists($cacheDir)) {
+        if ($writeMode && file_exists($cacheDir)) {
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
@@ -99,18 +104,18 @@ class TypeGenerator
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
             $classMap = $this->generateClass($config, $cacheDir, $mode);
-            $classes = \array_merge($classes, $classMap);
+            $classes = array_merge($classes, $classMap);
         }
 
         // Create class map file
         if ($writeMode && $this->useClassMap) {
-            $content = "<?php\nreturn ".\var_export($classes, true).';';
+            $content = "<?php\nreturn ".var_export($classes, true).';';
 
             // replaced hard-coded absolute paths by __DIR__
             // (see https://github.com/overblog/GraphQLBundle/issues/167)
-            $content = \str_replace(" => '$cacheDir", " => __DIR__ . '", $content);
+            $content = str_replace(" => '$cacheDir", " => __DIR__ . '", $content);
 
-            \file_put_contents($this->getClassesMap(), $content);
+            file_put_contents($this->getClassesMap(), $content);
 
             $this->loadClasses(true);
         }
@@ -123,30 +128,11 @@ class TypeGenerator
         $className = $config['config']['class_name'];
         $path = "$outputDirectory/$className.php";
 
-        // ORIGINAL CODE
-//        if (!($mode & self::MODE_MAPPING_ONLY)) {
-//            $this->clearInternalUseStatements();
-//            $code = $this->processTemplatePlaceHoldersReplacements('TypeSystem', $config, static::DEFERRED_PLACEHOLDERS);
-//            $code = $this->processPlaceHoldersReplacements(static::DEFERRED_PLACEHOLDERS, $code, $config)."\n";
-//
-//            if ($mode & self::MODE_WRITE) {
-//                $dir = \dirname($path);
-//                if (!\is_dir($dir)) {
-//                    \mkdir($dir, $this->cacheDirMask, true);
-//                }
-//                if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
-//                    \file_put_contents($path, $code);
-//                }
-//            }
-//        }
-
-        // TODO (mcg-web): please review this code. You can see the original code above (commented).
-        //                 It seems that there are too many mode-checks here.
         if (!($mode & self::MODE_MAPPING_ONLY)) {
             $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
 
             if ($mode & self::MODE_WRITE) {
-                if (($mode & self::MODE_OVERRIDE) || !\file_exists($path)) {
+                if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
                     $phpFile->save($path);
                 }
             }
@@ -159,7 +145,7 @@ class TypeGenerator
     {
         if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
             $classMapFile = $this->getClassesMap();
-            $classes = \file_exists($classMapFile) ? require $classMapFile : [];
+            $classes = file_exists($classMapFile) ? require $classMapFile : [];
 
             /** @var ClassLoader $mapClassLoader */
             static $mapClassLoader = null;

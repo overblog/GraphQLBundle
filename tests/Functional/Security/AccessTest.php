@@ -4,64 +4,71 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
+use Closure;
+use Error;
 use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpKernel\Kernel;
+use function file_exists;
+use function preg_match;
+use function preg_quote;
+use function spl_autoload_register;
+use function spl_autoload_unregister;
+use function sprintf;
+use function sys_get_temp_dir;
 
 class AccessTest extends TestCase
 {
-    /** @var \Closure */
-    private $loader;
+    /** @var Closure */
+    private Closure $loader;
 
-    private $userNameQuery = 'query { user { name } }';
+    private string $userNameQuery = 'query { user { name } }';
+    private string $userRolesQuery = 'query { user { roles } }';
+    private string $userIsEnabledQuery = 'query ($hasAccess: Boolean = true) { user { isEnabled(hasAccess: $hasAccess) } }';
 
-    private $userRolesQuery = 'query { user { roles } }';
-
-    private $userIsEnabledQuery = 'query ($hasAccess: Boolean = true) { user { isEnabled(hasAccess: $hasAccess) } }';
-
-    private $userFriendsQuery = <<<'EOF'
-query {
-  user {
-    friends(first: 2) {
-      edges {
-        node {
-          name
+    private string $userFriendsQuery = <<<'EOF'
+    query {
+      user {
+        friends(first: 2) {
+          edges {
+            node {
+              name
+            }
+          }
         }
       }
     }
-  }
-}
-EOF;
+    EOF;
 
-    private $simpleMutationWithThunkQuery = <<<'EOF'
-mutation M {
-  simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
-    result
-    clientMutationId
-  }
-}
-EOF;
+    private string $simpleMutationWithThunkQuery = <<<'EOF'
+    mutation M {
+      simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
+        result
+        clientMutationId
+      }
+    }
+    EOF;
 
     public function setUp(): void
     {
         parent::setUp();
         // load types
         $this->loader = function ($class): void {
-            if (\preg_match('@^'.\preg_quote('Overblog\GraphQLBundle\Access\__DEFINITIONS__\\').'(.*)$@', $class, $matches)) {
-                $file = \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
-                if (\file_exists($file)) {
+            if (preg_match('@^'.preg_quote('Overblog\GraphQLBundle\Access\__DEFINITIONS__\\').'(.*)$@', $class, $matches)) {
+                $file = sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/access/cache/testaccess/overblog/graphql-bundle/__definitions__/'.$matches[1].'.php';
+                if (file_exists($file)) {
                     require $file;
                 }
             }
         };
-        \spl_autoload_register($this->loader);
+        spl_autoload_register($this->loader);
     }
 
     public function testCustomClassLoaderNotRegister(): void
     {
-        $this->expectException(\Error::class);
+        $this->expectException(Error::class);
         $this->expectExceptionMessage('Class \'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType\' not found');
-        \spl_autoload_unregister($this->loader);
+        spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
     }
 
@@ -275,7 +282,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(\sprintf($this->simpleMutationWithThunkQuery, $result), $expected, static::USER_ADMIN, 'access');
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, $result), $expected, static::USER_ADMIN, 'access');
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
@@ -305,7 +312,7 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(\sprintf($this->simpleMutationWithThunkQuery, 321), $expected, static::USER_ADMIN, 'access');
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 321), $expected, static::USER_ADMIN, 'access');
         $this->assertTrue(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
@@ -330,11 +337,11 @@ EOF;
             ],
         ];
 
-        $this->assertResponse(\sprintf($this->simpleMutationWithThunkQuery, 123), $expected, static::USER_RYAN, 'access');
+        $this->assertResponse(sprintf($this->simpleMutationWithThunkQuery, 123), $expected, static::USER_RYAN, 'access');
         $this->assertFalse(SimpleMutationWithThunkFieldsMutation::hasMutate(true));
     }
 
-    private function expectedFailedUserRoles()
+    private function expectedFailedUserRoles(): array
     {
         return [
             'data' => [

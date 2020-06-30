@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use function array_values;
 
 class GlobalResolver
 {
-    /** @var TypeResolver */
-    private $typeResolver;
+    private TypeResolver $typeResolver;
 
-    private $userData = [
+    private array $userData = [
         1 => [
             'id' => 1,
             'name' => 'John Doe',
@@ -23,7 +24,7 @@ class GlobalResolver
         ],
     ];
 
-    private $photoData = [
+    private array $photoData = [
         1 => [
             'photoId' => 1,
             'width' => 300,
@@ -34,7 +35,7 @@ class GlobalResolver
         ],
     ];
 
-    private $postData = [
+    private array $postData = [
         1 => [
             'id' => 1,
             'text' => 'lorem',
@@ -52,9 +53,9 @@ class GlobalResolver
         $this->typeResolver = $typeResolver;
     }
 
-    public function idFetcher($globalId)
+    public function idFetcher(string $globalId): array
     {
-        list($type, $id) = \array_values(GlobalId::fromGlobalId($globalId));
+        list($type, $id) = array_values(GlobalId::fromGlobalId($globalId));
 
         if ('User' === $type) {
             return $this->userData[$id];
@@ -65,7 +66,7 @@ class GlobalResolver
         }
     }
 
-    public function typeResolver($value)
+    public function typeResolver(array $value): ?Type
     {
         if (isset($value['name'])) {
             return $this->typeResolver->resolve('User');
@@ -76,7 +77,7 @@ class GlobalResolver
         }
     }
 
-    public function resolveAllObjects()
+    public function resolveAllObjects(): array
     {
         return [
             $this->userData[1], $this->userData[2],

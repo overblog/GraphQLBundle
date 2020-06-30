@@ -16,22 +16,22 @@ class DummyEntity
     /**
      * @Assert\EqualTo("Lorem Ipsum")
      */
-    private $string1;
+    private string $string1;
 
     /**
      * @Assert\EqualTo("Lorem Ipsum")
      */
-    private $string2;
+    private string $string2;
 
     /**
      * @Assert\EqualTo("{""text"":""Lorem Ipsum""}")
      */
-    private $string3;
+    private string $string3;
 
     /**
      * @Assert\EqualTo("Dolor Sit Amet")
      */
-    public function getString1()
+    public function getString1(): string
     {
         return $this->string1;
     }
@@ -39,7 +39,7 @@ class DummyEntity
     /**
      * @Assert\EqualTo("Dolor Sit Amet")
      */
-    public function getString2()
+    public function getString2(): string
     {
         return $this->string2;
     }
@@ -47,7 +47,7 @@ class DummyEntity
     /**
      * @Assert\Json()
      */
-    public function getString3()
+    public function getString3(): string
     {
         return $this->string3;
     }

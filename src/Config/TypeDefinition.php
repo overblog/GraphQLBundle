@@ -4,74 +4,78 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Overblog\GraphQLBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
+use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
+use function is_array;
+use function is_int;
+use function is_string;
+use function preg_match;
 
 abstract class TypeDefinition
 {
     public const VALIDATION_LEVEL_CLASS = 0;
     public const VALIDATION_LEVEL_PROPERTY = 1;
 
-    abstract public function getDefinition();
+    abstract public function getDefinition(): ArrayNodeDefinition;
 
-    protected function __construct()
+    final protected function __construct()
     {
     }
 
     /**
      * @return static
      */
-    public static function create()
+    public static function create(): self
     {
         return new static();
     }
 
-    protected function resolveTypeSection()
+    protected function resolveTypeSection(): VariableNodeDefinition
     {
-        $node = self::createNode('resolveType', 'variable');
-
-        return $node;
+        return self::createNode('resolveType', 'variable');
     }
 
-    protected function nameSection()
+    protected function nameSection(): ScalarNodeDefinition
     {
+        /** @var ScalarNodeDefinition $node */
         $node = self::createNode('name', 'scalar');
-        $node->isRequired();
-        $node->validate()
-            ->ifTrue(fn ($name) => !\preg_match('/^[_a-z][_0-9a-z]*$/i', $name))
-            ->thenInvalid('Invalid type name "%s". (see http://spec.graphql.org/June2018/#sec-Names)')
-        ->end();
+
+        $node
+            ->isRequired()
+            ->validate()
+                ->ifTrue(fn ($name) => !preg_match('/^[_a-z][_0-9a-z]*$/i', $name))
+                ->thenInvalid('Invalid type name "%s". (see http://spec.graphql.org/June2018/#sec-Names)')
+            ->end()
+        ;
 
         return $node;
     }
 
-    protected function defaultValueSection()
+    protected function defaultValueSection(): VariableNodeDefinition
     {
         return self::createNode('defaultValue', 'variable');
     }
 
-    /**
-     * @return ArrayNodeDefinition|NodeDefinition
-     */
-    protected function validationSection(int $level): NodeParentInterface
+    protected function validationSection(int $level): ArrayNodeDefinition
     {
+        /** @var ArrayNodeDefinition $node */
         $node = self::createNode('validation', 'array');
 
+        /** @phpstan-ignore-next-line */
         $node
             // allow shorthands
             ->beforeNormalization()
                 ->always(function ($value) {
-                    if (\is_string($value)) {
+                    if (is_string($value)) {
                         // shorthand: cascade or link
                         return 'cascade' === $value ? ['cascade' => null] : ['link' => $value];
                     }
 
-                    if (\is_array($value)) {
+                    if (is_array($value)) {
                         foreach ($value as $k => $a) {
-                            if (!\is_int($k)) {
+                            if (!is_int($k)) {
                                 // validation: { link: ... , constraints: ..., cascade: ... }
                                 return $value;
                             }
@@ -85,13 +89,12 @@ abstract class TypeDefinition
             ->end()
             ->children()
                 ->scalarNode('link')
-//                    ->defaultNull()
                     ->validate()
                         ->ifTrue(function ($link) use ($level) {
                             if (self::VALIDATION_LEVEL_PROPERTY === $level) {
-                                return !\preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]+::(?:[$]?[A-Za-z][A-Za-z_\d]+|[A-Za-z_\d]+\(\))$/m', $link);
+                                return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]+::(?:[$]?[A-Za-z][A-Za-z_\d]+|[A-Za-z_\d]+\(\))$/m', $link);
                             } else {
-                                return !\preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]$/m', $link);
+                                return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]$/m', $link);
                             }
                         })
                         ->thenInvalid('Invalid link provided: "%s".')
@@ -102,6 +105,7 @@ abstract class TypeDefinition
 
         // Add the 'cascade' option if it's a property level validation section
         if (self::VALIDATION_LEVEL_PROPERTY === $level) {
+            /** @phpstan-ignore-next-line */
             $node
                 ->children()
                     ->arrayNode('cascade')
@@ -120,15 +124,17 @@ abstract class TypeDefinition
         return $node;
     }
 
-    protected function descriptionSection()
+    protected function descriptionSection(): ScalarNodeDefinition
     {
+        /** @var ScalarNodeDefinition $node */
         $node = self::createNode('description', 'scalar');
 
         return $node;
     }
 
-    protected function deprecationReasonSection()
+    protected function deprecationReasonSection(): ScalarNodeDefinition
     {
+        /** @var ScalarNodeDefinition $node */
         $node = self::createNode('deprecationReason', 'scalar');
 
         $node->info('Text describing why this field is deprecated. When not empty - field will not be returned by introspection queries (unless forced)');
@@ -136,8 +142,9 @@ abstract class TypeDefinition
         return $node;
     }
 
-    protected function typeSection($isRequired = false)
+    protected function typeSection(bool $isRequired = false): ScalarNodeDefinition
     {
+        /** @var ScalarNodeDefinition $node */
         $node = self::createNode('type', 'scalar');
 
         $node->info('One of internal or custom types.');
@@ -150,12 +157,12 @@ abstract class TypeDefinition
     }
 
     /**
-     * @return ArrayNodeDefinition|NodeDefinition
+     * @return mixed
      *
      * @internal
      */
     protected static function createNode(string $name, string $type = 'array')
     {
-        return Configuration::getRootNodeWithoutDeprecation(new TreeBuilder($name, $type), $name, $type);
+        return (new TreeBuilder($name, $type))->getRootNode();
     }
 }

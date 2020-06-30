@@ -4,51 +4,60 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Security;
 
+use LogicException;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use function array_reduce;
 
 final class Security
 {
+    /**
+     * @var CoreSecurity
+     */
     private $coreSecurity;
 
     public function __construct(?CoreSecurity $security)
     {
+        // @phpstan-ignore-next-line
         $this->coreSecurity = $security ?? new class() {
-            public function isGranted(): void
+            public function isGranted(): bool
             {
-                throw new \LogicException('The "symfony/security-core" component is required.');
+                throw new LogicException('The "symfony/security-core" component is required.');
             }
 
-            public function getUser(): void
+            public function getUser(): UserInterface
             {
-                throw new \LogicException('The "symfony/security-core" component is required.');
+                throw new LogicException('The "symfony/security-core" component is required.');
             }
         };
     }
 
-    public function getUser()
+    public function getUser(): ?UserInterface
     {
         return $this->coreSecurity->getUser();
     }
 
+    /**
+     * @param mixed $attributes
+     * @param mixed $subject
+     */
     public function isGranted($attributes, $subject = null): bool
     {
         return $this->coreSecurity->isGranted($attributes, $subject);
     }
 
-    public function hasAnyPermission($object, array $permissions): bool
+    public function hasAnyPermission(object $object, array $permissions): bool
     {
-        return \array_reduce(
+        return array_reduce(
             $permissions,
-            function ($isGranted, $permission) use ($object) {
-                return $isGranted || $this->isGranted($permission, $object);
-            },
+            fn ($isGranted, $permission) => $isGranted || $this->isGranted($permission, $object),
             false
         );
     }
 
     public function hasAnyRole(array $roles): bool
     {
-        return \array_reduce(
+        return array_reduce(
             $roles,
             function ($isGranted, $role) {
                 return $isGranted || $this->isGranted($role);
@@ -57,12 +66,16 @@ final class Security
         );
     }
 
+    /**
+     * @param mixed $object
+     * @param mixed $permission
+     */
     public function hasPermission($object, $permission): bool
     {
         return $this->isGranted($permission, $object);
     }
 
-    public function hasRole($role): bool
+    public function hasRole(string $role): bool
     {
         return $this->isGranted($role);
     }

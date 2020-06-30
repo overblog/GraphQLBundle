@@ -43,7 +43,7 @@ class ParameterTest extends TestCase
         $this->assertSame(5, $this->expressionLanguage->evaluate($name.'("test")'));
     }
 
-    public function getNames()
+    public function getNames(): array
     {
         return [
             ['param'],

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
+use Closure;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
@@ -30,6 +31,10 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use function array_fill_keys;
+use function class_exists;
+use function realpath;
+use function sprintf;
 
 class OverblogGraphQLExtension extends Extension
 {
@@ -48,6 +53,7 @@ class OverblogGraphQLExtension extends Extension
         $this->setConfigBuilders($config, $container);
         $this->setDebugListener($config, $container);
         $this->setDefinitionParameters($config, $container);
+        $this->setProfilerParameters($config, $container);
         $this->setClassLoaderListener($config, $container);
         $this->setCompilerCacheWarmer($config, $container);
         $this->registerForAutoconfiguration($container);
@@ -55,7 +61,7 @@ class OverblogGraphQLExtension extends Extension
         $this->registerValidatorFactory($container);
 
         $container->setParameter($this->getAlias().'.config', $config);
-        $container->setParameter($this->getAlias().'.resources_dir', \realpath(__DIR__.'/../Resources'));
+        $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 
     public function getAlias()
@@ -82,6 +88,7 @@ class OverblogGraphQLExtension extends Extension
         $loader->load('expression_language_functions.yaml');
         $loader->load('definition_config_processors.yaml');
         $loader->load('aliases.yaml');
+        $loader->load('profiler.yaml');
     }
 
     private function registerForAutoconfiguration(ContainerBuilder $container): void
@@ -98,7 +105,7 @@ class OverblogGraphQLExtension extends Extension
 
     private function registerValidatorFactory(ContainerBuilder $container): void
     {
-        if (\class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (class_exists('Symfony\\Component\\Validator\\Validation')) {
             $container->register(ValidatorFactory::class)
                 ->setArguments([
                     new Reference('validator.validator_factory'),
@@ -155,6 +162,11 @@ class OverblogGraphQLExtension extends Extension
         $container->setParameter($this->getAlias().'.use_experimental_executor', $config['definitions']['use_experimental_executor']);
     }
 
+    private function setProfilerParameters(array $config, ContainerBuilder $container): void
+    {
+        $container->setParameter($this->getAlias().'.profiler.query_match', $config['profiler']['query_match']);
+    }
+
     private function setBatchingMethod(array $config, ContainerBuilder $container): void
     {
         $container->setParameter($this->getAlias().'.batching_method', $config['batching_method']);
@@ -191,7 +203,7 @@ class OverblogGraphQLExtension extends Extension
         }
 
         foreach ($config['security'] as $key => $value) {
-            $container->setParameter(\sprintf('%s.%s', $this->getAlias(), $key), $value);
+            $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
         }
     }
 
@@ -245,8 +257,8 @@ class OverblogGraphQLExtension extends Extension
 
         foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
             // builder
-            $schemaBuilderID = \sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
-            $definition = $container->register($schemaBuilderID, \Closure::class);
+            $schemaBuilderID = sprintf('%s.schema_builder_%s', $this->getAlias(), $schemaName);
+            $definition = $container->register($schemaBuilderID, Closure::class);
             $definition->setFactory([new Reference('overblog_graphql.schema_builder'), 'getBuilder']);
             $definition->setArguments([
                 $schemaName,
@@ -256,23 +268,23 @@ class OverblogGraphQLExtension extends Extension
                 $schemaConfig['types'],
             ]);
             // schema
-            $schemaID = \sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
+            $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
             $definition = $container->register($schemaID, Schema::class);
             $definition->setFactory([new Reference($schemaBuilderID), 'call']);
 
             $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
 
-            $resolverMapsBySchema[$schemaName] = \array_fill_keys($schemaConfig['resolver_maps'], 0);
+            $resolverMapsBySchema[$schemaName] = array_fill_keys($schemaConfig['resolver_maps'], 0);
         }
 
-        $container->setParameter(\sprintf('%s.resolver_maps', $this->getAlias()), $resolverMapsBySchema);
+        $container->setParameter(sprintf('%s.resolver_maps', $this->getAlias()), $resolverMapsBySchema);
     }
 
     private function setServicesAliases(array $config, ContainerBuilder $container): void
     {
         if (isset($config['services'])) {
             foreach ($config['services'] as $name => $id) {
-                $alias = \sprintf('%s.%s', $this->getAlias(), $name);
+                $alias = sprintf('%s.%s', $this->getAlias(), $name);
                 $container->setAlias($alias, $id);
             }
         }

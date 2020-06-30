@@ -10,17 +10,17 @@ use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
+use Throwable;
+use function get_class;
+use function sprintf;
 
 final class ErrorLoggerListener
 {
     public const DEFAULT_LOGGER_SERVICE = 'logger';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    public function __construct(?LoggerInterface $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }
@@ -53,11 +53,11 @@ final class ErrorLoggerListener
         $this->log($exception, LogLevel::CRITICAL);
     }
 
-    public function log(\Throwable $exception, string $errorLevel = LogLevel::ERROR): void
+    public function log(Throwable $exception, string $errorLevel = LogLevel::ERROR): void
     {
-        $message = \sprintf(
+        $message = sprintf(
             '[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.',
-            \get_class($exception),
+            get_class($exception),
             $exception->getMessage(),
             $exception->getCode(),
             $exception->getFile(),

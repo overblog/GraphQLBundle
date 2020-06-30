@@ -17,49 +17,49 @@ class Lightsaber
      * @ORM\Column
      * @GQL\Field
      */
-    protected $color;
+    protected string $color;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @GQL\Field
      */
-    protected $size;
+    protected int $size;
 
     /**
      * @ORM\OneToMany(targetEntity="Hero")
      * @GQL\Field
      */
-    protected $holders;
+    protected Hero $holders;
 
     /**
      * @ORM\ManyToOne(targetEntity="Hero")
      * @GQL\Field
      */
-    protected $creator;
+    protected Hero $creator;
 
     /**
      * @ORM\OneToOne(targetEntity="Crystal")
      * @GQL\Field
      */
-    protected $crystal;
+    protected Crystal $crystal;
 
     /**
      * @ORM\ManyToMany(targetEntity="Battle")
      * @GQL\Field
      */
-    protected $battles;
+    protected Battle $battles;
 
     /**
      * @GQL\Field
      * @ORM\OneToOne(targetEntity="Hero")
      * @ORM\JoinColumn(nullable=true)
      */
-    protected $currentHolder;
+    protected Hero $currentHolder;
 
     /**
      * @GQL\Field
      * @ORM\Column(type="text[]")
      * @GQL\Deprecated("No more tags on lightsabers")
      */
-    protected $tags;
+    protected array $tags;
 }

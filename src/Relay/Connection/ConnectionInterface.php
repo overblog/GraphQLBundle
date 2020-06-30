@@ -18,7 +18,7 @@ interface ConnectionInterface
      *
      * @param iterable|EdgeInterface[] $edges
      */
-    public function setEdges(iterable $edges);
+    public function setEdges(iterable $edges): void;
 
     /**
      * Get the page info.
@@ -30,7 +30,7 @@ interface ConnectionInterface
     /**
      * Set the page info.
      */
-    public function setPageInfo(PageInfoInterface $pageInfo);
+    public function setPageInfo(PageInfoInterface $pageInfo): void;
 
     /**
      * Get the total count.
@@ -42,5 +42,5 @@ interface ConnectionInterface
     /**
      * Set the total count.
      */
-    public function setTotalCount(int $totalCount);
+    public function setTotalCount(int $totalCount): void;
 }
