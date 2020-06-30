@@ -19,20 +19,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ArgumentsTransformer
 {
-    /**
-     * @var ValidatorInterface
-     */
-    protected $validator;
+    protected ValidatorInterface $validator;
 
-    /**
-     * @var array
-     */
-    protected $classesMap;
+    protected array $classesMap;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $accessor;
+    protected PropertyAccessor $accessor;
 
     public function __construct(ValidatorInterface $validator = null, $classesMap = [])
     {
@@ -140,8 +131,9 @@ class ArgumentsTransformer
         $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
-        $errors = new ConstraintViolationList();
+
         if ($this->validator) {
+            $errors = new ConstraintViolationList();
             if (\is_object($result)) {
                 $errors = $this->validator->validate($result);
             }
@@ -154,13 +146,13 @@ class ArgumentsTransformer
                     }
                 }
             }
+
+            if (\count($errors) > 0) {
+                throw new InvalidArgumentError($argName, $errors);
+            }
         }
 
-        if (\count($errors) > 0) {
-            throw new InvalidArgumentError($argName, $errors);
-        } else {
-            return $result;
-        }
+        return $result;
     }
 
     /**
