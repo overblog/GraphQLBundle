@@ -372,13 +372,11 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param string|null $name
-     *
      * @return ArrayNodeDefinition|NodeDefinition
      *
      * @internal
      */
-    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, ?string $name, string $type = 'array')
+    public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, string $name, string $type = 'array')
     {
         // BC layer for symfony/config 4.1 and older
         return \method_exists($builder, 'getRootNode') ? $builder->getRootNode() : $builder->root($name, $type);

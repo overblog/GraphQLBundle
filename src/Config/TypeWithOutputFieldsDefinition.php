@@ -8,7 +8,6 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
-
     protected function outputFieldsSection(): NodeDefinition
     {
         $node = self::createNode('fields');
