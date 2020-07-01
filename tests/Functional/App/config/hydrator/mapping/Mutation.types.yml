@@ -1,0 +1,14 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            createUser:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [model])'
+                args:
+                    input: UserCreateInput!
+            updateUser:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [model])'
+                args:
+                    input: UserUpdateInput!

@@ -1,0 +1,20 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        config_validation: false
+        class_namespace: "Overblog\\GraphQLBundle\\Hydrator\\__DEFINITIONS__"
+        schema:
+            query: Mutation
+            mutation: Mutation
+        mappings:
+            types:
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/hydrator/mapping"
+
+services:
+    Overblog\GraphQLBundle\Tests\Functional\App\Mutation\HydratorMutation:
+        tags:
+            - { name: "overblog_graphql.mutation", alias: "update_user", method: "updateUser" }
+            - { name: "overblog_graphql.mutation", alias: "create_user", method: "createUser" }

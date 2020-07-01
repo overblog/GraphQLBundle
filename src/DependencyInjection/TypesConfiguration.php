@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use Overblog\GraphQLBundle\Config;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use function array_keys;
@@ -45,7 +46,7 @@ class TypesConfiguration implements ConfigurationInterface
         $rootNode
             ->useAttributeAsKey('name')
             ->prototype('array')
-                // config is the unique config entry allowed
+                # config is the unique config entry allowed
                 ->beforeNormalization()
                     ->ifTrue(function ($v) use ($configTypeKeys) {
                         if (!empty($v) && is_array($v)) {
@@ -66,7 +67,7 @@ class TypesConfiguration implements ConfigurationInterface
                             )
                         )
                 ->end()
-                // config is renamed _{TYPE}_config
+                # temporarily rename 'config' into '_{TYPE}_config'
                 ->beforeNormalization()
                     ->ifTrue(fn ($v) => isset($v['type']) && is_string($v['type']))
                     ->then(function ($v) {
@@ -77,6 +78,14 @@ class TypesConfiguration implements ConfigurationInterface
                         }
                         unset($v['config']);
 
+                        return $v;
+                    })
+                ->end()
+                # temporarily convert '{MODEL}' into '{TYPE}_{MODEL}'
+                ->beforeNormalization()
+                    ->ifTrue(fn($v) => isset($v['model']) && is_string($v['model']))
+                    ->then(function($v) {
+                        $v['model'] = "{$v['type']}_{$v['model']}";
                         return $v;
                     })
                 ->end()
@@ -101,8 +110,9 @@ class TypesConfiguration implements ConfigurationInterface
                     ->append(Config\InputObjectTypeDefinition::create()->getDefinition())
                     ->append(Config\CustomScalarTypeDefinition::create()->getDefinition())
                     ->variableNode('config')->end()
+                    ->append($this->modelSection())
                 ->end()
-                // _{TYPE}_config is renamed config
+                // rename '_{TYPE}_config' back into 'config'
                 ->validate()
                     ->ifTrue(fn ($v) => isset($v[$this->normalizedConfigTypeKey($v['type'])]))
                     ->then(function ($v) {
@@ -117,6 +127,25 @@ class TypesConfiguration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function modelSection()
+    {
+        $node = new ScalarNodeDefinition('model');
+
+        return $node
+            ->validate()
+                ->ifTrue(fn($v) => substr($v, 0, 12) !== "input-object")
+                ->thenInvalid("The 'model' option can be defined only for 'input-object' types.")
+            ->end()
+            ->validate()
+                ->always(fn($v) => ltrim($v, 'input-object_'))
+            ->end()
+            ->validate()
+                ->ifTrue(fn($v) => !class_exists($v))
+                ->thenInvalid("Model class %s doesn't exist")
+            ->end()
+        ;
     }
 
     private function addBeforeNormalization(ArrayNodeDefinition $node): void

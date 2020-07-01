@@ -1,0 +1,22 @@
+UserCreateInput:
+    type: input-object
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User
+    config:
+        fields:
+            username: "String!"
+            firstName: "String"
+            lastName: "String"
+            birthdate: "BirthdateInput"
+            address: "AddressInput"
+            friends: "[UserCreateInput]"
+
+UserUpdateInput:
+    type: input-object
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User
+    config:
+        fields:
+            firstName: "String"
+            lastName: "String"
+            birthdate: "BirthdateInput"
+            address: "AddressInput"
+            friends: "[UserUpdateInput]"
