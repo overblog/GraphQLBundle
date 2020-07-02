@@ -9,9 +9,10 @@ use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User;
 
 class HydratorMutation implements MutationInterface
 {
-    public function createUser(User $user)
+    public function createUser($model)
     {
-        $x = $user;
+        $x = $model;
+
 
         return (bool) $x;
     }

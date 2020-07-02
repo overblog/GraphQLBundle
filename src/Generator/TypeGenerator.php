@@ -103,6 +103,11 @@ class TypeGenerator
         foreach ($configs as $name => $config) {
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
+
+            if (isset($config['model'])) {
+                $config['config']['model'] = $config['model'];
+            }
+
             $classMap = $this->generateClass($config, $cacheDir, $mode);
             $classes = array_merge($classes, $classMap);
         }

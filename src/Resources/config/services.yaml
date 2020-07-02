@@ -105,3 +105,9 @@ services:
         arguments:
             - '@Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter'
             - '%overblog_graphql.class_namespace%'
+
+    Overblog\GraphQLBundle\Hydrator\Hydrator:
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: overblog_graphql.global_variable, alias: hydrator, public: false }

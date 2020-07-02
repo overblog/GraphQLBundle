@@ -19,10 +19,6 @@ class HydratorTest extends TestCase
      */
     public function simpleHydration(): void
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-
         $query = <<<QUERY
         mutation {
             createUser(input: {

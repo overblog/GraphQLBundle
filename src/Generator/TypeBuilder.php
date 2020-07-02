@@ -176,6 +176,7 @@ class TypeBuilder
          * @var array|null    $interfaces
          * @var string|null   $resolveType
          * @var array|null    $validation   - only by InputType
+         * @var string|null   $model        - only by InputType
          * @var array|null    $types        - only by UnionType
          * @var array|null    $values       - only by EnumType
          * @var callback|null $serialize    - only by CustomScalarType
@@ -195,6 +196,10 @@ class TypeBuilder
         // only by InputType (class level validation)
         if (isset($validation)) {
             $configLoader->addItem('validation', $this->buildValidationRules($validation));
+        }
+
+        if (isset($model)) {
+            $configLoader->addItem('model', $model);
         }
 
         if (!empty($fields)) {
@@ -301,31 +306,32 @@ class TypeBuilder
             ->bindVar(TypeGenerator::GLOBAL_VARS);
 
         // TODO (murtukov): replace usage of converter with ExpressionLanguage static method
-        if ($this->expressionConverter->check($resolve)) {
-            $injectErrors = ExpressionLanguage::expressionContainsVar('errors', $resolve);
-
-            if ($injectErrors) {
-                $closure->append('$errors = ', Instance::new(ResolveErrors::class));
-            }
-
-            $injectValidator = ExpressionLanguage::expressionContainsVar('validator', $resolve);
-
-            if (null !== $validationConfig) {
-                $this->buildValidator($closure, $validationConfig, $injectValidator, $injectErrors);
-            } elseif (true === $injectValidator) {
-                throw new GeneratorException(
-                    'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
-                    'Please remove the "validator" argument from the list of dependencies of your resolver '.
-                    'or provide validation configs.'
-                );
-            }
-
-            $closure->append('return ', $this->expressionConverter->convert($resolve));
-
+        if (!$this->expressionConverter->check($resolve)) {
+            $closure->append('return ', Utils::stringify($resolve));
             return $closure;
         }
 
-        $closure->append('return ', Utils::stringify($resolve));
+        if (ExpressionLanguage::expressionContainsVar('model', $resolve)) {
+            $closure->append('$model = ', "$this->globalVars->get('hydrator')->hydrate(\$args, \$info)");
+        }
+
+        if ($hasErrors = ExpressionLanguage::expressionContainsVar('errors', $resolve)) {
+            $closure->append('$errors = ', Instance::new(ResolveErrors::class));
+        }
+
+        $hasValidator = ExpressionLanguage::expressionContainsVar('validator', $resolve);
+
+        if (null !== $validationConfig) {
+            $this->buildValidator($closure, $validationConfig, $hasValidator, $hasErrors);
+        } elseif (true === $hasValidator) {
+            throw new GeneratorException(
+                'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
+                'Please remove the "validator" argument from the list of dependencies of your resolver '.
+                'or provide validation configs.'
+            );
+        }
+
+        $closure->append('return ', $this->expressionConverter->convert($resolve));
 
         return $closure;
     }
@@ -446,6 +452,7 @@ class TypeBuilder
                     // Another instance?
                     $instance->addArgument($this->buildConstraints($args));
                 } else {
+                    // TODO (murtukov): maybe Collection is redundant here
                     // Numeric or Assoc array?
                     $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
                 }

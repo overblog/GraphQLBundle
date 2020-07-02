@@ -14,7 +14,12 @@ class User
     public string $username;
     public string $firstName;
     public string $lastName;
-    public Birthdate $birthdate;
     public ?Address $address = null;
-    public array $friends = [];
+     public array $friends = [];
+
+    /**
+     * @Field("dateOfBirth")
+     * @Convert\(name="userName")
+     */
+    public Birthdate $birthdate;
 }

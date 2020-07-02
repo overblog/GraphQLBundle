@@ -4,11 +4,12 @@ Mutation:
         fields:
             createUser:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [model])'
+                resolve: '@=mut("create_user", [model])'
                 args:
                     input: UserCreateInput!
+
             updateUser:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [model])'
+                resolve: '@=mut("update_user", [model])'
                 args:
                     input: UserUpdateInput!
