@@ -19,7 +19,7 @@ class HydratorTest extends TestCase
      */
     public function simpleHydration(): void
     {
-        $query = <<<QUERY
+        $query = <<<'QUERY'
         mutation {
             createUser(input: {
                 username: "murtukov"

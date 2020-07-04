@@ -4,22 +4,27 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model;
 
-use Overblog\GraphQLBundle\Hydrator\Annotation\Model;
+use Overblog\GraphQLBundle\Hydrator\Annotation as Hydrator;
+use Overblog\GraphQLBundle\Hydrator\Converters as Convert;
 
-/**
- * @Model
- */
-class User
+
+
+class User extends AbstractUser
 {
-    public string $username;
+    /**
+     * @Hydrator\Field(
+     *     name="username"
+     *     converters={}
+     * )
+     */
+    public string $nickname;
     public string $firstName;
     public string $lastName;
     public ?Address $address = null;
-     public array $friends = [];
+    public array $friends = [];
 
     /**
-     * @Field("dateOfBirth")
-     * @Convert\(name="userName")
+     * @Hydrator\Field(name="birthdate")
      */
-    public Birthdate $birthdate;
+    public Birthdate $birth;
 }

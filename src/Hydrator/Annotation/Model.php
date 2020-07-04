@@ -9,5 +9,5 @@ namespace Overblog\GraphQLBundle\Hydrator\Annotation;
  */
 class Model
 {
-
+    public string $strategy = 'auto';
 }
