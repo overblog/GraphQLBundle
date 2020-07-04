@@ -80,15 +80,14 @@ class TypeBuilder
         $this->config = $config;
         $this->type = $type;
 
-        // TODO (murtukov): use the file name for save
-        $this->file = PhpFile::new("{$config['class_name']}.php")->setNamespace($this->namespace);
+        $this->file = PhpFile::new()->setNamespace($this->namespace);
 
         $class = $this->file->createClass($config['class_name'])
             ->setFinal()
             ->setExtends(self::EXTENDS[$type])
             ->addImplements(GeneratedTypeInterface::class)
             ->addConst('NAME', $config['name'])
-            ->addDocBlock(self::DOCBLOCK_TEXT);
+            ->setDocBlock(self::DOCBLOCK_TEXT);
 
         $class->emptyLine();
 
@@ -525,7 +524,7 @@ class TypeBuilder
         }
 
         if (!empty($args)) {
-            $field->addItem('args', Collection::map($args, [$this, 'buildArg']));
+            $field->addItem('args', Collection::map($args, [$this, 'buildArg'], false));
         }
 
         if (isset($complexity)) {
