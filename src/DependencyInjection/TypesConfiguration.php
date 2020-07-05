@@ -26,12 +26,7 @@ class TypesConfiguration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('overblog_graphql_types');
         $rootNode = Configuration::getRootNodeWithoutDeprecation($treeBuilder, 'overblog_graphql_types');
 
-        $configTypeKeys = \array_map(
-            function ($type) {
-                return $this->normalizedConfigTypeKey($type);
-            },
-            self::$types
-        );
+        $configTypeKeys = \array_map(fn ($type) => $this->normalizedConfigTypeKey($type), self::$types);
 
         $this->addBeforeNormalization($rootNode);
 
@@ -61,9 +56,7 @@ class TypesConfiguration implements ConfigurationInterface
                 ->end()
                 // config is renamed _{TYPE}_config
                 ->beforeNormalization()
-                    ->ifTrue(function ($v) {
-                        return isset($v['type']) && \is_string($v['type']);
-                    })
+                    ->ifTrue(fn ($v) => isset($v['type']) && \is_string($v['type']))
                     ->then(function ($v) {
                         $key = $this->normalizedConfigTypeKey($v['type']);
 
@@ -80,9 +73,7 @@ class TypesConfiguration implements ConfigurationInterface
                     ->scalarNode('class_name')
                         ->isRequired()
                         ->validate()
-                            ->ifTrue(function ($name) {
-                                return !\preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name);
-                            })
+                            ->ifTrue(fn ($name) => !\preg_match('/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/', $name))
                             ->thenInvalid('A valid class name starts with a letter or underscore, followed by any number of letters, numbers, or underscores.')
                         ->end()
                     ->end()
@@ -101,9 +92,7 @@ class TypesConfiguration implements ConfigurationInterface
                 ->end()
                 // _{TYPE}_config is renamed config
                 ->validate()
-                    ->ifTrue(function ($v) {
-                        return isset($v[$this->normalizedConfigTypeKey($v['type'])]);
-                    })
+                    ->ifTrue(fn ($v) => isset($v[$this->normalizedConfigTypeKey($v['type'])]))
                     ->then(function ($v) {
                         $key = $this->normalizedConfigTypeKey($v['type']);
                         $v['config'] = $v[$key];
@@ -123,12 +112,8 @@ class TypesConfiguration implements ConfigurationInterface
         $node
             // process beforeNormalization (should be execute after relay normalization)
             ->beforeNormalization()
-                ->ifTrue(function ($types) {
-                    return \is_array($types);
-                })
-                ->then(function ($types) {
-                    return Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION);
-                })
+                ->ifTrue(fn ($types) => \is_array($types))
+                ->then(fn ($types) => Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION))
             ->end()
             ;
     }

@@ -13,12 +13,8 @@ final class IsFullyAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isFullyAuthenticated',
-            static function (): string {
-                return '$globalVariable->get(\'security\')->isFullyAuthenticated()';
-            },
-            static function () use ($security): bool {
-                return $security->isFullyAuthenticated();
-            }
+            fn () => "$this->globalVars->get('security')->isFullyAuthenticated()",
+            fn () => $security->isFullyAuthenticated()
         );
     }
 }

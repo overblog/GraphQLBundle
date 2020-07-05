@@ -61,20 +61,12 @@ services:
     Overblog\GraphQLBundle\Generator\TypeGenerator:
         arguments:
             - "%overblog_graphql.class_namespace%"
-            - ["%overblog_graphql.resources_dir%/skeleton"]
             - "%overblog_graphql.cache_dir%"
             - "%overblog_graphql_types.config%"
+            - '@Overblog\GraphQLBundle\Generator\TypeBuilder'
             - "%overblog_graphql.use_classloader_listener%"
-            - ~
             - "%kernel.cache_dir%"
             - "%overblog_graphql.cache_dir_permissions%"
-        calls:
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\ConfigProcessor']]
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\LazyConfig']]
-            - ["addUseStatement", ['Overblog\GraphQLBundle\Definition\GlobalVariables']]
-            - ["addImplement", ["Overblog\\GraphQLBundle\\Definition\\Type\\GeneratedTypeInterface"]]
-
-            - ["setExpressionLanguage", ["@overblog_graphql.expression_language"]]
 
     Overblog\GraphQLBundle\Definition\ArgumentFactory:
         arguments:
@@ -104,3 +96,12 @@ services:
             - '@?security.helper'
         tags:
             - { name: overblog_graphql.global_variable, alias: security, public: false }
+
+    Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter:
+        arguments:
+            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'
+
+    Overblog\GraphQLBundle\Generator\TypeBuilder:
+        arguments:
+            - '@Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter'
+            - '%overblog_graphql.class_namespace%'

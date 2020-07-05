@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -28,8 +29,8 @@ class ParameterTest extends TestCase
      */
     public function testParameterCompilation($name): void
     {
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
-        $globalVariable->get('container');
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
     }
 

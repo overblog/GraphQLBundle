@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 
+use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
-use Overblog\GraphQLGenerator\Exception\GeneratorException;
 
 class TypeGeneratorTest extends TestCase
 {
@@ -90,8 +90,8 @@ class TypeGeneratorTest extends TestCase
         $this->expectException(GeneratorException::class);
         $this->expectExceptionMessage(
             'Unable to inject an instance of the InputValidator. No validation constraints provided. '.
-            'Please remove the InputValidator argument from the list of dependencies of your '.
-            'resolver or provide validation configs.'
+            'Please remove the "validator" argument from the list of dependencies of your resolver '.
+            'or provide validation configs.'
         );
 
         parent::setUp();

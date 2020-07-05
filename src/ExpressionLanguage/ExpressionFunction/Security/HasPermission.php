@@ -13,12 +13,8 @@ final class HasPermission extends ExpressionFunction
     {
         parent::__construct(
             'hasPermission',
-            static function ($object, $permission): string {
-                return \sprintf('$globalVariable->get(\'security\')->hasPermission(%s, %s)', $object, $permission);
-            },
-            static function ($_, $object, $permission) use ($security): bool {
-                return $security->hasPermission($object, $permission);
-            }
+            fn ($object, $permission) => "$this->globalVars->get('security')->hasPermission($object, $permission)",
+            fn ($_, $object, $permission) => $security->hasPermission($object, $permission)
         );
     }
 }

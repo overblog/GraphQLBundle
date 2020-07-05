@@ -4,46 +4,46 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
-    /**
-     * @return ArrayNodeDefinition|NodeDefinition
-     */
-    protected function outputFieldsSelection(string $name = 'fields')
+    protected function outputFieldsSection(): NodeDefinition
     {
-        $node = self::createNode($name);
+        $node = self::createNode('fields');
         $node
             ->isRequired()
             ->requiresAtLeastOneElement();
-        /* @var ArrayNodeDefinition $prototype */
+
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 
         $prototype
-            // Allow field type short syntax (Field: Type => Field: {type: Type})
             ->beforeNormalization()
-                ->ifTrue(function ($options) {
-                    return \is_string($options);
-                })
-                ->then(function ($options) {
-                    return ['type' => $options];
-                })
+                // Allow field type short syntax (Field: Type => Field: {type: Type})
+                ->ifTrue(fn ($options) => \is_string($options))
+                ->then(fn ($options) => ['type' => $options])
             ->end()
             ->validate()
+                // Remove empty entries
                 ->always(function ($value) {
                     if (empty($value['validationGroups'])) {
                         unset($value['validationGroups']);
+                    }
+
+                    if (empty($value['args'])) {
+                        unset($value['args']);
                     }
 
                     return $value;
                 })
             ->end()
             ->children()
-                ->append($this->typeSelection())
+                ->append($this->typeSection())
                 ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
                 ->arrayNode('validationGroups')
+                    ->beforeNormalization()
+                        ->castToArray()
+                    ->end()
                     ->prototype('scalar')
                         ->info('List of validation groups')
                     ->end()
@@ -54,15 +54,11 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->prototype('array')
                         // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
                         ->beforeNormalization()
-                            ->ifTrue(function ($options) {
-                                return \is_string($options);
-                            })
-                            ->then(function ($options) {
-                                return ['type' => $options];
-                            })
+                            ->ifTrue(fn ($options) => \is_string($options))
+                            ->then(fn ($options) => ['type' => $options])
                         ->end()
                         ->children()
-                            ->append($this->typeSelection(true))
+                            ->append($this->typeSection(true))
                             ->append($this->descriptionSection())
                             ->append($this->defaultValueSection())
                             ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
@@ -73,7 +69,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->info('Value resolver (expression language can be used here)')
                 ->end()
                 ->append($this->descriptionSection())
-                ->append($this->deprecationReasonSelection())
+                ->append($this->deprecationReasonSection())
                 ->variableNode('access')
                     ->info('Access control to field (expression language can be used here)')
                 ->end()

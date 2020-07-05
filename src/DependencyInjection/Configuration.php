@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -371,11 +372,9 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * @return ArrayNodeDefinition|NodeDefinition
+     *
      * @internal
-     *
-     * @param string|null $name
-     *
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
     public static function getRootNodeWithoutDeprecation(TreeBuilder $builder, string $name, string $type = 'array')
     {
