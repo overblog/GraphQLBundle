@@ -1,96 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$use of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:addInternalUseStatement\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$useStatement of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:addUseStatement\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:generateUseStatement\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:getExpressionLanguage\\(\\) should return Symfony\\\\Component\\\\ExpressionLanguage\\\\ExpressionLanguage but returns Symfony\\\\Component\\\\ExpressionLanguage\\\\ExpressionLanguage\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:varExportFromArrayValue\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$definition of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:shortenClassName\\(\\) expects string, string\\|null given\\.$#"
-			count: 2
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:\\$currentlyGeneratedClass \\(string\\) does not accept null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Parameter \\#3 \\$message of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/AbstractStarWarsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$code\\)\\: Unexpected token \"\\$code\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: lib/generator/tests/ClassUtilsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expected\\)\\: Unexpected token \"\\$expected\", expected TOKEN_IDENTIFIER at offset 38$#"
-			count: 1
-			path: lib/generator/tests/ClassUtilsTest.php
-
-		-
-			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$value\\.$#"
-			count: 1
-			path: lib/generator/tests/DateTimeType.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Tests\\\\DateTimeType\\:\\:parseLiteral\\(\\) should return string but returns DateTime\\.$#"
-			count: 1
-			path: lib/generator/tests/DateTimeType.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of method Symfony\\\\Component\\\\Yaml\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/AbstractTypeGeneratorTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string, 'getInstance'\\) given\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/AbstractTypeGeneratorTest.php
-
-		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNull\\(\\) with callable\\(\\)\\: mixed will always evaluate to false\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/TypeGeneratorTest.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Tests\\\\StarWarsData\\:\\:getCharacter\\(\\) should return array but returns null\\.$#"
-			count: 1
-			path: lib/generator/tests/StarWarsData.php
-
-		-
-			message: "#^Parameter \\#3 \\$message of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/StarWarsIntrospectionTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$id of method Overblog\\\\GraphQLBundle\\\\Resolver\\\\FluentResolverInterface\\:\\:getSolutionAliases\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
 			path: src/Command/DebugCommand.php
@@ -1269,6 +1179,46 @@ parameters:
 			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected TOKEN_IDENTIFIER at offset 52$#"
 			count: 1
 			path: tests/Upload/Type/GraphQLUploadTypeTest.php
+
+		-
+			message: "#^Variable \\$.* in isset\\(\\) is never defined\\.$#"
+			count: 22
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Undefined variable: .*$#"
+			count: 22
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Call to an undefined method Murtukov\\\\PHPCodeGenerator\\\\OOPStructure::createConstructor.*$#"
+			count: 1
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of function ltrim expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 2
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\TreeBuilder::root.*$#"
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: "#^Method Symfony\\\\Component\\\\Validator\\\\Constraints\\\\ExpressionValidator::__construct.*$#"
+			count: 1
+			path: src/Validator/Constraints/ExpressionValidator.php
+
+		-
+			message: "#^Return type \\(void\\) of method Overblog\\\\GraphQLBundle\\\\CacheWarmer\\\\CompileCacheWarmer::warmUp.*$#"
+			count: 2
+			path: src/CacheWarmer/CompileCacheWarmer.php
 
 		-
 			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"

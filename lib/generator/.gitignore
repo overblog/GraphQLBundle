@@ -1,7 +1,0 @@
-/vendor/
-/bin/
-/composer.lock
-/composer.phar
-/phpunit.xml
-/.php_cs
-/.php_cs.cache

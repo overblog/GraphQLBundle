@@ -12,15 +12,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\": "src/",
-            "Overblog\\GraphQLGenerator\\": "lib/generator/src/"
+            "Overblog\\GraphQLBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
-            "Overblog\\GraphQLBundle\\Tests\\": "tests/",
-            "Overblog\\GraphQLGenerator\\Tests\\": "lib/generator/tests/"
+            "Overblog\\GraphQLBundle\\Tests\\": "tests/"
         }
     },
     "config": {
@@ -30,6 +28,7 @@
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
+        "murtukov/php-code-generator": "^0.1.4",
         "psr/log": "^1.0",
         "symfony/config": "^4.3 || ^5.0",
         "symfony/dependency-injection": "^4.3 || ^5.0",
@@ -39,9 +38,6 @@
         "symfony/options-resolver": "^4.3 || ^5.0",
         "symfony/property-access": "^4.3 || ^5.0",
         "webonyx/graphql-php": "^0.13.5"
-    },
-    "replace": {
-        "overblog/graphql-php-generator": "self.version"
     },
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
@@ -84,13 +80,11 @@
         "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi",
-            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --diff -v --allow-risky=yes --ansi"
+            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
             "@install-cs",
-            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi",
-            "@php php-cs-fixer.phar fix --config=lib/generator/.php_cs.dist --dry-run --diff -v --allow-risky=yes --ansi"
+            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",

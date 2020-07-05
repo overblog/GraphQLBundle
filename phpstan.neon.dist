@@ -3,8 +3,7 @@ includes:
 
 parameters:
   level: 7
+  reportUnmatchedIgnoredErrors: false
   paths:
-    - %currentWorkingDirectory%/lib/generator/src
-    - %currentWorkingDirectory%/lib/generator/tests
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/tests

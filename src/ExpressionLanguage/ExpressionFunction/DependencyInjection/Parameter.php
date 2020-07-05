@@ -13,12 +13,8 @@ final class Parameter extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function (string $value) {
-                return "\$globalVariable->get('container')->getParameter($value)";
-            },
-            function ($arguments, $paramName) use ($parameterBag) {
-                return $parameterBag->get($paramName);
-            }
+            fn (string $value) => "$this->globalVars->get('container')->getParameter($value)",
+            fn ($arguments, $paramName) => $parameterBag->get($paramName)
         );
     }
 }

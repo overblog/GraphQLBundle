@@ -24,32 +24,23 @@ class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
+    private ?ValidationNode $__parent = null;
+    private ?string $__fieldName;
+
     /**
      * @var ObjectType|InputObjectType|Type
      */
-    private $__type;
-
-    /**
-     * @var ValidationNode|null
-     */
-    private $__parent;
+    private Type $__type;
 
     /**
      * @var ValidationNode[]
      */
-    private $__children = [];
-
-    /**
-     * @var string
-     */
-    private $__fieldName;
+    private array $__children = [];
 
     /**
      * Arguments of the resolver, where the current validation is being executed.
-     *
-     * @var array
      */
-    private $__resolverArgs;
+    private array $__resolverArgs;
 
     public function __construct(Type $type, string $field = null, ?ValidationNode $parent = null, array $resolverArgs = [])
     {

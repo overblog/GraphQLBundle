@@ -8,11 +8,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ResolveErrors
 {
-    private $validationErrors;
+    private ConstraintViolationListInterface $validationErrors;
 
-    /**
-     * @internal
-     */
     public function setValidationErrors(ConstraintViolationListInterface $errors): void
     {
         $this->validationErrors = $errors;

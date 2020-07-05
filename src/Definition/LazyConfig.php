@@ -6,11 +6,8 @@ namespace Overblog\GraphQLBundle\Definition;
 
 final class LazyConfig
 {
-    /** @var \Closure */
-    private $loader;
-
-    /** @var GlobalVariables */
-    private $globalVariables;
+    private \Closure $loader;
+    private ?GlobalVariables $globalVariables;
 
     /**
      * @var callable[]
