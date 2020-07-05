@@ -85,7 +85,6 @@ abstract class TypeDefinition
             ->end()
             ->children()
                 ->scalarNode('link')
-//                    ->defaultNull()
                     ->validate()
                         ->ifTrue(function ($link) use ($level) {
                             if (self::VALIDATION_LEVEL_PROPERTY === $level) {
