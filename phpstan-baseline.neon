@@ -1224,3 +1224,23 @@ parameters:
 			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
 			count: 1
 			path: src/Validator/InputValidator.php
+
+		- 
+			message: "#^Cannot call method loadProfile\\(\\) on Symfony\\\\Component\\\\HttpKernel\\\\Profiler\\\\Profiler|null\\.$#"
+			count: 1
+			path: src/Controller/ProfilerController.php
+
+		-
+			message: "#^Parameter \\#1 \\$ip of method Symfony\\\\Component\\\\HttpKernel\\\\Profiler\\\\Profiler::find\\(\\) expects string, null given\\.$#"
+			count: 1
+			path: src/Controller/ProfilerController.php
+
+		-
+			message: "#^Parameter \\#5 \\$start of method Symfony\\\\Component\\\\HttpKernel\\\\Profiler\\\\Profiler::find\\(\\) expects string, null given\\.$#"
+			count: 1
+			path: src/Controller/ProfilerController.php
+
+		-
+			message: "#^Parameter \\#6 \\$end of method Symfony\\\\Component\\\\HttpKernel\\\\Profiler\\\\Profiler::find\\(\\) expects string, null given\\.$#"
+			count: 1
+			path: src/Controller/ProfilerController.php
