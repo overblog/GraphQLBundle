@@ -16,7 +16,9 @@ overblog_graphql:
 services:
     validator.expression:
         class: Overblog\GraphQLBundle\Validator\Constraints\ExpressionValidator
-        arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
+        arguments:
+            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'
+            - '@Overblog\GraphQLBundle\Definition\GlobalVariables'
         tags:
             - name: validator.constraint_validator
               alias: validator.expression
