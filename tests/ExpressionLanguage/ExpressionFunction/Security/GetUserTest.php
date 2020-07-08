@@ -19,17 +19,17 @@ class GetUserTest extends TestCase
 {
     protected function getFunctions()
     {
-        $testUser = new User('testUser', 'testPassword');
-
-        $coreSecurity = $this->createMock(CoreSecurity::class);
-        $coreSecurity->method('getUser')->willReturn($testUser);
-
-        return [new GetUser(new Security($coreSecurity))];
+        return [new GetUser()];
     }
 
     public function testEvaluator(): void
     {
-        $user = $this->expressionLanguage->evaluate('getUser()');
+        $testUser = new User('testUser', 'testPassword');
+        $coreSecurity = $this->createMock(CoreSecurity::class);
+        $coreSecurity->method('getUser')->willReturn($testUser);
+        $globalVariable = new GlobalVariables(['security' => new Security($coreSecurity)]);
+
+        $user = $this->expressionLanguage->evaluate('getUser()', ['globalVariable' => $globalVariable]);
         $this->assertInstanceOf(UserInterface::class, $user);
     }
 
@@ -43,11 +43,15 @@ class GetUserTest extends TestCase
     public function testGetUserNoToken(): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
-            'security' => new Security(new CoreSecurity(
-                $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
-            )),
-        ]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
+            [
+                'security' => new Security(
+                    new CoreSecurity(
+                        $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
+                    )
+                ),
+            ]
+        );
         ${TypeGenerator::GLOBAL_VARS}->get('security');
 
         $this->getDIContainerMock(['security.token_storage' => $tokenStorage]);
@@ -64,11 +68,15 @@ class GetUserTest extends TestCase
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
-            'security' => new Security(new CoreSecurity(
-                $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
-            )),
-        ]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
+            [
+                'security' => new Security(
+                    new CoreSecurity(
+                        $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
+                    )
+                ),
+            ]
+        );
         ${TypeGenerator::GLOBAL_VARS}->get('security');
 
         $token

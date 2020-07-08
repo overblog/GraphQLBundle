@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
@@ -11,17 +12,21 @@ class IsFullyAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {
-        $Security = $this->getSecurityIsGrantedWithExpectation(
-            'IS_AUTHENTICATED_FULLY',
-            $this->any()
-        );
-
-        return [new IsFullyAuthenticated($Security)];
+        return [new IsFullyAuthenticated()];
     }
 
     public function testEvaluator(): void
     {
-        $isFullyAuthenticated = $this->expressionLanguage->evaluate('isFullyAuthenticated()');
+        $security = $this->getSecurityIsGrantedWithExpectation(
+            'IS_AUTHENTICATED_FULLY',
+            $this->any()
+        );
+        $globalVariable = new GlobalVariables(['security' => $security]);
+
+        $isFullyAuthenticated = $this->expressionLanguage->evaluate(
+            'isFullyAuthenticated()',
+            ['globalVariable' => $globalVariable]
+        );
         $this->assertTrue($isFullyAuthenticated);
     }
 
