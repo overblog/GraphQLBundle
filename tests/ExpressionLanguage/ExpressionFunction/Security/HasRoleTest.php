@@ -17,7 +17,7 @@ class HasRoleTest extends TestCase
 
     public function testEvaluator(): void
     {
-        $security       = $this->getSecurityIsGrantedWithExpectation(
+        $security = $this->getSecurityIsGrantedWithExpectation(
             'ROLE_USER',
             $this->any()
         );

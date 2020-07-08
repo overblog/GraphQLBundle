@@ -20,7 +20,7 @@ class HasPermissionTest extends TestCase
     public function testEvaluator(): void
     {
         $expectedObject = new \stdClass();
-        $security       = $this->getSecurityIsGrantedWithExpectation(
+        $security = $this->getSecurityIsGrantedWithExpectation(
             [
                 'OWNER',
                 $this->identicalTo($expectedObject),
@@ -33,7 +33,7 @@ class HasPermissionTest extends TestCase
             $this->testedExpression,
             [
                 'globalVariable' => $globalVariable,
-                'object'         => $expectedObject,
+                'object' => $expectedObject,
             ]
         );
         $this->assertTrue($hasPermission);

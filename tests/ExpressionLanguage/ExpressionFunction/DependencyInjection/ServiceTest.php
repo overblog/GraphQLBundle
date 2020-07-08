@@ -24,10 +24,10 @@ class ServiceTest extends TestCase
      */
     public function testServiceCompilation(string $name): void
     {
-        $object         = new \stdClass();
+        $object = new \stdClass();
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $globalVariable->get('container');
-        $this->assertSame($object, eval('return ' . $this->expressionLanguage->compile($name . '("toto")') . ';'));
+        $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
     /**
@@ -37,11 +37,11 @@ class ServiceTest extends TestCase
      */
     public function testServiceEvaluation(string $name): void
     {
-        $object         = new \stdClass();
+        $object = new \stdClass();
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $this->assertSame(
             $object,
-            $this->expressionLanguage->evaluate($name . '("toto")', ['globalVariable' => $globalVariable])
+            $this->expressionLanguage->evaluate($name.'("toto")', ['globalVariable' => $globalVariable])
         );
     }
 

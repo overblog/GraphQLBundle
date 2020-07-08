@@ -17,7 +17,7 @@ class IsRememberMeTest extends TestCase
 
     public function testEvaluator(): void
     {
-        $security       = $this->getSecurityIsGrantedWithExpectation(
+        $security = $this->getSecurityIsGrantedWithExpectation(
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );

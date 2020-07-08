@@ -33,7 +33,7 @@ class ArgumentsTest extends TestCase
 
     public function getResolveInfo($types): ResolveInfo
     {
-        $info         = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
+        $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->schema = new Schema(['types' => $types]);
 
         return $info;
@@ -55,17 +55,17 @@ class ArgumentsTest extends TestCase
         $info = $this->getResolveInfo(ArgumentsTransformerTest::getTypes());
 
         $mapping = [
-            'input1'  => 'InputType1',
-            'input2'  => 'InputType2',
-            'enum1'   => 'Enum1',
-            'int1'    => 'Int!',
+            'input1' => 'InputType1',
+            'input2' => 'InputType2',
+            'enum1' => 'Enum1',
+            'int1' => 'Int!',
             'string1' => 'String!',
         ];
-        $data    = [
-            'input1'  => ['field1' => 'hello', 'field2' => 12, 'field3' => true],
-            'input2'  => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12],
-            'enum1'   => 2,
-            'int1'    => 14,
+        $data = [
+            'input1' => ['field1' => 'hello', 'field2' => 12, 'field3' => true],
+            'input2' => ['field1' => [['field1' => 'hello1'], ['field1' => 'hello2']], 'field2' => 12],
+            'enum1' => 2,
+            'int1' => 14,
             'string1' => 'test_string',
         ];
 
@@ -73,7 +73,7 @@ class ArgumentsTest extends TestCase
             [
                 'InputType1' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType1'],
                 'InputType2' => ['type' => 'input', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\InputType2'],
-                'Enum1'      => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
+                'Enum1' => ['type' => 'enum', 'class' => 'Overblog\GraphQLBundle\Tests\Transformer\Enum1'],
             ]
         );
 
@@ -87,9 +87,9 @@ class ArgumentsTest extends TestCase
             'arguments(mapping, data, info)',
             [
                 'globalVariable' => $globalVariable,
-                'mapping'        => $mapping,
-                'data'           => $data,
-                'info'           => $info,
+                'mapping' => $mapping,
+                'data' => $data,
+                'info' => $info,
             ]
         );
 
@@ -101,7 +101,7 @@ class ArgumentsTest extends TestCase
         $this->assertEquals($res[4], 'test_string');
 
         $data = [];
-        $res  = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
+        $res = $transformer->getInstanceAndValidate('InputType1', $data, $info, 'input1');
         $this->assertInstanceOf(InputType1::class, $res);
 
         $res = $transformer->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
