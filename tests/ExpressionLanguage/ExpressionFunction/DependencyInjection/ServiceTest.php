@@ -10,16 +10,11 @@ use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class ServiceTest extends TestCase
 {
-    private $evaluationObject;
-
     protected function getFunctions()
     {
-        $this->evaluationObject = new \stdClass();
-        $container = $this->getDIContainerMock(['toto' => $this->evaluationObject]);
-
         return [
-            new Service($container),
-            new Service($container, 'serv'),
+            new Service(),
+            new Service('serv'),
         ];
     }
 
@@ -29,10 +24,10 @@ class ServiceTest extends TestCase
      */
     public function testServiceCompilation(string $name): void
     {
-        $object = new \stdClass();
+        $object         = new \stdClass();
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $globalVariable->get('container');
-        $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
+        $this->assertSame($object, eval('return ' . $this->expressionLanguage->compile($name . '("toto")') . ';'));
     }
 
     /**
@@ -42,7 +37,12 @@ class ServiceTest extends TestCase
      */
     public function testServiceEvaluation(string $name): void
     {
-        $this->assertSame($this->evaluationObject, $this->expressionLanguage->evaluate($name.'("toto")'));
+        $object         = new \stdClass();
+        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $this->assertSame(
+            $object,
+            $this->expressionLanguage->evaluate($name . '("toto")', ['globalVariable' => $globalVariable])
+        );
     }
 
     public function getNames()
