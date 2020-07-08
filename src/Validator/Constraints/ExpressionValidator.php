@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator\Constraints;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel;
@@ -15,9 +16,12 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 {
     private $expressionLanguage;
 
-    public function __construct(ExpressionLanguage $expressionLanguage)
+    private $globalVariables;
+
+    public function __construct(ExpressionLanguage $expressionLanguage, GlobalVariables $globalVariables)
     {
         $this->expressionLanguage = $expressionLanguage;
+        $this->globalVariables    = $globalVariables;
         if (Kernel::VERSION_ID >= 40400) {
             parent::__construct($expressionLanguage);
         } else {
@@ -31,11 +35,12 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof Expression) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Expression');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\Expression');
         }
 
-        $variables = $constraint->values;
-        $variables['value'] = $value;
+        $variables                   = $constraint->values;
+        $variables['value']          = $value;
+        $variables['globalVariable'] = $this->globalVariables;
 
         $object = $this->context->getObject();
 
@@ -43,16 +48,16 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         if ($object instanceof ValidationNode) {
             $variables['parentValue'] = $object->getResolverArg('value');
-            $variables['context'] = $object->getResolverArg('context');
-            $variables['args'] = $object->getResolverArg('args');
-            $variables['info'] = $object->getResolverArg('info');
+            $variables['context']     = $object->getResolverArg('context');
+            $variables['args']        = $object->getResolverArg('args');
+            $variables['info']        = $object->getResolverArg('info');
         }
 
         if (!$this->expressionLanguage->evaluate($constraint->expression, $variables)) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
-                ->setCode(Expression::EXPRESSION_FAILED_ERROR)
-                ->addViolation();
+                          ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
+                          ->setCode(Expression::EXPRESSION_FAILED_ERROR)
+                          ->addViolation();
         }
     }
 }
