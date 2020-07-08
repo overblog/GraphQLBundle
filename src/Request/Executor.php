@@ -95,6 +95,11 @@ class Executor
         return $schema;
     }
 
+    public function getSchemasNames(): array
+    {
+        return \array_keys($this->schemas);
+    }
+
     public function setMaxQueryDepth($maxQueryDepth): void
     {
         /** @var QueryDepth $queryDepth */
@@ -148,7 +153,7 @@ class Executor
             $this->defaultFieldResolver
         );
 
-        $result = $this->postExecute($result);
+        $result = $this->postExecute($result, $executorArgumentsEvent);
 
         return $result;
     }
@@ -172,10 +177,10 @@ class Executor
         );
     }
 
-    private function postExecute(ExecutionResult $result): ExecutionResult
+    private function postExecute(ExecutionResult $result, ExecutorArgumentsEvent $executorArguments): ExecutionResult
     {
         return $this->dispatcher->dispatch(
-            new ExecutorResultEvent($result),
+            new ExecutorResultEvent($result, $executorArguments),
             Events::POST_EXECUTOR
         )->getResult();
     }
