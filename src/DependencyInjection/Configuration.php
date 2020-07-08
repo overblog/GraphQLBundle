@@ -56,6 +56,7 @@ class Configuration implements ConfigurationInterface
                 ->append($this->servicesSection())
                 ->append($this->securitySection())
                 ->append($this->doctrineSection())
+                ->append($this->profilerSection())
             ->end();
 
         return $treeBuilder;
@@ -210,7 +211,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('resolver_maps')
                         ->defaultValue([])
                         ->prototype('scalar')->end()
-                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 0.14. Add the "overblog_graphql.resolver_map" tag to the services instead.')
+                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 0.14. Add the "overblog_graphql.resolver_map" tag to the services instead.', '0.13')
                     ->end()
                     ->arrayNode('types')
                         ->defaultValue([])
@@ -284,6 +285,21 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue([])
                     ->prototype('scalar')->end()
                 ->end()
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    private function profilerSection()
+    {
+        $builder = new TreeBuilder('profiler');
+        /** @var ArrayNodeDefinition $node */
+        $node = self::getRootNodeWithoutDeprecation($builder, 'profiler');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('query_match')->defaultNull()->end()
             ->end()
         ;
 
