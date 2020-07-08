@@ -12,7 +12,7 @@ final class HasAnyRole extends ExpressionFunction
     {
         parent::__construct(
             'hasAnyRole',
-            static fn ($roles) => "$this->globalVars->get('security')->hasAnyRole($roles)",
+            fn ($roles) => "$this->globalVars->get('security')->hasAnyRole($roles)",
             static fn (array $arguments, $roles) => $arguments['globalVariables']->get('security')->hasAnyRole($roles)
         );
     }

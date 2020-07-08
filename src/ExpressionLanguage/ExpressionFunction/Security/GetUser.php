@@ -12,7 +12,7 @@ final class GetUser extends ExpressionFunction
     {
         parent::__construct(
             'getUser',
-            static fn () => "$this->globalVars->get('security')->getUser()",
+            fn () => "$this->globalVars->get('security')->getUser()",
             static fn (array $arguments) => $arguments['globalVariables']->get('security')->getUser()
         );
     }

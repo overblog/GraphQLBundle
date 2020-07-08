@@ -29,7 +29,7 @@ class GetUserTest extends TestCase
         $coreSecurity->method('getUser')->willReturn($testUser);
         $globalVariable = new GlobalVariables(['security' => new Security($coreSecurity)]);
 
-        $user = $this->expressionLanguage->evaluate('getUser()', ['globalVariable' => $globalVariable]);
+        $user = $this->expressionLanguage->evaluate('getUser()', ['globalVariables' => $globalVariable]);
         $this->assertInstanceOf(UserInterface::class, $user);
     }
 

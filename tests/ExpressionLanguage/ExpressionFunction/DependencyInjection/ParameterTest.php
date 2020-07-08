@@ -39,7 +39,7 @@ class ParameterTest extends TestCase
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
         $this->assertSame(
             5,
-            $this->expressionLanguage->evaluate($name.'("test")', ['globalVariable' => $globalVariable])
+            $this->expressionLanguage->evaluate($name.'("test")', ['globalVariables' => $globalVariable])
         );
     }
 

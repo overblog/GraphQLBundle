@@ -24,7 +24,7 @@ class IsGrantedTest extends TestCase
         $globalVariable = new GlobalVariables(['security' => $security]);
 
         $this->assertTrue(
-            $this->expressionLanguage->evaluate('isGranted("ROLE_USER")', ['globalVariable' => $globalVariable])
+            $this->expressionLanguage->evaluate('isGranted("ROLE_USER")', ['globalVariables' => $globalVariable])
         );
     }
 

@@ -40,7 +40,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         $variables = $constraint->values;
         $variables['value'] = $value;
-        $variables['globalVariable'] = $this->globalVariables;
+        $variables['globalVariables'] = $this->globalVariables;
 
         $object = $this->context->getObject();
 

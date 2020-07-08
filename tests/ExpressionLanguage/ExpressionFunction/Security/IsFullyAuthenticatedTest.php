@@ -25,7 +25,7 @@ class IsFullyAuthenticatedTest extends TestCase
 
         $isFullyAuthenticated = $this->expressionLanguage->evaluate(
             'isFullyAuthenticated()',
-            ['globalVariable' => $globalVariable]
+            ['globalVariables' => $globalVariable]
         );
         $this->assertTrue($isFullyAuthenticated);
     }

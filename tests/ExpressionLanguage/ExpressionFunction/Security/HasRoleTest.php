@@ -23,7 +23,7 @@ class HasRoleTest extends TestCase
         );
         $globalVariable = new GlobalVariables(['security' => $security]);
 
-        $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', ['globalVariable' => $globalVariable]);
+        $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', ['globalVariables' => $globalVariable]);
         $this->assertTrue($hasRole);
     }
 

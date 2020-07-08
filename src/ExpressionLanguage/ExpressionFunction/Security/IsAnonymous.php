@@ -12,7 +12,7 @@ final class IsAnonymous extends ExpressionFunction
     {
         parent::__construct(
             'isAnonymous',
-            static fn () => "$this->globalVars->get('security')->isAnonymous()",
+            fn () => "$this->globalVars->get('security')->isAnonymous()",
             static fn (array $arguments) => $arguments['globalVariables']->get('security')->isAnonymous()
         );
     }

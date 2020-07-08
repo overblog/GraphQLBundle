@@ -32,7 +32,7 @@ class HasAnyPermissionTest extends TestCase
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,
             [
-                'globalVariable' => $globalVariable,
+                'globalVariables' => $globalVariable,
                 'object' => $expectedObject,
             ]
         );

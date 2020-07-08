@@ -12,7 +12,7 @@ final class Service extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            static fn (string $serviceId) => "$this->globalVars->get('container')->get($serviceId)",
+            fn (string $serviceId) => "$this->globalVars->get('container')->get($serviceId)",
             static fn (array $arguments, $serviceId) => $arguments['globalVariables']->get('container')->get($serviceId)
         );
     }

@@ -86,7 +86,7 @@ class ArgumentsTest extends TestCase
         $res = $this->expressionLanguage->evaluate(
             'arguments(mapping, data, info)',
             [
-                'globalVariable' => $globalVariable,
+                'globalVariables' => $globalVariable,
                 'mapping' => $mapping,
                 'data' => $data,
                 'info' => $info,

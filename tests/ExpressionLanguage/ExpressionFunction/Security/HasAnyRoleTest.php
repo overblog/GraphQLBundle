@@ -22,7 +22,7 @@ class HasAnyRoleTest extends TestCase
 
         $hasRole = $this->expressionLanguage->evaluate(
             'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',
-            ['globalVariable' => $globalVariable]
+            ['globalVariables' => $globalVariable]
         );
         $this->assertTrue($hasRole);
     }

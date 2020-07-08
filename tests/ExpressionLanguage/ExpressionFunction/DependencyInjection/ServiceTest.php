@@ -39,7 +39,7 @@ class ServiceTest extends TestCase
         $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $this->assertSame(
             $object,
-            $this->expressionLanguage->evaluate($name.'("toto")', ['globalVariable' => $globalVariable])
+            $this->expressionLanguage->evaluate($name.'("toto")', ['globalVariables' => $globalVariable])
         );
     }
 

@@ -23,7 +23,7 @@ class IsAnonymousTest extends TestCase
         );
         $globalVariable = new GlobalVariables(['security' => $security]);
 
-        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', ['globalVariable' => $globalVariable]);
+        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', ['globalVariables' => $globalVariable]);
         $this->assertTrue($isAnonymous);
     }
 

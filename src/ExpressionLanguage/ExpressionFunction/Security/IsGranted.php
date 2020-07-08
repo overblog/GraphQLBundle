@@ -12,7 +12,7 @@ final class IsGranted extends ExpressionFunction
     {
         parent::__construct(
             'isGranted',
-            static fn ($attributes, $object = 'null') => "$this->globalVars->get('security')->isGranted($attributes, $object)",
+            fn ($attributes, $object = 'null') => "$this->globalVars->get('security')->isGranted($attributes, $object)",
             static fn (array $arguments, $attributes, $object = null) => $arguments['globalVariables']->get('security')->isGranted($attributes, $object)
         );
     }

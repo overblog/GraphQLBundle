@@ -12,7 +12,7 @@ final class IsAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isAuthenticated',
-            static fn () => "$this->globalVars->get('security')->isAuthenticated()",
+            fn () => "$this->globalVars->get('security')->isAuthenticated()",
             static fn (array $arguments) => $arguments['globalVariables']->get('security')->isAuthenticated()
         );
     }

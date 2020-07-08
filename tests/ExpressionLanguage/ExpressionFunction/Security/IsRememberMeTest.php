@@ -23,7 +23,7 @@ class IsRememberMeTest extends TestCase
         );
         $globalVariable = new GlobalVariables(['security' => $security]);
 
-        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', ['globalVariable' => $globalVariable]);
+        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', ['globalVariables' => $globalVariable]);
         $this->assertTrue($isRememberMe);
     }
 

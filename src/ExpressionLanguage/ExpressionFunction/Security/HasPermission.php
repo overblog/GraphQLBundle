@@ -12,7 +12,7 @@ final class HasPermission extends ExpressionFunction
     {
         parent::__construct(
             'hasPermission',
-            static fn ($object, $permission) => "$this->globalVars->get('security')->hasPermission($object, $permission)",
+            fn ($object, $permission) => "$this->globalVars->get('security')->hasPermission($object, $permission)",
             static fn (array $arguments, $object, $permission) => $arguments['globalVariables']->get('security')->hasPermission($object, $permission)
         );
     }
