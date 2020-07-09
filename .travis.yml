@@ -31,8 +31,15 @@ script: composer test
 
 jobs:
     include:
-        - php: 7.4snapshot
-          env: SYMFONY_VERSION=4.3.*
+        - php: 7.4
+          env: SYMFONY_VERSION=4.4.*
+
+        - php: 7.4
+          env: SYMFONY_VERSION=5.0.*
+
+        - php: 7.4
+          env: SYMFONY_VERSION=5.1.*
+
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
@@ -41,20 +48,14 @@ jobs:
           env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
               - pecl install pcov
-          # TODO: after deleting the 'lib' folder remove the 'pcov.exclude' and 'pcov.directory' options
-          script: > # break command into 5 lines
-              php
-              -d pcov.enabled=1
-              -d pcov.directory=.
-              -d pcov.exclude="/(vendor|tests)/"
-              bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
+          script: php -dpcov.enabled=1 bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
           after_script:
               - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
               - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
 
         - stage: Code Quality
           php: 7.4
-          env: STATIC_ANALYSIS SYMFONY_VERSION=4.3.*
+          env: STATIC_ANALYSIS SYMFONY_VERSION=4.4.*
           install: travis_retry composer install --prefer-dist
           script: composer static-analysis
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union;
 
+use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
@@ -12,7 +13,7 @@ use Overblog\GraphQLBundle\Resolver\TypeResolver;
  */
 class SearchResult2
 {
-    public static function resolveType(TypeResolver $typeResolver, $value)
+    public static function resolveType(TypeResolver $typeResolver, bool $value): ?Type
     {
         return $typeResolver->resolve('Hero');
     }

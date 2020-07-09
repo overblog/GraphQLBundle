@@ -6,15 +6,16 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use stdClass;
 
 class HasAnyPermissionTest extends TestCase
 {
-    private $expectedObject;
-    private $testedExpression = 'hasAnyPermission(object,["OWNER", "WRITER"])';
+    private stdClass $expectedObject;
+    private string $testedExpression = 'hasAnyPermission(object,["OWNER", "WRITER"])';
 
     protected function getFunctions()
     {
-        $this->expectedObject = new \stdClass();
+        $this->expectedObject = new stdClass();
 
         $security = $this->getSecurityIsGrantedWithExpectation(
             [

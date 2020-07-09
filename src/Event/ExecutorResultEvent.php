@@ -9,8 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class ExecutorResultEvent extends Event
 {
-    /** @var ExecutionResult */
-    private $result;
+    private ExecutionResult $result;
 
     /** @var ExecutorArgumentsEvent */
     private $executorArguments;

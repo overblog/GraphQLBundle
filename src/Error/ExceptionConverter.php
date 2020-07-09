@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\ClientAware as ClientAwareInterface;
+use Throwable;
+use function get_class;
 
 final class ExceptionConverter implements ExceptionConverterInterface
 {
     /**
      * @var array<string, string>
      */
-    private $exceptionMap;
+    private array $exceptionMap;
 
-    /**
-     * @var bool
-     */
-    private $mapExceptionsToParent;
+    private bool $mapExceptionsToParent;
 
     /**
      * @param array<string, string> $exceptionMap
@@ -30,7 +29,7 @@ final class ExceptionConverter implements ExceptionConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function convertException(\Throwable $exception): \Throwable
+    public function convertException(Throwable $exception): Throwable
     {
         if ($exception instanceof ClientAwareInterface) {
             return $exception;
@@ -45,9 +44,9 @@ final class ExceptionConverter implements ExceptionConverterInterface
         return $exception;
     }
 
-    private function findErrorClass(\Throwable $exception): ?string
+    private function findErrorClass(Throwable $exception): ?string
     {
-        $exceptionClass = \get_class($exception);
+        $exceptionClass = get_class($exception);
 
         if (isset($this->exceptionMap[$exceptionClass])) {
             return $this->exceptionMap[$exceptionClass];
@@ -60,7 +59,7 @@ final class ExceptionConverter implements ExceptionConverterInterface
         return null;
     }
 
-    private function findErrorClassUsingParentException(\Throwable $exception): ?string
+    private function findErrorClassUsingParentException(Throwable $exception): ?string
     {
         foreach ($this->exceptionMap as $exceptionClass => $errorExceptionClass) {
             if ($exception instanceof $exceptionClass) {

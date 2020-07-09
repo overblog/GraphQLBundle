@@ -18,7 +18,7 @@ class PlanetRepository
      *    @GQL\Arg(type="String!", name="keyword")
      * })
      */
-    public function searchPlanet(string $keyword)
+    public function searchPlanet(string $keyword): array
     {
         return [];
     }
@@ -29,7 +29,7 @@ class PlanetRepository
      * })
      * @GQL\IsPublic("override_public")
      */
-    public function createPlanet(array $planetInput)
+    public function createPlanet(array $planetInput): array
     {
         return [];
     }
@@ -38,7 +38,7 @@ class PlanetRepository
      * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
      * @GQL\Access("override_access")
      */
-    public function getAllowedPlanetsForDroids()
+    public function getAllowedPlanetsForDroids(): array
     {
         return [];
     }

@@ -7,6 +7,8 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Type;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
+use function sprintf;
+use function str_replace;
 
 class YearScalarType extends ScalarType
 {
@@ -15,7 +17,7 @@ class YearScalarType extends ScalarType
      */
     public function serialize($value)
     {
-        return \sprintf('%s AC', $value);
+        return sprintf('%s AC', $value);
     }
 
     /**
@@ -23,7 +25,7 @@ class YearScalarType extends ScalarType
      */
     public function parseValue($value)
     {
-        return (int) \str_replace(' AC', '', $value);
+        return (int) str_replace(' AC', '', $value);
     }
 
     /**
@@ -32,9 +34,9 @@ class YearScalarType extends ScalarType
     public function parseLiteral($valueNode, array $variables = null)
     {
         if (!$valueNode instanceof StringValueNode) {
-            throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, [$valueNode]);
+            throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, $valueNode);
         }
 
-        return (int) \str_replace(' AC', '', $valueNode->value);
+        return (int) str_replace(' AC', '', $valueNode->value);
     }
 }

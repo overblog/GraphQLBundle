@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use function array_map;
 
 class ProfilerController
 {
@@ -31,7 +35,9 @@ class ProfilerController
     }
 
     /**
-     * @throws ServiceNotFoundException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function __invoke(Request $request, string $token): Response
     {
@@ -47,13 +53,13 @@ class ProfilerController
 
         $profile = $this->profiler->loadProfile($token);
 
-        $tokens = \array_map(function ($tokenData) {
+        $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
             $graphql = $profile ? $profile->getCollector('graphql') : null;
             $tokenData['graphql'] = $graphql;
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null));
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {

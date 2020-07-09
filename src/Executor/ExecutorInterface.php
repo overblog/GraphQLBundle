@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Executor;
 
+use ArrayObject;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
@@ -11,10 +12,10 @@ use GraphQL\Type\Schema;
 interface ExecutorInterface
 {
     /**
-     * @param mixed       $rootValue
-     * @param array|null  $contextValue
-     * @param array|null  $variableValues
-     * @param string|null $operationName
+     * @param mixed                  $rootValue
+     * @param ArrayObject|array|null $contextValue
+     * @param array|null             $variableValues
+     * @param string|null            $operationName
      */
     public function execute(
         PromiseAdapter $promiseAdapter,

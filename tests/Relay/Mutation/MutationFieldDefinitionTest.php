@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Mutation;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
 use PHPUnit\Framework\TestCase;
 
@@ -33,21 +34,21 @@ class MutationFieldDefinitionTest extends TestCase
      */
     public function testUndefinedMutateAndGetPayloadConfig(array $config): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Mutation "mutateAndGetPayload" config is required.');
         $this->definition->toMappingDefinition($config);
     }
 
     public function testInvalidMutateAndGetPayloadString(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot parse "mutateAndGetPayload" configuration string.');
         $this->definition->toMappingDefinition(['mutateAndGetPayload' => 'Some invalid string']);
     }
 
     public function testInvalidMutateAndGetPayloadFormat(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid format for "mutateAndGetPayload" configuration.');
         $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
     }

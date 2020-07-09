@@ -8,7 +8,7 @@ class TypeTaggedServiceMappingPass extends TaggedServiceMappingPass
 {
     public const TAG_NAME = 'overblog_graphql.type';
 
-    protected function getTagName()
+    protected function getTagName(): string
     {
         return self::TAG_NAME;
     }

@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use Generator;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
 abstract class AbstractProxyResolverTest extends AbstractResolverTest
 {
-    protected function getResolverSolutionsMapping()
+    protected function getResolverSolutionsMapping(): array
     {
         return [
             'Toto' => ['factory' => [[$this, 'createToto'], []], 'aliases' => ['foo', 'bar', 'baz'], 'method' => 'resolve'],
         ];
     }
 
-    public function createToto()
+    public function createToto(): Toto
     {
         return new Toto();
     }
@@ -49,7 +50,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
         $this->resolver->resolve('Fake');
     }
 
-    public function aliasProvider()
+    public function aliasProvider(): Generator
     {
         yield ['foo'];
         yield ['bar'];

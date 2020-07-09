@@ -9,12 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractResolverTest extends TestCase
 {
-    /** @var AbstractResolver */
-    protected $resolver;
+    protected AbstractResolver $resolver;
 
-    abstract protected function createResolver();
+    abstract protected function createResolver(): AbstractResolver;
 
-    abstract protected function getResolverSolutionsMapping();
+    abstract protected function getResolverSolutionsMapping(): array;
 
     public function setUp(): void
     {

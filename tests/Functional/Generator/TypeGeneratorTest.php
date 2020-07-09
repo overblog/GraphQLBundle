@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use function json_decode;
 
 class TypeGeneratorTest extends TestCase
 {
@@ -24,7 +25,7 @@ class TypeGeneratorTest extends TestCase
 
         $this->assertSame(
             'Cannot query field "privateData" on type "ObjectWithPrivateField".',
-            \json_decode(
+            json_decode( // @phpstan-ignore-line
                 static::query(
                     'query { object { name privateData } }',
                     self::USER_RYAN,
@@ -44,7 +45,7 @@ class TypeGeneratorTest extends TestCase
     {
         $this->assertSame(
             'Cannot query field "other" on type "ObjectWithPrivateField".',
-            \json_decode(
+            json_decode( // @phpstan-ignore-line
                 static::query(
                     'query { object { name other } }',
                     self::USER_RYAN,

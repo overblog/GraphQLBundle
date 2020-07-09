@@ -6,6 +6,11 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 interface FluentResolverInterface
 {
+    /**
+     * @param mixed $input
+     *
+     * @return mixed
+     */
     public function resolve($input);
 
     /**
@@ -18,13 +23,25 @@ interface FluentResolverInterface
      *
      * @return $this
      */
-    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = []);
+    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = []): self;
 
+    /**
+     * @return mixed
+     */
     public function getSolution(string $id);
 
+    /**
+     * @return mixed
+     */
     public function getSolutions();
 
+    /**
+     * @return mixed
+     */
     public function getSolutionAliases(string $id);
 
+    /**
+     * @return mixed
+     */
     public function getSolutionOptions(string $id);
 }

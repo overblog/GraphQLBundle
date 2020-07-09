@@ -14,8 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ValidateCommand extends Command
 {
-    /** @var RequestExecutor */
-    private $requestExecutor;
+    private RequestExecutor $requestExecutor;
 
     public function __construct(RequestExecutor $requestExecutor)
     {

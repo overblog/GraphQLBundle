@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
+use Exception;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
@@ -25,7 +26,7 @@ class InputValidatorMutation implements MutationInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function mutationErrors(ResolveErrors $errors): bool
     {
@@ -37,7 +38,7 @@ class InputValidatorMutation implements MutationInterface
             return false;
         }
 
-        throw new \Exception("The injected variable `errors` doesn't contain an expected amount of violations.");
+        throw new Exception("The injected variable `errors` doesn't contain an expected amount of violations.");
     }
 
     public function noValidation(): bool

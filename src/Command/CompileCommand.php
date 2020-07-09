@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class CompileCommand extends Command
 {
-    private $typeGenerator;
+    private TypeGenerator $typeGenerator;
 
     public function __construct(TypeGenerator $typeGenerator)
     {

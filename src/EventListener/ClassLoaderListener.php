@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class ClassLoaderListener
 {
-    private $typeGenerator;
+    private TypeGenerator $typeGenerator;
 
     public function __construct(TypeGenerator $typeGenerator)
     {

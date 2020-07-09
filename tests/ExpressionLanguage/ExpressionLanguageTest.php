@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
+use Generator;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -23,7 +24,7 @@ class ExpressionLanguageTest extends TestCase
         $this->assertEquals($result, $expectedResult);
     }
 
-    public function expressionProvider()
+    public function expressionProvider(): Generator
     {
         yield ["@=test('default', 15.6, validator)", true];
         yield ["@=validator('default', 15.6)", false];

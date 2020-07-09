@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Generator;
 
+use Generator;
 use Overblog\GraphQLBundle\Generator\TypeBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +28,7 @@ class TypeGeneratorTest extends TestCase
         $this->assertSame($expectedMask, $mask);
     }
 
-    public function getPermissionsProvider()
+    public function getPermissionsProvider(): Generator
     {
         // default permission when using default cache dir
         yield [0777, null, null];

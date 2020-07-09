@@ -16,11 +16,11 @@ abstract class Character
      * @GQL\Field(type="String!")
      * @GQL\Description("The name of the character")
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @GQL\Field(type="[Character]", resolve="@=resolver('App\\MyResolver::getFriends')")
      * @GQL\Description("The friends of the character")
      */
-    protected $friends;
+    protected array $friends;
 }

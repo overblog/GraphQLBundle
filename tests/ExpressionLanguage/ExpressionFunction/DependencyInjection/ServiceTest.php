@@ -8,14 +8,15 @@ use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use stdClass;
 
 class ServiceTest extends TestCase
 {
-    private $evaluationObject;
+    private stdClass $evaluationObject;
 
     protected function getFunctions()
     {
-        $this->evaluationObject = new \stdClass();
+        $this->evaluationObject = new stdClass();
         $container = $this->getDIContainerMock(['toto' => $this->evaluationObject]);
 
         return [
@@ -29,7 +30,7 @@ class ServiceTest extends TestCase
      */
     public function testServiceCompilation(string $name): void
     {
-        $object = new \stdClass();
+        $object = new stdClass();
         ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
@@ -43,7 +44,7 @@ class ServiceTest extends TestCase
         $this->assertSame($this->evaluationObject, $this->expressionLanguage->evaluate($name.'("toto")'));
     }
 
-    public function getNames()
+    public function getNames(): array
     {
         return [
             ['service'],

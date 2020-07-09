@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Controller;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Controller\ProfilerController;
 use Overblog\GraphQLBundle\Request\Executor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,10 @@ use Twig\Environment;
 
 class ProfilerControllerTest extends TestCase
 {
-    protected function getMockRouter()
+    /**
+     * @return Router&MockObject
+     */
+    protected function getMockRouter(): Router
     {
         $router = $this->getMockBuilder(Router::class)->disableOriginalConstructor()->setMethods(['generate'])->getMock();
         $router->expects($this->once())->method('generate')->willReturn('/endpoint');
@@ -25,7 +29,10 @@ class ProfilerControllerTest extends TestCase
         return $router;
     }
 
-    protected function getMockExecutor($expected = true)
+    /**
+     * @return Executor&MockObject
+     */
+    protected function getMockExecutor(bool $expected = true): Executor
     {
         $executor = $this->getMockBuilder(Executor::class)->disableOriginalConstructor()->setMethods(['getSchemasNames', 'getSchema'])->getMock();
         if ($expected) {
@@ -37,11 +44,14 @@ class ProfilerControllerTest extends TestCase
         return $executor;
     }
 
-    protected function getMockProfiler()
+    /**
+     * @return Profiler&MockObject
+     */
+    protected function getMockProfiler(): Profiler
     {
-        $profiler = $this->getMockBuilder(Profiler::class)->disableOriginalConstructor()->setMethods(['disable', 'loadProfile', 'find'])->getMock();
-
-        return $profiler;
+        return $this->getMockBuilder(Profiler::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['disable', 'loadProfile', 'find'])->getMock();
     }
 
     public function testInvokeWithoutProfiler(): void
@@ -71,6 +81,7 @@ class ProfilerControllerTest extends TestCase
         $controller = new ProfilerController($profilerMock, $twigMock, $routerMock, $executorMock, null);
         $graphqlData = ['graphql_data'];
 
+        /** @var MockObject $profilerMock */
         $profilerMock->expects($this->once())->method('disable');
         $profilerMock->expects($this->once())->method('find')->willReturn([['token' => 'token']]);
         $profileMock = $this->getMockBuilder(Profile::class)->disableOriginalConstructor()->setMethods(['getCollector'])->getMock();
