@@ -12,8 +12,8 @@ final class NewObject extends ExpressionFunction
     {
         parent::__construct(
             'newObject',
-            fn ($className, $args = '[]') => "(new \\ReflectionClass($className))->newInstanceArgs($args)",
-            fn ($arguments, $className, $args = []) => new $className(...$args)
+            static fn ($className, $args = '[]') => "(new \\ReflectionClass($className))->newInstanceArgs($args)",
+            static fn ($arguments, $className, $args = []) => new $className(...$args)
         );
     }
 }

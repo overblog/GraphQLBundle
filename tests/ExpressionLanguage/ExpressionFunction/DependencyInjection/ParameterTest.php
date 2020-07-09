@@ -8,18 +8,14 @@ use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class ParameterTest extends TestCase
 {
     protected function getFunctions()
     {
-        $parameterBag = new ParameterBag();
-        $parameterBag->set('test', 5);
-
         return [
-            new Parameter($parameterBag),
-            new Parameter($parameterBag, 'param'),
+            new Parameter(),
+            new Parameter('param'),
         ];
     }
 
@@ -40,7 +36,11 @@ class ParameterTest extends TestCase
      */
     public function testParameterEvaluation($name): void
     {
-        $this->assertSame(5, $this->expressionLanguage->evaluate($name.'("test")'));
+        $globalVars = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        $this->assertSame(
+            5,
+            $this->expressionLanguage->evaluate($name.'("test")', [TypeGenerator::GLOBAL_VARS => $globalVars])
+        );
     }
 
     public function getNames(): array
