@@ -14,7 +14,7 @@ final class Arguments extends ExpressionFunction
         parent::__construct(
             'arguments',
             fn ($mapping, $data) => "$this->globalVars->get('container')->get('overblog_graphql.arguments_transformer')->getArguments($mapping, $data, \$info)",
-            fn ($arguments, $mapping, $data) => $transformer->getArguments($mapping, $data, $arguments['info'])
+            static fn ($arguments, $mapping, $data) => $transformer->getArguments($mapping, $data, $arguments['info'])
         );
     }
 }

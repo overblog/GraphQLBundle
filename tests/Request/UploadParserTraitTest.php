@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Request;
 
+use Generator;
 use Overblog\GraphQLBundle\Request\UploadParserTrait;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use function json_encode;
 
 class UploadParserTraitTest extends TestCase
 {
     use UploadParserTrait;
 
     /**
-     * @param string $location
-     * @param string $expected
-     *
      * @dataProvider locationsProvider
      */
-    public function testLocationToPropertyAccessPath($location, $expected): void
+    public function testLocationToPropertyAccessPath(string $location, string $expected): void
     {
         $actual = $this->locationToPropertyAccessPath($location);
         $this->assertSame($expected, $actual);
@@ -31,7 +31,7 @@ class UploadParserTraitTest extends TestCase
      */
     public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message): void
     {
-        $actual = $this->handleUploadedFiles(['operations' => \json_encode($operations), 'map' => \json_encode($map)], $files);
+        $actual = $this->handleUploadedFiles(['operations' => json_encode($operations), 'map' => json_encode($map)], $files);
         $this->assertSame($expected, $actual, $message);
     }
 
@@ -51,7 +51,7 @@ class UploadParserTraitTest extends TestCase
         $this->expectExceptionMessage('Map entry "variables.file" could not be localized in operations.');
         $operations = ['query' => '', 'variables' => []];
         $map = ['0' => ['variables.file']];
-        $files = ['0' => new \stdClass()];
+        $files = ['0' => new stdClass()];
         $this->bindUploadedFiles($operations, $map, $files);
     }
 
@@ -67,9 +67,9 @@ class UploadParserTraitTest extends TestCase
         $this->assertTrue($this->isUploadPayload(['operations' => [], 'map' => []]));
     }
 
-    public function payloadProvider()
+    public function payloadProvider(): Generator
     {
-        $files = ['0' => new \stdClass()];
+        $files = ['0' => new stdClass()];
         yield [
             ['query' => 'mutation($file: Upload!) { singleUpload(file: $file) { id } }', 'variables' => ['file' => null]],
             ['0' => ['variables.file']],
@@ -77,7 +77,7 @@ class UploadParserTraitTest extends TestCase
             ['query' => 'mutation($file: Upload!) { singleUpload(file: $file) { id } }', 'variables' => ['file' => $files['0']]],
             'single file',
         ];
-        $files = ['0' => new \stdClass(), 1 => new \stdClass()];
+        $files = ['0' => new stdClass(), 1 => new stdClass()];
         yield [
             ['query' => 'mutation($files: [Upload!]!) { multipleUpload(files: $files) { id } }', 'variables' => ['files' => [null, null]]],
             ['0' => ['variables.files.0'], '1' => ['variables.files.1']],
@@ -85,7 +85,7 @@ class UploadParserTraitTest extends TestCase
             ['query' => 'mutation($files: [Upload!]!) { multipleUpload(files: $files) { id } }', 'variables' => ['files' => [$files['0'], $files[1]]]],
             'file list',
         ];
-        $files = [0 => new \stdClass(), '1' => new \stdClass(), '2' => new \stdClass()];
+        $files = [0 => new stdClass(), '1' => new stdClass(), '2' => new stdClass()];
         yield [
             [
                 ['query' => 'mutation($file: Upload!) { singleUpload(file: $file) { id } }', 'variables' => ['file' => null]],
@@ -101,7 +101,7 @@ class UploadParserTraitTest extends TestCase
         ];
     }
 
-    public function locationsProvider()
+    public function locationsProvider(): Generator
     {
         yield ['variables.file', '[variables][file]'];
         yield ['variables.files.0', '[variables][files][0]'];

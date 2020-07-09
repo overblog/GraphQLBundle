@@ -14,14 +14,16 @@ use Overblog\GraphQLBundle\Tests\Transformer\InputType1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType2;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
+use function class_exists;
+use function count;
 
 class ArgumentsTest extends TestCase
 {
-    private $transformer;
+    private ArgumentsTransformer $transformer;
 
     public function setUp(): void
     {
-        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         parent::setUp();
@@ -38,7 +40,7 @@ class ArgumentsTest extends TestCase
         return [new Arguments($this->transformer)];
     }
 
-    public function getResolveInfo($types): ResolveInfo
+    public function getResolveInfo(array $types): ResolveInfo
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->schema = new Schema(['types' => $types]);
@@ -46,10 +48,10 @@ class ArgumentsTest extends TestCase
         return $info;
     }
 
-    private function getTransformer(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
+    private function getTransformer(array $classesMap = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn($validateReturn ?: []);
+        $validator->method('validate')->willReturn([]);
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
@@ -79,7 +81,7 @@ class ArgumentsTest extends TestCase
         $this->assertInstanceOf(InputType1::class, $res[0]);
         $this->assertInstanceOf(InputType2::class, $res[1]);
         $this->assertInstanceOf(Enum1::class, $res[2]);
-        $this->assertEquals(2, \count($res[1]->field1));
+        $this->assertEquals(2, count($res[1]->field1));
         $this->assertIsInt($res[3]);
         $this->assertEquals($res[4], 'test_string');
 

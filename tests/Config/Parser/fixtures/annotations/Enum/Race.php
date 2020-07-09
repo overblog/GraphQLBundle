@@ -20,8 +20,14 @@ class Race
     public const ZABRAK = '3';
     public const TWILEK = '4';
 
+    /**
+     * @var int|string
+     */
     public $value;
 
+    /**
+     * @param int|string $value
+     */
     public function __construct($value)
     {
         $this->value = $value;

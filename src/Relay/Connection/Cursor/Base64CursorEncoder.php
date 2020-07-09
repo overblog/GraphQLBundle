@@ -22,7 +22,7 @@ final class Base64CursorEncoder implements CursorEncoderInterface
     /**
      * {@inheritdoc}
      */
-    public function decode(string $cursor)
+    public function decode(string $cursor): string
     {
         return Base64Encoder::decode($cursor);
     }

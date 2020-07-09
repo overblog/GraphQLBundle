@@ -4,23 +4,26 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use function is_string;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 {
     protected function outputFieldsSection(): NodeDefinition
     {
+        /** @var ArrayNodeDefinition $node */
         $node = self::createNode('fields');
-        $node
-            ->isRequired()
-            ->requiresAtLeastOneElement();
+
+        $node->isRequired()->requiresAtLeastOneElement();
 
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 
+        /** @phpstan-ignore-next-line */
         $prototype
             ->beforeNormalization()
                 // Allow field type short syntax (Field: Type => Field: {type: Type})
-                ->ifTrue(fn ($options) => \is_string($options))
+                ->ifTrue(fn ($options) => is_string($options))
                 ->then(fn ($options) => ['type' => $options])
             ->end()
             ->validate()
@@ -54,7 +57,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                     ->prototype('array')
                         // Allow arg type short syntax (Arg: Type => Arg: {type: Type})
                         ->beforeNormalization()
-                            ->ifTrue(fn ($options) => \is_string($options))
+                            ->ifTrue(fn ($options) => is_string($options))
                             ->then(fn ($options) => ['type' => $options])
                         ->end()
                         ->children()
@@ -84,7 +87,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         return $node;
     }
 
-    protected function fieldsBuilderSection()
+    protected function fieldsBuilderSection(): ArrayNodeDefinition
     {
         $node = self::createNode('builders');
 

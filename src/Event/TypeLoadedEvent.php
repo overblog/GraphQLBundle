@@ -9,11 +9,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 final class TypeLoadedEvent extends Event
 {
-    /** @var Type */
-    private $type;
-
-    /** @var string */
-    private $schemaName;
+    private Type $type;
+    private ?string $schemaName;
 
     public function __construct(Type $type, ?string $schemaName)
     {

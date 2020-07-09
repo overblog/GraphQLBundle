@@ -8,5 +8,5 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 
 class CustomEdge extends Edge
 {
-    public $customProperty;
+    public string $customProperty;
 }

@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Error;
 
-/**
- * Class UserErrors.
- */
-class UserErrors extends \RuntimeException
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
+use function is_object;
+use function is_string;
+use function sprintf;
+
+class UserErrors extends RuntimeException
 {
     /** @var UserError[] */
-    private $errors = [];
+    private array $errors = [];
 
-    public function __construct(array $errors, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct(array $errors, $message = '', $code = 0, Exception $previous = null)
     {
         $this->setErrors($errors);
         parent::__construct($message, $code, $previous);
@@ -30,15 +34,13 @@ class UserErrors extends \RuntimeException
 
     /**
      * @param string|\GraphQL\Error\UserError $error
-     *
-     * @return $this
      */
-    public function addError($error)
+    public function addError($error): self
     {
-        if (\is_string($error)) {
+        if (is_string($error)) {
             $error = new UserError($error);
-        } elseif (!\is_object($error) || !$error instanceof \GraphQL\Error\UserError) {
-            throw new \InvalidArgumentException(\sprintf('Error must be string or instance of %s.', \GraphQL\Error\UserError::class));
+        } elseif (!is_object($error) || !$error instanceof \GraphQL\Error\UserError) {
+            throw new InvalidArgumentException(sprintf('Error must be string or instance of %s.', \GraphQL\Error\UserError::class));
         }
 
         $this->errors[] = $error;
@@ -49,7 +51,7 @@ class UserErrors extends \RuntimeException
     /**
      * @return UserError[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

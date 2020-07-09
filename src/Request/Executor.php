@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Request;
 
+use ArrayObject;
+use Closure;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
@@ -12,29 +14,33 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Overblog\GraphQLBundle\Executor\ExecutorInterface;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function array_keys;
+use function is_callable;
+use function sprintf;
 
 class Executor
 {
     public const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
-    private $schemas = [];
+    private array $schemas = [];
+    private EventDispatcherInterface $dispatcher;
+    private PromiseAdapter $promiseAdapter;
+    private ExecutorInterface $executor;
+    private bool $useExperimentalExecutor;
 
-    private $dispatcher;
-
-    private $promiseAdapter;
-
-    private $executor;
-
+    /**
+     * @var callable|null
+     */
     private $defaultFieldResolver;
-
-    private $useExperimentalExecutor;
 
     public function __construct(
         ExecutorInterface $executor,
@@ -57,7 +63,7 @@ class Executor
         return $this;
     }
 
-    public function addSchemaBuilder(string $name, \Closure $builder): self
+    public function addSchemaBuilder(string $name, Closure $builder): self
     {
         $this->schemas[$name] = $builder;
 
@@ -71,10 +77,10 @@ class Executor
         return $this;
     }
 
-    public function getSchema(?string $name = null): Schema
+    public function getSchema(string $name = null): Schema
     {
         if (empty($this->schemas)) {
-            throw new \RuntimeException('At least one schema should be declare.');
+            throw new RuntimeException('At least one schema should be declare.');
         }
 
         if (null === $name) {
@@ -84,12 +90,12 @@ class Executor
             }
         }
         if (!isset($this->schemas[$name])) {
-            throw new NotFoundHttpException(\sprintf('Could not found "%s" schema.', $name));
+            throw new NotFoundHttpException(sprintf('Could not found "%s" schema.', $name));
         }
         $schema = $this->schemas[$name];
-        if (\is_callable($schema)) {
+        if (is_callable($schema)) {
             $schema = $schema();
-            $this->addSchema($name, $schema);
+            $this->addSchema((string) $name, $schema);
         }
 
         return $schema;
@@ -97,17 +103,17 @@ class Executor
 
     public function getSchemasNames(): array
     {
-        return \array_keys($this->schemas);
+        return array_keys($this->schemas);
     }
 
-    public function setMaxQueryDepth($maxQueryDepth): void
+    public function setMaxQueryDepth(int $maxQueryDepth): void
     {
         /** @var QueryDepth $queryDepth */
         $queryDepth = DocumentValidator::getRule('QueryDepth');
         $queryDepth->setMaxQueryDepth($maxQueryDepth);
     }
 
-    public function setMaxQueryComplexity($maxQueryComplexity): void
+    public function setMaxQueryComplexity(int $maxQueryComplexity): void
     {
         /** @var QueryComplexity $queryComplexity */
         $queryComplexity = DocumentValidator::getRule('QueryComplexity');
@@ -125,7 +131,7 @@ class Executor
     }
 
     /**
-     * @param array|\ArrayObject|object|null $rootValue
+     * @param array|ArrayObject|object|null $rootValue
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
@@ -134,7 +140,7 @@ class Executor
         $executorArgumentsEvent = $this->preExecute(
             $this->getSchema($schemaName),
             $request[ParserInterface::PARAM_QUERY] ?? null,
-            new \ArrayObject(),
+            new ArrayObject(),
             $rootValue,
             $request[ParserInterface::PARAM_VARIABLES],
             $request[ParserInterface::PARAM_OPERATION_NAME] ?? null
@@ -158,27 +164,34 @@ class Executor
         return $result;
     }
 
+    /**
+     * @param mixed $rootValue
+     */
     private function preExecute(
         Schema $schema,
-        ?string $requestString,
-        \ArrayObject $contextValue,
+        string $requestString,
+        ArrayObject $contextValue,
         $rootValue = null,
         ?array $variableValue = null,
         ?string $operationName = null
     ): ExecutorArgumentsEvent {
-        $this->dispatcher->dispatch(
-            new ExecutorContextEvent($contextValue),
-            Events::EXECUTOR_CONTEXT
-        );
+        // @phpstan-ignore-next-line (only for Symfony 4.4)
+        $this->dispatcher->dispatch(new ExecutorContextEvent($contextValue), Events::EXECUTOR_CONTEXT);
 
-        return $this->dispatcher->dispatch(
+        /** @var ExecutorArgumentsEvent $object */
+        // @phpstan-ignore-next-line (only for Symfony 4.4)
+        $object = $this->dispatcher->dispatch(
+            /** @var ExtensibleSchema $schema */
             ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
             Events::PRE_EXECUTOR
         );
+
+        return $object;
     }
 
     private function postExecute(ExecutionResult $result, ExecutorArgumentsEvent $executorArguments): ExecutionResult
     {
+        // @phpstan-ignore-next-line (only for Symfony 4.4)
         return $this->dispatcher->dispatch(
             new ExecutorResultEvent($result, $executorArguments),
             Events::POST_EXECUTOR

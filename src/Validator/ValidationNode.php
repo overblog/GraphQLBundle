@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Argument;
+use function in_array;
 
 /**
  * ValidationNode.
@@ -119,14 +120,14 @@ class ValidationNode
      */
     public function getResolverArg(string $name)
     {
-        if (\in_array($name, self::KNOWN_VAR_NAMES)) {
+        if (in_array($name, self::KNOWN_VAR_NAMES)) {
             return $this->__resolverArgs[$name];
         }
 
         return null;
     }
 
-    public function __get($name)
+    public function __get(string $name): ?string
     {
         return $this->$name ?? null;
     }

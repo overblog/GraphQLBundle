@@ -16,16 +16,21 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use function array_map;
+use function count;
+use function is_array;
+use function is_object;
+use function sprintf;
+use function strlen;
+use function substr;
 
 class ArgumentsTransformer
 {
-    protected ValidatorInterface $validator;
-
+    protected PropertyAccessor $accessor;
+    protected ?ValidatorInterface $validator;
     protected array $classesMap;
 
-    protected PropertyAccessor $accessor;
-
-    public function __construct(ValidatorInterface $validator = null, $classesMap = [])
+    public function __construct(ValidatorInterface $validator = null, array $classesMap = [])
     {
         $this->validator = $validator;
         $this->accessor = PropertyAccess::createPropertyAccessor();
@@ -47,7 +52,7 @@ class ArgumentsTransformer
     /**
      * Extract given type from Resolve Info.
      */
-    private function getType(string $type, ResolveInfo $info): Type
+    private function getType(string $type, ResolveInfo $info): ?Type
     {
         return $info->schema->getType($type);
     }
@@ -62,7 +67,7 @@ class ArgumentsTransformer
     private function populateObject(Type $type, $data, bool $multiple, ResolveInfo $info)
     {
         if (null === $data) {
-            return $data;
+            return null;
         }
 
         if ($type instanceof NonNull) {
@@ -70,7 +75,7 @@ class ArgumentsTransformer
         }
 
         if ($multiple) {
-            return \array_map(function ($data) use ($type, $info) {
+            return array_map(function ($data) use ($type, $info) {
                 return $this->populateObject($type, $data, false, $info);
             }, $data);
         }
@@ -93,7 +98,7 @@ class ArgumentsTransformer
             $fields = $type->getFields();
 
             foreach ($fields as $name => $field) {
-                $fieldData = $this->accessor->getValue($data, \sprintf('[%s]', $name));
+                $fieldData = $this->accessor->getValue($data, sprintf('[%s]', $name));
                 $fieldType = $field->getType();
 
                 if ($fieldType instanceof NonNull) {
@@ -125,21 +130,21 @@ class ArgumentsTransformer
      */
     public function getInstanceAndValidate(string $argType, $data, ResolveInfo $info, string $argName)
     {
-        $isRequired = '!' === $argType[\strlen($argType) - 1];
+        $isRequired = '!' === $argType[strlen($argType) - 1];
         $isMultiple = '[' === $argType[0];
         $endIndex = ($isRequired ? 1 : 0) + ($isMultiple ? 1 : 0);
-        $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
+        $type = substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
 
-        if ($this->validator) {
+        if (null !== $this->validator) {
             $errors = new ConstraintViolationList();
-            if (\is_object($result)) {
+            if (is_object($result)) {
                 $errors = $this->validator->validate($result);
             }
-            if (\is_array($result) && $isMultiple) {
+            if (is_array($result) && $isMultiple) {
                 foreach ($result as $element) {
-                    if (\is_object($element)) {
+                    if (is_object($element)) {
                         $errors->addAll(
                             $this->validator->validate($element)
                         );
@@ -147,7 +152,7 @@ class ArgumentsTransformer
                 }
             }
 
-            if (\count($errors) > 0) {
+            if (count($errors) > 0) {
                 throw new InvalidArgumentError($argName, $errors);
             }
         }

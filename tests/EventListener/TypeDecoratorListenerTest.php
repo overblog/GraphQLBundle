@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\EventListener;
 
+use Closure;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
@@ -17,6 +19,7 @@ use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
+use function substr;
 
 class TypeDecoratorListenerTest extends TestCase
 {
@@ -35,7 +38,7 @@ class TypeDecoratorListenerTest extends TestCase
         }
         $expected = static function (): void {
         };
-        $realFieldName = \substr($fieldName, 2);
+        $realFieldName = substr($fieldName, 2);
 
         $this->decorate(
             [$typeWithSpecialField->name => $typeWithSpecialField],
@@ -48,11 +51,11 @@ class TypeDecoratorListenerTest extends TestCase
             $this->assertSame($expected, $actual);
         } else {
             $this->assertNotNull($actual);
-            $this->assertInstanceOf(\Closure::class, $actual);
+            $this->assertInstanceOf(Closure::class, $actual);
         }
     }
 
-    public function testObjectTypeFieldDecoration()
+    public function testObjectTypeFieldDecoration(): ObjectType
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
@@ -78,7 +81,7 @@ class TypeDecoratorListenerTest extends TestCase
         $fields = $objectType->config['fields']();
 
         foreach (['bar', 'baz'] as $fieldName) {
-            $this->assertInstanceOf(\Closure::class, $fields[$fieldName]['resolve']);
+            $this->assertInstanceOf(Closure::class, $fields[$fieldName]['resolve']);
             $this->assertSame($fieldName, $fields[$fieldName]['resolve']());
         }
 
@@ -153,7 +156,7 @@ class TypeDecoratorListenerTest extends TestCase
         $this->assertDecorateException(
             [$enumType->name => $enumType],
             [$enumType->name => ['BAZ' => 1]],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"Foo".{"BAZ"} defined in resolverMap, was defined in resolvers, but enum is not in schema.'
         );
     }
@@ -169,7 +172,7 @@ class TypeDecoratorListenerTest extends TestCase
                     },
                 ],
             ],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
@@ -185,7 +188,7 @@ class TypeDecoratorListenerTest extends TestCase
                     },
                 ],
             ],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::RESOLVE_TYPE" is allowed.'
         );
     }
@@ -201,7 +204,7 @@ class TypeDecoratorListenerTest extends TestCase
                     },
                 ],
             ],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"Foo".{"baz"} defined in resolverMap, but only "Overblog\GraphQLBundle\Resolver\ResolverMapInterface::{SCALAR_TYPE, SERIALIZE, PARSE_VALUE, PARSE_LITERAL}" is allowed.'
         );
     }
@@ -222,7 +225,7 @@ class TypeDecoratorListenerTest extends TestCase
                     },
                 ],
             ],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"Foo".{"baz"} defined in resolverMap, but not in schema.'
         );
     }
@@ -237,12 +240,12 @@ class TypeDecoratorListenerTest extends TestCase
                     'bar' => null,
                 ],
             ],
-            \InvalidArgumentException::class,
+            InvalidArgumentException::class,
             '"myType".{"foo", "bar"} defined in resolverMap, but type is not managed by TypeDecorator.'
         );
     }
 
-    public function specialTypeFieldProvider()
+    public function specialTypeFieldProvider(): array
     {
         $objectWithResolveField = new ObjectType(['name' => 'Bar', 'fields' => [], 'resolveField' => null]);
 
@@ -273,7 +276,7 @@ class TypeDecoratorListenerTest extends TestCase
     private function assertDecorateException(array $types, array $map, ?string $exception = null, ?string $exceptionMessage = null): void
     {
         if ($exception) {
-            $this->expectException($exception);
+            $this->expectException($exception); // @phpstan-ignore-line
         }
         if ($exceptionMessage) {
             $this->expectExceptionMessage($exceptionMessage);

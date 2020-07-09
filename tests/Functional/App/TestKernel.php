@@ -11,10 +11,12 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
+use function sprintf;
+use function sys_get_temp_dir;
 
 final class TestKernel extends Kernel implements CompilerPassInterface
 {
-    private $testCase;
+    private ?string $testCase;
 
     /**
      * {@inheritdoc}
@@ -26,33 +28,33 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         yield new OverblogGraphQLBundle();
     }
 
-    public function __construct($environment, $debug, $testCase = null)
+    public function __construct(string $environment, bool $debug, string $testCase = null)
     {
-        $this->testCase = null !== $testCase ? $testCase : false;
+        $this->testCase = $testCase;
         parent::__construct($environment, $debug);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->basePath().'cache/'.$this->environment;
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->basePath().'logs';
     }
 
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return __DIR__;
     }
 
-    public function getRootDir()
+    public function getRootDir(): string
     {
         return __DIR__;
     }
 
-    public function isBooted()
+    public function isBooted(): bool
     {
         return $this->booted;
     }
@@ -62,8 +64,8 @@ final class TestKernel extends Kernel implements CompilerPassInterface
      */
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        if ($this->testCase) {
-            $loader->load(\sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
+        if (null !== $this->testCase) {
+            $loader->load(sprintf(__DIR__.'/config/%s/config.yml', $this->testCase));
         } else {
             $loader->load(__DIR__.'/config/config.yml');
         }
@@ -84,8 +86,8 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         }
     }
 
-    private function basePath()
+    private function basePath(): string
     {
-        return \sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.($this->testCase ? $this->testCase.'/' : '');
+        return sys_get_temp_dir().'/OverblogGraphQLBundle/'.Kernel::VERSION.'/'.($this->testCase ? $this->testCase.'/' : '');
     }
 }

@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use Closure;
+
 final class LazyConfig
 {
-    private \Closure $loader;
+    private Closure $loader;
     private ?GlobalVariables $globalVariables;
 
     /**
      * @var callable[]
      */
-    private $onPostLoad = [];
+    private array $onPostLoad = [];
 
-    private function __construct(\Closure $loader, GlobalVariables $globalVariables = null)
+    private function __construct(Closure $loader, GlobalVariables $globalVariables = null)
     {
         $this->loader = $loader;
         $this->globalVariables = $globalVariables ?: new GlobalVariables();
     }
 
-    public static function create(\Closure $loader, GlobalVariables $globalVariables = null)
+    public static function create(Closure $loader, GlobalVariables $globalVariables = null): self
     {
         return new self($loader, $globalVariables);
     }

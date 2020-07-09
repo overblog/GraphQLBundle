@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
+use function array_filter;
+
 class Characters
 {
     public const TYPE_HUMAN = 'human';
     public const TYPE_DIREWOLF = 'direwolf';
 
-    private static $characters = [
+    private static array $characters = [
         1 => [
             'id' => '1',
             'name' => 'Jon Snow',
@@ -96,24 +98,22 @@ class Characters
         ],
     ];
 
-    public static function getCharacters()
+    public static function getCharacters(): array
     {
         return self::$characters;
     }
 
-    public static function getHumans()
+    public static function getHumans(): array
     {
-        $humans = self::findByType(self::TYPE_HUMAN);
-
-        return $humans;
+        return self::findByType(self::TYPE_HUMAN);
     }
 
-    public static function getDirewolves()
+    public static function getDirewolves(): array
     {
         return self::findByType(self::TYPE_DIREWOLF);
     }
 
-    public static function resurrectZigZag()
+    public static function resurrectZigZag(): array
     {
         $zigZag = self::$characters[4];
         $zigZag['status'] = 1;
@@ -121,9 +121,9 @@ class Characters
         return $zigZag;
     }
 
-    private static function findByType($type)
+    private static function findByType(string $type): array
     {
-        return \array_filter(self::$characters, function ($character) use ($type) {
+        return array_filter(self::$characters, function ($character) use ($type) {
             return $type === $character['type'];
         });
     }

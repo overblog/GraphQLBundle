@@ -34,6 +34,28 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use RuntimeException;
+use function array_filter;
+use function array_intersect;
+use function array_map;
+use function array_replace_recursive;
+use function class_exists;
+use function count;
+use function explode;
+use function extract;
+use function in_array;
+use function is_array;
+use function is_callable;
+use function is_string;
+use function key;
+use function ltrim;
+use function reset;
+use function rtrim;
+use function str_split;
+use function strpos;
+use function strrchr;
+use function strtolower;
+use function substr;
+use function trim;
 
 /**
  * TODO (murtukov):
@@ -136,8 +158,8 @@ class TypeBuilder
                 $this->file->addUse(Type::class);
                 break;
             default:
-                if (\in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
-                    $name = \strtolower($typeNode->name->value);
+                if (in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
+                    $name = strtolower($typeNode->name->value);
                     $type = Literal::new("Type::$name()");
                     $this->file->addUse(Type::class);
                 } else {
@@ -150,7 +172,7 @@ class TypeBuilder
         return $type;
     }
 
-    protected function buildConfigLoader(array $config)
+    protected function buildConfigLoader(array $config): ArrowFunction
     {
         /**
          * @var array         $fields
@@ -163,8 +185,9 @@ class TypeBuilder
          * @var callback|null $serialize    - only by CustomScalarType
          * @var callback|null $parseValue   - only by CustomScalarType
          * @var callback|null $parseLiteral - only by CustomScalarType
+         * @phpstan-ignore-next-line
          */
-        \extract($config);
+        extract($config);
 
         $configLoader = Collection::assoc();
         $configLoader->addItem('name', new Literal('self::NAME'));
@@ -185,12 +208,12 @@ class TypeBuilder
         }
 
         if (!empty($interfaces)) {
-            $items = \array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $interfaces);
+            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $interfaces);
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (!empty($types)) {
-            $items = \array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $types);
+            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
@@ -229,7 +252,6 @@ class TypeBuilder
 
     /**
      * @param callable $callback
-     * @param string   $fieldName
      *
      * @return ArrowFunction
      *
@@ -237,16 +259,16 @@ class TypeBuilder
      */
     protected function buildScalarCallback($callback, string $fieldName)
     {
-        if (!\is_callable($callback)) {
+        if (!is_callable($callback)) {
             throw new GeneratorException("Value of '$fieldName' is not callable.");
         }
 
         $closure = new ArrowFunction();
 
-        if (!\is_string($callback)) {
+        if (!is_string($callback)) {
             [$class, $method] = $callback;
         } else {
-            [$class, $method] = \explode('::', $callback);
+            [$class, $method] = explode('::', $callback);
         }
 
         $className = Utils::resolveQualifier($class);
@@ -265,8 +287,7 @@ class TypeBuilder
     }
 
     /**
-     * @param mixed      $resolve
-     * @param array|null $validationConfig
+     * @param mixed $resolve
      *
      * @return GeneratorInterface
      *
@@ -275,7 +296,7 @@ class TypeBuilder
      */
     protected function buildResolve($resolve, ?array $validationConfig = null)
     {
-        if (\is_callable($resolve) && \is_array($resolve)) {
+        if (is_callable($resolve) && is_array($resolve)) {
             return Collection::numeric($resolve);
         }
 
@@ -351,19 +372,20 @@ class TypeBuilder
         }
     }
 
-    protected function buildValidationRules($mapping)
+    protected function buildValidationRules(array $mapping): Collection
     {
         /**
          * @var array  $constraints
          * @var string $link
          * @var array  $cascade
+         * @phpstan-ignore-next-line
          */
-        \extract($mapping);
+        extract($mapping);
 
         $array = Collection::assoc();
 
         if (!empty($link)) {
-            if (false === \strpos($link, '::')) {
+            if (false === strpos($link, '::')) {
                 // e.g.: App\Entity\Droid
                 $array->addItem('link', $link);
             } else {
@@ -384,7 +406,7 @@ class TypeBuilder
             $array->addItem('constraints', $this->buildConstraints($constraints));
         }
 
-        return $array;
+        return $array; // @phpstan-ignore-line
     }
 
     /**
@@ -398,18 +420,18 @@ class TypeBuilder
      *
      * @throws GeneratorException
      */
-    protected function buildConstraints(array $constraints = [])
+    protected function buildConstraints(array $constraints = []): Collection
     {
         $result = Collection::numeric()->setMultiline();
 
         foreach ($constraints as $wrapper) {
-            $name = \key($wrapper);
-            $args = \reset($wrapper);
+            $name = key($wrapper);
+            $args = reset($wrapper);
 
-            if (false !== \strpos($name, '\\')) {
+            if (false !== strpos($name, '\\')) {
                 // Custom constraint
-                $fqcn = \ltrim($name, '\\');
-                $name = \ltrim(\strrchr($name, '\\'), '\\');
+                $fqcn = ltrim($name, '\\');
+                $name = ltrim(strrchr($name, '\\'), '\\');
                 $this->file->addUse($fqcn);
             } else {
                 // Symfony constraint
@@ -417,14 +439,14 @@ class TypeBuilder
                 $fqcn = self::CONSTRAINTS_NAMESPACE."\\$name";
             }
 
-            if (!\class_exists($fqcn)) {
+            if (!class_exists($fqcn)) {
                 throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
             }
 
             $instance = Instance::new($name);
 
-            if (\is_array($args)) {
-                if (isset($args[0]) && \is_array($args[0])) {
+            if (is_array($args)) {
+                if (isset($args[0]) && is_array($args[0])) {
                     // Another instance?
                     $instance->addArgument($this->buildConstraints($args));
                 } else {
@@ -438,20 +460,21 @@ class TypeBuilder
             $result->push($instance);
         }
 
-        return $result;
+        return $result; // @phpstan-ignore-line
     }
 
     /**
      * @throws GeneratorException
      */
-    protected function buildCascade(array $cascade)
+    protected function buildCascade(array $cascade): Collection
     {
         /**
          * @var string $referenceType
          * @var array  $groups
          * @var bool   $isCollection
+         * @phpstan-ignore-next-line
          */
-        \extract($cascade);
+        extract($cascade);
 
         $result = Collection::assoc()
             ->addIfNotEmpty('groups', $groups);
@@ -461,19 +484,19 @@ class TypeBuilder
         }
 
         if (isset($referenceType)) {
-            $type = \trim($referenceType, '[]!');
+            $type = trim($referenceType, '[]!');
 
-            if (\in_array($type, self::BUILT_IN_TYPES)) {
+            if (in_array($type, self::BUILT_IN_TYPES)) {
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
             $result->addItem('referenceType', "$this->globalVars->get('typeResolver')->resolve('$referenceType')");
         }
 
-        return $result;
+        return $result; // @phpstan-ignore-line
     }
 
-    protected function buildProperties(array $properties)
+    protected function buildProperties(array $properties): Collection
     {
         $array = Collection::assoc();
 
@@ -481,13 +504,14 @@ class TypeBuilder
             $array->addItem($name, $this->buildValidationRules($props));
         }
 
-        return $array;
+        return $array; // @phpstan-ignore-line
     }
 
     /**
      * @return GeneratorInterface|Collection|string
      *
      * @throws GeneratorException
+     * @throws UnrecognizedValueTypeException
      */
     public function buildField(array $fieldConfig /*, $fieldname */)
     {
@@ -498,11 +522,12 @@ class TypeBuilder
          * @var array|null  $args
          * @var string|null $complexity
          * @var string|null $deprecationReason
+         * @phpstan-ignore-next-line
          */
-        \extract($fieldConfig);
+        extract($fieldConfig);
 
         // If there is only 'type', use shorthand
-        if (1 === \count($fieldConfig) && isset($type)) {
+        if (1 === count($fieldConfig) && isset($type)) {
             return $this->buildType($type);
         }
 
@@ -539,7 +564,7 @@ class TypeBuilder
             $field->addItem('access', $this->buildAccess($access));
         }
 
-        if (!empty($access) && \is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {
+        if (!empty($access) && is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {
             $field->addItem('useStrictAccess', false);
         } else {
             $field->addItem('useStrictAccess', true);
@@ -553,14 +578,15 @@ class TypeBuilder
         return $field;
     }
 
-    public function buildArg($argConfig, $argName)
+    public function buildArg(array $argConfig, string $argName): Collection
     {
         /**
          * @var string      $type
          * @var string|null $description
          * @var string|null $defaultValue
+         * @phpstan-ignore-next-line
          */
-        \extract($argConfig);
+        extract($argConfig);
 
         $arg = Collection::assoc()
             ->addItem('name', $argName)
@@ -574,7 +600,7 @@ class TypeBuilder
             $arg->addIfNotEmpty('defaultValue', $defaultValue);
         }
 
-        return $arg;
+        return $arg; // @phpstan-ignore-line
     }
 
     /**
@@ -597,7 +623,7 @@ class TypeBuilder
                 ;
             }
 
-            $arrow = ArrowFunction::new(\is_string($expression) ? new Literal($expression) : $expression);
+            $arrow = ArrowFunction::new(is_string($expression) ? new Literal($expression) : $expression);
 
             if (ExpressionLanguage::expressionContainsVar('childrenComplexity', $complexity)) {
                 $arrow->addArgument('childrenComplexity');
@@ -609,6 +635,11 @@ class TypeBuilder
         return new ArrowFunction(0);
     }
 
+    /**
+     * @param mixed $public
+     *
+     * @return ArrowFunction|mixed
+     */
     protected function buildPublic($public)
     {
         if ($this->expressionConverter->check($public)) {
@@ -630,6 +661,11 @@ class TypeBuilder
         return $public;
     }
 
+    /**
+     * @param mixed $access
+     *
+     * @return ArrowFunction|mixed
+     */
     protected function buildAccess($access)
     {
         if ($this->expressionConverter->check($access)) {
@@ -643,6 +679,11 @@ class TypeBuilder
         return $access;
     }
 
+    /**
+     * @param mixed $resolveType
+     *
+     * @return mixed|ArrowFunction
+     */
     protected function buildResolveType($resolveType)
     {
         if ($this->expressionConverter->check($resolveType)) {
@@ -664,7 +705,7 @@ class TypeBuilder
         }
 
         $fieldConfig['validation']['cascade']['isCollection'] = $this->isCollectionType($fieldConfig['type']);
-        $fieldConfig['validation']['cascade']['referenceType'] = \trim($fieldConfig['type'], '[]!');
+        $fieldConfig['validation']['cascade']['referenceType'] = trim($fieldConfig['type'], '[]!');
     }
 
     // TODO (murtukov): rework this method to use builders
@@ -684,14 +725,14 @@ class TypeBuilder
             }
 
             $properties[$name]['cascade']['isCollection'] = $this->isCollectionType($arg['type']);
-            $properties[$name]['cascade']['referenceType'] = \trim($arg['type'], '[]!');
+            $properties[$name]['cascade']['referenceType'] = trim($arg['type'], '[]!');
         }
 
         // Merge class and field constraints
         $classValidation = $this->config['validation'] ?? [];
 
         if (!empty($fieldConfig['validation'])) {
-            $classValidation = \array_replace_recursive($classValidation, $fieldConfig['validation']);
+            $classValidation = array_replace_recursive($classValidation, $fieldConfig['validation']);
         }
 
         $mapping = [];
@@ -710,7 +751,7 @@ class TypeBuilder
             $mapping['validationGroups'] = $fieldConfig['validationGroups'];
         }
 
-        if (empty($classValidation) && !\array_filter($properties)) {
+        if (empty($classValidation) && !array_filter($properties)) {
             return null;
         } else {
             return $mapping;
@@ -719,7 +760,7 @@ class TypeBuilder
 
     protected function isCollectionType(string $type): bool
     {
-        return 2 === \count(\array_intersect(['[', ']'], \str_split($type)));
+        return 2 === count(array_intersect(['[', ']'], str_split($type)));
     }
 
     /**
@@ -730,19 +771,15 @@ class TypeBuilder
      *    "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
      *    "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
      * ```.
-     *
-     * @param string $link
-     *
-     * @return array
      */
     protected function normalizeLink(string $link): array
     {
-        [$fqcn, $classMember] = \explode('::', $link);
+        [$fqcn, $classMember] = explode('::', $link);
 
         if ('$' === $classMember[0]) {
-            return [$fqcn, \ltrim($classMember, '$'), 'property'];
-        } elseif (')' === \substr($classMember, -1)) {
-            return [$fqcn, \rtrim($classMember, '()'), 'getter'];
+            return [$fqcn, ltrim($classMember, '$'), 'property'];
+        } elseif (')' === substr($classMember, -1)) {
+            return [$fqcn, rtrim($classMember, '()'), 'getter'];
         } else {
             return [$fqcn, $classMember, 'member'];
         }

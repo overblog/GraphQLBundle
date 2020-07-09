@@ -43,8 +43,9 @@ class DefinitionTest extends TestCase
         $this->assertSame([], $field->args);
     }
 
-    private function getType($type)
+    private function getType(string $type): ?Type
     {
+        // @phpstan-ignore-next-line
         return $this->getContainer()->get('overblog_graphql.type_resolver')->resolve($type);
     }
 }

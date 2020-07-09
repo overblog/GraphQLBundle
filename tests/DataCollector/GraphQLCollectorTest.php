@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\DataCollector;
 
+use ArrayObject;
 use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
@@ -25,12 +26,12 @@ class GraphQLCollectorTest extends TestCase
 
         $collector->onPostExecutor(new ExecutorResultEvent(
             new ExecutionResult(['res' => 'ok', 'error' => 'my error']),
-            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'invalid', new \ArrayObject())
+            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'invalid', new ArrayObject())
         ));
 
         $collector->onPostExecutor(new ExecutorResultEvent(
             new ExecutionResult(['res' => 'ok', 'error' => 'my error']),
-            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'query{ myalias: test{field1, field2} }', new \ArrayObject(), null, ['variable1' => 'v1'])
+            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'query{ myalias: test{field1, field2} }', new ArrayObject(), null, ['variable1' => 'v1'])
         ));
 
         $collector->collect($request, new Response());

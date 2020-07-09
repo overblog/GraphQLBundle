@@ -9,6 +9,11 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Reference;
+use function array_keys;
+use function array_merge;
+use function implode;
+use function krsort;
+use function sprintf;
 
 final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
 {
@@ -26,11 +31,11 @@ final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds(self::SERVICE_TAG, true) as $serviceId => $tags) {
             foreach ($tags as $tag) {
                 if (!isset($tag['schema'])) {
-                    throw new RuntimeException(\sprintf('The "schema" attribute on the "overblog_graphql.resolver_map" tag of the "%s" service is required.', $serviceId));
+                    throw new RuntimeException(sprintf('The "schema" attribute on the "overblog_graphql.resolver_map" tag of the "%s" service is required.', $serviceId));
                 }
 
                 if (!isset($resolverMapsBySchemas[$tag['schema']])) {
-                    throw new RuntimeException(\sprintf('Service "%s" is invalid: schema "%s" specified on the tag "%s" does not exist (known ones are: "%s").', $serviceId, $tag['schema'], self::SERVICE_TAG, \implode('", "', \array_keys($resolverMapsBySchemas))));
+                    throw new RuntimeException(sprintf('Service "%s" is invalid: schema "%s" specified on the tag "%s" does not exist (known ones are: "%s").', $serviceId, $tag['schema'], self::SERVICE_TAG, implode('", "', array_keys($resolverMapsBySchemas))));
                 }
 
                 $resolverMapsBySchemas[$tag['schema']][$serviceId] = $tag['priority'] ?? ($resolverMapsBySchemas[$tag['schema']][$serviceId] ?? 0);
@@ -44,9 +49,9 @@ final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
         }
 
         foreach ($resolverMapsSortedBySchema as $schema => $resolverMaps) {
-            \krsort($resolverMaps);
+            krsort($resolverMaps);
 
-            $resolverMaps = \array_merge(...$resolverMaps);
+            $resolverMaps = array_merge(...$resolverMaps);
 
             foreach ($resolverMaps as $index => $resolverMap) {
                 $resolverMaps[$index] = new Reference($resolverMap);

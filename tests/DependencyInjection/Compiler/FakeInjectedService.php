@@ -9,7 +9,7 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
  */
 class FakeInjectedService
 {
-    public function doSomething()
+    public function doSomething(): bool
     {
         return true;
     }

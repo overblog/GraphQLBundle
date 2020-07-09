@@ -9,12 +9,17 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 use PHPUnit\Framework\TestCase;
+use function array_flip;
+use function array_intersect_key;
+use function array_values;
+use function count;
+use function end;
 
 abstract class AbstractConnectionBuilderTest extends TestCase
 {
-    protected $letters = ['A', 'B', 'C', 'D', 'E'];
+    protected array $letters = ['A', 'B', 'C', 'D', 'E'];
 
-    protected function getExpectedConnection(array $wantedEdges, $hasPreviousPage, $hasNextPage): ConnectionInterface
+    protected function getExpectedConnection(array $wantedEdges, bool $hasPreviousPage, bool $hasNextPage): ConnectionInterface
     {
         $edges = [
             'A' => new Edge('YXJyYXljb25uZWN0aW9uOjA=', 'A'),
@@ -24,20 +29,20 @@ abstract class AbstractConnectionBuilderTest extends TestCase
             'E' => new Edge('YXJyYXljb25uZWN0aW9uOjQ=', 'E'),
         ];
 
-        $expectedEdges = \array_values(\array_intersect_key($edges, \array_flip($wantedEdges)));
+        $expectedEdges = array_values(array_intersect_key($edges, array_flip($wantedEdges)));
 
         return new Connection(
             $expectedEdges,
             new PageInfo(
                 isset($expectedEdges[0]) ? $expectedEdges[0]->getCursor() : null,
-                \end($expectedEdges) ? \end($expectedEdges)->getCursor() : null,
+                end($expectedEdges) ? end($expectedEdges)->getCursor() : null,
                 $hasPreviousPage,
                 $hasNextPage
             )
         );
     }
 
-    protected function assertSameConnection(ConnectionInterface $expectedConnection, ConnectionInterface $actualConnection): void
+    protected function assertSameConnection(ConnectionInterface $expectedConnection, ?ConnectionInterface $actualConnection): void
     {
         // assert totalCount
         $this->assertSame($expectedConnection->getTotalCount(), $actualConnection->getTotalCount());
@@ -51,7 +56,7 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         }
 
         // assert edges
-        $this->assertCount(\count($expectedConnection->getEdges()), $actualConnection->getEdges());
+        $this->assertCount(count($expectedConnection->getEdges()), $actualConnection->getEdges());
         foreach ($expectedConnection->getEdges() as $i => $expectedEdge) {
             $this->assertSame($expectedEdge->getNode(), $actualConnection->getEdges()[$i]->getNode());
             $this->assertSame($expectedEdge->getCursor(), $actualConnection->getEdges()[$i]->getCursor());

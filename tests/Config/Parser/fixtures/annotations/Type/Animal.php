@@ -16,10 +16,10 @@ abstract class Animal
      * @GQL\Field(type="String!")
      * @GQL\Description("The name of the animal")
      */
-    private $name;
+    private string $name;
 
     /**
      * @GQL\Field(type="String!")
      */
-    private $lives;
+    private string $lives;
 }

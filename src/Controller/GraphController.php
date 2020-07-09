@@ -4,44 +4,28 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Controller;
 
-use Overblog\GraphQLBundle\Request as GraphQLRequest;
+use Overblog\GraphQLBundle\Request\BatchParser;
+use Overblog\GraphQLBundle\Request\Executor;
+use Overblog\GraphQLBundle\Request\Parser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use function in_array;
 
 class GraphController
 {
-    /**
-     * @var GraphQLRequest\BatchParser
-     */
-    private $batchParser;
-
-    /**
-     * @var GraphQLRequest\Executor
-     */
-    private $requestExecutor;
-
-    /**
-     * @var GraphQLRequest\Parser
-     */
-    private $requestParser;
-
-    /**
-     * @var bool
-     */
-    private $shouldHandleCORS;
-
-    /**
-     * @var bool
-     */
-    private $useApolloBatchingMethod;
+    private BatchParser $batchParser;
+    private Executor $requestExecutor;
+    private Parser $requestParser;
+    private bool $shouldHandleCORS;
+    private bool $useApolloBatchingMethod;
 
     public function __construct(
-        GraphQLRequest\ParserInterface $batchParser,
-        GraphQLRequest\Executor $requestExecutor,
-        GraphQLRequest\ParserInterface $requestParser,
-        $shouldHandleCORS,
-        $graphQLBatchingMethod
+        BatchParser $batchParser,
+        Executor $requestExecutor,
+        Parser $requestParser,
+        bool $shouldHandleCORS,
+        string $graphQLBatchingMethod
     ) {
         $this->batchParser = $batchParser;
         $this->requestExecutor = $requestExecutor;
@@ -69,13 +53,13 @@ class GraphController
     /**
      * @return JsonResponse|Response
      */
-    private function createResponse(Request $request, string $schemaName = null, bool $batched)
+    private function createResponse(Request $request, ?string $schemaName, bool $batched)
     {
         if ('OPTIONS' === $request->getMethod()) {
             $response = new JsonResponse([], 200);
         } else {
-            if (!\in_array($request->getMethod(), ['POST', 'GET'])) {
-                return new Response('', 405);
+            if (!in_array($request->getMethod(), ['POST', 'GET'])) {
+                return new JsonResponse('', 405);
             }
             $payload = $this->processQuery($request, $schemaName, $batched);
             $response = new JsonResponse($payload, 200);
@@ -96,7 +80,7 @@ class GraphController
         }
     }
 
-    private function processQuery(Request $request, string $schemaName = null, bool $batched): array
+    private function processQuery(Request $request, ?string $schemaName, bool $batched): array
     {
         if ($batched) {
             $payload = $this->processBatchQuery($request, $schemaName);

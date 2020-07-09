@@ -622,29 +622,6 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "locations",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "LIST",
-                                "name": null,
-                                "ofType": {
-                                    "kind": "NON_NULL",
-                                    "name": null,
-                                    "ofType": {
-                                        "kind": "ENUM",
-                                        "name": "__DirectiveLocation",
-                                        "ofType": null
-                                    }
-                                }
-                            }
-                        },
-                        "isDeprecated": false,
-                        "deprecationReason": null
-                    },
-                    {
                         "name": "args",
                         "args": [],
                         "type": {
@@ -668,7 +645,7 @@
                         "deprecationReason": null
                     },
                     {
-                        "name": "onOperation",
+                        "name": "isRepeatable",
                         "args": [],
                         "type": {
                             "kind": "NON_NULL",
@@ -679,38 +656,31 @@
                                 "ofType": null
                             }
                         },
-                        "isDeprecated": true,
-                        "deprecationReason": "Use `locations`."
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     },
                     {
-                        "name": "onFragment",
+                        "name": "locations",
                         "args": [],
                         "type": {
                             "kind": "NON_NULL",
                             "name": null,
                             "ofType": {
-                                "kind": "SCALAR",
-                                "name": "Boolean",
-                                "ofType": null
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "__DirectiveLocation",
+                                        "ofType": null
+                                    }
+                                }
                             }
                         },
-                        "isDeprecated": true,
-                        "deprecationReason": "Use `locations`."
-                    },
-                    {
-                        "name": "onField",
-                        "args": [],
-                        "type": {
-                            "kind": "NON_NULL",
-                            "name": null,
-                            "ofType": {
-                                "kind": "SCALAR",
-                                "name": "Boolean",
-                                "ofType": null
-                            }
-                        },
-                        "isDeprecated": true,
-                        "deprecationReason": "Use `locations`."
+                        "isDeprecated": false,
+                        "deprecationReason": null
                     }
                 ],
                 "inputFields": null,
@@ -757,6 +727,11 @@
                     },
                     {
                         "name": "INLINE_FRAGMENT",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "VARIABLE_DEFINITION",
                         "isDeprecated": false,
                         "deprecationReason": null
                     },
@@ -1208,11 +1183,6 @@
         "directives": [
             {
                 "name": "include",
-                "locations": [
-                    "FIELD",
-                    "FRAGMENT_SPREAD",
-                    "INLINE_FRAGMENT"
-                ],
                 "args": [
                     {
                         "name": "if",
@@ -1227,15 +1197,15 @@
                         },
                         "defaultValue": null
                     }
+                ],
+                "locations": [
+                    "FIELD",
+                    "FRAGMENT_SPREAD",
+                    "INLINE_FRAGMENT"
                 ]
             },
             {
                 "name": "skip",
-                "locations": [
-                    "FIELD",
-                    "FRAGMENT_SPREAD",
-                    "INLINE_FRAGMENT"
-                ],
                 "args": [
                     {
                         "name": "if",
@@ -1250,14 +1220,15 @@
                         },
                         "defaultValue": null
                     }
+                ],
+                "locations": [
+                    "FIELD",
+                    "FRAGMENT_SPREAD",
+                    "INLINE_FRAGMENT"
                 ]
             },
             {
                 "name": "deprecated",
-                "locations": [
-                    "FIELD_DEFINITION",
-                    "ENUM_VALUE"
-                ],
                 "args": [
                     {
                         "name": "reason",
@@ -1268,6 +1239,10 @@
                         },
                         "defaultValue": "\"No longer supported\""
                     }
+                ],
+                "locations": [
+                    "FIELD_DEFINITION",
+                    "ENUM_VALUE"
                 ]
             }
         ]

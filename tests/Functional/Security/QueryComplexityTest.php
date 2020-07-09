@@ -8,33 +8,33 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class QueryComplexityTest extends TestCase
 {
-    private $userFriendsWithoutLimitQuery = <<<'EOF'
-query {
-  user {
-    friends {
-      edges {
-        node {
-          name
+    private string $userFriendsWithoutLimitQuery = <<<'EOF'
+    query {
+      user {
+        friends {
+          edges {
+            node {
+              name
+            }
+          }
         }
       }
     }
-  }
-}
-EOF;
+    EOF;
 
-    private $userFriendsWithLimitQuery = <<<'EOF'
-query {
-  user {
-    friends(first: 1) {
-      edges {
-        node {
-          name
+    private string $userFriendsWithLimitQuery = <<<'EOF'
+    query {
+      user {
+        friends(first: 1) {
+          edges {
+            node {
+              name
+            }
+          }
         }
       }
     }
-  }
-}
-EOF;
+    EOF;
 
     public function testComplexityReachLimitation(): void
     {

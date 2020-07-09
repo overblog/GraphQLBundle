@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +61,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
 
         $this->container->setDefinition('test_resolver', $testResolver);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Service tagged "test_resolver" must have valid "alias" argument.');
 
         $this->addCompilerPassesAndCompile();
@@ -76,7 +77,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
 
         $this->container->setDefinition('test_resolver', $testResolver);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Service tagged "test_resolver" must have valid "method" argument.');
 
         $this->addCompilerPassesAndCompile();
