@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadataInterface;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use function in_array;
 
 class InputValidator
 {
@@ -66,12 +67,8 @@ class InputValidator
     /**
      * Converts a numeric array of resolver args to an associative one.
      *
-     * @param mixed             $value
-     * @param ArgumentInterface $args
-     * @param mixed             $context
-     * @param ResolveInfo       $info
-     *
-     * @return array
+     * @param mixed $value
+     * @param mixed $context
      */
     private function mapResolverArgs($value, ArgumentInterface $args, $context, ResolveInfo $info): array
     {
@@ -153,7 +150,7 @@ class InputValidator
                     case 'link':
                         [$fqcn, $property, $type] = $value;
 
-                        if (!\in_array($fqcn, $this->cachedMetadata)) {
+                        if (!in_array($fqcn, $this->cachedMetadata)) {
                             $this->cachedMetadata[$fqcn] = $this->validator->getMetadataFor($fqcn);
                         }
 
@@ -247,9 +244,6 @@ class InputValidator
         }
     }
 
-    /**
-     * @param array $rules
-     */
     private function restructureShortForm(array &$rules): void
     {
         if (isset($rules[0])) {

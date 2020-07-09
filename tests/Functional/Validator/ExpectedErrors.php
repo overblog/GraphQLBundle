@@ -83,7 +83,7 @@ class ExpectedErrors
         'path' => ['collectionValidation'],
     ];
 
-    public static function simpleValidation($fieldName)
+    public static function simpleValidation(string $fieldName): array
     {
         return [
             'message' => 'validation',
@@ -108,7 +108,7 @@ class ExpectedErrors
         ];
     }
 
-    public static function cascadeWithGroups($fieldName)
+    public static function cascadeWithGroups(string $fieldName): array
     {
         $validation = [
             'address.street' => [
@@ -143,6 +143,7 @@ class ExpectedErrors
             ],
         ];
 
+        // @phpstan-ignore-next-line
         if (Kernel::VERSION_ID >= 40400) {
             $validation['birthdate.day'] = [
                 [

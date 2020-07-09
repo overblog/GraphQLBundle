@@ -8,5 +8,5 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 
 class CustomConnection extends Connection
 {
-    public $averageAge;
+    public int $averageAge;
 }

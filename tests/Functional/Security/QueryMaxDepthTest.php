@@ -8,40 +8,40 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class QueryMaxDepthTest extends TestCase
 {
-    private $userFriendsWithoutViolationQuery = <<<'EOF'
-query {
-  user {
-    friends(first:1) {
-      edges {
-        node {
-          name
+    private string $userFriendsWithoutViolationQuery = <<<'EOF'
+    query {
+      user {
+        friends(first:1) {
+          edges {
+            node {
+              name
+            }
+          }
         }
       }
     }
-  }
-}
-EOF;
+    EOF;
 
-    private $userFriendsWithViolationQuery = <<<'EOF'
-query {
-  user {
-    friends(first: 1) {
-      edges {
-        node {
-          name
-          friends {
-            edges {
-              node {
-                name
+    private string $userFriendsWithViolationQuery = <<<'EOF'
+    query {
+      user {
+        friends(first: 1) {
+          edges {
+            node {
+              name
+              friends {
+                edges {
+                  node {
+                    name
+                  }
+                }
               }
             }
           }
         }
       }
     }
-  }
-}
-EOF;
+    EOF;
 
     public function testMaxDepthReachLimitation(): void
     {

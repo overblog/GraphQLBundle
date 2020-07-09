@@ -27,9 +27,9 @@ class GetUserTest extends TestCase
         $testUser = new User('testUser', 'testPassword');
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
-        $globalVariable = new GlobalVariables(['security' => new Security($coreSecurity)]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => new Security($coreSecurity)]);
 
-        $user = $this->expressionLanguage->evaluate('getUser()', ['globalVariables' => $globalVariable]);
+        $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
         $this->assertInstanceOf(UserInterface::class, $user);
     }
 
@@ -61,13 +61,14 @@ class GetUserTest extends TestCase
     /**
      * @dataProvider getUserProvider
      *
-     * @param $user
-     * @param $expectedUser
+     * @param mixed $user
+     * @param mixed $expectedUser
      */
     public function testGetUser($user, $expectedUser): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
+
         ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
             [
                 'security' => new Security(
@@ -91,7 +92,7 @@ class GetUserTest extends TestCase
         $this->assertSame($expectedUser, eval($this->getCompileCode()));
     }
 
-    public function getUserProvider()
+    public function getUserProvider(): array
     {
         $user = $this->getMockBuilder(UserInterface::class)->getMock();
 
@@ -104,7 +105,7 @@ class GetUserTest extends TestCase
         ];
     }
 
-    private function getCompileCode()
+    private function getCompileCode(): string
     {
         return 'return '.$this->expressionLanguage->compile('getUser()').';';
     }

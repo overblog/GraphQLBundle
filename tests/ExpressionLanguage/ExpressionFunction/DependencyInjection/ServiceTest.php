@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use stdClass;
 
 class ServiceTest extends TestCase
 {
@@ -24,7 +25,7 @@ class ServiceTest extends TestCase
      */
     public function testServiceCompilation(string $name): void
     {
-        $object = new \stdClass();
+        $object = new stdClass();
         ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
@@ -35,15 +36,15 @@ class ServiceTest extends TestCase
      */
     public function testServiceEvaluation(string $name): void
     {
-        $object = new \stdClass();
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $object = new stdClass();
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $this->assertSame(
             $object,
-            $this->expressionLanguage->evaluate($name.'("toto")', ['globalVariables' => $globalVariable])
+            $this->expressionLanguage->evaluate($name.'("toto")', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}])
         );
     }
 
-    public function getNames()
+    public function getNames(): array
     {
         return [
             ['service'],

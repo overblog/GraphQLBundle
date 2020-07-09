@@ -14,8 +14,8 @@ class ResolverTestService implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    public function doSomethingWithContainer()
+    public function doSomethingWithContainer(): ?object
     {
-        return $this->container->get('injected_service')->doSomething();
+        return $this->container->get('injected_service')->doSomething(); // @phpstan-ignore-line
     }
 }

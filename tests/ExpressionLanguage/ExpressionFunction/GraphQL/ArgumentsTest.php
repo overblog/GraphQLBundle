@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Arguments;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use Overblog\GraphQLBundle\Tests\Transformer\ArgumentsTransformerTest;
 use Overblog\GraphQLBundle\Tests\Transformer\Enum1;
@@ -15,12 +16,14 @@ use Overblog\GraphQLBundle\Tests\Transformer\InputType1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType2;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
+use function class_exists;
+use function count;
 
 class ArgumentsTest extends TestCase
 {
     public function setUp(): void
     {
-        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         parent::setUp();
@@ -31,7 +34,7 @@ class ArgumentsTest extends TestCase
         return [new Arguments()];
     }
 
-    public function getResolveInfo($types): ResolveInfo
+    public function getResolveInfo(array $types): ResolveInfo
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->schema = new Schema(['types' => $types]);
@@ -39,10 +42,10 @@ class ArgumentsTest extends TestCase
         return $info;
     }
 
-    private function getTransformer(array $classesMap = null, $validateReturn = null): ArgumentsTransformer
+    private function getTransformer(array $classesMap = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn($validateReturn ?: []);
+        $validator->method('validate')->willReturn([]);
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
@@ -77,7 +80,7 @@ class ArgumentsTest extends TestCase
             ]
         );
 
-        $globalVariable = new GlobalVariables(
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
             [
                 'container' => $this->getDIContainerMock(['overblog_graphql.arguments_transformer' => $transformer]),
             ]
@@ -86,7 +89,7 @@ class ArgumentsTest extends TestCase
         $res = $this->expressionLanguage->evaluate(
             'arguments(mapping, data, info)',
             [
-                'globalVariables' => $globalVariable,
+                TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS},
                 'mapping' => $mapping,
                 'data' => $data,
                 'info' => $info,
@@ -96,7 +99,7 @@ class ArgumentsTest extends TestCase
         $this->assertInstanceOf(InputType1::class, $res[0]);
         $this->assertInstanceOf(InputType2::class, $res[1]);
         $this->assertInstanceOf(Enum1::class, $res[2]);
-        $this->assertEquals(2, \count($res[1]->field1));
+        $this->assertEquals(2, count($res[1]->field1));
         $this->assertIsInt($res[3]);
         $this->assertEquals($res[4], 'test_string');
 

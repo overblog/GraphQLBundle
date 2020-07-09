@@ -9,6 +9,10 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
+use RuntimeException;
+use function func_get_args;
+use function method_exists;
+use function sprintf;
 
 class Executor implements ExecutorInterface
 {
@@ -26,9 +30,9 @@ class Executor implements ExecutorInterface
         ?callable $fieldResolver = null,
         ?array $validationRules = null
     ): ExecutionResult {
-        if (!\method_exists($promiseAdapter, 'wait')) {
-            throw new \RuntimeException(
-                \sprintf(
+        if (!method_exists($promiseAdapter, 'wait')) {
+            throw new RuntimeException(
+                sprintf(
                     'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
                     PromiseAdapterInterface::class,
                     PromiseAdapter::class
@@ -36,6 +40,6 @@ class Executor implements ExecutorInterface
             );
         }
 
-        return $promiseAdapter->wait(GraphQL::promiseToExecute(...\func_get_args()));
+        return $promiseAdapter->wait(GraphQL::promiseToExecute(...func_get_args()));
     }
 }

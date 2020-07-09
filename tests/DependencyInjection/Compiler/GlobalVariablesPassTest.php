@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\GlobalVariablesPass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class GlobalVariablesPassTest extends TestCase
@@ -30,17 +32,17 @@ class GlobalVariablesPassTest extends TestCase
                 ],
             ]);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Service "my-id" tagged "overblog_graphql.global_variable" should have a valid "alias" attribute.');
 
         (new GlobalVariablesPass())->process($container);
     }
 
-    public function invalidAliasProvider()
+    public function invalidAliasProvider(): array
     {
         return [
             [null],
-            [new \stdClass()],
+            [new stdClass()],
             [[]],
             [true],
             [false],

@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Definition\Type;
 
+use Exception;
+use Generator;
 use GraphQL\Error\InvariantViolation;
+use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use function sprintf;
+use function uniqid;
 
 class CustomScalarTypeTest extends TestCase
 {
@@ -33,7 +39,7 @@ class CustomScalarTypeTest extends TestCase
         ]);
 
         foreach (['serialize', 'parseValue', 'parseLiteral'] as $field) {
-            $value = new \stdClass();
+            $value = new ScalarTypeDefinitionNode([]);
             $this->assertSame($value, $type->$field($value));
         }
     }
@@ -47,8 +53,8 @@ class CustomScalarTypeTest extends TestCase
     public function testAssertValidWithInvalidScalarType($scalarType, $got): void
     {
         $this->expectException(InvariantViolation::class);
-        $name = \uniqid('custom');
-        $this->expectExceptionMessage(\sprintf(
+        $name = uniqid('custom');
+        $this->expectExceptionMessage(sprintf(
             '%s must provide a valid "scalarType" instance of %s but got: %s',
             $name,
             ScalarType::class,
@@ -61,16 +67,16 @@ class CustomScalarTypeTest extends TestCase
     public function testAssertValidSerializeFunctionIsRequired(): void
     {
         $this->expectException(InvariantViolation::class);
-        $name = \uniqid('custom');
+        $name = uniqid('custom');
         $this->expectExceptionMessage($name.' must provide "serialize" function. If this custom Scalar is also used as an input type, ensure "parseValue" and "parseLiteral" functions are also provided.');
         $type = new CustomScalarType(['name' => $name]);
         $type->assertValid();
     }
 
-    public function invalidScalarTypeProvider()
+    public function invalidScalarTypeProvider(): Generator
     {
         yield [false, 'false'];
-        yield [new \stdClass(), 'instance of stdClass'];
+        yield [new stdClass(), 'instance of stdClass'];
         yield [
             function () {
                 return false;
@@ -79,12 +85,17 @@ class CustomScalarTypeTest extends TestCase
         ];
         yield [
             function () {
-                return new \stdClass();
+                return new stdClass();
             },
             'instance of stdClass',
         ];
     }
 
+    /**
+     * @param mixed $scalarType
+     *
+     * @throws Exception
+     */
     private function assertScalarTypeConfig($scalarType): void
     {
         $type = new CustomScalarType([

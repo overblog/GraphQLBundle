@@ -13,6 +13,9 @@ use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Throwable;
+use function count;
+use function microtime;
 
 class GraphQLCollector extends DataCollector
 {
@@ -21,7 +24,7 @@ class GraphQLCollector extends DataCollector
      */
     protected array $batches = [];
 
-    public function collect(Request $request, Response $response, \Throwable $exception = null): void
+    public function collect(Request $request, Response $response, Throwable $exception = null): void
     {
         $error = false;
         $count = 0;
@@ -97,7 +100,7 @@ class GraphQLCollector extends DataCollector
         $queryString = $executorArgument->getRequestString();
         $operationName = $executorArgument->getOperationName();
         $variables = $executorArgument->getVariableValue();
-        $queryTime = \microtime(true) - $executorArgument->getStartTime();
+        $queryTime = microtime(true) - $executorArgument->getStartTime();
 
         $result = $event->getResult()->toArray();
 
@@ -113,7 +116,7 @@ class GraphQLCollector extends DataCollector
             $parsed = Parser::parse($queryString);
             $batch['graphql'] = $this->extractGraphql($parsed, $operationName);
             if (isset($batch['graphql']['fields'])) {
-                $batch['count'] += \count($batch['graphql']['fields']);
+                $batch['count'] += count($batch['graphql']['fields']);
             }
             $error = $result['errors'][0] ?? false;
             if ($error) {

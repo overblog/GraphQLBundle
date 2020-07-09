@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator\Exception;
 
+use Exception;
 use GraphQL\Error\ClientAware;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Throwable;
 
-class ArgumentsValidationException extends \Exception implements ClientAware
+class ArgumentsValidationException extends Exception implements ClientAware
 {
-    private $violations;
+    private ConstraintViolationListInterface $violations;
 
     public function __construct(ConstraintViolationListInterface $violations, Throwable $previous = null)
     {

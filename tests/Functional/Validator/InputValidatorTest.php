@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use function class_exists;
+use function json_decode;
 
 class InputValidatorTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-        if (!\class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         static::bootKernel(['test_case' => 'validator']);
@@ -106,11 +108,11 @@ class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
-                        city: "Berlin", 
-                        street: "Brettnacher-Str. 14a", 
-                        zipCode: 10546, 
+                        city: "Berlin",
+                        street: "Brettnacher-Str. 14a",
+                        zipCode: 10546,
                         period: {
-                            startDate: "2016-01-01", 
+                            startDate: "2016-01-01",
                             endDate: "2019-07-14"
                         }
                     }]
@@ -134,11 +136,11 @@ class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
-                        city: "Moscow", 
-                        street: "ul. Lazo", 
-                        zipCode: -15, 
+                        city: "Moscow",
+                        street: "ul. Lazo",
+                        zipCode: -15,
                         period: {
-                            startDate: "2020-01-01", 
+                            startDate: "2020-01-01",
                             endDate: "2019-07-14"
                         }
                     }]
@@ -227,9 +229,10 @@ class InputValidatorTest extends TestCase
             }
         ';
 
+        /** @var string $jsonString */
         $jsonString = $this->query($query, 'Ryan', 'validator')->getResponse()->getContent();
 
-        $response = \json_decode($jsonString, true);
+        $response = json_decode($jsonString, true);
 
         $this->assertTrue(empty($response['errors']));
         $this->assertTrue($response['data']['userPasswordValidation']);

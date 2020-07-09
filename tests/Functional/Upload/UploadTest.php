@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Upload;
 
+use Exception;
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function json_decode;
+use function json_encode;
 
 class UploadTest extends TestCase
 {
@@ -122,7 +125,7 @@ class UploadTest extends TestCase
                 ],
                 ['0' => 'a.txt']
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // webonyx/graphql-php (<0.13.1) does not generate error result
             $this->expectException(InvariantViolation::class);
             $this->expectExceptionMessage('Upload scalar literal unsupported.');
@@ -152,18 +155,18 @@ class UploadTest extends TestCase
         );
     }
 
-    private function assertUpload(array $expected, array $parameters, array $files, $uri = '/', $json = true): void
+    private function assertUpload(array $expected, array $parameters, array $files, string $uri = '/', bool $json = true): void
     {
         if ($json) {
             foreach ($parameters as &$parameter) {
-                $parameter = \json_encode($parameter);
+                $parameter = json_encode($parameter);
             }
         }
         $actual = $this->uploadRequest($parameters, $files, $uri);
         $this->assertSame($expected, $actual);
     }
 
-    private function uploadRequest(array $parameters, array $files, $uri = '/')
+    private function uploadRequest(array $parameters, array $files, string $uri = '/'): array
     {
         $client = static::createClient(['test_case' => 'upload']);
         $this->disableCatchExceptions($client);
@@ -175,10 +178,10 @@ class UploadTest extends TestCase
             ['CONTENT_TYPE' => 'multipart/form-data']
         );
 
-        return \json_decode($client->getResponse()->getContent(), true);
+        return json_decode($client->getResponse()->getContent(), true);
     }
 
-    private function createUploadedFiles(array $fileNames)
+    private function createUploadedFiles(array $fileNames): array
     {
         $fixtureDir = __DIR__.'/fixtures/';
         $uploadedFiles = [];

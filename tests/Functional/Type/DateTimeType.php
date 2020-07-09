@@ -7,12 +7,11 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 use DateTime;
 use Exception;
 use GraphQL\Language\AST\StringValueNode;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 
 class DateTimeType
 {
     /**
-     * @param DateTime $value
-     *
      * @return string
      */
     public static function serialize(DateTime $value)
@@ -40,8 +39,11 @@ class DateTimeType
         return new DateTime($valueNode->value);
     }
 
-    public static function getDateTime($root, $args): ?DateTime
+    /**
+     * @param mixed $_
+     */
+    public static function getDateTime($_, ArgumentInterface $args): ?DateTime
     {
-        return $args['dateTime'] ?? new \DateTime('2016-11-28 12:00:00');
+        return $args['dateTime'] ?? new DateTime('2016-11-28 12:00:00');
     }
 }

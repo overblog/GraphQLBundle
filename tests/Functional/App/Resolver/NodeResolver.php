@@ -13,7 +13,7 @@ class NodeResolver implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    private $userData = [
+    private array $userData = [
         '1' => [
             'id' => 1,
             'name' => 'John Doe',
@@ -24,7 +24,7 @@ class NodeResolver implements ContainerAwareInterface
         ],
     ];
 
-    private $photoData = [
+    private array $photoData = [
         '3' => [
             'photoID' => 3,
             'photoWidth' => 300,
@@ -35,7 +35,7 @@ class NodeResolver implements ContainerAwareInterface
         ],
     ];
 
-    public function resolvePhotoField($value, ResolveInfo $info)
+    public function resolvePhotoField(array $value, ResolveInfo $info): ?int
     {
         switch ($info->fieldName) {
             case 'id':
@@ -47,7 +47,7 @@ class NodeResolver implements ContainerAwareInterface
         }
     }
 
-    public function idFetcher($id)
+    public function idFetcher(string $id): ?array
     {
         if (isset($this->userData[$id])) {
             return $this->userData[$id];
@@ -55,10 +55,10 @@ class NodeResolver implements ContainerAwareInterface
             return $this->photoData[$id];
         }
 
-        return;
+        return null;
     }
 
-    public function typeResolver($value)
+    public function typeResolver(array $value): string
     {
         if (isset($value['name'])) {
             return 'User';

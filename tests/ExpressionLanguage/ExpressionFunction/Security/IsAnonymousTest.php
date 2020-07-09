@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class IsAnonymousTest extends TestCase
@@ -21,9 +22,9 @@ class IsAnonymousTest extends TestCase
             'IS_AUTHENTICATED_ANONYMOUSLY',
             $this->any()
         );
-        $globalVariable = new GlobalVariables(['security' => $security]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
 
-        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', ['globalVariables' => $globalVariable]);
+        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
         $this->assertTrue($isAnonymous);
     }
 

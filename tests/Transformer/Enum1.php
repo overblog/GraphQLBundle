@@ -6,5 +6,8 @@ namespace Overblog\GraphQLBundle\Tests\Transformer;
 
 class Enum1
 {
+    /**
+     * @var mixed
+     */
     public $value;
 }

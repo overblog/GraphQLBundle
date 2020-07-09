@@ -15,5 +15,5 @@ class Cat extends Animal
     /**
      * @GQL\Field(type="Int!")
      */
-    protected $lives;
+    protected int $lives;
 }

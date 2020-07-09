@@ -36,14 +36,14 @@ class ParameterTest extends TestCase
      */
     public function testParameterEvaluation($name): void
     {
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
         $this->assertSame(
             5,
-            $this->expressionLanguage->evaluate($name.'("test")', ['globalVariables' => $globalVariable])
+            $this->expressionLanguage->evaluate($name.'("test")', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}])
         );
     }
 
-    public function getNames()
+    public function getNames(): array
     {
         return [
             ['param'],

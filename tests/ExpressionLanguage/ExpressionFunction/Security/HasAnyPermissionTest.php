@@ -7,10 +7,12 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use stdClass;
 
 class HasAnyPermissionTest extends TestCase
 {
-    private $testedExpression = 'hasAnyPermission(object,["OWNER", "WRITER"])';
+    private string $testedExpression = 'hasAnyPermission(object,["OWNER", "WRITER"])';
 
     protected function getFunctions()
     {
@@ -19,7 +21,7 @@ class HasAnyPermissionTest extends TestCase
 
     public function testEvaluator(): void
     {
-        $expectedObject = new \stdClass();
+        $expectedObject = new stdClass();
         $security = $this->getSecurityIsGrantedWithExpectation(
             [
                 $this->matchesRegularExpression('/^(OWNER|WRITER)$/'),
@@ -27,12 +29,12 @@ class HasAnyPermissionTest extends TestCase
             ],
             $this->any()
         );
-        $globalVariable = new GlobalVariables(['security' => $security]);
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
 
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,
             [
-                'globalVariables' => $globalVariable,
+                TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS},
                 'object' => $expectedObject,
             ]
         );
@@ -41,7 +43,7 @@ class HasAnyPermissionTest extends TestCase
 
     public function testHasAnyPermission(): void
     {
-        $expectedObject = new \stdClass();
+        $expectedObject = new stdClass();
 
         $this->assertExpressionCompile(
             $this->testedExpression,
