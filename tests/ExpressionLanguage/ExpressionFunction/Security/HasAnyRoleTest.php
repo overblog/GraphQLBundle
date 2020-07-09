@@ -19,11 +19,11 @@ class HasAnyRoleTest extends TestCase
     public function testEvaluator(): void
     {
         $security = $this->getSecurityIsGrantedWithExpectation('ROLE_ADMIN', $this->any());
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
         $hasRole = $this->expressionLanguage->evaluate(
             'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',
-            [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]
+            [TypeGenerator::GLOBAL_VARS => $globalVars]
         );
         $this->assertTrue($hasRole);
     }

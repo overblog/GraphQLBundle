@@ -22,9 +22,9 @@ class HasRoleTest extends TestCase
             'ROLE_USER',
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
-        $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
+        $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', [TypeGenerator::GLOBAL_VARS => $globalVars]);
         $this->assertTrue($hasRole);
     }
 

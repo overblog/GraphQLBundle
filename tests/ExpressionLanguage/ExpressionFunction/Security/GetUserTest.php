@@ -27,9 +27,9 @@ class GetUserTest extends TestCase
         $testUser = new User('testUser', 'testPassword');
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => new Security($coreSecurity)]);
+        $globalVars = new GlobalVariables(['security' => new Security($coreSecurity)]);
 
-        $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
+        $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GLOBAL_VARS => $globalVars]);
         $this->assertInstanceOf(UserInterface::class, $user);
     }
 

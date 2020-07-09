@@ -22,9 +22,9 @@ class IsAnonymousTest extends TestCase
             'IS_AUTHENTICATED_ANONYMOUSLY',
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
-        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
+        $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GLOBAL_VARS => $globalVars]);
         $this->assertTrue($isAnonymous);
     }
 

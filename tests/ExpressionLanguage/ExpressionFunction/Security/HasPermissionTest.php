@@ -29,12 +29,12 @@ class HasPermissionTest extends TestCase
             ],
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,
             [
-                TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS},
+                TypeGenerator::GLOBAL_VARS => $globalVars,
                 'object' => $expectedObject,
             ]
         );

@@ -22,11 +22,11 @@ class IsAuthenticatedTest extends TestCase
             $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'),
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
         $isAuthenticated = $this->expressionLanguage->evaluate(
             'isAuthenticated()',
-            [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]
+            [TypeGenerator::GLOBAL_VARS => $globalVars]
         );
         $this->assertTrue($isAuthenticated);
     }

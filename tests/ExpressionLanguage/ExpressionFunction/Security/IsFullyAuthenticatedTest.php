@@ -22,11 +22,11 @@ class IsFullyAuthenticatedTest extends TestCase
             'IS_AUTHENTICATED_FULLY',
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
         $isFullyAuthenticated = $this->expressionLanguage->evaluate(
             'isFullyAuthenticated()',
-            [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]
+            [TypeGenerator::GLOBAL_VARS => $globalVars]
         );
         $this->assertTrue($isFullyAuthenticated);
     }

@@ -37,10 +37,10 @@ class ServiceTest extends TestCase
     public function testServiceEvaluation(string $name): void
     {
         $object = new stdClass();
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $globalVars = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
         $this->assertSame(
             $object,
-            $this->expressionLanguage->evaluate($name.'("toto")', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}])
+            $this->expressionLanguage->evaluate($name.'("toto")', [TypeGenerator::GLOBAL_VARS => $globalVars])
         );
     }
 

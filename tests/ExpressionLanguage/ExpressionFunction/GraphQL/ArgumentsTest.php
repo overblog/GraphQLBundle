@@ -80,7 +80,7 @@ class ArgumentsTest extends TestCase
             ]
         );
 
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
+        $globalVars = new GlobalVariables(
             [
                 'container' => $this->getDIContainerMock(['overblog_graphql.arguments_transformer' => $transformer]),
             ]
@@ -89,7 +89,7 @@ class ArgumentsTest extends TestCase
         $res = $this->expressionLanguage->evaluate(
             'arguments(mapping, data, info)',
             [
-                TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS},
+                TypeGenerator::GLOBAL_VARS => $globalVars,
                 'mapping' => $mapping,
                 'data' => $data,
                 'info' => $info,

@@ -22,10 +22,10 @@ class IsGrantedTest extends TestCase
             $this->matchesRegularExpression('/^ROLE_(USER|ADMIN)$/'),
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
         $this->assertTrue(
-            $this->expressionLanguage->evaluate('isGranted("ROLE_USER")', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}])
+            $this->expressionLanguage->evaluate('isGranted("ROLE_USER")', [TypeGenerator::GLOBAL_VARS => $globalVars])
         );
     }
 

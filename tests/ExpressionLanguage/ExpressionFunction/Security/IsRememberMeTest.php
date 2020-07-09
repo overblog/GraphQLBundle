@@ -22,9 +22,9 @@ class IsRememberMeTest extends TestCase
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => $security]);
+        $globalVars = new GlobalVariables(['security' => $security]);
 
-        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GLOBAL_VARS => ${TypeGenerator::GLOBAL_VARS}]);
+        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GLOBAL_VARS => $globalVars]);
         $this->assertTrue($isRememberMe);
     }
 
