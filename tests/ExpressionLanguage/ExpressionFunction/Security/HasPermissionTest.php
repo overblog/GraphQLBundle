@@ -12,7 +12,7 @@ use stdClass;
 
 class HasPermissionTest extends TestCase
 {
-    private $testedExpression = 'hasPermission(object,"OWNER")';
+    private string $testedExpression = 'hasPermission(object,"OWNER")';
 
     protected function getFunctions()
     {
