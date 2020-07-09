@@ -61,7 +61,6 @@ use function trim;
  * TODO (murtukov):
  *  1. Add <code> docblocks for every method
  *  2. Replace hard-coded string types with constants ('object', 'input-object' etc.).
- *  3. Change formatting of generated arguments.
  */
 class TypeBuilder
 {
@@ -94,9 +93,6 @@ class TypeBuilder
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
     }
 
-    /**
-     * TODO (murtukov). Implement file prototype to increase performance.
-     */
     public function build(array $config, string $type): PhpFile
     {
         $this->config = $config;
@@ -179,7 +175,7 @@ class TypeBuilder
          * @var string|null   $description
          * @var array|null    $interfaces
          * @var string|null   $resolveType
-         * @var string|null   $validation   - only by InputType
+         * @var array|null    $validation   - only by InputType
          * @var array|null    $types        - only by UnionType
          * @var array|null    $values       - only by EnumType
          * @var callback|null $serialize    - only by CustomScalarType
@@ -566,8 +562,6 @@ class TypeBuilder
 
         if (!empty($access) && is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {
             $field->addItem('useStrictAccess', false);
-        } else {
-            $field->addItem('useStrictAccess', true);
         }
 
         if ('input-object' === $this->type && isset($validation)) {
