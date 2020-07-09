@@ -6,8 +6,8 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
-use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use stdClass;
 
 class HasAnyPermissionTest extends TestCase
