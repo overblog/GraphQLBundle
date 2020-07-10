@@ -4,7 +4,8 @@ UPGRADE FROM 0.13 to 1.0
 # Table of Contents
 
 - [Customize the cursor encoder of the edges of a connection](#customize-the-cursor-encoder-of-the-edges-of-a-connection)
-- [Change arguments of TypeGenerator](#change-arguments-of-typegenerator)
+- [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator)
+- [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -34,8 +35,8 @@ $connectionBuilder = new ConnectionBuilder(
 
 ### Change arguments of `TypeGenerator` class
 
-The `TypeGenerator` service is used internally for GraphQL types compilation. If you overridden the service definition,
-please take into account the new constructor signature:
+The `Overblog\GraphQLBundle\Generator\TypeGenerator` service is used internally for GraphQL types compilation. If you 
+overridden the service definition, please take into account the new constructor signature:
 
 ```diff
 public function __construct(
@@ -51,3 +52,36 @@ public function __construct(
 ) {
 ```
 `TypeBuilder` here is a new service `Overblog\GraphQLBundle\Generator\TypeBuilder`, which is also used internally.
+
+### Add magic `__get` method to `ArgumentInterface` implementors
+
+The interface `Overblog\GraphQLBundle\Definition\ArgumentInterface` as well as implementing it class 
+`Overblog\GraphQLBundle\Definition\Argument` now have the magic `__get` method:
+
+```diff
+interface ArgumentInterface extends ArrayAccess, Countable
+{
+    /**
+     * @return array the old array
+     */
+    public function exchangeArray(array $array): array;
+
+    public function getArrayCopy(): array;
+
++   /**
++    * @return mixed
++    */
++   public function __get(string $name);
+}
+
+class Argument implements ArgumentInterface
+{
+    // ...
+
++   public function __get(string $name)
++   {
++       return $this->rawArguments[$name] ?? null;
++   }
+}
+```
+If you use your own class for resolver arguments, then it should have a `__get` method as well.

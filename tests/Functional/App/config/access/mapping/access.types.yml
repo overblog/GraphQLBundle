@@ -38,7 +38,7 @@ User:
                 resolve: ['ROLE_USER']
             isEnabled:
                 # access as a promise
-                access: "@=resolver('promise', [args['hasAccess']])"
+                access: "@=resolver('promise', [args.hasAccess])"
                 args:
                     hasAccess: {type: Boolean!}
                 type: Boolean

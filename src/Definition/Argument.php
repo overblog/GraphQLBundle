@@ -87,4 +87,9 @@ class Argument implements ArgumentInterface
     {
         return count($this->rawArguments);
     }
+
+    public function __get(string $name)
+    {
+        return $this->rawArguments[$name] ?? null;
+    }
 }
