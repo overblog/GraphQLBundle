@@ -253,20 +253,22 @@ class AnnotationParser implements PreParserInterface
         array $configs
     ): array {
         $isMutation = $isDefault = $isRoot = false;
-        foreach ($configs['definitions']['schema'] as $schemaName => $schema) {
-            $schemaQuery = $schema['query'] ?? null;
-            $schemaMutation = $schema['mutation'] ?? null;
+        if (isset($configs['definitions']['schema'])) {
+            foreach ($configs['definitions']['schema'] as $schemaName => $schema) {
+                $schemaQuery = $schema['query'] ?? null;
+                $schemaMutation = $schema['mutation'] ?? null;
 
-            if ($schemaQuery && $gqlName === $schemaQuery) {
-                $isRoot = true;
-                if ('default' == $schemaName) {
-                    $isDefault = true;
-                }
-            } elseif ($schemaMutation && $gqlName === $schemaMutation) {
-                $isMutation = true;
-                $isRoot = true;
-                if ('default' == $schemaName) {
-                    $isDefault = true;
+                if ($schemaQuery && $gqlName === $schemaQuery) {
+                    $isRoot = true;
+                    if ('default' == $schemaName) {
+                        $isDefault = true;
+                    }
+                } elseif ($schemaMutation && $gqlName === $schemaMutation) {
+                    $isMutation = true;
+                    $isRoot = true;
+                    if ('default' == $schemaName) {
+                        $isDefault = true;
+                    }
                 }
             }
         }
@@ -436,10 +438,8 @@ class AnnotationParser implements PreParserInterface
         if ($unionAnnotation->types) {
             $unionConfiguration['types'] = $unionAnnotation->types;
         } else {
-            $unionConfiguration['types'] = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
+            $types = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
                 $typeClassName = $configuration['class'];
-                ['class' => $typeClassName] = $configuration;
-
                 $typeMetadata = self::getGraphClass($typeClassName);
 
                 if ($graphClass->isInterface() && $typeMetadata->implementsInterface($graphClass->getName())) {
@@ -448,6 +448,8 @@ class AnnotationParser implements PreParserInterface
 
                 return $typeMetadata->isSubclassOf($graphClass->getName());
             }, self::GQL_TYPE));
+            sort($types);
+            $unionConfiguration['types'] = $types;
         }
 
         $unionConfiguration = self::getDescriptionConfiguration($graphClass->getAnnotations()) + $unionConfiguration;
