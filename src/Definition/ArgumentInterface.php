@@ -15,4 +15,9 @@ interface ArgumentInterface extends ArrayAccess, Countable
     public function exchangeArray(array $array): array;
 
     public function getArrayCopy(): array;
+
+    /**
+     * @return mixed
+     */
+    public function __get(string $name);
 }
