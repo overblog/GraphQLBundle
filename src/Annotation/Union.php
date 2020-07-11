@@ -22,8 +22,6 @@ final class Union implements Annotation
     /**
      * Union types.
      *
-     * @required
-     *
      * @var array<string>
      */
     public $types;
