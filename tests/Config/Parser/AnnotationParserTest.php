@@ -216,7 +216,7 @@ class AnnotationParserTest extends TestCase
     public function testUnionAutoguessed(): void
     {
         $this->expect('Killable', 'union', [
-            'types' => ['Mandalorian', 'Hero', 'Sith'],
+            'types' => ['Hero', 'Mandalorian',  'Sith'],
             'resolveType' => '@=value.getType()',
         ]);
     }
