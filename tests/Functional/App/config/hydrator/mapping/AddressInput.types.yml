@@ -1,11 +1,11 @@
 AddressInput:
     type: input-object
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Address
     config:
         fields:
             street: String!
             city: String!
             zipCode: Int!
-            period: Period!
 
 
 #Address:

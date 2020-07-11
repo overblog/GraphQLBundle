@@ -1,6 +1,6 @@
 BirthdateInput:
     type: input-object
-#    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Birthdate
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Birthdate
     config:
         fields:
             day:

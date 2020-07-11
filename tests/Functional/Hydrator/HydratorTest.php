@@ -19,12 +19,19 @@ class HydratorTest extends TestCase
      */
     public function simpleHydration(): void
     {
+//        $this->markTestSkipped();
+
         $query = <<<'QUERY'
         mutation {
             createUser(input: {
                 username: "murtukov"
                 firstName: "Timur"
                 lastName: "Murtukov"
+                address: {
+                    street: "Proletarskaya 28"
+                    city: "Izberbash"
+                    zipCode: 368500
+                }
             })
         }
         QUERY;

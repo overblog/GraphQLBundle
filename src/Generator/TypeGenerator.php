@@ -23,7 +23,7 @@ class TypeGenerator
     public const MODE_WRITE = 4;
     public const MODE_OVERRIDE = 8;
 
-    public const GLOBAL_VARS = 'globalVariables';
+    public const GLOBAL_VARS = 'globalVars';
 
     private static bool $classMapLoaded = false;
     private ?string $cacheDir;

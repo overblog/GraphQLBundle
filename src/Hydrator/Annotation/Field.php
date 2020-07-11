@@ -16,4 +16,9 @@ class Field
      * @Required
      */
     public string $name;
+
+    public function __construct($values)
+    {
+        $this->name = $values['value'] ?? $values['name'];
+    }
 }

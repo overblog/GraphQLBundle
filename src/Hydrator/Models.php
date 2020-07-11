@@ -9,16 +9,16 @@ namespace Overblog\GraphQLBundle\Hydrator;
  */
 class Models
 {
-    private array $models;
+    public array $models;
 
-    public function __construct(array $models)
-    {
-        foreach ($models as $name => $model) {
-            $this->$name = $model;
-        }
-
-        $this->models = $models;
-    }
+//    public function __construct(array $models)
+//    {
+//        foreach ($models as $name => $model) {
+//            $this->$name = $model;
+//        }
+//
+//        $this->models = $models;
+//    }
 
     public function get(string $name)
     {
@@ -28,5 +28,10 @@ class Models
     public function getAll(): array
     {
         return $this->models;
+    }
+
+    public function add(string $name, $model)
+    {
+        $this->models[$name] = $model;
     }
 }

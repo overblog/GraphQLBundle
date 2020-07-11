@@ -6,5 +6,5 @@ class Address
 {
     public string $street;
     public string $city;
-    public string $zipCode;
+    public int $zipCode;
 }
