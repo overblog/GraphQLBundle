@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 class MutationTaggedServiceMappingTaggedPass extends ResolverTaggedServiceMappingPass
 {
-    protected function getTagName()
+    protected function getTagName(): string
     {
         return 'overblog_graphql.mutation';
     }

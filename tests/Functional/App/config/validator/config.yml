@@ -11,12 +11,14 @@ overblog_graphql:
         mappings:
             types:
                 - type: yaml
-                  dir: "%kernel.root_dir%/config/validator/mapping"
+                  dir: "%kernel.project_dir%/config/validator/mapping"
 
 services:
     validator.expression:
         class: Overblog\GraphQLBundle\Validator\Constraints\ExpressionValidator
-        arguments: ['@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage']
+        arguments:
+            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'
+            - '@Overblog\GraphQLBundle\Definition\GlobalVariables'
         tags:
             - name: validator.constraint_validator
               alias: validator.expression
@@ -30,5 +32,6 @@ services:
     Overblog\GraphQLBundle\Tests\Functional\App\Mutation\InputValidatorMutation:
         tags:
             - { name: "overblog_graphql.mutation", alias: "mutation_mock", method: "mutationMock" }
+            - { name: "overblog_graphql.mutation", alias: "mutation_errors", method: "mutationErrors" }
             - { name: "overblog_graphql.mutation", alias: "no_validation", method: "noValidation" }
 

@@ -6,37 +6,33 @@ namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use function array_filter;
+use function explode;
+use function is_string;
+use function json_decode;
+use function json_last_error;
+use const JSON_ERROR_NONE;
 
 class Parser implements ParserInterface
 {
     use UploadParserTrait;
 
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
     public function parse(Request $request): array
     {
         // Extracts the GraphQL request parameters
         $parsedBody = $this->getParsedBody($request);
-        $data = $this->getParams($request, $parsedBody);
 
-        return $data;
+        return $this->getParams($request, $parsedBody);
     }
 
     /**
      * Gets the body from the request based on Content-Type header.
-     *
-     * @param Request $request
-     *
-     * @return array
      */
     private function getParsedBody(Request $request): array
     {
         $body = $request->getContent();
         $method = $request->getMethod();
-        $contentType = \explode(';', (string) $request->headers->get('content-type'), 2)[0];
+        $contentType = explode(';', (string) $request->headers->get('content-type'), 2)[0];
 
         switch ($contentType) {
             // Plain string
@@ -54,9 +50,9 @@ class Parser implements ParserInterface
                     throw new BadRequestHttpException('The request content body must not be empty when using json content type request.');
                 }
 
-                $parsedBody = \json_decode($body, true);
+                $parsedBody = json_decode($body, true);
 
-                if (\JSON_ERROR_NONE !== \json_last_error()) {
+                if (JSON_ERROR_NONE !== json_last_error()) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 break;
@@ -80,16 +76,11 @@ class Parser implements ParserInterface
 
     /**
      * Gets the GraphQL parameters from the request.
-     *
-     * @param Request $request
-     * @param array   $data
-     *
-     * @return array
      */
     private function getParams(Request $request, array $data = []): array
     {
         // Add default request parameters
-        $data = \array_filter($data) + [
+        $data = array_filter($data) + [
                 static::PARAM_QUERY => null,
                 static::PARAM_VARIABLES => null,
                 static::PARAM_OPERATION_NAME => null,
@@ -110,10 +101,10 @@ class Parser implements ParserInterface
 
         // Variables can be defined using a JSON-encoded object.
         // If the parsing fails, an exception will be thrown.
-        if (\is_string($variables)) {
-            $variables = \json_decode($variables, true);
+        if (is_string($variables)) {
+            $variables = json_decode($variables, true);
 
-            if (\JSON_ERROR_NONE !== \json_last_error()) {
+            if (JSON_ERROR_NONE !== json_last_error()) {
                 throw new BadRequestHttpException('Variables are invalid JSON');
             }
         }

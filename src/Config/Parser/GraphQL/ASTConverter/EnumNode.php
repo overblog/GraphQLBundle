@@ -13,12 +13,14 @@ class EnumNode implements NodeInterface
         $config = DescriptionNode::toConfig($node);
 
         $values = [];
+
         foreach ($node->values as $value) {
-            $values[$value->name->value] = DescriptionNode::toConfig($node) + [
+            $values[$value->name->value] = DescriptionNode::toConfig($value) + [
                 'value' => $value->name->value,
             ];
 
             $directiveConfig = DirectiveNode::toConfig($value);
+
             if (isset($directiveConfig['deprecationReason'])) {
                 $values[$value->name->value]['deprecationReason'] = $directiveConfig['deprecationReason'];
             }

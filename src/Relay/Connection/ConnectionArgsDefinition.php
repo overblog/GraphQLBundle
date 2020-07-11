@@ -8,11 +8,6 @@ use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
 final class ConnectionArgsDefinition implements MappingInterface
 {
-    /**
-     * @param array $config
-     *
-     * @return array
-     */
     public function toMappingDefinition(array $config): array
     {
         return [

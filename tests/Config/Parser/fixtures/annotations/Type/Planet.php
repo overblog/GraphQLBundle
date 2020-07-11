@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 
 use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\GalaxyCoordinates;
 
 /**
  * @GQL\Type
@@ -15,22 +16,22 @@ class Planet
     /**
      * @GQL\Field(type="String!")
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @GQL\Field(type="GalaxyCoordinates")
      */
-    protected $location;
+    protected GalaxyCoordinates $location;
 
     /**
      * @GQL\Field(type="Int!")
      */
-    protected $population;
+    protected int $population;
 
     /**
      * @GQL\Field(fieldBuilder={"NoteFieldBuilder", {"option1": "value1"}})
      */
-    public $notes;
+    public array $notes;
 
     /**
      * @GQL\Field(
@@ -39,5 +40,5 @@ class Planet
      *   resolve="@=resolver('closest_planet', [args['filter']])"
      * )
      */
-    public $closestPlanet;
+    public Planet $closestPlanet;
 }

@@ -9,16 +9,11 @@ use Overblog\GraphQLBundle\Event\ExecutorResultEvent;
 
 final class ErrorHandlerListener
 {
-    /** @var ErrorHandler */
-    private $errorHandler;
+    private ErrorHandler $errorHandler;
+    private bool $throwException;
+    private bool $debug;
 
-    /** @var bool */
-    private $throwException;
-
-    /** @var bool */
-    private $debug;
-
-    public function __construct(ErrorHandler $errorHandler, $throwException = false, $debug = false)
+    public function __construct(ErrorHandler $errorHandler, bool $throwException = false, bool $debug = false)
     {
         $this->errorHandler = $errorHandler;
         $this->throwException = $throwException;
@@ -28,6 +23,7 @@ final class ErrorHandlerListener
     public function onPostExecutor(ExecutorResultEvent $executorResultEvent): void
     {
         $result = $executorResultEvent->getResult();
+
         $this->errorHandler->handleErrors($result, $this->throwException, $this->debug);
     }
 }

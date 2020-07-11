@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Argument;
+use function in_array;
 
 /**
  * ValidationNode.
@@ -24,32 +25,23 @@ class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
+    private ?ValidationNode $__parent = null;
+    private ?string $__fieldName;
+
     /**
      * @var ObjectType|InputObjectType|Type
      */
-    private $__type;
-
-    /**
-     * @var ValidationNode|null
-     */
-    private $__parent;
+    private Type $__type;
 
     /**
      * @var ValidationNode[]
      */
-    private $__children = [];
-
-    /**
-     * @var string
-     */
-    private $__fieldName;
+    private array $__children = [];
 
     /**
      * Arguments of the resolver, where the current validation is being executed.
-     *
-     * @var array
      */
-    private $__resolverArgs;
+    private array $__resolverArgs;
 
     public function __construct(Type $type, string $field = null, ?ValidationNode $parent = null, array $resolverArgs = [])
     {
@@ -76,8 +68,6 @@ class ValidationNode
     /**
      * Gets the name of the associated GraphQL type.
      * Shortcut for `getType()->name`.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -86,17 +76,12 @@ class ValidationNode
 
     /**
      * Returns the field name of the type (only for root type).
-     *
-     * @return string|null
      */
     public function getFieldName(): ?string
     {
         return $this->__fieldName;
     }
 
-    /**
-     * @return ValidationNode|null
-     */
     public function getParent(): ?ValidationNode
     {
         return $this->__parent;
@@ -104,8 +89,6 @@ class ValidationNode
 
     /**
      * @internal
-     *
-     * @param ValidationNode $child
      */
     public function addChild(ValidationNode $child): void
     {
@@ -114,10 +97,6 @@ class ValidationNode
 
     /**
      * Traverses up through parent nodes and returns the first matching one.
-     *
-     * @param string $name
-     *
-     * @return ValidationNode|null
      */
     public function findParent(string $name): ?ValidationNode
     {
@@ -137,16 +116,19 @@ class ValidationNode
     /**
      * Returns an argument of the resolver, where this validation is being executed.
      *
-     * @param string $name
-     *
      * @return ResolveInfo|Argument|mixed|null
      */
     public function getResolverArg(string $name)
     {
-        if (\in_array($name, self::KNOWN_VAR_NAMES)) {
+        if (in_array($name, self::KNOWN_VAR_NAMES)) {
             return $this->__resolverArgs[$name];
         }
 
         return null;
+    }
+
+    public function __get(string $name): ?string
+    {
+        return $this->$name ?? null;
     }
 }

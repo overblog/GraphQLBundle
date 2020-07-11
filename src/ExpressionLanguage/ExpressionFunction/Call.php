@@ -12,12 +12,8 @@ final class Call extends ExpressionFunction
     {
         parent::__construct(
             'call',
-            function (string $target, string $args = '[]') {
-                return "$target(...$args)";
-            },
-            function ($_, callable $target, array $args) {
-                return $target(...$args);
-            }
+            fn (string $target, string $args = '[]') => "$target(...$args)",
+            fn ($_, callable $target, array $args) => $target(...$args)
         );
     }
 }

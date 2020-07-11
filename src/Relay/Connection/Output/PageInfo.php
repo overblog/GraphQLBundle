@@ -10,17 +10,10 @@ class PageInfo implements PageInfoInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
 
-    /** @var string */
-    protected $startCursor;
-
-    /** @var string */
-    protected $endCursor;
-
-    /** @var bool */
-    protected $hasPreviousPage;
-
-    /** @var bool */
-    protected $hasNextPage;
+    protected ?string $startCursor;
+    protected ?string $endCursor;
+    protected ?bool $hasPreviousPage;
+    protected ?bool $hasNextPage;
 
     public function __construct(string $startCursor = null, string $endCursor = null, bool $hasPreviousPage = null, bool $hasNextPage = null)
     {
@@ -38,9 +31,6 @@ class PageInfo implements PageInfoInterface
         return $this->startCursor;
     }
 
-    /**
-     * @param string $startCursor
-     */
     public function setStartCursor(string $startCursor): void
     {
         $this->startCursor = $startCursor;
@@ -54,9 +44,6 @@ class PageInfo implements PageInfoInterface
         return $this->endCursor;
     }
 
-    /**
-     * @param string $endCursor
-     */
     public function setEndCursor(string $endCursor): void
     {
         $this->endCursor = $endCursor;
@@ -70,9 +57,6 @@ class PageInfo implements PageInfoInterface
         return $this->hasPreviousPage;
     }
 
-    /**
-     * @param bool $hasPreviousPage
-     */
     public function setHasPreviousPage(bool $hasPreviousPage): void
     {
         $this->hasPreviousPage = $hasPreviousPage;
@@ -86,9 +70,6 @@ class PageInfo implements PageInfoInterface
         return $this->hasNextPage;
     }
 
-    /**
-     * @param bool $hasNextPage
-     */
     public function setHasNextPage(bool $hasNextPage): void
     {
         $this->hasNextPage = $hasNextPage;

@@ -24,10 +24,9 @@ class DefinitionTest extends TestCase
         $enumTypeWithDeprecatedValue = $this->getType('EnumWithDeprecatedValue');
         $value = $enumTypeWithDeprecatedValue->getValues()[0];
         $this->assertSame([
-            'name' => 'foo',
-            'value' => 'foo',
             'deprecationReason' => 'Just because',
-            'description' => null,
+            'value' => 'foo',
+            'name' => 'foo',
         ], $value->config);
         $this->assertTrue($value->isDeprecated());
     }
@@ -44,8 +43,9 @@ class DefinitionTest extends TestCase
         $this->assertSame([], $field->args);
     }
 
-    private function getType($type)
+    private function getType(string $type): ?Type
     {
+        // @phpstan-ignore-next-line
         return $this->getContainer()->get('overblog_graphql.type_resolver')->resolve($type);
     }
 }

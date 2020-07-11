@@ -4,10 +4,22 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64CursorEncoder;
+use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
+use function array_slice;
+use function count;
+use function end;
+use function is_callable;
+use function is_numeric;
+use function max;
+use function min;
+use function sprintf;
+use function str_replace;
 
 /**
  * Class ConnectionBuilder.
@@ -18,22 +30,25 @@ class ConnectionBuilder
 {
     public const PREFIX = 'arrayconnection:';
 
+    protected CursorEncoderInterface $cursorEncoder;
+
     /**
      * If set, used to generate the connection object.
      *
-     * @var callable
+     * @var callable|null
      */
     protected $connectionCallback;
 
     /**
      * If set, used to generate the edge object.
      *
-     * @var callable
+     * @var ?callable
      */
     protected $edgeCallback;
 
-    public function __construct(callable $connectionCallback = null, callable $edgeCallback = null)
+    public function __construct(?CursorEncoderInterface $cursorEncoder = null, callable $connectionCallback = null, callable $edgeCallback = null)
     {
+        $this->cursorEncoder = $cursorEncoder ?? new Base64CursorEncoder();
         $this->connectionCallback = $connectionCallback;
         $this->edgeCallback = $edgeCallback;
     }
@@ -43,10 +58,7 @@ class ConnectionBuilder
      * a connection object for use in GraphQL. It uses array offsets as pagination,
      * so pagination will only work if the array is static.
      *
-     * @param array                   $data
      * @param array|ArgumentInterface $args
-     *
-     * @return ConnectionInterface
      */
     public function connectionFromArray(array $data, $args = []): ConnectionInterface
     {
@@ -55,7 +67,7 @@ class ConnectionBuilder
             $args,
             [
                 'sliceStart' => 0,
-                'arrayLength' => \count($data),
+                'arrayLength' => count($data),
             ]
         );
     }
@@ -87,11 +99,7 @@ class ConnectionBuilder
      * to materialize the entire array, and instead wish pass in a slice of the
      * total result large enough to cover the range specified in `args`.
      *
-     * @param array                   $arraySlice
      * @param array|ArgumentInterface $args
-     * @param array                   $meta
-     *
-     * @return ConnectionInterface
      */
     public function connectionFromArraySlice(array $arraySlice, $args, array $meta): ConnectionInterface
     {
@@ -112,7 +120,7 @@ class ConnectionBuilder
             ]
         );
 
-        $arraySliceLength = \count($arraySlice);
+        $arraySliceLength = count($arraySlice);
         $after = $connectionArguments['after'];
         $before = $connectionArguments['before'];
         $first = $connectionArguments['first'];
@@ -123,29 +131,29 @@ class ConnectionBuilder
         $beforeOffset = $this->getOffsetWithDefault($before, $arrayLength);
         $afterOffset = $this->getOffsetWithDefault($after, -1);
 
-        $startOffset = \max($sliceStart - 1, $afterOffset, -1) + 1;
-        $endOffset = \min($sliceEnd, $beforeOffset, $arrayLength);
+        $startOffset = max($sliceStart - 1, $afterOffset, -1) + 1;
+        $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
 
-        if (\is_numeric($first)) {
+        if (is_numeric($first)) {
             if ($first < 0) {
-                throw new \InvalidArgumentException('Argument "first" must be a non-negative integer');
+                throw new InvalidArgumentException('Argument "first" must be a non-negative integer');
             }
-            $endOffset = \min($endOffset, $startOffset + $first);
+            $endOffset = min($endOffset, $startOffset + $first); // @phpstan-ignore-line
         }
 
-        if (\is_numeric($last)) {
+        if (is_numeric($last)) {
             if ($last < 0) {
-                throw new \InvalidArgumentException('Argument "last" must be a non-negative integer');
+                throw new InvalidArgumentException('Argument "last" must be a non-negative integer');
             }
 
-            $startOffset = \max($startOffset, $endOffset - $last);
+            $startOffset = max($startOffset, $endOffset - $last);
         }
 
         // If supplied slice is too large, trim it down before mapping over it.
-        $offset = \max($startOffset - $sliceStart, 0);
+        $offset = max($startOffset - $sliceStart, 0);
         $length = ($arraySliceLength - ($sliceEnd - $endOffset)) - $offset;
 
-        $slice = \array_slice(
+        $slice = array_slice(
             $arraySlice,
             $offset,
             $length
@@ -154,7 +162,7 @@ class ConnectionBuilder
         $edges = $this->createEdges($slice, $startOffset);
 
         $firstEdge = $edges[0] ?? null;
-        $lastEdge = \end($edges);
+        $lastEdge = end($edges);
         $lowerBound = $after ? ($afterOffset + 1) : 0;
         $upperBound = $before ? $beforeOffset : $arrayLength;
 
@@ -174,7 +182,6 @@ class ConnectionBuilder
      *
      * @param mixed                   $dataPromise a promise
      * @param array|ArgumentInterface $args
-     * @param array                   $meta
      *
      * @return mixed a promise
      */
@@ -190,10 +197,7 @@ class ConnectionBuilder
     /**
      * Return the cursor associated with an object in an array.
      *
-     * @param array $data
      * @param mixed $object
-     *
-     * @return string|null
      */
     public function cursorForObjectInConnection(array $data, $object): ? string
     {
@@ -220,11 +224,6 @@ class ConnectionBuilder
      * Given an optional cursor and a default offset, returns the offset
      * to use; if the cursor contains a valid offset, that will be used,
      * otherwise it will be the default.
-     *
-     * @param string|null $cursor
-     * @param int         $defaultOffset
-     *
-     * @return int
      */
     public function getOffsetWithDefault(?string $cursor, int $defaultOffset): int
     {
@@ -233,35 +232,32 @@ class ConnectionBuilder
         }
         $offset = $this->cursorToOffset($cursor);
 
-        return !\is_numeric($offset) ? $defaultOffset : (int) $offset;
+        return !is_numeric($offset) ? $defaultOffset : (int) $offset;
     }
 
     /**
      * Creates the cursor string from an offset.
      *
-     * @param $offset
-     *
-     * @return string
+     * @param int|string $offset
      */
     public function offsetToCursor($offset): string
     {
-        return \base64_encode(static::PREFIX.$offset);
+        return $this->cursorEncoder->encode(self::PREFIX.$offset);
     }
 
     /**
      * Redefines the offset from the cursor string.
-     *
-     * @param $cursor
-     *
-     * @return string
      */
-    public function cursorToOffset($cursor): string
+    public function cursorToOffset(?string $cursor): string
     {
+        // Returning an empty string is required to not break the Paginator
+        // class. Ideally, we should throw an exception or not call this
+        // method if $cursor is empty
         if (null === $cursor) {
             return '';
         }
 
-        return \str_replace(static::PREFIX, '', \base64_decode($cursor, true));
+        return str_replace(static::PREFIX, '', $this->cursorEncoder->decode($cursor));
     }
 
     private function createEdges(iterable $slice, int $startOffset): array
@@ -273,7 +269,7 @@ class ConnectionBuilder
             if ($this->edgeCallback) {
                 $edge = ($this->edgeCallback)($cursor, $value, $index);
                 if (!($edge instanceof EdgeInterface)) {
-                    throw new \InvalidArgumentException(\sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
+                    throw new InvalidArgumentException(sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
                 }
             } else {
                 $edge = new Edge($cursor, $value);
@@ -284,12 +280,15 @@ class ConnectionBuilder
         return $edges;
     }
 
+    /**
+     * @param mixed $edges
+     */
     private function createConnection($edges, PageInfoInterface $pageInfo): ConnectionInterface
     {
         if ($this->connectionCallback) {
             $connection = ($this->connectionCallback)($edges, $pageInfo);
             if (!($connection instanceof ConnectionInterface)) {
-                throw new \InvalidArgumentException(\sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
+                throw new InvalidArgumentException(sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
             }
 
             return $connection;
@@ -298,15 +297,18 @@ class ConnectionBuilder
         return new Connection($edges, $pageInfo);
     }
 
-    private function getOptionsWithDefaults(array $options, array $defaults)
+    private function getOptionsWithDefaults(array $options, array $defaults): array
     {
         return $options + $defaults;
     }
 
+    /**
+     * @param string|object $value
+     */
     private function checkPromise($value): void
     {
-        if (!\is_callable([$value, 'then'])) {
-            throw new \InvalidArgumentException('This is not a valid promise.');
+        if (!is_callable([$value, 'then'])) {
+            throw new InvalidArgumentException('This is not a valid promise.');
         }
     }
 }

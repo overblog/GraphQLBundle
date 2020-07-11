@@ -4,41 +4,28 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Error;
 
-use GraphQL\Error\UserError;
+use Exception;
+use GraphQL\Error\UserError as GraphQLUserError;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-/**
- * Class InvalidArgumentError.
- */
-class InvalidArgumentError extends UserError
+class InvalidArgumentError extends GraphQLUserError
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private ConstraintViolationListInterface $errors;
 
-    /** @var ConstraintViolationListInterface */
-    private $errors = [];
-
-    public function __construct($name, ConstraintViolationListInterface $errors, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct(string $name, ConstraintViolationListInterface $errors, $message = '', $code = 0, Exception $previous = null)
     {
         $this->name = $name;
         $this->errors = $errors;
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return ConstraintViolationListInterface
-     */
-    public function getErrors()
+    public function getErrors(): ConstraintViolationListInterface
     {
         return $this->errors;
     }

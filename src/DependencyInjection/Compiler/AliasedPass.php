@@ -11,6 +11,9 @@ use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use function array_filter;
+use function call_user_func;
+use function is_subclass_of;
 
 final class AliasedPass implements CompilerPassInterface
 {
@@ -38,10 +41,10 @@ final class AliasedPass implements CompilerPassInterface
      */
     private function filterDefinitions(array $definitions): array
     {
-        return \array_filter($definitions, function (Definition $definition) {
+        return array_filter($definitions, function (Definition $definition) {
             foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
                 if ($definition->hasTag($tagName)) {
-                    return \is_subclass_of($definition->getClass(), AliasedInterface::class);
+                    return is_subclass_of($definition->getClass(), AliasedInterface::class);
                 }
             }
 
@@ -49,12 +52,10 @@ final class AliasedPass implements CompilerPassInterface
         });
     }
 
-    /**
-     * @param Definition $definition
-     */
     private function addDefinitionTagsFromAliases(Definition $definition): void
     {
-        $aliases = \call_user_func([$definition->getClass(), 'getAliases']);
+        $aliases = call_user_func([$definition->getClass(), 'getAliases']);
+        /** @var string $tagName */
         $tagName = $this->guessTagName($definition);
         $withMethod = TypeTaggedServiceMappingPass::TAG_NAME !== $tagName;
 
@@ -63,11 +64,11 @@ final class AliasedPass implements CompilerPassInterface
         }
     }
 
-    private function guessTagName(Definition $definition)
+    private function guessTagName(Definition $definition): ?string
     {
         $tagName = null;
         foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $refClassName => $tag) {
-            if (\is_subclass_of($definition->getClass(), $refClassName)) {
+            if (is_subclass_of($definition->getClass(), $refClassName)) {
                 $tagName = $tag;
                 break;
             }

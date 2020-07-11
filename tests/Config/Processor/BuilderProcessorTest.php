@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class BuilderProcessorTest extends TestCase
@@ -21,7 +23,7 @@ class BuilderProcessorTest extends TestCase
      */
     public function testApiAbuse($name, $type, $builderClass, $exceptionClass, $exceptionMessage): void
     {
-        $this->expectException($exceptionClass);
+        $this->expectException($exceptionClass); // @phpstan-ignore-line
         $this->expectExceptionMessage($exceptionMessage);
         BuilderProcessor::addBuilderClass($name, $type, $builderClass);
     }
@@ -29,34 +31,28 @@ class BuilderProcessorTest extends TestCase
     /**
      * @dataProvider processApiAbuseProvider
      *
-     * @param array  $config
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
     public function testProcessApiAbuse(array $config, $exceptionClass, $exceptionMessage): void
     {
-        $this->expectException($exceptionClass);
+        $this->expectException($exceptionClass); // @phpstan-ignore-line
         $this->expectExceptionMessage($exceptionMessage);
         BuilderProcessor::process($config);
     }
 
-    public function apiAbuseProvider()
+    public function apiAbuseProvider(): array
     {
         return [
-            ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, [], \InvalidArgumentException::class, 'Field builder class should be string, but array given.'],
-            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, [], \InvalidArgumentException::class, 'Fields builder class should be string, but array given.'],
-            ['foo', BuilderProcessor::BUILDER_ARGS_TYPE, [], \InvalidArgumentException::class, 'Args builder class should be string, but array given.'],
-            ['bar', BuilderProcessor::BUILDER_FIELD_TYPE, null, \InvalidArgumentException::class, 'Field builder class should be string, but NULL given.'],
-            ['bar', BuilderProcessor::BUILDER_FIELDS_TYPE, null, \InvalidArgumentException::class, 'Fields builder class should be string, but NULL given.'],
-            ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, 'Fake\Foo', \InvalidArgumentException::class, 'Field builder class "Fake\Foo" not found.'],
-            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, 'Fake\Foo', \InvalidArgumentException::class, 'Fields builder class "Fake\Foo" not found.'],
-            ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Field builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
-            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Fields builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
-            ['foo', BuilderProcessor::BUILDER_ARGS_TYPE, \stdClass::class, \InvalidArgumentException::class, 'Args builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
+            ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, 'Fake\Foo', InvalidArgumentException::class, 'Field builder class "Fake\Foo" not found.'],
+            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, 'Fake\Foo', InvalidArgumentException::class, 'Fields builder class "Fake\Foo" not found.'],
+            ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, stdClass::class, InvalidArgumentException::class, 'Field builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
+            ['foo', BuilderProcessor::BUILDER_FIELDS_TYPE, stdClass::class, InvalidArgumentException::class, 'Fields builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
+            ['foo', BuilderProcessor::BUILDER_ARGS_TYPE, stdClass::class, InvalidArgumentException::class, 'Args builder class should implement "Overblog\GraphQLBundle\Definition\Builder\MappingInterface", but "stdClass" given.'],
         ];
     }
 
-    public function processApiAbuseProvider()
+    public function processApiAbuseProvider(): array
     {
         return [
             [

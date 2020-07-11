@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 
 class ResolverResolverTest extends AbstractProxyResolverTest
 {
-    protected function createResolver()
+    protected function createResolver(): ResolverResolver
     {
         return new ResolverResolver();
     }

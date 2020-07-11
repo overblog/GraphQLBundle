@@ -14,8 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ValidateCommand extends Command
 {
-    /** @var RequestExecutor */
-    private $requestExecutor;
+    private RequestExecutor $requestExecutor;
 
     public function __construct(RequestExecutor $requestExecutor)
     {
@@ -47,7 +46,7 @@ final class ValidateCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         Warning::suppress(true);
 
@@ -59,8 +58,10 @@ final class ValidateCommand extends Command
         } catch (InvariantViolation $e) {
             $output->writeln('<comment>'.$e->getMessage().'</comment>');
 
-            return;
+            return 1;
         }
         $output->writeln('<info>No error</info>');
+
+        return 0;
     }
 }

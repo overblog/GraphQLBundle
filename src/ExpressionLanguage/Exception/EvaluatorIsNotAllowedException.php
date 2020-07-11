@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\Exception;
 
+use Exception;
 use Throwable;
 
-class EvaluatorIsNotAllowedException extends \Exception
+class EvaluatorIsNotAllowedException extends Exception
 {
     public function __construct(string $expressionFunctionName, int $code = 0, Throwable $previous = null)
     {

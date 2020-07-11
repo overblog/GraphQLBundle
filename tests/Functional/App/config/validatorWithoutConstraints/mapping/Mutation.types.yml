@@ -1,0 +1,10 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            noValidationDefined:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    username:
+                        type: "String"

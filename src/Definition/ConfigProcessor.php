@@ -11,7 +11,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
     /**
      * @var ConfigProcessorInterface[]
      */
-    private $processors;
+    private array $processors;
 
     public function __construct(iterable $processors)
     {
@@ -20,7 +20,7 @@ final class ConfigProcessor implements ConfigProcessorInterface
         }
     }
 
-    public function getProcessors()
+    public function getProcessors(): array
     {
         return $this->processors;
     }

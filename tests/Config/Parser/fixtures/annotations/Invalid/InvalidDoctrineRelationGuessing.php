@@ -16,5 +16,5 @@ class InvalidDoctrineRelationGuessing
      * @ORM\OneToOne(targetEntity="MissingType")
      * @GQL\Field
      */
-    protected $myRelation;
+    protected object $myRelation;
 }

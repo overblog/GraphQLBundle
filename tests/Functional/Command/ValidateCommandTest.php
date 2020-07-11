@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use function trim;
 
 class ValidateCommandTest extends TestCase
 {
@@ -32,7 +33,7 @@ class ValidateCommandTest extends TestCase
     {
         $this->commandTester->execute([]);
         $this->assertEquals(0, $this->commandTester->getStatusCode());
-        $this->assertEquals('No error', \trim($this->commandTester->getDisplay()));
+        $this->assertEquals('No error', trim($this->commandTester->getDisplay()));
     }
 
     public function testValidSchemaThrowException(): void
@@ -55,7 +56,7 @@ class ValidateCommandTest extends TestCase
         $this->command->setRequestExecutor($executor);
 
         $this->commandTester->execute(['--schema' => 'foo']);
-        $this->assertEquals(0, $this->commandTester->getStatusCode());
-        $this->assertEquals('broken schema', \trim($this->commandTester->getDisplay()));
+        $this->assertEquals(1, $this->commandTester->getStatusCode());
+        $this->assertEquals('broken schema', trim($this->commandTester->getDisplay()));
     }
 }

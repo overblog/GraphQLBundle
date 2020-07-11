@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
-use Overblog\GraphQLBundle\Config\Processor\ExpressionProcessor;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\Config\Processor\NamedConfigProcessor;
 use Overblog\GraphQLBundle\Config\Processor\ProcessorInterface;
@@ -23,14 +22,14 @@ class Processor implements ProcessorInterface
             NamedConfigProcessor::class,
             InheritanceProcessor::class,
         ],
-        self::NORMALIZATION => [ExpressionProcessor::class],
+        self::NORMALIZATION => [],
     ];
 
-    public static function process(array $configs, $type = self::NORMALIZATION): array
+    public static function process(array $configs, int $type = self::NORMALIZATION): array
     {
         /** @var ProcessorInterface $processor */
         foreach (static::PROCESSORS[$type] as $processor) {
-            $configs = \call_user_func([$processor, 'process'], $configs);
+            $configs = $processor::process($configs);
         }
 
         return $configs;

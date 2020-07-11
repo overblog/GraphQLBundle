@@ -12,7 +12,11 @@ use Overblog\GraphQLBundle\Resolver\FieldResolver;
 
 final class GlobalIdFieldResolver implements ResolverInterface, AliasedInterface
 {
-    public function __invoke($obj, ResolveInfo $info, $idValue, $typeName)
+    /**
+     * @param object|array    $obj
+     * @param int|string|null $idValue
+     */
+    public function __invoke($obj, ResolveInfo $info, $idValue, ?string $typeName): string
     {
         return GlobalId::toGlobalId(
             !empty($typeName) ? $typeName : $info->parentType->name,

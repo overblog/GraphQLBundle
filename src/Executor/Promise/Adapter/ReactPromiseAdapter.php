@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Executor\Promise\Adapter;
 
+use Exception;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Adapter\ReactPromiseAdapter as BaseReactPromiseAdapter;
 use GraphQL\Executor\Promise\Promise;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
+use React\Promise\PromiseInterface;
+use function sprintf;
+use function usleep;
 
 class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdapterInterface
 {
@@ -34,22 +39,17 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     /**
      * Synchronously wait when promise completes.
      *
-     * @param Promise  $promise
-     * @param callable $onProgress
-     *
-     * @return ExecutionResult
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public function wait(Promise $promise, callable $onProgress = null): ?ExecutionResult
     {
         if (!$this->isThenable($promise)) {
-            throw new \InvalidArgumentException(\sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
+            throw new InvalidArgumentException(sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));
         }
         $wait = true;
         $resolvedValue = null;
         $exception = null;
-        /** @var \React\Promise\PromiseInterface $reactPromise */
+        /** @var PromiseInterface $reactPromise */
         $reactPromise = $promise->adoptedPromise;
 
         $reactPromise->then(function ($values) use (&$resolvedValue, &$wait): void {
@@ -66,10 +66,10 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
                 $onProgress();
             }
             // less CPU intensive without sacrificing the performance
-            \usleep(5);
+            usleep(5);
         }
 
-        /** @var \Exception|null $exception */
+        /** @var Exception|null $exception */
         if (null !== $exception) {
             throw $exception;
         }

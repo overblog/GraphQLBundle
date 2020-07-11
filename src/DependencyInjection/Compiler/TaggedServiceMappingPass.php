@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use function array_map;
+use function array_replace;
+use function array_unique;
+use function in_array;
+use function is_string;
+use function is_subclass_of;
+use function sprintf;
+use function trigger_error;
+use const E_USER_DEPRECATED;
 
 abstract class TaggedServiceMappingPass implements CompilerPassInterface
 {
-    private function getTaggedServiceMapping(ContainerBuilder $container, $tagName)
+    private function getTaggedServiceMapping(ContainerBuilder $container, string $tagName): array
     {
         $serviceMapping = [];
 
@@ -26,7 +36,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
                 $solutionID = $id;
 
                 if (!$isType && '__invoke' !== $attributes['method']) {
-                    $solutionID = \sprintf('%s::%s', $id, $attributes['method']);
+                    $solutionID = sprintf('%s::%s', $id, $attributes['method']);
                 }
 
                 if (!isset($serviceMapping[$solutionID])) {
@@ -48,7 +58,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         $resolverDefinition = $container->findDefinition($this->getResolverServiceID());
 
         foreach ($mapping as $solutionID => $attributes) {
-            $attributes['aliases'] = \array_unique($attributes['aliases']);
+            $attributes['aliases'] = array_unique($attributes['aliases']);
             $aliases = $attributes['aliases'];
             $serviceID = $attributes['id'];
 
@@ -64,40 +74,29 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         }
     }
 
-    protected function checkRequirements($id, array $tag): void
+    protected function checkRequirements(string $id, array $tag): void
     {
-        if (isset($tag['alias']) && !\is_string($tag['alias'])) {
-            throw new \InvalidArgumentException(
-                \sprintf('Service tagged "%s" must have valid "alias" argument.', $id)
+        if (isset($tag['alias']) && !is_string($tag['alias'])) {
+            throw new InvalidArgumentException(
+                sprintf('Service tagged "%s" must have valid "alias" argument.', $id)
             );
         }
     }
 
-    /**
-     * @param array  $attributes
-     * @param string $id
-     * @param bool   $withMethod
-     *
-     * @return array
-     */
     private static function resolveAttributes(array $attributes, string $id, bool $withMethod): array
     {
         $default = ['id' => $id, 'aliases' => []];
         if ($withMethod) {
             $default['method'] = '__invoke';
         }
-        $attributes = \array_replace($default, $attributes);
+        $attributes = array_replace($default, $attributes);
 
         return $attributes;
     }
 
-    /**
-     * @param Definition $solutionDefinition
-     * @param bool       $isGenerated
-     */
     private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, bool $isGenerated): void
     {
-        $methods = \array_map(
+        $methods = array_map(
             function ($methodCall) {
                 return $methodCall[0];
             },
@@ -105,24 +104,21 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
         );
         if (
             $isGenerated
-            && \is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
-            && !\in_array('setContainer', $methods)
+            && is_subclass_of($solutionDefinition->getClass(), ContainerAwareInterface::class)
+            && !in_array('setContainer', $methods)
         ) {
-            @\trigger_error(
-                \sprintf(
+            @trigger_error(
+                sprintf(
                     'Autowire method "%s::setContainer" for custom tagged (type, resolver or mutation) services is deprecated as of 0.9 and will be removed in 1.0.',
                     ContainerAwareInterface::class
                 ),
-                \E_USER_DEPRECATED
+                E_USER_DEPRECATED
             );
             $solutionDefinition->addMethodCall('setContainer', [new Reference('service_container')]);
         }
     }
 
-    abstract protected function getTagName();
+    abstract protected function getTagName(): string;
 
-    /**
-     * @return string
-     */
-    abstract protected function getResolverServiceID();
+    abstract protected function getResolverServiceID(): string;
 }

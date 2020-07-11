@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use InvalidArgumentException;
+use function array_merge;
+use function array_unique;
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
+
 final class ResolverMaps implements ResolverMapInterface
 {
-    /** @var ResolverMapInterface[] */
-    private $resolverMaps;
+    private array $resolverMaps;
 
     public function __construct(array $resolverMaps)
     {
@@ -25,7 +32,7 @@ final class ResolverMaps implements ResolverMapInterface
                 return $resolverMap->resolve($typeName, $fieldName);
             }
         }
-        throw new UnresolvableException(\sprintf('Field "%s.%s" could not be resolved.', $typeName, $fieldName));
+        throw new UnresolvableException(sprintf('Field "%s.%s" could not be resolved.', $typeName, $fieldName));
     }
 
     /**
@@ -49,9 +56,9 @@ final class ResolverMaps implements ResolverMapInterface
     {
         $covered = [];
         foreach ($this->resolverMaps as $resolverMap) {
-            $covered = \array_merge($covered, $resolverMap->covered($typeName));
+            $covered = array_merge($covered, $resolverMap->covered($typeName));
         }
-        $covered = \array_unique($covered);
+        $covered = array_unique($covered);
 
         return $covered;
     }
@@ -60,10 +67,10 @@ final class ResolverMaps implements ResolverMapInterface
     {
         foreach ($resolverMaps as $resolverMap) {
             if (!$resolverMap instanceof ResolverMapInterface) {
-                throw new \InvalidArgumentException(\sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'ResolverMap should be instance of "%s" but got "%s".',
                     ResolverMapInterface::class,
-                    \is_object($resolverMap) ? \get_class($resolverMap) : \gettype($resolverMap)
+                    is_object($resolverMap) ? get_class($resolverMap) : gettype($resolverMap)
                 ));
             }
         }

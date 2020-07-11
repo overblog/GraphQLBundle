@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class CompileCommand extends Command
 {
-    private $typeGenerator;
+    private TypeGenerator $typeGenerator;
 
     public function __construct(TypeGenerator $typeGenerator)
     {
@@ -29,7 +29,7 @@ final class CompileCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Types compilation starts</info>');
         $classes = $this->typeGenerator->compile(TypeGenerator::MODE_WRITE | TypeGenerator::MODE_OVERRIDE);
@@ -43,5 +43,7 @@ final class CompileCommand extends Command
             }
             $io->table(['class', 'path'], $rows);
         }
+
+        return 0;
     }
 }

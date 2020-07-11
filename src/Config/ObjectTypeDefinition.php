@@ -5,18 +5,24 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use function array_key_exists;
 
 class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 {
-    public function getDefinition()
+    public function getDefinition(): ArrayNodeDefinition
     {
-        $node = self::createNode('_object_config');
+        $builder = new TreeBuilder('_object_config', 'array');
 
+        /** @var ArrayNodeDefinition $node */
+        $node = $builder->getRootNode();
+
+        /** @phpstan-ignore-next-line */
         $node
             ->children()
                 ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
                 ->append($this->nameSection())
-                ->append($this->outputFieldsSelection())
+                ->append($this->outputFieldsSection())
                 ->append($this->fieldsBuilderSection())
                 ->append($this->descriptionSection())
                 ->arrayNode('interfaces')
@@ -40,18 +46,16 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
     /**
      * set empty fields.access with fieldsDefaultAccess values if is set?
-     *
-     * @param ArrayNodeDefinition $node
      */
     private function treatFieldsDefaultAccess(ArrayNodeDefinition $node): void
     {
         $node->validate()
             ->ifTrue(function ($v) {
-                return \array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
+                return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
             })
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
-                    if (\array_key_exists('access', $field) && null !== $field['access']) {
+                    if (array_key_exists('access', $field) && null !== $field['access']) {
                         continue;
                     }
 
@@ -65,18 +69,14 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
     /**
      * set empty fields.public with fieldsDefaultPublic values if is set?
-     *
-     * @param ArrayNodeDefinition $node
      */
     private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
     {
         $node->validate()
-            ->ifTrue(function ($v) {
-                return \array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'];
-            })
+            ->ifTrue(fn ($v) => array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'])
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
-                    if (\array_key_exists('public', $field) && null !== $field['public']) {
+                    if (array_key_exists('public', $field) && null !== $field['public']) {
                         continue;
                     }
                     $field['public'] = $v['fieldsDefaultPublic'];

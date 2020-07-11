@@ -8,18 +8,21 @@ use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\WrappingType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use Overblog\GraphQLBundle\Resolver\UnsupportedResolverException;
+use stdClass;
+use function sprintf;
 
 class TypeResolverTest extends AbstractResolverTest
 {
-    protected function createResolver()
+    protected function createResolver(): TypeResolver
     {
         return new TypeResolver();
     }
 
-    protected function getResolverSolutionsMapping()
+    protected function getResolverSolutionsMapping(): array
     {
         return [
             'Toto' => ['factory' => [[$this, 'createObjectType'], [['name' => 'Toto']]], 'aliases' => ['foo']],
@@ -27,7 +30,7 @@ class TypeResolverTest extends AbstractResolverTest
         ];
     }
 
-    public function createObjectType(array $config)
+    public function createObjectType(array $config): ObjectType
     {
         return new ObjectType($config);
     }
@@ -35,11 +38,11 @@ class TypeResolverTest extends AbstractResolverTest
     public function testAddNotSupportedSolution(): void
     {
         $this->expectException(UnsupportedResolverException::class);
-        $this->expectExceptionMessage(\sprintf(
+        $this->expectExceptionMessage(sprintf(
             'Resolver "not-supported" must be "%s" "stdClass" given.',
             Type::class
         ));
-        $this->resolver->addSolution('not-supported', new \stdClass());
+        $this->resolver->addSolution('not-supported', new stdClass());
         $this->resolver->getSolution('not-supported');
     }
 
@@ -66,7 +69,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWithListOfWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var WrappingType $type */
         $type = $this->resolver->resolve('[Tata]');
 
         $this->assertInstanceOf(ListOfType::class, $type);
@@ -75,7 +78,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWithNonNullWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var WrappingType $type */
         $type = $this->resolver->resolve('Toto!');
 
         $this->assertInstanceOf(NonNull::class, $type);
@@ -84,7 +87,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWithNonNullListOfWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var NonNull $type */
         $type = $this->resolver->resolve('[Toto]!');
 
         $this->assertInstanceOf(NonNull::class, $type);
@@ -94,7 +97,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWitListOfNonNullWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var ListOfType $type */
         $type = $this->resolver->resolve('[Toto!]');
 
         $this->assertInstanceOf(ListOfType::class, $type);
@@ -104,7 +107,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWitNonNullListOfNonNullWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var NonNull $type */
         $type = $this->resolver->resolve('[Toto!]!');
 
         $this->assertInstanceOf(NonNull::class, $type);
@@ -115,7 +118,7 @@ class TypeResolverTest extends AbstractResolverTest
 
     public function testResolveWitListOfListOfWrapper(): void
     {
-        /** @var \GraphQL\Type\Definition\WrappingType $type */
+        /** @var ListOfType $type */
         $type = $this->resolver->resolve('[[Toto]]');
 
         $this->assertInstanceOf(ListOfType::class, $type);

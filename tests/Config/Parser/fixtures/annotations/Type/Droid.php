@@ -15,5 +15,5 @@ class Droid extends Character
     /**
      * @GQL\Field(type="Int!")
      */
-    protected $memory;
+    protected int $memory;
 }

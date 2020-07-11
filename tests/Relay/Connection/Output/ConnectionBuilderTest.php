@@ -36,7 +36,7 @@ class ConnectionBuilderTest extends \Overblog\GraphQLBundle\Tests\Relay\Connecti
         );
     }
 
-    public static function getBuilder()
+    public static function getBuilder(): string
     {
         return LegacyConnectionBuilder::class;
     }
