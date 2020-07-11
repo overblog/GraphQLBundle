@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\Type(interfaces={"Character"})
+ * @GQL\Type(isTypeOf="@=isTypeOf('App\Entity\Droid')")
  * @GQL\Description("The Droid type")
  */
 class Droid extends Character

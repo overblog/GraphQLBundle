@@ -46,4 +46,11 @@ class Type implements Annotation
      * @var array<\Overblog\GraphQLBundle\Annotation\FieldsBuilder>
      */
     public $builders = [];
+
+    /**
+     * Expression to resolve type for interfaces.
+     *
+     * @var string
+     */
+    public $isTypeOf;
 }
