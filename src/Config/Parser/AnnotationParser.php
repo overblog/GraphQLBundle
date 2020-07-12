@@ -485,8 +485,6 @@ class AnnotationParser implements PreParserInterface
         $accessAnnotation = self::getFirstAnnotationMatching($annotations, GQL\Access::class);
         $publicAnnotation = self::getFirstAnnotationMatching($annotations, GQL\IsPublic::class);
 
-        $isMethod = $reflector instanceof ReflectionMethod;
-
         if (!$fieldAnnotation) {
             if ($accessAnnotation || $publicAnnotation) {
                 throw new InvalidArgumentException(sprintf('The annotations "@Access" and/or "@Visible" defined on "%s" are only usable in addition of annotation "@Field"', $reflector->getName()));
@@ -495,7 +493,7 @@ class AnnotationParser implements PreParserInterface
             return [];
         }
 
-        if ($isMethod && !$reflector->isPublic()) {
+        if ($reflector instanceof ReflectionMethod && !$reflector->isPublic()) {
             throw new InvalidArgumentException(sprintf('The Annotation "@Field" can only be applied to public method. The method "%s" is not public.', $reflector->getName()));
         }
 
@@ -508,7 +506,16 @@ class AnnotationParser implements PreParserInterface
 
         $fieldConfiguration = self::getDescriptionConfiguration($annotations, true) + $fieldConfiguration;
 
-        $args = self::getArgs($fieldAnnotation->args, $isMethod && !$fieldAnnotation->argsBuilder ? $reflector : null);
+        $args = [];
+        if (!empty($fieldAnnotation->args)) {
+            foreach ($fieldAnnotation->args as $arg) {
+                $args[$arg->name] = ['type' => $arg->type]
+                    + ($arg->description ? ['description' => $arg->description] : [])
+                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
+            }
+        } elseif ($reflector instanceof ReflectionMethod) {
+            $args = self::guessArgs($reflector);
+        }
 
         if (!empty($args)) {
             $fieldConfiguration['args'] = $args;
@@ -519,7 +526,7 @@ class AnnotationParser implements PreParserInterface
         if ($fieldAnnotation->resolve) {
             $fieldConfiguration['resolve'] = self::formatExpression($fieldAnnotation->resolve);
         } else {
-            if ($isMethod) {
+            if ($reflector instanceof ReflectionMethod) {
                 $fieldConfiguration['resolve'] = self::formatExpression(sprintf('call(%s.%s, %s)', $currentValue, $reflector->getName(), self::formatArgsForExpression($args)));
             } else {
                 if ($fieldName !== $reflector->getName() || 'value' !== $currentValue) {
@@ -551,10 +558,11 @@ class AnnotationParser implements PreParserInterface
             }
         } else {
             if (!$fieldType) {
-                if ($isMethod) {
+                if ($reflector instanceof ReflectionMethod) {
                     /** @var ReflectionMethod $reflector */
                     if ($reflector->hasReturnType()) {
                         try {
+                            // @phpstan-ignore-next-line
                             $fieldConfiguration['type'] = self::resolveGraphQLTypeFromReflectionType($reflector->getReturnType(), self::VALID_OUTPUT_TYPES);
                         } catch (Exception $e) {
                             throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on method "%s" and cannot be auto-guessed from type hint "%s"', $fieldAnnotationName, $reflector->getName(), (string) $reflector->getReturnType()));
@@ -727,25 +735,6 @@ class AnnotationParser implements PreParserInterface
             if ($deprecatedAnnotation) {
                 $config['deprecationReason'] = $deprecatedAnnotation->value;
             }
-        }
-
-        return $config;
-    }
-
-    /**
-     * Get args config from an array of @Arg annotation or by auto-guessing if a method is provided.
-     */
-    private static function getArgs(?array $args, ReflectionMethod $method = null): array
-    {
-        $config = [];
-        if (!empty($args)) {
-            foreach ($args as $arg) {
-                $config[$arg->name] = ['type' => $arg->type]
-                    + ($arg->description ? ['description' => $arg->description] : [])
-                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
-            }
-        } elseif ($method) {
-            $config = self::guessArgs($method);
         }
 
         return $config;

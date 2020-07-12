@@ -21,7 +21,10 @@ class GraphClass extends ReflectionClass
 
     protected array $propertiesExtended = [];
 
-    public function __construct(string $className)
+    /**
+     * @param mixed $className
+     */
+    public function __construct($className)
     {
         parent::__construct($className);
 
@@ -66,6 +69,7 @@ class GraphClass extends ReflectionClass
             return self::getAnnotationReader()->getPropertyAnnotations($from);
         }
 
+        /** @phpstan-ignore-next-line */
         throw new AnnotationException(sprintf('Unable to retrieve annotations from object of class "%s".', get_class($from)));
     }
 
