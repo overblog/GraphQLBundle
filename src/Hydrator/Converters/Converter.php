@@ -6,5 +6,5 @@ namespace Overblog\GraphQLBundle\Hydrator\Converters;
 
 abstract class Converter
 {
-    abstract function convert($values, $annotation);
+    abstract function convert($values, ConverterAnnotationInterface $annotation);
 }

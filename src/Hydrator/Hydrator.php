@@ -135,6 +135,7 @@ class Hydrator
 
         if (null !== $annotation) {
             $converter = $this->converters->get($annotation::getConverterClass());
+            return $converter->convert($value, $annotation);
         }
 
         return $value;

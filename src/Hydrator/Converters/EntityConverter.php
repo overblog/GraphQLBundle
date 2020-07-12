@@ -14,24 +14,20 @@ class EntityConverter extends Converter
     public function __construct(?EntityManagerInterface $entityManager)
     {
         if (null === $entityManager) {
-            // TODO: change the message
-            throw new ServiceNotFoundException("EntityManager not found.");
+            throw new ServiceNotFoundException("Cannot use EntityConverter, because Doctrine ORM is not installed.");
         }
 
         $this->em = $entityManager;
     }
 
     /**
-     * @param $values
+     * @param $value
      * @param Entity $entityAnnotation
      *
      * @return object|null
      */
-    function convert($values, $entityAnnotation)
+    function convert($value, $entityAnnotation)
     {
-        // TODO: make id property configurable
-        $idProperty = 'id';
-
-        return $this->em->getRepository($entityAnnotation->value)->find($values->$idProperty);
+        return $this->em->getRepository($entityAnnotation->value)->find($value);
     }
 }

@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Hydrator\Converters;
 
 /**
- * Converts scalar value into Doctrine entity.
+ * Calls the "convert" method on the target service or "__invoke"
+ * if no method specified
  *
  * @Annotation
  */
-class Entity implements ConverterAnnotationInterface
+class Service implements ConverterAnnotationInterface
 {
     /**
-     * FQCN of the target entity
+     * Service ID.
      */
     public string $value;
+
+    /**
+     * Method name to call on the target service.
+     */
+    public string $method;
 
     public static function getConverterClass(): string
     {
