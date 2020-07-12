@@ -77,7 +77,7 @@ Droid:
 
 ## With Annotations
 
-Note: With annotations, you can omit the `interfaces` option. If so, the system will try to guess the interfaces automaticaly by getting the GraphQL Interface associated with classes that the Class type extends or implements.  
+Note: With annotations, you can omit the `interfaces` option. If so, the system will try to guess the interfaces automatically by getting the GraphQL Interface associated with classes that the Class type extends or implements.  
 
 ```php
 <?php
