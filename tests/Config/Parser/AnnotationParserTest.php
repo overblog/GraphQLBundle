@@ -22,6 +22,7 @@ class AnnotationParserTest extends TestCase
         'definitions' => [
             'schema' => [
                 'default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation'],
+                'second' => ['query' => 'RootQuery2', 'mutation' => 'RootMutation2'],
             ],
         ],
         'doctrine' => [
@@ -99,6 +100,7 @@ class AnnotationParserTest extends TestCase
         $this->expect('Droid', 'object', [
             'description' => 'The Droid type',
             'interfaces' => ['Character'],
+            'isTypeOf' => "@=isTypeOf('App\Entity\Droid')",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
@@ -211,6 +213,25 @@ class AnnotationParserTest extends TestCase
         ]);
     }
 
+    public function testUnionAutoguessed(): void
+    {
+        $this->expect('Killable', 'union', [
+            'types' => ['Hero', 'Mandalorian',  'Sith'],
+            'resolveType' => '@=value.getType()',
+        ]);
+    }
+
+    public function testInterfaceAutoguessed(): void
+    {
+        $this->expect('Mandalorian', 'object', [
+            'interfaces' => ['Armored', 'Character'],
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+            ],
+        ]);
+    }
+
     public function testScalar(): void
     {
         $this->expect('GalaxyCoordinates', 'custom-scalar', [
@@ -241,6 +262,32 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=override_public',
+                ],
+            ],
+        ]);
+    }
+
+    public function testProvidersMultischema(): void
+    {
+        $this->expect('RootQuery2', 'object', [
+            'fields' => [
+                'planet_getPlanetSchema2' => [
+                    'type' => 'Planet',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').getPlanetSchema2, arguments({}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
+            ],
+        ]);
+
+        $this->expect('RootMutation2', 'object', [
+            'fields' => [
+                'planet_createPlanetSchema2' => [
+                    'type' => 'Planet',
+                    'args' => ['planetInput' => ['type' => 'PlanetInput!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=override_public',
                 ],
@@ -404,6 +451,35 @@ class AnnotationParserTest extends TestCase
         } catch (Exception $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
             $this->assertMatchesRegularExpression('/The Annotation "@Field" can only be applied to public method/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidProviderQueryOnMutation(): void
+    {
+        $file = __DIR__.'/fixtures/annotations/Invalid/InvalidProvider.php';
+        AnnotationParser::preParse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+
+        try {
+            $mutationFile = __DIR__.'/fixtures/annotations/Type/RootMutation2.php';
+            AnnotationParser::parse(new SplFileInfo($mutationFile), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Using @Query targeting mutation type should raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/try to add a query field on type "RootMutation2"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidProviderMutationOnQuery(): void
+    {
+        $file = __DIR__.'/fixtures/annotations/Invalid/InvalidProvider.php';
+        AnnotationParser::preParse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+        try {
+            $queryFile = __DIR__.'/fixtures/annotations/Type/RootQuery2.php';
+            AnnotationParser::parse(new SplFileInfo($queryFile), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Using @Mutation targeting query type should raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/try to add a mutation on type "RootQuery2"/', $e->getPrevious()->getMessage());
         }
     }
 }
