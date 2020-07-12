@@ -213,7 +213,8 @@ class AnnotationParser implements PreParserInterface
                 if ($preProcess) {
                     self::$providers[] = ['metadata' => $graphClass, 'annotation' => $classAnnotation];
                 }
-                break;
+
+                return [];
         }
 
         if (null !== $gqlType) {
@@ -239,9 +240,7 @@ class AnnotationParser implements PreParserInterface
      */
     private static function getGraphClass(string $className): GraphClass
     {
-        if (!isset(self::$graphClassCache[$className])) {
-            self::$graphClassCache[$className] = new GraphClass($className);
-        }
+        self::$graphClassCache[$className] ??= new GraphClass($className);
 
         return self::$graphClassCache[$className];
     }
@@ -302,7 +301,7 @@ class AnnotationParser implements PreParserInterface
         $typeConfiguration['fields'] = array_merge($fieldsFromProperties, $fieldsFromMethods);
         $typeConfiguration = self::getDescriptionConfiguration($graphClass->getAnnotations()) + $typeConfiguration;
 
-        if ($typeAnnotation->interfaces) {
+        if (null !== $typeAnnotation->interfaces) {
             $typeConfiguration['interfaces'] = $typeAnnotation->interfaces;
         } else {
             $typeConfiguration['interfaces'] = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
@@ -435,7 +434,7 @@ class AnnotationParser implements PreParserInterface
     private static function unionAnnotationToGQLConfiguration(GraphClass $graphClass, GQL\Union $unionAnnotation): array
     {
         $unionConfiguration = [];
-        if ($unionAnnotation->types) {
+        if (null !== $unionAnnotation->types) {
             $unionConfiguration['types'] = $unionAnnotation->types;
         } else {
             $types = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
@@ -550,6 +549,7 @@ class AnnotationParser implements PreParserInterface
         } else {
             if (!$fieldType) {
                 if ($isMethod) {
+                    /** var ReflectionMethod $reflector */
                     if ($reflector->hasReturnType()) {
                         try {
                             $fieldConfiguration['type'] = self::resolveGraphQLTypeFromReflectionType($reflector->getReturnType(), self::VALID_OUTPUT_TYPES);
