@@ -386,7 +386,7 @@ The class exposing the mutation(s) must be declared as a [service](https://symfo
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema).
+-   **targetType** : The GraphQL type to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
 
 Example:
 
@@ -436,7 +436,7 @@ The class exposing the query(ies) must be declared as a [service](https://symfon
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type of the default schema).
+-   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
 
 Example:
 

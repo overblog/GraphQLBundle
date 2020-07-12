@@ -11,6 +11,7 @@ use function microtime;
 
 final class ExecutorArgumentsEvent extends Event
 {
+    private string $schemaName;
     private ExtensibleSchema $schema;
     private string $requestString;
     private ArrayObject $contextValue;
@@ -27,6 +28,7 @@ final class ExecutorArgumentsEvent extends Event
      * @return static
      */
     public static function create(
+        string $schemaName,
         ExtensibleSchema $schema,
         string $requestString,
         ArrayObject $contextValue,
@@ -35,6 +37,7 @@ final class ExecutorArgumentsEvent extends Event
         string $operationName = null
     ): self {
         $instance = new static();
+        $instance->setSchemaName($schemaName);
         $instance->setSchema($schema);
         $instance->setRequestString($requestString);
         $instance->setContextValue($contextValue);
@@ -44,6 +47,11 @@ final class ExecutorArgumentsEvent extends Event
         $instance->setStartTime(microtime(true));
 
         return $instance;
+    }
+
+    public function setSchemaName(string $schemaName): void
+    {
+        $this->schemaName = $schemaName;
     }
 
     public function setOperationName(?string $operationName): void
@@ -82,6 +90,11 @@ final class ExecutorArgumentsEvent extends Event
     public function setStartTime(float $startTime): void
     {
         $this->startTime = $startTime;
+    }
+
+    public function getSchemaName(): string
+    {
+        return $this->schemaName;
     }
 
     public function getSchema(): ExtensibleSchema
