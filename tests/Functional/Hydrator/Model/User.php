@@ -6,11 +6,12 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model;
 
 use Overblog\GraphQLBundle\Hydrator\Annotation as Hydrator;
 use Overblog\GraphQLBundle\Hydrator\Converters as Convert;
+use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Post;
 
 class User
 {
     /**
-     * @Hydrator\Field(name="username")
+     * @Hydrator\Field("username")
      */
     public string $nickname;
 
@@ -21,6 +22,12 @@ class User
     public ?Address $address = null;
 
     public array $friends = [];
+
+    /**
+     * @Hydrator\Field("postId")
+     * @Convert\Entity("Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Post")
+     */
+    public Post $post;
 
     /**
      * @Hydrator\Field("birthdate")

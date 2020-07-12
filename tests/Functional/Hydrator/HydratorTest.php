@@ -19,8 +19,6 @@ class HydratorTest extends TestCase
      */
     public function simpleHydration(): void
     {
-//        $this->markTestSkipped();
-
         $query = <<<'QUERY'
         mutation {
             createUser(input: {
@@ -32,6 +30,21 @@ class HydratorTest extends TestCase
                     city: "Izberbash"
                     zipCode: 368500
                 }
+                friends: [
+                    {
+                        username: "Clay007"
+                        firstName: "Clay"
+                        lastName: "Jensen",
+                        friends: []
+                    },
+                    {
+                        username: "frodo37"
+                        firstName: "Frodo"
+                        lastName: "Baggins"
+                        friends: []
+                    }
+                ]
+                postId: 13
             })
         }
         QUERY;

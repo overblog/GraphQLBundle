@@ -13,15 +13,3 @@ Mutation:
                 resolve: '@=mut("update_user", [model])'
                 args:
                     input: UserUpdateInput!
-
-#UserCreateInput:
-#    type: input-object
-#    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User
-#    config:
-#        fields:
-#            username: "String!"
-#            firstName: "String"
-#            lastName: "String"
-#            birthdate: "BirthdateInput"
-#            address: "AddressInput"
-#            friends: "[UserCreateInput]"

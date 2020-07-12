@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Closure;
+use Exception;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
@@ -78,6 +79,9 @@ class OverblogGraphQLExtension extends Extension
         );
     }
 
+    /**
+     * @throws Exception
+     */
     private function loadConfigFiles(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -90,6 +94,7 @@ class OverblogGraphQLExtension extends Extension
         $loader->load('definition_config_processors.yaml');
         $loader->load('aliases.yaml');
         $loader->load('profiler.yaml');
+        $loader->load('converters.yaml');
     }
 
     private function registerForAutoconfiguration(ContainerBuilder $container): void

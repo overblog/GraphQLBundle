@@ -9,7 +9,7 @@ namespace Overblog\GraphQLBundle\Hydrator\Converters;
  *
  * @Annotation
  */
-class Entity
+class Entity implements ConverterAnnotationInterface
 {
     /**
      * FQCN of the target entity
@@ -20,4 +20,9 @@ class Entity
      * ID property of the target entity
      */
     public ?string $property = null;
+
+    public static function getConverterClass(): string
+    {
+        return static::class.'Converter';
+    }
 }

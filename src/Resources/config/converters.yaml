@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Overblog\GraphQLBundle\Hydrator\Converters\:
+        resource: '../../Hydrator/Converters/*'
+
+    _instanceof:
+        Overblog\GraphQLBundle\Hydrator\Converters\Converter:
+            tags: ['overblog_graphql.hydrator.converter']
