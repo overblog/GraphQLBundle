@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use function class_exists;
 use function count;
@@ -26,7 +27,7 @@ class ArgumentsTransformerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists(Validation::class)) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
     }

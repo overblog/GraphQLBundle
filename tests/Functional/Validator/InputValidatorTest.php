@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Component\Validator\Validation;
 use function class_exists;
 use function json_decode;
 
@@ -13,7 +14,7 @@ class InputValidatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists(Validation::class)) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         static::bootKernel(['test_case' => 'validator']);

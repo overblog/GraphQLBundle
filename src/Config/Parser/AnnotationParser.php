@@ -321,8 +321,8 @@ class AnnotationParser implements PreParserInterface
     private static function getAnnotationReader(): AnnotationReader
     {
         if (null === self::$annotationReader) {
-            if (!class_exists('\\Doctrine\\Common\\Annotations\\AnnotationReader') ||
-                !class_exists('\\Doctrine\\Common\\Annotations\\AnnotationRegistry')) {
+            if (!class_exists(AnnotationReader::class) ||
+                !class_exists(AnnotationRegistry::class)) {
                 throw new RuntimeException('In order to use graphql annotation, you need to require doctrine annotations');
             }
 

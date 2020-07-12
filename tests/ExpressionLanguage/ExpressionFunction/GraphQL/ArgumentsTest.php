@@ -15,6 +15,7 @@ use Overblog\GraphQLBundle\Tests\Transformer\Enum1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType2;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
+use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use function class_exists;
 use function count;
@@ -23,7 +24,7 @@ class ArgumentsTest extends TestCase
 {
     public function setUp(): void
     {
-        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists(Validation::class)) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         parent::setUp();

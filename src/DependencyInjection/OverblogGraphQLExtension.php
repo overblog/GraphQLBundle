@@ -31,6 +31,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Validator\Validation;
 use function array_fill_keys;
 use function class_exists;
 use function realpath;
@@ -105,7 +106,7 @@ class OverblogGraphQLExtension extends Extension
 
     private function registerValidatorFactory(ContainerBuilder $container): void
     {
-        if (class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (class_exists(Validation::class)) {
             $container->register(ValidatorFactory::class)
                 ->setArguments([
                     new Reference('validator.validator_factory'),

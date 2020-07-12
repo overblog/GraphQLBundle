@@ -11,13 +11,14 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
+use Symfony\Component\Validator\Validation;
 use function class_exists;
 
 class MetadataFactoryTest extends TestCase
 {
     public function setUp(): void
     {
-        if (!class_exists('Symfony\\Component\\Validator\\Validation')) {
+        if (!class_exists(Validation::class)) {
             $this->markTestSkipped('Symfony validator component is not installed');
         }
         parent::setUp();
