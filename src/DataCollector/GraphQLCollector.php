@@ -65,8 +65,10 @@ class GraphQLCollector extends DataCollector
 
     /**
      * Return the targeted schema.
+     *
+     * @return string|false
      */
-    public function getSchema(): string
+    public function getSchema()
     {
         return $this->data['schema'] ?? 'default';
     }
