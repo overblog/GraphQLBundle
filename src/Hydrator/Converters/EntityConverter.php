@@ -14,7 +14,11 @@ class EntityConverter extends Converter
     public function __construct(?EntityManagerInterface $entityManager)
     {
         if (null === $entityManager) {
-            throw new ServiceNotFoundException("Cannot use EntityConverter, because Doctrine ORM is not installed.");
+            throw new ServiceNotFoundException(
+                "Couldn't convert value, because no EntityManager service is found. 
+                To use the 'EntityConverter' you need to install Doctrine ORM first. 
+                See: 'https://symfony.com/doc/current/doctrine.html'"
+            );
         }
 
         $this->em = $entityManager;
