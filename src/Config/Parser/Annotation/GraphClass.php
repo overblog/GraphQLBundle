@@ -8,7 +8,6 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use RuntimeException;
@@ -41,57 +40,11 @@ class GraphClass extends ReflectionClass
     }
 
     /**
-     * Get an array of parent class names.
-     *
-     * @return string[]
-     */
-    public function getParents(): array
-    {
-        $parents = [];
-        $class = $this;
-        while ($parent = $class->getParentClass()) {
-            $parents[] = $parent->getName();
-            $class = $parent;
-        }
-
-        return $parents;
-    }
-
-    /**
-     * Get the list of methods name.
-     *
-     * @return string[]
-     */
-    public function getMethodsNames(): array
-    {
-        return array_map(fn (ReflectionMethod $method) => $method->getName(), $this->getMethods());
-    }
-
-    public function getMethodAnnotations(string $name): array
-    {
-        return self::getAnnotationReader()->getMethodAnnotations($this->getMethod($name));
-    }
-
-    public function getPropertyAnnotations(string $name): array
-    {
-        return self::getAnnotationReader()->getPropertyAnnotations($this->getProperty($name));
-    }
-
-    /**
      * @return ReflectionProperty[]
      */
     public function getPropertiesExtended()
     {
         return $this->propertiesExtended;
-    }
-
-    public function getPropertyExtended(string $name): ReflectionProperty
-    {
-        if (!isset($this->propertiesExtended[$name])) {
-            throw new ReflectionException(sprintf('Missing property %s on class or parent class %s', $name, $this->getName()));
-        }
-
-        return $this->propertiesExtended[$name];
     }
 
     /**

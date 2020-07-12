@@ -304,7 +304,7 @@ class AnnotationParser implements PreParserInterface
         if (null !== $typeAnnotation->interfaces) {
             $typeConfiguration['interfaces'] = $typeAnnotation->interfaces;
         } else {
-            $typeConfiguration['interfaces'] = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
+            $interfaces = array_keys(self::searchClassesMapBy(function ($gqlType, $configuration) use ($graphClass) {
                 ['class' => $interfaceClassName] = $configuration;
 
                 $interfaceMetadata = self::getGraphClass($interfaceClassName);
@@ -314,6 +314,9 @@ class AnnotationParser implements PreParserInterface
 
                 return $graphClass->isSubclassOf($interfaceClassName);
             }, self::GQL_INTERFACE));
+
+            sort($interfaces);
+            $typeConfiguration['interfaces'] = $interfaces;
         }
 
         if ($typeAnnotation->resolveField) {

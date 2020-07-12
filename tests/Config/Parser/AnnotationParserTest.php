@@ -224,7 +224,7 @@ class AnnotationParserTest extends TestCase
     public function testInterfaceAutoguessed(): void
     {
         $this->expect('Mandalorian', 'object', [
-            'interfaces' => ['Character'],
+            'interfaces' => ['Armored', 'Character'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
