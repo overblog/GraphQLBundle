@@ -14,7 +14,6 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
-use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -137,6 +136,7 @@ class Executor
         $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
 
         $schema = $this->getSchema($schemaName);
+        /** @var string $schemaName */
         $schemaName = array_search($schema, $this->schemas);
 
         $executorArgumentsEvent = $this->preExecute(
@@ -185,7 +185,7 @@ class Executor
         /** @var ExecutorArgumentsEvent $object */
         // @phpstan-ignore-next-line (only for Symfony 4.4)
         $object = $this->dispatcher->dispatch(
-            /** @var ExtensibleSchema $schema */
+            // @phpstan-ignore-next-line
             ExecutorArgumentsEvent::create($schemaName, $schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
             Events::PRE_EXECUTOR
         );
