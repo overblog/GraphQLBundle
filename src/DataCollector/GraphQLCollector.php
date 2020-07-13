@@ -28,7 +28,11 @@ class GraphQLCollector extends DataCollector
     {
         $error = false;
         $count = 0;
+        $schema = null;
         foreach ($this->batches as $batch) {
+            if (!$schema) {
+                $schema = $batch['schema'];
+            }
             if (isset($batch['error'])) {
                 $error = true;
             }
@@ -36,7 +40,7 @@ class GraphQLCollector extends DataCollector
         }
 
         $this->data = [
-            'schema' => $request->attributes->get('_route_params')['schemaName'] ?? 'default',
+            'schema' => $schema,
             'batches' => $this->batches,
             'count' => $count,
             'error' => $error,
@@ -62,9 +66,9 @@ class GraphQLCollector extends DataCollector
     /**
      * Return the targeted schema.
      */
-    public function getSchema(): string
+    public function getSchema(): ?string
     {
-        return $this->data['schema'] ?? 'default';
+        return $this->data['schema'];
     }
 
     /**
@@ -105,6 +109,7 @@ class GraphQLCollector extends DataCollector
         $result = $event->getResult()->toArray();
 
         $batch = [
+            'schema' => $executorArgument->getSchemaName(),
             'queryString' => $queryString,
             'queryTime' => $queryTime,
             'variables' => $this->cloneVar($variables),

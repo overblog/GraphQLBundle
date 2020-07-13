@@ -114,7 +114,7 @@
                                 {{ result.status_code|default('n/a') }}
                             </span> 
                             <span class="nowrap newline">{{ result.time|date }}</span>
-                            {% if schemas|length > 0 %}
+                            {% if schemas|length > 0 and graphql.schema %}
                                 <span class="label schema-name">schema: {{ graphql.schema }}</span>
                             {% endif %}
                             <a  href="{{ path('_profiler', { token: result.token, panel: 'graphql' }) }}#{{result.token}}">{{ result.token }}</a>

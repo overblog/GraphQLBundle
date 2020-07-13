@@ -14,7 +14,6 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
-use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -84,14 +83,13 @@ class Executor
         }
 
         if (null === $name) {
-            // TODO(mcg-web): Replace by array_key_first PHP 7 >= 7.3.0.
-            foreach ($this->schemas as $name => $schema) {
-                break;
-            }
+            $name = isset($this->schemas['default']) ? 'default' : array_key_first($this->schemas);
         }
+
         if (!isset($this->schemas[$name])) {
             throw new NotFoundHttpException(sprintf('Could not found "%s" schema.', $name));
         }
+
         $schema = $this->schemas[$name];
         if (is_callable($schema)) {
             $schema = $schema();
@@ -137,8 +135,13 @@ class Executor
     {
         $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
 
+        $schema = $this->getSchema($schemaName);
+        /** @var string $schemaName */
+        $schemaName = array_search($schema, $this->schemas);
+
         $executorArgumentsEvent = $this->preExecute(
-            $this->getSchema($schemaName),
+            $schemaName,
+            $schema,
             $request[ParserInterface::PARAM_QUERY] ?? null,
             new ArrayObject(),
             $rootValue,
@@ -168,6 +171,7 @@ class Executor
      * @param mixed $rootValue
      */
     private function preExecute(
+        string $schemaName,
         Schema $schema,
         string $requestString,
         ArrayObject $contextValue,
@@ -181,8 +185,8 @@ class Executor
         /** @var ExecutorArgumentsEvent $object */
         // @phpstan-ignore-next-line (only for Symfony 4.4)
         $object = $this->dispatcher->dispatch(
-            /** @var ExtensibleSchema $schema */
-            ExecutorArgumentsEvent::create($schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
+            // @phpstan-ignore-next-line
+            ExecutorArgumentsEvent::create($schemaName, $schema, $requestString, $contextValue, $rootValue, $variableValue, $operationName),
             Events::PRE_EXECUTOR
         );
 

@@ -22,21 +22,20 @@ class GraphQLCollectorTest extends TestCase
         $collector = new GraphQLCollector();
 
         $request = new Request();
-        $request->attributes->set('_route_params', ['schemaName' => 'myschema']);
 
         $collector->onPostExecutor(new ExecutorResultEvent(
             new ExecutionResult(['res' => 'ok', 'error' => 'my error']),
-            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'invalid', new ArrayObject())
+            ExecutorArgumentsEvent::create('test_schema', new ExtensibleSchema([]), 'invalid', new ArrayObject())
         ));
 
         $collector->onPostExecutor(new ExecutorResultEvent(
             new ExecutionResult(['res' => 'ok', 'error' => 'my error']),
-            ExecutorArgumentsEvent::create(new ExtensibleSchema([]), 'query{ myalias: test{field1, field2} }', new ArrayObject(), null, ['variable1' => 'v1'])
+            ExecutorArgumentsEvent::create('test_schema', new ExtensibleSchema([]), 'query{ myalias: test{field1, field2} }', new ArrayObject(), null, ['variable1' => 'v1'])
         ));
 
         $collector->collect($request, new Response());
 
-        $this->assertEquals($collector->getSchema(), 'myschema');
+        $this->assertEquals($collector->getSchema(), 'test_schema');
         $this->assertEquals($collector->getName(), 'graphql');
         $this->assertEquals($collector->getCount(), 1);
         $this->assertTrue($collector->getError());
