@@ -65,8 +65,6 @@ class GraphQLCollector extends DataCollector
 
     /**
      * Return the targeted schema.
-     *
-     * @return string|false
      */
     public function getSchema(): ?string
     {
