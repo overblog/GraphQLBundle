@@ -258,15 +258,15 @@ class AnnotationParser implements PreParserInterface
                 $schemaQuery = $schema['query'] ?? null;
                 $schemaMutation = $schema['mutation'] ?? null;
 
-                if ($schemaQuery && $gqlName === $schemaQuery) {
+                if ($gqlName === $schemaQuery) {
                     $isRoot = true;
-                    if ($defaultSchemaName == $schemaName) {
+                    if ($defaultSchemaName === $schemaName) {
                         $isDefault = true;
                     }
-                } elseif ($schemaMutation && $gqlName === $schemaMutation) {
+                } elseif ($gqlName === $schemaMutation) {
                     $isMutation = true;
                     $isRoot = true;
-                    if ($defaultSchemaName == $schemaName) {
+                    if ($defaultSchemaName === $schemaName) {
                         $isDefault = true;
                     }
                 }

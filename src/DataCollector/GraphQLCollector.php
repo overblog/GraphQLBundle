@@ -28,7 +28,7 @@ class GraphQLCollector extends DataCollector
     {
         $error = false;
         $count = 0;
-        $schema = false;
+        $schema = null;
         foreach ($this->batches as $batch) {
             if (!$schema) {
                 $schema = $batch['schema'];
@@ -68,9 +68,9 @@ class GraphQLCollector extends DataCollector
      *
      * @return string|false
      */
-    public function getSchema()
+    public function getSchema(): ?string
     {
-        return $this->data['schema'] ?? 'default';
+        return $this->data['schema'];
     }
 
     /**
