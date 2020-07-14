@@ -19,6 +19,7 @@ use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class Configuration implements ConfigurationInterface
 {
@@ -210,7 +211,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('resolver_maps')
                         ->defaultValue([])
                         ->prototype('scalar')->end()
-                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 0.14. Add the "overblog_graphql.resolver_map" tag to the services instead.')
+                        ->setDeprecated(...$this->getDeprecationArgs())
                     ->end()
                     ->arrayNode('types')
                         ->defaultValue([])
@@ -221,6 +222,20 @@ class Configuration implements ConfigurationInterface
         ->end();
 
         return $node;
+    }
+
+    /**
+     * BC layer for symfony/config <5.1 .
+     */
+    private function getDeprecationArgs()
+    {
+        $msg = 'The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 1.0 Add the "overblog_graphql.resolver_map" tag to the services instead.';
+
+        if (Kernel::VERSION_ID < 50100) {
+            return [$msg];
+        }
+
+        return ['overblog/graphql-bundle', '0.13', $msg];
     }
 
     private function definitionsMappingsSection()
