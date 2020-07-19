@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Hydrator\Converters;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
@@ -11,7 +12,7 @@ class EntityConverter extends Converter
 {
     private EntityManagerInterface $em;
 
-    public function __construct(?EntityManagerInterface $entityManager)
+    public function __construct(?EntityManager $entityManager)
     {
         if (null === $entityManager) {
             throw new ServiceNotFoundException(

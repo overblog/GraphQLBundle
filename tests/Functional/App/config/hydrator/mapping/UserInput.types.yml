@@ -1,6 +1,6 @@
 UserCreateInput:
     type: input-object
-    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User
     config:
         fields:
             username: "String!"
@@ -13,7 +13,7 @@ UserCreateInput:
 
 UserUpdateInput:
     type: input-object
-    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User
     config:
         fields:
             firstName: "String"

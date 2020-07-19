@@ -6,8 +6,11 @@ namespace Overblog\GraphQLBundle\Hydrator;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
@@ -22,25 +25,44 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class Hydrator
 {
-    private static AnnotationReader $annotationReader;
+    private AnnotationReader $annotationReader;
     private PropertyAccessorInterface $propertyAccessor;
     private ServiceLocator $converters;
+    private EntityManagerInterface $em;
+    private array $args;
 
-    public function __construct(PropertyAccessorInterface $propertyAccessor, ServiceLocator $converters)
-    {
+    public function __construct(
+        PropertyAccessorInterface $propertyAccessor,
+        ServiceLocator $converters,
+        EntityManagerInterface $entityManager
+    ) {
+        if (!class_exists(AnnotationReader::class) || !class_exists(AnnotationRegistry::class)) {
+            throw new RuntimeException('In order to use graphql annotation, you need to require doctrine annotations');
+        }
+
+        AnnotationRegistry::registerLoader('class_exists');
+
+        $this->annotationReader = new AnnotationReader();
         $this->propertyAccessor = $propertyAccessor;
         $this->converters = $converters;
+        $this->em = $entityManager;
     }
 
-    public function hydrate(ArgumentInterface $args, ResolveInfo $info)
+    /**
+     * @throws ReflectionException
+     */
+    public function hydrate(ArgumentInterface $args, ResolveInfo $info): Models
     {
+        $this->args = $args->getArrayCopy();
         $requestedField = $info->parentType->getField($info->fieldName);
 
         $models = new Models();
 
-        foreach ($args->getArrayCopy() as $argName => $input) {
+        foreach ($this->args as $argName => $input) {
+            /** @var ListOfType|NonNull $argType */
             $argType = $requestedField->getArg($argName)->getType();
 
+            /** @var InputObjectType $inputType */
             $inputType = $argType->getOfType();
 
             if (!isset($inputType->config['model'])) {
@@ -57,14 +79,40 @@ class Hydrator
      * @param mixed $inputValues
      * @throws ReflectionException
      */
-    private function hydrateInputType(InputObjectType $inputType, $inputValues)
+    private function hydrateInputType(InputObjectType $inputType, $inputValues): object
     {
         if (empty($inputType->config['model'])) {
             return $inputValues;
         }
 
-        $model = new $inputType->config['model'];
-        $reflectionClass = new ReflectionClass($model);
+        // Check if target class is a Doctrine entity
+        $modelName = $inputType->config['model'];
+        $reflectionClass = new ReflectionClass($modelName);
+        $entityAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);
+
+        if (null !== $entityAnnotation) {
+            $path = explode('.', $entityAnnotation->identifier);
+
+            // If a path is provided, search the value from top argument down
+            if (count($path) === 1) {
+                $temp = &$this->args;
+                foreach($path as $key) {
+                    $temp = &$temp[$key];
+                }
+                $id = $temp;
+            } elseif (isset($inputValues[$entityAnnotation->identifier])) {
+                $id = $inputValues[$entityAnnotation->identifier];
+            } elseif (isset($this->args[$entityAnnotation->identifier])) {
+                $id = $this->args[$entityAnnotation->identifier];
+            } else {
+                $id = null;
+            }
+
+            // entity
+            $entity = $this->em->find($modelName, $id);
+        }
+
+        $model = new $modelName();
         $annotationMapping = $this->readAnnotationMapping($reflectionClass);
         $fields = $inputType->getFields();
 
@@ -96,6 +144,12 @@ class Hydrator
         return $model;
     }
 
+    /**
+     * @param $fieldObject
+     * @param $fieldValue
+     * @return mixed
+     * @throws ReflectionException
+     */
     private function hydrateValue($fieldObject, $fieldValue)
     {
         $field = Type::getNamedType($fieldObject->getType());
@@ -107,6 +161,12 @@ class Hydrator
         return $fieldValue;
     }
 
+    /**
+     * @param $fieldObject
+     * @param $fieldValue
+     * @return array
+     * @throws ReflectionException
+     */
     private function hydrateCollectionValue($fieldObject, $fieldValue)
     {
         $result = [];
@@ -128,10 +188,8 @@ class Hydrator
         $reflectionClass = new ReflectionClass($model);
         $property = $reflectionClass->getProperty($targetName);
 
-        $reader = self::getAnnotationReader();
-
         /** @var ConverterAnnotationInterface $annotation */
-        $annotation = $reader->getPropertyAnnotation($property, ConverterAnnotationInterface::class);
+        $annotation = $this->annotationReader->getPropertyAnnotation($property, ConverterAnnotationInterface::class);
 
         if (null !== $annotation) {
             $converter = $this->converters->get($annotation::getConverterClass());
@@ -141,22 +199,7 @@ class Hydrator
         return $value;
     }
 
-    public static function getAnnotationReader(): AnnotationReader
-    {
-        if (!isset(self::$annotationReader)) {
-            if (!class_exists(AnnotationReader::class) || !class_exists(AnnotationRegistry::class)) {
-                throw new RuntimeException('In order to use graphql annotation, you need to require doctrine annotations');
-            }
-
-            AnnotationRegistry::registerLoader('class_exists');
-            self::$annotationReader = new AnnotationReader();
-        }
-
-        return self::$annotationReader;
-    }
-
-
-    public function readAnnotationMapping(ReflectionClass $reflectionClass): array
+    private function readAnnotationMapping(ReflectionClass $reflectionClass): array
     {
         $reader = AnnotationParser::getAnnotationReader();
         $properties = $reflectionClass->getProperties();

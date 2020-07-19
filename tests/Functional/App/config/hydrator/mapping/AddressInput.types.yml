@@ -1,6 +1,6 @@
 AddressInput:
     type: input-object
-    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Address
+    model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Address
     config:
         fields:
             street: String!

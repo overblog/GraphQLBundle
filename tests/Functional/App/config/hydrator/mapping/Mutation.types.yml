@@ -12,4 +12,5 @@ Mutation:
                 type: Boolean
                 resolve: '@=mut("update_user", [model])'
                 args:
+                    id: Int!
                     input: UserUpdateInput!

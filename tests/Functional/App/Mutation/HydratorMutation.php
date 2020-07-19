@@ -10,16 +10,17 @@ use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User;
 
 class HydratorMutation implements MutationInterface
 {
-    public function createUser(Models $models, $args)
+    public function createUser(Models $models)
     {
-        $x = $models->input;
+        $model = $models->get('input');
 
-
-        return (bool) $x;
+        return true;
     }
 
-    public function updateUser(User $user)
+    public function updateUser(Models $models)
     {
+        $model = $models->get('input');
 
+        return true;
     }
 }

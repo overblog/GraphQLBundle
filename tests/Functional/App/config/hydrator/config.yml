@@ -18,3 +18,6 @@ services:
         tags:
             - { name: "overblog_graphql.mutation", alias: "update_user", method: "updateUser" }
             - { name: "overblog_graphql.mutation", alias: "create_user", method: "createUser" }
+
+    Doctrine\ORM\EntityManager:
+        factory: ['Overblog\GraphQLBundle\Tests\Functional\App\Service\EntityManagerServiceFactory', 'createEntityManager']

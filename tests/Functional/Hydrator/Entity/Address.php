@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,29 +7,27 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class Post
+class Address
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    public int $id;
+    public ?int $id = null;
 
     /**
      * @ORM\Column
      */
-    public string $title;
+    public string $street;
 
     /**
      * @ORM\Column
      */
-    public string $text;
+    public string $city;
 
-    public function __construct(int $id, string $title, string $text)
-    {
-        $this->id = $id;
-        $this->title = $title;
-        $this->text = $text;
-    }
+    /**
+     * @ORM\Column(type="integer")
+     */
+    public int $zipCode;
 }

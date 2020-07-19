@@ -8,6 +8,9 @@ use Overblog\GraphQLBundle\Hydrator\Annotation as Hydrator;
 use Overblog\GraphQLBundle\Hydrator\Converters as Convert;
 use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Post;
 
+/**
+ * @Hydrator\Model(identifier="")
+ */
 class User
 {
     /**
@@ -25,7 +28,7 @@ class User
 
     /**
      * @Hydrator\Field("postId")
-     * @Convert\Entity("Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\Post")
+     * @Convert\Entity("Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Post")
      */
     public Post $post;
 
