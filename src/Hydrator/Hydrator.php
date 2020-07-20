@@ -8,6 +8,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\NonUniqueResultException;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
@@ -16,7 +18,9 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Hydrator\Annotation\Field;
+use Overblog\GraphQLBundle\Hydrator\Annotation\Model;
 use Overblog\GraphQLBundle\Hydrator\Converters\ConverterAnnotationInterface;
+use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
@@ -76,8 +80,12 @@ class Hydrator
     }
 
     /**
+     * @param InputObjectType $inputType
      * @param mixed $inputValues
+     * @return object
+     * @throws MappingException
      * @throws ReflectionException
+     * @throws NonUniqueResultException
      */
     private function hydrateInputType(InputObjectType $inputType, $inputValues): object
     {
@@ -85,34 +93,18 @@ class Hydrator
             return $inputValues;
         }
 
-        // Check if target class is a Doctrine entity
         $modelName = $inputType->config['model'];
         $reflectionClass = new ReflectionClass($modelName);
+
         $entityAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);
+        $modelAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Model::class);
 
         if (null !== $entityAnnotation) {
-            $path = explode('.', $entityAnnotation->identifier);
-
-            // If a path is provided, search the value from top argument down
-            if (count($path) === 1) {
-                $temp = &$this->args;
-                foreach($path as $key) {
-                    $temp = &$temp[$key];
-                }
-                $id = $temp;
-            } elseif (isset($inputValues[$entityAnnotation->identifier])) {
-                $id = $inputValues[$entityAnnotation->identifier];
-            } elseif (isset($this->args[$entityAnnotation->identifier])) {
-                $id = $this->args[$entityAnnotation->identifier];
-            } else {
-                $id = null;
-            }
-
-            // entity
-            $entity = $this->em->find($modelName, $id);
+            $model = $this->getEntityModel($modelName, $modelAnnotation);
+        } else {
+            $model = new $modelName();
         }
 
-        $model = new $modelName();
         $annotationMapping = $this->readAnnotationMapping($reflectionClass);
         $fields = $inputType->getFields();
 
@@ -142,6 +134,48 @@ class Hydrator
         }
 
         return $model;
+    }
+
+    /**
+     * @param $modelAnnotation
+     *
+     * @return int|mixed|string|null
+     *
+     * @throws MappingException
+     * @throws NonUniqueResultException
+     */
+    private function getEntityModel(string $modelName, ?object $modelAnnotation)
+    {
+        $identifier = $modelAnnotation->identifier ?? 'id';
+        $path = explode('.', $identifier);
+
+        // If a path is provided, search the value from top argument down
+        if (count($path) > 1) {
+            $temp = &$this->args;
+            foreach($path as $key) {
+                $temp = &$temp[$key];
+            }
+            $id = $temp;
+        } elseif (isset($inputValues[$identifier])) {
+            $id = $inputValues[$identifier];
+        } elseif (isset($this->args[$identifier])) {
+            $id = $this->args[$identifier];
+        } else {
+            return new $modelName();
+        }
+
+        // entity
+        $meta = $this->em->getClassMetadata($modelName);
+        $entityIdentifier = $meta->getSingleIdentifierFieldName();
+
+        $builder = $this->em->createQueryBuilder()
+            ->select('o')
+            ->from($modelName, 'o')
+            ->where("o.$entityIdentifier = :identifier")
+            ->setParameter('identifier', $id);
+
+        // TODO: this shouldn't return null
+        return $builder->getQuery()->getOneOrNullResult();
     }
 
     /**

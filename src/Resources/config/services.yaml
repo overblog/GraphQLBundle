@@ -110,5 +110,6 @@ services:
         arguments:
             - '@property_accessor'
             - !tagged_locator 'overblog_graphql.hydrator.converter'
+            - '@Doctrine\ORM\EntityManager'
         tags:
             - { name: overblog_graphql.global_variable, alias: hydrator, public: false }

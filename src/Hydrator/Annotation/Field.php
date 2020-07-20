@@ -19,6 +19,6 @@ class Field
 
     public function __construct($values)
     {
-        $this->name = $values['value'] ?? $values['name'];
+        $this->name = $values['value'] ?? $values['mapFrom'];
     }
 }

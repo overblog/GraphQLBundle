@@ -8,8 +8,8 @@ UserCreateInput:
             lastName: "String"
             birthdate: "BirthdateInput"
             address: "AddressInput"
-            friends: "[UserCreateInput!]!"
-            postId: Int
+            friends: "[UserCreateInput!]"
+            posts: "[PostInput]"
 
 UserUpdateInput:
     type: input-object

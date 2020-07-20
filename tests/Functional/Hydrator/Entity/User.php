@@ -10,14 +10,13 @@ use Overblog\GraphQLBundle\Hydrator\Converters as Convert;
 
 /**
  * @ORM\Entity
- * @Hydrator\Model(identifier="")
  */
 class User
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column
+     * @ORM\Column(type="integer")
      */
     public ?int $id = null;
 
@@ -38,45 +37,25 @@ class User
     public string $lastName;
 
     /**
-     * @ORM\Column
+     * @ORM\OneToOne(targetEntity="Address")
      */
     public ?Address $address = null;
 
     /**
-     * @ORM\Column
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="friends")
      */
-    public array $friends = [];
+    public iterable $friends = [];
 
     /**
-     * @ORM\OneToMany(targetEntity="Post")
+     * @ORM\OneToMany(targetEntity="Post", mappedBy="user", cascade={"PERSIST"})
      * @Hydrator\Field("postId")
      * @var Post[]
      */
-    public array $posts;
+    public iterable $posts;
 
     /**
-     * @ORM\Column
+     * @ORM\OneToOne(targetEntity="Birthdate")
      * @Hydrator\Field("birthdate")
      */
     public Birthdate $birth;
-
-    public function __construct(
-        ?int $id,
-        string $nickname,
-        string $firstName,
-        string $lastName,
-        ?Address $address,
-        array $friends,
-        array $posts,
-        Birthdate $birth
-    ) {
-        $this->id = $id;
-        $this->nickname = $nickname;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->address = $address;
-        $this->friends = $friends;
-        $this->posts = $posts;
-        $this->birth = $birth;
-    }
 }

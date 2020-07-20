@@ -15,6 +15,7 @@ overblog_graphql:
 
 services:
     Overblog\GraphQLBundle\Tests\Functional\App\Mutation\HydratorMutation:
+        arguments: ['@Doctrine\ORM\EntityManager']
         tags:
             - { name: "overblog_graphql.mutation", alias: "update_user", method: "updateUser" }
             - { name: "overblog_graphql.mutation", alias: "create_user", method: "createUser" }

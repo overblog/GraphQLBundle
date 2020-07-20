@@ -28,10 +28,8 @@ class Post
      */
     public string $text;
 
-    public function __construct(int $id, string $title, string $text)
-    {
-        $this->id = $id;
-        $this->title = $title;
-        $this->text = $text;
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="posts")
+     */
+    public User $user;
 }
