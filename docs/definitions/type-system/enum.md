@@ -19,7 +19,8 @@ Episode:
                 #deprecationReason: "Just because"
             EMPIRE:
                 # We can use a PHP constant to avoid a magic number
-                value: '@=constant("App\\StarWars\\Movies::MOVIE_EMPIRE")'
+                # in previous versions this was done with '@=constant("App\\StarWars\\Movies::MOVIE_EMPIRE")'
+                value: !php/const App\StarWars\Movies::MOVIE_EMPIRE
                 description: "Released in 1980."
             JEDI: 6 # using the short syntax (JEDI value equal to 6)
             FORCEAWAKENS: # in this case FORCEAWAKENS value = FORCEAWAKENS
@@ -35,6 +36,7 @@ Note: At the moment, doctrine annotations on constants are not supported. So if 
 
 namespace AppBundle;
 
+use App\StarWars\Movies;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
@@ -48,7 +50,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class Episode
 {
     const NEWHOPE = 4;
-    const EMPIRE = 'constant("App\\StarWars\\Movies::MOVIE_EMPIRE")';
+    const EMPIRE = Movies::MOVIE_EMPIRE;
     const JEDI = 6;
     const FORCEAWAKENS = 'FORCEAWAKENS';
     
