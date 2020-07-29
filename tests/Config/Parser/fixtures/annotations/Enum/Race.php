@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Enum;
 
 use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Tests\Config\Parser\Constants;
 
 /**
  * @GQL\Enum(values={
@@ -18,7 +19,7 @@ class Race
     public const HUMAIN = 1;
     public const CHISS = '2';
     public const ZABRAK = '3';
-    public const TWILEK = '4';
+    public const TWILEK = Constants::TWILEK;
 
     /**
      * @var int|string
