@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Hydrator;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -13,10 +12,30 @@ use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Address;
 use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Birthdate;
 use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Post;
 use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User;
+use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Fixture\HydratorDatabase;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class HydratorTest extends TestCase
 {
+    private string $userOwnProps = <<<FRAGMENT
+    fragment userOwnProps on User {
+        id
+        nickname
+        firstName
+        lastName
+    }
+    FRAGMENT;
+
+    private string $postOwnProps = <<<FRAGMENT
+    fragment postOwnProps on Post {
+        id
+        title
+        text
+    }
+    FRAGMENT;
+
+
+
     /** @throws DBALException */
     protected function setUp(): void
     {
@@ -24,7 +43,12 @@ class HydratorTest extends TestCase
         static::bootKernel(['test_case' => 'hydrator']);
 
         // Create database
-        $conn = DriverManager::getConnection(['driver' => 'pdo_mysql', 'user' => 'root', 'password' => 'root']);
+        $conn = DriverManager::getConnection([
+            'driver' => 'pdo_mysql',
+            'user' => 'root',
+            'password' => 'root'
+        ]);
+
         $manager = $conn->getSchemaManager();
         $manager->dropAndCreateDatabase('overblog_testdb');
 
@@ -39,6 +63,8 @@ class HydratorTest extends TestCase
 
         $tool = new SchemaTool($em);
         $tool->updateSchema($classes);
+
+        HydratorDatabase::populateDB($em);
     }
 
     protected function tearDown(): void
@@ -52,11 +78,11 @@ class HydratorTest extends TestCase
     /**
      * @test
      */
-    public function simpleUserAndPostsCreate(): void
+    public function createUserAndPosts(): void
     {
-        $query = <<<'QUERY'
+        $query = <<<QUERY
         mutation {
-            createUser(
+            createUserAndPosts(
                 input: {
                     username: "murtukov"
                     firstName: "Timur"
@@ -66,58 +92,60 @@ class HydratorTest extends TestCase
                         {title: "Lorem Ipsum 2", text: "Lorem ipsum dolor sit amet 2"},
                     ]
                 }
-            )
+            ) {
+                ...userOwnProps
+                posts { ...postOwnProps }
+            }
         }
+        $this->userOwnProps
+        $this->postOwnProps
         QUERY;
 
         $result = self::executeGraphQLRequest($query);
 
-//        $this->assertTrue(empty($result['errors']));
-//        $this->assertTrue($result['data']['noValidation']);
+        /** @var User $user */
+        $user = $result['data']['createUserAndPosts'];
+
+        $this->assertNotNull($user['id']);
+        $this->assertEquals('murtukov', $user['nickname']);
+        $this->assertEquals('Timur', $user['firstName']);
+        $this->assertEquals('Murtukov', $user['lastName']);
+
+        $this->assertCount(2, $user['posts']);
+
+        $this->assertNotNull($user['posts'][0]['id']);
+        $this->assertNotNull($user['posts'][1]['id']);
+
+        $this->assertEquals('Lorem ipsum dolor sit amet 1', $user['posts'][0]['text']);
+        $this->assertEquals('Lorem ipsum dolor sit amet 2', $user['posts'][1]['text']);
+        $this->assertEquals('Lorem Ipsum 1', $user['posts'][0]['title']);
+        $this->assertEquals('Lorem Ipsum 2', $user['posts'][1]['title']);
     }
 
     /**
      * @test
      */
-    public function updateEntity()
+    public function updateUserAndPosts()
     {
-        $query = <<<'QUERY'
+        $query = <<<QUERY
         mutation {
-            updateUser(
+            updateUserAndPosts(
                 input: {
-                    id: 15
+                    id: "4"
                     username: "murtukov"
                     firstName: "Timur"
                     lastName: "Murtukov"
-                    address: {
-                        street: "Proletarskaya 28"
-                        city: "Izberbash"
-                        zipCode: 368500
-                    }
-                    friends: [
-                        {
-                            username: "Clay007"
-                            firstName: "Clay"
-                            lastName: "Jensen",
-                            friends: []
-                        },
-                        {
-                            username: "frodo37"
-                            firstName: "Frodo"
-                            lastName: "Baggins"
-                            friends: []
-                        }
-                    ]
-                    posts: [
-                        
-                    ]
-            })
+                    posts: [3, 4, 5]
+                }
+            ) {
+                ...userOwnProps
+                posts { ...postOwnProps }
+            }
         }
+        $this->userOwnProps
+        $this->postOwnProps
         QUERY;
 
         $result = self::executeGraphQLRequest($query);
-
-//        $this->assertTrue(empty($result['errors']));
-//        $this->assertTrue($result['data']['noValidation']);
     }
 }

@@ -7,4 +7,6 @@ namespace Overblog\GraphQLBundle\Hydrator\Converters;
 interface ConverterAnnotationInterface
 {
     public static function getConverterClass(): string;
+
+    public function isCollection(): bool;
 }

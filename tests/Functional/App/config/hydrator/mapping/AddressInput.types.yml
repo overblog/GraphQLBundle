@@ -1,3 +1,11 @@
+Address:
+    type: object
+    config:
+        fields:
+            street: String!
+            city: String!
+            zipCode: Int!
+
 AddressInput:
     type: input-object
     model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Address

@@ -30,4 +30,18 @@ class Address
      * @ORM\Column(type="integer")
      */
     public int $zipCode;
+
+    /**
+     * @param array<int, int> $values
+     */
+    public function populateFromArray(array $values): self
+    {
+        [$street, $city, $zipCode] = $values;
+
+        $this->street  = $street;
+        $this->city    = $city;
+        $this->zipCode = $zipCode;
+
+        return $this;
+    }
 }

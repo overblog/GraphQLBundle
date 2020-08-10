@@ -37,7 +37,7 @@ class User
     public string $lastName;
 
     /**
-     * @ORM\OneToOne(targetEntity="Address")
+     * @ORM\OneToOne(targetEntity="Address", cascade={"PERSIST"})
      */
     public ?Address $address = null;
 
@@ -54,7 +54,7 @@ class User
     public iterable $posts;
 
     /**
-     * @ORM\OneToOne(targetEntity="Birthdate")
+     * @ORM\OneToOne(targetEntity="Birthdate", cascade={"PERSIST"})
      * @Hydrator\Field("birthdate")
      */
     public Birthdate $birth;

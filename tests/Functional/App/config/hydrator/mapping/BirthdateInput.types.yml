@@ -1,3 +1,11 @@
+Birthdate:
+    type: object
+    config:
+        fields:
+            day: Int!
+            month: Int!
+            year: Int!
+
 BirthdateInput:
     type: input-object
     model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Birthdate

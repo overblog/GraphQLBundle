@@ -22,8 +22,15 @@ class Service implements ConverterAnnotationInterface
      */
     public string $method;
 
+    public bool $isCollection;
+
     public static function getConverterClass(): string
     {
         return static::class.'Converter';
+    }
+
+    public function isCollection(): bool
+    {
+        return $this->isCollection ?? false;
     }
 }

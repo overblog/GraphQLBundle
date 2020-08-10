@@ -18,7 +18,7 @@ services:
         arguments: ['@Doctrine\ORM\EntityManager']
         tags:
             - { name: "overblog_graphql.mutation", alias: "update_user", method: "updateUser" }
-            - { name: "overblog_graphql.mutation", alias: "create_user", method: "createUser" }
+            - { name: "overblog_graphql.mutation", alias: "create_user_and_posts", method: "createUserAndPosts" }
 
     Doctrine\ORM\EntityManager:
         factory: ['Overblog\GraphQLBundle\Tests\Functional\App\Service\EntityManagerServiceFactory', 'createEntityManager']

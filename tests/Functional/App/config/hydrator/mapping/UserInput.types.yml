@@ -1,3 +1,16 @@
+User:
+    type: object
+    config:
+        fields:
+            id: "ID!"
+            nickname: "String!"
+            firstName: "String"
+            lastName: "String"
+            birthdate: "Birthdate"
+            address: "Address"
+            friends: "[User]"
+            posts: "[Post]"
+
 UserCreateInput:
     type: input-object
     model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User
@@ -16,8 +29,11 @@ UserUpdateInput:
     model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User
     config:
         fields:
+            id: "ID!"
+            username: "String!"
             firstName: "String"
             lastName: "String"
             birthdate: "BirthdateInput"
             address: "AddressInput"
-            friends: "[UserUpdateInput]"
+            friends: "[UserCreateInput!]"
+            posts: "[Int]"

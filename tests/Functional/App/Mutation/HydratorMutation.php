@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 use Doctrine\ORM\EntityManagerInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Hydrator\Models;
-use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Model\User;
+use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User;
 
 class HydratorMutation implements MutationInterface
 {
@@ -18,20 +18,23 @@ class HydratorMutation implements MutationInterface
         $this->em = $entityManager;
     }
 
-    public function createUser(Models $models)
+    public function createUserAndPosts(Models $models): User
     {
         $model = $models->get('input');
 
         $this->em->persist($model);
         $this->em->flush();
 
-        return true;
+        return $model;
     }
 
-    public function updateUser(Models $models)
+    public function updateUserAndPosts(Models $models)
     {
         $model = $models->get('input');
 
-        return true;
+        $this->em->persist($model);
+        $this->em->flush();
+
+        return $model;
     }
 }

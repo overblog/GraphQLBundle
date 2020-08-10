@@ -32,4 +32,17 @@ class Post
      * @ORM\ManyToOne(targetEntity="User", inversedBy="posts")
      */
     public User $user;
+
+    /**
+     * @param array<int, int> $values
+     */
+    public function populateFromArray(array $values): self
+    {
+        [$title, $text] = $values;
+
+        $this->title = $title;
+        $this->text  = $text;
+
+        return $this;
+    }
 }

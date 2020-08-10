@@ -7,9 +7,9 @@ namespace Overblog\GraphQLBundle\Hydrator;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\NonUniqueResultException;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
@@ -20,19 +20,29 @@ use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Hydrator\Annotation\Field;
 use Overblog\GraphQLBundle\Hydrator\Annotation\Model;
 use Overblog\GraphQLBundle\Hydrator\Converters\ConverterAnnotationInterface;
-use Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\User;
+use Overblog\GraphQLBundle\Hydrator\Converters\Entity;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class Hydrator
 {
+    private const ENTITY_ANNOTATIONS = [
+        ORM\OneToOne::class,
+        ORM\OneToMany::class,
+        ORM\ManyToOne::class,
+        ORM\ManyToMany::class
+    ];
+
+    private static array $annotationCache = [];
+
     private AnnotationReader $annotationReader;
     private PropertyAccessorInterface $propertyAccessor;
-    private ServiceLocator $converters;
     private EntityManagerInterface $em;
+    private ServiceLocator $converters;
     private array $args;
 
     public function __construct(
@@ -53,7 +63,7 @@ class Hydrator
     }
 
     /**
-     * @throws ReflectionException
+     * @throws ORM\MappingException|NonUniqueResultException|ReflectionException|Exception
      */
     public function hydrate(ArgumentInterface $args, ResolveInfo $info): Models
     {
@@ -80,32 +90,32 @@ class Hydrator
     }
 
     /**
-     * @param InputObjectType $inputType
      * @param mixed $inputValues
+     *
      * @return object
-     * @throws MappingException
-     * @throws ReflectionException
-     * @throws NonUniqueResultException
+     *
+     * @throws ORM\MappingException|ReflectionException|NonUniqueResultException
      */
-    private function hydrateInputType(InputObjectType $inputType, $inputValues): object
+    private function hydrateInputType(InputObjectType $inputType, $inputValues, object $model = null): object
     {
         if (empty($inputType->config['model'])) {
             return $inputValues;
         }
 
-        $modelName = $inputType->config['model'];
-        $reflectionClass = new ReflectionClass($modelName);
+        $modelName = null !== $model ? get_class($model) : $inputType->config['model'];
+        $modelReflection = new ReflectionClass($modelName);
 
-        $entityAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);
-        $modelAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Model::class);
+        $entityAnnotation = $this->annotationReader->getClassAnnotation($modelReflection, Orm\Entity::class);
 
-        if (null !== $entityAnnotation) {
-            $model = $this->getEntityModel($modelName, $modelAnnotation);
-        } else {
-            $model = new $modelName();
+        if (null === $model) {
+            if (null !== $entityAnnotation) {
+                $model = $this->getEntityModel($modelName, $inputValues);
+            } else {
+                $model = new $modelName();
+            }
         }
 
-        $annotationMapping = $this->readAnnotationMapping($reflectionClass);
+        $annotationMapping = $this->readAnnotationMapping($modelReflection);
         $fields = $inputType->getFields();
 
         foreach ($inputValues as $fieldName => $fieldValue) {
@@ -114,21 +124,22 @@ class Hydrator
             }
 
             $fieldObject = $fields[$fieldName];
-            $targetName = $annotationMapping[$fieldName] ?? $fieldName;
+            $targetField = $annotationMapping[$fieldName] ?? $fieldName;
 
-            if ($this->propertyAccessor->isWritable($model, $targetName)) {
-                $type = $fieldObject->getType();
+            if ($this->propertyAccessor->isWritable($model, $targetField)) {
 
-                if (Type::getNullableType($type) instanceof ListOfType) {
-                    $resultValue = $this->hydrateCollectionValue($fieldObject, $fieldValue);
-                } else {
-                    $resultValue = $this->hydrateValue($fieldObject, $fieldValue);
-                }
+                $resultValue = $this->resolveConverter(
+                   $modelName,
+                   $targetField,
+                   $fieldValue,
+                   $modelReflection,
+                   $fieldObject
+               );
 
                 $this->propertyAccessor->setValue(
                     $model,
-                    $targetName,
-                    $this->convertValue($resultValue, $model, $targetName)
+                    $targetField,
+                    $resultValue
                 );
             }
         }
@@ -136,16 +147,152 @@ class Hydrator
         return $model;
     }
 
+    public function resolveConverter($modelName, $targetField, $fieldValue, $modelReflection, $fieldObject)
+    {
+        # 1. Check if converter declared explicitely -----------------------------------------------------------
+        $converterAnnotation = $this->getPropertyAnnotation($modelName, $targetField, ConverterAnnotationInterface::class);
+        if (null !== $converterAnnotation) {
+            $converter = $this->converters->get($converterAnnotation::getConverterClass());
+            $resultValue = $converter->convert($fieldValue, $converterAnnotation);
+        }
+
+        # ------------------------------------------------------------------------------------------------------
+
+        # 2. Check if an entity converter can be applied automatically (single or collection)
+        // Check if target property has a type-hint which is en Entity itself
+        $typeHint = $modelReflection->getProperty($targetField)->getType();
+        if (null !== $typeHint && class_exists((string) $typeHint)) {
+            $typeAnno = $this->annotationReader->getClassAnnotation(new ReflectionClass($typeHint), ORM\Entity::class);
+            if (null !== $typeAnno) {
+                // use entity converter
+                $converter = $this->converters->get(Converters\Entity::class);
+                $a = new Converters\Entity;
+                $a->value = (string) $typeHint;
+                $resultValue = $converter->convert($fieldValue, $a);
+            }
+        }
+
+        // Check if target property has a Doctrine annotation declared on it
+        foreach (self::ENTITY_ANNOTATIONS as $annotationName) {
+            /** @var ORM\OneToOne|ORM\OneToMany|ORM\ManyToOne|ORM\ManyToMany $a */
+            $columnAnnotation = $this->getPropertyAnnotation($modelName, $targetField, $annotationName);
+
+            if (null !== $columnAnnotation) {
+                if (strpos($columnAnnotation->targetEntity, '\\') === false) {
+                    // Fix namespace
+                    $columnAnnotation->targetEntity = $modelReflection->getNamespaceName()."\\$columnAnnotation->targetEntity";
+                }
+
+                switch (true) {
+                    case $columnAnnotation instanceof ORM\OneToOne:
+                    case $columnAnnotation instanceof ORM\ManyToOne:
+                        $converter = $this->converters->get($columnAnnotation->targetEntity);
+                        $entity = new Entity();
+                        $entity->value = "";
+                        $entity->isCollection = true;
+                        $resultValue = $converter->convert($fieldValue, $entity);
+                        break;
+
+                    case $columnAnnotation instanceof ORM\OneToMany:
+                    case $columnAnnotation instanceof ORM\ManyToMany:
+                        $converter = $this->converters->get($columnAnnotation->targetEntity);
+                        $entity = new Entity();
+                        $entity->value = "";
+                        $entity->isCollection = true;
+                        $resultValue = $converter->convert($fieldValue, $columnAnnotation);
+                        break;
+                }
+
+                break;
+            }
+        }
+
+        # ------------------------------------------------------------------------------------------------------
+
+        # 3. Use default converter (single or collection)
+        if (Type::getNullableType($fieldObject->getType()) instanceof ListOfType) {
+            $resultValue = $this->hydrateCollectionValue($fieldObject, $fieldValue, $modelName);
+        } else {
+            $resultValue = $this->hydrateValue($fieldObject, $fieldValue, $resultValue);
+        }
+
+        return $resultValue;
+    }
+
     /**
-     * @param $modelAnnotation
+     * Returns property annotation from cache.
      *
+     * @throws ReflectionException
+     */
+    private function getPropertyAnnotation(string $className, string $propertyName, string $annotationName): ?object
+    {
+        self::$annotationCache[$className][$propertyName] ??= $this->annotationReader->getPropertyAnnotations(new ReflectionProperty($className, $propertyName));
+
+        foreach (self::$annotationCache[$className][$propertyName] as $annotation) {
+            if ($annotation instanceof $annotationName) {
+                return $annotation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns class annotation from cache.
+     *
+     * @throws ReflectionException
+     */
+    private function getClassAnnotation(string $className, string $annotationName): ?object
+    {
+        static $cache = [];
+
+        return $cache[$className][$annotationName] ??=
+            $this->annotationReader->getClassAnnotation(new ReflectionClass($className), $annotationName);
+    }
+
+    /**
+     * @param string $modelName
+     * @param array $inputValues
      * @return int|mixed|string|null
      *
-     * @throws MappingException
-     * @throws NonUniqueResultException
+     * @throws ORM\MappingException|NonUniqueResultException|ReflectionException
      */
-    private function getEntityModel(string $modelName, ?object $modelAnnotation)
+    private function getEntityModel(string $modelName, array $inputValues)
     {
+        $idValue = $this->resolveIdValue($modelName, $inputValues);
+
+        if (null === $idValue) {
+            return new $modelName();
+        }
+
+        // entity
+        $meta = $this->em->getClassMetadata($modelName);
+        $entityIdField = $meta->getSingleIdentifierFieldName();
+
+        $builder = $this->em->createQueryBuilder()
+            ->select('o')
+            ->from($modelName, 'o')
+            ->where("o.$entityIdField = :identifier")
+            ->setParameter('identifier', $idValue);
+
+        $result = $builder->getQuery()->getOneOrNullResult();
+
+        if (null === $result) {
+            throw new Exception("Couldn't find entity");
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array|mixed|null
+     * @throws ReflectionException
+     */
+    private function resolveIdValue(string $modelName, array $inputValues)
+    {
+        $reflectionClass = new ReflectionClass($modelName);
+        $modelAnnotation = $this->annotationReader->getClassAnnotation($reflectionClass, Model::class);
+
         $identifier = $modelAnnotation->identifier ?? 'id';
         $path = explode('.', $identifier);
 
@@ -155,27 +302,10 @@ class Hydrator
             foreach($path as $key) {
                 $temp = &$temp[$key];
             }
-            $id = $temp;
-        } elseif (isset($inputValues[$identifier])) {
-            $id = $inputValues[$identifier];
-        } elseif (isset($this->args[$identifier])) {
-            $id = $this->args[$identifier];
-        } else {
-            return new $modelName();
+            return $temp;
         }
 
-        // entity
-        $meta = $this->em->getClassMetadata($modelName);
-        $entityIdentifier = $meta->getSingleIdentifierFieldName();
-
-        $builder = $this->em->createQueryBuilder()
-            ->select('o')
-            ->from($modelName, 'o')
-            ->where("o.$entityIdentifier = :identifier")
-            ->setParameter('identifier', $id);
-
-        // TODO: this shouldn't return null
-        return $builder->getQuery()->getOneOrNullResult();
+        return $inputValues[$identifier] ?? $this->args[$identifier] ?? null;
     }
 
     /**
@@ -184,12 +314,12 @@ class Hydrator
      * @return mixed
      * @throws ReflectionException
      */
-    private function hydrateValue($fieldObject, $fieldValue)
+    private function hydrateValue($fieldObject, $fieldValue, object $model = null)
     {
         $field = Type::getNamedType($fieldObject->getType());
 
         if ($field instanceof InputObjectType) {
-            $fieldValue = $this->hydrateInputType($field, $fieldValue);
+            $fieldValue = $this->hydrateInputType($field, $fieldValue, $model);
         }
 
         return $fieldValue;
@@ -198,15 +328,36 @@ class Hydrator
     /**
      * @param $fieldObject
      * @param $fieldValue
+     * @param string $modelName
      * @return array
+     * @throws ORM\MappingException
      * @throws ReflectionException
      */
-    private function hydrateCollectionValue($fieldObject, $fieldValue)
+    private function hydrateCollectionValue($fieldObject, $fieldValue, string $modelName)
     {
-        $result = [];
+        $isBuiltInTypes = Type::isBuiltInType(Type::getNamedType($fieldObject->getType()));
 
+        if (true === $isBuiltInTypes) {
+            $meta = $this->em->getClassMetadata($modelName);
+            $entityIdField = $meta->getSingleIdentifierFieldName();
+
+            $query = $this->em->createQuery(<<<DQL
+            SELECT o FROM $modelName o
+            WHERE o.$entityIdField IN (:ids)
+            INDEX BY o.$entityIdField
+            DQL);
+
+            $query->setParameter('ids', $fieldValue);
+            $entities = $query->getResult();
+
+            if (count($entities) !== count($fieldValue)) {
+                throw new Exception("Couldn't find all entities.");
+            }
+        }
+
+        $result = [];
         foreach ($fieldValue as $value) {
-            $result[] = $this->hydrateValue($fieldObject, $value);
+            $result[] = $this->hydrateValue($fieldObject, $value, $entities[$value] ?? null);
         }
 
         return $result;

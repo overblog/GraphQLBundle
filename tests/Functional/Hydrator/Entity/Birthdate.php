@@ -12,7 +12,7 @@ class Birthdate
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column
+     * @ORM\Column(type="integer")
      */
     public ?int $id = null;
 
@@ -30,4 +30,18 @@ class Birthdate
      * @ORM\Column(type="integer")
      */
     public int $year;
+
+    /**
+     * @param array<int, int> $values
+     */
+    public function populateFromArray(array $values): self
+    {
+        [$day, $month, $year] = $values;
+
+        $this->day   = $day;
+        $this->month = $month;
+        $this->year  = $year;
+
+        return $this;
+    }
 }

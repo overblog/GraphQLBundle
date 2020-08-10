@@ -1,7 +1,16 @@
+Post:
+    type: object
+    config:
+        fields:
+            id: "ID!"
+            title: "String!"
+            text: "String!"
+            user: "User"
+
 PostInput:
     type: input-object
     model: Overblog\GraphQLBundle\Tests\Functional\Hydrator\Entity\Post
     config:
         fields:
-            title: String!
-            text: String!
+            title: "String!"
+            text: "String!"
