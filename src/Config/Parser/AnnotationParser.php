@@ -734,11 +734,11 @@ class AnnotationParser implements PreParserInterface
     private static function getArgs(array $args = null, \ReflectionMethod $method = null): array
     {
         $config = [];
-        if ($args && !empty($args)) {
+        if (!empty($args)) {
             foreach ($args as $arg) {
                 $config[$arg->name] = ['type' => $arg->type]
-                    + ($arg->description ? ['description' => $arg->description] : [])
-                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
+                    + (null !== $arg->description ? ['description' => $arg->description] : [])
+                    + (null !== $arg->default ? ['defaultValue' => $arg->default] : []);
             }
         } elseif ($method) {
             $config = self::guessArgs($method);
