@@ -511,8 +511,8 @@ class AnnotationParser implements PreParserInterface
         if (!empty($fieldAnnotation->args)) {
             foreach ($fieldAnnotation->args as $arg) {
                 $args[$arg->name] = ['type' => $arg->type]
-                    + ($arg->description ? ['description' => $arg->description] : [])
-                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
+                    + (null !== $arg->description ? ['description' => $arg->description] : [])
+                    + (null !== $arg->default ? ['defaultValue' => $arg->default] : []);
             }
         } elseif ($reflector instanceof ReflectionMethod) {
             $args = self::guessArgs($reflector);
@@ -736,6 +736,28 @@ class AnnotationParser implements PreParserInterface
             if ($deprecatedAnnotation) {
                 $config['deprecationReason'] = $deprecatedAnnotation->value;
             }
+        }
+
+        return $config;
+    }
+
+    /**
+     * Get args config from an array of @Arg annotation or by auto-guessing if a method is provided.
+     *
+     * @param array            $args
+     * @param ReflectionMethod $method
+     */
+    private static function getArgs(array $args = null, ReflectionMethod $method = null): array
+    {
+        $config = [];
+        if ($args && !empty($args)) {
+            foreach ($args as $arg) {
+                $config[$arg->name] = ['type' => $arg->type]
+                    + ($arg->description ? ['description' => $arg->description] : [])
+                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
+            }
+        } elseif ($method) {
+            $config = self::guessArgs($method);
         }
 
         return $config;
