@@ -135,7 +135,7 @@ class AnnotationParserTest extends TestCase
                 'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
                 'victims' => [
                     'type' => '[Character]',
-                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims']],
+                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims', 'defaultValue' => false]],
                     'resolve' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
                 ],
             ],
