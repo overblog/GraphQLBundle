@@ -14,6 +14,7 @@ class Toto
     private $privatePropertyWithGetter = self::PRIVATE_PROPERTY_WITH_GETTER_VALUE;
     private $private_property_with_getter2 = self::PRIVATE_PROPERTY_WITH_GETTER2_VALUE;
     public $name = 'public';
+    private $enabled = true;
 
     /**
      * @return string
@@ -41,5 +42,13 @@ class Toto
     public function resolve()
     {
         return \func_get_args();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
     }
 }

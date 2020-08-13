@@ -24,6 +24,8 @@ class FieldResolver
         } elseif (\is_object($objectOrArray)) {
             if (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, 'get')) {
                 $value = $objectOrArray->$getter();
+            } elseif (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, 'is')) {
+                $value = $objectOrArray->$getter();
             } elseif (isset($objectOrArray->$fieldName)) {
                 $value = $objectOrArray->$fieldName;
             }
