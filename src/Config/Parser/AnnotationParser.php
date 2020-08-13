@@ -674,15 +674,24 @@ class AnnotationParser implements PreParserInterface
                     continue;
                 }
 
-                $annotationTarget = $annotation->targetType;
-                if (!$annotationTarget && $isDefaultTarget) {
-                    $annotationTarget = $targetType;
-                    if (!($annotation instanceof $expectedAnnotation)) {
+                $annotationTargets = $annotation->targetType;
+
+                if (null === $annotationTargets) {
+                    if ($isDefaultTarget) {
+                        $annotationTargets = [$targetType];
+                        if (!($annotation instanceof $expectedAnnotation)) {
+                            continue;
+                        }
+                    } else {
                         continue;
                     }
                 }
 
-                if ($annotationTarget !== $targetType) {
+                if (is_string($annotationTargets)) {
+                    $annotationTargets = [$annotationTargets];
+                }
+
+                if (!in_array($targetType, $annotationTargets)) {
                     continue;
                 }
 

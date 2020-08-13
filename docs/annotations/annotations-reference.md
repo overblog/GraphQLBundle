@@ -386,7 +386,7 @@ The class exposing the mutation(s) must be declared as a [service](https://symfo
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
+-   **targetType** : The GraphQL type(s) to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 
@@ -422,7 +422,7 @@ class MutationProvider {
 
 This annotation applies on classes to indicate that it contains methods tagged with `@Query` or `@Mutation`.  
 Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.  
-You can use `@Access` and/or `@IsPublic` on a provider class to add default access or visibility on defined query or mutation.  
+You can use `@Access` and/or `@IsPublic` on a provider class to add default access or visibility on defined query or mutation.
 
 Optional attributes:
 
@@ -436,7 +436,7 @@ The class exposing the query(ies) must be declared as a [service](https://symfon
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
+-   **targetType** : The GraphQL type(s) to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 
@@ -589,19 +589,18 @@ class Pet {
 }
 ```
 
-
 ## @Relay\Connection
 
-This annotation extends the `@Type` annotation so it uses the same attributes. 
+This annotation extends the `@Type` annotation so it uses the same attributes.
 It prepends the `RelayConnectionFieldsBuilder` to the list of fields builders.
 
 The extra attributes are :
 
 -   **edge** : The GraphQL type of the connection's edges
--   **node** : The GraphQL type of the node of the connection's edges' 
+-   **node** : The GraphQL type of the node of the connection's edges'
 
 You must define one and only one of this attributes.  
-If the `edge` attribute is used, the declaration is the same as adding a `RelayConnectionFieldsBuilder` 
+If the `edge` attribute is used, the declaration is the same as adding a `RelayConnectionFieldsBuilder`
 
 ```php
 <?php
