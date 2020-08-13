@@ -13,7 +13,7 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Mutation extends Field
 {
     /**
-     * The target types to attach this mutation to (usefull when multiple schemas are allowed).
+     * The target types to attach this mutation to (useful when multiple schemas are allowed).
      *
      * @var array<string>
      */
