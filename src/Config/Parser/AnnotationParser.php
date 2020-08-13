@@ -751,28 +751,6 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * Get args config from an array of @Arg annotation or by auto-guessing if a method is provided.
-     *
-     * @param array            $args
-     * @param ReflectionMethod $method
-     */
-    private static function getArgs(array $args = null, ReflectionMethod $method = null): array
-    {
-        $config = [];
-        if ($args && !empty($args)) {
-            foreach ($args as $arg) {
-                $config[$arg->name] = ['type' => $arg->type]
-                    + ($arg->description ? ['description' => $arg->description] : [])
-                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
-            }
-        } elseif ($method) {
-            $config = self::guessArgs($method);
-        }
-
-        return $config;
-    }
-
-    /**
      * Format an array of args to a list of arguments in an expression.
      */
     private static function formatArgsForExpression(array $args): string
