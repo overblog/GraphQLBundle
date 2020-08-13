@@ -100,10 +100,9 @@ class RootMutation {
 
 So, the resolver (the `createUser` method) will receive an instance of the class `UserRegisterInput` instead of an array of data. 
 
-
 ### Special arguments
 
-The arguments transformer is also able to transform some `specials arguments` (see auto-guessing) :
+The arguments transformer is also able to transform some `special arguments` (see auto-guessing) :
 
 - If the type `@info` is specified, it will be replaced by the current `ResolveInfo`
 
