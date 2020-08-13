@@ -39,6 +39,7 @@ class ResolverFieldTest extends TestCase
             ['not_object_or_array', 'String', null],
             ['name', $object, $object->name],
             ['enabled', $object, $object->isEnabled()],
+            ['isDisabled', $object, $object->isDisabled()],
         ];
     }
 }
