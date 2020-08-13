@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Gra
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeOf;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use stdClass;
 
 class IsTypeOfTest extends TestCase
 {
@@ -16,7 +17,7 @@ class IsTypeOfTest extends TestCase
 
     public function testIsTypeOfCompile(): void
     {
-        $this->assertTrue(eval('$value = new \stdClass(); return '.$this->expressionLanguage->compile('isTypeOf("stdClass")', ['value']).';'));
+        $this->assertTrue(eval('$value = new stdClass(); return '.$this->expressionLanguage->compile('isTypeOf("stdClass")', ['value']).';'));
     }
 
     /**
@@ -26,6 +27,6 @@ class IsTypeOfTest extends TestCase
      */
     public function testIsTypeOfEvaluate(): void
     {
-        $this->assertTrue($this->expressionLanguage->evaluate('isTypeOf("stdClass")', ['parentValue' => new \stdClass()]));
+        $this->assertTrue($this->expressionLanguage->evaluate('isTypeOf("stdClass")', ['parentValue' => new stdClass()]));
     }
 }

@@ -3,11 +3,14 @@ Mutation:
     config:
         fields:
             noValidation:
+                complexity: 1
+                public: true
                 type: Boolean
                 resolve: "@=mut('no_validation')"
                 args:
                     username:
                         type: String!
+                        defaultValue: 'Frank'
                         validation: ~
 
             simpleValidation:

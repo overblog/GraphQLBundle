@@ -15,10 +15,10 @@ class Planet
     /**
      * @GQL\Field(type="String!")
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
-    protected $population;
+    protected string $population;
 }

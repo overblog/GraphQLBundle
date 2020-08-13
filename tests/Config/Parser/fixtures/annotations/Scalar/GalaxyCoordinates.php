@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar;
 
+use DateTimeInterface;
 use GraphQL\Language\AST\Node;
 use Overblog\GraphQLBundle\Annotation as GQL;
+use function explode;
+use function implode;
 
 /**
  * @GQL\Scalar
@@ -14,32 +17,28 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class GalaxyCoordinates
 {
     /**
-     * @param \DateTimeInterface $value
-     *
      * @return string
      */
     public static function serialize(array $coordinates)
     {
-        return \implode(',', $coordinates);
+        return implode(',', $coordinates);
     }
 
     /**
      * @param mixed $value
      *
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public static function parseValue($value)
     {
-        return \explode(',', $value);
+        return explode(',', $value);
     }
 
     /**
-     * @param Node $valueNode
-     *
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
     public static function parseLiteral(Node $valueNode)
     {
-        return \explode(',', $valueNode->value);
+        return explode(',', $valueNode->value);
     }
 }

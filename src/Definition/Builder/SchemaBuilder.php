@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\Builder;
 
+use Closure;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\ValidatorExtension;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use function array_map;
 
 class SchemaBuilder
 {
-    /** @var TypeResolver */
-    private $typeResolver;
-
-    /** @var bool */
-    private $enableValidation;
+    private TypeResolver $typeResolver;
+    private bool $enableValidation;
 
     public function __construct(TypeResolver $typeResolver, bool $enableValidation = false)
     {
@@ -23,7 +22,7 @@ class SchemaBuilder
         $this->enableValidation = $enableValidation;
     }
 
-    public function getBuilder(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): \Closure
+    public function getBuilder(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): Closure
     {
         return function () use ($name, $queryAlias, $mutationAlias, $subscriptionAlias, $types): ExtensibleSchema {
             static $schema = null;
@@ -36,13 +35,7 @@ class SchemaBuilder
     }
 
     /**
-     * @param string      $name
-     * @param string|null $queryAlias
-     * @param string|null $mutationAlias
-     * @param string|null $subscriptionAlias
-     * @param string[]    $types
-     *
-     * @return ExtensibleSchema
+     * @param string[] $types
      */
     public function create(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): ExtensibleSchema
     {
@@ -76,7 +69,7 @@ class SchemaBuilder
             'types' => function () use ($types, $schemaName) {
                 $this->typeResolver->setCurrentSchemaName($schemaName);
 
-                return \array_map([$this->typeResolver, 'resolve'], $types);
+                return array_map([$this->typeResolver, 'resolve'], $types);
             },
         ];
     }

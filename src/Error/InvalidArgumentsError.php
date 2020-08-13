@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Error;
 
-use GraphQL\Error\UserError;
+use Exception;
+use GraphQL\Error\UserError as GraphQLUserError;
 
-/**
- * Class InvalidArgumentError.
- */
-class InvalidArgumentsError extends UserError
+class InvalidArgumentsError extends GraphQLUserError
 {
-    /** @var InvalidArgumentError */
-    private $errors = [];
+    /** @var InvalidArgumentError[] */
+    private array $errors;
 
-    public function __construct(array $errors, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct(array $errors, $message = '', $code = 0, Exception $previous = null)
     {
         $this->errors = $errors;
         parent::__construct($message, $code, $previous);
@@ -23,17 +21,15 @@ class InvalidArgumentsError extends UserError
     /**
      * @return InvalidArgumentError[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
     /**
      * Return a serializable array of validation errors for each argument.
-     *
-     * @return array
      */
-    public function toState()
+    public function toState(): array
     {
         $state = [];
         foreach ($this->getErrors() as $error) {

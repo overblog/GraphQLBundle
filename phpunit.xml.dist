@@ -15,14 +15,12 @@
     <testsuites>
         <testsuite name="OverblogGraphQLBundle Test Suite">
             <directory>./tests/</directory>
-            <directory>./lib/*/tests/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
             <directory>./src</directory>
-            <directory>./lib/*/src</directory>
         </whitelist>
     </filter>
 

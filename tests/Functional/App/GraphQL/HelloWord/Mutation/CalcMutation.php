@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 
 final class CalcMutation implements MutationInterface, AliasedInterface
 {
-    public function add($x, $y)
+    public function add(int $x, int $y): int
     {
         return $x + $y;
     }

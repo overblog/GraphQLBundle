@@ -4,41 +4,41 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Error;
 
+use Exception;
 use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use function is_array;
+use function is_string;
+use function sprintf;
 
 final class ErrorHandlerTest extends TestCase
 {
-    /** @var ErrorHandler */
-    private $errorHandler;
+    private ErrorHandler $errorHandler;
 
-    /** @var EventDispatcherInterface&MockObject */
+    /** @var EventDispatcherInterface */
     private $dispatcher;
-
-    /** @var ExceptionConverterInterface&MockObject */
-    private $exceptionConverter;
 
     public function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->exceptionConverter = $this->createMock(ExceptionConverterInterface::class);
-        $this->errorHandler = new ErrorHandler($this->dispatcher, $this->exceptionConverter);
+        $exceptionConverter = $this->createMock(ExceptionConverterInterface::class);
+        $this->errorHandler = new ErrorHandler($this->dispatcher, $exceptionConverter);
 
         $this->dispatcher->expects($this->any())
             ->method('dispatch')
             ->willReturnArgument(0);
 
-        $this->exceptionConverter->expects($this->any())
+        $exceptionConverter->expects($this->any())
             ->method('convertException')
             ->willReturnArgument(0);
     }
@@ -49,11 +49,11 @@ final class ErrorHandlerTest extends TestCase
             null,
             [
                 new GraphQLError('Error without wrapped exception'),
-                new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message')),
-                new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
-                new GraphQLError('Error with wrapped base user error', null, null, null, null, new GraphQLUserError('My bases User Error')),
-                new GraphQLError('', null, null, null, null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
-                new GraphQLError('Error with wrapped user warning', null, null, null, null, new UserWarning('My User Warning')),
+                new GraphQLError('Error with wrapped exception', null, null, [], null, new Exception('My Exception message')),
+                new GraphQLError('Error with wrapped user error', null, null, [], null, new UserError('My User Error')),
+                new GraphQLError('Error with wrapped base user error', null, null, [], null, new GraphQLUserError('My bases User Error')),
+                new GraphQLError('', null, null, [], null, new UserErrors(['My User Error 1', 'My User Error 2', new UserError('My User Error 3')])),
+                new GraphQLError('Error with wrapped user warning', null, null, [], null, new UserWarning('My User Warning')),
             ]
         );
 
@@ -105,13 +105,13 @@ final class ErrorHandlerTest extends TestCase
 
     public function testMaskErrorWithWrappedExceptionAndThrowExceptionSetToTrue(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('My Exception message');
 
         $executionResult = new ExecutionResult(
             null,
             [
-                new GraphQLError('Error with wrapped exception', null, null, null, null, new \Exception('My Exception message')),
+                new GraphQLError('Error with wrapped exception', null, null, [], null, new Exception('My Exception message')),
             ]
         );
 
@@ -120,8 +120,8 @@ final class ErrorHandlerTest extends TestCase
 
     public function testInvalidUserErrorsItem(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(\sprintf('Error must be string or instance of %s', GraphQLUserError::class));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Error must be string or instance of %s', GraphQLUserError::class));
 
         new UserErrors([
             'Some Error',
@@ -134,7 +134,7 @@ final class ErrorHandlerTest extends TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new GraphQLError('Error with wrapped user error', null, null, null, null, new UserError('My User Error')),
+                new GraphQLError('Error with wrapped user error', null, null, [], null, new UserError('My User Error')),
             ]
         );
 
@@ -155,12 +155,12 @@ final class ErrorHandlerTest extends TestCase
     public function testDebugEnabled(): void
     {
         try {
-            throw new \Exception();
-        } catch (\Exception $exception) {
+            throw new Exception();
+        } catch (Exception $exception) {
             $executionResult = new ExecutionResult(
                 null,
                 [
-                    new GraphQLError('Error wrapped exception', null, null, null, null, $exception),
+                    new GraphQLError('Error wrapped exception', null, null, [], null, $exception),
                 ]
             );
 
@@ -200,16 +200,16 @@ final class ErrorHandlerTest extends TestCase
 
     public function testConvertExceptionToUserWarning(): void
     {
-        $exceptionConverter = new ExceptionConverter([\InvalidArgumentException::class => UserWarning::class]);
+        $exceptionConverter = new ExceptionConverter([InvalidArgumentException::class => UserWarning::class]);
         $errorHandler = new ErrorHandler($this->dispatcher, $exceptionConverter);
         $executionResult = new ExecutionResult(null, [
             new GraphQLError(
                 'Error with invalid argument exception',
                 null,
                 null,
+                [],
                 null,
-                null,
-                new \InvalidArgumentException('Invalid argument exception')
+                new InvalidArgumentException('Invalid argument exception')
             ),
         ]);
 
@@ -230,7 +230,6 @@ final class ErrorHandlerTest extends TestCase
     }
 
     /**
-     * @param array        $exceptionMap
      * @param bool         $mapExceptionsToParent
      * @param array|string $expectedUserError
      *
@@ -247,19 +246,19 @@ final class ErrorHandlerTest extends TestCase
                     'Error with invalid argument exception',
                     null,
                     null,
-                    null,
+                    [],
                     null,
                     new ChildOfInvalidArgumentException('Invalid argument exception')
                 ),
             ]
         );
 
-        if (\is_string($expectedUserError)) {
-            self::expectException($expectedUserError);
+        if (is_string($expectedUserError)) {
+            self::expectException($expectedUserError); // @phpstan-ignore-line
         }
         $errorHandler->handleErrors($executionResult, true);
 
-        if (\is_array($expectedUserError)) {
+        if (is_array($expectedUserError)) {
             $this->assertSame($expectedUserError, $executionResult->toArray());
         }
     }
@@ -286,7 +285,7 @@ final class ErrorHandlerTest extends TestCase
             ],
             'without $mapExceptionsToParent and only the parent class, does not map to parent' => [
                 [
-                    \InvalidArgumentException::class => UserWarning::class,
+                    InvalidArgumentException::class => UserWarning::class,
                 ],
                 false,
                 ChildOfInvalidArgumentException::class,
@@ -312,7 +311,7 @@ final class ErrorHandlerTest extends TestCase
             ],
             'with $mapExceptionsToParent and only the parent class' => [
                 [
-                    \InvalidArgumentException::class => UserWarning::class,
+                    InvalidArgumentException::class => UserWarning::class,
                 ],
                 true,
                 [
@@ -329,7 +328,7 @@ final class ErrorHandlerTest extends TestCase
             'with $mapExceptionsToParent and the exact class first matches exact class' => [
                 [
                     ChildOfInvalidArgumentException::class => UserError::class,
-                    \InvalidArgumentException::class => UserWarning::class,
+                    InvalidArgumentException::class => UserWarning::class,
                 ],
                 true,
                 [
@@ -344,7 +343,7 @@ final class ErrorHandlerTest extends TestCase
             'with $mapExceptionsToParent and the exact class first but parent maps to error' => [
                 [
                     ChildOfInvalidArgumentException::class => UserWarning::class,
-                    \InvalidArgumentException::class => UserError::class,
+                    InvalidArgumentException::class => UserError::class,
                 ],
                 true,
                 [
@@ -360,7 +359,7 @@ final class ErrorHandlerTest extends TestCase
             ],
             'with $mapExceptionsToParent and the parent class first still matches exact class' => [
                 [
-                    \InvalidArgumentException::class => UserWarning::class,
+                    InvalidArgumentException::class => UserWarning::class,
                     ChildOfInvalidArgumentException::class => UserError::class,
                 ],
                 true,

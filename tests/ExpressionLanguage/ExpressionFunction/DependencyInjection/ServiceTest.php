@@ -6,46 +6,45 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use stdClass;
 
 class ServiceTest extends TestCase
 {
-    private $evaluationObject;
-
     protected function getFunctions()
     {
-        $this->evaluationObject = new \stdClass();
-        $container = $this->getDIContainerMock(['toto' => $this->evaluationObject]);
-
         return [
-            new Service($container),
-            new Service($container, 'serv'),
+            new Service(),
+            new Service('serv'),
         ];
     }
 
     /**
-     * @param string $name
      * @dataProvider getNames
      */
     public function testServiceCompilation(string $name): void
     {
-        $object = new \stdClass();
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
-        $globalVariable->get('container');
+        $object = new stdClass();
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
     /**
      * @dataProvider getNames
-     *
-     * @param string $name
      */
     public function testServiceEvaluation(string $name): void
     {
-        $this->assertSame($this->evaluationObject, $this->expressionLanguage->evaluate($name.'("toto")'));
+        $object = new stdClass();
+        $globalVars = new GlobalVariables(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $this->assertSame(
+            $object,
+            $this->expressionLanguage->evaluate($name.'("toto")', [TypeGenerator::GLOBAL_VARS => $globalVars])
+        );
     }
 
-    public function getNames()
+    public function getNames(): array
     {
         return [
             ['service'],

@@ -22,7 +22,6 @@ before_install:
     - if [ "${SYMFONY_VERSION}" != "" ]; then perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${SYMFONY_VERSION}"'"#' composer.json; fi;
     - if [ "${PHPUNIT_VERSION}" != "" ]; then  composer req "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
     - if [ "${VALIDATOR}" = "0" ]; then  composer remove "symfony/validator" --dev --no-update; fi;
-    - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
     - composer selfupdate
     - if [ $GRAPHQLPHP_VERSION ]; then composer require "webonyx/graphql-php:${GRAPHQLPHP_VERSION}" --dev --no-update; fi;
 
@@ -32,45 +31,41 @@ script: composer test
 
 jobs:
     include:
-        - php: 7.2
-          env: SYMFONY_VERSION=4.3.* PHPUNIT_VERSION=^7.2
-        - php: 7.3
-          env: SYMFONY_VERSION=4.3.* VALIDATOR=0
-        - php: 7.3
-          env: SYMFONY_VERSION=4.3.* USE_EXPERIMENTAL_EXECUTOR=1
-        - php: 7.3
-          env: SYMFONY_VERSION=4.4.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
-        - php: 7.3
-          env: SYMFONY_VERSION=5.0.* SYMFONY_DEPRECATIONS_HELPER=max[total]=0
-        - php: 7.4snapshot
-          env: SYMFONY_VERSION=4.3.*
+        - php: 7.4
+          env: SYMFONY_VERSION=4.4.*
+
+        - php: 7.4
+          env: SYMFONY_VERSION=5.0.*
+
+        - php: 7.4
+          env: SYMFONY_VERSION=5.1.*
+
         - php: nightly
           env: COMPOSER_UPDATE_FLAGS=--ignore-platform-reqs
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: COVERAGE SYMFONY_VERSION=4.4.*
           before_script:
-            - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
-            - if [[ ! $(php -m | grep -si xdebug) ]]; then echo "xdebug required for coverage"; exit 1; fi
-          script: bin/phpunit --color=always -v --debug -d xdebug.max_nesting_level=1000 --coverage-clover=build/logs/clover.xml
+              - pecl install pcov
+          script: php -dpcov.enabled=1 bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
           after_script:
-            - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
-            - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
+              - wget https://scrutinizer-ci.com/ocular.phar && travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+              - composer require "satooshi/php-coveralls:^1.0" && travis_retry php bin/coveralls -v
 
         - stage: Code Quality
-          php: 7.2
-          env: STATIC_ANALYSIS SYMFONY_VERSION=4.3.*
+          php: 7.4
+          env: STATIC_ANALYSIS SYMFONY_VERSION=4.4.*
           install: travis_retry composer install --prefer-dist
           script: composer static-analysis
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: CODING_STANDARDS
           script: composer check-cs
 
         - stage: Code Quality
-          php: 7.2
+          php: 7.4
           env: BENCHMARK
           script: composer bench
 

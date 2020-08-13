@@ -8,11 +8,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ResolveErrors
 {
-    private $validationErrors;
+    private ?ConstraintViolationListInterface $validationErrors = null;
 
-    /**
-     * @internal
-     */
     public function setValidationErrors(ConstraintViolationListInterface $errors): void
     {
         $this->validationErrors = $errors;
@@ -20,8 +17,6 @@ class ResolveErrors
 
     /**
      * Returns a collection of validation violations or null.
-     *
-     * @return ConstraintViolationListInterface|null
      */
     public function getValidationErrors(): ?ConstraintViolationListInterface
     {

@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
+use Exception;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use function sprintf;
+use function strpos;
+use function substr;
 
 class AnnotationParserTest extends TestCase
 {
-    protected $config = [];
+    protected array $config = [];
 
-    protected $parserConfig = [
+    protected array $parserConfig = [
         'definitions' => [
             'schema' => [
                 'default' => ['query' => 'RootQuery', 'mutation' => 'RootMutation'],
+                'second' => ['query' => 'RootQuery2', 'mutation' => 'RootMutation2'],
             ],
         ],
         'doctrine' => [
@@ -28,9 +37,9 @@ class AnnotationParserTest extends TestCase
         parent::setup();
 
         $files = [];
-        $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
+        $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
         foreach ($rii as $file) {
-            if (!$file->isDir() && '.php' === \substr($file->getPathname(), -4) && false === \strpos($file->getPathName(), 'Invalid')) {
+            if (!$file->isDir() && '.php' === substr($file->getPathname(), -4) && false === strpos($file->getPathName(), 'Invalid')) {
                 $files[] = $file->getPathname();
             }
         }
@@ -38,31 +47,31 @@ class AnnotationParserTest extends TestCase
         AnnotationParser::reset();
 
         foreach ($files as $file) {
-            AnnotationParser::preParse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::preParse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
         }
 
         $this->config = [];
         foreach ($files as $file) {
-            $this->config += self::cleanConfig(AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
+            $this->config += self::cleanConfig(AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
         }
     }
 
-    private function expect($name, $type, $config = []): void
+    private function expect(string $name, string $type, array $config = []): void
     {
         $expected = [
             'type' => $type,
             'config' => $config,
         ];
 
-        $this->assertArrayHasKey($name, $this->config, \sprintf("The GraphQL type '%s' doesn't exist", $name));
+        $this->assertArrayHasKey($name, $this->config, sprintf("The GraphQL type '%s' doesn't exist", $name));
         $this->assertEquals($expected, $this->config[$name]);
     }
 
     public function testExceptionIfRegisterSameType(): void
     {
-        $this->expectException(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/^Failed to parse GraphQL annotations from file/');
-        AnnotationParser::preParse(new \SplFileInfo(__DIR__.'/fixtures/annotations/Type/Battle.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/^Failed to parse GraphQL annotations from file/');
+        AnnotationParser::preParse(new SplFileInfo(__DIR__.'/fixtures/annotations/Type/Battle.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]);
     }
 
     public function testTypes(): void
@@ -91,6 +100,7 @@ class AnnotationParserTest extends TestCase
         $this->expect('Droid', 'object', [
             'description' => 'The Droid type',
             'interfaces' => ['Character'],
+            'isTypeOf' => "@=isTypeOf('App\Entity\Droid')",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
@@ -154,6 +164,15 @@ class AnnotationParserTest extends TestCase
             ],
             'builders' => [['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']]],
         ]);
+
+        // Test a type extending another type
+        $this->expect('Cat', 'object', [
+            'description' => 'The Cat type',
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
+                'lives' => ['type' => 'Int!'],
+            ],
+        ]);
     }
 
     public function testInput(): void
@@ -194,6 +213,25 @@ class AnnotationParserTest extends TestCase
         ]);
     }
 
+    public function testUnionAutoguessed(): void
+    {
+        $this->expect('Killable', 'union', [
+            'types' => ['Hero', 'Mandalorian',  'Sith'],
+            'resolveType' => '@=value.getType()',
+        ]);
+    }
+
+    public function testInterfaceAutoguessed(): void
+    {
+        $this->expect('Mandalorian', 'object', [
+            'interfaces' => ['Armored', 'Character'],
+            'fields' => [
+                'name' => ['type' => 'String!', 'description' => 'The name of the character'],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+            ],
+        ]);
+    }
+
     public function testScalar(): void
     {
         $this->expect('GalaxyCoordinates', 'custom-scalar', [
@@ -224,6 +262,32 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=override_public',
+                ],
+            ],
+        ]);
+    }
+
+    public function testProvidersMultischema(): void
+    {
+        $this->expect('RootQuery2', 'object', [
+            'fields' => [
+                'planet_getPlanetSchema2' => [
+                    'type' => 'Planet',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').getPlanetSchema2, arguments({}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
+            ],
+        ]);
+
+        $this->expect('RootMutation2', 'object', [
+            'fields' => [
+                'planet_createPlanetSchema2' => [
+                    'type' => 'Planet',
+                    'args' => ['planetInput' => ['type' => 'PlanetInput!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=override_public',
                 ],
@@ -310,11 +374,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidArgumentGuessing.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('Missing type hint for auto-guessed argument should have raise an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/Argument n°1 "\$test"/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/Argument n°1 "\$test"/', $e->getPrevious()->getMessage());
         }
     }
 
@@ -322,11 +386,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidReturnTypeGuessing.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('Missing type hint for auto-guessed return type should have raise an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/cannot be auto-guessed as there is not return type hint./', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/cannot be auto-guessed as there is not return type hint./', $e->getPrevious()->getMessage());
         }
     }
 
@@ -334,11 +398,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineRelationGuessing.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/Unable to auto-guess GraphQL type from Doctrine target class/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/Unable to auto-guess GraphQL type from Doctrine target class/', $e->getPrevious()->getMessage());
         }
     }
 
@@ -346,11 +410,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineTypeGuessing.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('Auto-guessing field type from doctrine relation on a non graphql entity should failed with an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/Unable to auto-guess GraphQL type from Doctrine type "invalidType"/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/Unable to auto-guess GraphQL type from Doctrine type "invalidType"/', $e->getPrevious()->getMessage());
         }
     }
 
@@ -358,11 +422,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidUnion.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('Union with missing resolve type shoud have raise an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/The annotation @Union has no "resolveType"/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The annotation @Union has no "resolveType"/', $e->getPrevious()->getMessage());
         }
     }
 
@@ -370,11 +434,11 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidAccess.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('@Access annotation without a @Field annotation should raise an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/The annotations "@Access" and\/or "@Visible" defined on "field"/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The annotations "@Access" and\/or "@Visible" defined on "field"/', $e->getPrevious()->getMessage());
         }
     }
 
@@ -382,11 +446,40 @@ class AnnotationParserTest extends TestCase
     {
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidPrivateMethod.php';
-            AnnotationParser::parse(new \SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            AnnotationParser::parse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
             $this->fail('@Access annotation without a @Field annotation should raise an exception');
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Symfony\Component\DependencyInjection\Exception\InvalidArgumentException::class, $e);
-            $this->assertRegexp('/The Annotation "@Field" can only be applied to public method/', $e->getPrevious()->getMessage());
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The Annotation "@Field" can only be applied to public method/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidProviderQueryOnMutation(): void
+    {
+        $file = __DIR__.'/fixtures/annotations/Invalid/InvalidProvider.php';
+        AnnotationParser::preParse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+
+        try {
+            $mutationFile = __DIR__.'/fixtures/annotations/Type/RootMutation2.php';
+            AnnotationParser::parse(new SplFileInfo($mutationFile), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Using @Query targeting mutation type should raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/try to add a query field on type "RootMutation2"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidProviderMutationOnQuery(): void
+    {
+        $file = __DIR__.'/fixtures/annotations/Invalid/InvalidProvider.php';
+        AnnotationParser::preParse(new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+        try {
+            $queryFile = __DIR__.'/fixtures/annotations/Type/RootQuery2.php';
+            AnnotationParser::parse(new SplFileInfo($queryFile), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Using @Mutation targeting query type should raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/try to add a mutation on type "RootQuery2"/', $e->getPrevious()->getMessage());
         }
     }
 }

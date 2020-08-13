@@ -14,6 +14,8 @@ class Field implements Annotation
 {
     /**
      * The field name.
+     *
+     * @var string
      */
     public $name;
 

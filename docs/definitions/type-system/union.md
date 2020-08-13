@@ -16,6 +16,8 @@ HumanAndDroid:
 
 ## With annotations
 
+Note: With annotations, you can omit the `types` parameter. If so, the system will try to detect GraphQL Type associated with classes that inherit or implement the Union class.  
+
 ```php
 <?php
 

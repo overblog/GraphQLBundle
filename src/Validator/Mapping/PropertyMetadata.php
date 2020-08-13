@@ -16,9 +16,7 @@ class PropertyMetadata extends MemberMetadata
     }
 
     /**
-     * @param  $object
-     *
-     * @return ReflectionProperty
+     * @param mixed $object
      *
      * @throws ReflectionException
      */

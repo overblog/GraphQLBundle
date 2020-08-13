@@ -20,14 +20,14 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use function preg_quote;
+use function sprintf;
+use const DIRECTORY_SEPARATOR;
 
 class ConfigParserPassTest extends TestCase
 {
-    /** @var ContainerBuilder */
-    private $container;
-
-    /** @var ConfigParserPass */
-    private $compilerPass;
+    private ContainerBuilder $container;
+    private ConfigParserPass $compilerPass;
 
     public function setUp(): void
     {
@@ -45,14 +45,14 @@ class ConfigParserPassTest extends TestCase
     public function testBrokenYmlOnPrepend(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('#The file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
+        $this->expectExceptionMessageMatches('#The file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.yml" does not contain valid YAML\.#');
         $this->processCompilerPass($this->getMappingConfig('yaml'));
     }
 
     public function testBrokenXmlOnPrepend(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('#Unable to parse file "(.*)'.\preg_quote(\DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
+        $this->expectExceptionMessageMatches('#Unable to parse file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
         $this->processCompilerPass($this->getMappingConfig('xml'));
     }
 
@@ -64,10 +64,9 @@ class ConfigParserPassTest extends TestCase
     }
 
     /**
-     * @param $internalConfigKey
      * @dataProvider internalConfigKeys
      */
-    public function testInternalConfigKeysShouldNotBeUsed($internalConfigKey): void
+    public function testInternalConfigKeysShouldNotBeUsed(string $internalConfigKey): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Don\'t use internal config keys _object_config, _enum_config, _interface_config, _union_config, _input_object_config, _custom_scalar_config, replace it by "config" instead.');
@@ -81,11 +80,6 @@ class ConfigParserPassTest extends TestCase
     /**
      * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
      * @runInSeparateProcess
-     *
-     * @param array  $builders
-     * @param array  $configs
-     * @param string $exceptionClass
-     * @param string $exceptionMessage
      */
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {
@@ -97,7 +91,7 @@ class ConfigParserPassTest extends TestCase
             $this->container
         );
 
-        $this->expectException($exceptionClass);
+        $this->expectException($exceptionClass); // @phpstan-ignore-line
         $this->expectExceptionMessage($exceptionMessage);
 
         $this->compilerPass->processConfiguration([$configs]);
@@ -253,25 +247,21 @@ class ConfigParserPassTest extends TestCase
                                 'description' => 'The creation date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.createdAt',
-                                'args' => [],
                             ],
                             'updatedAt' => [
                                 'description' => 'The update date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.updatedAt',
-                                'args' => [],
                             ],
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
-                                'args' => [],
                             ],
                             'rawID' => [
                                 'description' => 'The raw ID of an object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
-                                'args' => [],
                             ],
                             'rawIDs' => [
                                 'type' => '[RawID!]!',
@@ -325,8 +315,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'foo' => ['type' => 'FooBox!', 'args' => []],
-                            'bar' => ['type' => 'BarBox!', 'args' => []],
+                            'foo' => ['type' => 'FooBox!'],
+                            'bar' => ['type' => 'BarBox!'],
                         ],
                         'name' => 'Boxes',
                         'builders' => [],
@@ -360,8 +350,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
-                            'item' => ['type' => 'Foo', 'args' => []],
+                            'isEmpty' => ['type' => 'Boolean!'],
+                            'item' => ['type' => 'Foo'],
                         ],
                         'name' => 'FooBox',
                         'builders' => [],
@@ -375,8 +365,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!', 'args' => []],
-                            'item' => ['type' => 'Bar', 'args' => []],
+                            'isEmpty' => ['type' => 'Boolean!'],
+                            'item' => ['type' => 'Bar'],
                         ],
                         'name' => 'BarBox',
                         'builders' => [],
@@ -413,7 +403,7 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'fooString' => ['type' => 'String!', 'args' => []],
+                            'fooString' => ['type' => 'String!'],
                         ],
                         'name' => 'FooSuccessPayload',
                         'builders' => [],
@@ -427,8 +417,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            '_error' => ['type' => 'String', 'args' => []],
-                            'bar' => ['type' => 'String', 'args' => []],
+                            '_error' => ['type' => 'String'],
+                            'bar' => ['type' => 'String'],
                         ],
                         'name' => 'FooFailurePayload',
                         'builders' => [],
@@ -440,7 +430,7 @@ class ConfigParserPassTest extends TestCase
         );
     }
 
-    public function internalConfigKeys()
+    public function internalConfigKeys(): array
     {
         return [
             ['_object_config'],
@@ -451,9 +441,9 @@ class ConfigParserPassTest extends TestCase
         ];
     }
 
-    private function getMappingConfig($type): array
+    private function getMappingConfig(string $type): array
     {
-        $config = [
+        return [
             'definitions' => [
                 'mappings' => [
                     'types' => [
@@ -466,11 +456,9 @@ class ConfigParserPassTest extends TestCase
             ],
             'doctrine' => ['types_mapping' => []],
         ];
-
-        return $config;
     }
 
-    public function fieldBuilderTypeOverrideNotAllowedProvider()
+    public function fieldBuilderTypeOverrideNotAllowedProvider(): array
     {
         $expectedMessage = 'Type "%s" emitted by builder "%s" already exists. Type was provided by "%s". Builder may only emit new types. Overriding is not allowed.';
 
@@ -522,7 +510,7 @@ class ConfigParserPassTest extends TestCase
                     'FooInput' => $simpleObjectType,
                 ],
                 InvalidConfigurationException::class,
-                \sprintf($expectedMessage, 'FooInput', MutationField::class, 'configs'),
+                sprintf($expectedMessage, 'FooInput', MutationField::class, 'configs'),
             ],
             [
                 ['field' => ['Mutation' => MutationField::class]],
@@ -538,7 +526,7 @@ class ConfigParserPassTest extends TestCase
                     ],
                 ],
                 InvalidConfigurationException::class,
-                \sprintf($expectedMessage, 'FooInput', MutationField::class, MutationField::class),
+                sprintf($expectedMessage, 'FooInput', MutationField::class, MutationField::class),
             ],
             [
                 ['fields' => ['Boxes' => BoxFields::class]],
@@ -552,7 +540,7 @@ class ConfigParserPassTest extends TestCase
                     'FooBox' => $simpleObjectType,
                 ],
                 InvalidConfigurationException::class,
-                \sprintf($expectedMessage, 'FooBox', BoxFields::class, 'configs'),
+                sprintf($expectedMessage, 'FooBox', BoxFields::class, 'configs'),
             ],
             [
                 ['fields' => ['Boxes' => BoxFields::class]],
@@ -571,7 +559,7 @@ class ConfigParserPassTest extends TestCase
                     ],
                 ],
                 InvalidConfigurationException::class,
-                \sprintf($expectedMessage, 'FooBox', BoxFields::class, BoxFields::class),
+                sprintf($expectedMessage, 'FooBox', BoxFields::class, BoxFields::class),
             ],
         ];
     }

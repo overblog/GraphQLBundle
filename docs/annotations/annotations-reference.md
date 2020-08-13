@@ -384,6 +384,10 @@ This annotation applies on methods for classes tagged with the `@Provider` annot
 The resulting field is added to the root Mutation type (defined in configuration at key `overblog_graphql.definitions.schema.mutation`).  
 The class exposing the mutation(s) must be declared as a [service](https://symfony.com/doc/current/service_container.html).
 
+Optional attributes:
+
+-   **targetType** : The GraphQL type to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
+
 Example:
 
 This will add an `updateUserEmail` mutation, with as resolver `@=service('App\Graphql\MutationProvider').updateUserEmail(...)`.
@@ -432,7 +436,7 @@ The class exposing the query(ies) must be declared as a [service](https://symfon
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type).
+-   **targetType** : The GraphQL type to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)).
 
 Example:
 
@@ -464,9 +468,10 @@ This annotation is used on _class_ to define a GraphQL Type.
 Optional attributes:
 
 -   **name** : The GraphQL name of the type (default to the class name without namespace)
--   **interfaces** : An array of GraphQL interface this type inherits from
+-   **interfaces** : An array of GraphQL interface this type inherits from (can be auto-guessed. See interface documentation).
 -   **isRelay** : Set to true to have a Relay compatible type (ie. A `clientMutationId` will be added).
--   **builders**: An array of `@FieldsBuilder` annotations
+-   **builders** : An array of `@FieldsBuilder` annotations
+-   **isTypeOf** : Is type of resolver for interface implementation
 
 ```php
 <?php
@@ -554,7 +559,7 @@ This annotation is used on a _class_ to define an union.
 
 Required attributes:
 
--   **types** : An array of GraphQL Type as string
+-   **types** : An array of GraphQL Type as string (can be auto-guessed. See union documenation).
 
 Optional attributes:
 

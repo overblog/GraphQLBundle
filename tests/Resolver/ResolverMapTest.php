@@ -4,18 +4,27 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use ArrayAccess;
+use ArrayObject;
+use Closure;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
+use function array_keys;
+use function array_merge;
+use function get_class;
+use function sprintf;
 
 class ResolverMapTest extends TestCase
 {
     /**
-     * @param array|\ArrayAccess $map
-     * @param string             $typeName
-     * @param string             $fieldName
-     * @param \Closure|null      $expectedResolver
+     * @param array|ArrayAccess $map
+     * @param string            $typeName
+     * @param string            $fieldName
+     * @param Closure|null      $expectedResolver
      *
      * @dataProvider validMapDataProvider
      */
@@ -31,7 +40,7 @@ class ResolverMapTest extends TestCase
         $map = $this->map();
         $resolverMap = $this->createResolverMapMock($map);
         $covered = $resolverMap->covered();
-        $this->assertSame(\array_keys($map), $covered);
+        $this->assertSame(array_keys($map), $covered);
     }
 
     /**
@@ -43,10 +52,10 @@ class ResolverMapTest extends TestCase
     public function testInvalidMap($invalidMap, $invalidType): void
     {
         $resolverMap = $this->createResolverMapMock($invalidMap);
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage(\sprintf(
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(
             '%s::map() should return an array or an instance of \ArrayAccess and \Traversable but got "%s".',
-            \get_class($resolverMap),
+            get_class($resolverMap),
             $invalidType
         ));
         $resolverMap->resolve('Foo', 'bar');
@@ -65,26 +74,26 @@ class ResolverMapTest extends TestCase
         $resolverMap->resolve('Foo', 'bar');
     }
 
-    public function invalidMapDataProvider()
+    public function invalidMapDataProvider(): array
     {
         return [
             [null, 'NULL'],
             [false, 'boolean'],
             [true, 'boolean'],
             ['baz', 'string'],
-            [new \stdClass(), 'stdClass'],
+            [new stdClass(), 'stdClass'],
         ];
     }
 
-    public function validMapDataProvider()
+    public function validMapDataProvider(): array
     {
         $arrayMap = $this->map();
-        $objectMap = new \ArrayObject($arrayMap);
+        $objectMap = new ArrayObject($arrayMap);
 
         $validMap = [];
 
         foreach ([$arrayMap, $objectMap] as $map) {
-            $validMap = \array_merge($validMap, [
+            $validMap = array_merge($validMap, [
                 [$map, 'Query', ResolverMap::RESOLVE_FIELD, $map['Query'][ResolverMap::RESOLVE_FIELD]],
                 [$map, 'Query', 'foo', $map['Query']['foo']],
                 [$map, 'Query', 'bar', $map['Query']['bar']],
@@ -110,7 +119,7 @@ class ResolverMapTest extends TestCase
         return $resolverMap;
     }
 
-    private function map()
+    private function map(): array
     {
         return [
             'Query' => [

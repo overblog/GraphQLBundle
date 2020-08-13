@@ -111,4 +111,8 @@ overblog_graphql:
 | batch request  | `/graphql/bar/batch` |
 | GraphiQL*      | `/graphiql/bar`      |
 
+### Default schema
+
+The schema considered as the default is the one with the name `default` if it exists, otherwise, it will be the first one defined.  
+
 \* `/graphiql` depends on [OverblogGraphiQLBundle](https://github.com/overblog/GraphiQLBundle)

@@ -10,10 +10,8 @@ use Overblog\GraphQLBundle\Definition\GlobalVariables;
 
 final class TypeFactory
 {
-    /** @var ConfigProcessor */
-    private $configProcessor;
-    /** @var GlobalVariables */
-    private $globalVariables;
+    private ConfigProcessor $configProcessor;
+    private GlobalVariables $globalVariables;
 
     public function __construct(ConfigProcessor $configProcessor, GlobalVariables $globalVariables)
     {

@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use function is_string;
+use function strpos;
+use function substr;
+use function var_export;
 
 final class GlobalIdFieldDefinition implements MappingInterface
 {
     public function toMappingDefinition(array $config): array
     {
-        $typeName = isset($config['typeName']) && \is_string($config['typeName']) ? \var_export($config['typeName'], true) : 'null';
-        $idFetcher = isset($config['idFetcher']) && \is_string($config['idFetcher']) ? $this->cleanIdFetcher($config['idFetcher']) : 'null';
+        $typeName = isset($config['typeName']) && is_string($config['typeName']) ? var_export($config['typeName'], true) : 'null';
+        $idFetcher = isset($config['idFetcher']) && is_string($config['idFetcher']) ? $this->cleanIdFetcher($config['idFetcher']) : 'null';
 
         return [
             'description' => 'The ID of an object',
@@ -20,12 +24,12 @@ final class GlobalIdFieldDefinition implements MappingInterface
         ];
     }
 
-    private function cleanIdFetcher($idFetcher)
+    private function cleanIdFetcher(string $idFetcher): string
     {
         $cleanIdFetcher = $idFetcher;
 
-        if (0 === \strpos($idFetcher, '@=')) {
-            $cleanIdFetcher = \substr($idFetcher, 2);
+        if (0 === strpos($idFetcher, '@=')) {
+            $cleanIdFetcher = substr($idFetcher, 2);
         }
 
         return $cleanIdFetcher;

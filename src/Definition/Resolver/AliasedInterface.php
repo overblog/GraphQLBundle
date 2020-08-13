@@ -11,8 +11,6 @@ interface AliasedInterface
      *
      * For instance:
      * array('myMethod' => 'myAlias')
-     *
-     * @return array
      */
     public static function getAliases(): array;
 }

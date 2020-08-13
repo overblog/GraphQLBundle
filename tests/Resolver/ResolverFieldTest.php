@@ -11,13 +11,11 @@ use PHPUnit\Framework\TestCase;
 class ResolverFieldTest extends TestCase
 {
     /**
-     * @param $fieldName
-     * @param $source
-     * @param $expected
-     *
      * @dataProvider resolverProvider
+     *
+     * @param mixed $source
      */
-    public function testDefaultFieldResolveFn($fieldName, $source, $expected): void
+    public function testDefaultFieldResolveFn(string $fieldName, $source, ?string $expected): void
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->fieldName = $fieldName;
@@ -25,7 +23,7 @@ class ResolverFieldTest extends TestCase
         $this->assertSame($expected, (new FieldResolver())($source, [], [], $info));
     }
 
-    public function resolverProvider()
+    public function resolverProvider(): array
     {
         $object = new Toto();
 

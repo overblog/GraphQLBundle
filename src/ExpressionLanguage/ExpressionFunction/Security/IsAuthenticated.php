@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
-use Overblog\GraphQLBundle\Security\Security;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class IsAuthenticated extends ExpressionFunction
 {
-    public function __construct(Security $security)
+    public function __construct()
     {
         parent::__construct(
             'isAuthenticated',
-            static function (): string {
-                return '$globalVariable->get(\'security\')->isAuthenticated()';
-            },
-            static function () use ($security): bool {
-                return $security->isAuthenticated();
-            }
+            fn () => "$this->globalVars->get('security')->isAuthenticated()",
+            static fn (array $arguments) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->isAuthenticated()
         );
     }
 }

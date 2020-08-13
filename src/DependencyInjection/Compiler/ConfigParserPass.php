@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
@@ -11,6 +12,8 @@ use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Config\Definition\Exception\ForbiddenOverwriteException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\FileResource;
@@ -18,6 +21,18 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use function array_count_values;
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function array_replace_recursive;
+use function call_user_func;
+use function dirname;
+use function implode;
+use function is_a;
+use function is_dir;
+use function sprintf;
 
 class ConfigParserPass implements CompilerPassInterface
 {
@@ -35,7 +50,7 @@ class ConfigParserPass implements CompilerPassInterface
         'annotation' => AnnotationParser::class,
     ];
 
-    private static $defaultDefaultConfig = [
+    private static array $defaultDefaultConfig = [
         'definitions' => [
             'mappings' => [
                 'auto_discover' => [
@@ -47,8 +62,8 @@ class ConfigParserPass implements CompilerPassInterface
         ],
     ];
 
-    private $treatedFiles = [];
-    private $preTreatedFiles = [];
+    private array $treatedFiles = [];
+    private array $preTreatedFiles = [];
 
     public const DEFAULT_TYPES_SUFFIX = '.types';
 
@@ -71,7 +86,7 @@ class ConfigParserPass implements CompilerPassInterface
         $typesMappings = $this->mappingConfig($config, $container);
         // reset treated files
         $this->treatedFiles = [];
-        $typesMappings = \array_merge(...$typesMappings);
+        $typesMappings = array_merge(...$typesMappings);
         $typeConfigs = [];
 
         // treats mappings
@@ -86,12 +101,12 @@ class ConfigParserPass implements CompilerPassInterface
 
         // Parse all files and get related config
         foreach ($typesMappings as $params) {
-            $typeConfigs = \array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $config));
+            $typeConfigs = array_merge($typeConfigs, $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $config));
         }
 
         $this->checkTypesDuplication($typeConfigs);
         // flatten config is a requirement to support inheritance
-        $flattenTypeConfig = \array_merge(...$typeConfigs);
+        $flattenTypeConfig = array_merge(...$typeConfigs);
 
         return $flattenTypeConfig;
     }
@@ -100,22 +115,16 @@ class ConfigParserPass implements CompilerPassInterface
     {
         $needPreParsing = [];
         foreach (self::PARSERS as $type => $className) {
-            $needPreParsing[$type] = \is_a($className, PreParserInterface::class, true);
+            $needPreParsing[$type] = is_a($className, PreParserInterface::class, true);
         }
 
         return $needPreParsing;
     }
 
     /**
-     * @param $type
-     * @param SplFileInfo[]    $files
-     * @param ContainerBuilder $container
-     * @param array            $configs
-     * @param bool             $preParse
-     *
-     * @return array
+     * @param SplFileInfo[] $files
      */
-    private function parseTypeConfigFiles($type, $files, ContainerBuilder $container, array $configs, bool $preParse = false)
+    private function parseTypeConfigFiles(string $type, iterable $files, ContainerBuilder $container, array $configs, bool $preParse = false): array
     {
         if ($preParse) {
             $method = 'preParse';
@@ -132,7 +141,7 @@ class ConfigParserPass implements CompilerPassInterface
                 continue;
             }
 
-            $config[] = \call_user_func([self::PARSERS[$type], $method], $file, $container, $configs);
+            $config[] = call_user_func([self::PARSERS[$type], $method], $file, $container, $configs);
             $treatedFiles[$file->getRealPath()] = true;
         }
 
@@ -141,22 +150,22 @@ class ConfigParserPass implements CompilerPassInterface
 
     private function checkTypesDuplication(array $typeConfigs): void
     {
-        $types = \array_merge(...\array_map('array_keys', $typeConfigs));
-        $duplications = \array_keys(\array_filter(\array_count_values($types), function ($count) {
+        $types = array_merge(...array_map('array_keys', $typeConfigs));
+        $duplications = array_keys(array_filter(array_count_values($types), function ($count) {
             return $count > 1;
         }));
         if (!empty($duplications)) {
-            throw new ForbiddenOverwriteException(\sprintf(
+            throw new ForbiddenOverwriteException(sprintf(
                 'Types (%s) cannot be overwritten. See inheritance doc section for more details.',
-                \implode(', ', \array_map('json_encode', $duplications))
+                implode(', ', array_map('json_encode', $duplications))
             ));
         }
     }
 
-    private function mappingConfig(array $config, ContainerBuilder $container)
+    private function mappingConfig(array $config, ContainerBuilder $container): array
     {
         // use default value if needed
-        $config = \array_replace_recursive(self::$defaultDefaultConfig, $config);
+        $config = array_replace_recursive(self::$defaultDefaultConfig, $config);
 
         $mappingConfig = $config['definitions']['mappings'];
         $typesMappings = $mappingConfig['types'];
@@ -167,7 +176,7 @@ class ConfigParserPass implements CompilerPassInterface
         }
         if ($mappingConfig['auto_discover']['bundles']) {
             $mappingFromBundles = $this->mappingFromBundles($container);
-            $typesMappings = \array_merge($typesMappings, $mappingFromBundles);
+            $typesMappings = array_merge($typesMappings, $mappingFromBundles);
         } else {
             // enabled only for this bundle
             $typesMappings[] = [
@@ -182,21 +191,20 @@ class ConfigParserPass implements CompilerPassInterface
         return $typesMappings;
     }
 
-    private function detectFilesFromTypesMappings(array $typesMappings, ContainerBuilder $container)
+    private function detectFilesFromTypesMappings(array $typesMappings, ContainerBuilder $container): array
     {
-        return \array_filter(\array_map(
+        return array_filter(array_map(
             function (array $typeMapping) use ($container) {
                 $suffix = $typeMapping['suffix'] ?? '';
                 $types = $typeMapping['types'] ?? null;
-                $params = $this->detectFilesByTypes($container, $typeMapping['dir'], $suffix, $types);
 
-                return $params;
+                return $this->detectFilesByTypes($container, $typeMapping['dir'], $suffix, $types);
             },
             $typesMappings
         ));
     }
 
-    private function mappingFromBundles(ContainerBuilder $container)
+    private function mappingFromBundles(ContainerBuilder $container): array
     {
         $typesMappings = [];
         $bundles = $container->getParameter('kernel.bundles');
@@ -212,25 +220,25 @@ class ConfigParserPass implements CompilerPassInterface
         return $typesMappings;
     }
 
-    private function detectFilesByTypes(ContainerBuilder $container, $path, $suffix, array $types = null)
+    private function detectFilesByTypes(ContainerBuilder $container, string $path, string $suffix, array $types = null): array
     {
         // add the closest existing directory as a resource
         $resource = $path;
-        while (!\is_dir($resource)) {
-            $resource = \dirname($resource);
+        while (!is_dir($resource)) {
+            $resource = dirname($resource);
         }
         $container->addResource(new FileResource($resource));
 
         $stopOnFirstTypeMatching = empty($types);
 
-        $types = $stopOnFirstTypeMatching ? \array_keys(self::SUPPORTED_TYPES_EXTENSIONS) : $types;
+        $types = $stopOnFirstTypeMatching ? array_keys(self::SUPPORTED_TYPES_EXTENSIONS) : $types;
         $files = [];
 
         foreach ($types as $type) {
             $finder = Finder::create();
             try {
-                $finder->files()->in($path)->name(\sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]));
-            } catch (\InvalidArgumentException $e) {
+                $finder->files()->in($path)->name(sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]));
+            } catch (InvalidArgumentException $e) {
                 continue;
             }
             if ($finder->count() > 0) {
@@ -247,20 +255,22 @@ class ConfigParserPass implements CompilerPassInterface
         return $files;
     }
 
-    private function bundleDir($bundleClass)
+    /**
+     * @throws ReflectionException
+     */
+    private function bundleDir(string $bundleClass): string
     {
-        $bundle = new \ReflectionClass($bundleClass);
-        $bundleDir = \dirname($bundle->getFileName());
+        $bundle = new ReflectionClass($bundleClass); // @phpstan-ignore-line
 
-        return $bundleDir;
+        return dirname($bundle->getFileName());
     }
 
-    private function getAliasPrefix()
+    private function getAliasPrefix(): string
     {
         return 'overblog_graphql';
     }
 
-    private function getAlias()
+    private function getAlias(): string
     {
         return $this->getAliasPrefix().'_types';
     }

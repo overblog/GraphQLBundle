@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Validator;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
@@ -20,67 +20,45 @@ use Symfony\Component\Validator\Mapping\ClassMetadataInterface;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use function in_array;
 
 class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
 
-    /**
-     * @var array
-     */
-    private $resolverArgs;
+    private array $resolverArgs;
+    private array $propertiesMapping;
+    private array $classMapping;
+    private ValidatorInterface $validator;
+    private MetadataFactory $metadataFactory;
+    private ResolveInfo $info;
+    private ValidatorFactory $validatorFactory;
 
-    /**
-     * @var array
-     */
-    private $constraintMapping;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
-
-    /**
-     * @var ResolveInfo
-     */
-    private $info;
-
-    /**
-     * @var ValidatorFactory
-     */
-    private $validatorFactory;
-
-    /**
-     * @var ClassMetadataInterface[]
-     */
-    private $cachedMetadata = [];
+    /** @var ClassMetadataInterface[] */
+    private array $cachedMetadata = [];
 
     /**
      * InputValidator constructor.
-     *
-     * @param array                   $resolverArgs
-     * @param ValidatorInterface|null $validator
-     * @param ValidatorFactory        $factory
-     * @param array                   $mapping
      */
-    public function __construct(array $resolverArgs, ?ValidatorInterface $validator, ValidatorFactory $factory, array $mapping)
-    {
+    public function __construct(
+        array $resolverArgs,
+        ?ValidatorInterface $validator,
+        ValidatorFactory $factory,
+        array $propertiesMapping = [],
+        array $classMapping = []
+    ) {
         if (null === $validator) {
             throw new ServiceNotFoundException(
-                "The 'validator' service is not found. To use the 'InputValidator' you need to install the 
+                "The 'validator' service is not found. To use the 'InputValidator' you need to install the
                 Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
             );
         }
 
-        $this->resolverArgs = $this->mapResolverArgs($resolverArgs);
+        $this->resolverArgs = $this->mapResolverArgs(...$resolverArgs);
         $this->info = $this->resolverArgs['info'];
-        $this->constraintMapping = $mapping;
+        $this->propertiesMapping = $propertiesMapping;
+        $this->classMapping = $classMapping;
         $this->validator = $validator;
         $this->validatorFactory = $factory;
         $this->metadataFactory = new MetadataFactory();
@@ -89,25 +67,21 @@ class InputValidator
     /**
      * Converts a numeric array of resolver args to an associative one.
      *
-     * @param array $rawReolverArgs
-     *
-     * @return array
+     * @param mixed $value
+     * @param mixed $context
      */
-    private function mapResolverArgs(array $rawReolverArgs)
+    private function mapResolverArgs($value, ArgumentInterface $args, $context, ResolveInfo $info): array
     {
         return [
-            'value' => $rawReolverArgs[0],
-            'args' => $rawReolverArgs[1],
-            'context' => $rawReolverArgs[2],
-            'info' => $rawReolverArgs[3],
+            'value' => $value,
+            'args' => $args,
+            'context' => $context,
+            'info' => $info,
         ];
     }
 
     /**
      * @param string|array|null $groups
-     * @param bool              $throw
-     *
-     * @return ConstraintViolationListInterface|null
      *
      * @throws ArgumentsValidationException
      */
@@ -115,7 +89,12 @@ class InputValidator
     {
         $rootObject = new ValidationNode($this->info->parentType, $this->info->fieldName, null, $this->resolverArgs);
 
-        $this->buildValidationTree($rootObject, $this->constraintMapping, $this->resolverArgs['args']->getArrayCopy());
+        $this->buildValidationTree(
+            $rootObject,
+            $this->propertiesMapping,
+            $this->classMapping,
+            $this->resolverArgs['args']->getArrayCopy()
+        );
 
         $validator = $this->validatorFactory->createValidator($this->metadataFactory);
 
@@ -131,23 +110,21 @@ class InputValidator
     /**
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
-     *
-     * @param ValidationNode $rootObject
-     * @param array          $constraintMapping
-     * @param array          $args
-     *
-     * @return ValidationNode
      */
-    protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
+    protected function buildValidationTree(ValidationNode $rootObject, array $propertiesMapping, array $classMapping, array $args): ValidationNode
     {
         $metadata = new ObjectMetadata($rootObject);
 
-        $this->applyClassConstraints($metadata, $constraintMapping['class']);
+        if (!empty($classMapping)) {
+            $this->applyClassConstraints($metadata, $classMapping);
+        }
 
-        foreach ($constraintMapping['properties'] as $property => $params) {
+        foreach ($propertiesMapping as $property => $params) {
             if (!empty($params['cascade']) && isset($args[$property])) {
                 $options = $params['cascade'];
-                $type = $this->info->schema->getType($options['referenceType']);
+
+                /** @var ObjectType|InputObjectType $type */
+                $type = $options['referenceType'];
 
                 if ($options['isCollection']) {
                     $rootObject->$property = $this->createCollectionNode($args[$property], $type, $rootObject);
@@ -166,16 +143,14 @@ class InputValidator
                 $rootObject->$property = $args[$property] ?? null;
             }
 
-            foreach ($params ?? [] as $key => $value) {
-                if (null === $value) {
-                    continue;
-                }
+            $this->restructureShortForm($params);
 
+            foreach ($params ?? [] as $key => $value) {
                 switch ($key) {
                     case 'link':
                         [$fqcn, $property, $type] = $value;
 
-                        if (!\in_array($fqcn, $this->cachedMetadata)) {
+                        if (!in_array($fqcn, $this->cachedMetadata)) {
                             $this->cachedMetadata[$fqcn] = $this->validator->getMetadataFor($fqcn);
                         }
 
@@ -213,13 +188,9 @@ class InputValidator
     }
 
     /**
-     * @param array                      $values
      * @param ObjectType|InputObjectType $type
-     * @param ValidationNode             $parent
-     *
-     * @return array
      */
-    private function createCollectionNode(array $values, Type $type, ValidationNode $parent): array
+    private function createCollectionNode(array $values, $type, ValidationNode $parent): array
     {
         $collection = [];
 
@@ -231,36 +202,30 @@ class InputValidator
     }
 
     /**
-     * @param array                      $value
      * @param ObjectType|InputObjectType $type
-     * @param $parent
-     *
-     * @return ValidationNode
      */
-    private function createObjectNode(array $value, Type $type, ValidationNode $parent): ValidationNode
+    private function createObjectNode(array $value, $type, ValidationNode $parent): ValidationNode
     {
-        $mapping = [
-            'class' => $type->config['validation'] ?? null,
-        ];
+        $classMapping = $type->config['validation'] ?? [];
+        $propertiesMapping = [];
 
         foreach ($type->getFields() as $fieldName => $inputField) {
-            $mapping['properties'][$fieldName] = $inputField->config['validation'];
+            $propertiesMapping[$fieldName] = $inputField->config['validation'];
         }
 
-        return $this->buildValidationTree(new ValidationNode($type, null, $parent, $this->resolverArgs), $mapping, $value);
+        return $this->buildValidationTree(
+            new ValidationNode($type, null, $parent, $this->resolverArgs),
+            $propertiesMapping,
+            $classMapping,
+            $value
+        );
     }
 
-    /**
-     * @param ObjectMetadata $metadata
-     * @param array          $constraints
-     */
-    private function applyClassConstraints(ObjectMetadata $metadata, ?array $constraints): void
+    private function applyClassConstraints(ObjectMetadata $metadata, array $rules): void
     {
-        foreach ($constraints ?? [] as $key => $value) {
-            if (null === $value) {
-                continue;
-            }
+        $this->restructureShortForm($rules);
 
+        foreach ($rules as $key => $value) {
             switch ($key) {
                 case 'link':
                     $linkedMetadata = $this->validator->getMetadataFor($value);
@@ -279,7 +244,16 @@ class InputValidator
         }
     }
 
+    private function restructureShortForm(array &$rules): void
+    {
+        if (isset($rules[0])) {
+            $rules = ['constraints' => $rules];
+        }
+    }
+
     /**
+     * @param string|array|null $groups
+     *
      * @throws ArgumentsValidationException
      */
     public function __invoke($groups = null, bool $throw = true): ?ConstraintViolationListInterface

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
+use RuntimeException;
 
 class CustomScalarNode implements NodeInterface
 {
@@ -25,6 +26,6 @@ class CustomScalarNode implements NodeInterface
 
     public static function mustOverrideConfig(): void
     {
-        throw new \RuntimeException('Config entry must be override with ResolverMap to be used.');
+        throw new RuntimeException('Config entry must be override with ResolverMap to be used.');
     }
 }

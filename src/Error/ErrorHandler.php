@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Error;
 
-use GraphQL\Error\Debug;
+use Closure;
+use Error;
+use Exception;
+use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\FormattedError;
 use GraphQL\Error\UserError as GraphQLUserError;
@@ -12,19 +15,15 @@ use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Event\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use function array_map;
 
 class ErrorHandler
 {
     public const DEFAULT_ERROR_MESSAGE = 'Internal server Error';
 
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
-
-    /** @var ExceptionConverterInterface */
-    private $exceptionConverter;
-
-    /** @var string */
-    private $internalErrorMessage;
+    private EventDispatcherInterface $dispatcher;
+    private ExceptionConverterInterface $exceptionConverter;
+    private string $internalErrorMessage;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
@@ -46,22 +45,22 @@ class ErrorHandler
         $executionResult->errors = $exceptions['errors'];
 
         if (!empty($exceptions['extensions']['warnings'])) {
-            $executionResult->extensions['warnings'] = \array_map($errorFormatter, $exceptions['extensions']['warnings']);
+            $executionResult->extensions['warnings'] = array_map($errorFormatter, $exceptions['extensions']['warnings']);
         }
     }
 
-    private function createErrorFormatter(bool $debug): \Closure
+    private function createErrorFormatter(bool $debug = false): Closure
     {
-        $debugMode = false;
+        $debugMode = DebugFlag::NONE;
 
         if ($debug) {
-            $debugMode = Debug::INCLUDE_TRACE | Debug::INCLUDE_DEBUG_MESSAGE;
+            $debugMode = DebugFlag::INCLUDE_TRACE | DebugFlag::INCLUDE_DEBUG_MESSAGE;
         }
 
         return function (GraphQLError $error) use ($debugMode): array {
             $event = new ErrorFormattingEvent($error, FormattedError::createFromException($error, $debugMode, $this->internalErrorMessage));
 
-            $this->dispatcher->dispatch($event, Events::ERROR_FORMATTING);
+            $this->dispatcher->dispatch($event, Events::ERROR_FORMATTING); // @phpstan-ignore-line
 
             return $event->getFormattedError()->getArrayCopy();
         };
@@ -69,11 +68,8 @@ class ErrorHandler
 
     /**
      * @param GraphQLError[] $errors
-     * @param bool           $throwRawException
      *
-     * @return array
-     *
-     * @throws \Error|\Exception
+     * @throws Error|Exception
      */
     private function treatExceptions(array $errors, bool $throwRawException): array
     {

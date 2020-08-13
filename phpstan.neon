@@ -1,0 +1,11 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+  level: 7
+  reportUnmatchedIgnoredErrors: false
+  checkMissingIterableValueType: false
+  checkGenericClassInNonGenericObjectType: false
+  paths:
+    - %currentWorkingDirectory%/src
+    - %currentWorkingDirectory%/tests

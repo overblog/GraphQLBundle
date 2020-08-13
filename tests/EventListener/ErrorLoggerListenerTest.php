@@ -4,74 +4,113 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\EventListener;
 
+use Exception;
+use Generator;
 use GraphQL\Error\Error;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\MockObject\Matcher\Invocation;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use function sprintf;
 
-class ErrorLoggerListenerTest extends TestCase
+final class ErrorLoggerListenerTest extends TestCase
 {
-    /** @var ErrorLoggerListener */
-    private $listener;
+    private ErrorLoggerListener $listener;
 
-    /** @var LoggerInterface|MockObject */
+    /**
+     * @var LoggerInterface&MockObject
+     */
     private $logger;
 
     public function setUp(): void
     {
-        $this->logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->listener = new ErrorLoggerListener($this->logger);
     }
 
     /**
-     * @param Error             $error
-     * @param Invocation        $loggerExpects
-     * @param Constraint|string $loggerMethod
-     * @param array|null        $with
-     *
-     * @dataProvider fixtures
+     * @dataProvider onErrorFormattingDataProvider
      */
-    public function testOnErrorFormatting(Error $error, $loggerExpects, $loggerMethod, array $with = null): void
+    public function testOnErrorFormatting(Error $error, InvokedCount $expectedLoggerCalls, array $expectedLoggerMethodArguments): void
     {
-        $mock = $this->logger->expects($loggerExpects)->method($loggerMethod);
-        if ($with) {
-            $mock->with(...$with);
-        }
+        $this->logger->expects($expectedLoggerCalls)
+            ->method('log')
+            ->with(...$expectedLoggerMethodArguments);
 
         $this->listener->onErrorFormatting(new ErrorFormattingEvent($error, []));
     }
 
-    public function fixtures()
+    public function onErrorFormattingDataProvider(): Generator
     {
-        try {
-            throw new \Exception('Ko!');
-        } catch (\Exception $exception) {
-        }
-        $with = [
-            \sprintf('[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.', \Exception::class, 'Ko!', 0, __FILE__, $exception->getLine()),
-            ['throwable' => $exception],
+        $exception = new Exception('Ko!');
+
+        yield [
+            new Error('Basic error'),
+            $this->never(),
+            [$this->anything()],
         ];
 
-        return [
-            [self::createError('Basic error'), $this->never(), $this->anything()],
-            [self::createError('Wrapped Base UserError without previous', new \GraphQL\Error\UserError('User error message')), $this->never(), $this->anything()],
-            [self::createError('Wrapped UserError without previous', new UserError('User error message')), $this->never(), $this->anything()],
-            [self::createError('Wrapped UserWarning without previous', new UserWarning('User warning message')), $this->never(), $this->anything()],
-            [self::createError('Wrapped unknown exception', $exception), $this->once(), 'critical', $with],
-            [self::createError('Wrapped Base UserError with previous', new \GraphQL\Error\UserError('User error message', 0, $exception)), $this->once(), 'error', $with],
-            [self::createError('Wrapped UserError with previous', new UserError('User error message', 0, $exception)), $this->once(), 'error', $with],
-            [self::createError('Wrapped UserWarning with previous', new UserWarning('User warning message', 0, $exception)), $this->once(), 'warning', $with],
+        yield [
+            new Error('Wrapped Base UserError without previous', null, null, [], null, new UserError('User error message')),
+            $this->never(),
+            [$this->anything()],
         ];
-    }
 
-    private static function createError($message, \Exception $exception = null)
-    {
-        return new Error($message, null, null, null, null, $exception);
+        yield [
+            new Error('Wrapped UserError without previous', null, null, [], null, new UserError('User error message')),
+            $this->never(),
+            [$this->anything()],
+        ];
+
+        yield [
+            new Error('Wrapped UserWarning without previous', null, null, [], null, new UserWarning('User warning message')),
+            $this->never(),
+            [$this->anything()],
+        ];
+
+        yield [
+            new Error('Wrapped unknown exception', null, null, [], null, $exception),
+            $this->once(),
+            [
+                LogLevel::CRITICAL,
+                sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
+                ['exception' => $exception],
+            ],
+        ];
+
+        yield [
+            new Error('Wrapped Base UserError with previous', null, null, [], null, new UserError('User error message', 0, $exception)),
+            $this->once(),
+            [
+                LogLevel::ERROR,
+                sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
+                ['exception' => $exception],
+            ],
+        ];
+
+        yield [
+            new Error('Wrapped UserError with previous', null, null, [], null, new UserError('User error message', 0, $exception)),
+            $this->once(),
+            [
+                LogLevel::ERROR,
+                sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
+                ['exception' => $exception],
+            ],
+        ];
+
+        yield [
+            new Error('Wrapped UserWarning with previous', null, null, [], null, new UserWarning('User warning message', 0, $exception)),
+            $this->once(),
+            [
+                LogLevel::WARNING,
+                sprintf('[GraphQL] Exception: Ko![0] (caught throwable) at %s line %s.', __FILE__, $exception->getLine()),
+                ['exception' => $exception],
+            ],
+        ];
     }
 }

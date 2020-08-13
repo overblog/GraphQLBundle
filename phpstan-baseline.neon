@@ -1,112 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$use of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:addInternalUseStatement\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$useStatement of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:addUseStatement\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:generateUseStatement\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractClassGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:getExpressionLanguage\\(\\) should return Symfony\\\\Component\\\\ExpressionLanguage\\\\ExpressionLanguage but returns Symfony\\\\Component\\\\ExpressionLanguage\\\\ExpressionLanguage\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:varExportFromArrayValue\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$definition of method Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractClassGenerator\\:\\:shortenClassName\\(\\) expects string, string\\|null given\\.$#"
-			count: 2
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLGenerator\\\\Generator\\\\AbstractTypeGenerator\\:\\:\\$currentlyGeneratedClass \\(string\\) does not accept null\\.$#"
-			count: 1
-			path: lib/generator/src/Generator/AbstractTypeGenerator.php
-
-		-
-			message: "#^Parameter \\#3 \\$message of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/AbstractStarWarsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$code\\)\\: Unexpected token \"\\$code\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: lib/generator/tests/ClassUtilsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expected\\)\\: Unexpected token \"\\$expected\", expected TOKEN_IDENTIFIER at offset 38$#"
-			count: 1
-			path: lib/generator/tests/ClassUtilsTest.php
-
-		-
-			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$value\\.$#"
-			count: 1
-			path: lib/generator/tests/DateTimeType.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Tests\\\\DateTimeType\\:\\:parseLiteral\\(\\) should return string but returns DateTime\\.$#"
-			count: 1
-			path: lib/generator/tests/DateTimeType.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of method Symfony\\\\Component\\\\Yaml\\\\Parser\\:\\:parse\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/AbstractTypeGeneratorTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string, 'getInstance'\\) given\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/AbstractTypeGeneratorTest.php
-
-		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNull\\(\\) with callable\\(\\)\\: mixed will always evaluate to false\\.$#"
-			count: 1
-			path: lib/generator/tests/Generator/TypeGeneratorTest.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLGenerator\\\\Tests\\\\StarWarsData\\:\\:getCharacter\\(\\) should return array but returns null\\.$#"
-			count: 1
-			path: lib/generator/tests/StarWarsData.php
-
-		-
-			message: "#^Parameter \\#3 \\$message of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertEquals\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: lib/generator/tests/StarWarsIntrospectionTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$id of method Overblog\\\\GraphQLBundle\\\\Resolver\\\\FluentResolverInterface\\:\\:getSolutionAliases\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: src/Command/DebugCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$str of function strtolower expects string, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
 			count: 1
 			path: src/Command/GraphQLDumpSchemaCommand.php
 
 		-
 			message: "#^Binary operation \"\\.\" between '\\.' and \\(array\\<string\\>\\)\\|string\\|true results in an error\\.$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$options of static method GraphQL\\\\Type\\\\Introspection\\:\\:getIntrospectionQuery\\(\\) expects array\\<bool\\>\\|bool, array\\<string, array\\<string\\>\\|bool\\|string\\|null\\> given\\.$#"
 			count: 1
 			path: src/Command/GraphQLDumpSchemaCommand.php
 
@@ -131,46 +31,6 @@ parameters:
 			path: src/Command/ValidateCommand.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/CustomScalarTypeDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/EnumTypeDefinition.php
-
-		-
-			message: "#^Parameter \\#2 \\$search of function array_key_exists expects array, array\\|null given\\.$#"
-			count: 1
-			path: src/Config/EnumTypeDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/InputObjectTypeDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/InterfaceTypeDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/ObjectTypeDefinition.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method Overblog\\\\GraphQLBundle\\\\Config\\\\ObjectTypeDefinition\\:\\:treatFieldsDefaultAccess\\(\\) expects Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\ArrayNodeDefinition, Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition given\\.$#"
-			count: 1
-			path: src/Config/ObjectTypeDefinition.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method Overblog\\\\GraphQLBundle\\\\Config\\\\ObjectTypeDefinition\\:\\:treatFieldsDefaultPublic\\(\\) expects Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\ArrayNodeDefinition, Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition given\\.$#"
-			count: 1
-			path: src/Config/ObjectTypeDefinition.php
-
-		-
 			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Config/Parser/AnnotationParser.php
@@ -193,11 +53,6 @@ parameters:
 		-
 			message: "#^Offset 'type' does not exist on array\\|string\\.$#"
 			count: 2
-			path: src/Config/Parser/AnnotationParser.php
-
-		-
-			message: "#^Parameter \\#1 \\$type of static method Overblog\\\\GraphQLBundle\\\\Config\\\\Parser\\\\AnnotationParser\\:\\:resolveGraphQLTypeFromReflectionType\\(\\) expects ReflectionType, ReflectionType\\|null given\\.$#"
-			count: 1
 			path: src/Config/Parser/AnnotationParser.php
 
 		-
@@ -251,17 +106,7 @@ parameters:
 			path: src/Config/Parser/GraphQLParser.php
 
 		-
-			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\DefinitionNode\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Config/Parser/GraphQLParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string, 'toConfig'\\) given\\.$#"
-			count: 1
-			path: src/Config/Parser/GraphQLParser.php
-
-		-
-			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|null given\\.$#"
 			count: 1
 			path: src/Config/Parser/GraphQLParser.php
 
@@ -276,11 +121,6 @@ parameters:
 			path: src/Config/Parser/XmlParser.php
 
 		-
-			message: "#^Cannot access property \\$childNodes on DOMElement\\|null\\.$#"
-			count: 1
-			path: src/Config/Parser/XmlParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Config/Parser/YamlParser.php
@@ -291,112 +131,12 @@ parameters:
 			path: src/Config/Parser/YamlParser.php
 
 		-
-			message: "#^Static property Overblog\\\\GraphQLBundle\\\\Config\\\\Processor\\\\BuilderProcessor\\:\\:\\$builderClassMap \\(array\\<Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\MappingInterface\\>\\) does not accept default value of type array\\<string, array\\<string, string\\>\\>\\.$#"
-			count: 1
-			path: src/Config/Processor/BuilderProcessor.php
-
-		-
-			message: "#^Parameter \\#1 \\$arr1 of function array_replace_recursive expects array, array\\|null given\\.$#"
-			count: 1
-			path: src/Config/Processor/InheritanceProcessor.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Config\\\\Processor\\\\InheritanceProcessor\\:\\:mergeConfigs\\(\\) should return array but returns array\\|null\\.$#"
-			count: 1
-			path: src/Config/Processor/InheritanceProcessor.php
-
-		-
-			message: "#^Parameter \\#1 \\$arr1 of function array_replace expects array, array\\|null given\\.$#"
-			count: 1
-			path: src/Config/Processor/RelayProcessor.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 2
-			path: src/Config/TypeDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:requiresAtLeastOneElement\\(\\)\\.$#"
-			count: 1
-			path: src/Config/TypeWithOutputFieldsDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:useAttributeAsKey\\(\\)\\.$#"
-			count: 1
-			path: src/Config/TypeWithOutputFieldsDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:prototype\\(\\)\\.$#"
-			count: 1
-			path: src/Config/TypeWithOutputFieldsDefinition.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/Config/UnionTypeDefinition.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Controller\\\\GraphController\\:\\:\\$batchParser \\(Overblog\\\\GraphQLBundle\\\\Request\\\\BatchParser\\) does not accept Overblog\\\\GraphQLBundle\\\\Request\\\\ParserInterface\\.$#"
-			count: 1
-			path: src/Controller/GraphController.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Controller\\\\GraphController\\:\\:\\$requestParser \\(Overblog\\\\GraphQLBundle\\\\Request\\\\Parser\\) does not accept Overblog\\\\GraphQLBundle\\\\Request\\\\ParserInterface\\.$#"
-			count: 1
-			path: src/Controller/GraphController.php
-
-		-
-			message: "#^Parameter \\#2 \\$values of method Symfony\\\\Component\\\\HttpFoundation\\\\ResponseHeaderBag\\:\\:set\\(\\) expects array\\<string\\>\\|string, string\\|null given\\.$#"
-			count: 1
-			path: src/Controller/GraphController.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$array\\)\\: Unexpected token \"\\$array\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: src/Definition/ArgumentInterface.php
-
-		-
-			message: "#^Parameter \\#1 \\$alias of method Overblog\\\\GraphQLBundle\\\\Resolver\\\\TypeResolver\\:\\:resolve\\(\\) expects string, string\\|null given\\.$#"
-			count: 3
-			path: src/Definition/Builder/SchemaBuilder.php
-
-		-
-			message: "#^Parameter \\#2 \\$query of method Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\SchemaBuilder\\:\\:buildSchemaArguments\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\Type, GraphQL\\\\Type\\\\Definition\\\\Type\\|null given\\.$#"
-			count: 1
-			path: src/Definition/Builder/SchemaBuilder.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(mixed, mixed\\) given\\.$#"
-			count: 1
-			path: src/Definition/Type/CustomScalarType.php
-
-		-
-			message: "#^Property GraphQL\\\\Type\\\\SchemaConfig\\:\\:\\$typeLoader \\(callable\\) does not accept null\\.$#"
-			count: 1
-			path: src/Definition/Type/ExtensibleSchema.php
-
-		-
-			message: "#^Parameter \\#1 \\$object_or_string of function is_subclass_of expects object\\|string, string\\|null given\\.$#"
-			count: 2
-			path: src/DependencyInjection/Compiler/AliasedPass.php
-
-		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string\\|null, 'getAliases'\\) given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/AliasedPass.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/ConfigParserPass.php
-
-		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/ConfigParserPass.php
-
-		-
-			message: "#^Argument of an invalid type array\\|null supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
@@ -406,109 +146,14 @@ parameters:
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
 		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\Compiler\\\\TaggedServiceMappingPass\\:\\:resolveAttributes\\(\\) should return array but returns array\\|null\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/TaggedServiceMappingPass.php
-
-		-
-			message: "#^Parameter \\#1 \\$object_or_string of function is_subclass_of expects object\\|string, string\\|null given\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/TaggedServiceMappingPass.php
-
-		-
-			message: "#^Cannot call method compile\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
-
-		-
 			message: "#^Parameter \\#1 \\$str of function substr expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 3
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Cannot call method scalarNode\\(\\) on Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\|null\\.$#"
-			count: 3
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Cannot call method booleanNode\\(\\) on Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\|null\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Parameter \\#2 \\$disabledValue of method Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\Configuration\\:\\:securityQuerySection\\(\\) expects bool, int given\\.$#"
-			count: 2
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:useAttributeAsKey\\(\\)\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Cannot call method end\\(\\) on Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\|null\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^PHPDoc tag @param for parameter \\$name with type string\\|null is not subtype of native type string\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
-		-
-			message: "#^Parameter \\#1 \\$configuration of method Symfony\\\\Component\\\\DependencyInjection\\\\Extension\\\\Extension\\:\\:processConfiguration\\(\\) expects Symfony\\\\Component\\\\Config\\\\Definition\\\\ConfigurationInterface, Symfony\\\\Component\\\\Config\\\\Definition\\\\ConfigurationInterface\\|null given\\.$#"
-			count: 1
-			path: src/DependencyInjection/OverblogGraphQLExtension.php
-
-		-
-			message: "#^Parameter \\#1 \\$node of method Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\TypesConfiguration\\:\\:addBeforeNormalization\\(\\) expects Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\ArrayNodeDefinition, Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition given\\.$#"
-			count: 1
-			path: src/DependencyInjection/TypesConfiguration.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:useAttributeAsKey\\(\\)\\.$#"
-			count: 1
-			path: src/DependencyInjection/TypesConfiguration.php
-
-		-
-			message: "#^Method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) invoked with 2 parameters, 1 required\\.$#"
-			count: 1
-			path: src/Error/ErrorHandler.php
-
-		-
-			message: "#^Parameter \\#1 \\$exception of method Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverterInterface\\:\\:convertException\\(\\) expects Throwable, Throwable\\|null given\\.$#"
-			count: 1
-			path: src/Error/ErrorHandler.php
-
-		-
 			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\|null given\\.$#"
 			count: 1
 			path: src/Error/ErrorHandler.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentError\\:\\:\\$errors \\(Symfony\\\\Component\\\\Validator\\\\ConstraintViolationListInterface\\) does not accept default value of type array\\.$#"
-			count: 1
-			path: src/Error/InvalidArgumentError.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentsError\\:\\:\\$errors \\(Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentError\\) does not accept default value of type array\\.$#"
-			count: 1
-			path: src/Error/InvalidArgumentsError.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentsError\\:\\:\\$errors \\(Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentError\\) does not accept array\\.$#"
-			count: 1
-			path: src/Error/InvalidArgumentsError.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentsError\\:\\:getErrors\\(\\) should return array\\<Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentError\\> but returns Overblog\\\\GraphQLBundle\\\\Error\\\\InvalidArgumentError\\.$#"
-			count: 1
-			path: src/Error/InvalidArgumentsError.php
 
 		-
 			message: "#^Result of \\|\\| is always false\\.$#"
@@ -521,169 +166,14 @@ parameters:
 			path: src/Error/UserErrors.php
 
 		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Event\\\\ExecutorArgumentsEvent\\:\\:\\$contextValue \\(ArrayObject\\) does not accept ArrayObject\\|null\\.$#"
-			count: 1
-			path: src/Event/ExecutorArgumentsEvent.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Event\\\\TypeLoadedEvent\\:\\:\\$schemaName \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Event/TypeLoadedEvent.php
-
-		-
-			message: "#^Parameter \\#1 \\$throwable of method Overblog\\\\GraphQLBundle\\\\EventListener\\\\ErrorLoggerListener\\:\\:log\\(\\) expects Throwable, Throwable\\|null given\\.$#"
-			count: 2
-			path: src/EventListener/ErrorLoggerListener.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\ExpressionLanguage\\\\ExpressionFunction\\\\Security\\\\Helper\\:\\:getToken\\(\\) should return Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\TokenInterface\\|null but empty return statement found\\.$#"
-			count: 1
-			path: src/ExpressionLanguage/ExpressionFunction/Security/Helper.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$index\\)\\: Unexpected token \"\\$index\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: src/ExpressionLanguage/ExpressionLanguage.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$name\\)\\: Unexpected token \"\\$name\", expected TOKEN_IDENTIFIER at offset 39$#"
-			count: 1
-			path: src/ExpressionLanguage/ExpressionLanguage.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGenerator\\:\\:generateAccess\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGenerator\\:\\:generateTypeName\\(\\) should return string but returns string\\|null\\.$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, string\\|null given\\.$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^Parameter \\#1 \\$files of method Symfony\\\\Component\\\\Filesystem\\\\Filesystem\\:\\:remove\\(\\) expects iterable\\|string, string\\|null given\\.$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between null and Composer\\\\Autoload\\\\ClassLoader will always evaluate to false\\.$#"
 			count: 1
 			path: src/Generator/TypeGenerator.php
 
 		-
-			message: "#^PHPDoc tag @return with type string\\|null is not subtype of native type string\\.$#"
-			count: 2
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$config\\)\\: Unexpected token \"\\$config\", expected TOKEN_IDENTIFIER at offset 275$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$array\\)\\: Unexpected token \"\\$array\", expected TOKEN_IDENTIFIER at offset 393$#"
-			count: 1
-			path: src/Generator/TypeGenerator.php
-
-		-
-			message: "#^Cannot call method loadClasses\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: src/OverblogGraphQLBundle.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\ConnectionBuilder\\:\\:\\$connectionCallback \\(callable\\) does not accept \\(callable\\)\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\ConnectionBuilder\\:\\:\\$edgeCallback \\(callable\\) does not accept \\(callable\\)\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^Binary operation \"\\+\" between float\\|int and float\\|int\\|string results in an error\\.$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function array_slice expects int\\|null, float\\|int given\\.$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$offset\\)\\: Unexpected token \"\\$offset\", expected TOKEN_IDENTIFIER at offset 74$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$cursor\\)\\: Unexpected token \"\\$cursor\", expected TOKEN_IDENTIFIER at offset 77$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, string\\|false given\\.$#"
-			count: 1
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 2
-			path: src/Relay/Connection/ConnectionBuilder.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(mixed node\\)\\: Unexpected token \"node\", expected TOKEN_VARIABLE at offset 57$#"
-			count: 1
-			path: src/Relay/Connection/EdgeInterface.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$pageInfo \\(Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\) does not accept Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/Connection.php
-
-		-
 			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$edges \\(array\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\) does not accept iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
 			count: 1
 			path: src/Relay/Connection/Output/Connection.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\:\\:\\$cursor \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/Edge.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$startCursor \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/PageInfo.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$endCursor \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/PageInfo.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$hasPreviousPage \\(bool\\) does not accept bool\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/PageInfo.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$hasNextPage \\(bool\\) does not accept bool\\|null\\.$#"
-			count: 1
-			path: src/Relay/Connection/Output/PageInfo.php
-
-		-
-			message: "#^Call to an undefined method object\\:\\:then\\(\\)\\.$#"
-			count: 1
-			path: src/Relay/Connection/Paginator.php
-
-		-
-			message: "#^Call to an undefined method object\\:\\:setTotalCount\\(\\)\\.$#"
-			count: 1
-			path: src/Relay/Connection/Paginator.php
 
 		-
 			message: "#^Cannot call method then\\(\\) on array\\|object\\.$#"
@@ -706,19 +196,9 @@ parameters:
 			path: src/Relay/Mutation/PayloadDefinition.php
 
 		-
-			message: "#^Call to function is_string\\(\\) with null will always evaluate to false\\.$#"
-			count: 1
-			path: src/Request/BatchParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$schema of static method Overblog\\\\GraphQLBundle\\\\Event\\\\ExecutorArgumentsEvent\\:\\:create\\(\\) expects Overblog\\\\GraphQLBundle\\\\Definition\\\\Type\\\\ExtensibleSchema, GraphQL\\\\Type\\\\Schema given\\.$#"
 			count: 1
 			path: src/Request/Executor.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$input\\)\\: Unexpected token \"\\$input\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: src/Resolver/AbstractProxyResolver.php
 
 		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, mixed\\) given\\.$#"
@@ -726,44 +206,9 @@ parameters:
 			path: src/Resolver/AbstractProxyResolver.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$id\\)\\: Unexpected token \"\\$id\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 2
-			path: src/Resolver/AbstractResolver.php
-
-		-
-			message: "#^Cannot access property \\$operation on GraphQL\\\\Language\\\\AST\\\\OperationDefinitionNode\\|null\\.$#"
-			count: 1
-			path: src/Resolver/AccessResolver.php
-
-		-
-			message: "#^Parameter \\#2 \\$input1 of function array_map expects array, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
-			count: 1
-			path: src/Resolver/AccessResolver.php
-
-		-
-			message: "#^Method Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface\\:\\:dispatch\\(\\) invoked with 2 parameters, 1 required\\.$#"
-			count: 1
-			path: src/Resolver/TypeResolver.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: src/Resolver/TypeResolver.php
-
-		-
-			message: "#^Parameter \\#1 \\$wrappedType of static method GraphQL\\\\Type\\\\Definition\\\\Type\\:\\:nonNull\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\NullableType, GraphQL\\\\Type\\\\Definition\\\\Type given\\.$#"
-			count: 1
-			path: src/Resolver/TypeResolver.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Transformer\\\\ArgumentsTransformer\\:\\:\\$validator \\(Symfony\\\\Component\\\\Validator\\\\Validator\\\\ValidatorInterface\\) does not accept Symfony\\\\Component\\\\Validator\\\\Validator\\\\ValidatorInterface\\|null\\.$#"
-			count: 1
-			path: src/Transformer/ArgumentsTransformer.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Transformer\\\\ArgumentsTransformer\\:\\:getType\\(\\) should return GraphQL\\\\Type\\\\Definition\\\\Type but returns GraphQL\\\\Type\\\\Definition\\\\Type\\|null\\.$#"
-			count: 1
-			path: src/Transformer/ArgumentsTransformer.php
 
 		-
 			message: "#^If condition is always true\\.$#"
@@ -771,54 +216,14 @@ parameters:
 			path: src/Transformer/ArgumentsTransformer.php
 
 		-
-			message: "#^Parameter \\#2 \\$type of method Overblog\\\\GraphQLBundle\\\\Validator\\\\InputValidator\\:\\:createCollectionNode\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\InputObjectType\\|GraphQL\\\\Type\\\\Definition\\\\ObjectType, GraphQL\\\\Type\\\\Definition\\\\Type\\|null given\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^Parameter \\#2 \\$type of method Overblog\\\\GraphQLBundle\\\\Validator\\\\InputValidator\\:\\:createObjectNode\\(\\) expects GraphQL\\\\Type\\\\Definition\\\\InputObjectType\\|GraphQL\\\\Type\\\\Definition\\\\ObjectType, GraphQL\\\\Type\\\\Definition\\\\Type\\|null given\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parent\\)\\: Unexpected token \"\\$parent\", expected TOKEN_IDENTIFIER at offset 113$#"
-			count: 1
-			path: src/Validator/InputValidator.php
-
-		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\PropertyMetadata\\>\\) does not accept Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\.$#"
 			count: 1
 			path: src/Validator/Mapping/ObjectMetadata.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected TOKEN_IDENTIFIER at offset 19$#"
-			count: 1
-			path: src/Validator/Mapping/PropertyMetadata.php
-
-		-
 			message: "#^Call to an undefined method ReflectionMethod\\|ReflectionProperty\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Validator/Mapping/PropertyMetadata.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Validator\\\\ValidationNode\\:\\:\\$__fieldName \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Validator/ValidationNode.php
-
-		-
-			message: "#^Cannot call method getMessage\\(\\) on Throwable\\|null\\.$#"
-			count: 7
-			path: tests/Config/Parser/AnnotationParserTest.php
-
-		-
-			message: "#^PHPDoc tag @param references unknown parameter\\: \\$value$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php
 
 		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Scalar\\\\GalaxyCoordinates\\:\\:parseValue\\(\\) should return DateTimeInterface but returns array\\<int, string\\>\\.$#"
@@ -851,24 +256,9 @@ parameters:
 			path: tests/ExpressionLanguage/TestCase.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$internalConfigKey\\)\\: Unexpected token \"\\$internalConfigKey\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: tests/DependencyInjection/Compiler/ConfigParserPassTest.php
-
-		-
-			message: "#^Cannot call method doSomething\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: tests/DependencyInjection/Compiler/ResolverTestService.php
-
-		-
 			message: "#^Parameter \\#1 \\$exceptionMap of class Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter constructor expects array\\<string, string\\>, array\\<string, array\\<string\\>\\> given\\.$#"
 			count: 1
 			path: tests/Error/ExceptionConverterTest.php
-
-		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'React\\\\\\\\Promise…' and GraphQL\\\\Executor\\\\Promise\\\\Adapter\\\\SyncPromise\\|React\\\\Promise\\\\Promise will always evaluate to false\\.$#"
-			count: 1
-			path: tests/Executor/Promise/Adapter/ReactPromiseAdapterTest.php
 
 		-
 			message: "#^Call to method disableOriginalConstructor\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
@@ -881,74 +271,14 @@ parameters:
 			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expectedUser\\)\\: Unexpected token \"\\$expectedUser\", expected TOKEN_IDENTIFIER at offset 82$#"
-			count: 1
-			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$user\\)\\: Unexpected token \"\\$user\", expected TOKEN_IDENTIFIER at offset 62$#"
-			count: 1
-			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\App\\\\Resolver\\\\SchemaLanguageQueryResolverMap\\:\\:map\\(\\) should return array\\<string, array\\<callable\\>\\> but returns array\\<string, array\\<string, \\$this\\(Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\App\\\\Resolver\\\\SchemaLanguageQueryResolverMap\\)\\|array\\<int, string\\>\\|\\(Closure\\(mixed, Overblog\\\\GraphQLBundle\\\\Definition\\\\Argument\\)\\: mixed\\)\\|int\\>\\>\\.$#"
-			count: 1
-			path: tests/Functional/App/Resolver/SchemaLanguageQueryResolverMap.php
-
-		-
-			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$kind\\.$#"
-			count: 1
-			path: tests/Functional/App/Type/YearScalarType.php
-
-		-
-			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<int, GraphQL\\\\Language\\\\AST\\\\Node\\> given\\.$#"
-			count: 1
-			path: tests/Functional/App/Type/YearScalarType.php
-
-		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface\\:\\:isBooted\\(\\)\\.$#"
 			count: 1
 			path: tests/Functional/BootTest.php
 
 		-
-			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 3
-			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\CompileCommandTest\\:\\:\\$command \\(Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\) does not accept object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
-			message: "#^Cannot call method compile\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
-			message: "#^Cannot call method getCacheDir\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
 			count: 1
 			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertRegExp\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: tests/Functional/Command/CompileCommandTest.php
-
-		-
-			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/DebugCommandTest.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\DebugCommandTest\\:\\:\\$command \\(Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\) does not accept object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/DebugCommandTest.php
 
 		-
 			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
@@ -961,22 +291,7 @@ parameters:
 			path: tests/Functional/Command/DebugCommandTest.php
 
 		-
-			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\GraphDumpSchemaCommandTest\\:\\:\\$command \\(Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\) does not accept object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
-			count: 1
-			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$format\\)\\: Unexpected token \"\\$format\", expected TOKEN_IDENTIFIER at offset 18$#"
 			count: 1
 			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
 
@@ -984,11 +299,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
 			count: 2
 			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
-
-		-
-			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Command/ValidateCommandTest.php
 
 		-
 			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\ValidateCommandTest\\:\\:\\$command \\(Overblog\\\\GraphQLBundle\\\\Command\\\\ValidateCommand\\) does not accept object\\|null\\.$#"
@@ -1001,11 +311,6 @@ parameters:
 			path: tests/Functional/Command/ValidateCommandTest.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$uri\\)\\: Unexpected token \"\\$uri\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 2
-			path: tests/Functional/Controller/GraphControllerTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 5
 			path: tests/Functional/Controller/GraphControllerTest.php
@@ -1016,74 +321,19 @@ parameters:
 			path: tests/Functional/Controller/GraphControllerTest.php
 
 		-
-			message: "#^Parameter \\#6 \\$content of method Symfony\\\\Component\\\\BrowserKit\\\\Client\\:\\:request\\(\\) expects string\\|null, string\\|false given\\.$#"
-			count: 2
-			path: tests/Functional/Controller/GraphControllerTest.php
-
-		-
-			message: "#^Cannot call method getParameter\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Inheritance/InheritanceTest.php
-
-		-
 			message: "#^Parameter \\#3 \\$message of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$query\\)\\: Unexpected token \"\\$query\", expected TOKEN_IDENTIFIER at offset 61$#"
-			count: 1
-			path: tests/Functional/TestCase.php
-
-		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
-
-		-
-			message: "#^Call to function is_callable\\(\\) with array\\('Overblog…', 'fromPhp'\\) will always evaluate to false\\.$#"
-			count: 1
-			path: tests/Functional/TestCase.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(\\*NEVER\\*, 'fromPhp'\\) given\\.$#"
-			count: 1
-			path: tests/Functional/TestCase.php
-
-		-
-			message: "#^Cannot call method get\\(\\) on Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Type/CustomScalarTest.php
-
-		-
-			message: "#^Cannot call method resolve\\(\\) on object\\|null\\.$#"
-			count: 1
-			path: tests/Functional/Type/CustomScalarTest.php
 
 		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/Upload/UploadTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$payload\\)\\: Unexpected token \"\\$payload\", expected TOKEN_IDENTIFIER at offset 140$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$value\\)\\: Unexpected token \"\\$value\", expected TOKEN_IDENTIFIER at offset 44$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$object\\)\\: Unexpected token \"\\$object\", expected TOKEN_IDENTIFIER at offset 44$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$payload\\)\\: Unexpected token \"\\$payload\", expected TOKEN_IDENTIFIER at offset 141$#"
-			count: 1
-			path: tests/Functional/Validator/StaticValidator.php
 
 		-
 			message: "#^Cannot call method getCursor\\(\\) on Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\|false\\.$#"
@@ -1101,43 +351,23 @@ parameters:
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(mixed, 'connectionFromPromi…'\\) given\\.$#"
-			count: 5
-			path: tests/Relay/Connection/ConnectionBuilderFromPromisedTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$expected of method Overblog\\\\GraphQLBundle\\\\Tests\\\\Relay\\\\Connection\\\\ConnectionBuilderFromPromisedTest\\:\\:assertEqualsFromPromised\\(\\) expects Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection, Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\ConnectionInterface given\\.$#"
-			count: 3
-			path: tests/Relay/Connection/ConnectionBuilderFromPromisedTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$invalidPromise\\)\\: Unexpected token \"\\$invalidPromise\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 2
-			path: tests/Relay/Connection/ConnectionBuilderFromPromisedTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(mixed, 'connectionFromArray'\\) given\\.$#"
-			count: 21
-			path: tests/Relay/Connection/ConnectionBuilderTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(mixed, 'connectionFromArray…'\\) given\\.$#"
-			count: 7
-			path: tests/Relay/Connection/ConnectionBuilderTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(mixed, 'cursorForObjectInCo…'\\) given\\.$#"
-			count: 2
-			path: tests/Relay/Connection/ConnectionBuilderTest.php
-
-		-
 			message: "#^Cannot access offset 0 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
-			count: 3
+			count: 4
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
 			message: "#^Cannot access offset 1 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
-			count: 3
+			count: 4
+			path: tests/Relay/Connection/ConnectionBuilderTest.php
+
+		-
+			message: "#^Cannot access offset 2 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			count: 1
+			path: tests/Relay/Connection/ConnectionBuilderTest.php
+
+		-
+			message: "#^Cannot access offset 3 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			count: 1
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
@@ -1216,93 +446,31 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expected\\)\\: Unexpected token \"\\$expected\", expected TOKEN_IDENTIFIER at offset 87$#"
-			count: 1
-			path: tests/Relay/Connection/PaginatorTest.php
+			message: "#^Variable \\$.* in isset\\(\\) is never defined\\.$#"
+			count: 21
+			path: src/Generator/TypeBuilder.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$result\\)\\: Unexpected token \"\\$result\", expected TOKEN_IDENTIFIER at offset 111$#"
-			count: 1
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Cannot access offset mixed on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
-			count: 1
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Call to an undefined method object\\:\\:getEdges\\(\\)\\.$#"
-			count: 13
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$result of method Overblog\\\\GraphQLBundle\\\\Tests\\\\Relay\\\\Connection\\\\PaginatorTest\\:\\:assertSameEdgeNodeValue\\(\\) expects Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection, object given\\.$#"
-			count: 13
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Call to an undefined method object\\:\\:getPageInfo\\(\\)\\.$#"
-			count: 17
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$parameters of function call_user_func_array expects array\\<int, mixed\\>, array\\<string, mixed\\> given\\.$#"
-			count: 1
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^Call to an undefined method object\\:\\:getTotalCount\\(\\)\\.$#"
-			count: 1
-			path: tests/Relay/Connection/PaginatorTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$idFetcher\\)\\: Unexpected token \"\\$idFetcher\", expected TOKEN_IDENTIFIER at offset 66$#"
-			count: 1
-			path: tests/Relay/Node/NodeFieldDefinitionTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$idFetcherCallbackArg\\)\\: Unexpected token \"\\$idFetcherCallbackArg\", expected TOKEN_IDENTIFIER at offset 91$#"
-			count: 1
-			path: tests/Relay/Node/NodeFieldDefinitionTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$nodeInterfaceType\\)\\: Unexpected token \"\\$nodeInterfaceType\", expected TOKEN_IDENTIFIER at offset 127$#"
-			count: 1
-			path: tests/Relay/Node/NodeFieldDefinitionTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expectedResolveSingleInputCallbackArg\\)\\: Unexpected token \"\\$expectedResolveSingleInputCallbackArg\", expected TOKEN_IDENTIFIER at offset 52$#"
-			count: 1
-			path: tests/Relay/Node/PluralIdentifyingRootFieldDefinitionTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$resolveSingleInput\\)\\: Unexpected token \"\\$resolveSingleInput\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: tests/Relay/Node/PluralIdentifyingRootFieldDefinitionTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$expected\\)\\: Unexpected token \"\\$expected\", expected TOKEN_IDENTIFIER at offset 65$#"
-			count: 1
-			path: tests/Resolver/ResolverFieldTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$fieldName\\)\\: Unexpected token \"\\$fieldName\", expected TOKEN_IDENTIFIER at offset 18$#"
-			count: 1
-			path: tests/Resolver/ResolverFieldTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$source\\)\\: Unexpected token \"\\$source\", expected TOKEN_IDENTIFIER at offset 43$#"
-			count: 1
-			path: tests/Resolver/ResolverFieldTest.php
-
-		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'GraphQL\\\\\\\\Type…' and GraphQL\\\\Type\\\\Definition\\\\EnumType\\|GraphQL\\\\Type\\\\Definition\\\\InputObjectType\\|GraphQL\\\\Type\\\\Definition\\\\InterfaceType\\|GraphQL\\\\Type\\\\Definition\\\\ObjectType\\|GraphQL\\\\Type\\\\Definition\\\\ScalarType\\|GraphQL\\\\Type\\\\Definition\\\\UnionType will always evaluate to false\\.$#"
+			message: "#^Undefined variable: .*$#"
 			count: 3
-			path: tests/Resolver/TypeResolverTest.php
+			path: src/Generator/TypeBuilder.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected TOKEN_IDENTIFIER at offset 52$#"
+			message: "#^Call to an undefined method Murtukov\\\\PHPCodeGenerator\\\\OOPStructure::createConstructor.*$#"
 			count: 1
-			path: tests/Upload/Type/GraphQLUploadTypeTest.php
+			path: src/Generator/TypeBuilder.php
 
+		-
+			message: "#^Parameter \\#1 \\$str of function ltrim expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Generator/TypeBuilder.php
 
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 2
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
+			count: 1
+			path: src/Validator/InputValidator.php

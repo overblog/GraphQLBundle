@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverMap;
 
 class NullResolverMap extends ResolverMap
 {
-    protected function map()
+    protected function map(): array
     {
         return [];
     }

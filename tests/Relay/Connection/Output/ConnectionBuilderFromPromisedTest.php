@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder;
  */
 class ConnectionBuilderFromPromisedTest extends \Overblog\GraphQLBundle\Tests\Relay\Connection\ConnectionBuilderFromPromisedTest
 {
-    public static function getBuilder()
+    public static function getBuilder(): string
     {
         return ConnectionBuilder::class;
     }

@@ -6,7 +6,18 @@ namespace Overblog\GraphQLBundle\Tests\Transformer;
 
 class InputType1
 {
+    /**
+     * @var mixed
+     */
     public $field1;
+
+    /**
+     * @var mixed
+     */
     public $field2;
+
+    /**
+     * @var mixed
+     */
     public $field3;
 }

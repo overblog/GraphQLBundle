@@ -11,9 +11,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class StaticValidator
 {
     /**
-     * @param                           $value
-     * @param ExecutionContextInterface $context
-     * @param                           $payload
+     * @param mixed $value
+     * @param mixed $payload
      *
      * @throws Exception
      */
@@ -28,9 +27,8 @@ class StaticValidator
     }
 
     /**
-     * @param                           $object
-     * @param ExecutionContextInterface $context
-     * @param                           $payload
+     * @param mixed $object
+     * @param mixed $payload
      */
     public static function validateClass($object, ExecutionContextInterface $context, $payload): void
     {

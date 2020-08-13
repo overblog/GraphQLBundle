@@ -10,17 +10,13 @@ return PhpCsFixer\Config::create()
     ->setRules(
         [
             '@Symfony' => true,
-            '@PHP71Migration' => true,
-            '@PHP71Migration:risky' => true,
-            'single_blank_line_before_namespace' => true,
-            'ordered_imports' => true,
-            'concat_space' => ['spacing' => 'none'],
-            'phpdoc_no_alias_tag' => ['type' => 'var'],
-            'no_mixed_echo_print' => ['use' => 'echo'],
-            'binary_operator_spaces' => ['align_double_arrow' => false, 'align_equals' => false],
+            'ordered_imports' => ['imports_order' => ['class', 'function', 'const']],
             'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],
-            'native_function_invocation' => true,
             'fully_qualified_strict_types' => true,
+            'single_line_throw' => false,
+            'phpdoc_to_comment' => false,
+            'no_superfluous_phpdoc_tags' => ['allow_mixed' => true],
+            'global_namespace_import' => ['import_functions' => true, 'import_classes' => true, 'import_constants' => true],
         ]
     )
     ->setFinder($finder)

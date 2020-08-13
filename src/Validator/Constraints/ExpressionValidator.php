@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator\Constraints;
 
+use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel;
@@ -13,15 +15,18 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
 {
-    private $expressionLanguage;
+    private ExpressionLanguage $expressionLanguage;
 
-    public function __construct(ExpressionLanguage $expressionLanguage)
+    private GlobalVariables $globalVariables;
+
+    public function __construct(ExpressionLanguage $expressionLanguage, GlobalVariables $globalVariables)
     {
         $this->expressionLanguage = $expressionLanguage;
-        if (Kernel::VERSION_ID >= 40400) {
+        $this->globalVariables = $globalVariables;
+        if (Kernel::VERSION_ID >= 40400) {  // @phpstan-ignore-line
             parent::__construct($expressionLanguage);
-        } else {
-            parent::__construct(null, $expressionLanguage);
+        } else {                            // @phpstan-ignore-line
+            parent::{'__construct'}(null, $expressionLanguage);
         }
     }
 
@@ -36,6 +41,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         $variables = $constraint->values;
         $variables['value'] = $value;
+        $variables[TypeGenerator::GLOBAL_VARS] = $this->globalVariables;
 
         $object = $this->context->getObject();
 
@@ -50,9 +56,9 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         if (!$this->expressionLanguage->evaluate($constraint->expression, $variables)) {
             $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
-                ->setCode(Expression::EXPRESSION_FAILED_ERROR)
-                ->addViolation();
+                          ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
+                          ->setCode(Expression::EXPRESSION_FAILED_ERROR)
+                          ->addViolation();
         }
     }
 }
