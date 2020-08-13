@@ -47,7 +47,8 @@ class Toto
     /**
      * @return bool
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return $this->enabled;
     }
 }
