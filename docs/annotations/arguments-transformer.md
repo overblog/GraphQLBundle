@@ -99,3 +99,48 @@ class RootMutation {
 ```
 
 So, the resolver (the `createUser` method) will receive an instance of the class `UserRegisterInput` instead of an array of data. 
+
+
+### Special arguments
+
+The arguments transformer is also able to transform some `specials arguments` (see auto-guessing) :
+
+- If the type `@info` is specified, it will be replaced by the current `ResolveInfo`
+
+You can use it this way :
+
+```php
+/**
+ * @GQL\Type
+ */
+class RootQuery {
+    /**
+     * @GQL\Field(
+     *   type="[User]",
+     *   args={
+     *     @GQL\Arg(name="ids", type="[Int]"),
+     *     @GQL\Arg(name="info", type="@info")
+     *   },
+     *   resolve="@=call(service('UserRepository').getUser, arguments({ids: '[Int]', info: '@info'}, arg))"
+     * )
+     */
+    public $getUsers;
+}
+```
+
+or with auto-guessing
+
+```php
+/**
+ * @GQL\Provider
+ */
+class UsersResolver {
+    /**
+     * @GQL\Query(type="[User]")
+     */
+    public function getUser(int $id, ResolveInfo $info):array
+    {
+        ...
+    }
+}
+```

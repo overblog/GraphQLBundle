@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Exception;
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Overblog\GraphQLBundle\Config\Parser\Annotation\GraphClass;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
@@ -63,6 +64,11 @@ class AnnotationParser implements PreParserInterface
      */
     private const VALID_INPUT_TYPES = [self::GQL_SCALAR, self::GQL_ENUM, self::GQL_INPUT];
     private const VALID_OUTPUT_TYPES = [self::GQL_SCALAR, self::GQL_TYPE, self::GQL_INTERFACE, self::GQL_UNION, self::GQL_ENUM];
+
+    /** Allow injection of special arguments in arguments transformer */
+    private const SPECIAL_ARGUMENTS = [
+        ResolveInfo::class => '@info',
+    ];
 
     /**
      * {@inheritdoc}
@@ -519,7 +525,8 @@ class AnnotationParser implements PreParserInterface
         }
 
         if (!empty($args)) {
-            $fieldConfiguration['args'] = $args;
+            /** Remove special arguments **/
+            $fieldConfiguration['args'] = array_filter($args, fn ($arg) => !in_array($arg['type'], self::SPECIAL_ARGUMENTS));
         }
 
         $fieldName = $fieldAnnotation->name ?: $fieldName;
@@ -906,19 +913,23 @@ class AnnotationParser implements PreParserInterface
                 throw new InvalidArgumentException(sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed as there is not type hint.', $index + 1, $parameter->getName(), $method->getName()));
             }
 
-            try {
-                // @phpstan-ignore-next-line
-                $gqlType = self::resolveGraphQLTypeFromReflectionType($parameter->getType(), self::VALID_INPUT_TYPES, $parameter->isDefaultValueAvailable());
-            } catch (Exception $e) {
-                throw new InvalidArgumentException(sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed : %s".', $index + 1, $parameter->getName(), $method->getName(), $e->getMessage()));
-            }
+            if ($parameter->getClass() && isset(self::SPECIAL_ARGUMENTS[$parameter->getClass()->getName()])) {
+                $argumentConfig = ['type' => self::SPECIAL_ARGUMENTS[$parameter->getClass()->getName()]];
+            } else {
+                try {
+                    // @phpstan-ignore-next-line
+                    $gqlType = self::resolveGraphQLTypeFromReflectionType($parameter->getType(), self::VALID_INPUT_TYPES, $parameter->isDefaultValueAvailable());
+                } catch (Exception $e) {
+                    throw new InvalidArgumentException(sprintf('Argument n°%s "$%s" on method "%s" cannot be auto-guessed : %s".', $index + 1, $parameter->getName(), $method->getName(), $e->getMessage()));
+                }
 
-            $argumentConfig = [];
-            if ($parameter->isDefaultValueAvailable()) {
-                $argumentConfig['defaultValue'] = $parameter->getDefaultValue();
-            }
+                $argumentConfig = [];
+                if ($parameter->isDefaultValueAvailable()) {
+                    $argumentConfig['defaultValue'] = $parameter->getDefaultValue();
+                }
 
-            $argumentConfig['type'] = $gqlType;
+                $argumentConfig['type'] = $gqlType;
+            }
 
             $arguments[$parameter->getName()] = $argumentConfig;
         }

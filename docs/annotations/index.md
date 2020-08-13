@@ -191,6 +191,34 @@ The GraphQL arguments will be auto-guessed as:
 - `@Arg(name="input", type="MyInput!")`  (The input type corresponding to the `MyInputClass` will be used).
 - `@Arg(name="limit", type="Int", default = 10)`
 
+
+#### Special arguments
+
+In conjonction with the `Arguments transformer`, some arguments with type-hinted classes can also be auto-guessed.  
+The class `GraphQL\Type\Definition\ResolveInfo` will be auto-guessed as the `ResolveInfo` for the resolver.  
+Special arguments are not exposed as GraphQL argument as there are only used internally by the arguments transformer.  
+
+You can inject it as follow: 
+```php
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field(type="[String]!")
+     */
+    public function getSomething(int $amount, ResolveInfo $info) {
+        ...
+    }
+}
+```
+
+The GraphQL arguments will only be: 
+
+- `@Arg(name="amount", type="Int!")`
+
+
+
 ### Limitation of auto-guessing:
 
 When trying to auto-guess a type or args based on PHP Reflection (from type hinted method parameters or type hinted return value), there is a limitation.  
