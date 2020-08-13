@@ -38,7 +38,7 @@ class ResolverFieldTest extends TestCase
             ['private_property_with_getter2', $object, Toto::PRIVATE_PROPERTY_WITH_GETTER2_VALUE],
             ['not_object_or_array', 'String', null],
             ['name', $object, $object->name],
-            ['enabled', $object, $object->isEnabled()]
+            ['enabled', $object, $object->isEnabled()],
         ];
     }
 }
