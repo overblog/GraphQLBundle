@@ -674,19 +674,28 @@ class AnnotationParser implements PreParserInterface
                     continue;
                 }
 
-                $annotationTarget = $annotation->targetType;
-                if (!$annotationTarget && $isDefaultTarget) {
-                    $annotationTarget = $targetType;
-                    if (!($annotation instanceof $expectedAnnotation)) {
+                $annotationTargets = $annotation->targetType;
+
+                if (null === $annotationTargets) {
+                    if ($isDefaultTarget) {
+                        $annotationTargets = [$targetType];
+                        if (!$annotation instanceof $expectedAnnotation) {
+                            continue;
+                        }
+                    } else {
                         continue;
                     }
                 }
 
-                if ($annotationTarget !== $targetType) {
+                if (is_string($annotationTargets)) {
+                    $annotationTargets = [$annotationTargets];
+                }
+
+                if (!in_array($targetType, $annotationTargets)) {
                     continue;
                 }
 
-                if (!($annotation instanceof $expectedAnnotation)) {
+                if (!$annotation instanceof $expectedAnnotation) {
                     if (GQL\Mutation::class == $expectedAnnotation) {
                         $message = sprintf('The provider "%s" try to add a query field on type "%s" (through @Query on method "%s") but "%s" is a mutation.', $providerMetadata->getName(), $targetType, $method->getName(), $targetType);
                     } else {
