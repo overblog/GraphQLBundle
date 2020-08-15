@@ -109,13 +109,13 @@ class AnnotationParserTest extends TestCase
                     'type' => '[Planet]',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
                     'access' => '@=override_access',
-                    'public' => '@=default_public',
+                    'accessConfig' => [
+                        'nullOnDenied' => true,
+                    ],
                 ],
                 'planet_armorResistance' => [
                     'type' => 'Int!',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -127,6 +127,7 @@ class AnnotationParserTest extends TestCase
             'resolveField' => '@=value',
             'fieldsDefaultPublic' => '@=isAuthenticated()',
             'fieldsDefaultAccess' => '@=isAuthenticated()',
+            'fieldsDefaultAccessConfig' => ['nullOnDenied' => true],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
@@ -237,8 +238,6 @@ class AnnotationParserTest extends TestCase
                 'planet_armorResistance' => [
                     'type' => 'Int!',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -262,15 +261,11 @@ class AnnotationParserTest extends TestCase
                     'type' => '[Planet]',
                     'args' => ['keyword' => ['type' => 'String!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').searchPlanet, arguments({keyword: \"String!\"}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
                 'planet_isPlanetDestroyed' => [
                     'type' => 'Boolean!',
                     'args' => ['planetId' => ['type' => 'Int!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -281,15 +276,12 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
-                    'access' => '@=default_access',
                     'public' => '@=override_public',
                 ],
                 'planet_destroyPlanet' => [
                     'type' => 'Boolean!',
                     'args' => ['planetId' => ['type' => 'Int!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -302,15 +294,11 @@ class AnnotationParserTest extends TestCase
                 'planet_getPlanetSchema2' => [
                     'type' => 'Planet',
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').getPlanetSchema2, arguments({}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
                 'planet_isPlanetDestroyed' => [
                     'type' => 'Boolean!',
                     'args' => ['planetId' => ['type' => 'Int!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -321,15 +309,12 @@ class AnnotationParserTest extends TestCase
                     'type' => 'Planet',
                     'args' => ['planetInput' => ['type' => 'PlanetInput!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
-                    'access' => '@=default_access',
                     'public' => '@=override_public',
                 ],
                 'planet_destroyPlanet' => [
                     'type' => 'Boolean!',
                     'args' => ['planetId' => ['type' => 'Int!']],
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
-                    'access' => '@=default_access',
-                    'public' => '@=default_public',
                 ],
             ],
         ]);

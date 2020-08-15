@@ -29,16 +29,23 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         $deniedAccess = static function (): void {
             throw new UserWarning('Access denied to this field.');
         };
+        $nullAccess = fn () => null;
         foreach ($fields as &$field) {
             if (is_array($field) && isset($field['access']) && true !== $field['access']) {
                 $accessChecker = $field['access'];
-                if (false === $accessChecker) {
-                    $field['resolve'] = $deniedAccess;
-                } elseif (is_callable($accessChecker)) {
-                    $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver) {
-                        $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
+                $nullOnDenied = $field['accessConfig']['nullOnDenied'] ?? false;
 
-                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $field['useStrictAccess'] ?? true);
+                if (false === $accessChecker) {
+                    $field['resolve'] = $nullOnDenied ? $nullAccess : $deniedAccess;
+                } elseif (is_callable($accessChecker)) {
+                    $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver, $nullOnDenied) {
+                        $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
+                        $accessConfig = [
+                            'useStrictAccess' => $field['useStrictAccess'] ?? true,
+                            'nullOnDenied' => $nullOnDenied,
+                        ];
+
+                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $accessConfig);
                     };
                 }
             }

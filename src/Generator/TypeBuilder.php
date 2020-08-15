@@ -558,6 +558,9 @@ class TypeBuilder
 
         if (isset($access)) {
             $field->addItem('access', $this->buildAccess($access));
+            if (isset($accessConfig)) {
+                $field->addItem('accessConfig', $accessConfig);
+            }
         }
 
         if (!empty($access) && is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {

@@ -8,7 +8,7 @@ An access control can be added on the whole object using a decorator type for th
 
 An access control can be added on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
 If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
-Act like access is`true` if not set.
+Act like access is `true` if not set.
 
 In the example below the user field protection is set by the decorator:
 

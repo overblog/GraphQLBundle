@@ -341,7 +341,12 @@ class AnnotationParser implements PreParserInterface
 
         $accessAnnotation = self::getFirstAnnotationMatching($graphClass->getAnnotations(), GQL\Access::class);
         if ($accessAnnotation) {
-            $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
+            if (isset($accessAnnotation->value)) {
+                $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
+            }
+            if (isset($accessAnnotation->nullOnDenied)) {
+                $typeConfiguration['fieldsDefaultAccessConfig'] = ['nullOnDenied' => $accessAnnotation->nullOnDenied];
+            }
         }
 
         return ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration];
@@ -581,8 +586,13 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        if ($accessAnnotation) {
-            $fieldConfiguration['access'] = self::formatExpression($accessAnnotation->value);
+        if (null !== $accessAnnotation) {
+            if (isset($accessAnnotation->value)) {
+                $fieldConfiguration['access'] = self::formatExpression($accessAnnotation->value);
+            }
+            if (isset($accessAnnotation->nullOnDenied)) {
+                $fieldConfiguration['accessConfig'] = ['nullOnDenied' => $accessAnnotation->nullOnDenied];
+            }
         }
 
         if ($publicAnnotation) {
@@ -658,12 +668,6 @@ class AnnotationParser implements PreParserInterface
     {
         $fields = [];
         foreach (self::$providers as ['metadata' => $providerMetadata, 'annotation' => $providerAnnotation]) {
-            $defaultAccessAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\Access::class);
-            $defaultIsPublicAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\IsPublic::class);
-
-            $defaultAccess = $defaultAccessAnnotation ? self::formatExpression($defaultAccessAnnotation->value) : false;
-            $defaultIsPublic = $defaultIsPublicAnnotation ? self::formatExpression($defaultIsPublicAnnotation->value) : false;
-
             $methods = [];
             // First found the methods matching the targeted type
             foreach ($providerMetadata->getMethods() as $method) {
@@ -712,14 +716,6 @@ class AnnotationParser implements PreParserInterface
             foreach ($providerFields as $fieldName => $fieldConfig) {
                 if ($providerAnnotation->prefix) {
                     $fieldName = sprintf('%s%s', $providerAnnotation->prefix, $fieldName);
-                }
-
-                if ($defaultAccess && !isset($fieldConfig['access'])) {
-                    $fieldConfig['access'] = $defaultAccess;
-                }
-
-                if ($defaultIsPublic && !isset($fieldConfig['public'])) {
-                    $fieldConfig['public'] = $defaultIsPublic;
                 }
 
                 $fields[$fieldName] = $fieldConfig;

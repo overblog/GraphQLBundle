@@ -238,6 +238,67 @@ EOF;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
+    public function testUserNullableField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'nullField' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'EOF'
+query MyQuery {
+  user {
+    nullField
+  }
+}
+EOF;
+
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
+    public function testUserNullablePromiseField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'promiseNullField' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'EOF'
+query MyQuery {
+  user {
+    promiseNullField
+  }
+}
+EOF;
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
+    public function testUserNullableNotStrictPromiseField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'promiseNullFieldNotStrict' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'EOF'
+query MyQuery {
+  user {
+    promiseNullFieldNotStrict
+  }
+}
+EOF;
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
     public function testUserAccessToUserFriends(): void
     {
         $expected = [
