@@ -17,19 +17,19 @@ final class Union implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Union types.
      *
      * @var array<string>
      */
-    public $types;
+    public array $types;
 
     /**
      * Resolver type for union.
      *
      * @var string
      */
-    public $resolveType;
+    public string $resolveType;
 }

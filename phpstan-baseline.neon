@@ -46,16 +46,6 @@ parameters:
 			path: src/Config/Parser/AnnotationParser.php
 
 		-
-			message: "#^Access to an undefined property object\\:\\:\\$name\\.$#"
-			count: 1
-			path: src/Config/Parser/AnnotationParser.php
-
-		-
-			message: "#^Offset 'type' does not exist on array\\|string\\.$#"
-			count: 2
-			path: src/Config/Parser/AnnotationParser.php
-
-		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$description\\.$#"
 			count: 1
 			path: src/Config/Parser/GraphQL/ASTConverter/DescriptionNode.php
@@ -176,11 +166,6 @@ parameters:
 			path: src/Relay/Connection/Output/Connection.php
 
 		-
-			message: "#^Cannot call method then\\(\\) on array\\|object\\.$#"
-			count: 1
-			path: src/Relay/Connection/Paginator.php
-
-		-
 			message: "#^Possibly invalid array key type \\(array\\|string\\|null\\)\\.$#"
 			count: 1
 			path: src/Relay/Mutation/InputDefinition.php
@@ -196,11 +181,6 @@ parameters:
 			path: src/Relay/Mutation/PayloadDefinition.php
 
 		-
-			message: "#^Parameter \\#1 \\$schema of static method Overblog\\\\GraphQLBundle\\\\Event\\\\ExecutorArgumentsEvent\\:\\:create\\(\\) expects Overblog\\\\GraphQLBundle\\\\Definition\\\\Type\\\\ExtensibleSchema, GraphQL\\\\Type\\\\Schema given\\.$#"
-			count: 1
-			path: src/Request/Executor.php
-
-		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, mixed\\) given\\.$#"
 			count: 1
 			path: src/Resolver/AbstractProxyResolver.php
@@ -209,11 +189,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: src/Resolver/TypeResolver.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: src/Transformer/ArgumentsTransformer.php
 
 		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\PropertyMetadata\\>\\) does not accept Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\.$#"

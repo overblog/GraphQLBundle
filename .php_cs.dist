@@ -1,7 +1,7 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('vendor')
+    ->exclude('Annotation')
     ->name('*.php')
     ->in([__DIR__.'/src', __DIR__.'/tests'])
 ;

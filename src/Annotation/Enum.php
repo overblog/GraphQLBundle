@@ -17,10 +17,10 @@ final class Enum implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var array<\Overblog\GraphQLBundle\Annotation\EnumValue>
      */
-    public $values;
+    public array $values;
 }

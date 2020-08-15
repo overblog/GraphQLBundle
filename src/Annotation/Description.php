@@ -19,5 +19,5 @@ final class Description implements Annotation
      *
      * @var string
      */
-    public $value;
+    public string $value;
 }

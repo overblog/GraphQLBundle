@@ -19,5 +19,5 @@ final class Access implements Annotation
      *
      * @var string
      */
-    public $value;
+    public string $value;
 }
