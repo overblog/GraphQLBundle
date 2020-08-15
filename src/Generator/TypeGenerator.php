@@ -6,7 +6,9 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
+use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_merge;
 use function file_exists;
 use function file_put_contents;
@@ -33,12 +35,14 @@ class TypeGenerator
     private ?string $baseCacheDir;
     private string $classNamespace;
     private TypeBuilder $typeBuilder;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         string $classNamespace,
         ?string $cacheDir,
         array $configs,
         TypeBuilder $typeBuilder,
+        EventDispatcherInterface $eventDispatcher,
         bool $useClassMap = true,
         ?string $baseCacheDir = null,
         ?int $cacheDirMask = null
@@ -48,6 +52,7 @@ class TypeGenerator
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
         $this->typeBuilder = $typeBuilder;
+        $this->eventDispatcher = $eventDispatcher;
         $this->classNamespace = $classNamespace;
 
         if (null === $cacheDirMask) {
@@ -119,6 +124,8 @@ class TypeGenerator
 
             $this->loadClasses(true);
         }
+
+        $this->eventDispatcher->dispatch(new SchemaCompiledEvent());
 
         return $classes;
     }

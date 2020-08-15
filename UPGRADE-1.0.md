@@ -45,6 +45,7 @@ public function __construct(
     ?string $cacheDir,
     array $configs,
 +   TypeBuilder $typeBuilder
++   EventDispatcherInterface $eventDispatcher
     bool $useClassMap = true,
 -   callable $configProcessor = null,
     ?string $baseCacheDir = null,
