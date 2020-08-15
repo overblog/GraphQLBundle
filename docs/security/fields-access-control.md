@@ -9,7 +9,8 @@ Act like access is`true` if not set.
 Additional configuration can be set using `config.fields.*.accessConfig` or globally with `config.fieldsDefaultAccessConfig`.  
 The available option is :
 
-`nullOnDenied` : Boolean indicating if we should return `null` instead of raising an exception is the access to the field is denied. `default=false`.  
+`nullOnDenied` : Boolean indicating if we should return `null` instead of raising an exception is the access to the field is denied. `default=false`.  **Warning: When using this option make sure the corresponding field is nullable.**   
+
 
 Note:
 
