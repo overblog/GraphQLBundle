@@ -668,6 +668,13 @@ class AnnotationParser implements PreParserInterface
     {
         $fields = [];
         foreach (self::$providers as ['metadata' => $providerMetadata, 'annotation' => $providerAnnotation]) {
+            $defaultAccessAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\Access::class);
+            $defaultIsPublicAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\IsPublic::class);
+
+            $defaultAccess = isset($defaultAccessAnnotation->value) ? self::formatExpression($defaultAccessAnnotation->value) : false;
+            $defaultAccessConfig = isset($defaultAccessAnnotation->nullOnDenied) ? ['nullOnDenied' => $defaultAccessAnnotation->nullOnDenied] : false;
+            $defaultIsPublic = $defaultIsPublicAnnotation ? self::formatExpression($defaultIsPublicAnnotation->value) : false;
+
             $methods = [];
             // First found the methods matching the targeted type
             foreach ($providerMetadata->getMethods() as $method) {
@@ -716,6 +723,18 @@ class AnnotationParser implements PreParserInterface
             foreach ($providerFields as $fieldName => $fieldConfig) {
                 if ($providerAnnotation->prefix) {
                     $fieldName = sprintf('%s%s', $providerAnnotation->prefix, $fieldName);
+                }
+
+                if ($defaultAccess && !isset($fieldConfig['access'])) {
+                    $fieldConfig['access'] = $defaultAccess;
+                }
+
+                if ($defaultAccessConfig && !isset($fieldConfig['accessConfig'])) {
+                    $fieldConfig['accessConfig'] = $defaultAccessConfig;
+                }
+
+                if ($defaultIsPublic && !isset($fieldConfig['public'])) {
+                    $fieldConfig['public'] = $defaultIsPublic;
                 }
 
                 $fields[$fieldName] = $fieldConfig;
