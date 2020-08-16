@@ -17,40 +17,40 @@ class Type implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Type inherited interfaces.
      *
      * @var string[]
      */
-    public $interfaces;
+    public array $interfaces;
 
     /**
      * Is the type a relay payload.
      *
      * @var bool
      */
-    public $isRelay = false;
+    public bool $isRelay = false;
 
     /**
      * Expression to a target fields resolver.
      *
      * @var string
      */
-    public $resolveField;
+    public string $resolveField;
 
     /**
      * List of fields builder.
      *
      * @var array<\Overblog\GraphQLBundle\Annotation\FieldsBuilder>
      */
-    public $builders = [];
+    public array $builders = [];
 
     /**
      * Expression to resolve type for interfaces.
      *
      * @var string
      */
-    public $isTypeOf;
+    public string $isTypeOf;
 }

@@ -17,7 +17,7 @@ class Field implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Field Type.
@@ -26,21 +26,21 @@ class Field implements Annotation
      *
      * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * Field arguments.
      *
      * @var array<\Overblog\GraphQLBundle\Annotation\Arg>
      */
-    public $args;
+    public array $args = [];
 
     /**
      * Resolver for this property.
      *
      * @var string
      */
-    public $resolve;
+    public string $resolve;
 
     /**
      * Args builder.
