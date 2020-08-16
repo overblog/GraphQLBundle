@@ -12,6 +12,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
+use ReflectionClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -46,7 +47,7 @@ class ArgumentsTransformer
     {
         $classname = isset($this->classesMap[$type]) ? $this->classesMap[$type]['class'] : false;
 
-        return $classname ? new $classname() : false;
+        return $classname ? (new ReflectionClass($classname))->newInstanceWithoutConstructor() : false;
     }
 
     /**
