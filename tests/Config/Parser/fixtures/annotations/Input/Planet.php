@@ -13,6 +13,11 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class Planet
 {
     /**
+     * @GQL\Field(resolve="...")
+     */
+    protected string $skipField;
+
+    /**
      * @GQL\Field(type="String!")
      */
     protected string $name;
