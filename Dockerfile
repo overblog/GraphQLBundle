@@ -28,9 +28,13 @@ RUN set -eu; \
         php-xml \
         php-dom \
         php-pdo \
+        php-curl \
     ; ln -s /usr/bin/php7 /usr/bin/php
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# install Symfony Flex globally to speed up download of Composer packages (parallelized prefetching)
+RUN set -eux; \
+	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative;
 
 WORKDIR /opt/test
 
