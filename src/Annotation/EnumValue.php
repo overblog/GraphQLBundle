@@ -15,15 +15,15 @@ final class EnumValue implements Annotation
     /**
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * @var string
      */
-    public $deprecationReason;
+    public string $deprecationReason;
 }

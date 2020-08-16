@@ -17,5 +17,5 @@ final class Provider implements Annotation
      *
      * @var string
      */
-    public $prefix;
+    public string $prefix;
 }
