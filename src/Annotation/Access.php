@@ -24,5 +24,5 @@ final class Access implements Annotation
      *
      * @var bool
      */
-    public $nullOnDenied;
+    public bool $nullOnDenied;
 }
