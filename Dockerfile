@@ -7,7 +7,7 @@ FROM scratch AS test_source
 COPY benchmarks/ benchmarks/
 COPY src/ /src/
 COPY tests/ /tests/
-COPY phpunit.xml.* phpstan.neon.* .php_cs.* phpbench.json /
+COPY phpunit.xml.* phpstan*.neon .php_cs.* phpbench.json /
 
 FROM alpine:3.9
 

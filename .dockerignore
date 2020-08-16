@@ -5,6 +5,6 @@
 !/benchmarks/
 !/composer.json
 !/phpunit.xml.*
-!/phpstan.neon.*
+!/phpstan*.neon
 !/.php_cs.*
 !/phpbench.json
