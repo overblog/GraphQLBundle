@@ -636,7 +636,7 @@ class AnnotationParser implements PreParserInterface
             }
 
             $fieldName = $reflector->getName();
-            $fieldType = $fieldAnnotation->type;
+            $fieldType = $fieldAnnotation->type ?? self::guessType($graphClass, $annotations);
             $fieldConfiguration = [];
             if ($fieldType) {
                 // Resolve a PHP class from a GraphQL type
