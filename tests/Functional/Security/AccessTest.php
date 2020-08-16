@@ -147,7 +147,7 @@ class AccessTest extends TestCase
                         'locations' => [
                             [
                                 'line' => 2,
-                                'column' => 3,
+                                'column' => 5,
                             ],
                         ],
                         'path' => ['youShallNotSeeThisUnauthenticated'],
@@ -218,7 +218,7 @@ class AccessTest extends TestCase
                         'locations' => [
                             [
                                 'line' => 3,
-                                'column' => 5,
+                                'column' => 9,
                             ],
                         ],
                         'path' => ['user', 'forbidden'],
