@@ -567,7 +567,7 @@ class AnnotationParser implements PreParserInterface
                 $fieldConfiguration['builder'] = $builder;
                 $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
             } else {
-                throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $reflector->getName()));
+                throw new InvalidArgumentException(sprintf('The attribute "fieldBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $reflector->getName()));
             }
         } else {
             if (!isset($fieldAnnotation->type)) {
