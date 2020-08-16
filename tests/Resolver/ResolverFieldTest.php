@@ -13,9 +13,10 @@ class ResolverFieldTest extends TestCase
     /**
      * @dataProvider resolverProvider
      *
-     * @param mixed $source
+     * @param mixed            $source
+     * @param bool|string|null $expected
      */
-    public function testDefaultFieldResolveFn(string $fieldName, $source, ?string $expected): void
+    public function testDefaultFieldResolveFn(string $fieldName, $source, $expected): void
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->fieldName = $fieldName;
@@ -36,6 +37,8 @@ class ResolverFieldTest extends TestCase
             ['private_property_with_getter2', $object, Toto::PRIVATE_PROPERTY_WITH_GETTER2_VALUE],
             ['not_object_or_array', 'String', null],
             ['name', $object, $object->name],
+            ['enabled', $object, $object->isEnabled()],
+            ['isDisabled', $object, $object->isDisabled()],
         ];
     }
 }

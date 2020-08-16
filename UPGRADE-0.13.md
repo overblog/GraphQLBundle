@@ -23,7 +23,7 @@ The new `default_field_resolver` config entry accepts callable service id.
 Stop using internally `symfony/property-access` package
 since it was a bottleneck to performance for large schema.
 
-Array access and camelize getter are supported but isser, hasser,
+Array access and camelize getter/isser are supported but hasser,
 jQuery style (e.g. `last()`) and "can" property accessors
 are no more supported out-of-the-box,
 please implement a custom resolver if these accessors are needed.

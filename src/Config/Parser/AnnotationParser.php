@@ -511,8 +511,8 @@ class AnnotationParser implements PreParserInterface
         if (!empty($fieldAnnotation->args)) {
             foreach ($fieldAnnotation->args as $arg) {
                 $args[$arg->name] = ['type' => $arg->type]
-                    + ($arg->description ? ['description' => $arg->description] : [])
-                    + ($arg->default ? ['defaultValue' => $arg->default] : []);
+                    + (null !== $arg->description ? ['description' => $arg->description] : [])
+                    + (null !== $arg->default ? ['defaultValue' => $arg->default] : []);
             }
         } elseif ($reflector instanceof ReflectionMethod) {
             $args = self::guessArgs($reflector);
@@ -555,7 +555,7 @@ class AnnotationParser implements PreParserInterface
                 $fieldConfiguration['builder'] = $builder;
                 $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
             } else {
-                throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $reflector->getName()));
+                throw new InvalidArgumentException(sprintf('The attribute "fieldBuilder" on GraphQL annotation "@%s" defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', $fieldAnnotationName, $reflector->getName()));
             }
         } else {
             if (!$fieldType) {
@@ -674,19 +674,28 @@ class AnnotationParser implements PreParserInterface
                     continue;
                 }
 
-                $annotationTarget = $annotation->targetType;
-                if (!$annotationTarget && $isDefaultTarget) {
-                    $annotationTarget = $targetType;
-                    if (!($annotation instanceof $expectedAnnotation)) {
+                $annotationTargets = $annotation->targetType;
+
+                if (null === $annotationTargets) {
+                    if ($isDefaultTarget) {
+                        $annotationTargets = [$targetType];
+                        if (!$annotation instanceof $expectedAnnotation) {
+                            continue;
+                        }
+                    } else {
                         continue;
                     }
                 }
 
-                if ($annotationTarget !== $targetType) {
+                if (is_string($annotationTargets)) {
+                    $annotationTargets = [$annotationTargets];
+                }
+
+                if (!in_array($targetType, $annotationTargets)) {
                     continue;
                 }
 
-                if (!($annotation instanceof $expectedAnnotation)) {
+                if (!$annotation instanceof $expectedAnnotation) {
                     if (GQL\Mutation::class == $expectedAnnotation) {
                         $message = sprintf('The provider "%s" try to add a query field on type "%s" (through @Query on method "%s") but "%s" is a mutation.', $providerMetadata->getName(), $targetType, $method->getName(), $targetType);
                     } else {

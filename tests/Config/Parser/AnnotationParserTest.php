@@ -111,6 +111,12 @@ class AnnotationParserTest extends TestCase
                     'access' => '@=override_access',
                     'public' => '@=default_public',
                 ],
+                'planet_armorResistance' => [
+                    'type' => 'Int!',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
 
@@ -129,7 +135,7 @@ class AnnotationParserTest extends TestCase
                 'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
                 'victims' => [
                     'type' => '[Character]',
-                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims']],
+                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims', 'defaultValue' => false]],
                     'resolve' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
                 ],
             ],
@@ -228,6 +234,12 @@ class AnnotationParserTest extends TestCase
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'planet_armorResistance' => [
+                    'type' => 'Int!',
+                    'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
     }
@@ -253,6 +265,13 @@ class AnnotationParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'planet_isPlanetDestroyed' => [
+                    'type' => 'Boolean!',
+                    'args' => ['planetId' => ['type' => 'Int!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
 
@@ -264,6 +283,13 @@ class AnnotationParserTest extends TestCase
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanet, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=override_public',
+                ],
+                'planet_destroyPlanet' => [
+                    'type' => 'Boolean!',
+                    'args' => ['planetId' => ['type' => 'Int!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
                 ],
             ],
         ]);
@@ -279,6 +305,13 @@ class AnnotationParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'planet_isPlanetDestroyed' => [
+                    'type' => 'Boolean!',
+                    'args' => ['planetId' => ['type' => 'Int!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
 
@@ -290,6 +323,13 @@ class AnnotationParserTest extends TestCase
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').createPlanetSchema2, arguments({planetInput: \"PlanetInput!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=override_public',
+                ],
+                'planet_destroyPlanet' => [
+                    'type' => 'Boolean!',
+                    'args' => ['planetId' => ['type' => 'Int!']],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
                 ],
             ],
         ]);

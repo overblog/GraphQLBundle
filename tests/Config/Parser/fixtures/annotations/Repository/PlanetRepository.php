@@ -62,4 +62,28 @@ class PlanetRepository
     {
         return [];
     }
+
+    /**
+     * @GQL\Mutation(targetType={"RootMutation", "RootMutation2"})
+     */
+    public function destroyPlanet(int $planetId): bool
+    {
+        return true;
+    }
+
+    /**
+     * @GQL\Query(targetType={"RootQuery", "RootQuery2"})
+     */
+    public function isPlanetDestroyed(int $planetId): bool
+    {
+        return true;
+    }
+
+    /**
+     * @GQL\Query(targetType={"Droid", "Mandalorian"}, name="armorResistance")
+     */
+    public function getArmorResistance(): int
+    {
+        return 10;
+    }
 }
