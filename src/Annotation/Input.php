@@ -17,12 +17,12 @@ final class Input implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Is the type a relay input.
      *
      * @var bool
      */
-    public $isRelay = false;
+    public bool $isRelay = false;
 }

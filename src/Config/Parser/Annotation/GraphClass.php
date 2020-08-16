@@ -7,9 +7,12 @@ namespace Overblog\GraphQLBundle\Config\Parser\Annotation;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Overblog\GraphQLBundle\Annotation\Annotation;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
+use Reflector;
 use RuntimeException;
 use function class_exists;
 
@@ -18,11 +21,12 @@ class GraphClass extends ReflectionClass
     private static ?AnnotationReader $annotationReader = null;
 
     protected array $annotations = [];
-
     protected array $propertiesExtended = [];
 
     /**
      * @param mixed $className
+     *
+     * @throws ReflectionException
      */
     public function __construct($className)
     {
@@ -51,26 +55,24 @@ class GraphClass extends ReflectionClass
     }
 
     /**
-     * @param ReflectionMethod|ReflectionProperty|null $from
+     * @phpstan-param ReflectionMethod|ReflectionProperty|null $from
      *
-     * @return array
+     * @return array<Annotation>
+     *
+     * @throws AnnotationException
      */
-    public function getAnnotations(object $from = null)
+    public function getAnnotations(Reflector $from = null): array
     {
-        if (!$from) {
-            return $this->annotations;
+        switch (true) {
+            case null === $from:
+                return $this->annotations;
+            case $from instanceof ReflectionMethod:
+                return self::getAnnotationReader()->getMethodAnnotations($from);
+            case $from instanceof ReflectionProperty:
+                return self::getAnnotationReader()->getPropertyAnnotations($from);
+            default:
+                throw new AnnotationException(sprintf('Unable to retrieve annotations from object of class "%s".', get_class($from)));
         }
-
-        if ($from instanceof ReflectionMethod) {
-            return self::getAnnotationReader()->getMethodAnnotations($from);
-        }
-
-        if ($from instanceof ReflectionProperty) {
-            return self::getAnnotationReader()->getPropertyAnnotations($from);
-        }
-
-        /** @phpstan-ignore-next-line */
-        throw new AnnotationException(sprintf('Unable to retrieve annotations from object of class "%s".', get_class($from)));
     }
 
     private static function getAnnotationReader(): AnnotationReader

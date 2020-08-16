@@ -13,16 +13,13 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Scalar implements Annotation
 {
     /**
-     * Scalar name.
-     *
      * @var string
      */
-    public $name;
+    public string $name;
+
 
     /**
-     * Scalar type.
-     *
      * @var string
      */
-    public $scalarType;
+    public string $scalarType;
 }

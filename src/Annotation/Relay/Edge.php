@@ -21,5 +21,5 @@ final class Edge extends Type
      *
      * @var string
      */
-    public $node;
+    public string $node;
 }
