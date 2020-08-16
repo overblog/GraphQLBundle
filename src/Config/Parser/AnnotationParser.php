@@ -622,8 +622,13 @@ class AnnotationParser implements PreParserInterface
         foreach ($reflectors as $reflector) {
             $annotations = $graphClass->getAnnotations($reflector);
 
-            /** @var GQL\Field $fieldAnnotation */
+            /** @var GQL\Field|null $fieldAnnotation */
             $fieldAnnotation = self::getFirstAnnotationMatching($annotations, GQL\Field::class);
+
+            // No field annotation found
+            if (!$fieldAnnotation) {
+                continue;
+            }
 
             // Ignore field with resolver when the type is an Input
             if (isset($fieldAnnotation->resolve)) {
