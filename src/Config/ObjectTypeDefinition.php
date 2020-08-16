@@ -80,7 +80,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
             ->ifTrue(fn ($v) => isset($v['fieldsDefaultAccessConfig']))
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
-                    if (array_key_exists('accessConfig', $field) && null !== $field['accessConfig']) {
+                    if (isset($field['accessConfig'])) {
                         continue;
                     }
 

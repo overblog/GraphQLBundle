@@ -157,13 +157,13 @@ class AccessTest extends TestCase
         ];
 
         $query = <<<'EOF'
-{
-  youShallNotSeeThisUnauthenticated {
-    secretValue
-    youAreAuthenticated
-  }
-}
-EOF;
+        {
+            youShallNotSeeThisUnauthenticated {
+                secretValue
+                youAreAuthenticated
+            }
+        }
+        EOF;
 
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'access');
     }
@@ -228,12 +228,12 @@ EOF;
         ];
 
         $query = <<<'EOF'
-query MyQuery {
-  user {
-    forbidden
-  }
-}
-EOF;
+        query MyQuery {
+            user {
+                forbidden
+            }
+        }
+        EOF;
 
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
@@ -249,12 +249,12 @@ EOF;
         ];
 
         $query = <<<'GQL'
-query MyQuery {
-  user {
-    nullField
-  }
-}
-GQL;
+        query MyQuery {
+            user {
+                nullField
+            }
+        }
+        GQL;
 
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
@@ -270,12 +270,12 @@ GQL;
         ];
 
         $query = <<<'GQL'
-query MyQuery {
-  user {
-    promiseNullField
-  }
-}
-GQL;
+        query MyQuery {
+            user {
+                promiseNullField
+            }
+        }
+        GQL;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
@@ -290,12 +290,12 @@ GQL;
         ];
 
         $query = <<<'GQL'
-query MyQuery {
-  user {
-    promiseNullFieldNotStrict
-  }
-}
-GQL;
+        query MyQuery {
+            user {
+                promiseNullFieldNotStrict
+            }
+        }
+        GQL;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 

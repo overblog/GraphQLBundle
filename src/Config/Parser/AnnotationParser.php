@@ -470,10 +470,10 @@ class AnnotationParser implements PreParserInterface
                 if ($method->isStatic() && $method->isPublic()) {
                     $unionConfiguration['resolveType'] = self::formatExpression(sprintf("@=call('%s::%s', [service('overblog_graphql.type_resolver'), value], true)", self::formatNamespaceForExpression($graphClass->getName()), 'resolveType'));
                 } else {
-                    throw new InvalidArgumentException(sprintf('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.'));
+                    throw new InvalidArgumentException('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.');
                 }
             } else {
-                throw new InvalidArgumentException(sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
+                throw new InvalidArgumentException('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.');
             }
         }
 
@@ -874,7 +874,7 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        throw new InvalidArgumentException(sprintf('No Doctrine ORM annotation found.'));
+        throw new InvalidArgumentException('No Doctrine ORM annotation found.');
     }
 
     /**
