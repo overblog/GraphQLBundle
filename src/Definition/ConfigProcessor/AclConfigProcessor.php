@@ -40,12 +40,8 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 } elseif (is_callable($accessChecker)) {
                     $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver, $nullOnDenied) {
                         $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
-                        $accessConfig = [
-                            'useStrictAccess' => $field['useStrictAccess'] ?? true,
-                            'nullOnDenied' => $nullOnDenied,
-                        ];
 
-                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $accessConfig);
+                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $field['useStrictAccess'] ?? true, $nullOnDenied);
                     };
                 }
             }

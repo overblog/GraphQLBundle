@@ -8,15 +8,15 @@ RootQuery:
                 resolve: '@=resolver("query")'
             youShallNotSeeThisUnauthenticated:
                 type: SecureField
-                access: "@=isFullyAuthenticated()"
-                resolve: "@=[]"
+                access: '@=isFullyAuthenticated()'
+                resolve: '@=[]'
 
 Mutation:
     type: object
     config:
         fields:
             user:
-                access: "@=private_service.hasAccess()"
+                access: '@=private_service.hasAccess()'
                 type: Human
                 resolve: '@=resolver("query")'
 
@@ -33,9 +33,9 @@ User:
         fields:
             name: String
             roles:
-                type: "[String]"
+                type: '[String]'
                 access: "@=hasRole('ROLE_ADMIN')"
-                resolve: ["ROLE_USER"]
+                resolve: ['ROLE_USER']
             isEnabled:
                 # access as a promise
                 access: "@=resolver('promise', [args.hasAccess])"
@@ -52,7 +52,7 @@ User:
             friendsAsArray:
                 # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
                 access: "@=object != 2"
-                type: "[Int]"
+                type: '[Int]'
                 resolve: [1, 2, 3]
             forbidden:
                 access: false
@@ -80,10 +80,10 @@ SecureField:
         fields:
             secretValue:
                 type: String!
-                resolve: "top secret"
+                resolve: 'top secret'
             youAreAuthenticated:
                 type: Boolean!
-                resolve: "@=isFullyAuthenticated()"
+                resolve: '@=isFullyAuthenticated()'
 
 friendConnection:
     type: relay-connection
@@ -116,7 +116,7 @@ simpleMutationWithThunkFieldsInput:
     type: relay-mutation-input
     config:
         fields:
-            inputData: "Int"
+            inputData: 'Int'
 
 simpleMutationWithThunkFieldsPayload:
     type: relay-mutation-payload

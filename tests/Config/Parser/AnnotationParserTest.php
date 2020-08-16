@@ -277,7 +277,7 @@ class AnnotationParserTest extends TestCase
                     'public' => '@=default_public',
                 ],
                 'searchSecretWeapon' => [
-                    'type' => 'Boolean',
+                    'type' => 'Boolean!',
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\WeaponRepository').searchSecretWeapon, arguments({}, args))",
                     'access' => '@=default_access',
                     'accessConfig' => ['nullOnDenied' => true],

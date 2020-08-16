@@ -15,7 +15,7 @@ class WeaponRepository
     /**
      * @GQL\Query
      */
-    public function searchSecretWeapon(): ?bool
+    public function searchSecretWeapon(): bool
     {
         return false;
     }

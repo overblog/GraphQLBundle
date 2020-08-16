@@ -28,11 +28,8 @@ class AccessResolver
     /**
      * @return Promise|mixed|Connection
      */
-    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], array $accessConfig = [])
+    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], bool $useStrictAccess = true, bool $nullOnDenied = false)
     {
-        $useStrictAccess = $accessConfig['useStrictAccess'];
-        $nullOnDenied = $accessConfig['nullOnDenied'];
-
         if ($useStrictAccess || self::isMutationRootField($resolveArgs[3])) {
             return $this->checkAccessForStrictMode($accessChecker, $resolveCallback, $resolveArgs, $nullOnDenied);
         }
@@ -42,9 +39,7 @@ class AccessResolver
         if ($this->isThenable($resultOrPromise)) {
             return $this->createPromise(
                 $resultOrPromise,
-                function ($result) use ($accessChecker, $resolveArgs, $nullOnDenied) {
-                    return $this->processFilter($result, $accessChecker, $resolveArgs, $nullOnDenied);
-                }
+                fn ($result) => $this->processFilter($result, $accessChecker, $resolveArgs, $nullOnDenied)
             );
         }
 
@@ -83,7 +78,7 @@ class AccessResolver
     /**
      * @param iterable|object|Connection $result
      *
-     * @return Connection|iterable
+     * @return Connection|iterable|null
      */
     private function processFilter($result, callable $accessChecker, array $resolveArgs, bool $nullOnDenied = false)
     {

@@ -3,13 +3,13 @@
 ## With YAML
 
 An access control can be added on each field using `config.fields.*.access` or globally with `config.fieldsDefaultAccess`.
-If `config.fields.*.access` value is true field will be normally resolved but will be `null` otherwise.
+If `config.fields.*.access` value is true, field will be resolved normally, otherwise will be `null`.
 Act like access is`true` if not set.
 
 Additional configuration can be set using `config.fields.*.accessConfig` or globally with `config.fieldsDefaultAccessConfig`.  
 The available option is :
 
-`nullOnDenied` : Boolean indicating if we should return `null` instead of raising an exception is the access to the field is denied. `default=false`.  **Warning: When using this option make sure the corresponding field is nullable.**   
+`nullOnDenied` : Boolean indicating if we should return `null` instead of raising an exception if the access to the field is denied. `default=false`.  **Warning: When using this option make sure the corresponding field is nullable.**   
 
 
 Note:

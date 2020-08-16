@@ -248,13 +248,13 @@ EOF;
             ],
         ];
 
-        $query = <<<'EOF'
+        $query = <<<'GQL'
 query MyQuery {
   user {
     nullField
   }
 }
-EOF;
+GQL;
 
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
@@ -269,13 +269,13 @@ EOF;
             ],
         ];
 
-        $query = <<<'EOF'
+        $query = <<<'GQL'
 query MyQuery {
   user {
     promiseNullField
   }
 }
-EOF;
+GQL;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
@@ -289,13 +289,13 @@ EOF;
             ],
         ];
 
-        $query = <<<'EOF'
+        $query = <<<'GQL'
 query MyQuery {
   user {
     promiseNullFieldNotStrict
   }
 }
-EOF;
+GQL;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
