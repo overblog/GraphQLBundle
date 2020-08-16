@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Input;
 
+use Doctrine\ORM\Mapping as ORM;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
@@ -21,4 +22,17 @@ class Planet
      * @GQL\Field(type="Int!")
      */
     protected string $population;
+
+    /**
+     * @GQL\Field
+     */
+    protected string $description;
+
+    /**
+     * @GQL\Field
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $diameter;
+
+    protected $dummy;
 }
