@@ -14,7 +14,6 @@ use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use function array_map;
-use function call_user_func_array;
 use function is_iterable;
 
 class AccessResolver
@@ -29,24 +28,22 @@ class AccessResolver
     /**
      * @return Promise|mixed|Connection
      */
-    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], bool $useStrictAccess = false)
+    public function resolve(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], bool $useStrictAccess = true, bool $nullOnDenied = false)
     {
         if ($useStrictAccess || self::isMutationRootField($resolveArgs[3])) {
-            return $this->checkAccessForStrictMode($accessChecker, $resolveCallback, $resolveArgs);
+            return $this->checkAccessForStrictMode($accessChecker, $resolveCallback, $resolveArgs, $nullOnDenied);
         }
 
-        $resultOrPromise = call_user_func_array($resolveCallback, $resolveArgs);
+        $resultOrPromise = $resolveCallback(...$resolveArgs);
 
         if ($this->isThenable($resultOrPromise)) {
             return $this->createPromise(
                 $resultOrPromise,
-                function ($result) use ($accessChecker, $resolveArgs) {
-                    return $this->processFilter($result, $accessChecker, $resolveArgs);
-                }
+                fn ($result) => $this->processFilter($result, $accessChecker, $resolveArgs, $nullOnDenied)
             );
         }
 
-        return $this->processFilter($resultOrPromise, $accessChecker, $resolveArgs);
+        return $this->processFilter($resultOrPromise, $accessChecker, $resolveArgs, $nullOnDenied);
     }
 
     private static function isMutationRootField(ResolveInfo $info): bool
@@ -57,14 +54,16 @@ class AccessResolver
     /**
      * @return Promise|mixed
      */
-    private function checkAccessForStrictMode(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [])
+    private function checkAccessForStrictMode(callable $accessChecker, callable $resolveCallback, array $resolveArgs = [], bool $nullOnDenied = false)
     {
         $promiseOrHasAccess = $this->hasAccess($accessChecker, $resolveArgs);
-        $callback = function ($hasAccess) use ($resolveArgs, $resolveCallback) {
+        $callback = function ($hasAccess) use ($resolveArgs, $resolveCallback, $nullOnDenied) {
             if (true === $hasAccess) {
-                return call_user_func_array($resolveCallback, $resolveArgs);
+                return $resolveCallback(...$resolveArgs);
             }
-
+            if ($nullOnDenied) {
+                return null;
+            }
             $exceptionClassName = self::isMutationRootField($resolveArgs[3]) ? UserError::class : UserWarning::class;
             throw new $exceptionClassName('Access denied to this field.');
         };
@@ -79,9 +78,9 @@ class AccessResolver
     /**
      * @param iterable|object|Connection $result
      *
-     * @return Connection|iterable
+     * @return Connection|iterable|null
      */
-    private function processFilter($result, callable $accessChecker, array $resolveArgs)
+    private function processFilter($result, callable $accessChecker, array $resolveArgs, bool $nullOnDenied = false)
     {
         /** @var ResolveInfo $resolveInfo */
         $resolveInfo = $resolveArgs[3];
@@ -100,6 +99,9 @@ class AccessResolver
                 $result->getEdges()
             ));
         } elseif (!$this->hasAccess($accessChecker, $resolveArgs, $result)) {
+            if ($nullOnDenied) {
+                return null;
+            }
             throw new UserWarning('Access denied to this field.');
         }
 
@@ -114,7 +116,7 @@ class AccessResolver
     private function hasAccess(callable $accessChecker, array $resolveArgs = [], $object = null)
     {
         $resolveArgs[] = $object;
-        $accessOrPromise = call_user_func_array($accessChecker, $resolveArgs);
+        $accessOrPromise = $accessChecker(...$resolveArgs);
 
         return $accessOrPromise;
     }

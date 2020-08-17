@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killab
 /**
  * @GQL\Type(interfaces={"Character"}, resolveField="value")
  * @GQL\Description("The Sith type")
- * @GQL\Access("isAuthenticated()")
+ * @GQL\Access("isAuthenticated()", nullOnDenied=true)
  * @GQL\IsPublic("isAuthenticated()")
  */
 class Sith extends Character implements Killable

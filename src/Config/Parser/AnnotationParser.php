@@ -344,8 +344,14 @@ class AnnotationParser implements PreParserInterface
         }
 
         $accessAnnotation = self::getFirstAnnotationMatching($graphClass->getAnnotations(), GQL\Access::class);
+
         if (null !== $accessAnnotation) {
-            $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
+            if (isset($accessAnnotation->value)) {
+                $typeConfiguration['fieldsDefaultAccess'] = self::formatExpression($accessAnnotation->value);
+            }
+            if (isset($accessAnnotation->nullOnDenied)) {
+                $typeConfiguration['fieldsDefaultAccessConfig'] = ['nullOnDenied' => $accessAnnotation->nullOnDenied];
+            }
         }
 
         return ['type' => $typeAnnotation->isRelay ? 'relay-mutation-payload' : 'object', 'config' => $typeConfiguration];
@@ -467,10 +473,10 @@ class AnnotationParser implements PreParserInterface
                 if ($method->isStatic() && $method->isPublic()) {
                     $unionConfiguration['resolveType'] = self::formatExpression(sprintf("@=call('%s::%s', [service('overblog_graphql.type_resolver'), value], true)", self::formatNamespaceForExpression($graphClass->getName()), 'resolveType'));
                 } else {
-                    throw new InvalidArgumentException(sprintf('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.'));
+                    throw new InvalidArgumentException('The "resolveType()" method on class must be static and public. Or you must define a "resolveType" attribute on the @Union annotation.');
                 }
             } else {
-                throw new InvalidArgumentException(sprintf('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.'));
+                throw new InvalidArgumentException('The annotation @Union has no "resolveType" attribute and the related class has no "resolveType()" public static method. You need to define of them.');
             }
         }
 
@@ -593,8 +599,13 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        if ($accessAnnotation) {
-            $fieldConfiguration['access'] = self::formatExpression($accessAnnotation->value);
+        if (null !== $accessAnnotation) {
+            if (isset($accessAnnotation->value)) {
+                $fieldConfiguration['access'] = self::formatExpression($accessAnnotation->value);
+            }
+            if (isset($accessAnnotation->nullOnDenied)) {
+                $fieldConfiguration['accessConfig'] = ['nullOnDenied' => $accessAnnotation->nullOnDenied];
+            }
         }
 
         if ($publicAnnotation) {
@@ -684,7 +695,8 @@ class AnnotationParser implements PreParserInterface
             $defaultAccessAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\Access::class);
             $defaultIsPublicAnnotation = self::getFirstAnnotationMatching($providerMetadata->getAnnotations(), GQL\IsPublic::class);
 
-            $defaultAccess = $defaultAccessAnnotation ? self::formatExpression($defaultAccessAnnotation->value) : false;
+            $defaultAccess = isset($defaultAccessAnnotation->value) ? self::formatExpression($defaultAccessAnnotation->value) : false;
+            $defaultAccessConfig = isset($defaultAccessAnnotation->nullOnDenied) ? ['nullOnDenied' => $defaultAccessAnnotation->nullOnDenied] : false;
             $defaultIsPublic = $defaultIsPublicAnnotation ? self::formatExpression($defaultIsPublicAnnotation->value) : false;
 
             $methods = [];
@@ -729,12 +741,16 @@ class AnnotationParser implements PreParserInterface
             $currentValue = sprintf("service('%s')", self::formatNamespaceForExpression($providerMetadata->getName()));
             $providerFields = self::getGraphQLTypeFieldsFromAnnotations($graphClass, $methods, $expectedAnnotation, $currentValue);
             foreach ($providerFields as $fieldName => $fieldConfig) {
-                if ($providerAnnotation->prefix) {
+                if (isset($providerAnnotation->prefix)) {
                     $fieldName = sprintf('%s%s', $providerAnnotation->prefix, $fieldName);
                 }
 
                 if ($defaultAccess && !isset($fieldConfig['access'])) {
                     $fieldConfig['access'] = $defaultAccess;
+                }
+
+                if ($defaultAccessConfig && !isset($fieldConfig['accessConfig'])) {
+                    $fieldConfig['accessConfig'] = $defaultAccessConfig;
                 }
 
                 if ($defaultIsPublic && !isset($fieldConfig['public'])) {
@@ -882,7 +898,7 @@ class AnnotationParser implements PreParserInterface
             }
         }
 
-        throw new InvalidArgumentException(sprintf('No Doctrine ORM annotation found.'));
+        throw new InvalidArgumentException('No Doctrine ORM annotation found.');
     }
 
     /**

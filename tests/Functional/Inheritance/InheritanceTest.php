@@ -34,17 +34,21 @@ class InheritanceTest extends TestCase
                     'fields' => [
                         'sayHello' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'period' => [
                             'type' => 'Period',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'bar' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                     ],
                     'name' => 'Query',
                     'interfaces' => ['QueryHelloWord'],
                     'builders' => [],
+                    'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                 ],
             ],
             $this->config['Query']
@@ -115,25 +119,32 @@ class InheritanceTest extends TestCase
                     'fields' => [
                         'a' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'aa' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'b' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'c' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'd' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                         'e' => [
                             'type' => 'String',
+                            'accessConfig' => ['nullOnDenied' => false],
                         ],
                     ],
                     'name' => 'ABCDE',
                     'builders' => [],
+                    'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                 ],
             ],
             $this->config['ABCDE']

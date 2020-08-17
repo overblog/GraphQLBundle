@@ -15,9 +15,14 @@ final class Access implements Annotation
     /**
      * Field access.
      *
-     * @required
-     *
      * @var string
      */
     public string $value;
+
+    /**
+     * Should we return null in access denied.
+     *
+     * @var bool
+     */
+    public bool $nullOnDenied;
 }

@@ -109,6 +109,9 @@ class AnnotationParserTest extends TestCase
                     'type' => '[Planet]',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getAllowedPlanetsForDroids, arguments({}, args))',
                     'access' => '@=override_access',
+                    'accessConfig' => [
+                        'nullOnDenied' => true,
+                    ],
                     'public' => '@=default_public',
                 ],
                 'planet_armorResistance' => [
@@ -127,6 +130,7 @@ class AnnotationParserTest extends TestCase
             'resolveField' => '@=value',
             'fieldsDefaultPublic' => '@=isAuthenticated()',
             'fieldsDefaultAccess' => '@=isAuthenticated()',
+            'fieldsDefaultAccessConfig' => ['nullOnDenied' => true],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
@@ -271,6 +275,12 @@ class AnnotationParserTest extends TestCase
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isPlanetDestroyed, arguments({planetId: \"Int!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=default_public',
+                ],
+                'searchSecretWeapon' => [
+                    'type' => 'Boolean!',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\WeaponRepository').searchSecretWeapon, arguments({}, args))",
+                    'access' => '@=default_access',
+                    'accessConfig' => ['nullOnDenied' => true],
                 ],
             ],
         ]);

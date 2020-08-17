@@ -33,12 +33,19 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                 ->variableNode('fieldsDefaultAccess')
                     ->info('Default access control to fields (expression language can be use here)')
                 ->end()
+                ->arrayNode('fieldsDefaultAccessConfig')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('nullOnDenied')->defaultFalse()->end()
+                    ->end()
+                ->end()
                 ->variableNode('fieldsDefaultPublic')
                     ->info('Default public control to fields (expression language can be use here)')
                 ->end()
             ->end();
 
         $this->treatFieldsDefaultAccess($node);
+        $this->treatFieldsDefaultAccessConfig($node);
         $this->treatFieldsDefaultPublic($node);
 
         return $node;
@@ -50,16 +57,34 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     private function treatFieldsDefaultAccess(ArrayNodeDefinition $node): void
     {
         $node->validate()
-            ->ifTrue(function ($v) {
-                return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
-            })
+        ->ifTrue(fn ($v) => isset($v['fieldsDefaultAccess']))
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
                     if (array_key_exists('access', $field) && null !== $field['access']) {
                         continue;
                     }
-
                     $field['access'] = $v['fieldsDefaultAccess'];
+                }
+
+                return $v;
+            })
+        ->end();
+    }
+
+    /**
+     * set empty fields.accessConfig with fieldsDefaultAccessConfig values if is set?
+     */
+    private function treatFieldsDefaultAccessConfig(ArrayNodeDefinition $node): void
+    {
+        $node->validate()
+            ->ifTrue(fn ($v) => isset($v['fieldsDefaultAccessConfig']))
+            ->then(function ($v) {
+                foreach ($v['fields'] as &$field) {
+                    if (isset($field['accessConfig'])) {
+                        continue;
+                    }
+
+                    $field['accessConfig'] = $v['fieldsDefaultAccessConfig'];
                 }
 
                 return $v;
@@ -73,7 +98,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     private function treatFieldsDefaultPublic(ArrayNodeDefinition $node): void
     {
         $node->validate()
-            ->ifTrue(fn ($v) => array_key_exists('fieldsDefaultPublic', $v) && null !== $v['fieldsDefaultPublic'])
+            ->ifTrue(fn ($v) => isset($v['fieldsDefaultPublic']))
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
                     if (array_key_exists('public', $field) && null !== $field['public']) {

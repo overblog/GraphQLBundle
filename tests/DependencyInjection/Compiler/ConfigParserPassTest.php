@@ -247,21 +247,25 @@ class ConfigParserPassTest extends TestCase
                                 'description' => 'The creation date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.createdAt',
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'updatedAt' => [
                                 'description' => 'The update date of the object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.updatedAt',
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'rawID' => [
                                 'description' => 'The raw ID of an object',
                                 'type' => 'Int!',
                                 'resolve' => '@=value.id',
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'rawIDs' => [
                                 'type' => '[RawID!]!',
@@ -275,6 +279,7 @@ class ConfigParserPassTest extends TestCase
                                         'defaultValue' => 0,
                                     ],
                                 ],
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'categories' => [
                                 'type' => '[String!]!',
@@ -288,6 +293,7 @@ class ConfigParserPassTest extends TestCase
                                         'defaultValue' => 0,
                                     ],
                                 ],
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                             'categories2' => [
                                 'type' => '[String!]!',
@@ -301,11 +307,13 @@ class ConfigParserPassTest extends TestCase
                                         'defaultValue' => 0,
                                     ],
                                  ],
+                                 'accessConfig' => ['nullOnDenied' => false],
                             ],
                         ],
                         'name' => 'foo',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'Boxes' => [
@@ -315,12 +323,13 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'foo' => ['type' => 'FooBox!'],
-                            'bar' => ['type' => 'BarBox!'],
+                            'foo' => ['type' => 'FooBox!', 'accessConfig' => ['nullOnDenied' => false]],
+                            'bar' => ['type' => 'BarBox!', 'accessConfig' => ['nullOnDenied' => false]],
                         ],
                         'name' => 'Boxes',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'Mutation' => [
@@ -336,11 +345,13 @@ class ConfigParserPassTest extends TestCase
                                 'args' => [
                                     'input' => ['type' => 'FooInput!'],
                                 ],
+                                'accessConfig' => ['nullOnDenied' => false],
                             ],
                         ],
                         'name' => 'Mutation',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'FooBox' => [
@@ -350,12 +361,13 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!'],
-                            'item' => ['type' => 'Foo'],
+                            'isEmpty' => ['type' => 'Boolean!', 'accessConfig' => ['nullOnDenied' => false]],
+                            'item' => ['type' => 'Foo', 'accessConfig' => ['nullOnDenied' => false]],
                         ],
                         'name' => 'FooBox',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'BarBox' => [
@@ -365,12 +377,13 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'isEmpty' => ['type' => 'Boolean!'],
-                            'item' => ['type' => 'Bar'],
+                            'isEmpty' => ['type' => 'Boolean!', 'accessConfig' => ['nullOnDenied' => false]],
+                            'item' => ['type' => 'Bar', 'accessConfig' => ['nullOnDenied' => false]],
                         ],
                         'name' => 'BarBox',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'FooInput' => [
@@ -403,11 +416,12 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            'fooString' => ['type' => 'String!'],
+                            'fooString' => ['type' => 'String!', 'accessConfig' => ['nullOnDenied' => false]],
                         ],
                         'name' => 'FooSuccessPayload',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
                 'FooFailurePayload' => [
@@ -417,12 +431,13 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'fields' => [
-                            '_error' => ['type' => 'String'],
-                            'bar' => ['type' => 'String'],
+                            '_error' => ['type' => 'String', 'accessConfig' => ['nullOnDenied' => false]],
+                            'bar' => ['type' => 'String', 'accessConfig' => ['nullOnDenied' => false]],
                         ],
                         'name' => 'FooFailurePayload',
                         'builders' => [],
                         'interfaces' => [],
+                        'fieldsDefaultAccessConfig' => ['nullOnDenied' => false],
                     ],
                 ],
             ],

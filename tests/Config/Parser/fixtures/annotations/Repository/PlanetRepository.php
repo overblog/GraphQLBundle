@@ -37,7 +37,7 @@ class PlanetRepository
 
     /**
      * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
-     * @GQL\Access("override_access")
+     * @GQL\Access("override_access", nullOnDenied=true)
      */
     public function getAllowedPlanetsForDroids(): array
     {

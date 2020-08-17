@@ -147,7 +147,7 @@ class AccessTest extends TestCase
                         'locations' => [
                             [
                                 'line' => 2,
-                                'column' => 3,
+                                'column' => 5,
                             ],
                         ],
                         'path' => ['youShallNotSeeThisUnauthenticated'],
@@ -157,13 +157,13 @@ class AccessTest extends TestCase
         ];
 
         $query = <<<'EOF'
-{
-  youShallNotSeeThisUnauthenticated {
-    secretValue
-    youAreAuthenticated
-  }
-}
-EOF;
+        {
+            youShallNotSeeThisUnauthenticated {
+                secretValue
+                youAreAuthenticated
+            }
+        }
+        EOF;
 
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'access');
     }
@@ -218,7 +218,7 @@ EOF;
                         'locations' => [
                             [
                                 'line' => 3,
-                                'column' => 5,
+                                'column' => 9,
                             ],
                         ],
                         'path' => ['user', 'forbidden'],
@@ -228,13 +228,74 @@ EOF;
         ];
 
         $query = <<<'EOF'
-query MyQuery {
-  user {
-    forbidden
-  }
-}
-EOF;
+        query MyQuery {
+            user {
+                forbidden
+            }
+        }
+        EOF;
 
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
+    public function testUserNullableField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'nullField' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'GQL'
+        query MyQuery {
+            user {
+                nullField
+            }
+        }
+        GQL;
+
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
+    public function testUserNullablePromiseField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'promiseNullField' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'GQL'
+        query MyQuery {
+            user {
+                promiseNullField
+            }
+        }
+        GQL;
+        $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
+    }
+
+    public function testUserNullableNotStrictPromiseField(): void
+    {
+        $expected = [
+            'data' => [
+                'user' => [
+                    'promiseNullFieldNotStrict' => null,
+                ],
+            ],
+        ];
+
+        $query = <<<'GQL'
+        query MyQuery {
+            user {
+                promiseNullFieldNotStrict
+            }
+        }
+        GQL;
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }
 
