@@ -626,7 +626,7 @@ class AnnotationParser implements PreParserInterface
             $fieldAnnotation = self::getFirstAnnotationMatching($annotations, GQL\Field::class);
 
             // No field annotation found
-            if (!$fieldAnnotation) {
+            if (null === $fieldAnnotation) {
                 continue;
             }
 
