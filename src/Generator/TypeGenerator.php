@@ -626,7 +626,8 @@ CODE;
                 .$this->stringifyValue($value, $offset)
             ;
 
-            if ($value !== \end($array)) {
+            \end($array);
+            if ($key !== \key($array)) {
                 $code .= ', ';
             }
         }
