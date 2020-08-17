@@ -32,6 +32,7 @@ class Planet
      * @GQL\Field
      * @ORM\Column(type="integer", nullable=true)
      */
+    // @phpstan-ignore-next-line
     protected $diameter;
 
     /**
@@ -40,5 +41,6 @@ class Planet
       */
     protected int $variable;
 
+    // @phpstan-ignore-next-line
     protected $dummy;
 }

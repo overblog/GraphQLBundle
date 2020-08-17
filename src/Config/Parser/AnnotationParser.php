@@ -642,6 +642,7 @@ class AnnotationParser implements PreParserInterface
                 if ($reflector instanceof ReflectionProperty) {
                     if ($reflector->hasType()) {
                         try {
+                            // @phpstan-ignore-next-line
                             $fieldType = self::resolveGraphQLTypeFromReflectionType($reflector->getType(), self::VALID_INPUT_TYPES);
                         } catch (Exception $e) {
                             throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed from type hint "%s"', GQL\Field::class, $reflector->getName(), (string) $reflector->getType()));
