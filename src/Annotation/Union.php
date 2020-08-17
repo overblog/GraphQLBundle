@@ -22,7 +22,7 @@ final class Union implements Annotation
     /**
      * Union types.
      *
-     * @required
+     * @Required
      *
      * @var array<string>
      */
