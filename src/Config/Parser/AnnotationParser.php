@@ -76,6 +76,13 @@ class AnnotationParser implements PreParserInterface
     /**
      * Process a file.
      *
+     * @param \SplFileInfo     $file
+     * @param ContainerBuilder $container
+     * @param array            $configs
+     * @param bool             $preProcess
+     *
+     * @return array
+     *
      * @throws \ReflectionException
      * @throws InvalidArgumentException
      */
@@ -112,7 +119,16 @@ class AnnotationParser implements PreParserInterface
     }
 
     /**
-     * @param object $classAnnotation
+     * @param \ReflectionClass $reflectionEntity
+     * @param array            $configs
+     * @param object           $classAnnotation
+     * @param array            $classAnnotations
+     * @param array            $properties
+     * @param array            $methods
+     * @param array            $gqlTypes
+     * @param bool             $preProcess
+     *
+     * @return array
      */
     private static function classAnnotationsToGQLConfiguration(
         \ReflectionClass $reflectionEntity,
@@ -351,6 +367,12 @@ class AnnotationParser implements PreParserInterface
     /**
      * Create a GraphQL Interface type configuration from annotations on properties.
      *
+     * @param GQL\TypeInterface $interfaceAnnotation
+     * @param array             $classAnnotations
+     * @param array             $properties
+     * @param array             $methods
+     * @param string            $namespace
+     *
      * @return array
      */
     private static function typeInterfaceAnnotationToGQLConfiguration(GQL\TypeInterface $interfaceAnnotation, array $classAnnotations, array $properties, array $methods, string $namespace)
@@ -370,6 +392,13 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Create a GraphQL Input type configuration from annotations on properties.
+     *
+     * @param GQL\Input $inputAnnotation
+     * @param array     $classAnnotations
+     * @param array     $properties
+     * @param string    $namespace
+     *
+     * @return array
      */
     private static function inputAnnotationToGQLConfiguration(GQL\Input $inputAnnotation, array $classAnnotations, array $properties, string $namespace): array
     {
@@ -384,6 +413,12 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Get a GraphQL scalar configuration from given scalar annotation.
+     *
+     * @param string     $className
+     * @param GQL\Scalar $scalarAnnotation
+     * @param array      $classAnnotations
+     *
+     * @return array
      */
     private static function scalarAnnotationToGQLConfiguration(string $className, GQL\Scalar $scalarAnnotation, array $classAnnotations): array
     {
@@ -406,6 +441,12 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Get a GraphQL Enum configuration from given enum annotation.
+     *
+     * @param GQL\Enum $enumAnnotation
+     * @param array    $classAnnotations
+     * @param array    $constants
+     *
+     * @return array
      */
     private static function enumAnnotationToGQLConfiguration(GQL\Enum $enumAnnotation, array $classAnnotations, array $constants): array
     {
@@ -439,6 +480,13 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Get a GraphQL Union configuration from given union annotation.
+     *
+     * @param string    $className
+     * @param GQL\Union $unionAnnotation
+     * @param array     $classAnnotations
+     * @param array     $methods
+     *
+     * @return array
      */
     private static function unionAnnotationToGQLConfiguration(string $className, GQL\Union $unionAnnotation, array $classAnnotations, array $methods): array
     {
@@ -465,6 +513,14 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Create GraphQL fields configuration based on annotations.
+     *
+     * @param string $namespace
+     * @param array  $propertiesOrMethods
+     * @param bool   $isInput
+     * @param bool   $isMethod
+     * @param string $currentValue
+     *
+     * @return array
      */
     private static function getGraphQLFieldsFromAnnotations(string $namespace, array $propertiesOrMethods, bool $isInput = false, bool $isMethod = false, string $currentValue = 'value', string $fieldAnnotationName = 'Field'): array
     {
@@ -593,6 +649,11 @@ class AnnotationParser implements PreParserInterface
     /**
      * Return fields config from Provider methods.
      *
+     * @param string $namespace
+     * @param string $annotationName
+     * @param string $targetType
+     * @param bool   $isRoot
+     *
      * @return array
      */
     private static function getGraphQLFieldsFromProviders(string $namespace, string $annotationName, string $targetType, bool $isRoot = false)
@@ -638,6 +699,11 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Get the config for description & deprecation reason.
+     *
+     * @param array $annotations
+     * @param bool  $withDeprecation
+     *
+     * @return array
      */
     private static function getDescriptionConfiguration(array $annotations, bool $withDeprecation = false): array
     {
@@ -662,6 +728,8 @@ class AnnotationParser implements PreParserInterface
      *
      * @param array             $args
      * @param \ReflectionMethod $method
+     *
+     * @return array
      */
     private static function getArgs(array $args = null, \ReflectionMethod $method = null): array
     {
@@ -681,6 +749,10 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Format an array of args to a list of arguments in an expression.
+     *
+     * @param array $args
+     *
+     * @return string
      */
     private static function formatArgsForExpression(array $args): string
     {
@@ -694,6 +766,10 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Format a namespace to be used in an expression (double escape).
+     *
+     * @param string $namespace
+     *
+     * @return string
      */
     private static function formatNamespaceForExpression(string $namespace): string
     {
@@ -703,6 +779,7 @@ class AnnotationParser implements PreParserInterface
     /**
      * Get the first annotation matching given class.
      *
+     * @param array        $annotations
      * @param string|array $annotationClass
      *
      * @return mixed
@@ -727,6 +804,8 @@ class AnnotationParser implements PreParserInterface
     /**
      * Format an expression (ie. add "@=" if not set).
      *
+     * @param string $expression
+     *
      * @return string
      */
     private static function formatExpression(string $expression)
@@ -737,6 +816,9 @@ class AnnotationParser implements PreParserInterface
     /**
      * Suffix a name if it is not already.
      *
+     * @param string $name
+     * @param string $suffix
+     *
      * @return string
      */
     private static function suffixName(string $name, string $suffix)
@@ -746,6 +828,11 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Try to guess a field type base on is annotations.
+     *
+     * @param string $namespace
+     * @param array  $annotations
+     *
+     * @return string
      *
      * @throws \RuntimeException
      */
@@ -798,6 +885,11 @@ class AnnotationParser implements PreParserInterface
     /**
      * Resolve a FQN from classname and namespace.
      *
+     * @param string $className
+     * @param string $namespace
+     *
+     * @return string
+     *
      * @internal
      */
     public static function fullyQualifiedClassName(string $className, string $namespace): string
@@ -811,6 +903,10 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Resolve a GraphQLType from a doctrine type.
+     *
+     * @param string $doctrineType
+     *
+     * @return string|null
      */
     private static function resolveTypeFromDoctrineType(string $doctrineType): ?string
     {
@@ -888,7 +984,10 @@ class AnnotationParser implements PreParserInterface
     /**
      * Resolve a GraphQL Type from a class name.
      *
-     * @param array $wantedTypes
+     * @param string $className
+     * @param array  $wantedTypes
+     *
+     * @return string|null
      */
     private static function resolveTypeFromClass(string $className, array $wantedTypes = null): ?string
     {
@@ -906,6 +1005,8 @@ class AnnotationParser implements PreParserInterface
     /**
      * Resolve a PHP class from a GraphQL type.
      *
+     * @param string $type
+     *
      * @return string|array|null
      */
     private static function resolveClassFromType(string $type)
@@ -915,6 +1016,10 @@ class AnnotationParser implements PreParserInterface
 
     /**
      * Convert a PHP Builtin type to a GraphQL type.
+     *
+     * @param string $phpType
+     *
+     * @return string|null
      */
     private static function resolveTypeFromPhpType(string $phpType): ?string
     {
