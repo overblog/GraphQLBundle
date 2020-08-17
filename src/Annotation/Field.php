@@ -20,8 +20,6 @@ class Field implements Annotation
     /**
      * Field Type.
      *
-     * @required
-     *
      * @var string
      */
     public $type;
