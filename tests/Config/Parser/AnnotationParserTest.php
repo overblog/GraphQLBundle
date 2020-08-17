@@ -191,6 +191,7 @@ class AnnotationParserTest extends TestCase
                 'description' => ['type' => 'String!'],
                 'diameter' => ['type' => 'Int'],
                 'variable' => ['type' => 'Int!'],
+                'tags' => ['type' => '[String]!'],
             ],
         ]);
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToMany;
@@ -585,7 +586,7 @@ class AnnotationParser implements PreParserInterface
                     }
                 } else {
                     try {
-                        $fieldConfiguration['type'] = self::guessType($graphClass, $annotations);
+                        $fieldConfiguration['type'] = self::guessType($graphClass, $reflector, self::VALID_OUTPUT_TYPES);
                     } catch (Exception $e) {
                         throw new InvalidArgumentException(sprintf('The attribute "type" on "@%s" defined on "%s" is required and cannot be auto-guessed : %s.', $fieldAnnotationName, $reflector->getName(), $e->getMessage()));
                     }
@@ -639,22 +640,11 @@ class AnnotationParser implements PreParserInterface
             if (isset($fieldAnnotation->type)) {
                 $fieldType = $fieldAnnotation->type;
             } else {
-                if ($reflector instanceof ReflectionProperty) {
-                    if ($reflector->hasType()) {
-                        try {
-                            // @phpstan-ignore-next-line
-                            $fieldType = self::resolveGraphQLTypeFromReflectionType($reflector->getType(), self::VALID_INPUT_TYPES);
-                        } catch (Exception $e) {
-                            throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed from type hint "%s"', GQL\Field::class, $reflector->getName(), (string) $reflector->getType()));
-                        }
-                    } else {
-                        try {
-                            $fieldType = self::guessType($graphClass, $annotations);
-                        } catch (Exception $e) {
-                            throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed as there is no type hint or Doctrine annotation.', GQL\Field::class, $reflector->getName()));
+                try {
+                    $fieldType = self::guessType($graphClass, $reflector, self::VALID_INPUT_TYPES);
+                } catch (Exception $e) {
+                    throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed as there is no type hint or Doctrine annotation.', GQL\Field::class, $reflector->getName()));
 
-                        }
-                    }
                 }
             }
             $fieldConfiguration = [];
@@ -864,8 +854,17 @@ class AnnotationParser implements PreParserInterface
      *
      * @throws RuntimeException
      */
-    private static function guessType(GraphClass $graphClass, array $annotations): string
+    private static function guessType(GraphClass $graphClass, ReflectionProperty $reflector, array $filterGraphQLTypes = []): string
     {
+        if ($reflector->hasType()) {
+            try {
+                // @phpstan-ignore-next-line
+                return self::resolveGraphQLTypeFromReflectionType($reflector->getType(), $filterGraphQLTypes);
+            } catch (Exception $e) {
+            }
+        }
+
+        $annotations = $graphClass->getAnnotations($reflector);
         $columnAnnotation = self::getFirstAnnotationMatching($annotations, Column::class);
         if (null !== $columnAnnotation) {
             $type = self::resolveTypeFromDoctrineType($columnAnnotation->type);

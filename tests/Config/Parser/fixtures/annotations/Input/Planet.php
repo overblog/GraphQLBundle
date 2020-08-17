@@ -43,4 +43,10 @@ class Planet
 
     // @phpstan-ignore-next-line
     protected $dummy;
+
+    /**
+     * @GQL\Field
+     * @ORM\Column(type="text[]")
+     */
+    protected array $tags;
 }
