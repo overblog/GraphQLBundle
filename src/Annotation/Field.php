@@ -22,8 +22,6 @@ class Field implements Annotation
     /**
      * Field Type.
      *
-     * @required
-     *
      * @var string
      */
     public string $type;

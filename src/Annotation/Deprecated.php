@@ -15,7 +15,7 @@ final class Deprecated implements Annotation
     /**
      * The deprecation reason.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
