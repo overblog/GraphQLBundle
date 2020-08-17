@@ -636,12 +636,24 @@ class AnnotationParser implements PreParserInterface
             }
 
             $fieldName = $reflector->getName();
-            $fieldType = $fieldAnnotation->type ?? null;
-            if (!$fieldType) {
-                if ($reflector instanceof ReflectionProperty && $reflector->hasType()) {
-                    $fieldType = self::resolveGraphQLTypeFromReflectionType($reflector->getType(), self::VALID_INPUT_TYPES);
-                } else {
-                    $fieldType = self::guessType($graphClass, $annotations);
+            if (isset($fieldAnnotation->type)) {
+                $fieldType = $fieldAnnotation->type;
+            } else {
+                if ($reflector instanceof ReflectionProperty) {
+                    if ($reflector->hasType()) {
+                        try {
+                            $fieldType = self::resolveGraphQLTypeFromReflectionType($reflector->getType(), self::VALID_INPUT_TYPES);
+                        } catch (Exception $e) {
+                            throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed from type hint "%s"', GQL\Field::class, $reflector->getName(), (string) $reflector->getType()));
+                        }
+                    } else {
+                        try {
+                            $fieldType = self::guessType($graphClass, $annotations);
+                        } catch (Exception $e) {
+                            throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed as there is no type hint or Doctrine annotation.', GQL\Field::class, $reflector->getName()));
+
+                        }
+                    }
                 }
             }
             $fieldConfiguration = [];

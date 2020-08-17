@@ -34,5 +34,11 @@ class Planet
      */
     protected $diameter;
 
+    /**
+      * @GQL\Field
+      * @ORM\Column(type="boolean")
+      */
+    protected int $variable;
+
     protected $dummy;
 }

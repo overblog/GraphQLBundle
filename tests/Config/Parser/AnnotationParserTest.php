@@ -190,6 +190,7 @@ class AnnotationParserTest extends TestCase
                 'population' => ['type' => 'Int!'],
                 'description' => ['type' => 'String!'],
                 'diameter' => ['type' => 'Int'],
+                'variable' => ['type' => 'Int!'],
             ],
         ]);
     }
