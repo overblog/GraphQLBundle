@@ -408,7 +408,7 @@ class AnnotationParser implements PreParserInterface
      */
     private static function enumAnnotationToGQLConfiguration(GraphClass $graphClass, GQL\Enum $enumAnnotation): array
     {
-        $enumValues = $enumAnnotation->values ? $enumAnnotation->values : [];
+        $enumValues = $enumAnnotation->values ?? [];
 
         $values = [];
 
