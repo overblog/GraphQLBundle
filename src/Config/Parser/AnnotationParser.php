@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Doctrine\Common\Annotations\AnnotationException;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToMany;
@@ -644,7 +643,6 @@ class AnnotationParser implements PreParserInterface
                     $fieldType = self::guessType($graphClass, $reflector, self::VALID_INPUT_TYPES);
                 } catch (Exception $e) {
                     throw new InvalidArgumentException(sprintf('The attribute "type" on GraphQL annotation "@%s" is missing on property "%s" and cannot be auto-guessed as there is no type hint or Doctrine annotation.', GQL\Field::class, $reflector->getName()));
-
                 }
             }
             $fieldConfiguration = [];

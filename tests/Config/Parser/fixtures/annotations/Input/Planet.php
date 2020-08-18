@@ -36,9 +36,9 @@ class Planet
     protected $diameter;
 
     /**
-      * @GQL\Field
-      * @ORM\Column(type="boolean")
-      */
+     * @GQL\Field
+     * @ORM\Column(type="boolean")
+     */
     protected int $variable;
 
     // @phpstan-ignore-next-line
