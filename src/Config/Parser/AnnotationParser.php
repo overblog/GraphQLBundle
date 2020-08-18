@@ -744,7 +744,7 @@ class AnnotationParser implements PreParserInterface
             $currentValue = sprintf("service('%s')", self::formatNamespaceForExpression($providerMetadata->getName()));
             $providerFields = self::getGraphQLTypeFieldsFromAnnotations($graphClass, $methods, $expectedAnnotation, $currentValue);
             foreach ($providerFields as $fieldName => $fieldConfig) {
-                if ($providerAnnotation->prefix) {
+                if (isset($providerAnnotation->prefix)) {
                     $fieldName = sprintf('%s%s', $providerAnnotation->prefix, $fieldName);
                 }
 

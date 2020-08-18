@@ -15,7 +15,7 @@ final class FieldsBuilder implements Annotation
     /**
      * Builder name.
      *
-     * @required
+     * @Required
      *
      * @var string
      */

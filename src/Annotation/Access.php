@@ -15,7 +15,7 @@ final class Access implements Annotation
     /**
      * Field access.
      *
-     * @required
+     * @Required
      *
      * @var string
      */

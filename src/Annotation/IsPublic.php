@@ -15,7 +15,7 @@ final class IsPublic implements Annotation
     /**
      * Field publicity.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
