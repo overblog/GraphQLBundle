@@ -15,7 +15,7 @@ final class Arg implements Annotation
     /**
      * Argument name.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
@@ -31,7 +31,7 @@ final class Arg implements Annotation
     /**
      * Argument type.
      *
-     * @required
+     * @Required
      *
      * @var string
      */

@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class InvalidAccess
 {
     /**
-     * @GQL\Access()
+     * @GQL\Access("access")
      */
     protected string $field;
 }
