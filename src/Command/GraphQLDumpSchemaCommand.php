@@ -100,7 +100,7 @@ final class GraphQLDumpSchemaCommand extends Command
         /** @var bool $includeDescription */
         $includeDescription = $input->getOption('with-descriptions');
 
-        $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/var/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
+        $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
             case 'json':
