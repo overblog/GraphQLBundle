@@ -276,6 +276,10 @@ class AnnotationParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'countSecretWeapons' => [
+                    'type' => 'Int!',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\WeaponRepository').countSecretWeapons, arguments({}, args))",
+                ],
             ],
         ]);
 
@@ -316,6 +320,10 @@ class AnnotationParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'hasSecretWeapons' => [
+                    'type' => 'Boolean!',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\WeaponRepository').hasSecretWeapons, arguments({}, args))",
+                ],
             ],
         ]);
 
@@ -334,6 +342,10 @@ class AnnotationParserTest extends TestCase
                     'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').destroyPlanet, arguments({planetId: \"Int!\"}, args))",
                     'access' => '@=default_access',
                     'public' => '@=default_public',
+                ],
+                'createLightsaber' => [
+                    'type' => 'Boolean!',
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\WeaponRepository').createLightsaber, arguments({}, args))",
                 ],
             ],
         ]);
