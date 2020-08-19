@@ -632,7 +632,7 @@ class AnnotationParser implements PreParserInterface
 
             // Ignore field with resolver when the type is an Input
             if (isset($fieldAnnotation->resolve)) {
-                return [];
+                continue;
             }
 
             $fieldName = $reflector->getName();
