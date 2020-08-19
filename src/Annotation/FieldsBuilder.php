@@ -15,11 +15,11 @@ final class FieldsBuilder implements Annotation
     /**
      * Builder name.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
-    public $builder;
+    public string $builder;
 
     /**
      * The builder config.

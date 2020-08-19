@@ -17,5 +17,5 @@ final class Query extends Field
      *
      * @var array<string>
      */
-    public $targetType;
+    public array $targetType;
 }

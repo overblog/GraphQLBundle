@@ -13,7 +13,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class Droid extends Character
 {
     /**
-     * @GQL\Field(type="Int!")
+     * @GQL\Field
      */
     protected int $memory;
 }

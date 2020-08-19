@@ -7,7 +7,7 @@ FROM scratch AS test_source
 COPY benchmarks/ benchmarks/
 COPY src/ /src/
 COPY tests/ /tests/
-COPY phpunit.xml.* phpstan.neon.* .php_cs.* phpbench.json /
+COPY phpunit.xml.* phpstan*.neon .php_cs.* phpbench.json /
 
 FROM alpine:3.9
 
@@ -28,9 +28,13 @@ RUN set -eu; \
         php-xml \
         php-dom \
         php-pdo \
+        php-curl \
     ; ln -s /usr/bin/php7 /usr/bin/php
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# install Symfony Flex globally to speed up download of Composer packages (parallelized prefetching)
+RUN set -eux; \
+	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative;
 
 WORKDIR /opt/test
 

@@ -15,27 +15,27 @@ final class Arg implements Annotation
     /**
      * Argument name.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Argument description.
      *
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * Argument type.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * Default argument value.

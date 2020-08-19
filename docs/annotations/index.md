@@ -116,6 +116,27 @@ In the previous example, the generated `resolve` config of the `something` field
 
 ## Type & Args auto-guessing
 
+### @Field type auto-guessing when defined on a property with a type hint
+
+The type of the `@Field` annotation can be auto-guessed if it's defined on a property with a type hint.
+If the property has a usable type hint this is used and no futher guessing is done.
+
+For example:
+
+```php
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field
+     */
+    protected string $property;
+}
+```
+
+In this example, the type `String!` will be auto-guessed from the type hint of the property.  
+
 ### @Field type auto-guessing from Doctrine ORM Annotations
 
 Based on other Doctrine annotations on your fields, the corresponding GraphQL type can sometimes be guessed automatically.  

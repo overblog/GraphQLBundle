@@ -17,14 +17,14 @@ final class TypeInterface implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Resolver type for interface.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
-    public $resolveType;
+    public string $resolveType;
 }

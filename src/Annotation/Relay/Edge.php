@@ -17,9 +17,9 @@ final class Edge extends Type
     /**
      * Edge Node type.
      *
-     * @required
+     * @Required
      *
      * @var string
      */
-    public $node;
+    public string $node;
 }
