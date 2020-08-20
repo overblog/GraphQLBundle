@@ -382,9 +382,9 @@ class SecretArea {
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that the method on this class will resolve a Mutation field.  
 The corresponding GraphQL field is added to the GraphQL type(s) following the logic:
-- The type(s) specified in the `targetType` attribute of the `@Mutation` annotation if it's defined.  
+- The type(s) specified in the `targetTypes` attribute of the `@Mutation` annotation if it's defined.  
   or
-- The type(s) specified in the `targetTypeMutation` attribute of the `@Provider` annotation if it's defined.  
+- The type(s) specified in the `targetMutationTypes` attribute of the `@Provider` annotation if it's defined.  
   or
 - The root Query type of the default schema (defined in configuration at key `overblog_graphql.definitions.schema.mutation` or `overblog_graphql.definitions.schema.default.mutation`).  
   
@@ -392,7 +392,7 @@ The class exposing the mutation(s) must be declared as a [service](https://symfo
 
 Optional attributes:
 
--   **targetType** : The GraphQL type(s) to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
+-   **targetTypes** : The GraphQL type(s) to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 
@@ -440,9 +440,9 @@ Optional attributes:
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
 The corresponding GraphQL field is added to the GraphQL type(s) following the logic:
-- The type(s) specified in the `targetType` attribute of the `@Query` annotation if it's defined.  
+- The type(s) specified in the `targetTypes` attribute of the `@Query` annotation if it's defined.  
   or
-- The type(s) specified in the `targetTypeQuery` attribute of the `@Provider` annotation if it's defined.  
+- The type(s) specified in the `targetQueryTypes` attribute of the `@Provider` annotation if it's defined.  
   or
 - The root Query type of the default schema (defined in configuration at key `overblog_graphql.definitions.schema.query` or `overblog_graphql.definitions.schema.default.query`).  
   
@@ -450,7 +450,7 @@ The class exposing the query(ies) must be declared as a [service](https://symfon
 
 Optional attributes:
 
--   **targetType** : The GraphQL type(s) to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
+-   **targetTypes** : The GraphQL type(s) to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 

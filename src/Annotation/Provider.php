@@ -24,12 +24,12 @@ final class Provider implements Annotation
      *
      * @var array<string>
      */
-    public array $targetTypeQuery;
+    public array $targetQueryTypes;
 
     /**
      * The default target types to attach the provider mutations to.
      *
      * @var array<string>
      */
-    public array $targetTypeMutation;
+    public array $targetMutationTypes;
 }

@@ -13,9 +13,15 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Query extends Field
 {
     /**
+     * @deprecated
+     * @var array<string>
+     */
+    public array $targetType;
+
+    /**
      * The target types to attach this query to.
      *
      * @var array<string>
      */
-    public array $targetType;
+    public array $targetTypes;
 }

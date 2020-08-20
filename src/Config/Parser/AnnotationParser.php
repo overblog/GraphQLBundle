@@ -710,13 +710,14 @@ class AnnotationParser implements PreParserInterface
                     continue;
                 }
 
-                $annotationTargets = $annotation->targetType ?? null;
+                // TODO: Remove old property check in 1.1
+                $annotationTargets = $annotation->targetTypes ?? $annotation->targetType ?? null;
 
                 if (null === $annotationTargets) {
-                    if ($annotation instanceof GQL\Mutation && isset($providerAnnotation->targetTypeMutation)) {
-                        $annotationTargets = $providerAnnotation->targetTypeMutation;
-                    } elseif ($annotation instanceof GQL\Query && isset($providerAnnotation->targetTypeQuery)) {
-                        $annotationTargets = $providerAnnotation->targetTypeQuery;
+                    if ($annotation instanceof GQL\Mutation && isset($providerAnnotation->targetMutationTypes)) {
+                        $annotationTargets = $providerAnnotation->targetMutationTypes;
+                    } elseif ($annotation instanceof GQL\Query && isset($providerAnnotation->targetQueryTypes)) {
+                        $annotationTargets = $providerAnnotation->targetQueryTypes;
                     }
                 }
 
