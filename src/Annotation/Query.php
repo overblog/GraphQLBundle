@@ -13,8 +13,9 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Query extends Field
 {
     /**
-     * @deprecated
      * @var array<string>
+     *
+     * @deprecated This property is deprecated since 1.0 and will be removed in 1.1. Use $targetTypes instead.
      */
     public array $targetType;
 

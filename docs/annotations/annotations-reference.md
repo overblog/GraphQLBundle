@@ -433,8 +433,8 @@ You can use `@Access` and/or `@IsPublic` on a provider class to add default acce
 Optional attributes:
 
 -   **prefix**: A prefix to apply to all field names from this provider
--   **targetTypeQuery**: The default GraphQL type(s) to attach the provider `@Query` to
--   **targetTypeMutation**: The default GraphQL type(s) to attach the provider `@Mutation` to
+-   **targetQueryTypes**: The default GraphQL type(s) to attach the provider `@Query` to
+-   **targetMutationTypes**: The default GraphQL type(s) to attach the provider `@Mutation` to
 
 ## @Query
 
