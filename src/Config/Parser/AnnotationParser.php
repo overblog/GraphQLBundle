@@ -715,8 +715,7 @@ class AnnotationParser implements PreParserInterface
                 if (null === $annotationTargets) {
                     if ($annotation instanceof GQL\Mutation && isset($providerAnnotation->targetTypeMutation)) {
                         $annotationTargets = $providerAnnotation->targetTypeMutation;
-                    }
-                    if ($annotation instanceof GQL\Query && isset($providerAnnotation->targetTypeQuery)) {
+                    } elseif ($annotation instanceof GQL\Query && isset($providerAnnotation->targetTypeQuery)) {
                         $annotationTargets = $providerAnnotation->targetTypeQuery;
                     }
                 }
