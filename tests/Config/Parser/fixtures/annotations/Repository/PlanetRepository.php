@@ -45,7 +45,7 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Query(type="Planet", targetType="RootQuery2")
+     * @GQL\Query(type="Planet", targetTypes="RootQuery2")
      */
     public function getPlanetSchema2(): ?Planet
     {
@@ -53,7 +53,7 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Mutation(type="Planet", targetType="RootMutation2", args={
+     * @GQL\Mutation(type="Planet", targetTypes="RootMutation2", args={
      *    @GQL\Arg(type="PlanetInput!", name="planetInput")
      * })
      * @GQL\IsPublic("override_public")
@@ -64,7 +64,7 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Mutation(targetType={"RootMutation", "RootMutation2"})
+     * @GQL\Mutation(targetTypes={"RootMutation", "RootMutation2"})
      */
     public function destroyPlanet(int $planetId): bool
     {
@@ -72,7 +72,7 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Query(targetType={"RootQuery", "RootQuery2"})
+     * @GQL\Query(targetTypes={"RootQuery", "RootQuery2"})
      */
     public function isPlanetDestroyed(int $planetId): bool
     {
@@ -80,7 +80,7 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Query(targetType={"Droid", "Mandalorian"}, name="armorResistance")
+     * @GQL\Query(targetTypes={"Droid", "Mandalorian"}, name="armorResistance")
      */
     public function getArmorResistance(): int
     {

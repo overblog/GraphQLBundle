@@ -13,9 +13,16 @@ namespace Overblog\GraphQLBundle\Annotation;
 final class Mutation extends Field
 {
     /**
+     * @var array<string>
+     *
+     * @deprecated This property is deprecated since 1.0 and will be removed in 1.1. Use $targetTypes instead.
+     */
+    public array $targetType;
+
+    /**
      * The target types to attach this mutation to (useful when multiple schemas are allowed).
      *
      * @var array<string>
      */
-    public array $targetType;
+    public array $targetTypes;
 }
