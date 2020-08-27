@@ -95,11 +95,13 @@ final class GraphQLDumpSchemaCommand extends Command
     private function createFile(InputInterface $input): string
     {
         $format = strtolower($input->getOption('format'));
+        /** @var string|null $schemaName */
         $schemaName = $input->getOption('schema');
 
         /** @var bool $includeDescription */
         $includeDescription = $input->getOption('with-descriptions');
 
+        /** @var string $file */
         $file = $input->getOption('file') ?: $this->baseExportPath.sprintf('/schema%s.%s', $schemaName ? '.'.$schemaName : '', $format);
 
         switch ($format) {
