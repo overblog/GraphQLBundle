@@ -56,6 +56,7 @@ class ConfigParserPass implements CompilerPassInterface
                 'auto_discover' => [
                     'root_dir' => true,
                     'bundles' => true,
+                    'built_in' => true,
                 ],
                 'types' => [],
             ],
@@ -177,8 +178,8 @@ class ConfigParserPass implements CompilerPassInterface
         if ($mappingConfig['auto_discover']['bundles']) {
             $mappingFromBundles = $this->mappingFromBundles($container);
             $typesMappings = array_merge($typesMappings, $mappingFromBundles);
-        } else {
-            // enabled only for this bundle
+        }
+        if ($mappingConfig['auto_discover']['built_in']) {
             $typesMappings[] = [
                 'dir' => $this->bundleDir(OverblogGraphQLBundle::class).'/Resources/config/graphql',
                 'types' => ['yaml'],
@@ -211,6 +212,11 @@ class ConfigParserPass implements CompilerPassInterface
 
         // auto detect from bundle
         foreach ($bundles as $name => $class) {
+            // skip this bundle
+            if (OverblogGraphQLBundle::class === $class) {
+                continue;
+            }
+
             $bundleDir = $this->bundleDir($class);
 
             // only config files (yml or xml)

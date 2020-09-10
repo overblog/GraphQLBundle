@@ -113,7 +113,7 @@ class TypeGenerator
         }
 
         // Create class map file
-        if ($writeMode && $this->useClassMap) {
+        if ($writeMode && $this->useClassMap && count($classes) > 0) {
             $content = "<?php\nreturn ".var_export($classes, true).';';
 
             // replaced hard-coded absolute paths by __DIR__
