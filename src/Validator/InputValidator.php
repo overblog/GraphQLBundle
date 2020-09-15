@@ -210,7 +210,7 @@ class InputValidator
         $propertiesMapping = [];
 
         foreach ($type->getFields() as $fieldName => $inputField) {
-            $propertiesMapping[$fieldName] = $inputField->config['validation'];
+            $propertiesMapping[$fieldName] = $inputField->config['validation'] ?? [];
         }
 
         return $this->buildValidationTree(
