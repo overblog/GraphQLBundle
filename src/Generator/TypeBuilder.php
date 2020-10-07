@@ -102,10 +102,10 @@ class TypeBuilder
 
         $class = $this->file->createClass($config['class_name'])
             ->setFinal()
-            ->setExtends(self::EXTENDS[$type])
+            ->setExtends(static::EXTENDS[$type])
             ->addImplements(GeneratedTypeInterface::class)
             ->addConst('NAME', $config['name'])
-            ->setDocBlock(self::DOCBLOCK_TEXT);
+            ->setDocBlock(static::DOCBLOCK_TEXT);
 
         $class->emptyLine();
 
@@ -154,7 +154,7 @@ class TypeBuilder
                 $this->file->addUse(Type::class);
                 break;
             default:
-                if (in_array($typeNode->name->value, self::BUILT_IN_TYPES)) {
+                if (in_array($typeNode->name->value, static::BUILT_IN_TYPES)) {
                     $name = strtolower($typeNode->name->value);
                     $type = Literal::new("Type::$name()");
                     $this->file->addUse(Type::class);
@@ -431,8 +431,8 @@ class TypeBuilder
                 $this->file->addUse($fqcn);
             } else {
                 // Symfony constraint
-                $this->file->addUseGroup(self::CONSTRAINTS_NAMESPACE, $name);
-                $fqcn = self::CONSTRAINTS_NAMESPACE."\\$name";
+                $this->file->addUseGroup(static::CONSTRAINTS_NAMESPACE, $name);
+                $fqcn = static::CONSTRAINTS_NAMESPACE."\\$name";
             }
 
             if (!class_exists($fqcn)) {
@@ -482,7 +482,7 @@ class TypeBuilder
         if (isset($referenceType)) {
             $type = trim($referenceType, '[]!');
 
-            if (in_array($type, self::BUILT_IN_TYPES)) {
+            if (in_array($type, static::BUILT_IN_TYPES)) {
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
