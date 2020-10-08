@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
+use Symfony\Component\Config\Definition\BaseNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\EnumNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
@@ -223,7 +224,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('resolver_maps')
                         ->defaultValue([])
                         ->prototype('scalar')->end()
-                        ->setDeprecated('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 1.0. Add the "overblog_graphql.resolver_map" tag to the services instead.')
+                        ->setDeprecated(...$this->getDeprecationParameters('The "%path%.%node%" configuration is deprecated since version 0.13 and will be removed in 1.0. Add the "overblog_graphql.resolver_map" tag to the services instead.', '1.0'))
                     ->end()
                     ->arrayNode('types')
                         ->defaultValue([])
@@ -393,5 +394,22 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $node;
+    }
+
+    /**
+     * Returns the correct deprecation parameters for setDeprecated.
+     *
+     * @param string $message
+     * @param string $version
+     *
+     * @return string[]
+     */
+    private function getDeprecationParameters($message, $version)
+    {
+        if (method_exists(BaseNode::class, 'getDeprecation')) {
+            return ['overblog/graphql-bundle', $version, $message];
+        }
+
+        return [$message];
     }
 }
