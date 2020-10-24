@@ -13,7 +13,7 @@ This Symfony bundle provides integration of [GraphQL](https://facebook.github.io
 and [GraphQL Relay](https://facebook.github.io/relay/docs/en/graphql-server-specification.html).
 It also supports:
 * batching with [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer)
-* batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/networking/network-layer/#query-batching)
+* batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/api/link/apollo-link-batch-http/)
 * upload and batching upload with [apollo-upload-client](https://github.com/jaydenseric/apollo-upload-client)
 
 Browse your version documentation:
@@ -101,7 +101,7 @@ Talks and slides to help you start
   - [Video at SymfonyCamp UA 2017](https://www.youtube.com/watch?v=jyoYlnCPNgk) `English`
   - [Video at DPC 2017](https://www.youtube.com/watch?v=E7MjoCOGSSY) `English`
 * A GraphQL API: From hype to production *by Aurélien David* - [Twitter](https://twitter.com/spyl94), [GitHub](https://github.com/spyl94)
-  - [Slides at https://spyl.net/slides/symfonycon-cluj-2017](https://spyl.net/slides/symfonycon-cluj-2017) `English`
+  - [Slides at https://cap-collectif.slides.com/spyl/web2day-2019](https://cap-collectif.slides.com/spyl/web2day-2019) `English`
 * Une API GraphQL: du hype à la prod *by Aurélien David* - [Twitter](https://twitter.com/spyl94), [GitHub](https://github.com/spyl94)
   - [Video at PHPTour 2017 Nantes](https://www.youtube.com/watch?v=xbipW6fgD6c) `French`
 * Introduction to Symfony Flex and setting up OverblogGraphQLBundle with it *by Renato Mendes Figueiredo* - [Twitter](https://twitter.com/renatomefi), [GitHub](https://github.com/renatomefi)

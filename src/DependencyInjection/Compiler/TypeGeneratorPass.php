@@ -21,12 +21,23 @@ class TypeGeneratorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        // @phpstan-ignore-next-line
+        /**
+         * @var array<class-string, string> $generatedClasses
+         * @phpstan-ignore-next-line
+         */
         $generatedClasses = $container->get('overblog_graphql.cache_compiler')
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
         foreach ($generatedClasses as $class => $file) {
-            $alias = preg_replace('/Type$/', '', substr(strrchr($class, '\\'), 1));
+            $portion = strrchr($class, '\\');
+
+            if (false !== $portion) {
+                $portion = substr($portion, 1);
+            } else {
+                $portion = $class;
+            }
+
+            $alias = preg_replace('/Type$/', '', $portion);
             $this->setTypeServiceDefinition($container, $class, $alias);
         }
     }
