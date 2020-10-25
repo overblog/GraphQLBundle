@@ -244,7 +244,7 @@ class InputValidator
         ];
 
         foreach ($type->getFields() as $fieldName => $inputField) {
-            $mapping['properties'][$fieldName] = $inputField->config['validation'];
+            $mapping['properties'][$fieldName] = $inputField->config['validation'] ?? [];
         }
 
         return $this->buildValidationTree(new ValidationNode($type, null, $parent, $this->resolverArgs), $mapping, $value);
