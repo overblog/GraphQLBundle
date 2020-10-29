@@ -67,8 +67,10 @@ class GraphClass extends ReflectionClass
             case null === $from:
                 return $this->annotations;
             case $from instanceof ReflectionMethod:
+                // @phpstan-ignore-next-line
                 return self::getAnnotationReader()->getMethodAnnotations($from);
             case $from instanceof ReflectionProperty:
+                // @phpstan-ignore-next-line
                 return self::getAnnotationReader()->getPropertyAnnotations($from);
             default:
                 throw new AnnotationException(sprintf('Unable to retrieve annotations from object of class "%s".', get_class($from)));

@@ -426,11 +426,6 @@ parameters:
 			path: src/Generator/TypeBuilder.php
 
 		-
-			message: "#^Undefined variable: .*$#"
-			count: 3
-			path: src/Generator/TypeBuilder.php
-
-		-
 			message: "#^Call to an undefined method Murtukov\\\\PHPCodeGenerator\\\\OOPStructure::createConstructor.*$#"
 			count: 1
 			path: src/Generator/TypeBuilder.php
