@@ -41,7 +41,6 @@ use function array_replace_recursive;
 use function class_exists;
 use function count;
 use function explode;
-use function extract;
 use function in_array;
 use function is_array;
 use function is_callable;
@@ -93,6 +92,25 @@ class TypeBuilder
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
     }
 
+    /**
+     * @param array{
+     *     name:          string,
+     *     class_name:    string,
+     *     fields:        array,
+     *     description?:  string,
+     *     interfaces?:   array,
+     *     resolveType?:  string,
+     *     validation?:   array,
+     *     types?:        array,
+     *     values?:       array,
+     *     serialize?:    callable,
+     *     parseValue?:   callable,
+     *     parseLiteral?: callable,
+     * } $config
+     *
+     * @throws GeneratorException
+     * @throws UnrecognizedValueTypeException
+     */
     public function build(array $config, string $type): PhpFile
     {
         $this->config = $config;
@@ -168,78 +186,70 @@ class TypeBuilder
         return $type;
     }
 
+    /**
+     * @throws GeneratorException
+     * @throws UnrecognizedValueTypeException
+     */
     protected function buildConfigLoader(array $config): ArrowFunction
     {
-        /**
-         * @var array         $fields
-         * @var string|null   $description
-         * @var array|null    $interfaces
-         * @var string|null   $resolveType
-         * @var array|null    $validation   - only by InputType
-         * @var array|null    $types        - only by UnionType
-         * @var array|null    $values       - only by EnumType
-         * @var callback|null $serialize    - only by CustomScalarType
-         * @var callback|null $parseValue   - only by CustomScalarType
-         * @var callback|null $parseLiteral - only by CustomScalarType
-         * @phpstan-ignore-next-line
-         */
-        extract($config);
+        // Convert to object for better readability
+        $c = (object) $config;
 
         $configLoader = Collection::assoc();
         $configLoader->addItem('name', new Literal('self::NAME'));
 
-        if (isset($description)) {
-            $configLoader->addItem('description', $description);
+        if (isset($c->description)) {
+            $configLoader->addItem('description', $c->description);
         }
 
         // only by InputType (class level validation)
-        if (isset($validation)) {
-            $configLoader->addItem('validation', $this->buildValidationRules($validation));
+        if (isset($c->validation)) {
+            $configLoader->addItem('validation', $this->buildValidationRules($c->validation));
         }
 
-        if (!empty($fields)) {
+        if (!empty($c->fields)) {
             $configLoader->addItem('fields', ArrowFunction::new(
-                Collection::map($fields, [$this, 'buildField'])
+                Collection::map($c->fields, [$this, 'buildField'])
             ));
         }
 
-        if (!empty($interfaces)) {
-            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $interfaces);
+        if (!empty($c->interfaces)) {
+            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $c->interfaces);
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
-        if (!empty($types)) {
-            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $types);
+        if (!empty($c->types)) {
+            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $c->types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
-        if (isset($resolveType)) {
-            $configLoader->addItem('resolveType', $this->buildResolveType($resolveType));
+        if (isset($c->resolveType)) {
+            $configLoader->addItem('resolveType', $this->buildResolveType($c->resolveType));
         }
 
-        if (isset($resolveField)) {
-            $configLoader->addItem('resolveField', $this->buildResolve($resolveField));
+        if (isset($c->resolveField)) {
+            $configLoader->addItem('resolveField', $this->buildResolve($c->resolveField));
         }
 
-        if (isset($values)) {
-            $configLoader->addItem('values', Collection::assoc($values));
+        if (isset($c->values)) {
+            $configLoader->addItem('values', Collection::assoc($c->values));
         }
 
         if ('custom-scalar' === $this->type) {
-            if (isset($scalarType)) {
-                $configLoader->addItem('scalarType', $scalarType);
+            if (isset($c->scalarType)) {
+                $configLoader->addItem('scalarType', $c->scalarType);
             }
 
-            if (isset($serialize)) {
-                $configLoader->addItem('serialize', $this->buildScalarCallback($serialize, 'serialize'));
+            if (isset($c->serialize)) {
+                $configLoader->addItem('serialize', $this->buildScalarCallback($c->serialize, 'serialize'));
             }
 
-            if (isset($parseValue)) {
-                $configLoader->addItem('parseValue', $this->buildScalarCallback($parseValue, 'parseValue'));
+            if (isset($c->parseValue)) {
+                $configLoader->addItem('parseValue', $this->buildScalarCallback($c->parseValue, 'parseValue'));
             }
 
-            if (isset($parseLiteral)) {
-                $configLoader->addItem('parseLiteral', $this->buildScalarCallback($parseLiteral, 'parseLiteral'));
+            if (isset($c->parseLiteral)) {
+                $configLoader->addItem('parseLiteral', $this->buildScalarCallback($c->parseLiteral, 'parseLiteral'));
             }
         }
 
@@ -368,38 +378,42 @@ class TypeBuilder
         }
     }
 
-    protected function buildValidationRules(array $mapping): Collection
+    /**
+     * @param array{
+     *     constraints: array,
+     *     link: string,
+     *     cascade: array
+     * } $config
+     *
+     * @throws GeneratorException
+     */
+    protected function buildValidationRules(array $config): Collection
     {
-        /**
-         * @var array  $constraints
-         * @var string $link
-         * @var array  $cascade
-         * @phpstan-ignore-next-line
-         */
-        extract($mapping);
+        // Convert to object for better readability
+        $c = (object) $config;
 
         $array = Collection::assoc();
 
-        if (!empty($link)) {
-            if (false === strpos($link, '::')) {
+        if (!empty($c->link)) {
+            if (false === strpos($c->link, '::')) {
                 // e.g.: App\Entity\Droid
-                $array->addItem('link', $link);
+                $array->addItem('link', $c->link);
             } else {
                 // e.g. App\Entity\Droid::$id
-                $array->addItem('link', Collection::numeric($this->normalizeLink($link)));
+                $array->addItem('link', Collection::numeric($this->normalizeLink($c->link)));
             }
         }
 
-        if (!empty($cascade)) {
-            $array->addItem('cascade', $this->buildCascade($cascade));
+        if (!empty($c->cascade)) {
+            $array->addItem('cascade', $this->buildCascade($c->cascade));
         }
 
-        if (!empty($constraints)) {
+        if (!empty($c->constraints)) {
             // If there are only constarainst, dont use additional nesting
             if (0 === $array->count()) {
-                return $this->buildConstraints($constraints);
+                return $this->buildConstraints($c->constraints);
             }
-            $array->addItem('constraints', $this->buildConstraints($constraints));
+            $array->addItem('constraints', $this->buildConstraints($c->constraints));
         }
 
         return $array; // @phpstan-ignore-line
@@ -460,33 +474,33 @@ class TypeBuilder
     }
 
     /**
+     * @param array{
+     *     referenceType: string,
+     *     groups:        array,
+     *     isCollection:  bool
+     * } $cascade
+     *
      * @throws GeneratorException
      */
     protected function buildCascade(array $cascade): Collection
     {
-        /**
-         * @var string $referenceType
-         * @var array  $groups
-         * @var bool   $isCollection
-         * @phpstan-ignore-next-line
-         */
-        extract($cascade);
+        $c = (object) $cascade;
 
         $result = Collection::assoc()
-            ->addIfNotEmpty('groups', $groups);
+            ->addIfNotEmpty('groups', $c->groups);
 
-        if (isset($isCollection)) {
-            $result->addItem('isCollection', $isCollection);
+        if (isset($c->isCollection)) {
+            $result->addItem('isCollection', $c->isCollection);
         }
 
-        if (isset($referenceType)) {
-            $type = trim($referenceType, '[]!');
+        if (isset($c->referenceType)) {
+            $type = trim($c->referenceType, '[]!');
 
             if (in_array($type, static::BUILT_IN_TYPES)) {
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
-            $result->addItem('referenceType', "$this->globalVars->get('typeResolver')->resolve('$referenceType')");
+            $result->addItem('referenceType', "$this->globalVars->get('typeResolver')->resolve('$c->referenceType')");
         }
 
         return $result; // @phpstan-ignore-line
@@ -504,6 +518,16 @@ class TypeBuilder
     }
 
     /**
+     * @param array{
+     *     type:              string,
+     *     resolve?:          string,
+     *     description?:      string,
+     *     args?:             array,
+     *     complexity?:       string,
+     *     deprecatedReason?: string,
+     *     validation?:       array,
+     * } $fieldConfig
+     *
      * @return GeneratorInterface|Collection|string
      *
      * @throws GeneratorException
@@ -511,60 +535,52 @@ class TypeBuilder
      */
     public function buildField(array $fieldConfig /*, $fieldname */)
     {
-        /**
-         * @var string      $type
-         * @var string|null $resolve
-         * @var string|null $description
-         * @var array|null  $args
-         * @var string|null $complexity
-         * @var string|null $deprecationReason
-         * @phpstan-ignore-next-line
-         */
-        extract($fieldConfig);
+        // Convert to object for better readability
+        $c = (object) $fieldConfig;
 
         // If there is only 'type', use shorthand
-        if (1 === count($fieldConfig) && isset($type)) {
-            return $this->buildType($type);
+        if (1 === count($fieldConfig) && isset($c->type)) {
+            return $this->buildType($c->type);
         }
 
         $field = Collection::assoc()
-            ->addItem('type', $this->buildType($type));
+            ->addItem('type', $this->buildType($c->type));
 
         // only for object types
-        if (isset($resolve)) {
+        if (isset($c->resolve)) {
             $validationConfig = $this->restructureObjectValidationConfig($fieldConfig);
-            $field->addItem('resolve', $this->buildResolve($resolve, $validationConfig));
+            $field->addItem('resolve', $this->buildResolve($c->resolve, $validationConfig));
         }
 
-        if (isset($deprecationReason)) {
-            $field->addItem('deprecationReason', $deprecationReason);
+        if (isset($c->deprecationReason)) {
+            $field->addItem('deprecationReason', $c->deprecationReason);
         }
 
-        if (isset($description)) {
-            $field->addItem('description', $description);
+        if (isset($c->description)) {
+            $field->addItem('description', $c->description);
         }
 
-        if (!empty($args)) {
-            $field->addItem('args', Collection::map($args, [$this, 'buildArg'], false));
+        if (!empty($c->args)) {
+            $field->addItem('args', Collection::map($c->args, [$this, 'buildArg'], false));
         }
 
-        if (isset($complexity)) {
-            $field->addItem('complexity', $this->buildComplexity($complexity));
+        if (isset($c->complexity)) {
+            $field->addItem('complexity', $this->buildComplexity($c->complexity));
         }
 
-        if (isset($public)) {
-            $field->addItem('public', $this->buildPublic($public));
+        if (isset($c->public)) {
+            $field->addItem('public', $this->buildPublic($c->public));
         }
 
-        if (isset($access)) {
-            $field->addItem('access', $this->buildAccess($access));
+        if (isset($c->access)) {
+            $field->addItem('access', $this->buildAccess($c->access));
         }
 
-        if (!empty($access) && is_string($access) && ExpressionLanguage::expressionContainsVar('object', $access)) {
+        if (!empty($c->access) && is_string($c->access) && ExpressionLanguage::expressionContainsVar('object', $c->access)) {
             $field->addItem('useStrictAccess', false);
         }
 
-        if ('input-object' === $this->type && isset($validation)) {
+        if ('input-object' === $this->type && isset($c->validation)) {
             $this->restructureInputValidationConfig($fieldConfig);
             $field->addItem('validation', $this->buildValidationRules($fieldConfig['validation']));
         }
@@ -572,33 +588,35 @@ class TypeBuilder
         return $field;
     }
 
+    /**
+     * @param array{
+     *     type: string,
+     *     description?: string,
+     *     defaultValue?: string
+     * } $argConfig
+     */
     public function buildArg(array $argConfig, string $argName): Collection
     {
-        /**
-         * @var string      $type
-         * @var string|null $description
-         * @var string|null $defaultValue
-         * @phpstan-ignore-next-line
-         */
-        extract($argConfig);
+        // Convert to object for better readability
+        $c = (object) $argConfig;
 
         $arg = Collection::assoc()
             ->addItem('name', $argName)
-            ->addItem('type', $this->buildType($type));
+            ->addItem('type', $this->buildType($c->type));
 
-        if (isset($description)) {
-            $arg->addIfNotEmpty('description', $description);
+        if (isset($c->description)) {
+            $arg->addIfNotEmpty('description', $c->description);
         }
 
-        if (isset($defaultValue)) {
-            $arg->addIfNotEmpty('defaultValue', $defaultValue);
+        if (isset($c->defaultValue)) {
+            $arg->addIfNotEmpty('defaultValue', $c->defaultValue);
         }
 
         return $arg; // @phpstan-ignore-line
     }
 
     /**
-     * @param string $complexity
+     * @param mixed $complexity
      *
      * @return Closure|mixed
      */
