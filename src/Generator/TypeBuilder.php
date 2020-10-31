@@ -208,7 +208,7 @@ class TypeBuilder
      *
      *      fn() => [
      *          'name' => self::NAME,
-     *          'description' => 'Root query tyoe',
+     *          'description' => 'Root query type',
      *          'fields' => fn() => [
      *              'posts' => {@see buildField},
      *              'users' => {@see buildField},
@@ -537,7 +537,7 @@ class TypeBuilder
      *          'constraints' => {@see buildConstraints}
      *      ]
      *
-     * If only constraints provided, build {@see buildConstraints} directly.
+     * If only constraints provided, uses {@see buildConstraints} directly.
      *
      * @param array{
      *     constraints: array,
