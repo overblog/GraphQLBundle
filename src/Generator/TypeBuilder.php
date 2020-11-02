@@ -135,12 +135,10 @@ class TypeBuilder
 
         $class->createConstructor()
             ->addArgument('configProcessor', ConfigProcessor::class)
-            ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class, null)
-            ->append('$configLoader = ', $this->buildConfigLoader($config))
-            ->append('$config = $configProcessor->process(LazyConfig::create($configLoader, '.$this->globalVars.'))->load()')
-            ->append('parent::__construct($config)');
-
-        $this->file->addUse(LazyConfig::class);
+            ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class)
+            ->append('$config = ', $this->buildConfigLoader($config))
+            ->emptyLine()
+            ->append('parent::__construct($configProcessor->process($config))');
 
         return $this->file;
     }
