@@ -18,7 +18,7 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
         $this->argumentFactory = $argumentFactory;
     }
 
-    public function process(LazyConfig $lazyConfig): LazyConfig
+    public function process(LazyConfig $lazyConfig): void
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['resolveField']) && is_callable($config['resolveField'])) {
@@ -38,8 +38,6 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
 
             return $config;
         });
-
-        return $lazyConfig;
     }
 
     private function wrapFieldsArgument(array $fields): array

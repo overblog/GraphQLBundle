@@ -8,5 +8,5 @@ use Overblog\GraphQLBundle\Definition\LazyConfig;
 
 interface ConfigProcessorInterface
 {
-    public function process(LazyConfig $lazyConfig): LazyConfig;
+    public function process(LazyConfig $lazyConfig): void;
 }

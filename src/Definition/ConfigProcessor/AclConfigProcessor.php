@@ -47,7 +47,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(LazyConfig $lazyConfig): LazyConfig
+    public function process(LazyConfig $lazyConfig): void
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['fields']) && is_callable($config['fields'])) {
@@ -60,8 +60,6 @@ final class AclConfigProcessor implements ConfigProcessorInterface
 
             return $config;
         });
-
-        return $lazyConfig;
     }
 
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable

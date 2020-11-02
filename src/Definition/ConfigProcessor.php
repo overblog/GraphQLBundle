@@ -36,7 +36,7 @@ final class ConfigProcessor
         $lazyConfig = LazyConfig::create($loader);
 
         foreach ($this->getProcessors() as $processor) {
-            $lazyConfig = $processor->process($lazyConfig);
+            $processor->process($lazyConfig);
         }
 
         return $lazyConfig->load();

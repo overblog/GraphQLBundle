@@ -30,7 +30,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
         );
     }
 
-    public function process(LazyConfig $lazyConfig): LazyConfig
+    public function process(LazyConfig $lazyConfig): void
     {
         $lazyConfig->addPostLoader(function ($config) {
             if (isset($config['fields']) && is_callable($config['fields'])) {
@@ -43,7 +43,5 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
 
             return $config;
         });
-
-        return $lazyConfig;
     }
 }
