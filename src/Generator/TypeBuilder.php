@@ -436,7 +436,7 @@ class TypeBuilder
      * @throws GeneratorException
      * @throws UnrecognizedValueTypeException
      *
-     * @return GeneratorInterface
+     * @return GeneratorInterface|string
      */
     protected function buildResolve($resolve, ?array $validationConfig = null)
     {
@@ -444,11 +444,11 @@ class TypeBuilder
             return Collection::numeric($resolve);
         }
 
-        $closure = Closure::new()
-            ->addArguments('value', 'args', 'context', 'info')
-            ->bindVar(TypeGenerator::GLOBAL_VARS);
-
         if (EL::isStringWithTrigger($resolve)) {
+            $closure = Closure::new()
+                ->addArguments('value', 'args', 'context', 'info')
+                ->bindVar(TypeGenerator::GLOBAL_VARS);
+
             $injectErrors = EL::expressionContainsVar('errors', $resolve);
 
             if ($injectErrors) {
@@ -491,9 +491,7 @@ class TypeBuilder
             return $closure;
         }
 
-        $closure->append('return ', Utils::stringify($resolve));
-
-        return $closure;
+        return ArrowFunction::new($resolve);
     }
 
     /**
