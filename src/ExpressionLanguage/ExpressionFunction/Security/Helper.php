@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use function is_object;
 
 /**
- * @deprecated since 0.13 will be remove in 0.14
+ * @deprecated since 0.13 will be remove in 1.0
  * @codeCoverageIgnore
  */
 final class Helper

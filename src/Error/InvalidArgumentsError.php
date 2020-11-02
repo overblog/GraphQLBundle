@@ -12,8 +12,12 @@ class InvalidArgumentsError extends GraphQLUserError
     /** @var InvalidArgumentError[] */
     private array $errors;
 
-    public function __construct(array $errors, $message = '', $code = 0, Exception $previous = null)
-    {
+    public function __construct(
+        array $errors,
+        string $message = '',
+        int $code = 0,
+        Exception $previous = null
+    ) {
         $this->errors = $errors;
         parent::__construct($message, $code, $previous);
     }

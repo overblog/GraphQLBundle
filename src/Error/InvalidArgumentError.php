@@ -13,8 +13,13 @@ class InvalidArgumentError extends GraphQLUserError
     private string $name;
     private ConstraintViolationListInterface $errors;
 
-    public function __construct(string $name, ConstraintViolationListInterface $errors, $message = '', $code = 0, Exception $previous = null)
-    {
+    public function __construct(
+        string $name,
+        ConstraintViolationListInterface $errors,
+        string $message = '',
+        int $code = 0,
+        Exception $previous = null
+    ) {
         $this->name = $name;
         $this->errors = $errors;
         parent::__construct($message, $code, $previous);

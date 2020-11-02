@@ -44,8 +44,8 @@ class ExpressionLanguage extends BaseExpressionLanguage
      * Argument can be either an Expression object or a string with or
      * without a prefix
      *
-     * @param string            $name       - Name of the searched variable
-     * @param string|Expression $expression - Expression to search in
+     * @param string            $name       - name of the searched variable (needle)
+     * @param string|Expression $expression - expression to search in (haystack)
      *
      * @throws SyntaxError
      */
@@ -76,6 +76,20 @@ class ExpressionLanguage extends BaseExpressionLanguage
         }
 
         return $contained ?? false;
+    }
+
+    /**
+     * Checks if value is a string and has the expression trigger prefix.
+     *
+     * @param mixed $value
+     */
+    public static function isStringWithTrigger($value): bool
+    {
+        if (is_string($value)) {
+            return self::stringHasTrigger($value);
+        }
+
+        return false;
     }
 
     /**
