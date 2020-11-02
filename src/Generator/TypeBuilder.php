@@ -25,7 +25,6 @@ use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
-use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
@@ -283,7 +282,7 @@ class TypeBuilder
      * @throws GeneratorException
      * @throws UnrecognizedValueTypeException
      */
-    protected function buildConfigLoader(array $config): ArrowFunction
+    protected function buildConfigLoader(array $config)
     {
         // Convert to an object for a better readability
         $c = (object) $config;
@@ -349,7 +348,7 @@ class TypeBuilder
             }
         }
 
-        return new ArrowFunction($configLoader);
+        return $configLoader;
     }
 
     /**

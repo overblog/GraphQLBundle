@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
-use Overblog\GraphQLBundle\Definition\LazyConfig;
 use function array_filter;
 use function call_user_func;
 use function is_array;
@@ -30,18 +29,14 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
         );
     }
 
-    public function process(LazyConfig $lazyConfig): void
+    public function process(array &$config): void
     {
-        $lazyConfig->addPostLoader(function ($config) {
-            if (isset($config['fields']) && is_callable($config['fields'])) {
-                $config['fields'] = function () use ($config) {
-                    $fields = $config['fields']();
+        if (isset($config['fields']) && is_callable($config['fields'])) {
+            $config['fields'] = function () use ($config) {
+                $fields = $config['fields']();
 
-                    return static::filter($fields);
-                };
-            }
-
-            return $config;
-        });
+                return static::filter($fields);
+            };
+        }
     }
 }

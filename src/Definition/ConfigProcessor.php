@@ -31,14 +31,12 @@ final class ConfigProcessor
         $this->processors[] = $configProcessor;
     }
 
-    public function process(Closure $loader): array
+    public function process(array $config): array
     {
-        $lazyConfig = LazyConfig::create($loader);
-
         foreach ($this->getProcessors() as $processor) {
-            $processor->process($lazyConfig);
+            $processor->process($config);
         }
 
-        return $lazyConfig->load();
+        return $config;
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Resolver\AccessResolver;
 use function is_array;
@@ -47,19 +46,15 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(LazyConfig $lazyConfig): void
+    public function process(array &$config): void
     {
-        $lazyConfig->addPostLoader(function ($config) {
-            if (isset($config['fields']) && is_callable($config['fields'])) {
-                $config['fields'] = function () use ($config) {
-                    $fields = $config['fields']();
+        if (isset($config['fields']) && is_callable($config['fields'])) {
+            $config['fields'] = function () use ($config) {
+                $fields = $config['fields']();
 
-                    return static::acl($fields, $this->accessResolver, $this->defaultResolver);
-                };
-            }
-
-            return $config;
-        });
+                return static::acl($fields, $this->accessResolver, $this->defaultResolver);
+            };
+        }
     }
 
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable

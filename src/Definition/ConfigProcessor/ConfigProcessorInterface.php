@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
-use Overblog\GraphQLBundle\Definition\LazyConfig;
+use Closure;
 
 interface ConfigProcessorInterface
 {
-    public function process(LazyConfig $lazyConfig): void;
+    public function process(array &$config): void;
 }
