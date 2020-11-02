@@ -9,28 +9,26 @@ use Closure;
 final class LazyConfig
 {
     private Closure $loader;
-    private ?GlobalVariables $globalVariables;
 
     /**
      * @var callable[]
      */
     private array $onPostLoad = [];
 
-    private function __construct(Closure $loader, GlobalVariables $globalVariables = null)
+    private function __construct(Closure $loader)
     {
         $this->loader = $loader;
-        $this->globalVariables = $globalVariables ?: new GlobalVariables();
     }
 
-    public static function create(Closure $loader, GlobalVariables $globalVariables = null): self
+    public static function create(Closure $loader): self
     {
-        return new self($loader, $globalVariables);
+        return new self($loader);
     }
 
     public function load(): array
     {
-        $loader = $this->loader;
-        $config = $loader($this->globalVariables);
+        $config = ($this->loader)();
+
         foreach ($this->onPostLoad as $postLoader) {
             $config = $postLoader($config);
         }

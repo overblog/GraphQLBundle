@@ -87,7 +87,6 @@ services:
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         arguments:
             - !tagged_iterator overblog_graphql.definition_config_processor
-            - '@Overblog\GraphQLBundle\Definition\GlobalVariables'
 
     GraphQL\Executor\Promise\PromiseAdapter: "@overblog_graphql.promise_adapter"
 

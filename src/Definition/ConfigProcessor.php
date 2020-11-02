@@ -13,14 +13,12 @@ final class ConfigProcessor
      * @var ConfigProcessorInterface[]
      */
     private array $processors;
-    private GlobalVariables $globalVariables;
 
-    public function __construct(iterable $processors, GlobalVariables $globalVariables)
+    public function __construct(iterable $processors)
     {
         foreach ($processors as $processor) {
             $this->register($processor);
         }
-        $this->globalVariables = $globalVariables;
     }
 
     public function getProcessors(): array
@@ -35,7 +33,7 @@ final class ConfigProcessor
 
     public function process(Closure $loader): array
     {
-        $lazyConfig = LazyConfig::create($loader, $this->globalVariables);
+        $lazyConfig = LazyConfig::create($loader);
 
         foreach ($this->getProcessors() as $processor) {
             $lazyConfig = $processor->process($lazyConfig);
