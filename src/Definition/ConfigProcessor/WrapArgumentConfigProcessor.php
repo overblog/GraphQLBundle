@@ -26,6 +26,7 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
         if (isset($config['fields'])) {
             $config['fields'] = function () use ($config) {
                 $fields = $config['fields'];
+
                 if (is_callable($config['fields'])) {
                     $fields = $config['fields']();
                 }

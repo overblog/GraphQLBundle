@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
-use Closure;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor\ConfigProcessorInterface;
 
 final class ConfigProcessor
@@ -33,7 +32,7 @@ final class ConfigProcessor
 
     public function process(array $config): array
     {
-        foreach ($this->getProcessors() as $processor) {
+        foreach ($this->processors as $processor) {
             $processor->process($config);
         }
 
