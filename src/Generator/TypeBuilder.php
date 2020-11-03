@@ -135,7 +135,7 @@ class TypeBuilder
         $class->createConstructor()
             ->addArgument('configProcessor', ConfigProcessor::class)
             ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class)
-            ->append('$config = ', $this->buildConfigLoader($config))
+            ->append('$config = ', $this->buildConfig($config))
             ->emptyLine()
             ->append('parent::__construct($configProcessor->process($config))');
 
@@ -198,12 +198,12 @@ class TypeBuilder
     }
 
     /**
-     * Builds an arrow function with an array as the return value. Content of
-     * the array depends on the GraphQL type that is currently being generated.
+     * Builds a config array compatible with webonyx/graphql-php type system. The content
+     * of the array depends on the GraphQL type that is currently being generated.
      *
      * Render example (object):
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'description' => 'Root query type',
      *          'fields' => fn() => [
@@ -220,7 +220,7 @@ class TypeBuilder
      *
      * Render example (input-object):
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'description' => 'Some description.',
      *          'validation' => {@see buildValidationRules}
@@ -232,7 +232,7 @@ class TypeBuilder
      *
      * Render example (interface)
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'description' => 'Some description.',
      *          'fields' => fn() => [
@@ -244,7 +244,7 @@ class TypeBuilder
      *
      * Render example (union):
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'description' => 'Some description.',
      *          'types' => fn() => [
@@ -256,7 +256,7 @@ class TypeBuilder
      *
      * Render example (custom-scalar):
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'description' => 'Some description'
      *          'serialize' => {@see buildScalarCallback},
@@ -266,7 +266,7 @@ class TypeBuilder
      *
      * Render example (enum):
      *
-     *      fn() => [
+     *      [
      *          'name' => self::NAME,
      *          'values' => [
      *              'PUBLISHED' => ['value' => 1],
@@ -282,7 +282,7 @@ class TypeBuilder
      * @throws GeneratorException
      * @throws UnrecognizedValueTypeException
      */
-    protected function buildConfigLoader(array $config)
+    protected function buildConfig(array $config): Collection
     {
         // Convert to an object for a better readability
         $c = (object) $config;
@@ -348,7 +348,7 @@ class TypeBuilder
             }
         }
 
-        return $configLoader;
+        return $configLoader; // @phpstan-ignore-line
     }
 
     /**

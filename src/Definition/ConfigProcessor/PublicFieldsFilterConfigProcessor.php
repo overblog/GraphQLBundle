@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use function array_filter;
-use function call_user_func;
 use function is_array;
 use function is_callable;
 use const ARRAY_FILTER_USE_BOTH;
