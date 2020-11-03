@@ -28,7 +28,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
         );
     }
 
-    public function process(array &$config): void
+    public function process(array $config): array
     {
         if (isset($config['fields']) && is_callable($config['fields'])) {
             $config['fields'] = function () use ($config) {
@@ -37,5 +37,7 @@ final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterfac
                 return static::filter($fields);
             };
         }
+
+        return $config;
     }
 }

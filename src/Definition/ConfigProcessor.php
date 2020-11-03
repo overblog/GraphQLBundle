@@ -33,7 +33,7 @@ final class ConfigProcessor
     public function process(array $config): array
     {
         foreach ($this->processors as $processor) {
-            $processor->process($config);
+            $config = $processor->process($config);
         }
 
         return $config;

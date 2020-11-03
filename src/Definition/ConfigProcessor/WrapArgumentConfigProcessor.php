@@ -17,7 +17,7 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
         $this->argumentFactory = $argumentFactory;
     }
 
-    public function process(array &$config): void
+    public function process(array $config): array
     {
         if (isset($config['resolveField']) && is_callable($config['resolveField'])) {
             $config['resolveField'] = $this->argumentFactory->wrapResolverArgs($config['resolveField']);
@@ -34,6 +34,8 @@ final class WrapArgumentConfigProcessor implements ConfigProcessorInterface
                 return $this->wrapFieldsArgument($fields);
             };
         }
+
+        return $config;
     }
 
     private function wrapFieldsArgument(array $fields): array

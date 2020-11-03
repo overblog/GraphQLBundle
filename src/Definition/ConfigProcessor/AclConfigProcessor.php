@@ -47,7 +47,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(array &$config): void
+    public function process(array $config): array
     {
         if (isset($config['fields']) && is_callable($config['fields'])) {
             $config['fields'] = function () use ($config) {
@@ -56,6 +56,8 @@ final class AclConfigProcessor implements ConfigProcessorInterface
                 return static::acl($fields, $this->accessResolver, $this->defaultResolver);
             };
         }
+
+        return $config;
     }
 
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable

@@ -6,5 +6,5 @@ namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 interface ConfigProcessorInterface
 {
-    public function process(array &$config): void;
+    public function process(array $config): array;
 }
