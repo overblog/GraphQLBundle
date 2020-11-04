@@ -76,7 +76,7 @@ Mutation:
                         type: Birthdate
                         validation: cascade # delegating validation to the embedded type
                         
-Birthday:
+Birthdate:
     type: input-object
     config:
         fields:
@@ -104,7 +104,7 @@ The configuration above checks, that:
     - the number of items in the collection is between 1 and 3
     - every item in the collection is a valid email address
 
-The `birthday` field is of type `input-object` and is marked as `cascade` so it's validation will happen according to the  constraints declared in the `Birthday` type:
+The `birthdate` field is of type `input-object` and is marked as `cascade` so it's validation will happen according to the  constraints declared in the `Birthdate` type:
 - **day** is between 1 and 31
 - **month** is between 1 and 12
 - **year** is between 1900 and 2019
@@ -113,7 +113,7 @@ The `birthday` field is of type `input-object` and is marked as `cascade` so it'
 ## How does it work?
 
 The [Symfony Validator Component](https://symfony.com/doc/current/components/validator.html) is designed to validate 
-objects. For this reason, when the validation starts, all input data is first converted into objects of class 
+objects. For this reason, when this bundle starts a validation, all input data is first converted into objects of class 
 [`ValidationNode`](#validationnode-api) and then validated. This process is performed 
 automatically by the bundle just **before** calling corresponding resolvers (each resolver gets its own `InputValidator` 
 instance). If validation fails, the corresponding resolver will not be called (except when you perform
@@ -661,7 +661,7 @@ Mutation:
         fields:
             registerUser: 
                 type: User
-                resolve: "@=('register_user')"
+                resolve: "@=mut('register_user')"
                 validationGroups: ['User']
                 args:
                     input:
@@ -669,7 +669,7 @@ Mutation:
                         validation: cascade
             registerAdmin: 
                 type: User
-                resolve: "@=('register_admin')"
+                resolve: "@=mut('register_admin')"
                 validationGroups: ['Admin']
                 args:
                     input:
