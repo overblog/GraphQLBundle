@@ -114,7 +114,7 @@ class AccessResolver
     private function hasAccess(callable $accessChecker, array $resolveArgs = [], $object = null)
     {
         $resolveArgs[] = $object;
-        $accessOrPromise = call_user_func_array($accessChecker, $resolveArgs);
+        $accessOrPromise = $accessChecker(...$resolveArgs);
 
         return $accessOrPromise;
     }

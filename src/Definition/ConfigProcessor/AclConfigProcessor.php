@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Resolver\AccessResolver;
 use function is_array;
@@ -29,6 +28,7 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         $deniedAccess = static function (): void {
             throw new UserWarning('Access denied to this field.');
         };
+
         foreach ($fields as &$field) {
             if (is_array($field) && isset($field['access']) && true !== $field['access']) {
                 $accessChecker = $field['access'];
@@ -47,21 +47,17 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(LazyConfig $lazyConfig): LazyConfig
+    public function process(array $config): array
     {
-        $lazyConfig->addPostLoader(function ($config) {
-            if (isset($config['fields']) && is_callable($config['fields'])) {
-                $config['fields'] = function () use ($config) {
-                    $fields = $config['fields']();
+        if (isset($config['fields']) && is_callable($config['fields'])) {
+            $config['fields'] = function () use ($config) {
+                $fields = $config['fields']();
 
-                    return static::acl($fields, $this->accessResolver, $this->defaultResolver);
-                };
-            }
+                return static::acl($fields, $this->accessResolver, $this->defaultResolver);
+            };
+        }
 
-            return $config;
-        });
-
-        return $lazyConfig;
+        return $config;
     }
 
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable
