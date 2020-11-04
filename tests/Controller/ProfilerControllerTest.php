@@ -23,7 +23,7 @@ class ProfilerControllerTest extends TestCase
      */
     protected function getMockRouter(): Router
     {
-        $router = $this->getMockBuilder(Router::class)->disableOriginalConstructor()->setMethods(['generate'])->getMock();
+        $router = $this->getMockBuilder(Router::class)->disableOriginalConstructor()->onlyMethods(['generate'])->getMock();
         $router->expects($this->once())->method('generate')->willReturn('/endpoint');
 
         return $router;
@@ -34,7 +34,7 @@ class ProfilerControllerTest extends TestCase
      */
     protected function getMockExecutor(bool $expected = true): Executor
     {
-        $executor = $this->getMockBuilder(Executor::class)->disableOriginalConstructor()->setMethods(['getSchemasNames', 'getSchema'])->getMock();
+        $executor = $this->getMockBuilder(Executor::class)->disableOriginalConstructor()->onlyMethods(['getSchemasNames', 'getSchema'])->getMock();
         if ($expected) {
             $schema = new Schema([]);
             $executor->expects($this->once())->method('getSchemasNames')->willReturn(['schema']);
@@ -51,7 +51,8 @@ class ProfilerControllerTest extends TestCase
     {
         return $this->getMockBuilder(Profiler::class)
             ->disableOriginalConstructor()
-            ->setMethods(['disable', 'loadProfile', 'find'])->getMock();
+            ->onlyMethods(['disable', 'loadProfile', 'find'])
+            ->getMock();
     }
 
     public function testInvokeWithoutProfiler(): void
@@ -77,16 +78,23 @@ class ProfilerControllerTest extends TestCase
         $profilerMock = $this->getMockProfiler();
         $executorMock = $this->getMockExecutor();
         $routerMock = $this->getMockRouter();
-        $twigMock = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->setMethods(['render'])->getMock();
+
+        /** @var Environment&MockObject $twigMock */
+        $twigMock = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->onlyMethods(['render'])->getMock();
         $controller = new ProfilerController($profilerMock, $twigMock, $routerMock, $executorMock, null);
         $graphqlData = ['graphql_data'];
 
-        /** @var MockObject $profilerMock */
+        /** @var Profiler&MockObject $profilerMock */
         $profilerMock->expects($this->once())->method('disable');
         $profilerMock->expects($this->once())->method('find')->willReturn([['token' => 'token']]);
-        $profileMock = $this->getMockBuilder(Profile::class)->disableOriginalConstructor()->setMethods(['getCollector'])->getMock();
-        $profileMock->expects($this->once())->method('getCollector')->willReturn($graphqlData);
 
+        $profileMock = $this->getMockBuilder(Profile::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getCollector', 'hasCollector'])
+            ->getMock();
+
+        $profileMock->expects($this->once())->method('getCollector')->willReturn($graphqlData);
+        $profileMock->expects($this->once())->method('hasCollector')->willReturn(true);
         $profilerMock->expects($this->exactly(2))->method('loadProfile')->willReturn($profileMock);
 
         $request = new Request();
