@@ -55,8 +55,10 @@ class ProfilerController
 
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
-            $graphql = $profile ? $profile->getCollector('graphql') : null;
-            $tokenData['graphql'] = $graphql;
+            if (!$profile->hasCollector('graphql')) {
+                return false;
+            }
+            $tokenData['graphql'] = $profile->getCollector('graphql');
 
             return $tokenData;
         }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null)); // @phpstan-ignore-line
@@ -69,7 +71,7 @@ class ProfilerController
         return new Response($this->twig->render('@OverblogGraphQL/profiler/graphql.html.twig', [
             'request' => $request,
             'profile' => $profile,
-            'tokens' => $tokens,
+            'tokens' => array_filter($tokens),
             'token' => $token,
             'panel' => null,
             'schemas' => $schemas,
