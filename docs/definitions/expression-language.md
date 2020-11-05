@@ -336,25 +336,17 @@ Examples
 Private services
 ----------------
 
-It is not possible to use private services with [`service`](#service) functions since this is equivalent to call
-`get` method on the container. In order to make private services accessible, they must be tagged with `overblog_graphql.global_variable`.
+It is not possible to use private services with the [`service`](#service) function since this is equivalent to call the
+`get` method on the [Service Container](https://symfony.com/doc/current/service_container.html). In order to make 
+private services accessible, they must be tagged with `overblog_graphql.graphql_service`.
 
-Yaml example:
+Example:
 
 ```yaml
 App\MyPrivateService:
     public: false
     tags:
-        - { name: overblog_graphql.global_variable, alias: my_private_service }
-```
-
-To use a vendor private services:
-
-```php
-<?php
-
-$vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
-$vendorPrivateServiceDef->addTag('overblog_graphql.global_variable', ['alias' => 'vendor_private_service']);
+        - { name: overblog_graphql.graphql_service, alias: my_private_service }
 ```
 
 Usage:
@@ -366,7 +358,14 @@ MyType:
         fields:
             name:
                 type: String!
-                resolve: '@=my_private_service.formatName(value)'
+                resolve: "@=service('my_private_service').formatName(value)"
+```
+
+To use a vendor private services:
+
+```php
+$vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
+$vendorPrivateServiceDef->addTag('overblog_graphql.graphql_service', ['alias' => 'vendor_private_service']);
 ```
 
 Custom expression functions

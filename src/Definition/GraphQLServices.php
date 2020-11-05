@@ -8,7 +8,10 @@ use LogicException;
 use function json_encode;
 use function sprintf;
 
-final class GlobalVariables
+/**
+ * Container for special services to be passed to all generated types.
+ */
+final class GraphQLServices
 {
     private array $services;
 
@@ -23,7 +26,7 @@ final class GlobalVariables
     public function get(string $name)
     {
         if (!isset($this->services[$name])) {
-            throw new LogicException(sprintf('Global variable %s could not be located. You should define it.', json_encode($name)));
+            throw new LogicException(sprintf('GraphQL service %s could not be located. You should define it.', json_encode($name)));
         }
 
         return $this->services[$name];

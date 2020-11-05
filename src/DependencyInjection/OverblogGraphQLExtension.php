@@ -113,7 +113,7 @@ class OverblogGraphQLExtension extends Extension
                     new Reference('translator.default', $container::NULL_ON_INVALID_REFERENCE),
                 ])
                 ->addTag(
-                    'overblog_graphql.global_variable',
+                    'overblog_graphql.graphql_service',
                     [
                         'alias' => 'validatorFactory',
                         'public' => false,

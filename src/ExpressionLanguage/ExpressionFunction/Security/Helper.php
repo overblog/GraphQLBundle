@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Stringable;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -19,21 +19,21 @@ final class Helper
     /**
      * @return TokenInterface|null
      */
-    private static function getToken(GlobalVariables $globalVariable)
+    private static function getToken(GraphQLServices $services)
     {
-        if (!$globalVariable->get('container')->has('security.token_storage')) {
+        if (!$services->get('container')->has('security.token_storage')) {
             return null;
         }
 
-        return $globalVariable->get('container')->get('security.token_storage')->getToken();
+        return $services->get('container')->get('security.token_storage')->getToken();
     }
 
     /**
      * @return string|Stringable|UserInterface|null
      */
-    public static function getUser(GlobalVariables $globalVariable)
+    public static function getUser(GraphQLServices $services)
     {
-        if (!$token = self::getToken($globalVariable)) {
+        if (!$token = self::getToken($services)) {
             return null;
         }
 

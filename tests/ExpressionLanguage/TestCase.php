@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
@@ -54,10 +54,10 @@ abstract class TestCase extends BaseTestCase
         string $assertMethod = 'assertTrue'
     ): void {
         $code = $this->expressionLanguage->compile($expression, array_keys($vars));
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
+        ${TypeGenerator::GRAPHQL_SERVICES} = new GraphQLServices([
             'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));

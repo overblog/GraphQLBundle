@@ -13,8 +13,8 @@ final class IsAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isAuthenticated',
-            fn () => "$this->globalVars->get('security')->isAuthenticated()",
-            static fn (array $arguments) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->isAuthenticated()
+            fn () => "$this->services->get('security')->isAuthenticated()",
+            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isAuthenticated()
         );
     }
 }

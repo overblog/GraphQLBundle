@@ -5,7 +5,7 @@ services:
     Overblog\GraphQLBundle\Executor\Executor: ~
     Overblog\GraphQLBundle\Request\Parser: ~
     Overblog\GraphQLBundle\Request\BatchParser: ~
-    Overblog\GraphQLBundle\Definition\GlobalVariables: ~
+    Overblog\GraphQLBundle\Definition\GraphQLServices: ~
     GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter: ~
     Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter: ~
     Overblog\GraphQLBundle\Resolver\FieldResolver: ~
@@ -29,13 +29,13 @@ services:
     Overblog\GraphQLBundle\Definition\Builder\TypeFactory:
         arguments:
             - '@Overblog\GraphQLBundle\Definition\ConfigProcessor'
-            - '@Overblog\GraphQLBundle\Definition\GlobalVariables'
+            - '@Overblog\GraphQLBundle\Definition\GraphQLServices'
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         calls:
             - ["setDispatcher", ["@event_dispatcher"]]
         tags:
-            - { name: overblog_graphql.global_variable, alias: typeResolver }
+            - { name: overblog_graphql.graphql_service, alias: typeResolver }
 
     Overblog\GraphQLBundle\Transformer\ArgumentsTransformer:
         arguments:
@@ -44,11 +44,11 @@ services:
 
     Overblog\GraphQLBundle\Resolver\ResolverResolver:
         tags:
-            - { name: overblog_graphql.global_variable, alias: resolverResolver, public: false }
+            - { name: overblog_graphql.graphql_service, alias: resolverResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\MutationResolver:
         tags:
-            - { name: overblog_graphql.global_variable, alias: mutationResolver, public: false }
+            - { name: overblog_graphql.graphql_service, alias: mutationResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\AccessResolver:
         arguments:
@@ -73,7 +73,7 @@ services:
         arguments:
             - '%overblog_graphql.argument_class%'
         tags:
-            - { name: overblog_graphql.global_variable, alias: argumentFactory }
+            - { name: overblog_graphql.graphql_service, alias: argumentFactory }
 
     Overblog\GraphQLBundle\Controller\GraphController:
         public: true
@@ -98,7 +98,7 @@ services:
         arguments:
             - '@?security.helper'
         tags:
-            - { name: overblog_graphql.global_variable, alias: security, public: false }
+            - { name: overblog_graphql.graphql_service, alias: security, public: false }
 
     Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter:
         arguments:

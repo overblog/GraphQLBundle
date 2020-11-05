@@ -17,7 +17,7 @@ final class MutateAndGetPayloadCallback extends ExpressionFunction
             static fn ($mutateAndGetPayload) => (
                 Closure::new()
                     ->addArgument('value')
-                    ->bindVars(TypeGenerator::GLOBAL_VARS, 'args', 'context', 'info')
+                    ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $mutateAndGetPayload")
                     ->generate()
             )

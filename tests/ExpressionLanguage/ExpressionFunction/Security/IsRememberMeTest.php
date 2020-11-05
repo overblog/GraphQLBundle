@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
@@ -22,9 +22,9 @@ class IsRememberMeTest extends TestCase
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );
-        $globalVars = new GlobalVariables(['security' => $security]);
+        $gqlServices = new GraphQLServices(['security' => $security]);
 
-        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GLOBAL_VARS => $globalVars]);
+        $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GRAPHQL_SERVICES => $gqlServices]);
         $this->assertTrue($isRememberMe);
     }
 

@@ -4,8 +4,10 @@ UPGRADE FROM 0.13 to 1.0
 # Table of Contents
 
 - [Customize the cursor encoder of the edges of a connection](#customize-the-cursor-encoder-of-the-edges-of-a-connection)
-- [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator)
+- [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator-class)
 - [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
+- [Rename `GlobalVariables` to `GraphQLServices`](#)
+- [Change `overblog_graphql.global_variable` tag]()
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -86,3 +88,13 @@ class Argument implements ArgumentInterface
 }
 ```
 If you use your own class for resolver arguments, then it should have a `__get` method as well.
+
+### Rename `GlobalVariables` to `GraphQLServices`
+
+The `GlobalVariables` class was renamed into `GraphQLServices` to better reflect its purpose - holding services, 
+passed to all generated GraphQL types. 
+
+### Change `overblog_graphql.global_variable` tag
+
+If you have any services tagged with `overblog_graphql.global_variable`, they should now be tagged with
+`overblog_graphql.graphql_service` instead.

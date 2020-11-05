@@ -25,4 +25,4 @@ services:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Service\PrivateService
         public: false
         tags:
-            - { name: "overblog_graphql.global_variable", alias: "private_service" }
+            - { name: "overblog_graphql.graphql_service", alias: "private_service" }

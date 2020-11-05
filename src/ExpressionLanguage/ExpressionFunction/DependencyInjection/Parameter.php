@@ -13,8 +13,8 @@ final class Parameter extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            fn (string $value) => "$this->globalVars->get('container')->getParameter($value)",
-            static fn (array $arguments, $paramName) => $arguments[TypeGenerator::GLOBAL_VARS]->get('container')->getParameter($paramName)
+            fn (string $value) => "$this->services->get('container')->getParameter($value)",
+            static fn (array $arguments, $paramName) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('container')->getParameter($paramName)
         );
     }
 }

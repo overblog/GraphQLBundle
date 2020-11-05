@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator\Constraints;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -17,12 +17,12 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 {
     private ExpressionLanguage $expressionLanguage;
 
-    private GlobalVariables $globalVariables;
+    private GraphQLServices $graphQLServices;
 
-    public function __construct(ExpressionLanguage $expressionLanguage, GlobalVariables $globalVariables)
+    public function __construct(ExpressionLanguage $expressionLanguage, GraphQLServices $graphQLServices)
     {
         $this->expressionLanguage = $expressionLanguage;
-        $this->globalVariables = $globalVariables;
+        $this->graphQLServices = $graphQLServices;
         if (Kernel::VERSION_ID >= 40400) {  // @phpstan-ignore-line
             parent::__construct($expressionLanguage);
         } else {                            // @phpstan-ignore-line
@@ -41,7 +41,7 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         $variables = $constraint->values;
         $variables['value'] = $value;
-        $variables[TypeGenerator::GLOBAL_VARS] = $this->globalVariables;
+        $variables[TypeGenerator::GRAPHQL_SERVICES] = $this->graphQLServices;
 
         $object = $this->context->getObject();
 

@@ -13,8 +13,8 @@ final class HasAnyPermission extends ExpressionFunction
     {
         parent::__construct(
             'hasAnyPermission',
-            fn ($object, $permissions) => "$this->globalVars->get('security')->hasAnyPermission($object, $permissions)",
-            static fn (array $arguments, $object, $permissions) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->hasAnyPermission($object, $permissions)
+            fn ($object, $permissions) => "$this->services->get('security')->hasAnyPermission($object, $permissions)",
+            static fn (array $arguments, $object, $permissions) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->hasAnyPermission($object, $permissions)
         );
     }
 }

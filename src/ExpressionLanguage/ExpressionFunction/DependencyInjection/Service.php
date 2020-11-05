@@ -13,8 +13,8 @@ final class Service extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            fn (string $serviceId) => "$this->globalVars->get('container')->get($serviceId)",
-            static fn (array $arguments, $serviceId) => $arguments[TypeGenerator::GLOBAL_VARS]->get('container')->get($serviceId)
+            fn (string $serviceId) => "$this->services->get('container')->get($serviceId)",
+            static fn (array $arguments, $serviceId) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('container')->get($serviceId)
         );
     }
 }
