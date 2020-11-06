@@ -13,7 +13,7 @@ final class HasPermission extends ExpressionFunction
     {
         parent::__construct(
             'hasPermission',
-            fn ($object, $permission) => "$this->services->get('security')->hasPermission($object, $permission)",
+            fn ($object, $permission) => "$this->gqlServices->get('security')->hasPermission($object, $permission)",
             static fn (array $arguments, $object, $permission) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->hasPermission($object, $permission)
         );
     }

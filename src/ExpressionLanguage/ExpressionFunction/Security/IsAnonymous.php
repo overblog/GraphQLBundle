@@ -13,7 +13,7 @@ final class IsAnonymous extends ExpressionFunction
     {
         parent::__construct(
             'isAnonymous',
-            fn () => "$this->services->get('security')->isAnonymous()",
+            fn () => "$this->gqlServices->get('security')->isAnonymous()",
             static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isAnonymous()
         );
     }

@@ -13,7 +13,7 @@ final class GetUser extends ExpressionFunction
     {
         parent::__construct(
             'getUser',
-            fn () => "$this->services->get('security')->getUser()",
+            fn () => "$this->gqlServices->get('security')->getUser()",
             static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->getUser()
         );
     }

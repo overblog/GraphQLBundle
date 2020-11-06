@@ -12,7 +12,10 @@ final class Mutation extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            fn ($alias, $args = '[]') => "$this->services->get('mutationResolver')->resolve([$alias, $args])"
+            function ($alias, ...$args) {
+                $args = (count($args) > 0) ? (', ' . join(', ', $args)) : '';
+                return "$this->gqlServices->mutation($alias$args)";
+            }
         );
     }
 }

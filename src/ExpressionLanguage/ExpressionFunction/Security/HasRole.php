@@ -13,7 +13,7 @@ final class HasRole extends ExpressionFunction
     {
         parent::__construct(
             'hasRole',
-            fn ($role) => "$this->services->get('security')->hasRole($role)",
+            fn ($role) => "$this->gqlServices->get('security')->hasRole($role)",
             static fn (array $arguments, $role) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->hasRole($role)
         );
     }

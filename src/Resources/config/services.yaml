@@ -5,10 +5,15 @@ services:
     Overblog\GraphQLBundle\Executor\Executor: ~
     Overblog\GraphQLBundle\Request\Parser: ~
     Overblog\GraphQLBundle\Request\BatchParser: ~
-    Overblog\GraphQLBundle\Definition\GraphQLServices: ~
     GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter: ~
     Overblog\GraphQLBundle\Executor\Promise\Adapter\ReactPromiseAdapter: ~
     Overblog\GraphQLBundle\Resolver\FieldResolver: ~
+
+    Overblog\GraphQLBundle\Definition\GraphQLServices:
+        arguments:
+            - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
+            - '@Overblog\GraphQLBundle\Resolver\ResolverResolver'
+            - '@Overblog\GraphQLBundle\Resolver\MutationResolver'
 
     Overblog\GraphQLBundle\Request\Executor:
         arguments:
@@ -34,8 +39,6 @@ services:
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         calls:
             - ["setDispatcher", ["@event_dispatcher"]]
-        tags:
-            - { name: overblog_graphql.graphql_service, alias: typeResolver }
 
     Overblog\GraphQLBundle\Transformer\ArgumentsTransformer:
         arguments:
@@ -43,12 +46,7 @@ services:
             - "%overblog_graphql_types.classes_map%"
 
     Overblog\GraphQLBundle\Resolver\ResolverResolver:
-        tags:
-            - { name: overblog_graphql.graphql_service, alias: resolverResolver, public: false }
-
     Overblog\GraphQLBundle\Resolver\MutationResolver:
-        tags:
-            - { name: overblog_graphql.graphql_service, alias: mutationResolver, public: false }
 
     Overblog\GraphQLBundle\Resolver\AccessResolver:
         arguments:

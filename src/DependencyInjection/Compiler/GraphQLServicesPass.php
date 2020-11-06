@@ -45,6 +45,6 @@ final class GraphQLServicesPass implements CompilerPassInterface
                 }
             }
         }
-        $container->findDefinition(GraphQLServices::class)->setArguments([$serviceContainer]);
+        $container->findDefinition(GraphQLServices::class)->addArgument($serviceContainer);
     }
 }

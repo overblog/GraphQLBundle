@@ -13,7 +13,7 @@ final class IsFullyAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isFullyAuthenticated',
-            fn () => "$this->services->get('security')->isFullyAuthenticated()",
+            fn () => "$this->gqlServices->get('security')->isFullyAuthenticated()",
             fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isFullyAuthenticated()
         );
     }

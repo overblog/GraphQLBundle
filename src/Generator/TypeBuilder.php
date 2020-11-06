@@ -85,7 +85,7 @@ class TypeBuilder
     protected string $namespace;
     protected array $config;
     protected string $type;
-    protected string $services = '$'.TypeGenerator::GRAPHQL_SERVICES;
+    protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -152,7 +152,7 @@ class TypeBuilder
      *  -   "String"   -> Type::string()
      *  -   "String!"  -> Type::nonNull(Type::string())
      *  -   "[String!] -> Type::listOf(Type::nonNull(Type::string()))
-     *  -   "[Post]"   -> fn() => Type::listOf($services->getResolver('Post'))
+     *  -   "[Post]"   -> Type::listOf($services->getType('Post'))
      *
      * @return GeneratorInterface|string
      */
@@ -199,7 +199,7 @@ class TypeBuilder
                     $this->file->addUse(Type::class);
                 } else {
                     $name = $typeNode->name->value;
-                    $type = "$this->services->get('typeResolver')->resolve('$name')";
+                    $type = "$this->gqlServices->getType('$name')";
                     $isReference = true;
                 }
                 break;
@@ -223,7 +223,7 @@ class TypeBuilder
      *               ...
      *           ],
      *           'interfaces' => fn() => [
-     *               $services->get('typeResolver')->resolve('PostInterface'),
+     *               $services->getType('PostInterface'),
      *               ...
      *           ],
      *           'resolveField' => {@see buildResolveField},
@@ -259,7 +259,7 @@ class TypeBuilder
      *          'name' => self::NAME,
      *          'description' => 'Some description.',
      *          'types' => fn() => [
-     *              $services->get('typeResolver')->resolve('Photo'),
+     *              $services->getType('Photo'),
      *              ...
      *          ],
      *          'resolveType' => {@see buildResolveType},
@@ -318,12 +318,12 @@ class TypeBuilder
         }
 
         if (!empty($c->interfaces)) {
-            $items = array_map(fn ($type) => "$this->services->get('typeResolver')->resolve('$type')", $c->interfaces);
+            $items = array_map(fn ($type) => "$this->gqlServices->getType('$type')", $c->interfaces);
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (!empty($c->types)) {
-            $items = array_map(fn ($type) => "$this->services->get('typeResolver')->resolve('$type')", $c->types);
+            $items = array_map(fn ($type) => "$this->gqlServices->getType('$type')", $c->types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
@@ -417,14 +417,14 @@ class TypeBuilder
      * Render example (with expression language):
      *
      *      function ($value, $args, $context, $info) use ($services) {
-     *          return $services->get('mutationResolver')->resolve(["my_resolver", [0 => $args]]);
+     *          return $services->mutation("my_resolver", $args);
      *      }
      *
      * Render example (with validation):
      *
      *      function ($value, $args, $context, $info) use ($services) {
      *          $validator = {@see buildValidatorInstance}
-     *          return $services->get('mutationResolver')->resolve(["create_post", [0 => $validator]]);
+     *          return $services->mutation("create_post", $validator);
      *      }
      *
      * Render example (with validation, but errors are injected into the user-defined resolver):
@@ -436,7 +436,7 @@ class TypeBuilder
      *
      *          $errors->setValidationErrors($validator->validate(null, false))
      *
-     *          return $services->get('mutationResolver')->resolve(["create_post", [0 => $errors]]);
+     *          return $services->mutation("create_post", $errors);
      *      }
      *
      * @param mixed $resolve
@@ -520,8 +520,8 @@ class TypeBuilder
         $validator = Instance::new(InputValidator::class)
             ->setMultiline()
             ->addArgument(new Literal('\\func_get_args()'))
-            ->addArgument("$this->services->get('container')->get('validator')")
-            ->addArgument("$this->services->get('validatorFactory')");
+            ->addArgument("$this->gqlServices->get('container')->get('validator')")
+            ->addArgument("$this->gqlServices->get('validatorFactory')");
 
         if (!empty($mapping['properties'])) {
             $validator->addArgument($this->buildProperties($mapping['properties']));
@@ -656,7 +656,7 @@ class TypeBuilder
      *      [
      *          'groups' => ['my_group'],
      *          'isCollection' => true,
-     *          'referenceType' => $services->get('typeResolver')->resolve('Article')
+     *          'referenceType' => $services->getType('Article')
      *      ]
      *
      * @param array{
@@ -685,7 +685,7 @@ class TypeBuilder
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
-            $array->addItem('referenceType', "$this->services->get('typeResolver')->resolve('$c->referenceType')");
+            $array->addItem('referenceType', "$this->gqlServices->getType('$c->referenceType')");
         }
 
         return $array; // @phpstan-ignore-line
@@ -872,7 +872,7 @@ class TypeBuilder
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
                     ->bindVar(TypeGenerator::GRAPHQL_SERVICES)
-                    ->append('$args = ', "$this->services->get('argumentFactory')->create(\$arguments)")
+                    ->append('$args = ', "$this->gqlServices->get('argumentFactory')->create(\$arguments)")
                     ->append('return ', $expression)
                 ;
             }
@@ -953,7 +953,7 @@ class TypeBuilder
      *
      * Render example:
      *
-     *      fn($value, $context, $info) => $services->get('typeResolver')->resolve($value)
+     *      fn($value, $context, $info) => $services->getType($value)
      *
      * @param mixed $resolveType
      *

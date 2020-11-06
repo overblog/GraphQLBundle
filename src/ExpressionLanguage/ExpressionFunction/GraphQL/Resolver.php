@@ -12,7 +12,7 @@ final class Resolver extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            fn (string $alias, string $args = '[]') => "$this->services->get('resolverResolver')->resolve([$alias, $args])"
+            fn (string $alias, string $args = '[]') => "$this->gqlServices->query($alias, $args)"
         );
     }
 }
