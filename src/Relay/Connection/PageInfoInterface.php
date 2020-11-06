@@ -17,9 +17,6 @@ interface PageInfoInterface
      */
     public function getStartCursor(): ?string;
 
-    /**
-     * @param string $startCursor
-     */
     public function setStartCursor(string $startCursor): void;
 
     /**
@@ -27,9 +24,6 @@ interface PageInfoInterface
      */
     public function getEndCursor(): ?string;
 
-    /**
-     * @param string $endCursor
-     */
     public function setEndCursor(string $endCursor): void;
 
     /**
@@ -37,9 +31,6 @@ interface PageInfoInterface
      */
     public function getHasPreviousPage(): ?bool;
 
-    /**
-     * @param bool $hasPreviousPage
-     */
     public function setHasPreviousPage(bool $hasPreviousPage): void;
 
     /**
@@ -47,8 +38,5 @@ interface PageInfoInterface
      */
     public function getHasNextPage(): ?bool;
 
-    /**
-     * @param bool $hasNextPage
-     */
     public function setHasNextPage(bool $hasNextPage): void;
 }

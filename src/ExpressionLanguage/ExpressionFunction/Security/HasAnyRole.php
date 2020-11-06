@@ -9,15 +9,12 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class HasAnyRole extends ExpressionFunction
 {
-    public function __construct($name = 'hasAnyRole')
+    public function __construct()
     {
         parent::__construct(
-            $name,
-            function ($roles) {
-                $code = \sprintf('array_reduce(%s, function ($isGranted, $role) use (%s) { return $isGranted || $globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted($role); }, false)', $roles, TypeGenerator::USE_FOR_CLOSURES);
-
-                return $code;
-            }
+            'hasAnyRole',
+            fn ($roles) => "$this->globalVars->get('security')->hasAnyRole($roles)",
+            static fn (array $arguments, $roles) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->hasAnyRole($roles)
         );
     }
 }

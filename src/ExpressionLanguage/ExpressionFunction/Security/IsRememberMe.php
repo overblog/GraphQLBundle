@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class IsRememberMe extends ExpressionFunction
 {
-    public function __construct($name = 'isRememberMe')
+    public function __construct()
     {
         parent::__construct(
-            $name,
-            function () {
-                return '$globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted(\'IS_AUTHENTICATED_REMEMBERED\')';
-            }
+            'isRememberMe',
+            fn () => "$this->globalVars->get('security')->isRememberMe()",
+            static fn (array $arguments) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->isRememberMe()
         );
     }
 }

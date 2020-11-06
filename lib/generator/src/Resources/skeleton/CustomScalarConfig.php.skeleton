@@ -1,7 +1,0 @@
-[
-<spaces>'name' => <name>,
-<spaces>'description' => <description>,
-<spaces>'serialize' => <serialize>,
-<spaces>'parseValue' => <parseValue>,
-<spaces>'parseLiteral' => <parseLiteral>,
-]

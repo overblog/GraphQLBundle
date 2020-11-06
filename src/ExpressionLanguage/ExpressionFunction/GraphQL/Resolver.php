@@ -12,9 +12,7 @@ final class Resolver extends ExpressionFunction
     {
         parent::__construct(
             $name,
-            function ($alias, $args = '[]') {
-                return \sprintf('$globalVariable->get(\'resolverResolver\')->resolve([%s, %s])', $alias, $args);
-            }
+            fn (string $alias, string $args = '[]') => "$this->globalVars->get('resolverResolver')->resolve([$alias, $args])"
         );
     }
 }

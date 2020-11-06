@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use function is_string;
+use function sprintf;
 
 final class GlobalVariablesPass implements CompilerPassInterface
 {
@@ -22,9 +25,9 @@ final class GlobalVariablesPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                if (empty($attributes['alias']) || !\is_string($attributes['alias'])) {
-                    throw new \InvalidArgumentException(
-                        \sprintf('Service "%s" tagged "overblog_graphql.global_variable" should have a valid "alias" attribute.', $id)
+                if (empty($attributes['alias']) || !is_string($attributes['alias'])) {
+                    throw new InvalidArgumentException(
+                        sprintf('Service "%s" tagged "overblog_graphql.global_variable" should have a valid "alias" attribute.', $id)
                     );
                 }
                 $globalVariables[$attributes['alias']] = new Reference($id);
@@ -34,7 +37,7 @@ final class GlobalVariablesPass implements CompilerPassInterface
                     $expressionLanguageDefinition->addMethodCall(
                         'addGlobalName',
                         [
-                            \sprintf('globalVariable->get(\'%s\')', $attributes['alias']),
+                            sprintf('globalVariables->get(\'%s\')', $attributes['alias']),
                             $attributes['alias'],
                         ]
                     );

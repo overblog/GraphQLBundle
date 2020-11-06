@@ -4,29 +4,24 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use function call_user_func_array;
+use function is_array;
 
 abstract class AbstractProxyResolver extends AbstractResolver
 {
     /**
-     * @param $input
+     * @param mixed $input
      *
      * @return mixed
      */
     public function resolve($input)
     {
-        if (!\is_array($input)) {
+        if (!is_array($input)) {
             $input = [$input];
         }
 
-        if (!isset($input[0]) || !isset($input[1])) {
-            $optionResolver = new OptionsResolver();
-            $optionResolver->setDefaults([null, []]);
-            $input = $optionResolver->resolve($input);
-        }
-
-        $alias = $input[0];
-        $funcArgs = $input[1];
+        $alias = $input[0] ?? '';
+        $funcArgs = $input[1] ?? [];
 
         $solution = $this->getSolution($alias);
 
@@ -37,8 +32,8 @@ abstract class AbstractProxyResolver extends AbstractResolver
         $options = $this->getSolutionOptions($alias);
         $func = [$solution, $options['method']];
 
-        return \call_user_func_array($func, $funcArgs);
+        return call_user_func_array($func, $funcArgs);
     }
 
-    abstract protected function unresolvableMessage($alias);
+    abstract protected function unresolvableMessage(string $alias): string;
 }

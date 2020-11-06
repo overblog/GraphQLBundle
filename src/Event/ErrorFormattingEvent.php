@@ -4,64 +4,28 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Event;
 
+use ArrayObject;
 use GraphQL\Error\Error;
 use Symfony\Contracts\EventDispatcher\Event;
 
-// TODO(mcg-web): remove hack after migrjating Symfony >= 4.3
-if (EventDispatcherVersionHelper::isForLegacy()) {
-    final class ErrorFormattingEvent extends \Symfony\Component\EventDispatcher\Event
+final class ErrorFormattingEvent extends Event
+{
+    private Error $error;
+    private ArrayObject $formattedError;
+
+    public function __construct(Error $error, array $formattedError)
     {
-        /** @var Error */
-        private $error;
-
-        /** @var \ArrayObject */
-        private $formattedError;
-
-        public function __construct(Error $error, array $formattedError)
-        {
-            $this->error = $error;
-            $this->formattedError = new \ArrayObject($formattedError);
-        }
-
-        public function getError()
-        {
-            return $this->error;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getFormattedError(): \ArrayObject
-        {
-            return $this->formattedError;
-        }
+        $this->error = $error;
+        $this->formattedError = new ArrayObject($formattedError);
     }
-} else {
-    final class ErrorFormattingEvent extends Event
+
+    public function getError(): Error
     {
-        /** @var Error */
-        private $error;
+        return $this->error;
+    }
 
-        /** @var \ArrayObject */
-        private $formattedError;
-
-        public function __construct(Error $error, array $formattedError)
-        {
-            $this->error = $error;
-            $this->formattedError = new \ArrayObject($formattedError);
-        }
-
-        public function getError()
-        {
-            return $this->error;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getFormattedError(): \ArrayObject
-        {
-            return $this->formattedError;
-        }
+    public function getFormattedError(): ArrayObject
+    {
+        return $this->formattedError;
     }
 }

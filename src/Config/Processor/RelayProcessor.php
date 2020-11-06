@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Processor;
 
+use Exception;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionDefinition;
 use Overblog\GraphQLBundle\Relay\Mutation\InputDefinition;
 use Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition;
 use Overblog\GraphQLBundle\Relay\Node\NodeDefinition;
+use function array_replace;
+use function is_array;
+use function is_string;
+use function sprintf;
 
 final class RelayProcessor implements ProcessorInterface
 {
@@ -19,9 +24,6 @@ final class RelayProcessor implements ProcessorInterface
         'relay-mutation-payload' => PayloadDefinition::class,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     public static function process(array $configs): array
     {
         foreach (static::RELAY_DEFINITION_MAPPING as $typeName => $definitionBuilderClass) {
@@ -31,16 +33,19 @@ final class RelayProcessor implements ProcessorInterface
         return $configs;
     }
 
-    private static function processRelayConfigs($typeName, $definitionBuilderClass, array $configs)
+    /**
+     * @throws Exception
+     */
+    private static function processRelayConfigs(string $typeName, string $definitionBuilderClass, array $configs): array
     {
         foreach ($configs as $name => $config) {
-            if (isset($config['type']) && \is_string($config['type']) && $typeName === $config['type']) {
-                $configInherits = isset($config['inherits']) && \is_array($config['inherits']) ? $config['inherits'] : [];
+            if (isset($config['type']) && is_string($config['type']) && $typeName === $config['type']) {
+                $configInherits = isset($config['inherits']) && is_array($config['inherits']) ? $config['inherits'] : [];
 
-                $config = isset($config['config']) && \is_array($config['config']) ? $config['config'] : [];
+                $config = isset($config['config']) && is_array($config['config']) ? $config['config'] : [];
 
                 if (empty($config['class_name'])) {
-                    $config['class_name'] = \sprintf('%sType', $name);
+                    $config['class_name'] = sprintf('%sType', $name);
                 }
                 if (empty($config['name'])) {
                     $config['name'] = $name;
@@ -55,7 +60,7 @@ final class RelayProcessor implements ProcessorInterface
                     $connectionDefinition[$name]['inherits'] = $configInherits;
                 }
 
-                $configs = \array_replace($configs, $connectionDefinition);
+                $configs = array_replace($configs, $connectionDefinition);
             }
         }
 

@@ -6,11 +6,20 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
+use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security as CoreSecurity;
+use function array_keys;
+use function call_user_func_array;
+use function extract;
+use function is_array;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -32,26 +41,39 @@ abstract class TestCase extends BaseTestCase
      */
     abstract protected function getFunctions();
 
-    protected function assertExpressionCompile($expression, $with, array $vars = [], $expects = null, $return = true, $assertMethod = 'assertTrue'): void
-    {
-        $code = $this->expressionLanguage->compile($expression, \array_keys($vars));
-        $globalVariable = new GlobalVariables([
-            'container' => $this->getDIContainerMock(
-                ['security.authorization_checker' => $this->getAuthorizationCheckerIsGrantedWithExpectation($with, $expects, $return)]
-            ),
+    /**
+     * @param Expression|string $expression
+     * @param mixed             $with
+     */
+    protected function assertExpressionCompile(
+        $expression,
+        $with,
+        array $vars = [],
+        InvokedCount $expects = null,
+        bool $return = true,
+        string $assertMethod = 'assertTrue'
+    ): void {
+        $code = $this->expressionLanguage->compile($expression, array_keys($vars));
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
+            'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        $globalVariable->get('container');
-        \extract($vars);
+        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
     }
 
-    private function getAuthorizationCheckerIsGrantedWithExpectation($with, $expects = null, $return = true)
+    /**
+     * @param mixed                             $with
+     * @param InvokedCount|AnyInvokedCount|null $expects
+     * @param mixed                             $return
+     */
+    protected function getSecurityIsGrantedWithExpectation($with, $expects = null, $return = true): Security
     {
         if (null === $expects) {
             $expects = $this->once();
         }
-        $authChecker = $this->getAuthorizationCheckerMock();
+        $security = $this->getCoreSecurityMock();
 
         if ($return instanceof Stub) {
             $returnValue = $return;
@@ -59,25 +81,24 @@ abstract class TestCase extends BaseTestCase
             $returnValue = $this->returnValue($return);
         }
 
-        $methodExpectation = $authChecker
+        // @phpstan-ignore-next-line
+        $methodExpectation = $security
             ->expects($expects)
             ->method('isGranted');
 
-        \call_user_func_array([$methodExpectation, 'with'], \is_array($with) ? $with : [$with]);
+        call_user_func_array([$methodExpectation, 'with'], is_array($with) ? $with : [$with]);
 
         $methodExpectation->will($returnValue);
 
-        return $authChecker;
+        return new Security($security);
     }
 
-    private function getAuthorizationCheckerMock()
+    private function getCoreSecurityMock(): CoreSecurity
     {
-        $AuthorizationChecker = $this->getMockBuilder(AuthorizationCheckerInterface::class)
+        return $this->getMockBuilder(CoreSecurity::class)
             ->disableOriginalConstructor()
             ->setMethods(['isGranted'])
             ->getMock()
-        ;
-
-        return $AuthorizationChecker;
+            ;
     }
 }

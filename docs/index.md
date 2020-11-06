@@ -2,15 +2,16 @@ OverblogGraphQLBundle
 ======================
 
 This Symfony bundle provides integration of [GraphQL](https://facebook.github.io/graphql/) using [webonyx/graphql-php](https://github.com/webonyx/graphql-php)
-and [GraphQL Relay](https://facebook.github.io/relay/docs/graphql-relay-specification.html).
-It also supports batching using libs like [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer) or [Apollo GraphQL](http://dev.apollodata.com/core/network.html#query-batching).
+and [GraphQL Relay](https://relay.dev/docs/en/graphql-server-specification).
+It also supports batching using libs like [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer) or [Apollo GraphQL](https://www.apollographql.com/docs/react/api/link/apollo-link-batch-http/).
 
 Versions requirements
 ----------------------
 
 | Version                                                         | PHP        | Symfony          | Support        |
 | --------------------------------------------------------------: | ---------: | ---------------: | -------------: |
-| [`0.13`](https://github.com/overblog/GraphQLBundle/tree/master) | `>= 7.2`   | `>= 4.3`         | DEV            |
+| [`1.0`](https://github.com/overblog/GraphQLBundle/tree/master)  | `>= 7.4`   | `>= 4.4`         | DEV            |
+| [`0.13`](https://github.com/overblog/GraphQLBundle/tree/0.13)   | `>= 7.2`   | `>= 4.3`         | Active support |
 | [`0.12`](https://github.com/overblog/GraphQLBundle/tree/0.12)   | `>= 7.1`   | `>= 3.4, <4.4`   | Active support |
 | [`0.11`](https://github.com/overblog/GraphQLBundle/tree/0.11)   | `>= 5.6`   | `>= 3.1, <=4.3`  | Active support |
 | [`0.10`](https://github.com/overblog/GraphQLBundle/tree/0.10)   | `>= 5.5.9` | `>= 2.8, <= 3.1` | End of life    |
@@ -20,7 +21,7 @@ Versions requirements
 After installation
 ------------
 
-Define your [graphQL schema](definitions/index.md).
+Define your [GraphQL schema](definitions/index.md).
 
 Symfony Flex installation
 ------------

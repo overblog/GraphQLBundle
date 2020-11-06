@@ -19,12 +19,12 @@ final class Connection extends Type
      *
      * @var string
      */
-    public $edge;
+    public string $edge;
 
     /**
      * Connection Node type.
      *
      * @var string
      */
-    public $node;
+    public string $node;
 }

@@ -13,15 +13,12 @@ class Connection implements ConnectionInterface
     use DeprecatedPropertyPublicAccessTrait;
 
     /** @var EdgeInterface[] */
-    protected $edges;
+    protected array $edges;
 
-    /** @var PageInfoInterface */
-    protected $pageInfo;
+    protected ?PageInfoInterface $pageInfo;
+    protected ?int $totalCount = null;
 
-    /** @var int|null */
-    protected $totalCount;
-
-    public function __construct($edges = [], PageInfoInterface $pageInfo = null)
+    public function __construct(array $edges = [], PageInfoInterface $pageInfo = null)
     {
         $this->edges = $edges;
         $this->pageInfo = $pageInfo;
@@ -30,7 +27,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getEdges()
+    public function getEdges(): array
     {
         return $this->edges;
     }

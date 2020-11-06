@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\LazyConfig;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Resolver\AccessResolver;
+use function is_array;
+use function is_callable;
 
 final class AclConfigProcessor implements ConfigProcessorInterface
 {
-    /** @var AccessResolver */
-    private $accessResolver;
+    private AccessResolver $accessResolver;
 
     /** @var callable */
     private $defaultResolver;
@@ -23,21 +23,22 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         $this->defaultResolver = $defaultResolver;
     }
 
-    public static function acl(array $fields, AccessResolver $accessResolver, callable $defaultResolver)
+    public static function acl(array $fields, AccessResolver $accessResolver, callable $defaultResolver): array
     {
         $deniedAccess = static function (): void {
             throw new UserWarning('Access denied to this field.');
         };
+
         foreach ($fields as &$field) {
-            if (\is_array($field) && isset($field['access']) && true !== $field['access']) {
+            if (is_array($field) && isset($field['access']) && true !== $field['access']) {
                 $accessChecker = $field['access'];
                 if (false === $accessChecker) {
                     $field['resolve'] = $deniedAccess;
-                } elseif (\is_callable($accessChecker)) {
+                } elseif (is_callable($accessChecker)) {
                     $field['resolve'] = function ($value, $args, $context, ResolveInfo $info) use ($field, $accessChecker, $accessResolver, $defaultResolver) {
                         $resolverCallback = self::findFieldResolver($field, $info, $defaultResolver);
 
-                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $field['useStrictAccess']);
+                        return $accessResolver->resolve($accessChecker, $resolverCallback, [$value, $args, $context, $info], $field['useStrictAccess'] ?? true);
                     };
                 }
             }
@@ -46,30 +47,19 @@ final class AclConfigProcessor implements ConfigProcessorInterface
         return $fields;
     }
 
-    public function process(LazyConfig $lazyConfig): LazyConfig
+    public function process(array $config): array
     {
-        $lazyConfig->addPostLoader(function ($config) {
-            if (isset($config['fields']) && \is_callable($config['fields'])) {
-                $config['fields'] = function () use ($config) {
-                    $fields = $config['fields']();
+        if (isset($config['fields']) && is_callable($config['fields'])) {
+            $config['fields'] = function () use ($config) {
+                $fields = $config['fields']();
 
-                    return static::acl($fields, $this->accessResolver, $this->defaultResolver);
-                };
-            }
+                return static::acl($fields, $this->accessResolver, $this->defaultResolver);
+            };
+        }
 
-            return $config;
-        });
-
-        return $lazyConfig;
+        return $config;
     }
 
-    /**
-     * @param array       $field
-     * @param ResolveInfo $info
-     * @param callable    $defaultResolver
-     *
-     * @return callable
-     */
     private static function findFieldResolver(array $field, ResolveInfo $info, callable $defaultResolver): callable
     {
         if (isset($field['resolve'])) {

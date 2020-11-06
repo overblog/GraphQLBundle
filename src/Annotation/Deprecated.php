@@ -19,5 +19,5 @@ final class Deprecated implements Annotation
      *
      * @var string
      */
-    public $value;
+    public string $value;
 }

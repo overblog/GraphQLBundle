@@ -12,14 +12,19 @@ use Overblog\GraphQLBundle\EventListener\ValidationErrorsListener;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
+use function class_exists;
 
 class ValidationErrorsListenerTest extends TestCase
 {
     /** @var ValidationErrorsListener */
     private $listener;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
+        if (!class_exists(Validation::class)) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
         $this->listener = new ValidationErrorsListener();
     }
 

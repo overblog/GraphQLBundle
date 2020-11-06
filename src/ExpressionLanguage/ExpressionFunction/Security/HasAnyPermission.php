@@ -9,15 +9,12 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 final class HasAnyPermission extends ExpressionFunction
 {
-    public function __construct($name = 'hasAnyPermission')
+    public function __construct()
     {
         parent::__construct(
-            $name,
-            function ($object, $permissions) {
-                $code = \sprintf('array_reduce(%s, function ($isGranted, $permission) use (%s, $object) { return $isGranted || $globalVariable->get(\'container\')->get(\'security.authorization_checker\')->isGranted($permission, %s); }, false)', $permissions, TypeGenerator::USE_FOR_CLOSURES, $object);
-
-                return $code;
-            }
+            'hasAnyPermission',
+            fn ($object, $permissions) => "$this->globalVars->get('security')->hasAnyPermission($object, $permissions)",
+            static fn (array $arguments, $object, $permissions) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->hasAnyPermission($object, $permissions)
         );
     }
 }

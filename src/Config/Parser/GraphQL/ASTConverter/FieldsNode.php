@@ -9,7 +9,7 @@ use GraphQL\Utils\AST;
 
 class FieldsNode implements NodeInterface
 {
-    public static function toConfig(Node $node, $property = 'fields'): array
+    public static function toConfig(Node $node, string $property = 'fields'): array
     {
         $config = [];
         if (!empty($node->$property)) {

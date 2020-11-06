@@ -20,7 +20,7 @@ class ExtensibleSchema extends Schema
     }
 
     /** @var SchemaExtensionInterface[] */
-    private $extensions = [];
+    private array $extensions = [];
 
     /**
      * @param SchemaExtensionInterface[] $extensions
@@ -37,9 +37,6 @@ class ExtensibleSchema extends Schema
         return $this;
     }
 
-    /**
-     * @param SchemaExtensionInterface $extension
-     */
     public function addExtension(SchemaExtensionInterface $extension): void
     {
         $this->extensions[] = $extension;
@@ -70,13 +67,13 @@ class ExtensibleSchema extends Schema
                 // we disabled the custom typeLoader to force default loader usage
                 $schemaConfig->typeLoader = null;
                 $type = $this->getType($name);
-                $schemaConfig->typeLoader = $loaderWrapper;
+                $schemaConfig->typeLoader = $loaderWrapper; // @phpstan-ignore-line
             }
 
             return $type;
         };
 
-        $schemaConfig->typeLoader = $loaderWrapper;
+        $schemaConfig->typeLoader = $loaderWrapper; // @phpstan-ignore-line
 
         return $schemaConfig;
     }

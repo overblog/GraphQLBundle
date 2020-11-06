@@ -8,15 +8,19 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
-use Overblog\GraphQLBundle\Resolver\Resolver;
+use Overblog\GraphQLBundle\Resolver\FieldResolver;
 
 final class GlobalIdFieldResolver implements ResolverInterface, AliasedInterface
 {
-    public function __invoke($obj, ResolveInfo $info, $idValue, $typeName)
+    /**
+     * @param object|array    $obj
+     * @param int|string|null $idValue
+     */
+    public function __invoke($obj, ResolveInfo $info, $idValue, ?string $typeName): string
     {
         return GlobalId::toGlobalId(
             !empty($typeName) ? $typeName : $info->parentType->name,
-            $idValue ? $idValue : Resolver::valueFromObjectOrArray($obj, 'id')
+            $idValue ? $idValue : FieldResolver::valueFromObjectOrArray($obj, 'id')
         );
     }
 

@@ -14,5 +14,5 @@ class Crystal
     /**
      * @GQL\Field(type="String!")
      */
-    protected $color;
+    protected string $color;
 }

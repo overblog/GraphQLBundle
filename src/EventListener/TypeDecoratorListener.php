@@ -9,17 +9,24 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
+use function array_diff;
+use function count;
+use function current;
+use function implode;
+use function is_callable;
+use function sprintf;
+use function substr;
 
 final class TypeDecoratorListener
 {
-    private $argumentFactory;
-
-    private $schemaResolverMaps = [];
+    private ArgumentFactory $argumentFactory;
+    private array $schemaResolverMaps = [];
 
     public function __construct(ArgumentFactory $argumentFactory)
     {
@@ -28,7 +35,7 @@ final class TypeDecoratorListener
 
     public function addSchemaResolverMaps(string $schemaName, array $resolverMaps): void
     {
-        $this->schemaResolverMaps[$schemaName] = 1 === \count($resolverMaps) ? \current($resolverMaps) : new ResolverMaps($resolverMaps);
+        $this->schemaResolverMaps[$schemaName] = 1 === count($resolverMaps) ? current($resolverMaps) : new ResolverMaps($resolverMaps);
     }
 
     public function onTypeLoaded(TypeLoadedEvent $event): void
@@ -51,11 +58,11 @@ final class TypeDecoratorListener
         } else {
             $covered = $resolverMap->covered($type->name);
             if (!empty($covered)) {
-                throw new \InvalidArgumentException(
-                    \sprintf(
+                throw new InvalidArgumentException(
+                    sprintf(
                         '"%s".{"%s"} defined in resolverMap, but type is not managed by TypeDecorator.',
                         $type->name,
-                        \implode('", "', $covered)
+                        implode('", "', $covered)
                     )
                 );
             }
@@ -70,7 +77,7 @@ final class TypeDecoratorListener
                 $this->configTypeMapping($type, ResolverMapInterface::IS_TYPEOF, $resolverMap);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
                 $resolveFieldFn = $this->argumentFactory->wrapResolverArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
-                $type->config[\substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
+                $type->config[substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
                 $fieldsResolved[] = $fieldName;
@@ -81,20 +88,19 @@ final class TypeDecoratorListener
 
     /**
      * @param InterfaceType|UnionType $type
-     * @param ResolverMapInterface    $resolverMap
      */
     private function decorateInterfaceOrUnionType($type, ResolverMapInterface $resolverMap): void
     {
         $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE, $resolverMap);
         $covered = $resolverMap->covered($type->name);
         if (!empty($covered)) {
-            $unknownFields = \array_diff($covered, [ResolverMapInterface::RESOLVE_TYPE]);
+            $unknownFields = array_diff($covered, [ResolverMapInterface::RESOLVE_TYPE]);
             if (!empty($unknownFields)) {
-                throw new \InvalidArgumentException(
-                    \sprintf(
+                throw new InvalidArgumentException(
+                    sprintf(
                         '"%s".{"%s"} defined in resolverMap, but only "%s::RESOLVE_TYPE" is allowed.',
                         $type->name,
-                        \implode('", "', $unknownFields),
+                        implode('", "', $unknownFields),
                         ResolverMapInterface::class
                     )
                 );
@@ -115,15 +121,15 @@ final class TypeDecoratorListener
             $this->configTypeMapping($type, $fieldName, $resolverMap);
         }
 
-        $unknownFields = \array_diff($resolverMap->covered($type->name), $allowedFields);
+        $unknownFields = array_diff($resolverMap->covered($type->name), $allowedFields);
         if (!empty($unknownFields)) {
-            throw new \InvalidArgumentException(
-                \sprintf(
+            throw new InvalidArgumentException(
+                sprintf(
                     '"%s".{"%s"} defined in resolverMap, but only "%s::{%s}" is allowed.',
                     $type->name,
-                    \implode('", "', $unknownFields),
+                    implode('", "', $unknownFields),
                     ResolverMapInterface::class,
-                    \implode(', ', ['SCALAR_TYPE', 'SERIALIZE', 'PARSE_VALUE', 'PARSE_LITERAL'])
+                    implode(', ', ['SCALAR_TYPE', 'SERIALIZE', 'PARSE_VALUE', 'PARSE_LITERAL'])
                 )
             );
         }
@@ -139,13 +145,13 @@ final class TypeDecoratorListener
             }
             $fieldNames[] = $fieldName;
         }
-        $unknownFields = \array_diff($resolverMap->covered($type->name), $fieldNames);
+        $unknownFields = array_diff($resolverMap->covered($type->name), $fieldNames);
         if (!empty($unknownFields)) {
-            throw new \InvalidArgumentException(
-                \sprintf(
+            throw new InvalidArgumentException(
+                sprintf(
                     '"%s".{"%s"} defined in resolverMap, was defined in resolvers, but enum is not in schema.',
                     $type->name,
-                    \implode('", "', $unknownFields)
+                    implode('", "', $unknownFields)
                 )
             );
         }
@@ -156,7 +162,7 @@ final class TypeDecoratorListener
         $fields = $type->config['fields'];
 
         $decoratedFields = function () use ($fields, $type, $fieldsResolved, $resolverMap) {
-            if (\is_callable($fields)) {
+            if (is_callable($fields)) {
                 $fields = $fields();
             }
 
@@ -171,23 +177,23 @@ final class TypeDecoratorListener
                 $fieldNames[] = $fieldName;
             }
 
-            $unknownFields = \array_diff($fieldsResolved, $fieldNames);
+            $unknownFields = array_diff($fieldsResolved, $fieldNames);
             if (!empty($unknownFields)) {
-                throw new \InvalidArgumentException(
-                    \sprintf('"%s".{"%s"} defined in resolverMap, but not in schema.', $type->name, \implode('", "', $unknownFields))
+                throw new InvalidArgumentException(
+                    sprintf('"%s".{"%s"} defined in resolverMap, but not in schema.', $type->name, implode('", "', $unknownFields))
                 );
             }
 
             return $fields;
         };
 
-        $type->config['fields'] = \is_callable($fields) ? $decoratedFields : $decoratedFields();
+        $type->config['fields'] = is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
-    private function configTypeMapping(Type $type, $fieldName, ResolverMapInterface $resolverMap): void
+    private function configTypeMapping(Type $type, string $fieldName, ResolverMapInterface $resolverMap): void
     {
         if ($resolverMap->isResolvable($type->name, $fieldName)) {
-            $type->config[\substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
+            $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
         }
     }
 }

@@ -1,0 +1,131 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            noValidation:
+                complexity: 1
+                public: true
+                type: Boolean
+                resolve: "@=mut('no_validation')"
+                args:
+                    username:
+                        type: String!
+                        defaultValue: 'Frank'
+                        validation: ~
+
+            simpleValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 5 }
+                            - Regex:
+                                pattern: '/^[a-z]+$/i'
+                                htmlPattern: true
+
+            linkedConstraintsValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
+                validation:
+                    link: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity
+                    constraints:
+                        - Expression: "this.string2 == 'Dolor Sit Amet'"
+                args:
+                    string1:
+                        type: String!
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::$string1
+                    string2:
+                        type: String!
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::string2()
+                    string3:
+                        type: String!
+                        validation: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity::string3
+
+            collectionValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args, validator])"
+                args:
+                    addresses:
+                        type: "[Address]!"
+                        validation: cascade
+                    emails:
+                        type: '[String]!'
+                        validation:
+                            - Unique: ~
+                            - Count: { min: 3 }
+                            - All:
+                                - Email:
+                                    message: 'The email "{{ value }}" is not a valid email.'
+
+            cascadeValidationWithGroups:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    groups:
+                        type: "[String]!"
+                    address:
+                        type: Address!
+                        validation: cascade
+                    birthdate:
+                        type: Birthdate
+                        validation:
+                            cascade:
+                                groups: ['group2']
+
+            userPasswordValidation:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    oldPassword:
+                        type: "String"
+                        validation:
+                            - Symfony\Component\Security\Core\Validator\Constraints\UserPassword: ~
+
+            expressionVariablesValidation:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args, validator])'
+                args:
+                    username:
+                        type: "String"
+                        validation:
+                            - Expression: "service('service_validator').resolveVariablesAccessible(args, info)"
+
+            autoValidationAutoThrow:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args])'
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 5 }
+                            - Regex:
+                                  pattern: '/^[a-z]+$/i'
+                                  htmlPattern: true
+
+            autoValidationNoThrow:
+                type: Boolean
+                resolve: '@=mut("mutation_errors", [errors])'
+                args:
+                    username:
+                        type: String!
+                        validation:
+                            - Length: { min: 5 }
+                            - Regex:
+                                  pattern: '/^[a-z]+$/i'
+                                  htmlPattern: true
+
+            autoValidationAutoThrowWithGroups:
+                type: Boolean
+                resolve: '@=mut("mutation_mock", [args])'
+                validationGroups: ["Default", "Address", "Period", "group1", "group2"]
+                args:
+                    address:
+                        type: Address!
+                        validation: cascade
+                    birthdate:
+                        type: Birthdate
+                        validation:
+                            cascade:
+                                groups: ['group2']

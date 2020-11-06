@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
+use ArrayObject;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
+use function array_filter;
+use function in_array;
 
 class SchemaLanguageQueryResolverMap extends ResolverMap
 {
-    protected function map()
+    protected function map(): array
     {
         return [
             'Query' => [
@@ -19,8 +22,8 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
                 'findHumansByDateOfBirth' => function ($value, Argument $args) {
                     $years = $args['years'];
 
-                    return \array_filter(Characters::getHumans(), function ($human) use ($years) {
-                        return \in_array($human['dateOfBirth'], $years);
+                    return array_filter(Characters::getHumans(), function ($human) use ($years) {
+                        return in_array($human['dateOfBirth'], $years);
                     });
                 },
                 'humans' => [Characters::class, 'getHumans'],
@@ -55,7 +58,10 @@ class SchemaLanguageQueryResolverMap extends ResolverMap
         ];
     }
 
-    public function __invoke($value, Argument $args, \ArrayObject $context, ResolveInfo $info): ?array
+    /**
+     * @param null $_
+     */
+    public function __invoke($_, Argument $args, ArrayObject $context, ResolveInfo $info): ?array
     {
         if ('character' === $info->fieldName) {
             $characters = Characters::getCharacters();

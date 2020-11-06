@@ -134,12 +134,12 @@ UPGRADE FROM 0.10 to 0.11
         ```
 ### Type autoMapping and Symfony DI `autoconfigure`
 
-   When using these functionality, type will be accessible only by FQCN in schema definition,
-   (if class not implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`).
+   When using these functionalities, type will be accessible only by FQCN in schema definition
+   (if class doesn't implement `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`).
    So if you want to use the `true` type name don't forget to declare it as an alias using interface.
-   This change is for a performance mater types are lazy loaded.
+   This change is to increase performance, types are lazy-loaded.
 
-   example:
+   Here's an example:
 
    ```php
    <?php
@@ -158,7 +158,7 @@ UPGRADE FROM 0.10 to 0.11
 
    **Since 0.11**: Only FQCN `App\GraphQL\Type\DateTimeType` is accessible
 
-   here how this can be done in 0.11:
+   Here is how this can be done in 0.11:
 
    ```php
    <?php
@@ -189,9 +189,9 @@ UPGRADE FROM 0.10 to 0.11
    This could lead to some performances issues or/and wrong types public exposition (in introspection query).
    [See webonyx/graphql-php documentations for more details](http://webonyx.github.io/graphql-php/type-system/schema/#configuration-options)
 
-   **Since 0.11** Non detect types should be explicitly declare
+   **Since 0.11** Non detect types should be explicitly declared
 
-   here a concrete example:
+   Here is a concrete example:
    ```yaml
    Query:
       type: object
@@ -222,13 +222,13 @@ UPGRADE FROM 0.10 to 0.11
             # ...
          interfaces: [FooInterface]
    ```
-   In above example `Baz` an `Bar` can not be detected by graphql-php during static schema analysis,
-   an `GraphQL\Error\InvariantViolation` exception will be throw with the following message:
+   In above example `Baz` and `Bar` can not be detected by graphql-php during static schema analysis,
+   an `GraphQL\Error\InvariantViolation` exception will be thrown with the following message:
    ```text
    Could not find possible implementing types for FooInterface in schema.
    Check that schema.types is defined and is an array of all possible types in the schema.
    ```
-   here how this can be fix:
+   Here is how this can be fixed:
 
    ```yaml
    overblog_graphql:
@@ -241,25 +241,25 @@ UPGRADE FROM 0.10 to 0.11
 ### Events
 
   `Overblog\GraphQLBundle\Event\ExecutorContextEvent::setExecutorContext` method has been removed as `context`
-  is now a `ArrayObject`. When using `graphql.executor.context` listener the value will now be accessible only
-  in `context` variables and not in `rootValue`. `context` and `rootValue` has been separate, if you need to
+  is now an `ArrayObject`. When using `graphql.executor.context` listener the value will now be accessible only
+  in `context` variables and not in `rootValue`. `context` and `rootValue` have been separated, if you need to
   use `rootValue` see [event documentation for more details](Resources/doc/events/index.md).
 
   **Before 0.11**
   `context` and `rootValue` were of type `array` with same value so `$context === $info->rootValue` and
-  `$context === $value` in root query resolver. That for the reason why uploaded files was accessible in
+  `$context === $value` in root query resolver. Because of this, uploaded files was accessible in
   `$context['request_files']` and `$info->rootValue['request_files']`.
 
   **Since 0.11**
   `context` is of type `ArrayObject` and `rootValue` has no typeHint (default: `null`) so
   `$context !== $info->rootValue` and `$context !== $value` in root query resolver.
-  Uploaded files is no more accessible under `$info->rootValue['request_files']` out of the box.
+  Uploaded files is no longer accessible under `$info->rootValue['request_files']` out of the box.
 
 ### Change fluent resolvers id
 
-  The use of class name as prefix of fluent resolver id remove the possibility to use same class as 2 different services.
+  The use of class name as prefix of fluent resolver id removes the possibility to use same class as 2 different services.
   See issue [#296](https://github.com/overblog/GraphQLBundle/issues/296) for more detail
-  That's the reason why starting v0.11 we are using service id as prefix (like in Symfony 4.1)...
+  Because of this, in v0.11 we are using service id as prefix (like in Symfony 4.1)...
 
   Example:
   ```yaml

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 
 use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killable;
 
 /**
  * @GQL\Type(interfaces={"Character"}, resolveField="value")
@@ -12,24 +13,24 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Access("isAuthenticated()")
  * @GQL\IsPublic("isAuthenticated()")
  */
-class Sith extends Character
+class Sith extends Character implements Killable
 {
     /**
      * @GQL\Field(type="String!")
      * @GQL\Access("hasRole('SITH_LORD')")
      */
-    protected $realName;
+    protected string $realName;
 
     /**
      * @GQL\Field(type="String!")
      * @GQL\IsPublic("hasRole('SITH_LORD')")
      */
-    protected $location;
+    protected string $location;
 
     /**
      * @GQL\Field(type="Sith", resolve="service('master_resolver').getMaster(value)")
      */
-    protected $currentMaster;
+    protected Sith $currentMaster;
 
     /**
      * @GQL\Field(
@@ -40,7 +41,7 @@ class Sith extends Character
      *   }
      * )
      */
-    public function getVictims(bool $jediOnly = false)
+    public function getVictims(bool $jediOnly = false): array
     {
         return [];
     }

@@ -11,8 +11,8 @@ class SchemaLanguageTest extends TestCase
     public function testQueryHumans(): void
     {
         $query = <<<'QUERY'
-{ humans {id name direwolf {id name} } }
-QUERY;
+        { humans {id name direwolf {id name} } }
+        QUERY;
 
         $expected = [
             'data' => [

@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Resolver\MutationResolver;
 
 class MutationResolverTest extends AbstractProxyResolverTest
 {
-    protected function createResolver()
+    protected function createResolver(): MutationResolver
     {
         return new MutationResolver();
     }

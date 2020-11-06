@@ -1,0 +1,14 @@
+imports:
+    - { resource: ../config.yml }
+
+overblog_graphql:
+    definitions:
+        config_validation: false
+        class_namespace: "Overblog\\GraphQLBundle\\Validator\\__DEFINITIONS__"
+        schema:
+            query: Mutation
+            mutation: Mutation
+        mappings:
+            types:
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/cascadeOnScalars/mapping"

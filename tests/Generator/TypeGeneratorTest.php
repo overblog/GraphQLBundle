@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Generator;
 
+use Generator;
+use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
+use Overblog\GraphQLBundle\Generator\TypeBuilder;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TypeGeneratorTest extends TestCase
 {
@@ -17,14 +21,27 @@ class TypeGeneratorTest extends TestCase
      */
     public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask): void
     {
+        $typeBuilder = $this->createMock(TypeBuilder::class);
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $mask = (new TypeGenerator(
-            'App', [], $cacheDir, [], true, null, null, $cacheDirMask
+            'App', $cacheDir, [], $typeBuilder, $eventDispatcher, true, null, $cacheDirMask
         ))->getCacheDirMask();
 
         $this->assertSame($expectedMask, $mask);
     }
 
-    public function getPermissionsProvider()
+    public function testCompiledEvent(): void
+    {
+        $typeBuilder = $this->createMock(TypeBuilder::class);
+        $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
+
+        $eventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(new SchemaCompiledEvent()));
+
+        (new TypeGenerator('App', null, [], $typeBuilder, $eventDispatcher))->compile(TypeGenerator::MODE_DRY_RUN);
+    }
+
+    public function getPermissionsProvider(): Generator
     {
         // default permission when using default cache dir
         yield [0777, null, null];

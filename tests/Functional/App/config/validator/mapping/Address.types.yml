@@ -1,0 +1,23 @@
+Address:
+    type: input-object
+    config:
+        validation:
+            - GroupSequence: ['Address', 'group1', 'group2']
+        fields:
+            street:
+                type: String!
+                validation:
+                    - Length: {min: 10}
+            city:
+                type: String!
+                validation:
+                    - Choice:
+                        groups: ['group1']
+                        choices: ['New York', 'Berlin', 'Tokyo']
+            zipCode:
+                type: Int!
+                validation:
+                    - Expression: "service('service_validator').isZipCodeValid(value)"
+            period:
+                type: Period!
+                validation: cascade

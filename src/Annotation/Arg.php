@@ -19,14 +19,14 @@ final class Arg implements Annotation
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Argument description.
      *
      * @var string
      */
-    public $description;
+    public string $description;
 
     /**
      * Argument type.
@@ -35,7 +35,7 @@ final class Arg implements Annotation
      *
      * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * Default argument value.

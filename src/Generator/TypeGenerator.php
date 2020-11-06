@@ -6,65 +6,69 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
-use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
-use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
-use Overblog\GraphQLGenerator\Generator\TypeGenerator as BaseTypeGenerator;
-use Symfony\Component\ExpressionLanguage\Expression;
+use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use function array_merge;
+use function file_exists;
+use function file_put_contents;
+use function str_replace;
+use function var_export;
 
-class TypeGenerator extends BaseTypeGenerator
+/**
+ * @final
+ */
+class TypeGenerator
 {
-    public const USE_FOR_CLOSURES = '$globalVariable';
+    public const MODE_DRY_RUN = 1;
+    public const MODE_MAPPING_ONLY = 2;
+    public const MODE_WRITE = 4;
+    public const MODE_OVERRIDE = 8;
 
-    public const DEFAULT_CONFIG_PROCESSOR = [Processor::class, 'process'];
+    public const GLOBAL_VARS = 'globalVariables';
 
-    private $cacheDir;
-
-    private $configProcessor;
-
-    private $configs;
-
-    private $useClassMap;
-
-    private $baseCacheDir;
-
-    private static $classMapLoaded = false;
+    private static bool $classMapLoaded = false;
+    private ?string $cacheDir;
+    protected int $cacheDirMask;
+    private array $configs;
+    private bool $useClassMap;
+    private ?string $baseCacheDir;
+    private string $classNamespace;
+    private TypeBuilder $typeBuilder;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         string $classNamespace,
-        array $skeletonDirs,
         ?string $cacheDir,
         array $configs,
+        TypeBuilder $typeBuilder,
+        EventDispatcherInterface $eventDispatcher,
         bool $useClassMap = true,
-        callable $configProcessor = null,
         ?string $baseCacheDir = null,
         ?int $cacheDirMask = null
     ) {
-        $this->setCacheDir($cacheDir);
-        $this->configProcessor = null === $configProcessor ? static::DEFAULT_CONFIG_PROCESSOR : $configProcessor;
+        $this->cacheDir = $cacheDir;
         $this->configs = $configs;
         $this->useClassMap = $useClassMap;
         $this->baseCacheDir = $baseCacheDir;
+        $this->typeBuilder = $typeBuilder;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->classNamespace = $classNamespace;
+
         if (null === $cacheDirMask) {
-            // we apply permission 0777 for default cache dir otherwise we apply 0775.
+            // Apply permission 0777 for default cache dir otherwise apply 0775.
             $cacheDirMask = null === $cacheDir ? 0777 : 0775;
         }
 
-        parent::__construct($classNamespace, $skeletonDirs, $cacheDirMask);
+        $this->cacheDirMask = $cacheDirMask;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBaseCacheDir(): ?string
     {
         return $this->baseCacheDir;
     }
 
-    /**
-     * @param string|null $baseCacheDir
-     */
-    public function setBaseCacheDir($baseCacheDir): void
+    public function setBaseCacheDir(string $baseCacheDir): void
     {
         $this->baseCacheDir = $baseCacheDir;
     }
@@ -85,169 +89,81 @@ class TypeGenerator extends BaseTypeGenerator
         return $this;
     }
 
-    protected function generateClassName(array $config): string
-    {
-        return $config['class_name'];
-    }
-
-    protected function generateClassDocBlock(array $value): string
-    {
-        return <<<'EOF'
-
-/**
- * THIS FILE WAS GENERATED AND SHOULD NOT BE MODIFIED!
- */
-EOF;
-    }
-
-    protected function generateClosureUseStatements(array $config): string
-    {
-        return \sprintf('use (%s) ', static::USE_FOR_CLOSURES);
-    }
-
-    protected function resolveTypeCode(string $alias): string
-    {
-        return  \sprintf('$globalVariable->get(\'typeResolver\')->resolve(%s)', \var_export($alias, true));
-    }
-
-    protected function generatePublic(array $value): string
-    {
-        if (!$this->arrayKeyExistsAndIsNotNull($value, 'public')) {
-            return 'null';
-        }
-
-        $publicCallback = $this->callableCallbackFromArrayValue($value, 'public', '$typeName, $fieldName');
-
-        $code = <<<'CODE'
-function ($fieldName) <closureUseStatements> {
-<spaces><spaces>$publicCallback = %s;
-<spaces><spaces>return call_user_func($publicCallback, $this->name, $fieldName);
-<spaces>}
-CODE;
-
-        $code = \sprintf($code, $publicCallback);
-
-        return $code;
-    }
-
-    protected function generateAccess(array $value): string
-    {
-        if (!$this->arrayKeyExistsAndIsNotNull($value, 'access')) {
-            return 'null';
-        }
-
-        if (\is_bool($value['access'])) {
-            return $this->varExport($value['access']);
-        }
-
-        return $this->callableCallbackFromArrayValue($value, 'access', '$value, $args, $context, \\GraphQL\\Type\\Definition\\ResolveInfo $info, $object');
-    }
-
-    /**
-     * @param array $value
-     *
-     * @return string
-     */
-    protected function generateComplexity(array $value): string
-    {
-        $resolveComplexity = parent::generateComplexity($value);
-        $resolveComplexity = \ltrim($this->prefixCodeWithSpaces($resolveComplexity));
-
-        if ('null' === $resolveComplexity) {
-            return $resolveComplexity;
-        }
-
-        $code = <<<'CODE'
-function ($childrenComplexity, $args = []) <closureUseStatements>{
-<spaces><spaces>$resolveComplexity = %s;
-
-<spaces><spaces>return call_user_func_array($resolveComplexity, [$childrenComplexity, $globalVariable->get('argumentFactory')->create($args)]);
-<spaces>}
-CODE;
-
-        $code = \sprintf($code, $resolveComplexity);
-
-        return $code;
-    }
-
-    /**
-     * @param array $value
-     *
-     * @return string
-     */
-    protected function generateScalarType(array $value): string
-    {
-        return $this->callableCallbackFromArrayValue($value, 'scalarType');
-    }
-
-    protected function generateParentClassName(array $config): string
-    {
-        if ('custom-scalar' === $config['type']) {
-            return $this->shortenClassName(CustomScalarType::class);
-        } else {
-            return parent::generateParentClassName($config);
-        }
-    }
-
-    protected function generateTypeName(array $config): string
-    {
-        return $this->varExport($config['config']['name']);
-    }
-
-    protected function generateUseStrictAccess(array $value): string
-    {
-        $expressionLanguage = $this->getExpressionLanguage();
-        $useStrictAccess = 'true';
-        if (null !== $expressionLanguage && $this->arrayKeyExistsAndIsNotNull($value, 'access') && $value['access'] instanceof Expression) {
-            $names = ExpressionLanguage::KNOWN_NAMES;
-            if ($expressionLanguage instanceof ExpressionLanguage) {
-                $names = \array_merge($names, $expressionLanguage->getGlobalNames());
-            }
-            $parsedExpression = $expressionLanguage->parse($value['access'], $names);
-            $serializedNode = \str_replace("\n", '//', (string) $parsedExpression->getNodes());
-            $useStrictAccess = false === \strpos($serializedNode, 'NameNode(name: \'object\')') ? 'true' : 'false';
-        }
-
-        return $useStrictAccess;
-    }
-
     public function compile(int $mode): array
     {
         $cacheDir = $this->getCacheDir();
         $writeMode = $mode & self::MODE_WRITE;
-        if ($writeMode && \file_exists($cacheDir)) {
+
+        // Configure write mode
+        if ($writeMode && file_exists($cacheDir)) {
             $fs = new Filesystem();
             $fs->remove($cacheDir);
         }
-        $configs = \call_user_func($this->configProcessor, $this->configs);
-        $classes = $this->generateClasses($configs, $cacheDir, $mode);
 
-        if ($writeMode && $this->useClassMap) {
-            $content = "<?php\nreturn ".\var_export($classes, true).';';
-            // replaced hard-coding absolute path by __DIR__ (see https://github.com/overblog/GraphQLBundle/issues/167)
-            $content = \str_replace(' => \''.$cacheDir, ' => __DIR__ . \'', $content);
+        // Process configs
+        $configs = Processor::process($this->configs);
 
-            \file_put_contents($this->getClassesMap(), $content);
+        // Generate classes
+        $classes = [];
+        foreach ($configs as $name => $config) {
+            $config['config']['name'] ??= $name;
+            $config['config']['class_name'] = $config['class_name'];
+            $classMap = $this->generateClass($config, $cacheDir, $mode);
+            $classes = array_merge($classes, $classMap);
+        }
+
+        // Create class map file
+        if ($writeMode && $this->useClassMap && count($classes) > 0) {
+            $content = "<?php\nreturn ".var_export($classes, true).';';
+
+            // replaced hard-coded absolute paths by __DIR__
+            // (see https://github.com/overblog/GraphQLBundle/issues/167)
+            $content = str_replace(" => '$cacheDir", " => __DIR__ . '", $content);
+
+            file_put_contents($this->getClassesMap(), $content);
 
             $this->loadClasses(true);
         }
 
+        $this->eventDispatcher->dispatch(new SchemaCompiledEvent());
+
         return $classes;
+    }
+
+    public function generateClass(array $config, ?string $outputDirectory, int $mode = self::MODE_WRITE): array
+    {
+        $className = $config['config']['class_name'];
+        $path = "$outputDirectory/$className.php";
+
+        if (!($mode & self::MODE_MAPPING_ONLY)) {
+            $phpFile = $this->typeBuilder->build($config['config'], $config['type']);
+
+            if ($mode & self::MODE_WRITE) {
+                if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
+                    $phpFile->save($path);
+                }
+            }
+        }
+
+        return ["$this->classNamespace\\$className" => $path];
     }
 
     public function loadClasses(bool $forceReload = false): void
     {
         if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
             $classMapFile = $this->getClassesMap();
-            $classes = \file_exists($classMapFile) ? require $classMapFile : [];
+            $classes = file_exists($classMapFile) ? require $classMapFile : [];
+
             /** @var ClassLoader $mapClassLoader */
             static $mapClassLoader = null;
+
             if (null === $mapClassLoader) {
                 $mapClassLoader = new ClassLoader();
                 $mapClassLoader->setClassMapAuthoritative(true);
             } else {
                 $mapClassLoader->unregister();
             }
+
             $mapClassLoader->addClassMap($classes);
             $mapClassLoader->register();
 

@@ -8,13 +8,12 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class NewObject extends ExpressionFunction
 {
-    public function __construct($name = 'newObject')
+    public function __construct()
     {
         parent::__construct(
-            $name,
-            function ($className, $args = '[]') {
-                return \sprintf('(new \ReflectionClass(%s))->newInstanceArgs(%s)', $className, $args);
-            }
+            'newObject',
+            static fn ($className, $args = '[]') => "(new \\ReflectionClass($className))->newInstanceArgs($args)",
+            static fn ($arguments, $className, $args = []) => new $className(...$args)
         );
     }
 }

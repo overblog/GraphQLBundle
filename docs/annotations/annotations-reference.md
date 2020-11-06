@@ -1,17 +1,17 @@
 # Annotations reference
 
-In the following reference examples, the `use Overblog\GraphQLBundle\Annotation as GQL;` will is omitted.
+In the following reference examples the line `use Overblog\GraphQLBundle\Annotation as GQL;` will be omitted.
 
 ## Notes
 
--   When a annotation require an expression, the `@=` will be added automatically if it is not set.
+-   When an annotation requires an expression, the `@=` will be added automatically if it's not set.
 
-    -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']`.
+    -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']` during the compilation.
 
--   You can use multiple type annotations on the same class. For example, if you need your class to be a Graphql Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
+-   You can use multiple type annotations on the same class. For example, if you need your class to be a GraphQL Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
 
-In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated.  
-As fields on input type don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
+In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated during the compilation process.  
+As fields on input types don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
 
 ```php
 <?php
@@ -36,53 +36,54 @@ class Coordinates {
      */
     public $elevation;
 }
->
 ```
 
 ## Index
 
-@Access
+[@Access](#access)
 
-@Arg
+[@Arg](#arg)
 
-@Deprecated
+[@Deprecated](#deprecated)
 
-@Description
+[@Description](#description)
 
-@Enum
+[@Enum](#enum)
 
-@EnumValue
+[@EnumValue](#enumvalue)
 
-@Field
+[@Field](#field)
 
-@FieldsBuilder
+[@FieldsBuilder](#fieldsbuilder)
 
-@Input
+[@Input](#input)
 
-@IsPublic
+[@IsPublic](#ispublic)
 
-@Mutation
+[@Mutation](#mutation)
 
-@Provider
+[@Provider](#provider)
 
-@Query
+[@Query](#query)
 
-@Type
+[@Type](#type)
 
-@TypeInterface
+[@TypeInterface](#typeinterface)
 
-@Scalar
+[@Scalar](#scalar)
 
-@Union
+[@Union](#union)
 
-@Relay\Connection
+[@Relay\Connection](#relayconnection)
 
-@Relay\Edge
+[@Relay\Edge](#relayedge)
+
+---
 
 ## @Access
 
-Added on a _class_ in conjonction with `@Type` or `@TypeInterface`, this annotation will define the default access type on this fields.  
-Added on a _property_ or _method_ in conjonction with `@Field`, it'll define the access type on this particular field.
+Added on a _class_ in conjunction with `@Type` or `@TypeInterface`, this annotation will define the default access type on this fields.  
+Added on a _property_ or _method_ in conjunction with `@Field`, it'll define the access type on this particular field.
 
 Example:
 
@@ -101,11 +102,10 @@ class Hero {
 
     /**
      * @GQL\Field(type="String")
-     * @GQL\Field("hasRole('ROLE_ADMIN')")
+     * @GQL\Access("hasRole('ROLE_ADMIN')")
      */
     public $secret;
 }
-?>
 ```
 
 ## @Arg
@@ -146,12 +146,11 @@ class Hero {
      */
     public $friends;
 }
-?>
 ```
 
 ## @Deprecated
 
-This annotation is used in conjonction with `@Field` to mark it as deprecated with the specified reason.
+This annotation is used in conjunction with `@Field` to mark it as deprecated with the specified reason.
 
 Example
 
@@ -173,12 +172,11 @@ class Hero {
      */
     public $age;
 }
-?>
 ```
 
 ## @Description
 
-This annotation is used in conjonction with one of `@Enum`, `@Field`, `@Input`, `@Scalar`, `@Type`, `@TypeInterface`, `@Union` to set a description for the GraphQL object.
+This annotation is used in conjunction with one of `@Enum`, `@Field`, `@Input`, `@Scalar`, `@Type`, `@TypeInterface`, `@Union` to set a description for the GraphQL object.
 
 Example
 
@@ -196,12 +194,11 @@ class Hero {
      */
     public $name;
 }
-?>
 ```
 
 ## @Enum
 
-This annotation applies on _class_ to define it as a enum. The constants defined on the class will be the enum values.  
+This annotation applies on _class_ to define it as a `enum`. The constants defined on the class will be the enum values.  
 In order to add more meta on the values (like description or deprecated reason), you have to provided them as `@EnumValue` in the `values` attribute with a `name` attribute referencing a constant name. You just need to do it for the constants you want to add meta on.
 
 Optional attributes:
@@ -232,10 +229,9 @@ class Planet
 
     public $value;
 }
-?>
 ```
 
-In the example above, if a query or mutation has this Enum as an argument, the value will be an instanceof the class with the enum value as the `value` property. (see [The Arguments Transformer documentation](arguments-transformer.md)).  
+In the example above, if a query or mutation has this Enum as an argument, the value will be an instance of the class with the enum value as the `value` property. (see [The Arguments Transformer documentation](arguments-transformer.md)).  
 As the class can be instanciated from the `Arguments Transformer` service, it cannot have a constructor with required arguments.
 
 ## @EnumValue
@@ -257,17 +253,17 @@ This annotation can be defined on a _property_ or a _method_.
 
 If it is defined on a _method_:
 
--   If no `resolve` attribute is define, it will default to `@=value.methodName(...args)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or it's the method name that will be use).
+-   If no `resolve` attribute is defined, it will default to `@=value.methodName(...args)"`, so the method itself will be used as the field resolver. You can then specify a `name` for this field (or the method's name will be use).
 
 If it is defined on a _method_ of the Root Query or the Root mutation :
 
--   If not `resolve` attribute is define, it will default to `@=service(FQN).methodName(...args)"` with `FQN` being the fully qualified name of the Root Query class or Root Mutation.
+-   If not `resolve` attribute is defined, it will default to `@=service(FQN).methodName(...args)"` with `FQN` being the fully qualified name of the Root Query class or Root Mutation.
 
 Optional attributes:
 
--   **type** : The GraphqL type of the field. This attribute can sometimes be auto guess from Doctrine ORM annotations
+-   **type** : The GraphqL type of the field. This attribute can sometimes be guessed automatically from Doctrine ORM annotations
 -   **name** : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
--   **args** : A array of `@Arg`
+-   **args** : An array of `@Arg`
 -   **resolve** : A resolution expression
 -   **fieldBuilder** : A field builder to use. Either as string (will be the field builder name), or as an array, first index will the name of the builder and second one will be the config.
 -   **argsBuilder** : An args builder to use. Either as string (will be the args builder name), or as an array, first index will the name of the builder and second one will be the config.
@@ -295,7 +291,6 @@ class Hero {
      */
     public $friends;
 }
-?>
 ```
 
 Example on methods:
@@ -318,7 +313,6 @@ class Hero {
         return array_slice($this->friends, 0, $limit);
     }
 }
-?>
 ```
 
 ## @FieldsBuilder
@@ -345,13 +339,12 @@ Example:
 class MyType {
 
 }
-?>
 ```
 
 ## @Input
 
 This annotation is used on a _class_ to define an input type.
-An Input type is pretty much the same as an input except:
+An Input type is pretty much the same as an input, except:
 
 -   Dynamic `@Field` with `resolve` attribute are ignored.
 
@@ -360,12 +353,12 @@ Optional attributes:
 -   **name** : The GraphQL name of the input field (default to classnameInput )
 -   **isRelay** : Set to true if you want your input to be relay compatible (ie. An extra field `clientMutationId` will be added to the input)
 
-The corresponding class will also be used by the `Arguments Transformer` service. A instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
+The corresponding class will also be used by the `Arguments Transformer` service. An instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
 
 ## @IsPublic
 
-Added on a _class_ in conjonction with `@Type` or `@TypeInterface`, this annotation will define the defaut to set if fields are public or not.
-Added on a _property_ or _method_ in conjonction with `@Field`, it'll define an expression to set if the field is public or not.
+Added on a _class_ in conjunction with `@Type` or `@TypeInterface`, this annotation will define the defaut to set if fields are public or not.
+Added on a _property_ or _method_ in conjunction with `@Field`, it'll define an expression to set if the field is public or not.
 
 Example:
 
@@ -383,18 +376,27 @@ class SecretArea {
      */
     public $secretCode;
 }
-?>
 ```
 
 ## @Mutation
 
-This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Mutation field.  
-The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.mutation`).  
-The class exposing the mutation(s) must have a corresponding service with his className.
+This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that the method on this class will resolve a Mutation field.  
+The corresponding GraphQL field is added to the GraphQL type(s) following the logic:
+- The type(s) specified in the `targetTypes` attribute of the `@Mutation` annotation if it's defined.  
+  or
+- The type(s) specified in the `targetMutationTypes` attribute of the `@Provider` annotation if it's defined.  
+  or
+- The root Query type of the default schema (defined in configuration at key `overblog_graphql.definitions.schema.mutation` or `overblog_graphql.definitions.schema.default.mutation`).  
+  
+The class exposing the mutation(s) must be declared as a [service](https://symfony.com/doc/current/service_container.html).
+
+Optional attributes:
+
+-   **targetTypes** : The GraphQL type(s) to attach the field to. It must be a mutation. (by default, it'll be the root Mutation type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 
-This will add a `updateUserEmail` mutation, with as resolver `@=service('App\Graphql\MutationProvider').updateUserEmail(...)`.
+This will add an `updateUserEmail` mutation, with as resolver `@=service('App\Graphql\MutationProvider').updateUserEmail(...)`.
 
 ```php
 <?php
@@ -420,27 +422,35 @@ class MutationProvider {
         return $user;
     }
 }
-?>
 ```
 
 ## @Provider
 
-This annotation applies on classes to indicate that it containts methods tagged with `@Query`o or `@Mutation`.  
-Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.
+This annotation applies on classes to indicate that it contains methods tagged with `@Query` or `@Mutation`.  
+Without it, the `@Query` and `@Mutation` are ignored. When used, **remember to have a corresponding service with the fully qualified name of the class as service id**.  
+You can use `@Access` and/or `@IsPublic` on a provider class to add default access or visibility on defined query or mutation.
 
 Optional attributes:
 
--   **prefix** : A prefix to apply to all field names from this provider
+-   **prefix**: A prefix to apply to all field names from this provider
+-   **targetQueryTypes**: The default GraphQL type(s) to attach the provider `@Query` to
+-   **targetMutationTypes**: The default GraphQL type(s) to attach the provider `@Mutation` to
 
 ## @Query
 
 This annotation applies on methods for classes tagged with the `@Provider` annotation. It indicates that on this class a method will resolve a Query field.  
-The resulting field is added to the main Mutation type (define in configuration at key `overblog_graphql.definitions.schema.query`).  
-The class exposing the querie(s) must have a corresponding service with his className.
+The corresponding GraphQL field is added to the GraphQL type(s) following the logic:
+- The type(s) specified in the `targetTypes` attribute of the `@Query` annotation if it's defined.  
+  or
+- The type(s) specified in the `targetQueryTypes` attribute of the `@Provider` annotation if it's defined.  
+  or
+- The root Query type of the default schema (defined in configuration at key `overblog_graphql.definitions.schema.query` or `overblog_graphql.definitions.schema.default.query`).  
+  
+The class exposing the query(ies) must be declared as a [service](https://symfony.com/doc/current/service_container.html).
 
 Optional attributes:
 
--   **targetType** : The GraphQL type to attach the field to (by default, it'll be the Root query).
+-   **targetTypes** : The GraphQL type(s) to attach the field to (by default, it'll be the root Query type of the default schema. see [Default Schema](../definitions/schema.md#default-schema)). You can specify one or multiple target types.
 
 Example:
 
@@ -463,7 +473,6 @@ class UsersProviders {
         return $this->repository->findAll();
     }
 }
-?>
 ```
 
 ## @Type
@@ -473,9 +482,10 @@ This annotation is used on _class_ to define a GraphQL Type.
 Optional attributes:
 
 -   **name** : The GraphQL name of the type (default to the class name without namespace)
--   **interfaces** : An array of GraphQL interface this type herits from
+-   **interfaces** : An array of GraphQL interface this type inherits from (can be auto-guessed. See interface documentation).
 -   **isRelay** : Set to true to have a Relay compatible type (ie. A `clientMutationId` will be added).
--   **builders**: An array of `@FieldsBuilder` annotations
+-   **builders** : An array of `@FieldsBuilder` annotations
+-   **isTypeOf** : Is type of resolver for interface implementation
 
 ```php
 <?php
@@ -489,7 +499,6 @@ class Hero {
      */
     public $name;
 }
-?>
 ```
 
 ## @TypeInterface
@@ -564,7 +573,7 @@ This annotation is used on a _class_ to define an union.
 
 Required attributes:
 
--   **types** : An array of GraphQL Type as string
+-   **types** : An array of GraphQL Type as string (can be auto-guessed. See union documenation).
 
 Optional attributes:
 
@@ -594,19 +603,18 @@ class Pet {
 }
 ```
 
-
 ## @Relay\Connection
 
-This annotation extends the `@Type` annotation so it uses the same attributes. 
+This annotation extends the `@Type` annotation so it uses the same attributes.
 It prepends the `RelayConnectionFieldsBuilder` to the list of fields builders.
 
 The extra attributes are :
 
 -   **edge** : The GraphQL type of the connection's edges
--   **node** : The GraphQL type of the node of the connection's edges' 
+-   **node** : The GraphQL type of the node of the connection's edges'
 
 You must define one and only one of this attributes.  
-If the `edge` attribute is used, the declaration is the same as adding a `RelayConnectionFieldsBuilder` 
+If the `edge` attribute is used, the declaration is the same as adding a `RelayConnectionFieldsBuilder`
 
 ```php
 <?php

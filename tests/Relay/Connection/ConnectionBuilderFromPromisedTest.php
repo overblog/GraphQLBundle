@@ -4,41 +4,50 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Relay\Connection;
 
+use Exception;
+use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
-use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use React\Promise\ExtendedPromiseInterface;
 use React\Promise\FulfilledPromise;
+use React\Promise\Promise;
+use React\Promise\PromiseInterface;
+use stdClass;
+use function call_user_func;
+use function func_get_args;
+use function React\Promise\resolve;
 
 class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {
-        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), []);
+        $promise = call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), []);
         $expected = $this->getExpectedConnection($this->letters, false, false);
         $this->assertEqualsFromPromised($expected, $promise);
     }
 
     public function testRespectsASmallerFirst(): void
     {
-        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), ['first' => 2]);
+        $promise = call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $this->promisedLetters(), ['first' => 2]);
         $expected = $this->getExpectedConnection(['A', 'B'], false, true);
         $this->assertEqualsFromPromised($expected, $promise);
     }
 
     /**
-     * @param $invalidPromise
+     * @param mixed $invalidPromise
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromise($invalidPromise): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('This is not a valid promise.');
-        \call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
+        call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
     }
 
-    public function invalidPromiseDataProvider()
+    public function invalidPromiseDataProvider(): array
     {
         return [
-            [new \stdClass()],
+            [new stdClass()],
             ['fake'],
             [['fake']],
             [false],
@@ -48,7 +57,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     public function testRespectsASmallerFirstWhenSlicing(): void
     {
-        $promise = \call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'],
+        $promise = call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'],
             $this->promisedLetters(['A', 'B', 'C']),
             ['first' => 2],
             [
@@ -61,26 +70,34 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
     }
 
     /**
-     * @param $invalidPromise
+     * @param mixed $invalidPromise
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('This is not a valid promise.');
-        \call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'], $invalidPromise, [], []);
+        call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'], $invalidPromise, [], []);
     }
 
+    /**
+     * @return ExtendedPromiseInterface|FulfilledPromise|Promise|PromiseInterface
+     */
     private function promisedLetters(array $letters = null)
     {
-        return \React\Promise\resolve($letters ?: $this->letters);
+        return resolve($letters ?: $this->letters);
     }
 
-    private function assertEqualsFromPromised(Connection $expected, FulfilledPromise $promise): void
+    private function assertEqualsFromPromised(ConnectionInterface $expected, FulfilledPromise $promise): void
     {
         $this->assertSameConnection($expected, self::await($promise));
     }
 
+    /**
+     * @return mixed
+     *
+     * @throws Exception
+     */
     private static function await(FulfilledPromise $promise)
     {
         $resolvedValue = null;
@@ -94,15 +111,18 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
             }
         );
 
-        if ($rejectedReason instanceof \Exception) {
+        if ($rejectedReason instanceof Exception) {
             throw $rejectedReason;
         }
 
         return $resolvedValue;
     }
 
+    /**
+     * @return ConnectionBuilder
+     */
     public static function getBuilder()
     {
-        return new ConnectionBuilder(...\func_get_args());
+        return new ConnectionBuilder(...func_get_args());
     }
 }

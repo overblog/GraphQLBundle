@@ -4,42 +4,51 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
+use Closure;
+use function func_get_args;
+
 class Toto
 {
     public const PRIVATE_PROPERTY_WITH_GETTER_VALUE = 'IfYouWantMeUseMyGetter';
     public const PRIVATE_PROPERTY_WITH_GETTER2_VALUE = 'IfYouWantMeUseMyGetter2';
     public const PRIVATE_PROPERTY_WITHOUT_GETTER = 'ImNotAccessibleFromOutside:D';
 
-    private $privatePropertyWithoutGetter = self::PRIVATE_PROPERTY_WITHOUT_GETTER;
-    private $privatePropertyWithGetter = self::PRIVATE_PROPERTY_WITH_GETTER_VALUE;
-    private $private_property_with_getter2 = self::PRIVATE_PROPERTY_WITH_GETTER2_VALUE;
-    public $name = 'public';
+    private string $privatePropertyWithoutGetter = self::PRIVATE_PROPERTY_WITHOUT_GETTER;
+    private string $privatePropertyWithGetter = self::PRIVATE_PROPERTY_WITH_GETTER_VALUE;
+    private string $private_property_with_getter2 = self::PRIVATE_PROPERTY_WITH_GETTER2_VALUE;
+    public string $name = 'public';
+    private bool $enabled = true;
+    private bool $isDisabled = false;
 
-    /**
-     * @return string
-     */
-    public function getPrivatePropertyWithGetter()
+    public function getPrivatePropertyWithGetter(): string
     {
         return $this->privatePropertyWithGetter;
     }
 
-    /**
-     * @return string
-     */
-    public function getPrivatePropertyWithGetter2()
+    public function getPrivatePropertyWithGetter2(): string
     {
         return $this->private_property_with_getter2;
     }
 
-    public function getPrivatePropertyWithoutGetterUsingCallBack()
+    public function getPrivatePropertyWithoutGetterUsingCallBack(): Closure
     {
         return function () {
             return $this->privatePropertyWithoutGetter;
         };
     }
 
-    public function resolve()
+    public function resolve(): array
     {
-        return \func_get_args();
+        return func_get_args();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->isDisabled;
     }
 }

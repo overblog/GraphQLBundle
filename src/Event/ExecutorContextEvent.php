@@ -4,51 +4,20 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Event;
 
+use ArrayObject;
 use Symfony\Contracts\EventDispatcher\Event;
 
-// TODO(mcg-web): remove hack after migrating Symfony >= 4.3
-if (EventDispatcherVersionHelper::isForLegacy()) {
-    final class ExecutorContextEvent extends \Symfony\Component\EventDispatcher\Event
+final class ExecutorContextEvent extends Event
+{
+    private ArrayObject $executorContext;
+
+    public function __construct(ArrayObject $executorContext)
     {
-        /** @var \ArrayObject */
-        private $executorContext;
-
-        /**
-         * @param \ArrayObject $executorContext
-         */
-        public function __construct(\ArrayObject $executorContext)
-        {
-            $this->executorContext = $executorContext;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getExecutorContext(): \ArrayObject
-        {
-            return $this->executorContext;
-        }
+        $this->executorContext = $executorContext;
     }
-} else {
-    final class ExecutorContextEvent extends Event
+
+    public function getExecutorContext(): ArrayObject
     {
-        /** @var \ArrayObject */
-        private $executorContext;
-
-        /**
-         * @param \ArrayObject $executorContext
-         */
-        public function __construct(\ArrayObject $executorContext)
-        {
-            $this->executorContext = $executorContext;
-        }
-
-        /**
-         * @return \ArrayObject
-         */
-        public function getExecutorContext(): \ArrayObject
-        {
-            return $this->executorContext;
-        }
+        return $this->executorContext;
     }
 }

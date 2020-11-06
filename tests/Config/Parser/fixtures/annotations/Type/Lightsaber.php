@@ -17,36 +17,41 @@ class Lightsaber
      * @ORM\Column
      * @GQL\Field
      */
-    protected $color;
+    protected string $color;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @GQL\Field
      */
+    // @phpstan-ignore-next-line
     protected $size;
 
     /**
      * @ORM\OneToMany(targetEntity="Hero")
      * @GQL\Field
      */
+    // @phpstan-ignore-next-line
     protected $holders;
 
     /**
      * @ORM\ManyToOne(targetEntity="Hero")
      * @GQL\Field
      */
+    // @phpstan-ignore-next-line
     protected $creator;
 
     /**
      * @ORM\OneToOne(targetEntity="Crystal")
      * @GQL\Field
      */
+    // @phpstan-ignore-next-line
     protected $crystal;
 
     /**
      * @ORM\ManyToMany(targetEntity="Battle")
      * @GQL\Field
      */
+    // @phpstan-ignore-next-line
     protected $battles;
 
     /**
@@ -54,6 +59,7 @@ class Lightsaber
      * @ORM\OneToOne(targetEntity="Hero")
      * @ORM\JoinColumn(nullable=true)
      */
+    // @phpstan-ignore-next-line
     protected $currentHolder;
 
     /**
@@ -61,5 +67,5 @@ class Lightsaber
      * @ORM\Column(type="text[]")
      * @GQL\Deprecated("No more tags on lightsabers")
      */
-    protected $tags;
+    protected array $tags;
 }

@@ -19,7 +19,7 @@ final class FieldsBuilder implements Annotation
      *
      * @var string
      */
-    public $builder;
+    public string $builder;
 
     /**
      * The builder config.

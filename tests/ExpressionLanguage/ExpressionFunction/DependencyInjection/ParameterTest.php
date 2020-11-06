@@ -6,27 +6,44 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 
 use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 class ParameterTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new Parameter(), new Parameter('param')];
+        return [
+            new Parameter(),
+            new Parameter('param'),
+        ];
     }
 
     /**
      * @param string $name
      * @dataProvider getNames
      */
-    public function testParameter($name): void
+    public function testParameterCompilation($name): void
     {
-        $globalVariable = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
-        $globalVariable->get('container');
+        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        ${TypeGenerator::GLOBAL_VARS}->get('container');
         $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
     }
 
-    public function getNames()
+    /**
+     * @param string $name
+     * @dataProvider getNames
+     */
+    public function testParameterEvaluation($name): void
+    {
+        $globalVars = new GlobalVariables(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        $this->assertSame(
+            5,
+            $this->expressionLanguage->evaluate($name.'("test")', [TypeGenerator::GLOBAL_VARS => $globalVars])
+        );
+    }
+
+    public function getNames(): array
     {
         return [
             ['param'],

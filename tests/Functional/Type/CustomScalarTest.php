@@ -35,6 +35,7 @@ class CustomScalarTest extends TestCase
 
     public function testDateTimeTypeDescription(): void
     {
+        // @phpstan-ignore-next-line
         $dateTimeType = static::$kernel->getContainer()->get('overblog_graphql.type_resolver')->resolve('DateTime');
         $this->assertSame('The DateTime type', $dateTimeType->description);
     }
