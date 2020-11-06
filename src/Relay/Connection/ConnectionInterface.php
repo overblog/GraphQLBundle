@@ -39,14 +39,14 @@ interface ConnectionInterface
     /**
      * Get the total count.
      *
-     * @return int
+     * @return mixed
      */
-    public function getTotalCount(): ?int;
+    public function getTotalCount();
 
     /**
      * Set the total count.
      *
-     * @param int $totalCount
+     * @param mixed $totalCount
      */
-    public function setTotalCount(int $totalCount);
+    public function setTotalCount($totalCount);
 }

@@ -62,7 +62,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalCount(): ?int
+    public function getTotalCount()
     {
         return $this->totalCount;
     }
@@ -70,7 +70,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setTotalCount(int $totalCount): void
+    public function setTotalCount($totalCount): void
     {
         $this->totalCount = $totalCount;
     }
