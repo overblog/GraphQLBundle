@@ -9,6 +9,7 @@ use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Validator\InputValidator;
 
 /**
  * Container for special services to be passed to all generated types.
@@ -80,5 +81,13 @@ final class GraphQLServices
     public function getType(string $typeName): ?Type
     {
         return $this->types->resolve($typeName);
+    }
+
+    /**
+     * Creates an instance of InputValidator
+     */
+    public function createInputValidator(array $resolverArgs): InputValidator
+    {
+        return $this->services['input_validator_factory']->create($resolverArgs);
     }
 }

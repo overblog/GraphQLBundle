@@ -101,8 +101,7 @@ abstract class TestCase extends BaseTestCase
         return $this->getMockBuilder(CoreSecurity::class)
             ->disableOriginalConstructor()
             ->setMethods(['isGranted'])
-            ->getMock()
-            ;
+            ->getMock();
     }
 
     protected function createGraphQLServices(array $services = []): GraphQLServices
