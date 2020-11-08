@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
-use GraphQL\Type\Definition\ListOfType;
-use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\WrappingType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use Overblog\GraphQLBundle\Resolver\UnsupportedResolverException;
@@ -58,72 +55,6 @@ class TypeResolverTest extends AbstractResolverTest
     {
         $this->expectException(UnresolvableException::class);
         $this->resolver->resolve('Fake');
-    }
-
-    public function testWrongListOfWrappingType(): void
-    {
-        $this->expectException(UnresolvableException::class);
-        $this->expectExceptionMessage('Malformed ListOf wrapper type "[Tata" expected "]" but got ""a"".');
-        $this->resolver->resolve('[Tata');
-    }
-
-    public function testResolveWithListOfWrapper(): void
-    {
-        /** @var WrappingType $type */
-        $type = $this->resolver->resolve('[Tata]');
-
-        $this->assertInstanceOf(ListOfType::class, $type);
-        $this->assertSame('Tata', $type->getWrappedType()->name);
-    }
-
-    public function testResolveWithNonNullWrapper(): void
-    {
-        /** @var WrappingType $type */
-        $type = $this->resolver->resolve('Toto!');
-
-        $this->assertInstanceOf(NonNull::class, $type);
-        $this->assertSame('Toto', $type->getWrappedType()->name);
-    }
-
-    public function testResolveWithNonNullListOfWrapper(): void
-    {
-        /** @var NonNull $type */
-        $type = $this->resolver->resolve('[Toto]!');
-
-        $this->assertInstanceOf(NonNull::class, $type);
-        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
-        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
-    }
-
-    public function testResolveWitListOfNonNullWrapper(): void
-    {
-        /** @var ListOfType $type */
-        $type = $this->resolver->resolve('[Toto!]');
-
-        $this->assertInstanceOf(ListOfType::class, $type);
-        $this->assertInstanceOf(NonNull::class, $type->getWrappedType());
-        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
-    }
-
-    public function testResolveWitNonNullListOfNonNullWrapper(): void
-    {
-        /** @var NonNull $type */
-        $type = $this->resolver->resolve('[Toto!]!');
-
-        $this->assertInstanceOf(NonNull::class, $type);
-        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
-        $this->assertInstanceOf(NonNull::class, $type->getWrappedType()->getWrappedType());
-        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->getWrappedType()->name);
-    }
-
-    public function testResolveWitListOfListOfWrapper(): void
-    {
-        /** @var ListOfType $type */
-        $type = $this->resolver->resolve('[[Toto]]');
-
-        $this->assertInstanceOf(ListOfType::class, $type);
-        $this->assertInstanceOf(ListOfType::class, $type->getWrappedType());
-        $this->assertSame('Toto', $type->getWrappedType()->getWrappedType()->name);
     }
 
     public function testAliases(): void
