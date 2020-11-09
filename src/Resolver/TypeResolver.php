@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use GraphQL\Type\Definition\NullableType;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use function json_encode;
 use function sprintf;
-use function strlen;
-use function substr;
 
 class TypeResolver extends AbstractResolver
 {
@@ -53,20 +49,11 @@ class TypeResolver extends AbstractResolver
         }
 
         if (!isset($this->cache[$alias])) {
-            $type = $this->string2Type($alias);
+            $type = $this->baseType($alias);
             $this->cache[$alias] = $type;
         }
 
         return $this->cache[$alias];
-    }
-
-    private function string2Type(string $alias): Type
-    {
-        if (null !== ($type = $this->wrapTypeIfNeeded($alias))) {
-            return $type;
-        }
-
-        return $this->baseType($alias);
     }
 
     private function baseType(string $alias): Type
@@ -79,39 +66,6 @@ class TypeResolver extends AbstractResolver
         }
 
         return $type;
-    }
-
-    private function wrapTypeIfNeeded(string $alias): ?Type
-    {
-        // Non-Null
-        if ('!' === $alias[strlen($alias) - 1]) {
-            /** @var NullableType $type */
-            $type = $this->string2Type(substr($alias, 0, -1));
-
-            return Type::nonNull($type);
-        }
-        // List
-        if ($this->hasNeedListOfWrapper($alias)) {
-            return Type::listOf($this->string2Type(substr($alias, 1, -1)));
-        }
-
-        return null;
-    }
-
-    private function hasNeedListOfWrapper(string $alias): bool
-    {
-        if ('[' === $alias[0]) {
-            $got = $alias[strlen($alias) - 1];
-            if (']' !== $got) {
-                throw new UnresolvableException(
-                    sprintf('Malformed ListOf wrapper type "%s" expected "]" but got "%s".', $alias, json_encode($got))
-                );
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     protected function supportedSolutionClass(): ?string

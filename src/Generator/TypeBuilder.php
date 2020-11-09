@@ -144,14 +144,15 @@ class TypeBuilder
 
     /**
      * Converts a native GraphQL type string into the `webonyx/graphql-php`
-     * type literal.
+     * type literal. References to user-defined types are converted into
+     * TypeResovler method call and wrapped into a closure.
      *
      * Render examples:
      *
      *  -   "String"   -> Type::string()
      *  -   "String!"  -> Type::nonNull(Type::string())
      *  -   "[String!] -> Type::listOf(Type::nonNull(Type::string()))
-     *  -   "[Post]"   -> Type::listOf($globalVariables->get('typeResolver')->resolve('Post'))
+     *  -   "[Post]"   -> fn() => Type::listOf($globalVariables->get('typeResolver')->resolve('Post'))
      *
      * @return GeneratorInterface|string
      */
@@ -159,7 +160,16 @@ class TypeBuilder
     {
         $typeNode = Parser::parseType($typeDefinition);
 
-        return $this->wrapTypeRecursive($typeNode);
+        $isReference = false;
+        $type = $this->wrapTypeRecursive($typeNode, $isReference);
+
+        if ($isReference) {
+            // References to other types should be wrapped in a closure
+            // for performance reasons
+            return ArrowFunction::new($type);
+        }
+
+        return $type;
     }
 
     /**
@@ -169,20 +179,20 @@ class TypeBuilder
      *
      * @return DependencyAwareGenerator|string
      */
-    protected function wrapTypeRecursive($typeNode)
+    protected function wrapTypeRecursive($typeNode, bool &$isReference)
     {
         switch ($typeNode->kind) {
             case NodeKind::NON_NULL_TYPE:
-                $innerType = $this->wrapTypeRecursive($typeNode->type);
+                $innerType = $this->wrapTypeRecursive($typeNode->type, $isReference);
                 $type = Literal::new("Type::nonNull($innerType)");
                 $this->file->addUse(Type::class);
                 break;
             case NodeKind::LIST_TYPE:
-                $innerType = $this->wrapTypeRecursive($typeNode->type);
+                $innerType = $this->wrapTypeRecursive($typeNode->type, $isReference);
                 $type = Literal::new("Type::listOf($innerType)");
                 $this->file->addUse(Type::class);
                 break;
-            default:
+            default: // NodeKind::NAMED_TYPE
                 if (in_array($typeNode->name->value, static::BUILT_IN_TYPES)) {
                     $name = strtolower($typeNode->name->value);
                     $type = Literal::new("Type::$name()");
@@ -190,6 +200,7 @@ class TypeBuilder
                 } else {
                     $name = $typeNode->name->value;
                     $type = "$this->globalVars->get('typeResolver')->resolve('$name')";
+                    $isReference = true;
                 }
                 break;
         }
