@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
+use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 
 interface ConnectionInterface
@@ -37,16 +38,16 @@ interface ConnectionInterface
     public function setPageInfo(PageInfoInterface $pageInfo);
 
     /**
-     * Get the total count.
+     * Get the total count or promise that returns the total count.
      *
-     * @return int
+     * @return int|Promise
      */
-    public function getTotalCount(): ?int;
+    public function getTotalCount();
 
     /**
-     * Set the total count.
+     * Set the total count or promise that returns the total count.
      *
-     * @param int $totalCount
+     * @param int|Promise $totalCount
      */
-    public function setTotalCount(int $totalCount);
+    public function setTotalCount($totalCount);
 }
