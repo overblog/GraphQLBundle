@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
+use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
@@ -18,7 +19,7 @@ class Connection implements ConnectionInterface
     /** @var PageInfoInterface */
     protected $pageInfo;
 
-    /** @var int|null */
+    /** @var int|Promise|null Total count or promise that returns the total count */
     protected $totalCount;
 
     public function __construct($edges = [], PageInfoInterface $pageInfo = null)
@@ -62,7 +63,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalCount(): ?int
+    public function getTotalCount()
     {
         return $this->totalCount;
     }
@@ -70,7 +71,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function setTotalCount(int $totalCount): void
+    public function setTotalCount($totalCount): void
     {
         $this->totalCount = $totalCount;
     }
