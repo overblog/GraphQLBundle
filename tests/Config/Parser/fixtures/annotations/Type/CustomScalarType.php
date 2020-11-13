@@ -16,8 +16,8 @@ class CustomScalarType
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @GQL\Field
+     * @phpstan-ignore-next-line
      */
-    // @phpstan-ignore-next-line
     protected $doctrineDatetime;
 
     /**
