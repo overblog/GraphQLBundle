@@ -10,10 +10,14 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function str_replace;
-use function ucwords;
 
 class FieldResolver
 {
+    /**
+     * Allowed method prefixes
+     */
+    private const PREFIXES = ['get', 'is', 'has', ''];
+
     /**
      * @param mixed $parentValue
      * @param mixed $args
@@ -24,7 +28,7 @@ class FieldResolver
     public function __invoke($parentValue, $args, $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        $value = self::valueFromObjectOrArray($parentValue, $fieldName);
+        $value = static::valueFromObjectOrArray($parentValue, $fieldName);
 
         return $value instanceof Closure ? $value($parentValue, $args, $context, $info) : $value;
     }
@@ -36,28 +40,22 @@ class FieldResolver
      */
     public static function valueFromObjectOrArray($objectOrArray, string $fieldName)
     {
-        $value = null;
         if (is_array($objectOrArray) && isset($objectOrArray[$fieldName])) {
-            $value = $objectOrArray[$fieldName];
-        } elseif (is_object($objectOrArray)) {
-            if (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, 'get')) {
-                $value = $objectOrArray->$getter();
-            } elseif (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, 'is')) {
-                $value = $objectOrArray->$getter();
-            } elseif (null !== $getter = self::guessObjectMethod($objectOrArray, $fieldName, '')) {
-                $value = $objectOrArray->$getter();
-            } elseif (isset($objectOrArray->$fieldName)) {
-                $value = $objectOrArray->$fieldName;
-            }
+            return $objectOrArray[$fieldName];
         }
 
-        return $value;
-    }
+        if (is_object($objectOrArray)) {
+            foreach (static::PREFIXES as $prefix) {
+                $method = $prefix.str_replace('_', '', $fieldName);
 
-    private static function guessObjectMethod(object $object, string $fieldName, string $prefix): ?string
-    {
-        if (is_callable([$object, $method = $prefix.str_replace(' ', '', ucwords(str_replace('_', ' ', $fieldName)))])) {
-            return $method;
+                if (is_callable([$objectOrArray, $method])) {
+                    return $objectOrArray->$method();
+                }
+            }
+
+            if (isset($objectOrArray->$fieldName)) {
+                return $objectOrArray->$fieldName;
+            }
         }
 
         return null;
