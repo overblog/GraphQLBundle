@@ -36,9 +36,9 @@ resolve: '@=resolver("say_hello", [args["name"]])'
 namespace App\GraphQL\Resolver;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface, AliasedInterface
+class Greetings implements QueryInterface, AliasedInterface
 {
     public function sayHello($name)
     {
@@ -67,9 +67,9 @@ Note: backslashes must be correctly escaped and respect the use of single and do
 # src/GraphQL/Resolver/Greetings.php
 namespace App\GraphQL\Resolver;
 
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function sayHello($name)
     {
@@ -88,9 +88,9 @@ resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
 # src/GraphQL/Resolver/Greetings.php
 namespace App\GraphQL\Resolver;
 
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function __invoke($name)
     {
@@ -121,9 +121,9 @@ MyType:
 namespace App\GraphQL\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function __invoke(ResolveInfo $info, $name)
     {

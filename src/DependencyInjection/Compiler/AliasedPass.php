@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -19,7 +19,7 @@ final class AliasedPass implements CompilerPassInterface
 {
     private const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
-        ResolverInterface::class => 'overblog_graphql.resolver',
+        QueryInterface::class => 'overblog_graphql.resolver',
         Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
     ];
 

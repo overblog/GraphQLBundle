@@ -73,7 +73,7 @@ class DebugCommandTest extends TestCase
         return [
             [[]],
             [['type']],
-            [['resolver']],
+            [['query']],
             [['mutation']],
             [['type', 'mutation']],
         ];

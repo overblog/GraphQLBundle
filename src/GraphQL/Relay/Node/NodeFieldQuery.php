@@ -8,9 +8,9 @@ use Closure;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-final class NodeFieldResolver implements ResolverInterface, AliasedInterface
+final class NodeFieldQuery implements QueryInterface, AliasedInterface
 {
     /**
      * @param mixed $context

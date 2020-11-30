@@ -8,10 +8,10 @@ use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use function call_user_func_array;
 
-final class PluralIdentifyingRootFieldResolver implements ResolverInterface, AliasedInterface
+final class PluralIdentifyingRootFieldQuery implements QueryInterface, AliasedInterface
 {
     private PromiseAdapter $promiseAdapter;
 

@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -18,7 +18,7 @@ final class ResolverMethodAliasesPass implements CompilerPassInterface
 {
     private const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
-        ResolverInterface::class => 'overblog_graphql.resolver',
+        QueryInterface::class => 'overblog_graphql.resolver',
     ];
 
     /**

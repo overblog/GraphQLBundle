@@ -150,11 +150,11 @@ use App\Entity\Droid;
 use App\Entity\Human;
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
-class MyResolver implements ResolverInterface, AliasedInterface
+class MyResolver implements QueryInterface, AliasedInterface
 {
     public function allCharacters(): array
     {

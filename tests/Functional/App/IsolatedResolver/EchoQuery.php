@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver;
 
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-final class EchoResolver implements ResolverInterface, ContainerAwareInterface
+final class EchoQuery implements QueryInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 

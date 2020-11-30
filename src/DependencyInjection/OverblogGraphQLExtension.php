@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\CacheWarmer\CompileCacheWarmer;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
 use Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
@@ -97,7 +97,7 @@ class OverblogGraphQLExtension extends Extension
         $container->registerForAutoconfiguration(MutationInterface::class)
             ->addTag('overblog_graphql.mutation');
 
-        $container->registerForAutoconfiguration(ResolverInterface::class)
+        $container->registerForAutoconfiguration(QueryInterface::class)
             ->addTag('overblog_graphql.resolver');
 
         $container->registerForAutoconfiguration(Type::class)

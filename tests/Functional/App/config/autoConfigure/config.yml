@@ -15,4 +15,4 @@ services:
         autoconfigure: true
     Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\:
         resource: '../../GraphQL/*'
-    Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver\EchoResolver: ~
+    Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver\EchoQuery: ~

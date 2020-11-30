@@ -25,11 +25,11 @@ use function ucfirst;
 
 class DebugCommand extends Command
 {
-    private static array $categories = ['type', 'mutation', 'resolver'];
+    private static array $categories = ['type', 'mutation', 'query'];
 
     private TypeResolver $typeResolver;
     private MutationResolver $mutationResolver;
-    private QueryResolver $resolverResolver;
+    private QueryResolver $queryResolver;
 
     public function __construct(
         TypeResolver $typeResolver,
@@ -39,7 +39,7 @@ class DebugCommand extends Command
         parent::__construct();
         $this->typeResolver = $typeResolver;
         $this->mutationResolver = $mutationResolver;
-        $this->resolverResolver = $resolverResolver;
+        $this->queryResolver = $resolverResolver;
     }
 
     protected function configure(): void
@@ -71,7 +71,7 @@ class DebugCommand extends Command
         $tableHeaders = ['solution id', 'aliases'];
 
         foreach ($categories as $category) {
-            $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
+            $io->title(sprintf('GraphQL %s Services', ucfirst($category)));
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};

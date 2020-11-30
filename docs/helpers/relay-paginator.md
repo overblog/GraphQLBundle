@@ -224,10 +224,10 @@ sayHello(first: 1, after: "YXJyYXljb25uZWN0aW9uOjI="){ # after: base64_encode('a
 namespace App\GraphQL\Resolver;
 
 use Overblog\GraphQLBundle\Definition\Argument;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function sayHello(Argument $args)
     {
