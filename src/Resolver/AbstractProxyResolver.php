@@ -29,6 +29,8 @@ abstract class AbstractProxyResolver extends AbstractResolver
         }
 
         $options = $this->getSolutionOptions($alias);
+
+        /** @var callable $func */
         $func = [$solution, $options['method']];
 
         return $func(...$funcArgs);

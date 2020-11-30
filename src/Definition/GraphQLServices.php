@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use GraphQL\Type\Definition\Type;
 use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
@@ -48,17 +49,27 @@ final class GraphQLServices
         return isset($this->services[$name]);
     }
 
+    /**
+     * @param mixed ...$args
+     *
+     * @return mixed
+     */
     public function query(string $alias, ...$args)
     {
         return $this->resolverResolver->resolve([$alias, $args]);
     }
 
+    /**
+     * @param mixed ...$args
+     *
+     * @return mixed
+     */
     public function mutation(string $alias, ...$args)
     {
         return $this->mutationResolver->resolve([$alias, $args]);
     }
 
-    public function getType(string $typeName)
+    public function getType(string $typeName): ?Type
     {
         return $this->types->resolve($typeName);
     }

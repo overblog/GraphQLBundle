@@ -105,7 +105,7 @@ abstract class TestCase extends BaseTestCase
             ;
     }
 
-    protected function createGraphQLServices($services = [])
+    protected function createGraphQLServices(array $services = []): GraphQLServices
     {
         return new GraphQLServices(
             $this->createMock(TypeResolver::class),

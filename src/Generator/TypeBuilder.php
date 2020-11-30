@@ -671,8 +671,12 @@ class TypeBuilder
     {
         $c = (object) $cascade;
 
-        $array = Collection::assoc()
-            ->addIfNotEmpty('groups', $c->groups);
+        /**
+         * todo: remove this type-hint after fixing return type in the php generator
+         *
+         * @var Collection $array
+         */
+        $array = Collection::assoc()->addIfNotEmpty('groups', $c->groups);
 
         if (isset($c->isCollection)) {
             $array->addItem('isCollection', $c->isCollection);
