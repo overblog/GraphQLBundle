@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Definition;
 use GraphQL\Type\Definition\Type;
 use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 
 /**
@@ -17,12 +17,12 @@ final class GraphQLServices
 {
     private array $services;
     private TypeResolver $types;
-    private ResolverResolver $resolverResolver;
+    private QueryResolver $resolverResolver;
     private MutationResolver $mutationResolver;
 
     public function __construct(
         TypeResolver $typeResolver,
-        ResolverResolver $resolverResolver,
+        QueryResolver $resolverResolver,
         MutationResolver $mutationResolver,
         array $services = []
     ) {
@@ -38,7 +38,7 @@ final class GraphQLServices
     public function get(string $name)
     {
         if (!isset($this->services[$name])) {
-            throw new LogicException("GraphQL service '$name' could not be located. You should define it.");
+            throw new LogicException(sprintf('GraphQL service "%s" could not be located. You should define it.', $name));
         }
 
         return $this->services[$name];

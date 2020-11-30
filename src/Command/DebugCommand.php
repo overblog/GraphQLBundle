@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Command;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,12 +29,12 @@ class DebugCommand extends Command
 
     private TypeResolver $typeResolver;
     private MutationResolver $mutationResolver;
-    private ResolverResolver $resolverResolver;
+    private QueryResolver $resolverResolver;
 
     public function __construct(
         TypeResolver $typeResolver,
         MutationResolver $mutationResolver,
-        ResolverResolver $resolverResolver
+        QueryResolver $resolverResolver
     ) {
         parent::__construct();
         $this->typeResolver = $typeResolver;

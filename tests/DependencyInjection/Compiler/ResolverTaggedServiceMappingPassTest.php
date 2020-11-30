@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -21,7 +21,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
         $container = new ContainerBuilder();
         $container->setDefinition('injected_service', new Definition(FakeInjectedService::class));
 
-        $container->register('overblog_graphql.resolver_resolver', ResolverResolver::class);
+        $container->register('overblog_graphql.resolver_resolver', QueryResolver::class);
 
         $this->container = $container;
     }

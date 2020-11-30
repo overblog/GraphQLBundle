@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
@@ -109,7 +109,7 @@ abstract class TestCase extends BaseTestCase
     {
         return new GraphQLServices(
             $this->createMock(TypeResolver::class),
-            $this->createMock(ResolverResolver::class),
+            $this->createMock(QueryResolver::class),
             $this->createMock(MutationResolver::class),
             $services
         );

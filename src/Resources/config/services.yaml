@@ -12,7 +12,7 @@ services:
     Overblog\GraphQLBundle\Definition\GraphQLServices:
         arguments:
             - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
-            - '@Overblog\GraphQLBundle\Resolver\ResolverResolver'
+            - '@Overblog\GraphQLBundle\Resolver\QueryResolver'
             - '@Overblog\GraphQLBundle\Resolver\MutationResolver'
 
     Overblog\GraphQLBundle\Request\Executor:
@@ -45,7 +45,7 @@ services:
             - "@?validator"
             - "%overblog_graphql_types.classes_map%"
 
-    Overblog\GraphQLBundle\Resolver\ResolverResolver:
+    Overblog\GraphQLBundle\Resolver\QueryResolver:
     Overblog\GraphQLBundle\Resolver\MutationResolver:
 
     Overblog\GraphQLBundle\Resolver\AccessResolver:

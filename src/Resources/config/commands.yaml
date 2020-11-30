@@ -13,7 +13,7 @@ services:
         arguments:
             - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
             - '@Overblog\GraphQLBundle\Resolver\MutationResolver'
-            - '@Overblog\GraphQLBundle\Resolver\ResolverResolver'
+            - '@Overblog\GraphQLBundle\Resolver\QueryResolver'
         tags:
             - { name: console.command, command: graphql:debug, alias: "debug:graphql" }
 
