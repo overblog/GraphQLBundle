@@ -6,5 +6,5 @@ Photo:
                 type: ID!
             width:
                 type: Int
-        resolveField: "@=resolver('resolve_photo_field', [value, info])"
+        resolveField: "@=query('resolve_photo_field', value, info)"
         interfaces: [Node]

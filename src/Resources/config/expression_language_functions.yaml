@@ -24,6 +24,6 @@ services:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation
         arguments: { $name : 'mut' }
 
-    expression_function.resolver_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver
-        arguments: { $name : 'res' }
+    expression_function.query_alias:
+        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query
+        arguments: { $name : 'q' }

@@ -32,7 +32,7 @@ abstract class AbstractProxyResolver extends AbstractResolver
         $options = $this->getSolutionOptions($alias);
         $func = [$solution, $options['method']];
 
-        return call_user_func_array($func, $funcArgs);
+        return $func(...$funcArgs);
     }
 
     abstract protected function unresolvableMessage(string $alias): string;

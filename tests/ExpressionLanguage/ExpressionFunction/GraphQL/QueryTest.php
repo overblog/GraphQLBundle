@@ -5,25 +5,25 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\GraphQL;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedException;
-use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Resolver;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class ResolverTest extends TestCase
+class QueryTest extends TestCase
 {
     protected function getFunctions()
     {
-        return [new Resolver(), new Resolver('res')];
+        return [new Query(), new Query('q')];
     }
 
     public function testEvaluatorThrowsException(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate('resolver()');
+        $this->expressionLanguage->evaluate('query()');
     }
 
     public function testEvaluatorThrowsExceptionByAlias(): void
     {
         $this->expectException(EvaluatorIsNotAllowedException::class);
-        $this->expressionLanguage->evaluate('res()');
+        $this->expressionLanguage->evaluate('q()');
     }
 }

@@ -6,4 +6,4 @@ Query:
                 builder: "Relay::Node"
                 builderConfig:
                     nodeInterfaceType: Node
-                    idFetcher: '@=resolver("node_id_fetcher", [value])'
+                    idFetcher: '@=query("node_id_fetcher", value)'

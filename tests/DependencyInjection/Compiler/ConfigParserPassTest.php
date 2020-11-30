@@ -392,7 +392,7 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'types' => ['FooSuccessPayload', 'FooFailurePayload'],
-                        'resolveType' => '@=resolver("PayloadTypeResolver", [value, "FooSuccessPayload", "FooFailurePayload"])',
+                        'resolveType' => '@=query("PayloadTypeResolver", value, "FooSuccessPayload", "FooFailurePayload")',
                         'name' => 'FooPayload',
                     ],
                 ],

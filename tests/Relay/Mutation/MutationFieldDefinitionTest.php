@@ -67,7 +67,7 @@ class MutationFieldDefinitionTest extends TestCase
                         'type' => null,
                     ],
                 ],
-                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+                'resolve' => '@=query(\'relay_mutation_field\', args, context, info, mutateAndGetPayloadCallback(foobar))',
             ]],
             'types set as string return expected type string' => [[
                 'payloadType' => 'foo',
@@ -80,7 +80,7 @@ class MutationFieldDefinitionTest extends TestCase
                         'type' => 'bar!',
                     ],
                 ],
-                'resolve' => '@=resolver(\'relay_mutation_field\', [args, context, info, mutateAndGetPayloadCallback(foobar)])',
+                'resolve' => '@=query(\'relay_mutation_field\', args, context, info, mutateAndGetPayloadCallback(foobar))',
             ]],
         ];
     }

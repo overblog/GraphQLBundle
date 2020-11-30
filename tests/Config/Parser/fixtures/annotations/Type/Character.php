@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
+ * @GQL\TypeInterface(resolveType="@=query('character_type', value)")
  * @GQL\Description("The character interface")
  */
 abstract class Character
@@ -19,7 +19,7 @@ abstract class Character
     protected string $name;
 
     /**
-     * @GQL\Field(type="[Character]", resolve="@=resolver('App\\MyResolver::getFriends')")
+     * @GQL\Field(type="[Character]", resolve="@=query('App\\MyResolver::getFriends')")
      * @GQL\Description("The friends of the character")
      */
     protected array $friends;

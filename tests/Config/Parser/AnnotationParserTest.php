@@ -79,10 +79,10 @@ class AnnotationParserTest extends TestCase
         // Test an interface
         $this->expect('Character', 'interface', [
             'description' => 'The character interface',
-            'resolveType' => "@=resolver('character_type', [value])",
+            'resolveType' => "@=query('character_type', value)",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\\\MyResolver::getFriends')"],
             ],
         ]);
 
@@ -92,7 +92,7 @@ class AnnotationParserTest extends TestCase
             'interfaces' => ['Character'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\\\MyResolver::getFriends')"],
                 'race' => ['type' => 'Race'],
             ],
         ]);
@@ -103,7 +103,7 @@ class AnnotationParserTest extends TestCase
             'isTypeOf' => "@=isTypeOf('App\Entity\Droid')",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\\\MyResolver::getFriends')"],
                 'memory' => ['type' => 'Int!'],
                 'planet_allowedPlanets' => [
                     'type' => '[Planet]',
@@ -129,7 +129,7 @@ class AnnotationParserTest extends TestCase
             'fieldsDefaultAccess' => '@=isAuthenticated()',
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\\\MyResolver::getFriends')"],
                 'realName' => ['type' => 'String!', 'access' => "@=hasRole('SITH_LORD')"],
                 'location' => ['type' => 'String!', 'public' => "@=hasRole('SITH_LORD')"],
                 'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
@@ -158,7 +158,7 @@ class AnnotationParserTest extends TestCase
                         'builder' => 'PlanetFilterArgBuilder',
                         'config' => ['option2' => 'value2'],
                     ],
-                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=query('closest_planet', args['filter'])",
                 ],
             ],
         ]);
@@ -237,7 +237,7 @@ class AnnotationParserTest extends TestCase
             'interfaces' => ['Armored', 'Character'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\\\MyResolver::getFriends')"],
                 'planet_armorResistance' => [
                     'type' => 'Int!',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
