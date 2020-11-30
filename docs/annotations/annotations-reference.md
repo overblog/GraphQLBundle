@@ -32,7 +32,7 @@ class Coordinates {
     public $longitude;
 
     /**
-     * @GQL\Field(type="Float!", resolve="resolver('elevation_resolver', [value.latitude, value.longitude])")
+     * @GQL\Field(type="Float!", resolve="query('elevation_resolver', value.latitude, value.longitude)")
      */
     public $elevation;
 }
@@ -141,7 +141,7 @@ class Hero {
      *     @GQL\Arg(name="droidsOnly", type="Boolean", description="Retrieve only droids heroes"),
      *     @GQL\Arg(name="nameStartsWith", type="String", description="Retrieve only heroes with name starting with")
      * },
-     * resolve="resolver('hero_friends', [args['droidsOnly'], args['nameStartsWith']])"
+     * resolve="query('hero_friends', args['droidsOnly'], args['nameStartsWith'])"
      * )
      */
     public $friends;
@@ -286,7 +286,7 @@ class Hero {
      * @GQL\Field(
      *   type="[Hero]",
      *   argsBuilder="Pager"
-     *   resolve="resolver('hero_friends', [value, args['page']])"
+     *   resolve="query('hero_friends', value, args['page'])"
      * )
      */
     public $friends;

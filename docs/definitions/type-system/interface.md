@@ -40,7 +40,7 @@ it: with **yaml** config files and with **annotations**. Lets take a look at bot
 Character:
     type: interface
     config:
-        resolveType: "@=resolver('character_type', [value, typeResolver])"
+        resolveType: "@=query('character_type', value, typeResolver)"
         description: "A character in the Star Wars Trilogy"
         fields:
             id: 'ID!'
@@ -261,7 +261,7 @@ namespace AppBundle;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
+ * @GQL\TypeInterface(resolveType="@=query('character_type', value)")
  * @GQL\Description("A character in the Star Wars Trilogy")
  */
 abstract class Character

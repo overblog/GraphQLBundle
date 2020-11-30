@@ -103,7 +103,7 @@ Character:
     config:
         # depending of `value.type`, this resolver should 
         # returns `CharacterWarrior` or `CharacterWizard`
-        resolveType: "@=resolver('character_type_resolver', [value.type])"
+        resolveType: "@=query('character_type_resolver', value.type)"
         fields:
             id: {type: Int!}
             type: {type: String!}
@@ -190,7 +190,7 @@ NodeEditPermission:
                 # The `value` is enforced to implement "Node" no matter which type uses this decorator.
                 # The resolver could be for example a (cached) user of symfony/security authorization checker
                 # which does ->isGranted([attribute] $attribute, [subject] $value)
-                resolve: '@=resolver("Permission.nodeAttribute", ["edit", value])'
+                resolve: '@=query("Permission.nodeAttribute", "edit", value)'
 
 Product:
     type: 'object'

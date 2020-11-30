@@ -46,21 +46,21 @@ Query:
                     episode:
                         description: "If omitted, returns the hero of the whole saga. If provided, returns the hero of that particular episode."
                         type: "Episode"
-                resolve: "@=resolver('character_hero', [args['episode'].getId()])"
+                resolve: "@=query('character_hero', args['episode'].getId())"
             human:
                 type: "Human"
                 args:
                     id:
                         description: "id of the human"
                         type: "String!"
-                resolve: "@=resolver('character_human', [args['id']])"
+                resolve: "@=query('character_human', args['id'])"
             droid:
                 type: "Droid"
                 args:
                     id:
                         description: "id of the droid"
                         type: "String!"
-                resolve: "@=resolver('character_droid', [args])"
+                resolve: "@=query('character_droid', args)"
 ```
 
  

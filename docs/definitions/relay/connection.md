@@ -8,7 +8,7 @@ Query:
         fields:
             user:
                 type: User
-                resolve: '@=resolver("query")'
+                resolve: '@=query("query")'
 
 User:
     type: object
@@ -19,21 +19,21 @@ User:
             friends:
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
-                resolve: '@=resolver("friends", [value, args])'
+                resolve: '@=query("friends", value, args)'
             friendsForward:
                 type: userConnection
                 argsBuilder: "Relay::ForwardConnection"
-                resolve: '@=resolver("friends", [value, args])'
+                resolve: '@=query("friends", value, args)'
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"
-                resolve: '@=resolver("friends", [value, args])'
+                resolve: '@=query("friends", value, args)'
 
 friendConnection:
     type: relay-connection
     config:
         nodeType: User
-        resolveNode: '@=resolver("node", [value])'
+        resolveNode: '@=query("node", value)'
         edgeFields:
             friendshipTime:
                 type: String
@@ -41,13 +41,13 @@ friendConnection:
         connectionFields:
             totalCount:
                 type: Int
-                resolve: '@=resolver("connection")'
+                resolve: '@=query("connection")'
 
 userConnection:
     type: relay-connection
     config:
         nodeType: User
-        resolveNode: '@=resolver("node", [value])'
+        resolveNode: '@=query("node", value)'
 ```
 
 To ease relay connection pagination you can use the [pagination helper](../../helpers/relay-paginator.md).

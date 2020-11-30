@@ -1,13 +1,13 @@
 # Resolver
 
-To ease development we named 2 types of resolver:
+To ease development we created 2 types of resolver:
 
-- `Resolver` that should be use for resolving readonly actions (query)
-- `Mutation` that should be use for resolving writing actions (mutation)
+- `Query` that should be used for resolving readonly actions
+- `Mutation` that should be used for resolving writing actions
 
 This is just a recommendation.
 
-Resolvers can be define 2 different ways:
+Resolvers can be defined in 2 different ways:
 
 ## The PHP way
 
@@ -20,14 +20,14 @@ Auto map classes method are accessible by:
 
 **Note:**
 * When using service id as FQCN in yaml or annotation definition, backslashes must be correctly escaped, here an example:
-`'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
+`'@=query("App\\GraphQL\\Resolver\\Greetings", args["name"])'`.
 * You can also see the more straight forward way using [resolver map](resolver-map.md).
 
 ### Resolver
 
 Example using an alias:
 ````yaml
-resolve: '@=resolver("say_hello", [args["name"]])'
+resolve: '@=query("say_hello", args["name"])'
 ````
 
 ```php
@@ -57,7 +57,7 @@ class Greetings implements QueryInterface, AliasedInterface
 
 Example using a fully qualified method name:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+resolve: '@=query("App\\GraphQL\\Resolver\\Greetings::sayHello", args["name"])'
 ````
 
 Note: backslashes must be correctly escaped and respect the use of single and double quotes.
@@ -80,7 +80,7 @@ class Greetings implements QueryInterface
 
 Example using the class invoker:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
+resolve: '@=query("App\\GraphQL\\Resolver\\Greetings", args["name"])'
 ````
 
 ```php
@@ -107,7 +107,7 @@ You may also use the invoker to define a type-wide resolver with the `resolveFie
 MyType:
     type: object
     config:
-        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"]])'
+        resolveField: '@=query("App\\GraphQL\\Resolver\\Greetings", info, args.name)'
         fields:
             hello:
                 type: String

@@ -172,8 +172,8 @@ Examples:
 ```yaml
 @=newObject("App\\Entity\\User", ["John", 15])
 
-# Using inside another function (resolver)
-@=resolver("myResolver", [newObject("App\\User\\User", [args])])
+# Using inside another function (query)
+@=query("myResolver", newObject("App\\User\\User", [args]))
 ```
 
 ---
@@ -438,12 +438,12 @@ Backslashes in expressions must be escaped by 2 or 4 backslasehs, depending on w
 When using **single quotes** as _outer_ quotes, you must use **double backslashes**. e.g.:
 ```yaml
 ...
-resolve: '@=resolver("App\\GraphQL\\Resolver\\ResolverName::methodName")'
+resolve: '@=query("App\\GraphQL\\Resolver\\ResolverName::methodName")'
 ...
 ```
 When using **double quotes** as _outer_ quotes, you must use **4 backslashes**, e.g.:
 ```yaml
 ...
-resolve: "@=resolver('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
+resolve: "@=query('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
 ...
 ```

@@ -31,7 +31,7 @@ Query:
                     id:
                         description: "id of the droid"
                         type: "String!"
-                resolve: "@=resolver('character_droid', [args])"
+                resolve: "@=query('character_droid', args)"
 ```
 
 In the example we add `1000` on the complexity every time using `Query.droid` field in query.

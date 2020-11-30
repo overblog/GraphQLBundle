@@ -10,12 +10,12 @@ Query:
                 builder: "Relay::Node"
                 builderConfig:
                     nodeInterfaceType: Node
-                    idFetcher: '@=resolver("node_id_fetcher", [value])'
+                    idFetcher: '@=query("node_id_fetcher", value)'
                     
 Node:
     type: relay-node
     config:
-        resolveType: '@=resolver("node_type", [value])'
+        resolveType: '@=query("node_type", value)'
 
 Photo:
     type: object

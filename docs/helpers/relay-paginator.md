@@ -203,7 +203,7 @@ You should get the 4 last items of the _data set_.
 #### Within a resolver
 
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args])'
+resolve: '@=query("App\\GraphQL\\Resolver\\Greetings::sayHello", args)'
 ````
 
 ````

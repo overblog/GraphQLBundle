@@ -152,7 +152,7 @@ class MutationField implements MappingInterface
 
         $field = [
             'type' => $payloadTypeName.'!',
-            'resolve' => \sprintf('@=mutation("%s", [args["input"]])', $resolver),
+            'resolve' => \sprintf('@=mutation("%s", args["input"])', $resolver),
             'args' => [
                 'input' => $inputTypeName.'!',
             ],
@@ -170,7 +170,7 @@ class MutationField implements MappingInterface
                 'config' => [
                     'types' => [$payloadSuccessTypeName, $payloadFailureTypeName],
                     'resolveType' => \sprintf(
-                        '@=resolver("PayloadTypeResolver", [value, "%s", "%s"])',
+                        '@=query("PayloadTypeResolver", value, "%s", "%s")',
                         $payloadSuccessTypeName,
                         $payloadFailureTypeName
                     ),
@@ -236,7 +236,7 @@ FooPayload:
     type: union
     config:
         types: ['FooSuccessPayload', 'FooFailurePayload']
-        resolveType: '@=resolver("PayloadTypeResolver", [value, "FooSuccessPayload", "FooFailurePayload"])'
+        resolveType: '@=query("PayloadTypeResolver", value, "FooSuccessPayload", "FooFailurePayload")'
 
 FooSuccessPayload:
     type: object
