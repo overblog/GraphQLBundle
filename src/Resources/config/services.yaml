@@ -39,6 +39,8 @@ services:
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         calls:
             - ["setDispatcher", ["@event_dispatcher"]]
+        tags:
+            - { name: overblog_graphql.service, alias: typeResolver }
 
     Overblog\GraphQLBundle\Transformer\ArgumentsTransformer:
         arguments:

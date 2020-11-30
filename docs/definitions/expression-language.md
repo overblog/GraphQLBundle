@@ -25,7 +25,6 @@ All definition config entries can use expression language but it must be explici
 	- [hasPermission](#haspermission)
 	- [hasAnyPermission](#hasanypermission)
 	- [getUser](#getuser)
-	- [getType](#gettype)
 - [Registered variables](#registered-variables)
 - [Private services](#private-services)
 - [Custom expression functions](#custom-expression-functions)
@@ -319,16 +318,6 @@ Examples
 
 # Checking if user has particular name
 @=getUser().firstName === 'adam'
-```
-
-### getType
-**Signature**: <code><b>getType</b>(string <b>$alias</B>): GraphQL\Type\Definition\Type|null</code>
-
-Returns a GraphQL type.
-
-Examples
-```yaml
-@=getType('Post')
 ```
 
 
