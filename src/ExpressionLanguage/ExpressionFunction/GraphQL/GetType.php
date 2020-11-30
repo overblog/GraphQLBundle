@@ -10,9 +10,7 @@ final class GetType extends ExpressionFunction
 {
     public function __construct()
     {
-        parent::__construct(
-            'getType',
-            fn (string $alias) => "$this->gqlServices->getType($alias)"
+        parent::__construct('getType', fn (string $alias) => "$this->gqlServices->getType($alias)"
         );
     }
 }

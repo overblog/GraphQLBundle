@@ -20,7 +20,7 @@ final class GraphQLServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container): void
     {
-        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.graphql_service', true);
+        $taggedServices = $container->findTaggedServiceIds('overblog_graphql.service', true);
         $serviceContainer = ['container' => new Reference('service_container')];
         $expressionLanguageDefinition = $container->findDefinition('overblog_graphql.expression_language');
 
@@ -28,7 +28,7 @@ final class GraphQLServicesPass implements CompilerPassInterface
             foreach ($tags as $attributes) {
                 if (empty($attributes['alias']) || !is_string($attributes['alias'])) {
                     throw new InvalidArgumentException(
-                        sprintf('Service "%s" tagged "overblog_graphql.graphql_service" should have a valid "alias" attribute.', $id)
+                        sprintf('Service "%s" tagged "overblog_graphql.service" should have a valid "alias" attribute.', $id)
                     );
                 }
                 $serviceContainer[$attributes['alias']] = new Reference($id);

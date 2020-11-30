@@ -33,7 +33,7 @@ class GraphQLServicesPassTest extends TestCase
             ]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Service "my-id" tagged "overblog_graphql.graphql_service" should have a valid "alias" attribute.');
+        $this->expectExceptionMessage('Service "my-id" tagged "overblog_graphql.service" should have a valid "alias" attribute.');
 
         (new GraphQLServicesPass())->process($container);
     }

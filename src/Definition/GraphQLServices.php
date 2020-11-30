@@ -8,8 +8,6 @@ use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\ResolverResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
-use function json_encode;
-use function sprintf;
 
 /**
  * Container for special services to be passed to all generated types.
