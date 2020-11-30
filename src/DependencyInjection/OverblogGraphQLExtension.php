@@ -98,7 +98,7 @@ class OverblogGraphQLExtension extends Extension
             ->addTag('overblog_graphql.mutation');
 
         $container->registerForAutoconfiguration(QueryInterface::class)
-            ->addTag('overblog_graphql.resolver');
+            ->addTag('overblog_graphql.query');
 
         $container->registerForAutoconfiguration(Type::class)
             ->addTag('overblog_graphql.type');

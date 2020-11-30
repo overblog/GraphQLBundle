@@ -19,7 +19,7 @@ final class AliasedPass implements CompilerPassInterface
 {
     private const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
-        QueryInterface::class => 'overblog_graphql.resolver',
+        QueryInterface::class => 'overblog_graphql.query',
         Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
     ];
 

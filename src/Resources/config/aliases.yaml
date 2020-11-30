@@ -3,7 +3,7 @@ services:
         public: true
 
     overblog_graphql.type_resolver: '@Overblog\GraphQLBundle\Resolver\TypeResolver'
-    overblog_graphql.resolver_resolver: '@Overblog\GraphQLBundle\Resolver\QueryResolver'
+    overblog_graphql.query_resolver: '@Overblog\GraphQLBundle\Resolver\QueryResolver'
     overblog_graphql.mutation_resolver: '@Overblog\GraphQLBundle\Resolver\MutationResolver'
     overblog_graphql.access_resolver: '@Overblog\GraphQLBundle\Resolver\AccessResolver'
     overblog_graphql.cache_compiler: '@Overblog\GraphQLBundle\Generator\TypeGenerator'

@@ -4,8 +4,8 @@ services:
         arguments:
             - "@overblog_graphql.promise_adapter"
         tags:
-            - { name: "overblog_graphql.resolver", alias: "friends", method: "friendsResolver" }
-            - { name: "overblog_graphql.resolver", alias: "node", method: "resolveNode" }
-            - { name: "overblog_graphql.resolver", alias: "query", method: "resolveQuery" }
-            - { name: "overblog_graphql.resolver", alias: "connection", method: "resolveConnection" }
-            - { name: "overblog_graphql.resolver", alias: "promise", method: "resolvePromiseFullFilled" }
+            - { name: "overblog_graphql.query", alias: "friends", method: "friendsResolver" }
+            - { name: "overblog_graphql.query", alias: "node", method: "resolveNode" }
+            - { name: "overblog_graphql.query", alias: "query", method: "resolveQuery" }
+            - { name: "overblog_graphql.query", alias: "connection", method: "resolveConnection" }
+            - { name: "overblog_graphql.query", alias: "promise", method: "resolvePromiseFullFilled" }

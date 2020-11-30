@@ -5,7 +5,7 @@ services:
     plural_resolver:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\PluralResolver
         tags:
-            - { name: "overblog_graphql.resolver" }
+            - { name: "overblog_graphql.query" }
 
 overblog_graphql:
     definitions:

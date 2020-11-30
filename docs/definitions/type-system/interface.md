@@ -299,11 +299,11 @@ services:
         class: MyBundle\GraphQL\Resolver\CharacterResolver
         arguments: ["@overblog_graphql.type_resolver"]
         tags:
-            - { name: overblog_graphql.resolver, alias: "character_type", method: "resolveType" }
-            - { name: overblog_graphql.resolver, alias: "character_friends", method: "resolveFriends" }
-            - { name: overblog_graphql.resolver, alias: "character_hero", method: "resolveHero" }
-            - { name: overblog_graphql.resolver, alias: "character_human", method: "resolveHuman" }
-            - { name: overblog_graphql.resolver, alias: "character_droid", method: "resolveDroid" }
+            - { name: overblog_graphql.query, alias: "character_type", method: "resolveType" }
+            - { name: overblog_graphql.query, alias: "character_friends", method: "resolveFriends" }
+            - { name: overblog_graphql.query, alias: "character_hero", method: "resolveHero" }
+            - { name: overblog_graphql.query, alias: "character_human", method: "resolveHuman" }
+            - { name: overblog_graphql.query, alias: "character_droid", method: "resolveDroid" }
 ```
 
 ```php

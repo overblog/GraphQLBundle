@@ -86,7 +86,7 @@ Example:
 ### query
 **Signature**: <code><b>query</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `q`
 
-Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
+Calls a method on the tagged service `overblog_graphql.query` with `$args`
 
 Examples:
 ```yaml
@@ -349,7 +349,7 @@ Private services
 
 It is not possible to use private services with the [`service`](#service) function since this is equivalent to call the
 `get` method on the [Service Container](https://symfony.com/doc/current/service_container.html). In order to make 
-private services accessible, they must be tagged with `overblog_graphql.graphql_service`.
+private services accessible, they must be tagged with `overblog_graphql.service`.
 
 Example:
 
@@ -357,7 +357,7 @@ Example:
 App\MyPrivateService:
     public: false
     tags:
-        - { name: overblog_graphql.graphql_service, alias: my_private_service }
+        - { name: overblog_graphql.service, alias: my_private_service }
 ```
 
 Usage:
@@ -376,7 +376,7 @@ To use a vendor private services:
 
 ```php
 $vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
-$vendorPrivateServiceDef->addTag('overblog_graphql.graphql_service', ['alias' => 'vendor_private_service']);
+$vendorPrivateServiceDef->addTag('overblog_graphql.service', ['alias' => 'vendor_private_service']);
 ```
 
 Custom expression functions

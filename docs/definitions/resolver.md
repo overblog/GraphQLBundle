@@ -12,7 +12,7 @@ Resolvers can be define 2 different ways:
 ## The PHP way
 
 
-You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`) in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
+You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\QueryInterface` or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`) in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
 Auto map classes method are accessible by:
 * double-colon (::) to separate service id (class name) and the method names
 (example: `AppBunble\GraphQL\CustomResolver::myMethod`)
@@ -184,7 +184,7 @@ services:
 
 ## The service way
 
-Creating a service tagged `overblog_graphql.resolver` for resolvers
+Creating a service tagged `overblog_graphql.query` for queries
 or `overblog_graphql.mutation` for mutations.
 
 Using the php way examples:
@@ -195,8 +195,8 @@ services:
         # only for sf < 3.3
         #class: App\GraphQL\Resolver\Greetings
         tags:
-            - { name: overblog_graphql.resolver, method: sayHello, alias: say_hello } # add alias say_hello
-            - { name: overblog_graphql.resolver, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
+            - { name: overblog_graphql.query, method: sayHello, alias: say_hello } # add alias say_hello
+            - { name: overblog_graphql.query, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
 ```
 
 `SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
@@ -210,7 +210,7 @@ services:
         # only for sf < 3.3
         #class: App\GraphQL\Resolver\Greetings
         tags:
-            - { name: overblog_graphql.resolver }
+            - { name: overblog_graphql.query }
 ```
 
 This way resolver can be accessed with service id `App\GraphQL\Resolver\Greetings`.

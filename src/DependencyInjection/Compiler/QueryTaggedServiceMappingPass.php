@@ -8,11 +8,11 @@ use InvalidArgumentException;
 use function is_string;
 use function sprintf;
 
-class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
+class QueryTaggedServiceMappingPass extends TaggedServiceMappingPass
 {
     protected function getTagName(): string
     {
-        return 'overblog_graphql.resolver';
+        return 'overblog_graphql.query';
     }
 
     protected function checkRequirements(string $id, array $tag): void
@@ -28,6 +28,6 @@ class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
 
     protected function getResolverServiceID(): string
     {
-        return 'overblog_graphql.resolver_resolver';
+        return 'overblog_graphql.query_resolver';
     }
 }
