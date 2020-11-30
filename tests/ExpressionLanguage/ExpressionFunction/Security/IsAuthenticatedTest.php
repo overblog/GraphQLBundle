@@ -22,7 +22,7 @@ class IsAuthenticatedTest extends TestCase
             $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'),
             $this->any()
         );
-        $gqlServices = new GraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices(['security' => $security]);
 
         $isAuthenticated = $this->expressionLanguage->evaluate(
             'isAuthenticated()',

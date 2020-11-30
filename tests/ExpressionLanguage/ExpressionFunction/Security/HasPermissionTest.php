@@ -29,7 +29,7 @@ class HasPermissionTest extends TestCase
             ],
             $this->any()
         );
-        $services = new GraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices(['security' => $security]);
 
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,

@@ -22,7 +22,7 @@ class IsFullyAuthenticatedTest extends TestCase
             'IS_AUTHENTICATED_FULLY',
             $this->any()
         );
-        $gqlServices = new GraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices(['security' => $security]);
 
         $isFullyAuthenticated = $this->expressionLanguage->evaluate(
             'isFullyAuthenticated()',

@@ -22,7 +22,7 @@ class IsRememberMeTest extends TestCase
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );
-        $gqlServices = new GraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices(['security' => $security]);
 
         $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GRAPHQL_SERVICES => $gqlServices]);
         $this->assertTrue($isRememberMe);

@@ -332,7 +332,7 @@ class ConfigParserPassTest extends TestCase
                         'fields' => [
                             'foo' => [
                                 'type' => 'FooPayload!',
-                                'resolve' => '@=mutation("Mutation.foo", [args["input"]])',
+                                'resolve' => '@=mutation("Mutation.foo", args.input)',
                                 'args' => [
                                     'input' => ['type' => 'FooInput!'],
                                 ],

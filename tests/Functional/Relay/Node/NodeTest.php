@@ -24,13 +24,13 @@ class NodeTest extends TestCase
 
     public function testNodeInterfaceAndFields(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "1") {
-    id
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "1") {
+            id
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -43,13 +43,13 @@ EOF;
 
     public function testGetsTheCorrectIdForPhotos(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "4") {
-    id
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "4") {
+            id
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -62,16 +62,16 @@ EOF;
 
     public function testGetsTheCorrectWidthForPhotos(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "4") {
-    id
-    ... on Photo {
-      width
-    }
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "4") {
+            id
+            ... on Photo {
+              width
+            }
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -85,14 +85,14 @@ EOF;
 
     public function testGetsTheCorrectTypeNameForUsers(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "1") {
-    id
-    __typename
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "1") {
+            id
+            __typename
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -106,14 +106,14 @@ EOF;
 
     public function testGetsTheCorrectTypeNameForPhotos(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "4") {
-    id
-    __typename
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "4") {
+            id
+            __typename
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -127,16 +127,16 @@ EOF;
 
     public function testIgnoresPhotoFragmentsOnUser(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "1") {
-    id
-    ... on Photo {
-      width
-    }
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "1") {
+            id
+            ... on Photo {
+              width
+            }
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => [
@@ -149,13 +149,13 @@ EOF;
 
     public function testReturnsNullForBadIds(): void
     {
-        $query = <<<'EOF'
-{
-  node(id: "5") {
-    id
-  }
-}
-EOF;
+        $query = <<<QUERY
+        {
+          node(id: "5") {
+            id
+          }
+        }
+        QUERY;
 
         $expectedData = [
             'node' => null,
@@ -166,24 +166,24 @@ EOF;
 
     public function testHasCorrectNodeInterface(): void
     {
-        $query = <<<'EOF'
-{
-        __type(name: "Node") {
-          name
-          kind
-          fields {
+        $query = <<<QUERY
+        {
+          __type(name: "Node") {
             name
-            type {
-              kind
-              ofType {
-                name
+            kind
+            fields {
+              name
+              type {
                 kind
+                ofType {
+                  name
+                  kind
+                }
               }
             }
           }
         }
-      }
-EOF;
+        QUERY;
 
         $expectedData = [
             '__type' => [
@@ -209,31 +209,31 @@ EOF;
 
     public function testHasCorrectNodeRootField(): void
     {
-        $query = <<<'EOF'
-{
-        __schema {
-          queryType {
-            fields {
-              name
-              type {
-                name
-                kind
-              }
-              args {
+        $query = <<<QUERY
+        {
+          __schema {
+            queryType {
+              fields {
                 name
                 type {
+                  name
                   kind
-                  ofType {
-                    name
+                }
+                args {
+                  name
+                  type {
                     kind
+                    ofType {
+                      name
+                      kind
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-EOF;
+        QUERY;
 
         $expectedData = [
             '__schema' => [

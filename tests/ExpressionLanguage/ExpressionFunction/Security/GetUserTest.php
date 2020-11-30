@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
@@ -27,7 +26,7 @@ class GetUserTest extends TestCase
         $testUser = new User('testUser', 'testPassword');
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
-        $services = new GraphQLServices(['security' => new Security($coreSecurity)]);
+        $services = $this->createGraphQLServices(['security' => new Security($coreSecurity)]);
 
         $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertInstanceOf(UserInterface::class, $user);
@@ -35,7 +34,9 @@ class GetUserTest extends TestCase
 
     public function testGetUserNoTokenStorage(): void
     {
-        ${TypeGenerator::GRAPHQL_SERVICES} = new GraphQLServices(['security' => new Security($this->createMock(CoreSecurity::class))]);
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
+            ['security' => new Security($this->createMock(CoreSecurity::class))]
+        );
         ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         $this->assertNull(eval($this->getCompileCode()));
     }
@@ -43,7 +44,7 @@ class GetUserTest extends TestCase
     public function testGetUserNoToken(): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
-        ${TypeGenerator::GRAPHQL_SERVICES} = new GraphQLServices(
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
                 'security' => new Security(
                     new CoreSecurity(
@@ -69,7 +70,7 @@ class GetUserTest extends TestCase
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
 
-        ${TypeGenerator::GRAPHQL_SERVICES} = new GraphQLServices(
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
                 'security' => new Security(
                     new CoreSecurity(

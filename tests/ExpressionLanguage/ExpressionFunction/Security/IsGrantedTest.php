@@ -22,7 +22,7 @@ class IsGrantedTest extends TestCase
             $this->matchesRegularExpression('/^ROLE_(USER|ADMIN)$/'),
             $this->any()
         );
-        $gqlServices = new GraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices(['security' => $security]);
 
         $this->assertTrue(
             $this->expressionLanguage->evaluate('isGranted("ROLE_USER")', [TypeGenerator::GRAPHQL_SERVICES => $gqlServices])

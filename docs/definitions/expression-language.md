@@ -9,7 +9,7 @@ All definition config entries can use expression language but it must be explici
 	- [service](#service)
 	- [parameter](#parameter)
 	- [isTypeOf](#istypeof)
-	- [resolver](#resolver)
+	- [query](#query)
 	- [mutation](#mutation)
 	- [arguments](#arguments)
 	- [globalId](#globalid)
@@ -25,6 +25,7 @@ All definition config entries can use expression language but it must be explici
 	- [hasPermission](#haspermission)
 	- [hasAnyPermission](#hasanypermission)
 	- [getUser](#getuser)
+	- [getType](#gettype)
 - [Registered variables](#registered-variables)
 - [Private services](#private-services)
 - [Custom expression functions](#custom-expression-functions)
@@ -82,42 +83,42 @@ Example:
 
 ---
 
-### resolver
-**Signature**: <code><b>resolver</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `res`
+### query
+**Signature**: <code><b>query</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `q`
 
 Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
 
 Examples:
 ```yaml
 # Using aliased resolver name
-@=resolver('blog_by_id', [value['blogID']])
+@=query('blog_by_id', value['blogID'])
 
-# Using the 'res' alias and a FQCN::methodName.
+# Using the 'q' alias and a FQCN::methodName.
 # Note the double quotes.
-@=res("App\\GraphQL\\Resolver\\UserResolver::findOne", [args, info, context, value])
+@=q("App\\GraphQL\\Resolver\\UserResolver::findOne", args, info, context, value)
 
 # If using single quotes, you must use 4 slashes
-@=res('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', [args, info, context, value])
+@=q('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', info, args)
 ```
 
 ---
 
 ### mutation
-**Signature**: <code><b>mutation</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `mut`
+**Signature**: <code><b>mutation</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `m`
 
 Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
 
 Examples:
 ```yaml
 # Using aliased mutation name
-@=mutation('remove_post_from_community', [args['postId']])
+@=mutation('remove_post_from_community', args.postId)
 
-# Using the 'mut' alias and a FQCN::methodName
+# Using the 'm' alias and a FQCN::methodName
 # Note the double quotes.
-@=mut("App\\GraphQL\\Mutation\\PostMutation::findAll", [args])
+@=m("App\\GraphQL\\Mutation\\PostMutation::findAll", args)
 
 # If using single quotes, you must use 4 slashes
-@=mut('App\\\\GraphQL\\\\Mutation\\\\PostMutation::findAll', [args])
+@=m('App\\\\GraphQL\\\\Mutation\\\\PostMutation::findAll', args)
 ```
 
 ---
@@ -320,11 +321,21 @@ Examples
 @=getUser().firstName === 'adam'
 ```
 
+### getType
+**Signature**: <code><b>getType</b>(string <b>$alias</B>): GraphQL\Type\Definition\Type|null</code>
+
+Returns a GraphQL type.
+
+Examples
+```yaml
+@=getType('Post')
+```
+
+
 ## Registered variables:
 
 | Variable             | Description  | Scope|
 |:-------------------- |:------------ |:---- |
-| `typeResolver`       | An object of class `Overblog\GraphQLBundle\Resolver\TypeResolver`| global|
 | `object`             | Refers to the value of the field for which access is being requested. For array `object` will be each item of the array. For Relay connection `object` will be the node of each connection edges. | only available for `config.fields.*.access` with query operation or mutation payload type. |
 | `value`              | The value returned by a previous resolver | available in the `resolve` and `access` contexts |
 | `args`               | An array of argument values of current resolver | available in the `resolve` and `access` contexts |

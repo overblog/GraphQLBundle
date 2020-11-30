@@ -2,9 +2,7 @@ Photo:
     type: object
     config:
         fields:
-            id:
-                type: ID!
-            width:
-                type: Int
+            id: ID!
+            width: Int
         resolveField: "@=query('resolve_photo_field', value, info)"
         interfaces: [Node]

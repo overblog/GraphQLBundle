@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyPermission;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
@@ -29,7 +28,7 @@ class HasAnyPermissionTest extends TestCase
             ],
             $this->any()
         );
-        $services = new GraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices(['security' => $security]);
 
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,

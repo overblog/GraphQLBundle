@@ -158,7 +158,7 @@ class AnnotationParserTest extends TestCase
                         'builder' => 'PlanetFilterArgBuilder',
                         'config' => ['option2' => 'value2'],
                     ],
-                    'resolve' => "@=query('closest_planet', args['filter'])",
+                    'resolve' => "@=query('closest_planet', args.filter)",
                 ],
             ],
         ]);

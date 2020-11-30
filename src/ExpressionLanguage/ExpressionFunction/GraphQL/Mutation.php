@@ -8,7 +8,9 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 final class Mutation extends ExpressionFunction
 {
-    public function __construct($name = 'mutation')
+    public const NAME = 'mutation';
+
+    public function __construct($name = self::NAME)
     {
         parent::__construct(
             $name,

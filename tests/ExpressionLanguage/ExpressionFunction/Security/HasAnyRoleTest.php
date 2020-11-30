@@ -19,7 +19,7 @@ class HasAnyRoleTest extends TestCase
     public function testEvaluator(): void
     {
         $security = $this->getSecurityIsGrantedWithExpectation('ROLE_ADMIN', $this->any());
-        $services = new GraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices(['security' => $security]);
 
         $hasRole = $this->expressionLanguage->evaluate(
             'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',

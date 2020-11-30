@@ -39,7 +39,7 @@ final class PluralIdentifyingRootFieldDefinition implements MappingInterface
             'type' => "[${config['outputType']}]",
             'args' => [$argName => ['type' => "[${config['inputType']}!]!"]],
             'resolve' => sprintf(
-                "@=resolver('relay_plural_identifying_field', [args['$argName'], context, info, resolveSingleInputCallback(%s)])",
+                "@=query('relay_plural_identifying_field', args.$argName, context, info, resolveSingleInputCallback(%s))",
                 $this->cleanResolveSingleInput($config['resolveSingleInput'])
             ),
         ];

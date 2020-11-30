@@ -22,7 +22,7 @@ class HasRoleTest extends TestCase
             'ROLE_USER',
             $this->any()
         );
-        $services = new GraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices(['security' => $security]);
 
         $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertTrue($hasRole);

@@ -22,7 +22,7 @@ class IsAnonymousTest extends TestCase
             'IS_AUTHENTICATED_ANONYMOUSLY',
             $this->any()
         );
-        $services = new GraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices(['security' => $security]);
 
         $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertTrue($isAnonymous);
