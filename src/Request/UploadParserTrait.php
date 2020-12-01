@@ -52,6 +52,14 @@ trait UploadParserTrait
         return $operations;
     }
 
+    /**
+     * @param array{
+     *     operations?: array|null,
+     *     map?:        array|null,
+     *     query?:      string,
+     *     variables?:  array
+     * } $payload
+     */
     private function isUploadPayload(array $payload): bool
     {
         if (isset($payload['operations']) && isset($payload['map']) && is_array($payload['operations']) && is_array($payload['map'])) {
@@ -61,9 +69,9 @@ trait UploadParserTrait
             $mapPosition = array_search('map', $payloadKeys);
 
             return $operationsPosition < $mapPosition;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -73,9 +81,7 @@ trait UploadParserTrait
     {
         return array_reduce(
             explode('.', $location),
-            function ($carry, $item) {
-                return sprintf('%s[%s]', $carry, $item);
-            }
+            fn ($carry, $item) => "{$carry}[$item]"
         );
     }
 
