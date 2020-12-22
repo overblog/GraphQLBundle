@@ -1,0 +1,188 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*.*"
+      - master
+  push:
+    branches:
+      - "*.*"
+      - master
+
+env:
+  fail-fast: true
+  COMPOSER_ROOT_VERSION: "1.4"
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - php-version: 7.4
+            symfony-version: "4.4.*"
+          - php-version: 7.4
+            symfony-version: "5.0.*"
+          - php-version: 7.4
+            symfony-version: "5.1.*"
+
+    name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Change stability"
+        if: matrix.stability != ''
+        run: perl -pi -e 's/^}$/,"minimum-stability":"'"${{ matrix.minimum-stability }}"'"}/' composer.json
+
+      - name: "Symfony version"
+        if: matrix.symfony-version != ''
+        run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}"'"#' composer.json
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress ${{ matrix.composer-flags }}
+
+      - name: "Run tests"
+        run: composer test
+
+  coding-standard:
+    runs-on: ubuntu-20.04
+    name: Coding Standard
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Check coding standard"
+        run: composer check-cs
+
+  benchmark:
+    runs-on: ubuntu-20.04
+    name: Benchmark
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Run benchmark"
+        run: composer bench
+
+  static-analysis:
+    runs-on: ubuntu-20.04
+    name: "Static analysis"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP with coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Run static-analysis"
+        run: composer static-analysis
+
+  coverage:
+    runs-on: ubuntu-20.04
+    name: "Coverage"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          ref: ${{ github.ref }}
+
+      - name: "Install PHP with coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "pcov"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: Run tests with coverage
+        run: php -dpcov.enabled=1 bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
+
+      - name: "Upload coverage results to Scrutinizer"
+        run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+
+      - name: "Upload coverage results to Coveralls"
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_RUN_LOCALLY: 1
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
