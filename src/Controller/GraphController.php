@@ -137,7 +137,7 @@ class GraphController
 
         foreach ($queries as $query) {
             $payload = $this->requestExecutor
-                ->execute($schemaName, ['query' => $query['query'], 'variables' => $query['variables']])
+                ->execute($schemaName, $query)
                 ->toArray();
             if (!$this->useApolloBatchingMethod) {
                 $payload = ['id' => $query['id'], 'payload' => $payload];
