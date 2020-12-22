@@ -11,7 +11,8 @@ init:
 
 install:
     - ps: Set-Service wuauserv -StartupType Manual
-    - cinst -y php composer
+    - cinst -y php --version=7.4
+    - cinst -y composer
     - refreshenv
     - cd c:\tools\php74
     - copy php.ini-production php.ini /Y
