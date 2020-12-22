@@ -1,0 +1,241 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*.*"
+      - master
+  push:
+    branches:
+      - "*.*"
+      - master
+
+env:
+  COMPOSER_ROOT_VERSION: "1.4"
+
+jobs:
+  build:
+    runs-on: ubuntu-16.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-version: 5.6
+            graphql-version: "^0.11.2"
+            composer-flags: "--prefer-lowest"
+            symfony-deprecation-helper: "disabled"
+
+          - php-version: 5.6
+            graphql-version: "0.12"
+            symfony-version: "3.1.*"
+            symfony-deprecation-helper: "disabled"
+
+          - php-version: 7.0
+            symfony-version: "3.2.*"
+            phpunit-version: "^5.7.26"
+
+          - php-version: 7.1
+
+          - php-version: 7.2
+            symfony-version: "3.4.*"
+
+          - php-version: 7.3
+            symfony-version: "4.1.*"
+
+          - php-version: 7.4
+            symfony-version: "4.3.*"
+
+          - php-version: 7.3
+            symfony-version: "4.4.*"
+            symfony-deprecation-helper: "max[total]=0"
+
+          - php-version: 7.3
+            symfony-version: "5.0.*"
+            symfony-deprecation-helper: "max[total]=0"
+
+          - php-version: 7.4
+            symfony-version: "5.1.*"
+
+          - php-version: 7.4
+            symfony-version: "5.2.*"
+
+    name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Change stability"
+        if: matrix.stability != ''
+        run: perl -pi -e 's/^}$/,"minimum-stability":"'"${{ matrix.minimum-stability }}"'"}/' composer.json
+
+      - name: "Symfony version"
+        if: matrix.symfony-version != ''
+        run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}"'"#' composer.json
+
+      - name: "PhpUnit version"
+        if: matrix.phpunit-version != ''
+        run: composer req "phpunit/phpunit:${{ matrix.phpunit-version }}" --dev --no-update
+
+      - name: "Webonyx GraphQL version"
+        if: matrix.graphql-version != ''
+        run: composer req "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress ${{ matrix.composer-flags }}
+
+      - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
+        if: matrix.symfony-deprecation-helper != ''
+        run: export SYMFONY_DEPRECATIONS_HELPER=${{ matrix.symfony-deprecation-helper }}
+
+      - name: "Run tests"
+        run: composer test
+
+  coding-standard:
+    runs-on: ubuntu-16.04
+    name: Coding Standard
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.2"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Check coding standard"
+        run: composer check-cs
+
+  benchmark:
+    runs-on: ubuntu-16.04
+    name: Benchmark
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.2"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Run benchmark"
+        run: composer bench
+
+  static-analysis:
+    runs-on: ubuntu-16.04
+    name: "Static analysis"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP with coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.2"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Run static-analysis"
+        run: composer static-analysis
+
+  coverage:
+    runs-on: ubuntu-16.04
+    name: "Coverage"
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          ref: ${{ github.ref }}
+
+      - name: "Install PHP with coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.2"
+          ini-values: pcov.directory=.
+          coverage: "pcov"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Symfony 4.4 version"
+        run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"4.4.*"'"#' composer.json
+
+      - name: "Install dependencies"
+        run: composer update --no-interaction --no-interaction --no-progress
+
+      - name: "Setup PCOV for PHPUnit < 8"
+        run: |
+          composer require pcov/clobber
+          bin/pcov clobber
+
+      - name: "Run tests with coverage"
+        run: bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
+
+      - name: "Upload coverage results to Scrutinizer"
+        run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+
+      - name: "Upload coverage results to Coveralls"
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_RUN_LOCALLY: 1
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
