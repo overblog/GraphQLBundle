@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*.*"
+      - master
+  push:
+    branches:
+      - "*.*"
+      - master
+
+env:
+  fail-fast: true
+  COMPOSER_ROOT_VERSION: "1.4"
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - php-version: 7.2
+          - symfony-require: "3.4.*"
+
+    name: PHP ${{ matrix.php }} Test ${{ matrix.env }}
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 50
+
+      - name: "Install PHP without coverage"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version  }}
+          coverage: none
+
+      - name: "Install PHP without coverage"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
+
+      - name: "Install dependencies with composer"
+        env:
+          SYMFONY_REQUIRE: "${{ matrix.symfony-require }}"
+        run: |
+          composer global require --no-progress --no-scripts --no-plugins symfony/flex
+          composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
+
+      - name: Run tests
+        run: |
+          export $ENV
+          composer test
+        env:
+          ENV: ${{ matrix.env }}
