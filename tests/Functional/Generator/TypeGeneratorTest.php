@@ -25,12 +25,12 @@ class TypeGeneratorTest extends TestCase
 
         $this->assertSame(
             'Cannot query field "privateData" on type "ObjectWithPrivateField".',
-            json_decode( // @phpstan-ignore-line
+            json_decode(
                 static::query(
                     'query { object { name privateData } }',
                     self::USER_RYAN,
                     'public'
-                )->getResponse()->getContent(),
+                )->getResponse()->getContent() ?: '',
                 true
             )['errors'][0]['message']
         );
@@ -45,12 +45,12 @@ class TypeGeneratorTest extends TestCase
     {
         $this->assertSame(
             'Cannot query field "other" on type "ObjectWithPrivateField".',
-            json_decode( // @phpstan-ignore-line
+            json_decode(
                 static::query(
                     'query { object { name other } }',
                     self::USER_RYAN,
                     'public'
-                )->getResponse()->getContent(),
+                )->getResponse()->getContent() ?: '',
                 true
             )['errors'][0]['message']
         );
