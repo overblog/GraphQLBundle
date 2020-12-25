@@ -1,7 +1,7 @@
 OverblogGraphQLBundle
 ======================
 
-[![Build Status](https://travis-ci.org/overblog/GraphQLBundle.svg?branch=0.12)](https://travis-ci.org/overblog/GraphQLBundle)
+![CI](https://github.com/overblog/GraphQLBundle/workflows/CI/badge.svg?branch=0.12)
 [![Build status](https://ci.appveyor.com/api/projects/status/7ksxlcgwt40q74hv/branch/0.12?svg=true)](https://ci.appveyor.com/project/overblog/graphqlbundle/branch/0.12)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=0.12)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=0.12)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=0.12)](https://coveralls.io/github/overblog/GraphQLBundle?branch=0.12)
