@@ -217,11 +217,6 @@ jobs:
       - name: "Install dependencies"
         run: composer update --no-interaction --no-interaction --no-progress
 
-      - name: "Setup PCOV for PHPUnit < 8"
-        run: |
-          composer require pcov/clobber
-          bin/pcov clobber
-
       - name: "Run tests with coverage"
         run: bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
 
