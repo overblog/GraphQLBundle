@@ -201,8 +201,8 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "7.2"
-          ini-values: pcov.directory=.
-          coverage: "pcov"
+          ini-values: xdebug.max_nesting_level=1000
+          coverage: "xdebug"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
