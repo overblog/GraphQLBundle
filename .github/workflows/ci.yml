@@ -20,30 +20,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: 5.6
-            graphql-version: "^0.11.2"
-            composer-flags: "--prefer-lowest"
-            symfony-deprecation-helper: "disabled"
-
-          - php-version: 5.6
-            graphql-version: "0.12"
-            symfony-version: "3.1.*"
-            symfony-deprecation-helper: "disabled"
-
-          - php-version: 7.0
-            symfony-version: "3.2.*"
-            phpunit-version: "^5.7.26"
-
           - php-version: 7.1
-
-          - php-version: 7.2
             symfony-version: "3.4.*"
 
-          - php-version: 7.3
-            symfony-version: "4.1.*"
+          - php-version: 7.2
+            symfony-version: "4.0.*"
+            phpunit-version: "^7.2"
 
-          - php-version: 7.4
+          - php-version: 7.2
+            symfony-version: "4.1.*"
+            phpunit-version: "^7.2"
+
+          - php-version: 7.3
             symfony-version: "4.3.*"
+
+          - php-version: 7.3
+            symfony-version: "4.3.*"
+            experimental-executor: "1"
 
           - php-version: 7.3
             symfony-version: "4.4.*"
@@ -54,7 +47,8 @@ jobs:
             symfony-deprecation-helper: "max[total]=0"
 
           - php-version: 7.4
-            symfony-version: "5.1.*"
+            symfony-version: "4.3.*"
+            symfony-deprecation-helper: "max[total]=0"
 
           - php-version: 7.4
             symfony-version: "5.2.*"
@@ -98,6 +92,10 @@ jobs:
 
       - name: "Install dependencies"
         run: composer update --no-interaction --no-interaction --no-progress ${{ matrix.composer-flags }}
+
+      - name: "Set USE_EXPERIMENTAL_EXECUTOR if needed"
+        if: matrix.experimental-executor != ''
+        run: export USE_EXPERIMENTAL_EXECUTOR=${{ matrix.experimental-executor }}
 
       - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
         if: matrix.symfony-deprecation-helper != ''
