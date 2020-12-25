@@ -97,7 +97,7 @@ jobs:
         run: composer req "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
 
       - name: "Install dependencies"
-        run: composer update --no-interaction --no-interaction --no-progress ${{ matrix.composer-flags }}
+        run: composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
 
       - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
         if: matrix.symfony-deprecation-helper != ''
@@ -129,7 +129,7 @@ jobs:
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
       - name: "Install dependencies"
-        run: composer update --no-interaction --no-interaction --no-progress
+        run: composer update --no-interaction --no-progress
 
       - name: "Check coding standard"
         run: composer check-cs
@@ -157,7 +157,7 @@ jobs:
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
       - name: "Install dependencies"
-        run: composer update --no-interaction --no-interaction --no-progress
+        run: composer update --no-interaction --no-progress
 
       - name: "Run benchmark"
         run: composer bench
@@ -185,7 +185,7 @@ jobs:
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
       - name: "Install dependencies"
-        run: composer update --no-interaction --no-interaction --no-progress
+        run: composer update --no-interaction --no-progress
 
       - name: "Run static-analysis"
         run: composer static-analysis
@@ -217,7 +217,7 @@ jobs:
         run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"4.4.*"'"#' composer.json
 
       - name: "Install dependencies"
-        run: composer update --no-interaction --no-interaction --no-progress
+        run: composer update --no-interaction --no-progress
 
       - name: "Setup PCOV for PHPUnit < 8"
         run: |
