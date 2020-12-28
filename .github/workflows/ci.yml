@@ -20,19 +20,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: 7.1
-            symfony-version: "3.4.*"
-
           - php-version: 7.2
-            symfony-version: "4.0.*"
-            phpunit-version: "^7.2"
-
-          - php-version: 7.2
-            symfony-version: "4.1.*"
+            symfony-version: "4.3.*"
             phpunit-version: "^7.2"
 
           - php-version: 7.3
             symfony-version: "4.3.*"
+            validator: false
 
           - php-version: 7.3
             symfony-version: "4.3.*"
@@ -103,6 +97,10 @@ jobs:
       - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
         if: matrix.symfony-deprecation-helper != ''
         run: export SYMFONY_DEPRECATIONS_HELPER=${{ matrix.symfony-deprecation-helper }}
+
+      - name: "Disabled validor if needed"
+        if: matrix.validator == false
+        run: export VALIDATOR=0
 
       - name: "Run tests"
         run: composer test
