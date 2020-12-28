@@ -51,6 +51,9 @@ jobs:
             symfony-deprecation-helper: "max[total]=0"
 
           - php-version: 7.4
+            symfony-version: "5.1.*"
+
+          - php-version: 7.4
             symfony-version: "5.2.*"
 
     name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
