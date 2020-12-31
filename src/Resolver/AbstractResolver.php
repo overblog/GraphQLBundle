@@ -97,6 +97,14 @@ abstract class AbstractResolver implements FluentResolverInterface
             return $this->solutions[$id];
         } else {
             $loader = $this->solutions[$id];
+            
+            if(is_callable($loader)) {
+                $this->solutions[$id] = $solution = $loader();
+                $this->onLoadSolution($solution);
+            } else {
+                $solution = $loader;
+            }
+            
             $this->solutions[$id] = $solution = $loader();
             $this->onLoadSolution($solution);
             $this->fullyLoadedSolutions[$id] = true;
