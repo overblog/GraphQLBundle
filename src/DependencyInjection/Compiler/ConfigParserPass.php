@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
+use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\XmlParser;
@@ -41,6 +42,7 @@ class ConfigParserPass implements CompilerPassInterface
         'xml' => 'xml',
         'graphql' => '{graphql,graphqls}',
         'annotation' => 'php',
+        'attribute' => 'php',
     ];
 
     public const PARSERS = [
@@ -48,6 +50,7 @@ class ConfigParserPass implements CompilerPassInterface
         'xml' => XmlParser::class,
         'graphql' => GraphQLParser::class,
         'annotation' => AnnotationParser::class,
+        'attribute' => AttributeParser::class,
     ];
 
     private static array $defaultDefaultConfig = [
@@ -92,7 +95,8 @@ class ConfigParserPass implements CompilerPassInterface
 
         // treats mappings
         // Pre-parse all files
-        AnnotationParser::reset();
+        AnnotationParser::reset($config);
+        AttributeParser::reset($config);
         $typesNeedPreParsing = $this->typesNeedPreParsing();
         foreach ($typesMappings as $params) {
             if ($typesNeedPreParsing[$params['type']]) {

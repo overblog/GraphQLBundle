@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
+use \Attribute;
+use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+
 /**
  * Annotation for GraphQL input type.
  *
  * @Annotation
  * @Target("CLASS")
  */
-final class Input implements Annotation
+#[Attribute(Attribute::TARGET_CLASS)]
+final class Input implements NamedArgumentConstructorAnnotation, Annotation
 {
     /**
      * Type name.
-     *
+     * 
      * @var string
      */
-    public string $name;
+    public ?string $name;
 
     /**
      * Is the type a relay input.
-     *
-     * @var bool
+     * 
+     * @var boolean
      */
     public bool $isRelay = false;
+
+    public function __construct(?string $name = null, bool $isRelay = false)
+    {
+        $this->name = $name;
+        $this->isRelay = $isRelay;
+    }
 }

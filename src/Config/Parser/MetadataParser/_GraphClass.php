@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Config\Parser\Annotation;
+namespace Overblog\GraphQLBundle\Config\Parser\ClassParser;
 
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -61,7 +61,7 @@ class GraphClass extends ReflectionClass
      *
      * @throws AnnotationException
      */
-    public function getAnnotations(Reflector $from = null): array
+    public function getMetadatas(Reflector $from = null): array
     {
         switch (true) {
             case null === $from:

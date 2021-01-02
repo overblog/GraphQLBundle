@@ -10,6 +10,8 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
  * @GQL\Description("The armored interface")
  */
+#[GQL\TypeInterface(resolveType: "@=resolver('character_type', [value])")]
+#[GQL\Description("The armored interface")]
 interface Armored
 {
 }

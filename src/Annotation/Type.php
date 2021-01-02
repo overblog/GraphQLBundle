@@ -4,53 +4,75 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
+use \Attribute;
+use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+
 /**
  * Annotation for GraphQL type.
  *
  * @Annotation
  * @Target("CLASS")
  */
-class Type implements Annotation
+#[Attribute(Attribute::TARGET_CLASS)]
+class Type implements NamedArgumentConstructorAnnotation, Annotation
 {
     /**
      * Type name.
-     *
+     * 
      * @var string
      */
-    public string $name;
+    public ?string $name;
 
     /**
      * Type inherited interfaces.
      *
      * @var string[]
      */
-    public array $interfaces;
+    public array $interfaces = [];
 
     /**
      * Is the type a relay payload.
-     *
-     * @var bool
+     * 
+     * @var boolean
      */
     public bool $isRelay = false;
 
     /**
      * Expression to a target fields resolver.
-     *
+     * 
      * @var string
      */
-    public string $resolveField;
+    public ?string $resolveField;
 
     /**
      * List of fields builder.
      *
      * @var array<\Overblog\GraphQLBundle\Annotation\FieldsBuilder>
+     * 
+     * @deprecated
      */
     public array $builders = [];
 
     /**
      * Expression to resolve type for interfaces.
-     *
+     * 
      * @var string
      */
-    public string $isTypeOf;
+    public ?string $isTypeOf;
+
+    public function __construct(
+        ?string $name = null,
+        array $interfaces = [],
+        bool $isRelay = false,
+        ?string $resolveField = null,
+        array $builders = [],
+        ?string $isTypeOf = null
+    ) {
+        $this->name = $name;
+        $this->interfaces = $interfaces;
+        $this->isRelay = $isRelay;
+        $this->resolveField = $resolveField;
+        $this->builders = $builders;
+        $this->isTypeOf = $isTypeOf;
+    }
 }

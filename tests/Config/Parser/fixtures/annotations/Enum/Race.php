@@ -8,12 +8,15 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 use Overblog\GraphQLBundle\Tests\Config\Parser\Constants;
 
 /**
- * @GQL\Enum(values={
- *    @GQL\EnumValue(name="CHISS", description="The Chiss race"),
- *    @GQL\EnumValue(name="ZABRAK", deprecationReason="The Zabraks have been wiped out")
- * })
+ * @GQL\Enum
+ * @GQL\EnumValue(name="CHISS", description="The Chiss race")
+ * @GQL\EnumValue(name="ZABRAK", deprecationReason="The Zabraks have been wiped out")
  * @GQL\Description("The list of races!")
  */
+#[GQL\Enum]
+#[GQL\EnumValue(name: "CHISS", description: "The Chiss race")]
+#[GQL\EnumValue(name: "ZABRAK", deprecationReason: "The Zabraks have been wiped out")]
+#[GQL\Description("The list of races!")]
 class Race
 {
     public const HUMAIN = 1;
