@@ -42,8 +42,13 @@ class DocBlockTypeGuesser extends PhpTypeGuesser
     {
         $contextFactory = new ContextFactory();
         $context = $contextFactory->createFromReflector($reflectionClass);
+        $docBlockComment = $reflector->getDocComment();
+        if (!$docBlockComment) {
+            throw new TypeGuessingException(sprintf('Doc Block not found'));
+        }
+
         try {
-            $docBlock = $this->getParser()->create($reflector->getDocComment(), $context);
+            $docBlock = $this->getParser()->create($docBlockComment, $context);
         } catch (Exception $e) {
             throw new TypeGuessingException(sprintf('Doc Block parsing failed with error: %s', $e->getMessage()));
         }

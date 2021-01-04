@@ -174,6 +174,18 @@ abstract class MetadataParserTest extends TestCase
                     ],
                     'resolve' => "@=resolver('closest_planet', [args['filter']])",
                 ],
+                'notesDeprecated' => [
+                    'builder' => 'NoteFieldBuilder',
+                    'builderConfig' => ['option1' => 'value1'],
+                ],
+                'closestPlanetDeprecated' => [
+                    'type' => 'Planet',
+                    'argsBuilder' => [
+                        'builder' => 'PlanetFilterArgBuilder',
+                        'config' => ['option2' => 'value2'],
+                    ],
+                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                ],
             ],
         ]);
 

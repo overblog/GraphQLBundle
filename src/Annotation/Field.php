@@ -50,6 +50,8 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      * Args builder.
      *
      * @var mixed
+     * 
+     * @deprecated
      */
     public $argsBuilder;
 
@@ -57,6 +59,8 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      * Field builder.
      *
      * @var mixed
+     * 
+     * @deprecated
      */
     public $fieldBuilder;
 

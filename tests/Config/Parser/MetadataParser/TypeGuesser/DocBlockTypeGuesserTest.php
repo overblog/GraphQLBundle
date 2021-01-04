@@ -15,7 +15,7 @@ use function sprintf;
 
 class DocBlockTypeGuesserTest extends TestCase
 {
-    protected $reflectors = [
+    protected array $reflectors = [
         ReflectionProperty::class => 'var',
         ReflectionMethod::class => 'return',
     ];
@@ -57,13 +57,27 @@ class DocBlockTypeGuesserTest extends TestCase
         }
     }
 
-    protected function doTest(string $docType, string $gqlType, ClassesTypesMap $map = null, string $reflectorClass = ReflectionProperty::class)
+    public function testMissingDocBlock(): void
+    {
+        $docBlockGuesser = new DocBlockTypeGuesser(new ClassesTypesMap());
+        $mock = $this->createMock(ReflectionProperty::class);
+        $mock->method('getDocComment')->willReturn(false);
+
+        try {
+            $docBlockGuesser->guessType(new ReflectionClass(__CLASS__), $mock);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(TypeGuessingException::class, $e);
+            $this->assertEquals('Doc Block not found', $e->getMessage());
+        }
+    }
+
+    protected function doTest(string $docType, string $gqlType, ClassesTypesMap $map = null, string $reflectorClass = ReflectionProperty::class): void
     {
         $docBlockGuesser = new DocBlockTypeGuesser($map ?: new ClassesTypesMap());
         $this->assertEquals($gqlType, $docBlockGuesser->guessType(new ReflectionClass(__CLASS__), $this->getMockedReflector($docType, $reflectorClass)));
     }
 
-    protected function doTestError(string $docType, string $reflectorClass, string $match)
+    protected function doTestError(string $docType, string $reflectorClass, string $match): void
     {
         $docBlockGuesser = new DocBlockTypeGuesser(new ClassesTypesMap());
         try {
@@ -75,12 +89,17 @@ class DocBlockTypeGuesserTest extends TestCase
         }
     }
 
+    /**
+     * @return ReflectionProperty|ReflectionMethod
+     */
     protected function getMockedReflector(string $type, string $className = ReflectionProperty::class)
     {
+        // @phpstan-ignore-next-line
         $mock = $this->createMock($className);
         $mock->method('getDocComment')
              ->willReturn(sprintf('/** @%s %s **/', $this->reflectors[$className], $type));
 
+        /** @var ReflectionProperty|ReflectionMethod $mock */
         return $mock;
     }
 }

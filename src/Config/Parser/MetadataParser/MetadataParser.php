@@ -560,9 +560,12 @@ abstract class MetadataParser implements PreParserInterface
             }
         }
 
-        if ($fieldMetadata->argsBuilder) {
+        $argsBuilder = self::getFirstMetadataMatching($metadatas, Metadata\ArgsBuilder::class);
+        if ($argsBuilder) {
+            $fieldConfiguration['argsBuilder'] = ['builder' => $argsBuilder->value, 'config' => $argsBuilder->config];
+        } elseif ($fieldMetadata->argsBuilder) {
             if (is_string($fieldMetadata->argsBuilder)) {
-                $fieldConfiguration['argsBuilder'] = $fieldMetadata->argsBuilder;
+                $fieldConfiguration['argsBuilder'] = ['builder' => $fieldMetadata->argsBuilder, 'config' => []];
             } elseif (is_array($fieldMetadata->argsBuilder)) {
                 list($builder, $builderConfig) = $fieldMetadata->argsBuilder;
                 $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
@@ -570,10 +573,14 @@ abstract class MetadataParser implements PreParserInterface
                 throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
             }
         }
-
-        if ($fieldMetadata->fieldBuilder) {
+        $fieldBuilder = self::getFirstMetadataMatching($metadatas, Metadata\FieldBuilder::class);
+        if ($fieldBuilder) {
+            $fieldConfiguration['builder'] = $fieldBuilder->value;
+            $fieldConfiguration['builderConfig'] = $fieldBuilder->config;
+        } elseif ($fieldMetadata->fieldBuilder) {
             if (is_string($fieldMetadata->fieldBuilder)) {
                 $fieldConfiguration['builder'] = $fieldMetadata->fieldBuilder;
+                $fieldConfiguration['builderConfig'] = [];
             } elseif (is_array($fieldMetadata->fieldBuilder)) {
                 list($builder, $builderConfig) = $fieldMetadata->fieldBuilder;
                 $fieldConfiguration['builder'] = $builder;
