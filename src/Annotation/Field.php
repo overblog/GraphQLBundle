@@ -67,6 +67,10 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      */
     public ?string $complexity;
 
+    /**
+     * @param string|string[]|null $argsBuilder 
+     * @param string|string[]|null $fieldBuilder 
+     */
     public function __construct(
         ?string $name = null,
         ?string $type = null,

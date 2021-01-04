@@ -11,13 +11,21 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
 
-class TypeHintTypeGuesser extends TypeGuesser
+class TypeHintTypeGuesser extends PhpTypeGuesser
 {
     public function getName(): string
     {
         return 'Type Hint';
     }
 
+    public function supports(Reflector $reflector): bool
+    {
+        return $reflector instanceof ReflectionProperty || $reflector instanceof ReflectionParameter || $reflector instanceof ReflectionMethod;
+    }
+
+    /**
+     * @param ReflectionProperty|ReflectionParameter|ReflectionMethod $reflector
+     */
     public function guessType(ReflectionClass $reflectionClass, Reflector $reflector, array $filterGraphQLTypes = []): ?string
     {
         $type = null;
@@ -58,27 +66,5 @@ class TypeHintTypeGuesser extends TypeGuesser
         $nullable = $hasDefaultValue || $type->allowsNull();
 
         return sprintf('%s%s', $gqlType, $nullable ? '' : '!');
-    }
-
-    /**
-     * Convert a PHP Builtin type to a GraphQL type.
-     */
-    protected function resolveTypeFromPhpType(string $phpType): ?string
-    {
-        switch ($phpType) {
-            case 'boolean':
-            case 'bool':
-                return 'Boolean';
-            case 'integer':
-            case 'int':
-                return 'Int';
-            case 'float':
-            case 'double':
-                return 'Float';
-            case 'string':
-                return 'String';
-            default:
-                return null;
-        }
     }
 }

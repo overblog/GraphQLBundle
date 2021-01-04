@@ -25,7 +25,7 @@ class AttributeParser extends MetadataParser
             case $reflector instanceof ReflectionProperty:
                 $attributes = $reflector->getAttributes();
         }
-        
+
         // @phpstan-ignore-line
         return array_map(fn (ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
     }

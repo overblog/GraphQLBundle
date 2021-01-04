@@ -29,6 +29,7 @@
         "php": ">=7.4",
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.4",
+        "phpdocumentor/reflection-docblock": "^5.2",
         "psr/log": "^1.0",
         "symfony/config": "^4.4 || ^5.0",
         "symfony/dependency-injection": "^4.4 || ^5.0",

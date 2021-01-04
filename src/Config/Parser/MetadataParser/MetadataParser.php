@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser;
 use Doctrine\Common\Annotations\AnnotationException;
 use Overblog\GraphQLBundle\Annotation\Annotation as Meta;
 use Overblog\GraphQLBundle\Annotation as Metadata;
+use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DocBlockTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeHintTypeGuesser;
@@ -90,6 +91,7 @@ abstract class MetadataParser implements PreParserInterface
     {
         self::$map = new ClassesTypesMap();
         self::$typeGuessers = [
+            new DocBlockTypeGuesser(self::$map),
             new TypeHintTypeGuesser(self::$map),
             new DoctrineTypeGuesser(self::$map, $configs['doctrine']['types_mapping']),
         ];
@@ -876,6 +878,9 @@ abstract class MetadataParser implements PreParserInterface
     {
         $errors = [];
         foreach (self::$typeGuessers as $typeGuesser) {
+            if (!$typeGuesser->supports($reflector)) {
+                continue;
+            }
             try {
                 $type = $typeGuesser->guessType($reflectionClass, $reflector, $filterGraphQLTypes);
 

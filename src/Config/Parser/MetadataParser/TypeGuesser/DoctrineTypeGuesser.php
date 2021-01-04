@@ -36,6 +36,14 @@ class DoctrineTypeGuesser extends TypeGuesser
         return 'Doctrine annotations ';
     }
 
+    public function supports(Reflector $reflector): bool
+    {
+        return $reflector instanceof ReflectionProperty;
+    }
+
+    /**
+     * @param ReflectionProperty $reflector
+     */
     public function guessType(ReflectionClass $reflectionClass, Reflector $reflector, array $filterGraphQLTypes = []): ?string
     {
         if (!$reflector instanceof ReflectionProperty) {

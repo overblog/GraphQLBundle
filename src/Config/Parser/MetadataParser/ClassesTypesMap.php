@@ -33,7 +33,7 @@ class ClassesTypesMap
     {
         foreach ($this->classesMap as $gqlType => $config) {
             if ($config['class'] === $className) {
-                if (in_array($config['type'], $filteredTypes)) {
+                if (empty($filteredTypes) || in_array($config['type'], $filteredTypes)) {
                     return $gqlType;
                 }
             }

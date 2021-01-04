@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
  */
 class AttributeParserTest extends MetadataParserTest
 {
-    public function parser($method, ...$args)
+    public function parser(string $method, ...$args)
     {
         return AttributeParser::$method(...$args);
     }

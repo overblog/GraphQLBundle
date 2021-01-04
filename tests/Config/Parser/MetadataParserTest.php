@@ -32,7 +32,12 @@ abstract class MetadataParserTest extends TestCase
         ],
     ];
 
-    abstract public function parser($method, ...$args);
+    /**
+     * @param array $args
+     *
+     * @return mixed
+     */
+    abstract public function parser(string $method, ...$args);
 
     abstract public function formatMetadata(string $metadata): string;
 
@@ -186,6 +191,7 @@ abstract class MetadataParserTest extends TestCase
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
                 'lives' => ['type' => 'Int!'],
+                'toys' => ['type' => '[String!]!'],
             ],
         ]);
     }

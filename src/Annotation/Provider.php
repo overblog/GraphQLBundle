@@ -37,6 +37,10 @@ final class Provider implements NamedArgumentConstructorAnnotation, Annotation
      */
     public ?array $targetMutationTypes;
     
+    /**
+     * @param string|string[]|null $targetQueryTypes 
+     * @param string|string[]|null $targetMutationTypes 
+     */
     public function __construct(?string $prefix = null, $targetQueryTypes = null, $targetMutationTypes = null)
     {
         $this->prefix = $prefix;

@@ -9,7 +9,7 @@ use SplFileInfo;
 
 class AnnotationParserTest extends MetadataParserTest
 {
-    public function parser($method, ...$args)
+    public function parser(string $method, ...$args)
     {
         return AnnotationParser::$method(...$args);
     }

@@ -23,6 +23,10 @@ final class Mutation extends Field implements NamedArgumentConstructorAnnotation
      */
     public array $targetTypes;
 
+    /**
+     * @param string|string[]|null $targetTypes 
+     * @param string|string[]|null $targetType 
+     */
     public function __construct(
         ?string $name = null,
         ?string $type = null,

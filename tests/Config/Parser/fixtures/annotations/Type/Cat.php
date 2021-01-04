@@ -19,4 +19,12 @@ class Cat extends Animal
      */
     #[GQL\Field(type: "Int!")]
     protected int $lives;
+
+    /**
+     * @GQL\Field
+     *
+     * @var string[]
+     */
+    #[GQL\Field]
+    protected array $toys;
 }

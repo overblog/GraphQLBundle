@@ -17,6 +17,8 @@ abstract class TypeGuesser implements TypeGuesserInterface
         $this->map = $map;
     }
 
+    abstract public function supports(Reflector $reflector): bool;
+
     abstract public function getName(): string;
 
     abstract public function guessType(ReflectionClass $reflectionClass, Reflector $reflector, array $filterGraphQLTypes = []): ?string;
