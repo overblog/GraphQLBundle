@@ -115,6 +115,7 @@ abstract class MetadataParser implements PreParserInterface
             }
 
             $gqlTypes = [];
+            /** @phpstan-ignore-next-line */
             $reflectionClass = self::getClassReflection($className);
 
             foreach (static::getMetadatas($reflectionClass) as $classMetadata) {
@@ -246,6 +247,7 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * @throws ReflectionException
+     * @phpstan-param class-string $className
      */
     private static function getClassReflection(string $className): ReflectionClass
     {
@@ -338,7 +340,7 @@ abstract class MetadataParser implements PreParserInterface
         $buildersAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class), $typeAnnotation->builders);
         if (!empty($buildersAnnotations)) {
             $typeConfiguration['builders'] = array_map(function ($fieldsBuilderAnnotation) {
-                return ['builder' => $fieldsBuilderAnnotation->builder, 'builderConfig' => $fieldsBuilderAnnotation->builderConfig];
+                return ['builder' => $fieldsBuilderAnnotation->value, 'builderConfig' => $fieldsBuilderAnnotation->config];
             }, $buildersAnnotations);
         }
 
@@ -524,6 +526,7 @@ abstract class MetadataParser implements PreParserInterface
 
         $args = [];
 
+        /** @var Metadata\Arg[] $argAnnotations */
         $argAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\Arg::class), $fieldMetadata->args);
 
         foreach ($argAnnotations as $arg) {
@@ -718,7 +721,7 @@ abstract class MetadataParser implements PreParserInterface
                 }
 
                 // TODO: Remove old property check in 1.1
-                $metadataTargets = $metadata->targetTypes ?? $metadata->targetType ?? null;
+                $metadataTargets = $metadata->targetTypes ?? null;
 
                 if (null === $metadataTargets) {
                     if ($metadata instanceof Metadata\Mutation && isset($providerMetadata->targetMutationTypes)) {
@@ -926,7 +929,10 @@ abstract class MetadataParser implements PreParserInterface
         return $arguments;
     }
 
-    private static function getClassProperties(ReflectionClass $reflectionClass)
+    /**
+     * @return ReflectionProperty[]
+     */
+    private static function getClassProperties(ReflectionClass $reflectionClass): array
     {
         $properties = [];
         do {

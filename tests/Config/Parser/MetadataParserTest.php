@@ -204,7 +204,21 @@ abstract class MetadataParserTest extends TestCase
                 'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
                 'lives' => ['type' => 'Int!'],
                 'toys' => ['type' => '[String!]!'],
+                'shortcut' => ['type' => 'String', 'resolve' => '@=value.field'],
             ],
+        ]);
+
+        // Test type with shortcut annotation
+        $this->expect('Doggy', 'object', [
+            'fields' => [
+                'toys' => ['type' => '[String!]!'],
+                'catFights' => [
+                    'type' => 'Int!',
+                    'resolve' => '@=call(value.getCountCatFights, arguments({}, args))',
+                    'argsBuilder' => ['builder' => 'MyArgsBuilder'],
+                ],
+            ],
+            'builders' => [['builder' => 'MyFieldsBuilder']],
         ]);
     }
 
@@ -221,6 +235,20 @@ abstract class MetadataParserTest extends TestCase
                 'tags' => ['type' => '[String]!'],
             ],
         ]);
+
+        $this->expect('StarPlanet', 'input-object', [
+            'fields' => [
+                'distance' => ['type' => 'Int!'],
+            ],
+        ]);
+    }
+
+    public function testInterfaces(): void
+    {
+        $this->expect('WithArmor', 'interface', [
+            'description' => 'The armored interface',
+            'resolveType' => '@=resolver(\'character_type\', [value])',
+        ]);
     }
 
     public function testEnum(): void
@@ -234,11 +262,18 @@ abstract class MetadataParserTest extends TestCase
                 'TWILEK' => ['value' => '4'],
             ],
         ]);
+
+        $this->expect('Pets', 'enum', [
+            'values' => [
+                'DOGS' => ['value' => 'dog'],
+                'CATS' => ['value' => 'cat'],
+            ],
+        ]);
     }
 
     public function testUnion(): void
     {
-        $this->expect('SearchResult', 'union', [
+        $this->expect('ResultSearch', 'union', [
             'description' => 'A search result',
             'types' => ['Hero', 'Droid', 'Sith'],
             'resolveType' => '@=value.getType()',
@@ -261,7 +296,7 @@ abstract class MetadataParserTest extends TestCase
     public function testInterfaceAutoguessed(): void
     {
         $this->expect('Mandalorian', 'object', [
-            'interfaces' => ['Armored', 'Character'],
+            'interfaces' => ['Character', 'WithArmor'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
@@ -282,6 +317,10 @@ abstract class MetadataParserTest extends TestCase
             'parseValue' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\\annotations\Scalar\GalaxyCoordinates', 'parseValue'],
             'parseLiteral' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\\annotations\Scalar\GalaxyCoordinates', 'parseLiteral'],
             'description' => 'The galaxy coordinates scalar',
+        ]);
+
+        $this->expect('ShortScalar', 'custom-scalar', [
+            'scalarType' => '@=type',
         ]);
     }
 

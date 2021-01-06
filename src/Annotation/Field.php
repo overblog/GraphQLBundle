@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
+use Attribute;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -14,18 +15,18 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"PROPERTY", "METHOD"})
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
-class Field implements NamedArgumentConstructorAnnotation, Annotation
+class Field extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * The field name.
-     * 
+     *
      * @var string
      */
     public ?string $name;
 
     /**
      * Field Type.
-     * 
+     *
      * @var string
      */
     public ?string $type;
@@ -34,14 +35,14 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      * Field arguments.
      *
      * @var array<\Overblog\GraphQLBundle\Annotation\Arg>
-     * 
+     *
      * @deprecated
      */
     public array $args = [];
 
     /**
      * Resolver for this property.
-     * 
+     *
      * @var string
      */
     public ?string $resolve;
@@ -50,7 +51,7 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      * Args builder.
      *
      * @var mixed
-     * 
+     *
      * @deprecated
      */
     public $argsBuilder;
@@ -59,7 +60,7 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
      * Field builder.
      *
      * @var mixed
-     * 
+     *
      * @deprecated
      */
     public $fieldBuilder;
@@ -72,8 +73,8 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
     public ?string $complexity;
 
     /**
-     * @param string|string[]|null $argsBuilder 
-     * @param string|string[]|null $fieldBuilder 
+     * @param string|string[]|null $argsBuilder
+     * @param string|string[]|null $fieldBuilder
      */
     public function __construct(
         ?string $name = null,
@@ -82,9 +83,13 @@ class Field implements NamedArgumentConstructorAnnotation, Annotation
         ?string $resolve = null,
         $argsBuilder = null,
         $fieldBuilder = null,
-        ?string $complexity = null
+        ?string $complexity = null,
+        ?string $value = null
     ) {
-        $this->name = $name;
+        if ($name && $value) {
+            $this->cumulatedAttributesException('name', $value, $name);
+        }
+        $this->name = $value ?: $name;
         $this->type = $type;
         $this->args = $args;
         $this->resolve = $resolve;

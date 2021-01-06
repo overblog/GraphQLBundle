@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"CLASS"})
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Provider implements NamedArgumentConstructorAnnotation, Annotation
+final class Provider extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Optionnal prefix for provider fields.

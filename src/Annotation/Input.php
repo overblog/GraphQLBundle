@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use \Attribute;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -14,7 +15,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Input implements NamedArgumentConstructorAnnotation, Annotation
+final class Input extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Type name.
@@ -30,9 +31,12 @@ final class Input implements NamedArgumentConstructorAnnotation, Annotation
      */
     public bool $isRelay = false;
 
-    public function __construct(?string $name = null, bool $isRelay = false)
+    public function __construct(?string $name = null, bool $isRelay = false, ?string $value = null)
     {
-        $this->name = $name;
+        if ($name && $value) {
+            $this->cumulatedAttributesException('name', $value, $name);
+        }
+        $this->name = $value ?: $name;
         $this->isRelay = $isRelay;
     }
 }

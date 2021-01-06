@@ -8,10 +8,10 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Type
- * @GQL\FieldsBuilder(builder="MyFieldsBuilder", builderConfig={"param1": "val1"})
+ * @GQL\FieldsBuilder(value="MyFieldsBuilder", config={"param1": "val1"})
  */
 #[GQL\Type]
-#[GQL\FieldsBuilder(builder: "MyFieldsBuilder", builderConfig: ["param1" => "val1"])]
+#[GQL\FieldsBuilder(value: "MyFieldsBuilder", config: ["param1" => "val1"])]
 class Crystal
 {
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use \Attribute;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -14,7 +15,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class Type implements NamedArgumentConstructorAnnotation, Annotation
+class Type extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Type name.
@@ -66,9 +67,13 @@ class Type implements NamedArgumentConstructorAnnotation, Annotation
         bool $isRelay = false,
         ?string $resolveField = null,
         array $builders = [],
-        ?string $isTypeOf = null
+        ?string $isTypeOf = null,
+        ?string $value = null
     ) {
-        $this->name = $name;
+        if ($name && $value) {
+            $this->cumulatedAttributesException('name', $value, $name);
+        }
+        $this->name = $value ?: $name;
         $this->interfaces = $interfaces;
         $this->isRelay = $isRelay;
         $this->resolveField = $resolveField;

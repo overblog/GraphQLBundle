@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use \Attribute;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -14,7 +15,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Union implements NamedArgumentConstructorAnnotation, Annotation
+final class Union extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Union name.
@@ -37,9 +38,12 @@ final class Union implements NamedArgumentConstructorAnnotation, Annotation
      */
     public ?string $resolveType;
     
-    public function __construct(?string $name = null, array $types = [], ?string $resolveType = null)
+    public function __construct(?string $name = null, array $types = [], ?string $resolveType = null, ?string $value = null)
     {
-        $this->name = $name;
+        if ($name && $value) {
+            $this->cumulatedAttributesException('name', $value, $name);
+        }
+        $this->name = $value ?: $name;
         $this->types = $types;
         $this->resolveType = $resolveType;
     }

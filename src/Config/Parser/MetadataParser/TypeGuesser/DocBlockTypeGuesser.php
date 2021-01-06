@@ -94,7 +94,7 @@ class DocBlockTypeGuesser extends PhpTypeGuesser
         if ($type instanceof Object_) {
             $className = $type->getFqsen();
             if (!$className) {
-                throw new TypeGuessingException(sprintf('%s, but type "object" is too generic.', $exceptionPrefix, $className));
+                throw new TypeGuessingException(sprintf('%s, but type "object" is too generic.', $exceptionPrefix));
             }
             // Remove first '\' from returned class name
             $className = substr((string) $className, 1);
@@ -115,12 +115,16 @@ class DocBlockTypeGuesser extends PhpTypeGuesser
     protected function resolveCompound(Compound $compound): ?Type
     {
         $typeNull = new Null_();
-        if ($compound->getIterator()->count() > 2 || !$compound->contains($typeNull)) {
+        if (2 !== $compound->getIterator()->count() || !$compound->contains($typeNull)) {
             return null;
         }
-        $type = current(array_filter(iterator_to_array($compound->getIterator(), false), fn (Type $type) => (string) $type !== (string) $typeNull));
+        foreach ($compound as $type) {
+            if (!$type instanceof Null_) {
+                return $type;
+            }
+        }
 
-        return $type;
+        return null;
     }
 
     private function getParser(): DocBlockFactory

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -14,27 +14,6 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"ANNOTATION", "CLASS"})
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-final class FieldsBuilder implements NamedArgumentConstructorAnnotation, Annotation
+final class FieldsBuilder extends Builder implements NamedArgumentConstructorAnnotation
 {
-    /**
-     * Builder name.
-     *
-     * @Required
-     * 
-     * @var string
-     */
-    public string $builder;
-
-    /**
-     * The builder config.
-     *
-     * @var mixed
-     */
-    public $builderConfig = [];
-
-    public function __construct(string $builder, array $builderConfig = [])
-    {
-        $this->builder = $builder;
-        $this->builderConfig = $builderConfig;
-    }
 }

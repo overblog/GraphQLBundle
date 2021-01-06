@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-final class Access implements NamedArgumentConstructorAnnotation, Annotation
+final class Access extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Field access.

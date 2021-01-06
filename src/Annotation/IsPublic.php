@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
-final class IsPublic implements NamedArgumentConstructorAnnotation, Annotation
+final class IsPublic extends Annotation implements NamedArgumentConstructorAnnotation
 {
      /**
      * Field publicity.

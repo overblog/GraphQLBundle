@@ -47,7 +47,7 @@ class ClassesTypesMap
      */
     public function resolveClass(string $typeName): ?string
     {
-        return isset($this->classesMap[$typeName]) ? $this->classesMap[$typeName]['class'] : null;
+        return $this->classesMap[$typeName]['class'] ?? null;
     }
 
     /**

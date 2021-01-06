@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"CLASS", "METHOD", "PROPERTY"})
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-final class Description implements NamedArgumentConstructorAnnotation, Annotation
+final class Description extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * The object description.

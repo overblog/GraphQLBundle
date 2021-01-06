@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"METHOD"})
  */
 #[Attribute(Attribute::TARGET_METHOD)]
-final class Query extends Field implements NamedArgumentConstructorAnnotation
+final class Query extends Field
 {
     /**
      * The target types to attach this query to.
@@ -36,9 +36,10 @@ final class Query extends Field implements NamedArgumentConstructorAnnotation
         $fieldBuilder = null,
         ?string $complexity = null,
         $targetTypes = null,
-        $targetType = null
+        $targetType = null,
+        ?string $value = null
     ) {
-        parent::__construct($name, $type, $args, $resolve, $argsBuilder, $fieldBuilder, $complexity);
+        parent::__construct($name, $type, $args, $resolve, $argsBuilder, $fieldBuilder, $complexity, $value);
         if ($targetTypes) {
             $this->targetTypes = is_string($targetTypes) ? [$targetTypes] : $targetTypes;
         } elseif ($targetType) {

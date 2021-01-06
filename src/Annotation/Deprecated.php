@@ -14,7 +14,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Target({"METHOD", "PROPERTY"})
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-final class Deprecated implements NamedArgumentConstructorAnnotation, Annotation
+final class Deprecated extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * The deprecation reason.

@@ -13,8 +13,8 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Annotation
  * @Target({"ANNOTATION", "CLASS"})
  */
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_CLASS_CONSTANT | Attribute::IS_REPEATABLE)]
-final class EnumValue implements NamedArgumentConstructorAnnotation, Annotation
+#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
+final class EnumValue extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * @var string
@@ -31,9 +31,12 @@ final class EnumValue implements NamedArgumentConstructorAnnotation, Annotation
      */
     public ?string $deprecationReason;
 
-    public function __construct(?string $name = null, ?string $description = null, ?string $deprecationReason = null)
+    public function __construct(?string $name = null, ?string $description = null, ?string $deprecationReason = null, ?string $value = null)
     {
-        $this->name = $name;
+        if ($name && $value) {
+            $this->cumulatedAttributesException('name', $value, $name);
+        }
+        $this->name = $value ?: $name;
         $this->description = $description;
         $this->deprecationReason = $deprecationReason;
     }
