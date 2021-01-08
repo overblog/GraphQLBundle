@@ -28,9 +28,9 @@ abstract class Builder extends Annotation implements NamedArgumentConstructorAnn
     /**
      * The builder config.
      *
-     * @var mixed
+     * @var array
      */
-    public $config = [];
+    public array $config = [];
 
     public function __construct(string $value, array $config = [])
     {
