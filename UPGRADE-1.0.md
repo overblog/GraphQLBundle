@@ -3,9 +3,13 @@ UPGRADE FROM 0.13 to 1.0
 
 # Table of Contents
 
-- [Customize the cursor encoder of the edges of a connection](#customize-the-cursor-encoder-of-the-edges-of-a-connection)
-- [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator)
-- [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
+- [UPGRADE FROM 0.13 to 1.0](#upgrade-from-013-to-10)
+- [Table of Contents](#table-of-contents)
+    - [Customize the cursor encoder of the edges of a connection](#customize-the-cursor-encoder-of-the-edges-of-a-connection)
+    - [Change arguments of `TypeGenerator` class](#change-arguments-of-typegenerator-class)
+    - [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
+    - [Annotations - Flattened annotations](#annotations---flattened-annotations)
+    - [Annotations - Attributes changed](#annotations---attributes-changed)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -86,3 +90,67 @@ class Argument implements ArgumentInterface
 }
 ```
 If you use your own class for resolver arguments, then it should have a `__get` method as well.
+
+
+### Annotations - Flattened annotations
+
+In order to prepare to PHP 8 attributes (they don't support nested attributes at the moment. @see https://github.com/symfony/symfony/issues/38503), the following annotations have been flattened: `@FieldsBuilder`, `@FieldBuilder`, `@ArgsBuilder`, `@Arg` and `@EnumValue`. 
+
+Before:
+```php
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field(args={
+     *   @GQL\Arg(name="arg1", type="String"),
+     *   @GQL\Arg(name="arg2", type="Int")
+     * })
+     */
+    public function myFields(?string $arg1, ?int $arg2) {..}
+}
+
+```
+
+After:
+```php
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field
+     * @GQL\Arg(name="arg1", type="String"),
+     * @GQL\Arg(name="arg2", type="Int")
+     */
+    public function myFields(?string $arg1, ?int $arg2) {..}
+}
+
+```
+
+### Annotations - Attributes changed
+
+Change the attributes name of `@FieldsBuilder` annotation from `builder` and `builderConfig` to `value` and `config`. 
+
+Before:
+```php
+/**
+ * @GQL\Type(name="MyType", builders={@GQL\FieldsBuilder(builder="Timestamped", builderConfig={opt1: "val1"})})
+ */
+class MyType {
+
+}
+```
+
+After:
+```php
+/**
+ * @GQL\Type("MyType")
+ * @GQL\FieldsBuilder(value="Timestamped", config={opt1: "val1"})
+ */
+class MyType {
+
+}
+```
+
