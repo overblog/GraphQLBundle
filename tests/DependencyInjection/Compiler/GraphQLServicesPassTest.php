@@ -22,15 +22,35 @@ class GraphQLServicesPassTest extends TestCase
     {
         /** @var ContainerBuilder|MockObject $container */
         $container = $this->getMockBuilder(ContainerBuilder::class)
-            ->setMethods(['findTaggedServiceIds', 'findDefinition'])
+            ->onlyMethods(['findTaggedServiceIds', 'findDefinition'])
             ->getMock();
-        $container->expects($this->once())
+
+        // TODO: remove following code in 1.0
+        // remove start
+        $container->expects($this->exactly(2))
             ->method('findTaggedServiceIds')
-            ->willReturn([
-                'my-id' => [
-                    ['alias' => $invalidAlias],
+            ->withConsecutive(['overblog_graphql.service'], ['overblog_graphql.global_variable'])
+            ->willReturnOnConsecutiveCalls(
+                [
+                    'my-id' => [
+                        ['alias' => $invalidAlias],
+                    ],
                 ],
-            ]);
+                []
+            );
+        // remove end
+
+        // TODO: uncomment following code in 1.0
+//        $container = $this->getMockBuilder(ContainerBuilder::class)
+//            ->onlyMethods(['findTaggedServiceIds', 'findDefinition'])
+//            ->getMock();
+//        $container->expects($this->once())
+//            ->method('findTaggedServiceIds')
+//            ->willReturn([
+//                'my-id' => [
+//                    ['alias' => $invalidAlias],
+//                ],
+//            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Service "my-id" tagged "overblog_graphql.service" should have a valid "alias" attribute.');

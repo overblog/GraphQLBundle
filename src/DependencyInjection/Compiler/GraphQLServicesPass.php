@@ -21,6 +21,19 @@ final class GraphQLServicesPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $taggedServices = $container->findTaggedServiceIds('overblog_graphql.service', true);
+
+        // TODO: remove following if-block in 1.0
+        // @codeCoverageIgnoreStart
+        if (count($deprecatedTaggedServices = $container->findTaggedServiceIds('overblog_graphql.global_variable', true)) > 0) {
+            @trigger_error(
+                "The tag 'overblog_graphql.global_variable' is deprecated since 0.14 and will be removed in 1.0. Use 'overblog_graphql.service' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
+                E_USER_DEPRECATED
+            );
+
+            $taggedServices = array_merge($taggedServices, $deprecatedTaggedServices);
+        }
+        // @codeCoverageIgnoreEnd
+
         $serviceContainer = ['container' => new Reference('service_container')];
         $expressionLanguageDefinition = $container->findDefinition('overblog_graphql.expression_language');
 

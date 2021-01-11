@@ -66,6 +66,11 @@ final class GraphQLServices
      */
     public function mutation(string $alias, ...$args)
     {
+        // TODO: remove the following if-block in 1.0
+        if (1 === count($args) && is_array($args[0])) {
+            $args = $args[0];
+        }
+
         return $this->mutationResolver->resolve([$alias, $args]);
     }
 

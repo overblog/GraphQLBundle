@@ -40,7 +40,7 @@ $connectionBuilder = new ConnectionBuilder(
 ### Change arguments of `TypeGenerator` class
 
 The `Overblog\GraphQLBundle\Generator\TypeGenerator` service is used internally for GraphQL types compilation. If you 
-overridden the service definition, please take into account the new constructor signature:
+overrode the service definition, please take into account the new constructor signature:
 
 ```diff
 public function __construct(
@@ -104,21 +104,21 @@ If you have any services tagged with `overblog_graphql.global_variable`, they sh
 `overblog_graphql.graphql_service` instead.
 
 
-## Change `resolver` expression function
+### Change `resolver` expression function
 
 The signature of the `resolver` expression function has been changed. 
 
 Old signature (deprecated): <code><b>resolver</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code>  
 New signature: <code><b>query</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code>
 
-Example of the function call to be changed:
+Example:
 ```diff
 - resolver('get_posts', [args, info, value])
 + query('get_posts', args, info, value)
 ```
 
 
-## Rename `ResolverInterface` to `QueryInterface`
+### Rename `ResolverInterface` to `QueryInterface`
 
 The `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` interface is deprecated. Use 
 `Overblog\GraphQLBundle\Definition\Resolver\QueryInterface` instead.
@@ -126,9 +126,11 @@ The `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` interface is 
 Example:
 ```diff
 - use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
--
-- class UserResolver implements ResolverInterface
 + use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
-+
+
+- class UserResolver implements ResolverInterface
 + class UserQuery implements QueryInterface
+{
+    // ...
+}
 ```

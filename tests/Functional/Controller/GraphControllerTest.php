@@ -127,20 +127,20 @@ class GraphControllerTest extends TestCase
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
-query FriendsQuery($firstFriends: Int) {
-  user {
-    friends(first: $firstFriends) {
-      totalCount
-      edges {
-        friendshipTime
-        node {
-          name
+        query FriendsQuery($firstFriends: Int) {
+          user {
+            friends(first: $firstFriends) {
+              totalCount
+              edges {
+                friendshipTime
+                node {
+                  name
+                }
+              }
+            }
+          }
         }
-      }
-    }
-  }
-}
-EOF;
+        EOF;
 
         $content = json_encode(['query' => $query, 'variables' => '{"firstFriends": 2}']) ?: null;
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], $content);
@@ -155,10 +155,10 @@ EOF;
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
-query {
-  user
-}
-EOF;
+        query {
+          user
+        }
+        EOF;
 
         $client->request('GET', '/', ['query' => $query, 'variables' => '"firstFriends": 2}']);
     }
@@ -171,10 +171,10 @@ EOF;
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
-query {
-  user
-}
-EOF;
+        query {
+          user
+        }
+        EOF;
 
         $client->request('GET', '/graphql/fake', ['query' => $query]);
     }
