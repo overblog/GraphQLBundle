@@ -68,6 +68,7 @@ trait UploadParserTrait
             $operationsPosition = array_search('operations', $payloadKeys);
             $mapPosition = array_search('map', $payloadKeys);
 
+            /** @phpstan-ignore-next-line */
             return $operationsPosition < $mapPosition;
         }
 

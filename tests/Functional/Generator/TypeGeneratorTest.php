@@ -30,7 +30,7 @@ class TypeGeneratorTest extends TestCase
                     'query { object { name privateData } }',
                     self::USER_RYAN,
                     'public'
-                )->getResponse()->getContent(),
+                )->getResponse()->getContent() ?: '',
                 true
             )['errors'][0]['message']
         );
@@ -50,7 +50,7 @@ class TypeGeneratorTest extends TestCase
                     'query { object { name other } }',
                     self::USER_RYAN,
                     'public'
-                )->getResponse()->getContent(),
+                )->getResponse()->getContent() ?: '',
                 true
             )['errors'][0]['message']
         );
