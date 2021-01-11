@@ -8,6 +8,8 @@ UPGRADE FROM 0.13 to 1.0
 - [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
 - [Rename `GlobalVariables` to `GraphQLServices`](#rename-globalvariables-to-graphqlservices)
 - [Change `overblog_graphql.global_variable` tag](#change-overblog_graphqlglobal_variable-tag)
+- [Change `resolver` expression function](#change-resolver-expression-function)
+- [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -89,12 +91,44 @@ class Argument implements ArgumentInterface
 ```
 If you use your own class for resolver arguments, then it should have a `__get` method as well.
 
+
 ### Rename `GlobalVariables` to `GraphQLServices`
 
 The `GlobalVariables` class was renamed into `GraphQLServices` to better reflect its purpose - holding services, 
 passed to all generated GraphQL types. 
 
+
 ### Change `overblog_graphql.global_variable` tag
 
 If you have any services tagged with `overblog_graphql.global_variable`, they should now be tagged with
 `overblog_graphql.graphql_service` instead.
+
+
+## Change `resolver` expression function
+
+The signature of the `resolver` expression function has been changed. 
+
+Old signature (deprecated): <code><b>resolver</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code>  
+New signature: <code><b>query</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code>
+
+Example of the function call to be changed:
+```diff
+- resolver('get_posts', [args, info, value])
++ query('get_posts', args, info, value)
+```
+
+
+## Rename `ResolverInterface` to `QueryInterface`
+
+The `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` interface is deprecated. Use 
+`Overblog\GraphQLBundle\Definition\Resolver\QueryInterface` instead.
+
+Example:
+```diff
+- use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+-
+- class UserResolver implements ResolverInterface
++ use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
++
++ class UserQuery implements QueryInterface
+```
