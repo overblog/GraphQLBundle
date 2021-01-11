@@ -325,6 +325,7 @@ Examples
 
 | Variable             | Description  | Scope|
 |:-------------------- |:------------ |:---- |
+| `typeResolver`       | An object of class `Overblog\GraphQLBundle\Resolver\TypeResolver`| global|
 | `object`             | Refers to the value of the field for which access is being requested. For array `object` will be each item of the array. For Relay connection `object` will be the node of each connection edges. | only available for `config.fields.*.access` with query operation or mutation payload type. |
 | `value`              | The value returned by a previous resolver | available in the `resolve` and `access` contexts |
 | `args`               | An array of argument values of current resolver | available in the `resolve` and `access` contexts |
