@@ -17,17 +17,17 @@ final class GraphQLServices
 {
     private array $services;
     private TypeResolver $types;
-    private QueryResolver $resolverResolver;
+    private QueryResolver $queryResolver;
     private MutationResolver $mutationResolver;
 
     public function __construct(
         TypeResolver $typeResolver,
-        QueryResolver $resolverResolver,
+        QueryResolver $queryResolver,
         MutationResolver $mutationResolver,
         array $services = []
     ) {
         $this->types = $typeResolver;
-        $this->resolverResolver = $resolverResolver;
+        $this->queryResolver = $queryResolver;
         $this->mutationResolver = $mutationResolver;
         $this->services = $services;
     }
@@ -56,7 +56,7 @@ final class GraphQLServices
      */
     public function query(string $alias, ...$args)
     {
-        return $this->resolverResolver->resolve([$alias, $args]);
+        return $this->queryResolver->resolve([$alias, $args]);
     }
 
     /**
