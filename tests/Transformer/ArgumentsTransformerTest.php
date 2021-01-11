@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Transformer;
 
+use Exception;
+use Generator;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
@@ -179,5 +183,76 @@ class ArgumentsTransformerTest extends TestCase
 
             $this->assertEquals($e->toState(), $expected);
         }
+    }
+
+    public function getWrappedInputObject(): Generator
+    {
+        $inputObject = new InputObjectType([
+            'name' => 'InputType1',
+            'fields' => [
+                'field1' => Type::string(),
+                'field2' => Type::int(),
+                'field3' => Type::boolean(),
+            ],
+        ]);
+        yield [$inputObject, false];
+        yield [new NonNull($inputObject), false];
+    }
+
+    /** @dataProvider getWrappedInputObject */
+    public function testInputObjectWithWrappingType(Type $type): void
+    {
+        $transformer = $this->getTransformer([
+                'InputType1' => ['type' => 'input', 'class' => InputType1::class],
+            ], new ConstraintViolationList()
+        );
+        $info = $this->getResolveInfo(self::getTypes());
+
+        $data = ['field1' => 'hello', 'field2' => 12, 'field3' => true];
+
+        $inputValue = $transformer->getInstanceAndValidate($type->toString(), $data, $info, 'input1');
+
+        /** @var InputType1 $inputValue */
+        $this->assertInstanceOf(InputType1::class, $inputValue);
+        $this->assertEquals($inputValue->field1, $data['field1']);
+        $this->assertEquals($inputValue->field2, $data['field2']);
+        $this->assertEquals($inputValue->field3, $data['field3']);
+    }
+
+    public function getWrappedInputObjectList(): Generator
+    {
+        $inputObject = new InputObjectType([
+            'name' => 'InputType1',
+            'fields' => [
+                'field1' => Type::string(),
+                'field2' => Type::int(),
+                'field3' => Type::boolean(),
+            ],
+        ]);
+        yield [new ListOfType($inputObject)];
+        yield [new ListOfType(new NonNull($inputObject))];
+        yield [new NonNull(new ListOfType($inputObject))];
+        yield [new NonNull(new ListOfType(new NonNull($inputObject)))];
+    }
+
+    /** @dataProvider getWrappedInputObjectList */
+    public function testInputObjectWithWrappingTypeList(Type $type): void
+    {
+        $transformer = $this->getTransformer(
+            ['InputType1' => ['type' => 'input', 'class' => InputType1::class]],
+            new ConstraintViolationList()
+        );
+        $info = $this->getResolveInfo(self::getTypes());
+
+        $data = ['field1' => 'hello', 'field2' => 12, 'field3' => true];
+
+        $inputValue = $transformer->getInstanceAndValidate($type->toString(), [$data], $info, 'input1');
+        $inputValue = reset($inputValue);
+
+        /** @var InputType1 $inputValue */
+        $this->assertInstanceOf(InputType1::class, $inputValue);
+        $this->assertEquals($inputValue->field1, $data['field1']);
+        $this->assertEquals($inputValue->field2, $data['field2']);
+        $this->assertEquals($inputValue->field3, $data['field3']);
     }
 }
