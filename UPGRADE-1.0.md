@@ -6,8 +6,8 @@ UPGRADE FROM 0.13 to 1.0
 - [Customize the cursor encoder of the edges of a connection](#customize-the-cursor-encoder-of-the-edges-of-a-connection)
 - [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator-class)
 - [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
-- [Rename `GlobalVariables` to `GraphQLServices`](#)
-- [Change `overblog_graphql.global_variable` tag]()
+- [Rename `GlobalVariables` to `GraphQLServices`](#rename-globalvariables-to-graphqlservices)
+- [Change `overblog_graphql.global_variable` tag](#change-overblog_graphqlglobal_variable-tag)
 
 ### Customize the cursor encoder of the edges of a connection
 
