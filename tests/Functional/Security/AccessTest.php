@@ -67,7 +67,7 @@ class AccessTest extends TestCase
     public function testCustomClassLoaderNotRegister(): void
     {
         $this->expectException(Error::class);
-        $this->expectExceptionMessage('Class \'Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType\' not found');
+        $this->expectExceptionMessage('Class "Overblog\GraphQLBundle\Access\__DEFINITIONS__\RootQueryType" not found');
         spl_autoload_unregister($this->loader);
         $this->assertResponse($this->userNameQuery, [], static::ANONYMOUS_USER, 'access');
     }
