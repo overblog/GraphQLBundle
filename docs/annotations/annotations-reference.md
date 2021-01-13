@@ -44,11 +44,11 @@ When using annotations or attributes, you can use a shortened version of the syn
 Example without:  
 `@GQL\Field(name="MyField")` 
 
-Exampel with shortcut:  
+Example with shortcut:  
 `@GQL\Field("MyField")`
 
-When using the shortened version, it is the attribute describe as `default attribute` in the following list that will be set if attribute name is not specified.  
-
+When the short version is used (ie. the attribute name is not specified), the attribute describe as `default attribute` in the annotation's attributes list will be use.  
+In the above example, the attribute `name` on `@GQL\Field` is the default attribute.   
 
 
 ## Index
@@ -127,7 +127,7 @@ class Hero {
 
 ## @Arg
 
-This annotation is used in conjonction with a `@Field`, a `@Query` or `@Mutation` to define an argument.
+This annotation is used in conjunction with a `@Field`, a `@Query` or `@Mutation` to define an argument.
 
 Required attributes:
 
@@ -164,8 +164,8 @@ class Hero {
 
 ## @ArgsBuilder
 
-This annotation is used in conjonction with a `@Field`, a `@Query` or `@Mutation` to generate the field arguments.
-It is used to set a arguments builder for a field (see [Args builders](../definitions/builders/args.md)))
+This annotation is used in conjunction with a `@Field`, a `@Query` or `@Mutation` to generate the field arguments.
+It is used to set an arguments builder for a field (see [Args builders](../definitions/builders/args.md)))
 
 Required attributes:
 

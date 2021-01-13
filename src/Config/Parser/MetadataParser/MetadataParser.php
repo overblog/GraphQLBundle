@@ -136,6 +136,9 @@ abstract class MetadataParser implements PreParserInterface
         }
     }
 
+    /**
+     * @return array<string,array>
+     */
     private static function classMetadatasToGQLConfiguration(
         ReflectionClass $reflectionClass,
         Meta $classMetadata,
@@ -304,6 +307,9 @@ abstract class MetadataParser implements PreParserInterface
         return $gqlConfiguration;
     }
 
+    /**
+     * @return array{type: 'relay-mutation-payload'|'object', config: array}
+     */
     private static function graphQLTypeConfigFromAnnotation(ReflectionClass $reflectionClass, Metadata\Type $typeAnnotation, string $currentValue): array
     {
         $typeConfiguration = [];
@@ -363,6 +369,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Create a GraphQL Interface type configuration from metadatas on properties.
+     *
+     * @return array{type: 'interface', config: array}
      */
     private static function typeInterfaceMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\TypeInterface $interfaceAnnotation): array
     {
@@ -381,6 +389,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Create a GraphQL Input type configuration from metadatas on properties.
+     *
+     * @return array{type: 'relay-mutation-input'|'input-object', config: array}
      */
     private static function inputMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Input $inputAnnotation): array
     {
@@ -393,6 +403,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Get a GraphQL scalar configuration from given scalar metadata.
+     *
+     * @return array{type: 'custom-scalar', config: array}
      */
     private static function scalarMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Scalar $scalarAnnotation): array
     {
@@ -415,6 +427,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Get a GraphQL Enum configuration from given enum metadata.
+     *
+     * @return array{type: 'enum', config: array}
      */
     private static function enumMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Enum $enumMetadata): array
     {
@@ -424,16 +438,18 @@ abstract class MetadataParser implements PreParserInterface
         $values = [];
 
         foreach ($reflectionClass->getConstants() as $name => $value) {
-            $valueAnnotation = current(array_filter($enumValues, fn ($enumValueAnnotation) => $enumValueAnnotation->name === $name));
+            $enumValueAnnotation = current(array_filter($enumValues, fn ($enumValueAnnotation) => $enumValueAnnotation->name === $name));
             $valueConfig = [];
             $valueConfig['value'] = $value;
 
-            if ($valueAnnotation && isset($valueAnnotation->description)) {
-                $valueConfig['description'] = $valueAnnotation->description;
-            }
+            if (false !== $enumValueAnnotation) {
+                if (isset($enumValueAnnotation->description)) {
+                    $valueConfig['description'] = $enumValueAnnotation->description;
+                }
 
-            if ($valueAnnotation && isset($valueAnnotation->deprecationReason)) {
-                $valueConfig['deprecationReason'] = $valueAnnotation->deprecationReason;
+                if (isset($enumValueAnnotation->deprecationReason)) {
+                    $valueConfig['deprecationReason'] = $enumValueAnnotation->deprecationReason;
+                }
             }
 
             $values[$name] = $valueConfig;
@@ -447,6 +463,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Get a GraphQL Union configuration from given union metadata.
+     *
+     * @return array{type: 'union', config: array}
      */
     private static function unionMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Union $unionMetadata): array
     {
@@ -493,6 +511,8 @@ abstract class MetadataParser implements PreParserInterface
      * @phpstan-param class-string<Metadata\Field> $fieldMetadataName
      *
      * @throws AnnotationException
+     *
+     * @return array<string,array>
      */
     private static function getTypeFieldConfigurationFromReflector(ReflectionClass $reflectionClass, Reflector $reflector, string $fieldMetadataName, string $currentValue = 'value'): array
     {
@@ -624,6 +644,8 @@ abstract class MetadataParser implements PreParserInterface
      * @param ReflectionProperty[] $reflectors
      *
      * @throws AnnotationException
+     *
+     * @return array<string,array>
      */
     private static function getGraphQLInputFieldsFromMetadatas(ReflectionClass $reflectionClass, array $reflectors): array
     {
@@ -699,6 +721,8 @@ abstract class MetadataParser implements PreParserInterface
      *
      * Return fields config from Provider methods.
      * Loop through configured provider and extract fields targeting the targetType.
+     *
+     * @return array<string,array>
      */
     private static function getGraphQLFieldsFromProviders(ReflectionClass $reflectionClass, string $expectedMetadata, string $targetType, bool $isDefaultTarget = false): array
     {
@@ -782,6 +806,8 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * Get the config for description & deprecation reason.
+     *
+     * @return array<'description'|'deprecationReason',string>
      */
     private static function getDescriptionConfiguration(array $metadatas, bool $withDeprecation = false): array
     {

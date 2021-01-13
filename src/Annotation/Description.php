@@ -8,7 +8,7 @@ use \Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
- * Annotation for GraphQL to mark a field as deprecated.
+ * Annotation for GraphQL to set a type or field description.
  *
  * @Annotation
  * @Target({"CLASS", "METHOD", "PROPERTY"})

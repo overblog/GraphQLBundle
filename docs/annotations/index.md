@@ -162,16 +162,17 @@ In the previous example, the generated `resolve` config of the `something` field
 
 ## Type & Args auto-guessing
 
-When no explicit `type` is defined on a `@Field` (`@Query`, or `@Mutation`), the bundle will try to guess it using the following methods:
-- **Doc Block** The guess will be made from `@var` or `@return` in Doc block
-- **Type hint** The guess will be made from type hint 
-- **Doctrine annotations** The guess will be made from doctrine annotations
+If the `type` option is not defined explicitly on the `@Field`, `@Query` or `@Mutation`, the bundle will try to guess it from other DocBlock annotations or from the PHP type-hint, in the following order:
 
-The system will try every method, in the above order and return a type as soon as one of the guessing method return one.
+1. `@var` and `@return` annotations
+2. type-hint 
+3. Doctrine annotations
 
-### @Field type auto-guessing from Dock Block
+It will stop on the first successful guess.
 
-The type of the `@Field` annotation can be auto-guessed if its Dock Block describe a known type. It is the more precise auto-guessing as it supports collection of object type.
+### @Field type auto-guessing from DockBlock
+
+The `type` option of the `@Field` annotation can be guessed if its DocBlock describes a known type. It is a more precise guessing as it supports collections of objects, e.g. `User[]` or `array<User>`.
 
 For example:
 
