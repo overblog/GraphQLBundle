@@ -148,7 +148,12 @@ class ArgumentsTransformer
     {
         $isRequired = '!' === $argType[\strlen($argType) - 1];
         $isMultiple = '[' === $argType[0];
-        $endIndex = ($isRequired ? 1 : 0) + ($isMultiple ? 1 : 0);
+        $isStrictMultiple = false;
+        if ($isMultiple) {
+            $isStrictMultiple = '!' === $argType[\strpos($argType, ']') - 1];
+        }
+
+        $endIndex = ($isRequired ? 1 : 0) + ($isMultiple ? 1 : 0) + ($isStrictMultiple ? 1 : 0);
         $type = \substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : \strlen($argType));
 
         $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
