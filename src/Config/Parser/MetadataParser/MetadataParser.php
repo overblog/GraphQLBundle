@@ -15,6 +15,7 @@ use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -346,7 +347,7 @@ abstract class MetadataParser implements PreParserInterface
         $buildersAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class), $typeAnnotation->builders);
         if (!empty($buildersAnnotations)) {
             $typeConfiguration['builders'] = array_map(function ($fieldsBuilderAnnotation) {
-                return ['builder' => $fieldsBuilderAnnotation->value, 'builderConfig' => $fieldsBuilderAnnotation->config];
+                return ['builder' => $fieldsBuilderAnnotation->name, 'builderConfig' => $fieldsBuilderAnnotation->config];
             }, $buildersAnnotations);
         }
 
@@ -438,8 +439,10 @@ abstract class MetadataParser implements PreParserInterface
         $values = [];
 
         foreach ($reflectionClass->getConstants() as $name => $value) {
+            $reflectionConstant = new ReflectionClassConstant($reflectionClass->getName(), $name);
+            $valueConfig = self::getDescriptionConfiguration(static::getMetadatas($reflectionConstant), true);
+
             $enumValueAnnotation = current(array_filter($enumValues, fn ($enumValueAnnotation) => $enumValueAnnotation->name === $name));
-            $valueConfig = [];
             $valueConfig['value'] = $value;
 
             if (false !== $enumValueAnnotation) {
@@ -585,7 +588,7 @@ abstract class MetadataParser implements PreParserInterface
 
         $argsBuilder = self::getFirstMetadataMatching($metadatas, Metadata\ArgsBuilder::class);
         if ($argsBuilder) {
-            $fieldConfiguration['argsBuilder'] = ['builder' => $argsBuilder->value, 'config' => $argsBuilder->config];
+            $fieldConfiguration['argsBuilder'] = ['builder' => $argsBuilder->name, 'config' => $argsBuilder->config];
         } elseif ($fieldMetadata->argsBuilder) {
             if (is_string($fieldMetadata->argsBuilder)) {
                 $fieldConfiguration['argsBuilder'] = ['builder' => $fieldMetadata->argsBuilder, 'config' => []];
@@ -598,7 +601,7 @@ abstract class MetadataParser implements PreParserInterface
         }
         $fieldBuilder = self::getFirstMetadataMatching($metadatas, Metadata\FieldBuilder::class);
         if ($fieldBuilder) {
-            $fieldConfiguration['builder'] = $fieldBuilder->value;
+            $fieldConfiguration['builder'] = $fieldBuilder->name;
             $fieldConfiguration['builderConfig'] = $fieldBuilder->config;
         } elseif ($fieldMetadata->fieldBuilder) {
             if (is_string($fieldMetadata->fieldBuilder)) {

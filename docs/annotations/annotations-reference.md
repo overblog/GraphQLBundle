@@ -38,19 +38,6 @@ class Coordinates {
 }
 ```
 
-## Annotations shortcuts
-
-When using annotations or attributes, you can use a shortened version of the syntax.  
-Example without:  
-`@GQL\Field(name="MyField")` 
-
-Example with shortcut:  
-`@GQL\Field("MyField")`
-
-When the short version is used (ie. the attribute name is not specified), the attribute describe as `default attribute` in the annotation's attributes list will be use.  
-In the above example, the attribute `name` on `@GQL\Field` is the default attribute.   
-
-
 ## Index
 
 [@Access](#access)
@@ -131,7 +118,7 @@ This annotation is used in conjunction with a `@Field`, a `@Query` or `@Mutation
 
 Required attributes:
 
--   **name** (default attribute): The GraphQL name of the field argument (default to class name).
+-   **name** : The GraphQL name of the field argument (default to class name).
 -   **type** : The GraphQL type of the field argument
 
 Optional attributes:
@@ -169,7 +156,7 @@ It is used to set an arguments builder for a field (see [Args builders](../defin
 
 Required attributes:
 
--   **value** (default attribute): The name of the args builder
+-   **value** : The name of the args builder
 
 Optional attributes:
 
@@ -249,7 +236,7 @@ In order to add more meta on the values (like description or deprecated reason),
 
 Optional attributes:
 
--   **name** (default attribute): The GraphQL name of the enum (default to the class name without namespace)
+-   **name** : The GraphQL name of the enum (default to the class name without namespace)
 
 Deprecated attributes:
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
@@ -288,7 +275,7 @@ The attribute `name` must match a constant name on the class.
 
 Required attributes:
 
--   **name** (default attribute): The name of the targeted enum value
+-   **name** : The name of the targeted enum value
 
 Optional attributes:
 
@@ -311,7 +298,7 @@ If it is defined on a _method_ of the Root Query or the Root mutation :
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
+-   **name**  : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
 -   **type** : The GraphqL type of the field. This attribute can sometimes be guessed automatically from Doctrine ORM annotations
 -   **resolve** : A resolution expression
 
@@ -373,7 +360,7 @@ It is used to set a field builder for a field (see [Field builders](../definitio
 
 Required attributes:
 
--   **value** (default attribute): The name of the field builder
+-   **value** : The name of the field builder
 
 Optional attributes:
 
@@ -404,7 +391,7 @@ It is used to add fields builder to types (see [Fields builders](../definitions/
 
 Required attributes:
 
--   **value** (default attribute) : The name of the fields builder
+-   **value**  : The name of the fields builder
 
 Optional attributes:
 
@@ -433,7 +420,7 @@ An Input type is pretty much the same as an input, except:
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the input field (default to classnameInput )
+-   **name**  : The GraphQL name of the input field (default to classnameInput )
 -   **isRelay** : Set to true if you want your input to be relay compatible (ie. An extra field `clientMutationId` will be added to the input)
 
 The corresponding class will also be used by the `Arguments Transformer` service. An instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
@@ -563,7 +550,7 @@ This annotation is used on _class_ to define a GraphQL Type.
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the type (default to the class name without namespace)
+-   **name**  : The GraphQL name of the type (default to the class name without namespace)
 -   **interfaces** : An array of GraphQL interface this type inherits from (can be auto-guessed. See interface documentation).
 -   **isRelay** : Set to true to have a Relay compatible type (ie. A `clientMutationId` will be added).
 -   **isTypeOf** : Is type of resolver for interface implementation
@@ -597,7 +584,7 @@ Required attributes:
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the interface (default to the class name without namespace)
+-   **name**  : The GraphQL name of the interface (default to the class name without namespace)
 
 ## @Scalar
 
@@ -605,7 +592,7 @@ This annotation is used on a _class_ to define a custom scalar.
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the interface (default to the class name without namespace)
+-   **name**  : The GraphQL name of the interface (default to the class name without namespace)
 -   **scalarType** : An expression to reuse an other scalar type
 
 Example:
@@ -663,7 +650,7 @@ Required attributes:
 
 Optional attributes:
 
--   **name** (default attribute) : The GraphQL name of the union (default to the class name without namespace)
+-   **name**  : The GraphQL name of the union (default to the class name without namespace)
 -   **resolveType** : Expression to resolve an object type. By default, it'll use a static method `resolveType` on the related class and call it with the `type resolver` as first argument and then the `value`.
 
 Example:

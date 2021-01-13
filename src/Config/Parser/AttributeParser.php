@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\MetadataParser;
 use ReflectionAttribute;
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
@@ -23,6 +24,7 @@ class AttributeParser extends MetadataParser
             case $reflector instanceof ReflectionClass:
             case $reflector instanceof ReflectionMethod:
             case $reflector instanceof ReflectionProperty:
+            case $reflector instanceof ReflectionClassConstant:
                 $attributes = $reflector->getAttributes();
         }
 

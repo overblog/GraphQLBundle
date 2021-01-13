@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -18,10 +18,6 @@ final class Description extends Annotation implements NamedArgumentConstructorAn
 {
     /**
      * The object description.
-     *
-     * @Required
-     * 
-     * @var string
      */
     public string $value;
 

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
-use Doctrine\Common\Annotations\AnnotationException;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -19,24 +18,17 @@ final class Input extends Annotation implements NamedArgumentConstructorAnnotati
 {
     /**
      * Type name.
-     * 
-     * @var string
      */
     public ?string $name;
 
     /**
      * Is the type a relay input.
-     * 
-     * @var boolean
      */
     public bool $isRelay = false;
 
-    public function __construct(?string $name = null, bool $isRelay = false, ?string $value = null)
+    public function __construct(string $name = null, bool $isRelay = false)
     {
-        if ($name && $value) {
-            $this->cumulatedAttributesException('name', $value, $name);
-        }
-        $this->name = $value ?: $name;
+        $this->name = $name;
         $this->isRelay = $isRelay;
     }
 }

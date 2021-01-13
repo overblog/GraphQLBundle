@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -13,7 +12,6 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Annotation
  * @Target({"ANNOTATION", "CLASS"})
  */
-#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class EnumValue extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
@@ -31,12 +29,14 @@ final class EnumValue extends Annotation implements NamedArgumentConstructorAnno
      */
     public ?string $deprecationReason;
 
-    public function __construct(?string $name = null, ?string $description = null, ?string $deprecationReason = null, ?string $value = null)
+    /**
+     * @param string|null $name              The constant name to attach description or deprecation reason to
+     * @param string|null $description       The description of the enum value
+     * @param string|null $deprecationReason The deprecation reason of the enum value
+     */
+    public function __construct(?string $name = null, ?string $description = null, ?string $deprecationReason = null)
     {
-        if ($name && $value) {
-            $this->cumulatedAttributesException('name', $value, $name);
-        }
-        $this->name = $value ?: $name;
+        $this->name = $name;
         $this->description = $description;
         $this->deprecationReason = $deprecationReason;
     }

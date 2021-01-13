@@ -35,7 +35,7 @@ class Planet
 
     /**
      * @GQL\Field
-     * @GQL\FieldBuilder(value="NoteFieldBuilder", config={"option1"="value1"})
+     * @GQL\FieldBuilder(name="NoteFieldBuilder", config={"option1"="value1"})
      */
     #[GQL\Field]
     #[GQL\FieldBuilder("NoteFieldBuilder", ["option1" => "value1"])]
@@ -46,7 +46,7 @@ class Planet
      *   type="Planet",
      *   resolve="@=resolver('closest_planet', [args['filter']])"
      * )
-     * @GQL\ArgsBuilder(value="PlanetFilterArgBuilder", config={"option2"="value2"})
+     * @GQL\ArgsBuilder(name="PlanetFilterArgBuilder", config={"option2"="value2"})
      */
     #[GQL\Field(type: "Planet", resolve: "@=resolver('closest_planet', [args['filter']])")]
     #[GQL\ArgsBuilder("PlanetFilterArgBuilder", ["option2" => "value2"])]

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -18,26 +18,16 @@ final class Arg extends Annotation implements NamedArgumentConstructorAnnotation
 {
     /**
      * Argument name.
-     *
-     * @Required
-     *
-     * @var string
      */
     public string $name;
 
     /**
      * Argument description.
-     *
-     * @var string
      */
     public ?string $description;
 
     /**
      * Argument type.
-     *
-     * @Required
-     *
-     * @var string
      */
     public string $type;
 
@@ -49,14 +39,14 @@ final class Arg extends Annotation implements NamedArgumentConstructorAnnotation
     public $default;
 
     /**
-     * @param mixed|null $default 
+     * @param string      $name        The name of the argument
+     * @param string      $type        The type of the argument
+     * @param string|null $description The description of the argument
+     * @param mixed|null  $default     Default value of the argument
      */
-    public function __construct(string $name, string $type, ?string $description = null, $default = null, ?string $value = null)
+    public function __construct(string $name, string $type, ?string $description = null, $default = null)
     {
-        if ($value && $name) {
-            $this->cumulatedAttributesException('name', $value, $name);
-        }
-        $this->name = $value ?: $name;
+        $this->name = $name;
         $this->description = $description;
         $this->type = $type;
         $this->default = $default;

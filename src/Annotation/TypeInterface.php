@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
-use Doctrine\Common\Annotations\AnnotationException;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -19,26 +18,21 @@ final class TypeInterface extends Annotation implements NamedArgumentConstructor
 {
     /**
      * Interface name.
-     * 
-     * @var string
      */
     public ?string $name;
 
     /**
      * Resolver type for interface.
-     *
-     * @Required
-     * 
-     * @var string
      */
     public string $resolveType;
 
-    public function __construct(?string $name = null, string $resolveType, ?string $value = null)
+    /**
+     * @param string|null $name        The GraphQL name of the interface
+     * @param string      $resolveType The express resolve type
+     */
+    public function __construct(string $name = null, string $resolveType)
     {
-        if ($name && $value) {
-            $this->cumulatedAttributesException('name', $value, $name);
-        }
-        $this->name = $value ?: $name;
+        $this->name = $name;
         $this->resolveType = $resolveType;
     }
 }

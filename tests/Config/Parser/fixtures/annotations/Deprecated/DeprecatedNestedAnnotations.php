@@ -7,9 +7,9 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Deprec
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\Type(builders={@GQL\FieldsBuilder(value="MyFieldsBuilder", config={"param1": "val1"})})
+ * @GQL\Type(builders={@GQL\FieldsBuilder(name="MyFieldsBuilder", config={"param1": "val1"})})
  */
-class Deprecated
+class DeprecatedNestedAnnotations
 {
     /**
      * @GQL\Field(type="String!")

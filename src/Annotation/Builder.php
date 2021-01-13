@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -18,23 +18,21 @@ abstract class Builder extends Annotation implements NamedArgumentConstructorAnn
 {
     /**
      * Builder name.
-     *
-     * @Required
-     * 
-     * @var string
      */
-    public string $value;
+    public string $name;
 
     /**
      * The builder config.
-     *
-     * @var array
      */
     public array $config = [];
 
-    public function __construct(string $value, array $config = [])
+    /**
+     * @param string|null $name   The name of the builder
+     * @param array       $config The builder configuration array
+     */
+    public function __construct(string $name = null, array $config = [])
     {
-        $this->value = $value;
+        $this->name = $name;
         $this->config = $config;
     }
 }

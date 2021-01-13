@@ -18,10 +18,6 @@ final class Access extends Annotation implements NamedArgumentConstructorAnnotat
 {
     /**
      * Field access.
-     *
-     * @Required
-     * 
-     * @var string
      */
     public string $value;
 

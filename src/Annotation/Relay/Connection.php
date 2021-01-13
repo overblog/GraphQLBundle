@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation\Relay;
 
-use \Attribute;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 use Overblog\GraphQLBundle\Annotation\Annotation;
 use Overblog\GraphQLBundle\Annotation\Type;
@@ -20,15 +20,11 @@ final class Connection extends Type implements NamedArgumentConstructorAnnotatio
 {
     /**
      * Connection Edge type.
-     * 
-     * @var string
      */
     public ?string $edge;
 
     /**
      * Connection Node type.
-     * 
-     * @var string
      */
     public ?string $node;
 

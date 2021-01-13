@@ -27,10 +27,4 @@ class Cat extends Animal
      */
     #[GQL\Field]
     protected array $toys;
-
-    /**
-     * @GQL\Field("shortcut")
-     */
-    #[GQL\Field("shortcut")]
-    protected ?string $field;
 }

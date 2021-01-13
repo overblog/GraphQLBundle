@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use \Attribute;
-use Doctrine\Common\Annotations\AnnotationException;
+use Attribute;
 use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 
 /**
@@ -17,22 +16,17 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Scalar extends Annotation implements NamedArgumentConstructorAnnotation
 {
-    /**
-     * @var string
-     */
     public ?string $name;
 
-    /**
-     * @var string
-     */
     public ?string $scalarType;
-    
-    public function __construct(?string $name = null, ?string $scalarType = null, ?string $value = null)
+
+    /**
+     * @param string|null $name       The GraphQL name of the Scalar
+     * @param string|null $scalarType Expression to reuse an other scalar type
+     */
+    public function __construct(string $name = null, string $scalarType = null)
     {
-        if ($name && $value) {
-            $this->cumulatedAttributesException('name', $value, $name);
-        }
-        $this->name = $value ?: $name;
+        $this->name = $name;
         $this->scalarType = $scalarType;
     }
 }

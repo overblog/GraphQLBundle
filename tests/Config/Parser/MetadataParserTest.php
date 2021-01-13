@@ -204,21 +204,7 @@ abstract class MetadataParserTest extends TestCase
                 'name' => ['type' => 'String!', 'description' => 'The name of the animal'],
                 'lives' => ['type' => 'Int!'],
                 'toys' => ['type' => '[String!]!'],
-                'shortcut' => ['type' => 'String', 'resolve' => '@=value.field'],
             ],
-        ]);
-
-        // Test type with shortcut annotation
-        $this->expect('Doggy', 'object', [
-            'fields' => [
-                'toys' => ['type' => '[String!]!'],
-                'catFights' => [
-                    'type' => 'Int!',
-                    'resolve' => '@=call(value.getCountCatFights, arguments({}, args))',
-                    'argsBuilder' => ['builder' => 'MyArgsBuilder'],
-                ],
-            ],
-            'builders' => [['builder' => 'MyFieldsBuilder']],
         ]);
     }
 
@@ -233,12 +219,6 @@ abstract class MetadataParserTest extends TestCase
                 'diameter' => ['type' => 'Int'],
                 'variable' => ['type' => 'Int!'],
                 'tags' => ['type' => '[String]!'],
-            ],
-        ]);
-
-        $this->expect('StarPlanet', 'input-object', [
-            'fields' => [
-                'distance' => ['type' => 'Int!'],
             ],
         ]);
     }
@@ -260,13 +240,6 @@ abstract class MetadataParserTest extends TestCase
                 'CHISS' => ['value' => '2', 'description' => 'The Chiss race'],
                 'ZABRAK' => ['value' => '3', 'deprecationReason' => 'The Zabraks have been wiped out'],
                 'TWILEK' => ['value' => '4'],
-            ],
-        ]);
-
-        $this->expect('Pets', 'enum', [
-            'values' => [
-                'DOGS' => ['value' => 'dog'],
-                'CATS' => ['value' => 'cat'],
             ],
         ]);
     }
@@ -317,10 +290,6 @@ abstract class MetadataParserTest extends TestCase
             'parseValue' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\\annotations\Scalar\GalaxyCoordinates', 'parseValue'],
             'parseLiteral' => ['Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\\annotations\Scalar\GalaxyCoordinates', 'parseLiteral'],
             'description' => 'The galaxy coordinates scalar',
-        ]);
-
-        $this->expect('ShortScalar', 'custom-scalar', [
-            'scalarType' => '@=type',
         ]);
     }
 
