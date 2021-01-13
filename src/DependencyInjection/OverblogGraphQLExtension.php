@@ -207,7 +207,8 @@ class OverblogGraphQLExtension extends Extension
 
         $container->register(ErrorHandler::class)
             ->setArgument(0, new Reference(EventDispatcherInterface::class))
-            ->setArgument(1, new Reference(ExceptionConverterInterface::class));
+            ->setArgument(1, new Reference(ExceptionConverterInterface::class))
+            ->setArgument(2, $config['errors_handler']['internal_error_message']);
 
         $container->register(ErrorHandlerListener::class)
             ->setArgument(0, new Reference(ErrorHandler::class))
