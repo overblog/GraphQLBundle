@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Transformer;
 
-use Exception;
 use Generator;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -212,7 +211,7 @@ class ArgumentsTransformerTest extends TestCase
 
         $inputValue = $transformer->getInstanceAndValidate($type->toString(), $data, $info, 'input1');
 
-        /** @var InputType1 $inputValue */
+        /* @var InputType1 $inputValue */
         $this->assertInstanceOf(InputType1::class, $inputValue);
         $this->assertEquals($inputValue->field1, $data['field1']);
         $this->assertEquals($inputValue->field2, $data['field2']);
@@ -247,9 +246,9 @@ class ArgumentsTransformerTest extends TestCase
         $data = ['field1' => 'hello', 'field2' => 12, 'field3' => true];
 
         $inputValue = $transformer->getInstanceAndValidate($type->toString(), [$data], $info, 'input1');
-        $inputValue = reset($inputValue);
+        $inputValue = \reset($inputValue);
 
-        /** @var InputType1 $inputValue */
+        /* @var InputType1 $inputValue */
         $this->assertInstanceOf(InputType1::class, $inputValue);
         $this->assertEquals($inputValue->field1, $data['field1']);
         $this->assertEquals($inputValue->field2, $data['field2']);
