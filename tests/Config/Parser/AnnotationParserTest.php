@@ -52,4 +52,15 @@ class AnnotationParserTest extends MetadataParserTest
             ],
         ]);
     }
+
+    public function testLegacyEnumNestedValue(): void
+    {
+        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedEnum.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
+        $this->expect('DeprecatedEnum', 'enum', [
+            'values' => [
+                'P1' => ['value' => 1, 'description' => 'P1 description'],
+                'P2' => ['value' => 2, 'deprecationReason' => 'P2 deprecated'],
+            ],
+        ]);
+    }
 }
