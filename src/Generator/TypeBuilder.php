@@ -16,7 +16,6 @@ use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
-use Murtukov\PHPCodeGenerator\DependencyAwareGenerator;
 use Murtukov\PHPCodeGenerator\Exception\UnrecognizedValueTypeException;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Instance;
