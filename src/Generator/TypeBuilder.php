@@ -177,7 +177,7 @@ class TypeBuilder
      *
      * @param mixed $typeNode
      *
-     * @return DependencyAwareGenerator|string
+     * @return Literal|string
      */
     protected function wrapTypeRecursive($typeNode, bool &$isReference)
     {

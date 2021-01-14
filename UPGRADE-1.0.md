@@ -7,8 +7,8 @@ UPGRADE FROM 0.13 to 1.0
 - [Change arguments of `TypeGenerator`](#change-arguments-of-typegenerator-class)
 - [Add magic `__get` method to `ArgumentInterface` implementors](#add-magic-__get-method-to-argumentinterface-implementors)
 - [Rename `GlobalVariables` to `GraphQLServices`](#rename-globalvariables-to-graphqlservices)
-- [Change `overblog_graphql.global_variable` tag](#change-overblog_graphqlglobal_variable-tag)
-- [Change `resolver` expression function](#change-resolver-expression-function)
+- [Replace `overblog_graphql.global_variable` tag](#replace-overblog_graphqlglobal_variable-tag)
+- [Replace `resolver` expression function](#replace-resolver-expression-function)
 - [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
 
 ### Customize the cursor encoder of the edges of a connection
@@ -98,13 +98,13 @@ The `GlobalVariables` class was renamed into `GraphQLServices` to better reflect
 passed to all generated GraphQL types. 
 
 
-### Change `overblog_graphql.global_variable` tag
+### Replace `overblog_graphql.global_variable` tag
 
 If you have any services tagged with `overblog_graphql.global_variable`, they should now be tagged with
-`overblog_graphql.graphql_service` instead.
+`overblog_graphql.service` instead.
 
 
-### Change `resolver` expression function
+### Replace `resolver` expression function
 
 The signature of the `resolver` expression function has been changed. 
 
