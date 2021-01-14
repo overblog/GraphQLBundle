@@ -47,7 +47,7 @@ class DoctrineTypeGuesser extends TypeGuesser
     public function guessType(ReflectionClass $reflectionClass, Reflector $reflector, array $filterGraphQLTypes = []): ?string
     {
         if (!$reflector instanceof ReflectionProperty) {
-            throw new TypeGuessingException('Doctrine type guesser only apply to properties');
+            throw new TypeGuessingException('Doctrine type guesser only apply to properties.');
         }
         /** @var Column|null $columnAnnotation */
         $columnAnnotation = $this->getAnnotation($reflector, Column::class);

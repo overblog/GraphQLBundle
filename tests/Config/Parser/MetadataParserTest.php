@@ -405,6 +405,12 @@ abstract class MetadataParserTest extends TestCase
                 'battles' => ['type' => '[Battle]!'],
                 'currentHolder' => ['type' => 'Hero'],
                 'tags' => ['type' => '[String]!', 'deprecationReason' => 'No more tags on lightsabers'],
+                'text' => ['type' => 'String!'],
+                'string' => ['type' => 'String!'],
+                'float' => ['type' => 'Float!'],
+                'decimal' => ['type' => 'Float!'],
+                'bool' => ['type' => 'Boolean!'],
+                'boolean' => ['type' => 'Boolean!'],
             ],
         ]);
     }

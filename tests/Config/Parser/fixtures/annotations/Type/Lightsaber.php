@@ -19,7 +19,21 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
-    protected string $color;
+    protected $color;
+
+    /**
+     * @ORM\Column(type="text")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $text;
+
+    /**
+     * @ORM\Column(type="string")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $string;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -78,4 +92,32 @@ class Lightsaber
     #[GQL\Field]
     #[GQL\Deprecated("No more tags on lightsabers")]
     protected array $tags;
+
+    /**
+     * @ORM\Column(type="float")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $float;
+
+    /**
+     * @ORM\Column(type="decimal")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $decimal;
+
+    /**
+     * @ORM\Column(type="bool")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $bool;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    protected $boolean;
 }
