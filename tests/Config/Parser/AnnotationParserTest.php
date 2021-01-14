@@ -138,6 +138,11 @@ class AnnotationParserTest extends TestCase
                     'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims', 'defaultValue' => false]],
                     'resolve' => '@=call(value.getVictims, arguments({jediOnly: "Boolean"}, args))',
                 ],
+                'oldMasters' => [
+                    'type' => '[Character]',
+                    'args' => ['jediOnly' => ['type' => 'Boolean', 'description' => 'Only Jedi victims']],
+                    'resolve' => '@=call(value.getOldMasters, arguments({info: "@info", jediOnly: "Boolean"}, args))',
+                ],
             ],
         ]);
 
@@ -389,7 +394,7 @@ class AnnotationParserTest extends TestCase
                         'away' => ['type' => 'Boolean', 'defaultValue' => false],
                         'maxDistance' => ['type' => 'Float', 'defaultValue' => null],
                     ],
-                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
+                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", info: "@info", away: "Boolean", maxDistance: "Float"}, args))',
                     'complexity' => '@=childrenComplexity * 5',
                 ],
             ],

@@ -190,6 +190,16 @@ class ArgumentsTransformerTest extends TestCase
         $this->assertEquals('enum1', $res->field3->value);
     }
 
+    public function testSpecialArguments(): void
+    {
+        $transformer = $this->getTransformer([]);
+        $info = $this->getResolveInfo(self::getTypes());
+        $res = $transformer->getArguments(['p1' => 'Int!', 'p2' => '@info'], ['p1' => 12], $info);
+
+        $this->assertEquals($res[0], 12);
+        $this->assertEquals($res[1], $info);
+    }
+
     public function testRaisedErrors(): void
     {
         $violation = new ConstraintViolation('validation_error', 'validation_error', [], 'invalid', 'field2', 'invalid');

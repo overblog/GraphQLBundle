@@ -179,7 +179,14 @@ class ArgumentsTransformer
 
         foreach ($mapping as $name => $type) {
             try {
-                $value = $this->getInstanceAndValidate($type, $data[$name], $info, $name);
+                switch ($type) {
+                    case '@info':
+                        $value = $info;
+                        break;
+                    default:
+                        $value = $this->getInstanceAndValidate($type, $data[$name], $info, $name);
+                        break;
+                }
                 $args[] = $value;
             } catch (InvalidArgumentError $exception) {
                 $exceptions[] = $exception;

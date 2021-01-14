@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killable;
 
@@ -42,6 +43,21 @@ class Sith extends Character implements Killable
      * )
      */
     public function getVictims(bool $jediOnly = false): array
+    {
+        return [];
+    }
+
+    /**
+     * @GQL\Field(
+     *   type="[Character]",
+     *   name="oldMasters",
+     *   args={
+     *     @GQl\Arg(name="info", type="@info"),
+     *     @GQL\Arg(name="jediOnly", type="Boolean", description="Only Jedi victims", default=false)
+     *   }
+     * )
+     */
+    public function getOldMasters(ResolveInfo $info, bool $jediOnly = false): array
     {
         return [];
     }
