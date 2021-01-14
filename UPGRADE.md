@@ -1,5 +1,5 @@
-UPGRADE FROM 0.13 to 1.0
-=======================
+UPGRADE FROM 0.13 to 0.14
+=========================
 
 # Table of Contents
 
