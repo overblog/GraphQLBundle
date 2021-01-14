@@ -12,6 +12,7 @@ use ReflectionClass;
 
 class DoctrineTypeGuesserTest extends TestCase
 {
+    // @phpstan-ignore-next-line
     protected $property;
 
     public function testGuessError(): void
@@ -20,6 +21,7 @@ class DoctrineTypeGuesserTest extends TestCase
         $docBlockGuesser = new DoctrineTypeGuesser(new ClassesTypesMap());
 
         try {
+            // @phpstan-ignore-next-line
             $docBlockGuesser->guessType($refClass, $refClass);
         } catch (Exception $e) {
             $this->assertInstanceOf(TypeGuessingException::class, $e);

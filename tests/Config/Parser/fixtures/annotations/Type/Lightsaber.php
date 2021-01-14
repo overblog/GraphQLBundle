@@ -19,6 +19,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $color;
 
     /**
@@ -26,6 +27,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $text;
 
     /**
@@ -33,6 +35,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $string;
 
     /**
@@ -98,6 +101,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $float;
 
     /**
@@ -105,6 +109,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $decimal;
 
     /**
@@ -112,6 +117,7 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $bool;
 
     /**
@@ -119,5 +125,6 @@ class Lightsaber
      * @GQL\Field
      */
     #[GQL\Field]
+    // @phpstan-ignore-next-line
     protected $boolean;
 }
