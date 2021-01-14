@@ -33,6 +33,7 @@ class ClassUtilsTest extends TestCase
         return [
             ['$toto, \Toto\Tata $test', '$toto, Tata $test'],
             ['\Tata $test', 'Tata $test'],
+            [null, ''],
         ];
     }
 }
