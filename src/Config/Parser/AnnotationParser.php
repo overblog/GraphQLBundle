@@ -37,7 +37,9 @@ class AnnotationParser extends MetadataParser
         if (null === self::$annotationReader) {
             if (!class_exists(AnnotationReader::class) ||
                 !class_exists(AnnotationRegistry::class)) {
+                // @codeCoverageIgnoreStart
                 throw new RuntimeException('In order to use graphql annotation, you need to require doctrine annotations');
+                // @codeCoverageIgnoreEnd
             }
 
             AnnotationRegistry::registerLoader('class_exists');
