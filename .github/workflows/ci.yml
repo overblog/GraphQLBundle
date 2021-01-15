@@ -190,7 +190,7 @@ jobs:
       - name: "Install PHP with coverage"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "8"
+          php-version: "8.0"
           ini-values: pcov.directory=.
           coverage: "pcov"
 
