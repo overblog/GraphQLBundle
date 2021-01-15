@@ -35,7 +35,7 @@ jobs:
 
           - php-version: 7.4
             symfony-version: "5.2.*"
-            
+
           - php-version: 8.0
             symfony-version: "5.2.*"
 
@@ -201,6 +201,9 @@ jobs:
           key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
+      - name: "Install Ocular as depencies"
+        run: composer req "scrutinizer/ocular" --dev --no-update
+
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress
 
@@ -209,8 +212,7 @@ jobs:
 
       - name: "Upload coverage results to Scrutinizer"
         run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+          php vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml
 
       - name: "Upload coverage results to Coveralls"
         env:
