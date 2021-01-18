@@ -22,4 +22,14 @@ final class Scalar implements Annotation
      * @var string
      */
     public string $scalarType;
+
+    /**
+     * @var string
+     */
+    public string $doctrineType;
+
+    /**
+     * @var string
+     */
+    public string $phpType;
 }

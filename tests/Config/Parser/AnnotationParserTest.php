@@ -426,6 +426,16 @@ class AnnotationParserTest extends TestCase
         ]);
     }
 
+    public function testScalarRegisterType(): void
+    {
+        $this->expect('CustomScalarType', 'object', [
+            'fields' => [
+                'doctrineDatetime' => ['type' => 'ScalarWithTypeMapping'],
+                'phpDatetime' => ['type' => 'ScalarWithTypeMapping!'],
+            ],
+        ]);
+    }
+
     public function testInvalidParamGuessing(): void
     {
         try {

@@ -93,6 +93,7 @@ class AnnotationParser implements PreParserInterface
         self::$classesMap = [];
         self::$providers = [];
         self::$graphClassCache = [];
+        self::$doctrineMapping = [];
     }
 
     /**
@@ -102,7 +103,7 @@ class AnnotationParser implements PreParserInterface
      */
     private static function processFile(SplFileInfo $file, ContainerBuilder $container, array $configs, bool $preProcess): array
     {
-        self::$doctrineMapping = $configs['doctrine']['types_mapping'];
+        self::$doctrineMapping += $configs['doctrine']['types_mapping'];
         $container->addResource(new FileResource($file->getRealPath()));
 
         try {
@@ -189,6 +190,16 @@ class AnnotationParser implements PreParserInterface
                 $gqlType = self::GQL_SCALAR;
                 if (!$preProcess) {
                     $gqlConfiguration = self::scalarAnnotationToGQLConfiguration($graphClass, $classAnnotation);
+                } else {
+                    if (isset($classAnnotation->doctrineType)) {
+                        $gqlName = $classAnnotation->name ?? $graphClass->getShortName();
+                        self::$doctrineMapping[$classAnnotation->doctrineType] = $gqlName;
+                    }
+                    if (isset($classAnnotation->phpType)) {
+                        self::$classesMap[$gqlName] = ['type' => $gqlType, 'class' => $classAnnotation->phpType];
+
+                        return $gqlTypes;
+                    }
                 }
                 break;
 
