@@ -36,6 +36,9 @@ jobs:
           - php-version: 7.4
             symfony-version: "5.2.*"
 
+          - php-version: 8.0
+            symfony-version: "5.2.*"
+
     name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
 
     steps:
@@ -187,7 +190,7 @@ jobs:
       - name: "Install PHP with coverage"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.4"
+          php-version: "8.0"
           ini-values: pcov.directory=.
           coverage: "pcov"
 
@@ -198,6 +201,9 @@ jobs:
           key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
+      - name: "Install Ocular as depencies"
+        run: composer req "scrutinizer/ocular" --dev --no-update
+
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress
 
@@ -205,9 +211,7 @@ jobs:
         run: bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
 
       - name: "Upload coverage results to Scrutinizer"
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+        run: vendor/scrutinizer/ocular/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml
 
       - name: "Upload coverage results to Coveralls"
         env:

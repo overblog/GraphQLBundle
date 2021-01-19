@@ -18,6 +18,8 @@ return PhpCsFixer\Config::create()
             'no_superfluous_phpdoc_tags' => ['allow_mixed' => true],
             'global_namespace_import' => ['import_functions' => true, 'import_classes' => true, 'import_constants' => true],
             'phpdoc_summary' => false,
+            'hash_to_slash_comment' => false,
+            'single_line_comment_style' => false
         ]
     )
     ->setFinder($finder)

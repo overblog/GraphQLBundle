@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Resolver\TypeResolver;
 /**
  * @GQL\Union(types={"Hero", "Droid", "Sith"})
  */
+#[GQL\Union(types: ["Hero", "Droid", "Sith"])]
 class SearchResult2
 {
     public static function resolveType(TypeResolver $typeResolver, bool $value): ?Type

@@ -11,18 +11,38 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type
  * @ORM\Entity
  */
+#[GQL\Type]
 class Lightsaber
 {
     /**
      * @ORM\Column
      * @GQL\Field
      */
-    protected string $color;
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $color;
+
+    /**
+     * @ORM\Column(type="text")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $text;
+
+    /**
+     * @ORM\Column(type="string")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $string;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @GQL\Field
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $size;
 
@@ -30,6 +50,7 @@ class Lightsaber
      * @ORM\OneToMany(targetEntity="Hero")
      * @GQL\Field
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $holders;
 
@@ -37,6 +58,7 @@ class Lightsaber
      * @ORM\ManyToOne(targetEntity="Hero")
      * @GQL\Field
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $creator;
 
@@ -44,6 +66,7 @@ class Lightsaber
      * @ORM\OneToOne(targetEntity="Crystal")
      * @GQL\Field
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $crystal;
 
@@ -51,6 +74,7 @@ class Lightsaber
      * @ORM\ManyToMany(targetEntity="Battle")
      * @GQL\Field
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $battles;
 
@@ -59,6 +83,7 @@ class Lightsaber
      * @ORM\OneToOne(targetEntity="Hero")
      * @ORM\JoinColumn(nullable=true)
      */
+    #[GQL\Field]
     // @phpstan-ignore-next-line
     protected $currentHolder;
 
@@ -67,5 +92,39 @@ class Lightsaber
      * @ORM\Column(type="text[]")
      * @GQL\Deprecated("No more tags on lightsabers")
      */
+    #[GQL\Field]
+    #[GQL\Deprecated("No more tags on lightsabers")]
     protected array $tags;
+
+    /**
+     * @ORM\Column(type="float")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $float;
+
+    /**
+     * @ORM\Column(type="decimal")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $decimal;
+
+    /**
+     * @ORM\Column(type="bool")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $bool;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @GQL\Field
+     */
+    #[GQL\Field]
+    // @phpstan-ignore-next-line
+    protected $boolean;
 }

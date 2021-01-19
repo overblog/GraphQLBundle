@@ -33,17 +33,17 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/AnnotationParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
 			message: "#^Parameter \\#1 \\$filename of function file_get_contents expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/AnnotationParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/AnnotationParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$description\\.$#"
@@ -126,7 +126,7 @@ parameters:
 			path: src/DependencyInjection/Compiler/AliasedPass.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
@@ -444,3 +444,8 @@ parameters:
 			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
 			count: 1
 			path: src/Validator/InputValidator.php
+
+		-
+			message:  "#^Call to an undefined method ReflectionClass|ReflectionMethod|ReflectionProperty::getAttributes().$#"
+			count: 1
+			path: src/Config/Parser/AttributeParser.php
