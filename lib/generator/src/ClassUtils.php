@@ -29,6 +29,10 @@ abstract class ClassUtils
 
     public static function shortenClassFromCode($code, callable $callback = null)
     {
+        if (null === $code) {
+            return '';
+        }
+
         if (null === $callback) {
             $callback = function ($matches) {
                 return static::shortenClassName($matches[1]);
