@@ -47,6 +47,9 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         $variables['this'] = $object;
 
+        // Make all tagged GraphQL services available in the expression constraint
+        $variables = array_merge($variables, $this->graphQLServices->getAll());
+
         if ($object instanceof ValidationNode) {
             $variables['parentValue'] = $object->getResolverArg('value');
             $variables['context'] = $object->getResolverArg('context');

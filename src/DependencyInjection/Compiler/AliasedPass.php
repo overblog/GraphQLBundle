@@ -45,18 +45,16 @@ final class AliasedPass implements CompilerPassInterface
     private function filterDefinitions(array $definitions): array
     {
         return array_filter($definitions, function (Definition $definition) {
+            // TODO: remove following if-block in 1.0
+            if ($definition->hasTag('overblog_graphql.resolver')) {
+                @trigger_error(
+                    "The 'overblog_graphql.resolver' tag is deprecated since 0.14 and will be removed in 1.0. Use 'overblog_graphql.query' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
+                    E_USER_DEPRECATED
+                );
+            }
+
             foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
                 if ($definition->hasTag($tagName)) {
-                    // TODO: remove following if-block in 1.0
-                    // @codeCoverageIgnoreStart
-                    if ('overblog_graphql.resolver' === $tagName) {
-                        @trigger_error(
-                            "The 'overblog_graphql.resolver' tag is deprecated since 0.14 and will be removed in 1.0. Use 'overblog_graphql.query' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
-                            E_USER_DEPRECATED
-                        );
-                    }
-                    // @codeCoverageIgnoreEnd
-
                     return is_subclass_of($definition->getClass(), AliasedInterface::class);
                 }
             }

@@ -90,7 +90,7 @@ Mutation:
                     username:
                         type: "String"
                         validation:
-                            - Expression: "service('service_validator').resolveVariablesAccessible(args, info)"
+                            - Expression: "service_validator.resolveVariablesAccessible(args, info)"
 
             autoValidationAutoThrow:
                 type: Boolean

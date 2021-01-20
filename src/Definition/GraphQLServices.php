@@ -44,6 +44,14 @@ final class GraphQLServices
         return $this->services[$name];
     }
 
+    /**
+     * Get all GraphQL services.
+     */
+    public function getAll(): array
+    {
+        return $this->services;
+    }
+
     public function has(string $name): bool
     {
         return isset($this->services[$name]);

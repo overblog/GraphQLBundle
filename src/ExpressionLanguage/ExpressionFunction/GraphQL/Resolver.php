@@ -7,8 +7,7 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 
 /**
- * @deprecated This class has been deprecated since 0.14 and will be removed in 1.0. Use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query instead.
- * @codeCoverageIgnore
+ * @deprecated since 0.14 and will be removed in 1.0. Use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query instead.
  */
 final class Resolver extends ExpressionFunction
 {
@@ -18,7 +17,7 @@ final class Resolver extends ExpressionFunction
             $name,
             function (string $alias, string $args = '[]') {
                 @trigger_error(
-                    "The expression function 'resolver' has been deprecated since 0.14 and will be removed in 1.0. Use 'query' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
+                    "The 'resolver' expression function is deprecated since 0.14 and will be removed in 1.0. Use 'query' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
                     E_USER_DEPRECATED
                 );
 

@@ -24,10 +24,9 @@ services:
               alias: validator.expression
 
     Overblog\GraphQLBundle\Tests\Functional\Validator\ServiceValidator:
-
-    service_validator:
-        alias: Overblog\GraphQLBundle\Tests\Functional\Validator\ServiceValidator
-        public: true
+        tags:
+            # TODO: replace the tag with 'overblog_graphql.service' in 1.0
+            - { name: overblog_graphql.global_variable, alias: service_validator }
 
     Overblog\GraphQLBundle\Tests\Functional\App\Mutation\InputValidatorMutation:
         tags:

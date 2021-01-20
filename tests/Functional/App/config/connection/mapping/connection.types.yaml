@@ -20,11 +20,11 @@ User:
             friendsForward:
                 type: userConnection
                 argsBuilder: "Relay::ForwardConnection"
-                resolve: '@=query("friends", value, args)'
+                resolve: '@=resolver("friends", [value, args])'
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"
-                resolve: '@=query("friends", value, args)'
+                resolve: '@=resolver("friends", [value, args])'
 
 friendConnection:
     type: relay-connection
