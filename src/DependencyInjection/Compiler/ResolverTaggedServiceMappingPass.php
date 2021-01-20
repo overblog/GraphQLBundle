@@ -7,11 +7,15 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 use InvalidArgumentException;
 use function is_string;
 use function sprintf;
+use function trigger_error;
+use const E_USER_DEPRECATED;
+
+@trigger_error(sprintf('The "%s" class is deprecated since 0.14 and will be removed in 1.0. Use "%s" instead.', ResolverTaggedServiceMappingPass::class, QueryTaggedServiceMappingPass::class), E_USER_DEPRECATED);
 
 /**
  * TODO: remove this class in 1.0
  *
- * @deprecated This class is deprecated since 0.14 in favor of QueryTaggedServiceMappingPass and will be removed in 1.0.
+ * @deprecated since 0.14 and will be removed in 1.0. Use Overblog\GraphQLBundle\DependencyInjection\Compiler\QueryTaggedServiceMappingPass instead.
  * @codeCoverageIgnore
  */
 class ResolverTaggedServiceMappingPass extends TaggedServiceMappingPass
