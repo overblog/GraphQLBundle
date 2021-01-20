@@ -12,24 +12,41 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type\Planet;
  * @GQL\Access("default_access")
  * @GQL\IsPublic("default_public")
  */
+#[GQL\Provider(prefix: "planet_")]
+#[GQL\Access("default_access")]
+#[GQL\IsPublic("default_public")]
 class PlanetRepository
 {
     /**
-     * @GQL\Query(type="[Planet]", args={
-     *    @GQL\Arg(type="String!", name="keyword")
-     * })
+     * @GQL\Query(type="[Planet]")
+     * @GQL\Arg(type="String!", name="keyword")
      */
+    #[GQL\Query(type: "[Planet]")]
+    #[GQL\Arg(type: "String!", name: "keyword")]
     public function searchPlanet(string $keyword): array
     {
         return [];
     }
 
     /**
-     * @GQL\Mutation(type="Planet", args={
-     *    @GQL\Arg(type="PlanetInput!", name="planetInput")
-     * })
+     * @GQL\Query(type="[Planet]")
+     * @GQL\Arg(type="Int!", name="distance")
+     */
+    #[GQL\Query(type: "[Planet]")]
+    #[GQL\Arg(type: "Int!", name: "distance")]
+    public function searchStar(int $distance): array
+    {
+        return [];
+    }
+
+    /**
+     * @GQL\Mutation(type="Planet")
+     * @GQL\Arg(type="PlanetInput!", name="planetInput")
      * @GQL\IsPublic("override_public")
      */
+    #[GQL\Mutation(type: "Planet")]
+    #[GQL\Arg(type: "PlanetInput!", name: "planetInput")]
+    #[GQL\IsPublic("override_public")]
     public function createPlanet(array $planetInput): array
     {
         return [];
@@ -39,6 +56,8 @@ class PlanetRepository
      * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
      * @GQL\Access("override_access")
      */
+    #[GQL\Query(type: "[Planet]", targetType: "Droid", name: "allowedPlanets")]
+    #[GQL\Access("override_access")]
     public function getAllowedPlanetsForDroids(): array
     {
         return [];
@@ -47,17 +66,20 @@ class PlanetRepository
     /**
      * @GQL\Query(type="Planet", targetTypes="RootQuery2")
      */
+    #[GQL\Query(type: "Planet", targetType: "RootQuery2")]
     public function getPlanetSchema2(): ?Planet
     {
         return null;
     }
 
     /**
-     * @GQL\Mutation(type="Planet", targetTypes="RootMutation2", args={
-     *    @GQL\Arg(type="PlanetInput!", name="planetInput")
-     * })
+     * @GQL\Mutation(type="Planet", targetTypes="RootMutation2")
+     * @GQL\Arg(type="PlanetInput!", name="planetInput")
      * @GQL\IsPublic("override_public")
      */
+    #[GQL\Mutation(type: "Planet", targetTypes: "RootMutation2")]
+    #[GQL\Arg(type: "PlanetInput!", name: "planetInput")]
+    #[GQL\IsPublic("override_public")]
     public function createPlanetSchema2(array $planetInput): array
     {
         return [];
@@ -66,6 +88,7 @@ class PlanetRepository
     /**
      * @GQL\Mutation(targetTypes={"RootMutation", "RootMutation2"})
      */
+    #[GQL\Mutation(targetTypes: ["RootMutation", "RootMutation2"])]
     public function destroyPlanet(int $planetId): bool
     {
         return true;
@@ -74,6 +97,7 @@ class PlanetRepository
     /**
      * @GQL\Query(targetTypes={"RootQuery", "RootQuery2"})
      */
+    #[GQL\Query(targetTypes: ["RootQuery", "RootQuery2"])]
     public function isPlanetDestroyed(int $planetId): bool
     {
         return true;
@@ -82,6 +106,7 @@ class PlanetRepository
     /**
      * @GQL\Query(targetTypes={"Droid", "Mandalorian"}, name="armorResistance")
      */
+    #[GQL\Query(name: "armorResistance", targetTypes: ["Droid", "Mandalorian"])]
     public function getArmorResistance(): int
     {
         return 10;

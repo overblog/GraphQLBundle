@@ -1,6 +1,8 @@
-# Annotations
+# Annotations & PHP 8 attributes
 
-In order to use annotations, you need to configure the mapping:
+In order to use annotations or attributes, you need to configure the mapping:
+
+To use annotations, use the `annotation` mapping type.
 ```yaml
 # config/packages/graphql.yaml
 overblog_graphql:
@@ -12,9 +14,51 @@ overblog_graphql:
           suffix: ~
 ```
 
+To use attributes, use the `attribute` mapping type.
+
+```yaml
+# config/packages/graphql.yaml
+overblog_graphql:
+  definitions:
+    mappings:
+      types:
+        - type: attribute
+          dir: "%kernel.project_dir%/src/GraphQL"
+          suffix: ~
+```
+
 This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
 
-## Using Annotations as your only Mapping
+The annotations & attributes are equivalent and are used in the same way. They share the same annotation namespaces, classes and API.
+
+Example with annotations:
+```php
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field(type="Int")
+     */
+    protected $myField;
+}
+```
+
+Example with attributes:
+```php
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+#[GQL\Type]
+class MyType {
+    #[GQL\Field(type: "Int")]
+    protected $myField;
+}
+```
+
+
+## Using Annotations or Attributes as your only Mapping
 
 If you only use annotations as mappings you need to add an empty `RootQuery` type.
 Your config should look like this:
@@ -42,6 +86,8 @@ class RootQuery
 }
 ```
 If you use mutations, you need a `RootMutation` type as well.
+
+
 ## Annotations reference
 - [Annotations reference](annotations-reference.md)
 
@@ -115,6 +161,35 @@ In the previous example, the generated `resolve` config of the `something` field
 
 
 ## Type & Args auto-guessing
+
+If the `type` option is not defined explicitly on the `@Field`, `@Query` or `@Mutation`, the bundle will try to guess it from other DocBlock annotations or from the PHP type-hint, in the following order:
+
+1. `@var` and `@return` annotations
+2. type-hint 
+3. Doctrine annotations
+
+It will stop on the first successful guess.
+
+### @Field type auto-guessing from DockBlock
+
+The `type` option of the `@Field` annotation can be guessed if its DocBlock describes a known type. It is a more precise guessing as it supports collections of objects, e.g. `User[]` or `array<User>`.
+
+For example:
+
+```php
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field
+     * 
+     * @var Friend[]
+     */
+    public array $friends = [];
+}
+```
+
 
 ### @Field type auto-guessing when defined on a property with a type hint
 

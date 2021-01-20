@@ -32,7 +32,7 @@ class Coordinates {
     public $longitude;
 
     /**
-     * @GQL\Field(type="Float!", resolve="query('elevation_resolver', value.latitude, value.longitude)")
+     * @GQL\Field(type="Float!", resolve="resolver('elevation_resolver', [value.latitude, value.longitude])")
      */
     public $elevation;
 }
@@ -44,6 +44,8 @@ class Coordinates {
 
 [@Arg](#arg)
 
+[@ArgsBuilder](#argsBuilder)
+
 [@Deprecated](#deprecated)
 
 [@Description](#description)
@@ -53,6 +55,8 @@ class Coordinates {
 [@EnumValue](#enumvalue)
 
 [@Field](#field)
+
+[@FieldBuilder](#fieldbuilder)
 
 [@FieldsBuilder](#fieldsbuilder)
 
@@ -110,11 +114,11 @@ class Hero {
 
 ## @Arg
 
-This annotation is used in the `args` attribute of a `@Field` or `@Query` or `@Mutation` to define an argument.
+This annotation is used in conjunction with a `@Field`, a `@Query` or `@Mutation` to define an argument.
 
 Required attributes:
 
--   **name** : The GraphQL name of the field argument (default to class name)
+-   **name** : The GraphQL name of the field argument (default to class name).
 -   **type** : The GraphQL type of the field argument
 
 Optional attributes:
@@ -131,20 +135,49 @@ Example:
  */
 class Hero {
     /**
-     *  @GQL\Field(fieldBuilder={"GenericIdBuilder", {"name": "heroId"}})
+     * @GQL\Field
+     * @GQL\FieldBuilder("GenericIdBuilder", config={"name": "heroId"})
      */
     public $id;
 
     /**
-     * @GQL\Field(type="[Hero]",
-     * args={
-     *     @GQL\Arg(name="droidsOnly", type="Boolean", description="Retrieve only droids heroes"),
-     *     @GQL\Arg(name="nameStartsWith", type="String", description="Retrieve only heroes with name starting with")
-     * },
-     * resolve="query('hero_friends', args['droidsOnly'], args['nameStartsWith'])"
-     * )
+     * @GQL\Field(type="[Hero]", resolve="resolver('hero_friends', [args['droidsOnly'], args['nameStartsWith']])")
+     * @GQL\Arg(name="droidsOnly", type="Boolean", description="Retrieve only droids heroes"),
+     * @GQL\Arg(name="nameStartsWith", type="String", description="Retrieve only heroes with name starting with")
      */
     public $friends;
+}
+```
+
+## @ArgsBuilder
+
+This annotation is used in conjunction with a `@Field`, a `@Query` or `@Mutation` to generate the field arguments.
+It is used to set an arguments builder for a field (see [Args builders](../definitions/builders/args.md)))
+
+Required attributes:
+
+-   **value** : The name of the args builder
+
+Optional attributes:
+
+-   **config** : The configuration to pass to the args builder
+
+Example:
+
+```php
+<?php
+
+/**
+ * @GQL\Type(name="MyType")
+ */
+class MyType {
+    /**
+     * @GQL\Field(type="[Friend]")
+     * @GQL\ArgsBuilder("Pagination")
+     */
+    protected function friends(int $limit, int $offset) {
+        return $this->getFriends();
+    }
 }
 ```
 
@@ -204,6 +237,8 @@ In order to add more meta on the values (like description or deprecated reason),
 Optional attributes:
 
 -   **name** : The GraphQL name of the enum (default to the class name without namespace)
+
+Deprecated attributes:
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
 
 The class will also be used by the `Arguments Transformer` service when an `Enum` is encoutered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
@@ -214,10 +249,9 @@ Example:
 <?php
 
 /**
- * @GQL\Enum(values={
- *    @GQL\EnumValue(name="TATOUINE", description="The planet of Tatouine"),
- *    @GQL\EnumValue(name="BESPIN", deprecationReason="Not used anymore. The planet has been destroyed !")
- * })
+ * @GQL\Enum
+ * @GQL\EnumValue("TATOUINE", description="The planet of Tatouine"),
+ * @GQL\EnumValue("BESPIN", deprecationReason="Not used anymore. The planet has been destroyed !")
  * @GQL\Description("The list of planets!")
  */
 class Planet
@@ -236,7 +270,8 @@ As the class can be instanciated from the `Arguments Transformer` service, it ca
 
 ## @EnumValue
 
-This annotation is used in the `values` attribute on the `@Enum` annotation to add a description or deprecation reason on his value. See `@Enum` example above.
+This annotation is used in conjunction with the `@Enum` annotation to add values to an `Enum`. See `@Enum` example above.
+The attribute `name` must match a constant name on the class.
 
 Required attributes:
 
@@ -246,6 +281,8 @@ Optional attributes:
 
 -   **description** : The GraphQL description of the enum value
 -   **deprecationReason** : A deprecation reason for this enum value
+
+Note: Currently, doctrine annotation do not support annotations on class constant. That's the reason why the `@EnumValue` annotations must be set on the class itself. 
 
 ## @Field
 
@@ -261,10 +298,13 @@ If it is defined on a _method_ of the Root Query or the Root mutation :
 
 Optional attributes:
 
+-   **name**  : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
 -   **type** : The GraphqL type of the field. This attribute can sometimes be guessed automatically from Doctrine ORM annotations
--   **name** : The GraphQL name of the field (default to the property name). If you don't specify a `resolve` attribute while changing the `name`, the default one will be '@=value.<property_name>'
--   **args** : An array of `@Arg`
 -   **resolve** : A resolution expression
+
+Deprecated attributes (use flat annotations instead):
+
+-   **args** : An array of `@Arg`
 -   **fieldBuilder** : A field builder to use. Either as string (will be the field builder name), or as an array, first index will the name of the builder and second one will be the config.
 -   **argsBuilder** : An args builder to use. Either as string (will be the args builder name), or as an array, first index will the name of the builder and second one will be the config.
 
@@ -278,16 +318,17 @@ Example on properties:
  */
 class Hero {
     /**
-     *  @GQL\Field(fieldBuilder={"GenericIdBuilder", {"name": "heroId"}})
+     * @GQL\Field
+     * @GQL\FieldBuilder("GenericIdBuilder", config={"name": "heroId"})
      */
     public $id;
 
     /**
      * @GQL\Field(
      *   type="[Hero]",
-     *   argsBuilder="Pager"
-     *   resolve="query('hero_friends', value, args['page'])"
+     *   resolve="resolver('hero_friends', [value, args['page']])"
      * )
+     * @GQL\ArgsBuilder("Pager")
      */
     public $friends;
 }
@@ -303,11 +344,8 @@ Example on methods:
  */
 class Hero {
     /**
-     * @GQL\Field(
-     *   name="friends",
-     *   type="[Hero]",
-     *   args={@GQL\Arg(name="limit", type="Int")}
-     * )
+     * @GQL\Field(name="friends", type="[Hero]")
+     * @GQL\Arg("limit", type="Int")
      */
     public function getFriends(int $limit) {
         return array_slice($this->friends, 0, $limit);
@@ -315,18 +353,18 @@ class Hero {
 }
 ```
 
-## @FieldsBuilder
+## @FieldBuilder
 
-This annotation is used on the attributes `builders` of a `@Type` annotation.
-It is used to add fields builder to types (see [Fields builders](../definitions/builders/fields.md)))
+This annotation is used with `@Field`, `@Query` or `@Mutation` to use a builder to generate the field.
+It is used to set a field builder for a field (see [Field builders](../definitions/builders/field.md)))
 
 Required attributes:
 
--   **builder** : The name of the fields builder
+-   **value** : The name of the field builder
 
 Optional attributes:
 
--   **builderConfig** : The configuration to pass to the fields builder
+-   **config** : The configuration to pass to the field builder
 
 Example:
 
@@ -334,7 +372,39 @@ Example:
 <?php
 
 /**
- * @GQL\Type(name="MyType", builders={@GQL\FieldsBuilder(builder="Timestamped")})
+ * @GQL\Type(name="MyType")
+ */
+class MyType {
+    /**
+     * @GQL\Field
+     * @GQL\FieldBuilder("GenericIdBuilder", config={"name": "heroId"})
+     */
+    protected $field1;
+}
+```
+
+
+## @FieldsBuilder
+
+This annotation is used with `@GQL\Type` to use a builder to generate fields for the type.
+It is used to add fields builder to types (see [Fields builders](../definitions/builders/fields.md)))
+
+Required attributes:
+
+-   **value**  : The name of the fields builder
+
+Optional attributes:
+
+-   **config** : The configuration to pass to the fields builder
+
+Example:
+
+```php
+<?php
+
+/**
+ * @GQL\Type(name="MyType")
+ * @GQL\FieldsBuilder("Timestamped")
  */
 class MyType {
 
@@ -350,7 +420,7 @@ An Input type is pretty much the same as an input, except:
 
 Optional attributes:
 
--   **name** : The GraphQL name of the input field (default to classnameInput )
+-   **name**  : The GraphQL name of the input field (default to classnameInput )
 -   **isRelay** : Set to true if you want your input to be relay compatible (ie. An extra field `clientMutationId` will be added to the input)
 
 The corresponding class will also be used by the `Arguments Transformer` service. An instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
@@ -409,10 +479,9 @@ namespace App\Graphql\Mutation;
 class MutationProvider {
 
     /**
-     * @GQL\Mutation(type="User", args={
-     *    @GQL\Arg(name="id", type="ID!"),
-     *    @GQL\Arg(name="newEmail", type="String!")
-     * })
+     * @GQL\Mutation(type="User")
+     * @GQL\Arg("id", type="ID!"),
+     * @GQL\Arg("newEmail", type="String!")
      */
     public function updateUserEmail(string $id, string $newEmail) {
         $user = $this->repository->find($id);
@@ -481,17 +550,21 @@ This annotation is used on _class_ to define a GraphQL Type.
 
 Optional attributes:
 
--   **name** : The GraphQL name of the type (default to the class name without namespace)
+-   **name**  : The GraphQL name of the type (default to the class name without namespace)
 -   **interfaces** : An array of GraphQL interface this type inherits from (can be auto-guessed. See interface documentation).
 -   **isRelay** : Set to true to have a Relay compatible type (ie. A `clientMutationId` will be added).
--   **builders** : An array of `@FieldsBuilder` annotations
 -   **isTypeOf** : Is type of resolver for interface implementation
+
+Deprecated attributes:
+
+-   **builders** : An array of `@FieldsBuilder` annotations
 
 ```php
 <?php
 
 /**
- * @GQL\Type(interfaces={"Character"}, builders={@GQL\FieldsBuilder(builder="Timestamped")})
+ * @GQL\Type(interfaces={"Character"})
+ * @GQL\FieldsBuilder("Timestamped")
  */
 class Hero {
     /**
@@ -511,7 +584,7 @@ Required attributes:
 
 Optional attributes:
 
--   **name** : The GraphQL name of the interface (default to the class name without namespace)
+-   **name**  : The GraphQL name of the interface (default to the class name without namespace)
 
 ## @Scalar
 
@@ -519,7 +592,7 @@ This annotation is used on a _class_ to define a custom scalar.
 
 Optional attributes:
 
--   **name** : The GraphQL name of the interface (default to the class name without namespace)
+-   **name**  : The GraphQL name of the interface (default to the class name without namespace)
 -   **scalarType** : An expression to reuse an other scalar type
 
 Example:
@@ -577,7 +650,7 @@ Required attributes:
 
 Optional attributes:
 
--   **name** : The GraphQL name of the union (default to the class name without namespace)
+-   **name**  : The GraphQL name of the union (default to the class name without namespace)
 -   **resolveType** : Expression to resolve an object type. By default, it'll use a static method `resolveType` on the related class and call it with the `type resolver` as first argument and then the `value`.
 
 Example:
@@ -627,9 +700,9 @@ class MyConnection {}
 ... is the same as ...
 
 /**
- * @GQL\Type(builders={
- *      @GQL\FieldsBuilder(builder="relay-connection", builderConfig={edgeType="MyConnectionEdge"})
- * })
+ * @GQL\Type
+ * @GQL\FieldsBuilder("relay-connection", config={edgeType="MyConnectionEdge"})
+ * 
  */
 class MyConnection {}
 ```
@@ -647,16 +720,14 @@ class MyConnection {}
 ... is the same as ...
 
 /**
- * @GQL\Type(builders={
- *      @GQL\FieldsBuilder(builder="relay-edge", builderConfig={nodeType="MyType"})
- * })
+ * @GQL\Type
+ * @GQL\FieldsBuilder("relay-edge", config={nodeType="MyType"})
  */
 class MyConnectionEdge {}
 
 /**
- * @GQL\Type(builders={
- *      @GQL\FieldsBuilder(builder="relay-connection", builderConfig={edgeType="MyConnectionEdge"})
- * })
+ * @GQL\Type
+ * @GQL\FieldsBuilder("relay-connection", config={edgeType="MyConnectionEdge"})
  */
 class MyConnection {}
 
@@ -682,9 +753,8 @@ class MyEdge {}
 ... is the same as ...
 
 /**
- * @GQL\Type(builders={
- *      @GQL\FieldsBuilder(builder="relay-edge", builderConfig={nodeType="MyType"})
- * })
+ * @GQL\Type
+ * @GQL\FieldsBuilder("relay-edge", config={nodeType="MyType"})
  */
 class MyEdge {}
 ```

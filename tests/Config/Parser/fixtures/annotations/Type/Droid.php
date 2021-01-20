@@ -10,10 +10,13 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type(isTypeOf="@=isTypeOf('App\Entity\Droid')")
  * @GQL\Description("The Droid type")
  */
+#[GQL\Type(isTypeOf: "@=isTypeOf('App\Entity\Droid')")]
+#[GQL\Description("The Droid type")]
 class Droid extends Character
 {
     /**
      * @GQL\Field
      */
+    #[GQL\Field]
     protected int $memory;
 }

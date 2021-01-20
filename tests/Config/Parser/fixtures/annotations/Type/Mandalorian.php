@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killab
 /**
  * @GQL\Type
  */
+#[GQL\Type]
 class Mandalorian extends Character implements Killable, Armored
 {
 }
