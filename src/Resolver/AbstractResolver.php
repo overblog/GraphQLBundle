@@ -66,6 +66,11 @@ abstract class AbstractResolver implements FluentResolverInterface
         return array_keys($this->aliases, $id);
     }
 
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
+
     /**
      * @return mixed
      */
