@@ -13,12 +13,16 @@ class InterfaceTypeDefinition extends TypeWithOutputFieldsDefinition
         /** @var ArrayNodeDefinition $node */
         $node = self::createNode('_interface_config');
 
+        /** @phpstan-ignore-next-line */
         $node
             ->children()
                 ->append($this->nameSection())
                 ->append($this->outputFieldsSection())
                 ->append($this->resolveTypeSection())
                 ->append($this->descriptionSection())
+                ->arrayNode('interfaces')
+                    ->prototype('scalar')->info('One of internal or custom interface types.')->end()
+                ->end()
             ->end();
 
         return $node;

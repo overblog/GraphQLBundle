@@ -782,7 +782,7 @@
                     },
                     {
                         "name": "INTERFACE",
-                        "description": "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
+                        "description": "Indicates this type is an interface. `fields`, `interfaces`, and `possibleTypes` are valid fields.",
                         "isDeprecated": false,
                         "deprecationReason": null
                     },
