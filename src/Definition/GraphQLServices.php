@@ -73,6 +73,7 @@ final class GraphQLServices
      * @param mixed ...$args
      *
      * @return mixed
+     *
      * @throws ReflectionException
      */
     public function mutation(string $alias, ...$args)
