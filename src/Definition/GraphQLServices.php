@@ -9,8 +9,6 @@ use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
-use ReflectionException;
-use ReflectionMethod;
 
 /**
  * Container for special services to be passed to all generated types.
@@ -73,24 +71,9 @@ final class GraphQLServices
      * @param mixed ...$args
      *
      * @return mixed
-     *
-     * @throws ReflectionException
      */
     public function mutation(string $alias, ...$args)
     {
-        // TODO: remove the following if-block in 1.0
-        if (1 === count($args) && is_array($args[0])) {
-            $aliases = $this->mutationResolver->getAliases();
-
-            if (isset($aliases[$alias])) {
-                // Check if proxy resolver has the same amount of params
-                $numOfParams = (new ReflectionMethod($aliases[$alias]))->getNumberOfParameters();
-                if (count($args[0]) === $numOfParams) {
-                    $args = $args[0];
-                }
-            }
-        }
-
         return $this->mutationResolver->resolve([$alias, $args]);
     }
 

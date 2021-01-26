@@ -10,6 +10,7 @@ All definition config entries can use expression language but it must be explici
 	- [parameter](#parameter)
 	- [isTypeOf](#istypeof)
 	- [query](#query)
+    - [resolver](#resolver) 
 	- [mutation](#mutation)
 	- [arguments](#arguments)
 	- [globalId](#globalid)
@@ -102,8 +103,33 @@ Examples:
 
 ---
 
+### resolver
+**Signature**: <code><b>resolver</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code> | **Alias**: `res`
+
+> This function is deprecated since version 0.14 and will be removed in 1.0. Use the [`query`](#query) function instead.
+
+Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
+
+Examples:
+```yaml
+# Using aliased resolver name
+@=resolver('blog_by_id', [value['blogID']])
+
+# Using the 'q' alias and a FQCN::methodName.
+# Note the double quotes.
+@=res("App\\GraphQL\\Resolver\\UserResolver::findOne", [args, info, context, value])
+
+# If using single quotes, you must use 4 slashes
+@=res('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', [info, args])
+```
+
+---
+
 ### mutation
 **Signature**: <code><b>mutation</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `m`
+
+> The signature of this function is changed since version 0.14.  
+> The old signature is <code><b>mutation</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code>, which is not used anymore.
 
 Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
 
