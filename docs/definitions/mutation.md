@@ -79,7 +79,7 @@ class ShipMutation implements MutationInterface, AliasedInterface
     {
         return [
             // `create_ship` is the name of the mutation that you SHOULD use inside of your types definition
-            // `createShip` is the method that will be executed when you call `@=resolver('create_ship')`
+            // `createShip` is the method that will be executed when you call `@=mutation('create_ship')`
             'createShip' => 'create_ship'
         ];
     }

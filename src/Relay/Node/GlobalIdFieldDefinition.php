@@ -20,7 +20,7 @@ final class GlobalIdFieldDefinition implements MappingInterface
         return [
             'description' => 'The ID of an object',
             'type' => 'ID!',
-            'resolve' => "@=resolver('relay_globalid_field', [value, info, $idFetcher, $typeName])",
+            'resolve' => "@=query('relay_globalid_field', value, info, $idFetcher, $typeName)",
         ];
     }
 

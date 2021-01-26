@@ -2,9 +2,7 @@ Photo:
     type: object
     config:
         fields:
-            id:
-                type: ID!
-            width:
-                type: Int
-        resolveField: "@=resolver('resolve_photo_field', [value, info])"
+            id: ID!
+            width: Int
+        resolveField: "@=query('resolve_photo_field', value, info)"
         interfaces: [Node]

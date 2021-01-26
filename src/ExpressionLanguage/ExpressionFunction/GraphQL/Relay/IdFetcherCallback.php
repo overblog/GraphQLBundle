@@ -17,7 +17,7 @@ final class IdFetcherCallback extends ExpressionFunction
             static fn ($idFetcher) => (
                 Closure::new()
                     ->addArgument('value')
-                    ->bindVars(TypeGenerator::GLOBAL_VARS, 'args', 'context', 'info')
+                    ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $idFetcher")
                     ->generate()
             )

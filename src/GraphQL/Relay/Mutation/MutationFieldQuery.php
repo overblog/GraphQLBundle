@@ -11,11 +11,11 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use function is_array;
 use function is_object;
 
-final class MutationFieldResolver implements ResolverInterface, AliasedInterface
+final class MutationFieldQuery implements QueryInterface, AliasedInterface
 {
     private PromiseAdapter $promiseAdapter;
     private ArgumentFactory $argumentFactory;

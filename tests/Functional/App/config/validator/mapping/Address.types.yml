@@ -17,7 +17,7 @@ Address:
             zipCode:
                 type: Int!
                 validation:
-                    - Expression: "service('service_validator').isZipCodeValid(value)"
+                    - Expression: "service_validator.isZipCodeValid(value)"
             period:
                 type: Period!
                 validation: cascade

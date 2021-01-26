@@ -2,4 +2,4 @@ services:
     overblog_graphql.test.exception:
         class: Overblog\GraphQLBundle\Tests\Functional\App\Exception\ExampleException
         tags:
-            - { name: "overblog_graphql.resolver", alias: "example_exception" }
+            - { name: "overblog_graphql.query", alias: "example_exception" }

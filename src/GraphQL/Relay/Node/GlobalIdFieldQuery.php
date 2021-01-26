@@ -6,11 +6,11 @@ namespace Overblog\GraphQLBundle\GraphQL\Relay\Node;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
 
-final class GlobalIdFieldResolver implements ResolverInterface, AliasedInterface
+final class GlobalIdFieldQuery implements QueryInterface, AliasedInterface
 {
     /**
      * @param object|array    $obj

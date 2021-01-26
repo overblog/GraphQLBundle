@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,8 +20,10 @@ final class AliasedPass implements CompilerPassInterface
 {
     private const SERVICE_SUBCLASS_TAG_MAPPING = [
         MutationInterface::class => 'overblog_graphql.mutation',
-        ResolverInterface::class => 'overblog_graphql.resolver',
+        QueryInterface::class => 'overblog_graphql.query',
         Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
+        // TODO: remove next line in 1.0
+        ResolverInterface::class => 'overblog_graphql.resolver',
     ];
 
     /**
@@ -42,6 +45,14 @@ final class AliasedPass implements CompilerPassInterface
     private function filterDefinitions(array $definitions): array
     {
         return array_filter($definitions, function (Definition $definition) {
+            // TODO: remove following if-block in 1.0
+            if ($definition->hasTag('overblog_graphql.resolver')) {
+                @trigger_error(
+                    "The 'overblog_graphql.resolver' tag is deprecated since 0.14 and will be removed in 1.0. Use 'overblog_graphql.query' instead. For more info visit: https://github.com/overblog/GraphQLBundle/issues/775",
+                    E_USER_DEPRECATED
+                );
+            }
+
             foreach (self::SERVICE_SUBCLASS_TAG_MAPPING as $tagName) {
                 if ($definition->hasTag($tagName)) {
                     return is_subclass_of($definition->getClass(), AliasedInterface::class);

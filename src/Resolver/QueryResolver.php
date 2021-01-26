@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use function sprintf;
 
-class ResolverResolver extends AbstractProxyResolver
+class QueryResolver extends AbstractProxyResolver
 {
     protected function unresolvableMessage(string $alias): string
     {

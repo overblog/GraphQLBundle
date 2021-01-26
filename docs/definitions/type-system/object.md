@@ -29,7 +29,7 @@ Human:
             friends:
                 type: "[Character]"
                 description: "The friends of the character."
-                resolve: "@=resolver('character_friends', [value])"
+                resolve: "@=query('character_friends', value)"
             appearsIn:
                 type: "[Episode]"
                 description: "Which movies they appear in."
@@ -65,7 +65,7 @@ Droid:
             friends:
                 type: "[Character]"
                 description: "The friends of the droid, or an empty list if they have none."
-                resolve: "@=resolver('character_friends', [value])"
+                resolve: "@=query('character_friends', value)"
             appearsIn:
                 type: "[Episode]"
                 description: "Which movies they appear in."

@@ -7,8 +7,9 @@ namespace Overblog\GraphQLBundle;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\AliasedPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ExpressionFunctionPass;
-use Overblog\GraphQLBundle\DependencyInjection\Compiler\GlobalVariablesPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\GraphQLServicesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\MutationTaggedServiceMappingTaggedPass;
+use Overblog\GraphQLBundle\DependencyInjection\Compiler\QueryTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverMapTaggedServiceMappingPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverMethodAliasesPass;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ResolverTaggedServiceMappingPass;
@@ -38,15 +39,17 @@ class OverblogGraphQLBundle extends Bundle
 
         //TypeGeneratorPass must be before TypeTaggedServiceMappingPass
         $container->addCompilerPass(new ConfigParserPass());
-        $container->addCompilerPass(new GlobalVariablesPass());
+        $container->addCompilerPass(new GraphQLServicesPass());
         $container->addCompilerPass(new ExpressionFunctionPass());
         $container->addCompilerPass(new ResolverMethodAliasesPass());
         $container->addCompilerPass(new AliasedPass());
         $container->addCompilerPass(new ResolverMapTaggedServiceMappingPass());
         $container->addCompilerPass(new TypeGeneratorPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new TypeTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
-        $container->addCompilerPass(new ResolverTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
+        $container->addCompilerPass(new QueryTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
         $container->addCompilerPass(new MutationTaggedServiceMappingTaggedPass(), PassConfig::TYPE_BEFORE_REMOVING);
+        // TODO: remove next line in 1.0
+        $container->addCompilerPass(new ResolverTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
     }
 
     public function getContainerExtension()

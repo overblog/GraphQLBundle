@@ -13,7 +13,7 @@ Query:
                     description: 'Map from a username to the user'
                     inputType: String
                     outputType: User
-                    resolveSingleInput: '@=resolver("plural_single_input", [value, info])'
+                    resolveSingleInput: '@=query("plural_single_input", value, info)'
                     
 User:
     type: object

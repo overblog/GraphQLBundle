@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUser;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
@@ -27,23 +26,25 @@ class GetUserTest extends TestCase
         $testUser = new User('testUser', 'testPassword');
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
-        $globalVars = new GlobalVariables(['security' => new Security($coreSecurity)]);
+        $services = $this->createGraphQLServices(['security' => new Security($coreSecurity)]);
 
-        $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GLOBAL_VARS => $globalVars]);
+        $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertInstanceOf(UserInterface::class, $user);
     }
 
     public function testGetUserNoTokenStorage(): void
     {
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(['security' => new Security($this->createMock(CoreSecurity::class))]);
-        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
+            ['security' => new Security($this->createMock(CoreSecurity::class))]
+        );
+        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         $this->assertNull(eval($this->getCompileCode()));
     }
 
     public function testGetUserNoToken(): void
     {
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
                 'security' => new Security(
                     new CoreSecurity(
@@ -52,7 +53,7 @@ class GetUserTest extends TestCase
                 ),
             ]
         );
-        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
 
         $this->getDIContainerMock(['security.token_storage' => $tokenStorage]);
         $this->assertNull(eval($this->getCompileCode()));
@@ -69,7 +70,7 @@ class GetUserTest extends TestCase
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
 
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables(
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
                 'security' => new Security(
                     new CoreSecurity(
@@ -78,7 +79,7 @@ class GetUserTest extends TestCase
                 ),
             ]
         );
-        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
 
         $token
             ->expects($this->once())

@@ -9,7 +9,8 @@ All definition config entries can use expression language but it must be explici
 	- [service](#service)
 	- [parameter](#parameter)
 	- [isTypeOf](#istypeof)
-	- [resolver](#resolver)
+	- [query](#query)
+    - [resolver](#resolver) 
 	- [mutation](#mutation)
 	- [arguments](#arguments)
 	- [globalId](#globalid)
@@ -82,8 +83,30 @@ Example:
 
 ---
 
+### query
+**Signature**: <code><b>query</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `q`
+
+Calls a method on the tagged service `overblog_graphql.query` with `$args`
+
+Examples:
+```yaml
+# Using aliased resolver name
+@=query('blog_by_id', value['blogID'])
+
+# Using the 'q' alias and a FQCN::methodName.
+# Note the double quotes.
+@=q("App\\GraphQL\\Resolver\\UserResolver::findOne", args, info, context, value)
+
+# If using single quotes, you must use 4 slashes
+@=q('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', info, args)
+```
+
+---
+
 ### resolver
-**Signature**: <code><b>resolver</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `res`
+**Signature**: <code><b>resolver</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code> | **Alias**: `res`
+
+> This function is deprecated since version 0.14 and will be removed in 1.0. Use the [`query`](#query) function instead.
 
 Calls a method on the tagged service `overblog_graphql.resolver` with `$args`
 
@@ -92,32 +115,35 @@ Examples:
 # Using aliased resolver name
 @=resolver('blog_by_id', [value['blogID']])
 
-# Using the 'res' alias and a FQCN::methodName.
+# Using the 'q' alias and a FQCN::methodName.
 # Note the double quotes.
 @=res("App\\GraphQL\\Resolver\\UserResolver::findOne", [args, info, context, value])
 
 # If using single quotes, you must use 4 slashes
-@=res('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', [args, info, context, value])
+@=res('App\\\\GraphQL\\\\Resolver\\\\UserResolver::findOne', [info, args])
 ```
 
 ---
 
 ### mutation
-**Signature**: <code><b>mutation</b>(string <b>$alias</b>, array <b> $args</b> = []): mixed</code> | **Alias**: `mut`
+**Signature**: <code><b>mutation</b>(string <b>$alias</b>, <b>...$args</b>): mixed</code> | **Alias**: `m`
+
+> The signature of this function is changed since version 0.14.  
+> The old signature is <code><b>mutation</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code>, which is not used anymore.
 
 Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
 
 Examples:
 ```yaml
 # Using aliased mutation name
-@=mutation('remove_post_from_community', [args['postId']])
+@=mutation('remove_post_from_community', args.postId)
 
-# Using the 'mut' alias and a FQCN::methodName
+# Using the 'm' alias and a FQCN::methodName
 # Note the double quotes.
-@=mut("App\\GraphQL\\Mutation\\PostMutation::findAll", [args])
+@=m("App\\GraphQL\\Mutation\\PostMutation::findAll", args)
 
 # If using single quotes, you must use 4 slashes
-@=mut('App\\\\GraphQL\\\\Mutation\\\\PostMutation::findAll', [args])
+@=m('App\\\\GraphQL\\\\Mutation\\\\PostMutation::findAll', args)
 ```
 
 ---
@@ -171,8 +197,8 @@ Examples:
 ```yaml
 @=newObject("App\\Entity\\User", ["John", 15])
 
-# Using inside another function (resolver)
-@=resolver("myResolver", [newObject("App\\User\\User", [args])])
+# Using inside another function (query)
+@=query("myResolver", newObject("App\\User\\User", [args]))
 ```
 
 ---
@@ -320,6 +346,7 @@ Examples
 @=getUser().firstName === 'adam'
 ```
 
+
 ## Registered variables:
 
 | Variable             | Description  | Scope|
@@ -336,25 +363,17 @@ Examples
 Private services
 ----------------
 
-It is not possible to use private services with [`service`](#service) functions since this is equivalent to call
-`get` method on the container. In order to make private services accessible, they must be tagged with `overblog_graphql.global_variable`.
+It is not possible to use private services with the [`service`](#service) function since this is equivalent to call the
+`get` method on the [Service Container](https://symfony.com/doc/current/service_container.html). In order to make 
+private services accessible, they must be tagged with `overblog_graphql.service`.
 
-Yaml example:
+Example:
 
 ```yaml
 App\MyPrivateService:
     public: false
     tags:
-        - { name: overblog_graphql.global_variable, alias: my_private_service }
-```
-
-To use a vendor private services:
-
-```php
-<?php
-
-$vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
-$vendorPrivateServiceDef->addTag('overblog_graphql.global_variable', ['alias' => 'vendor_private_service']);
+        - { name: overblog_graphql.service, alias: my_private_service }
 ```
 
 Usage:
@@ -366,7 +385,14 @@ MyType:
         fields:
             name:
                 type: String!
-                resolve: '@=my_private_service.formatName(value)'
+                resolve: "@=service('my_private_service').formatName(value)"
+```
+
+To use a vendor private services:
+
+```php
+$vendorPrivateServiceDef = $container->findDefinition(\Vendor\PrivateService::class);
+$vendorPrivateServiceDef->addTag('overblog_graphql.service', ['alias' => 'vendor_private_service']);
 ```
 
 Custom expression functions
@@ -428,12 +454,12 @@ Backslashes in expressions must be escaped by 2 or 4 backslasehs, depending on w
 When using **single quotes** as _outer_ quotes, you must use **double backslashes**. e.g.:
 ```yaml
 ...
-resolve: '@=resolver("App\\GraphQL\\Resolver\\ResolverName::methodName")'
+resolve: '@=query("App\\GraphQL\\Resolver\\ResolverName::methodName")'
 ...
 ```
 When using **double quotes** as _outer_ quotes, you must use **4 backslashes**, e.g.:
 ```yaml
 ...
-resolve: "@=resolver('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
+resolve: "@=query('App\\\\GraphQL\\\\Resolver\\\\ResolverName::methodName')"
 ...
 ```

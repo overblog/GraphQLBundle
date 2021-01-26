@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Resolver\MutationResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
@@ -54,10 +57,10 @@ abstract class TestCase extends BaseTestCase
         string $assertMethod = 'assertTrue'
     ): void {
         $code = $this->expressionLanguage->compile($expression, array_keys($vars));
-        ${TypeGenerator::GLOBAL_VARS} = new GlobalVariables([
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices([
             'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        ${TypeGenerator::GLOBAL_VARS}->get('security');
+        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
@@ -100,5 +103,15 @@ abstract class TestCase extends BaseTestCase
             ->setMethods(['isGranted'])
             ->getMock()
             ;
+    }
+
+    protected function createGraphQLServices(array $services = []): GraphQLServices
+    {
+        return new GraphQLServices(
+            $this->createMock(TypeResolver::class),
+            $this->createMock(QueryResolver::class),
+            $this->createMock(MutationResolver::class),
+            $services
+        );
     }
 }

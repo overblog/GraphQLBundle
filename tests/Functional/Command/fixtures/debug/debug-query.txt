@@ -1,0 +1,15 @@
+
+GraphQL Query Services
+======================
+
+ --------------------------------------------------------------------------- -------------------------------- 
+  solution id                                                                 aliases                         
+ --------------------------------------------------------------------------- -------------------------------- 
+  Overblog\GraphQLBundle\GraphQL\Relay\Mutation\MutationFieldQuery            relay_mutation_field            
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\GlobalIdFieldQuery                relay_globalid_field            
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\NodeFieldQuery                    relay_node_field                
+  Overblog\GraphQLBundle\GraphQL\Relay\Node\PluralIdentifyingRootFieldQuery   relay_plural_identifying_field  
+ --------------------------------------------------------------------------- -------------------------------- 
+
+
+

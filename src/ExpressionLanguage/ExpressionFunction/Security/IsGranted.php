@@ -13,8 +13,8 @@ final class IsGranted extends ExpressionFunction
     {
         parent::__construct(
             'isGranted',
-            fn ($attributes, $object = 'null') => "$this->globalVars->get('security')->isGranted($attributes, $object)",
-            static fn (array $arguments, $attributes, $object = null) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->isGranted($attributes, $object)
+            fn ($attributes, $object = 'null') => "$this->gqlServices->get('security')->isGranted($attributes, $object)",
+            static fn (array $arguments, $attributes, $object = null) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isGranted($attributes, $object)
         );
     }
 }

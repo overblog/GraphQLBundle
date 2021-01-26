@@ -13,8 +13,8 @@ final class IsRememberMe extends ExpressionFunction
     {
         parent::__construct(
             'isRememberMe',
-            fn () => "$this->globalVars->get('security')->isRememberMe()",
-            static fn (array $arguments) => $arguments[TypeGenerator::GLOBAL_VARS]->get('security')->isRememberMe()
+            fn () => "$this->gqlServices->get('security')->isRememberMe()",
+            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isRememberMe()
         );
     }
 }

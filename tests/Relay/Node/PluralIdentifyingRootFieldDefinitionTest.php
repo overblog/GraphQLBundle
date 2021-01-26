@@ -83,7 +83,7 @@ class PluralIdentifyingRootFieldDefinitionTest extends TestCase
         $expected = [
             'type' => '[User]',
             'args' => ['username' => ['type' => '[UserInput!]!']],
-            'resolve' => '@=resolver(\'relay_plural_identifying_field\', [args[\'username\'], context, info, resolveSingleInputCallback('.$expectedResolveSingleInputCallbackArg.')])',
+            'resolve' => '@=query(\'relay_plural_identifying_field\', args.username, context, info, resolveSingleInputCallback('.$expectedResolveSingleInputCallbackArg.'))',
         ];
 
         $this->assertSame($expected, $this->definition->toMappingDefinition($config));

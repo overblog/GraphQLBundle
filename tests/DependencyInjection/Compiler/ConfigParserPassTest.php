@@ -332,7 +332,7 @@ class ConfigParserPassTest extends TestCase
                         'fields' => [
                             'foo' => [
                                 'type' => 'FooPayload!',
-                                'resolve' => '@=mutation("Mutation.foo", [args["input"]])',
+                                'resolve' => '@=mutation("Mutation.foo", args.input)',
                                 'args' => [
                                     'input' => ['type' => 'FooInput!'],
                                 ],
@@ -392,7 +392,7 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'types' => ['FooSuccessPayload', 'FooFailurePayload'],
-                        'resolveType' => '@=resolver("PayloadTypeResolver", [value, "FooSuccessPayload", "FooFailurePayload"])',
+                        'resolveType' => '@=query("PayloadTypeResolver", value, "FooSuccessPayload", "FooFailurePayload")',
                         'name' => 'FooPayload',
                     ],
                 ],

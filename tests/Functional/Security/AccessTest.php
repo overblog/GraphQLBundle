@@ -26,7 +26,7 @@ class AccessTest extends TestCase
     private string $userRolesQuery = 'query { user { roles } }';
     private string $userIsEnabledQuery = 'query ($hasAccess: Boolean = true) { user { isEnabled(hasAccess: $hasAccess) } }';
 
-    private string $userFriendsQuery = <<<'EOF'
+    private string $userFriendsQuery = <<<'QUERY'
     query {
       user {
         friends(first: 2) {
@@ -38,16 +38,16 @@ class AccessTest extends TestCase
         }
       }
     }
-    EOF;
+    QUERY;
 
-    private string $simpleMutationWithThunkQuery = <<<'EOF'
+    private string $simpleMutationWithThunkQuery = <<<'MUTATION'
     mutation M {
       simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
         result
         clientMutationId
       }
     }
-    EOF;
+    MUTATION;
 
     public function setUp(): void
     {
@@ -160,14 +160,14 @@ class AccessTest extends TestCase
             ],
         ];
 
-        $query = <<<'EOF'
-{
-  youShallNotSeeThisUnauthenticated {
-    secretValue
-    youAreAuthenticated
-  }
-}
-EOF;
+        $query = <<<'QUERY'
+        {
+          youShallNotSeeThisUnauthenticated {
+            secretValue
+            youAreAuthenticated
+          }
+        }
+        QUERY;
 
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'access');
     }
@@ -231,13 +231,13 @@ EOF;
             ],
         ];
 
-        $query = <<<'EOF'
-query MyQuery {
-  user {
-    forbidden
-  }
-}
-EOF;
+        $query = <<<'QUERY'
+        query MyQuery {
+          user {
+            forbidden
+          }
+        }
+        QUERY;
 
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }

@@ -40,7 +40,7 @@ it: with **yaml** config files and with **annotations**. Lets take a look at bot
 Character:
     type: interface
     config:
-        resolveType: "@=resolver('character_type', [value, typeResolver])"
+        resolveType: "@=query('character_type', value, typeResolver)"
         description: "A character in the Star Wars Trilogy"
         fields:
             id: 'ID!'
@@ -150,11 +150,11 @@ use App\Entity\Droid;
 use App\Entity\Human;
 use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
-class MyResolver implements ResolverInterface, AliasedInterface
+class MyResolver implements QueryInterface, AliasedInterface
 {
     public function allCharacters(): array
     {
@@ -261,7 +261,7 @@ namespace AppBundle;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
- * @GQL\TypeInterface(resolveType="@=resolver('character_type', [value])")
+ * @GQL\TypeInterface(resolveType="@=query('character_type', value)")
  * @GQL\Description("A character in the Star Wars Trilogy")
  */
 abstract class Character
@@ -299,11 +299,11 @@ services:
         class: MyBundle\GraphQL\Resolver\CharacterResolver
         arguments: ["@overblog_graphql.type_resolver"]
         tags:
-            - { name: overblog_graphql.resolver, alias: "character_type", method: "resolveType" }
-            - { name: overblog_graphql.resolver, alias: "character_friends", method: "resolveFriends" }
-            - { name: overblog_graphql.resolver, alias: "character_hero", method: "resolveHero" }
-            - { name: overblog_graphql.resolver, alias: "character_human", method: "resolveHuman" }
-            - { name: overblog_graphql.resolver, alias: "character_droid", method: "resolveDroid" }
+            - { name: overblog_graphql.query, alias: "character_type", method: "resolveType" }
+            - { name: overblog_graphql.query, alias: "character_friends", method: "resolveFriends" }
+            - { name: overblog_graphql.query, alias: "character_hero", method: "resolveHero" }
+            - { name: overblog_graphql.query, alias: "character_human", method: "resolveHuman" }
+            - { name: overblog_graphql.query, alias: "character_droid", method: "resolveDroid" }
 ```
 
 ```php

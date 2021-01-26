@@ -1,18 +1,18 @@
 # Resolver
 
-To ease development we named 2 types of resolver:
+To ease development we created 2 types of resolver:
 
-- `Resolver` that should be use for resolving readonly actions (query)
-- `Mutation` that should be use for resolving writing actions (mutation)
+- `Query` that should be used for resolving readonly actions
+- `Mutation` that should be used for resolving writing actions
 
 This is just a recommendation.
 
-Resolvers can be define 2 different ways:
+Resolvers can be defined in 2 different ways:
 
 ## The PHP way
 
 
-You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface` or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`) in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
+You can declare a resolver (any class that implements `Overblog\GraphQLBundle\Definition\Resolver\QueryInterface` or `Overblog\GraphQLBundle\Definition\Resolver\MutationInterface`) in `src/*Bundle/GraphQL` or `app/GraphQL` and they will be auto discovered.
 Auto map classes method are accessible by:
 * double-colon (::) to separate service id (class name) and the method names
 (example: `AppBunble\GraphQL\CustomResolver::myMethod`)
@@ -20,14 +20,14 @@ Auto map classes method are accessible by:
 
 **Note:**
 * When using service id as FQCN in yaml or annotation definition, backslashes must be correctly escaped, here an example:
-`'@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'`.
+`'@=query("App\\GraphQL\\Resolver\\Greetings", args["name"])'`.
 * You can also see the more straight forward way using [resolver map](resolver-map.md).
 
 ### Resolver
 
 Example using an alias:
 ````yaml
-resolve: '@=resolver("say_hello", [args["name"]])'
+resolve: '@=query("say_hello", args["name"])'
 ````
 
 ```php
@@ -36,9 +36,9 @@ resolve: '@=resolver("say_hello", [args["name"]])'
 namespace App\GraphQL\Resolver;
 
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface, AliasedInterface
+class Greetings implements QueryInterface, AliasedInterface
 {
     public function sayHello($name)
     {
@@ -57,7 +57,7 @@ class Greetings implements ResolverInterface, AliasedInterface
 
 Example using a fully qualified method name:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings::sayHello", [args["name"]])'
+resolve: '@=query("App\\GraphQL\\Resolver\\Greetings::sayHello", args["name"])'
 ````
 
 Note: backslashes must be correctly escaped and respect the use of single and double quotes.
@@ -67,9 +67,9 @@ Note: backslashes must be correctly escaped and respect the use of single and do
 # src/GraphQL/Resolver/Greetings.php
 namespace App\GraphQL\Resolver;
 
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function sayHello($name)
     {
@@ -80,7 +80,7 @@ class Greetings implements ResolverInterface
 
 Example using the class invoker:
 ````yaml
-resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
+resolve: '@=query("App\\GraphQL\\Resolver\\Greetings", args["name"])'
 ````
 
 ```php
@@ -88,9 +88,9 @@ resolve: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [args["name"]])'
 # src/GraphQL/Resolver/Greetings.php
 namespace App\GraphQL\Resolver;
 
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function __invoke($name)
     {
@@ -107,7 +107,7 @@ You may also use the invoker to define a type-wide resolver with the `resolveFie
 MyType:
     type: object
     config:
-        resolveField: '@=resolver("App\\GraphQL\\Resolver\\Greetings", [info, args["name"]])'
+        resolveField: '@=query("App\\GraphQL\\Resolver\\Greetings", info, args.name)'
         fields:
             hello:
                 type: String
@@ -121,9 +121,9 @@ MyType:
 namespace App\GraphQL\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
+use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
 
-class Greetings implements ResolverInterface
+class Greetings implements QueryInterface
 {
     public function __invoke(ResolveInfo $info, $name)
     {
@@ -184,7 +184,7 @@ services:
 
 ## The service way
 
-Creating a service tagged `overblog_graphql.resolver` for resolvers
+Creating a service tagged `overblog_graphql.query` for queries
 or `overblog_graphql.mutation` for mutations.
 
 Using the php way examples:
@@ -195,8 +195,8 @@ services:
         # only for sf < 3.3
         #class: App\GraphQL\Resolver\Greetings
         tags:
-            - { name: overblog_graphql.resolver, method: sayHello, alias: say_hello } # add alias say_hello
-            - { name: overblog_graphql.resolver, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
+            - { name: overblog_graphql.query, method: sayHello, alias: say_hello } # add alias say_hello
+            - { name: overblog_graphql.query, method: sayHello } # add service id "App\GraphQL\Resolver\Greetings"
 ```
 
 `SayHello` resolver can be access by using `App\GraphQL\Resolver\Greetings::sayHello` or
@@ -210,7 +210,7 @@ services:
         # only for sf < 3.3
         #class: App\GraphQL\Resolver\Greetings
         tags:
-            - { name: overblog_graphql.resolver }
+            - { name: overblog_graphql.query }
 ```
 
 This way resolver can be accessed with service id `App\GraphQL\Resolver\Greetings`.

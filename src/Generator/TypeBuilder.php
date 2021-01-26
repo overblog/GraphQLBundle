@@ -23,7 +23,7 @@ use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
+use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
@@ -84,7 +84,7 @@ class TypeBuilder
     protected string $namespace;
     protected array $config;
     protected string $type;
-    protected string $globalVars = '$'.TypeGenerator::GLOBAL_VARS;
+    protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -133,7 +133,7 @@ class TypeBuilder
 
         $class->createConstructor()
             ->addArgument('configProcessor', ConfigProcessor::class)
-            ->addArgument(TypeGenerator::GLOBAL_VARS, GlobalVariables::class)
+            ->addArgument(TypeGenerator::GRAPHQL_SERVICES, GraphQLServices::class)
             ->append('$config = ', $this->buildConfig($config))
             ->emptyLine()
             ->append('parent::__construct($configProcessor->process($config))');
@@ -151,7 +151,7 @@ class TypeBuilder
      *  -   "String"   -> Type::string()
      *  -   "String!"  -> Type::nonNull(Type::string())
      *  -   "[String!] -> Type::listOf(Type::nonNull(Type::string()))
-     *  -   "[Post]"   -> fn() => Type::listOf($globalVariables->get('typeResolver')->resolve('Post'))
+     *  -   "[Post]"   -> Type::listOf($services->getType('Post'))
      *
      * @return GeneratorInterface|string
      */
@@ -198,7 +198,7 @@ class TypeBuilder
                     $this->file->addUse(Type::class);
                 } else {
                     $name = $typeNode->name->value;
-                    $type = "$this->globalVars->get('typeResolver')->resolve('$name')";
+                    $type = "$this->gqlServices->getType('$name')";
                     $isReference = true;
                 }
                 break;
@@ -222,7 +222,7 @@ class TypeBuilder
      *               ...
      *           ],
      *           'interfaces' => fn() => [
-     *               $globalVariables->get('typeResolver')->resolve('PostInterface'),
+     *               $services->getType('PostInterface'),
      *               ...
      *           ],
      *           'resolveField' => {@see buildResolveField},
@@ -258,7 +258,7 @@ class TypeBuilder
      *          'name' => self::NAME,
      *          'description' => 'Some description.',
      *          'types' => fn() => [
-     *              $globalVariables->get('typeResolver')->resolve('Photo'),
+     *              $services->getType('Photo'),
      *              ...
      *          ],
      *          'resolveType' => {@see buildResolveType},
@@ -317,12 +317,12 @@ class TypeBuilder
         }
 
         if (!empty($c->interfaces)) {
-            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $c->interfaces);
+            $items = array_map(fn ($type) => "$this->gqlServices->getType('$type')", $c->interfaces);
             $configLoader->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
         if (!empty($c->types)) {
-            $items = array_map(fn ($type) => "$this->globalVars->get('typeResolver')->resolve('$type')", $c->types);
+            $items = array_map(fn ($type) => "$this->gqlServices->getType('$type')", $c->types);
             $configLoader->addItem('types', ArrowFunction::new(Collection::numeric($items, true)));
         }
 
@@ -409,33 +409,33 @@ class TypeBuilder
      *
      * Render example (no expression language):
      *
-     *      function ($value, $args, $context, $info) use ($globalVariables) {
+     *      function ($value, $args, $context, $info) use ($services) {
      *          return "Hello, World!";
      *      }
      *
      * Render example (with expression language):
      *
-     *      function ($value, $args, $context, $info) use ($globalVariables) {
-     *          return $globalVariables->get('mutationResolver')->resolve(["my_resolver", [0 => $args]]);
+     *      function ($value, $args, $context, $info) use ($services) {
+     *          return $services->mutation("my_resolver", $args);
      *      }
      *
      * Render example (with validation):
      *
-     *      function ($value, $args, $context, $info) use ($globalVariables) {
+     *      function ($value, $args, $context, $info) use ($services) {
      *          $validator = {@see buildValidatorInstance}
-     *          return $globalVariables->get('mutationResolver')->resolve(["create_post", [0 => $validator]]);
+     *          return $services->mutation("create_post", $validator);
      *      }
      *
      * Render example (with validation, but errors are injected into the user-defined resolver):
      * {@link https://github.com/overblog/GraphQLBundle/blob/master/docs/validation/index.md#injecting-errors}
      *
-     *      function ($value, $args, $context, $info) use ($globalVariables) {
+     *      function ($value, $args, $context, $info) use ($services) {
      *          $errors = new ResolveErrors();
      *          $validator = {@see buildValidatorInstance}
      *
      *          $errors->setValidationErrors($validator->validate(null, false))
      *
-     *          return $globalVariables->get('mutationResolver')->resolve(["create_post", [0 => $errors]]);
+     *          return $services->mutation("create_post", $errors);
      *      }
      *
      * @param mixed $resolve
@@ -454,7 +454,7 @@ class TypeBuilder
         if (EL::isStringWithTrigger($resolve)) {
             $closure = Closure::new()
                 ->addArguments('value', 'args', 'context', 'info')
-                ->bindVar(TypeGenerator::GLOBAL_VARS);
+                ->bindVar(TypeGenerator::GRAPHQL_SERVICES);
 
             $injectErrors = EL::expressionContainsVar('errors', $resolve);
 
@@ -506,8 +506,8 @@ class TypeBuilder
      *
      *      new InputValidator(
      *          \func_get_args(),
-     *          $globalVariables->get('container')->get('validator'),
-     *          $globalVariables->get('validatorFactory'),
+     *          $services->get('container')->get('validator'),
+     *          $services->get('validatorFactory'),
      *          {@see buildProperties},
      *          {@see buildValidationRules},
      *      )
@@ -519,8 +519,8 @@ class TypeBuilder
         $validator = Instance::new(InputValidator::class)
             ->setMultiline()
             ->addArgument(new Literal('\\func_get_args()'))
-            ->addArgument("$this->globalVars->get('container')->get('validator')")
-            ->addArgument("$this->globalVars->get('validatorFactory')");
+            ->addArgument("$this->gqlServices->get('container')->get('validator')")
+            ->addArgument("$this->gqlServices->get('validatorFactory')");
 
         if (!empty($mapping['properties'])) {
             $validator->addArgument($this->buildProperties($mapping['properties']));
@@ -655,7 +655,7 @@ class TypeBuilder
      *      [
      *          'groups' => ['my_group'],
      *          'isCollection' => true,
-     *          'referenceType' => $globalVariables->get('typeResolver')->resolve('Article')
+     *          'referenceType' => $services->getType('Article')
      *      ]
      *
      * @param array{
@@ -670,8 +670,12 @@ class TypeBuilder
     {
         $c = (object) $cascade;
 
-        $array = Collection::assoc()
-            ->addIfNotEmpty('groups', $c->groups);
+        /**
+         * todo: remove this type-hint after fixing return type in the php generator
+         *
+         * @var Collection $array
+         */
+        $array = Collection::assoc()->addIfNotEmpty('groups', $c->groups);
 
         if (isset($c->isCollection)) {
             $array->addItem('isCollection', $c->isCollection);
@@ -684,7 +688,7 @@ class TypeBuilder
                 throw new GeneratorException('Cascade validation cannot be applied to built-in types.');
             }
 
-            $array->addItem('referenceType', "$this->globalVars->get('typeResolver')->resolve('$c->referenceType')");
+            $array->addItem('referenceType', "$this->gqlServices->getType('$c->referenceType')");
         }
 
         return $array; // @phpstan-ignore-line
@@ -848,8 +852,8 @@ class TypeBuilder
      *
      * Render example (closure):
      *
-     *      function ($value, $arguments) use ($globalVariables) {
-     *          $args = $globalVariables->get('argumentFactory')->create($arguments);
+     *      function ($value, $arguments) use ($services) {
+     *          $args = $services->get('argumentFactory')->create($arguments);
      *          return ($args['age'] + 5);
      *      }
      *
@@ -870,8 +874,8 @@ class TypeBuilder
                 return Closure::new()
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
-                    ->bindVar(TypeGenerator::GLOBAL_VARS)
-                    ->append('$args = ', "$this->globalVars->get('argumentFactory')->create(\$arguments)")
+                    ->bindVar(TypeGenerator::GRAPHQL_SERVICES)
+                    ->append('$args = ', "$this->gqlServices->get('argumentFactory')->create(\$arguments)")
                     ->append('return ', $expression)
                 ;
             }
@@ -927,7 +931,7 @@ class TypeBuilder
      *
      * Render example (if expression):
      *
-     *      fn($value, $args, $context, $info, $object) => $globalVariables->get('private_service')->hasAccess()
+     *      fn($value, $args, $context, $info, $object) => $services->get('private_service')->hasAccess()
      *
      * @param mixed $access
      *
@@ -952,7 +956,7 @@ class TypeBuilder
      *
      * Render example:
      *
-     *      fn($value, $context, $info) => $globalVariables->get('typeResolver')->resolve($value)
+     *      fn($value, $context, $info) => $services->getType($value)
      *
      * @param mixed $resolveType
      *

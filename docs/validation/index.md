@@ -1145,7 +1145,7 @@ Mutation:
         fields:
             registerUser:
                 type: User
-                resolve: "@=resolver('register_user', [args])"
+                resolve: "@=query('register_user', args)"
                 args:
                     username: String!
                     password: String!
@@ -1185,7 +1185,7 @@ Mutation:
         fields:
             createUser:
                 type: User
-                resolve: "@=resolver('createUser', [args])"
+                resolve: "@=query('createUser', args)"
                 args:
                     username: String!
                     password: String!
@@ -1193,7 +1193,7 @@ Mutation:
                     email: String!
             createAdmin:
                 type: User
-                resolve: "@=resolver('createAdmin', [args])"
+                resolve: "@=query('createAdmin', args)"
                 args:
                     username: String!
                     password: String!

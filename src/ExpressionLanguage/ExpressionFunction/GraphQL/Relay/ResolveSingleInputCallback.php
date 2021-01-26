@@ -17,7 +17,7 @@ final class ResolveSingleInputCallback extends ExpressionFunction
             static fn ($resolveSingleInput) => (
                 Closure::new()
                     ->addArgument('value')
-                    ->bindVars(TypeGenerator::GLOBAL_VARS, 'args', 'context', 'info')
+                    ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $resolveSingleInput")
                     ->generate()
             )

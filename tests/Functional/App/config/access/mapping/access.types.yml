@@ -5,7 +5,7 @@ RootQuery:
         fields:
             user:
                 type: User
-                resolve: '@=resolver("query")'
+                resolve: '@=query("query")'
             youShallNotSeeThisUnauthenticated:
                 type: SecureField
                 access: '@=isFullyAuthenticated()'
@@ -18,7 +18,7 @@ Mutation:
             user:
                 access: '@=private_service.hasAccess()'
                 type: Human
-                resolve: '@=resolver("query")'
+                resolve: '@=query("query")'
 
 Human:
     type: interface
@@ -38,7 +38,7 @@ User:
                 resolve: ['ROLE_USER']
             isEnabled:
                 # access as a promise
-                access: "@=resolver('promise', [args.hasAccess])"
+                access: "@=query('promise', args.hasAccess)"
                 args:
                     hasAccess: {type: Boolean!}
                 type: Boolean
@@ -48,7 +48,7 @@ User:
                 access: "@=object == 1"
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
-                resolve: '@=resolver("friends", [value, args])'
+                resolve: '@=query("friends", value, args)'
             friendsAsArray:
                 # TODO(mcg-web): replace by strict equality after fix compilation expression language bug in sf 4.0
                 access: "@=object != 2"
@@ -75,7 +75,7 @@ friendConnection:
     type: relay-connection
     config:
         nodeType: User
-        resolveNode: '@=resolver("node", [value])'
+        resolveNode: '@=query("node", value)'
         edgeFields:
             friendshipTime:
                 type: String
@@ -83,7 +83,7 @@ friendConnection:
         connectionFields:
             totalCount:
                 type: Int
-                resolve: '@=resolver("connection")'
+                resolve: '@=query("connection")'
 
 #Mutation
 RootMutation:
@@ -96,7 +96,7 @@ RootMutation:
                 builderConfig:
                     inputType: simpleMutationWithThunkFieldsInput
                     payloadType: simpleMutationWithThunkFieldsPayload
-                    mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', [value])"
+                    mutateAndGetPayload: "@=mutation('simple_mutation_with_thunk_fields', value)"
 
 simpleMutationWithThunkFieldsInput:
     type: relay-mutation-input

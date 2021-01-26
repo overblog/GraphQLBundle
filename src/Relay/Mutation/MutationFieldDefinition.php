@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query;
 use function is_array;
 use function is_string;
 use function json_encode;
@@ -20,13 +21,14 @@ final class MutationFieldDefinition implements MappingInterface
     public function toMappingDefinition(array $config): array
     {
         $mutateAndGetPayload = $this->cleanMutateAndGetPayload($config);
+        $expFuncName = Query::NAME;
 
         return [
             'type' => $this->extractPayloadType($config),
             'args' => [
                 'input' => ['type' => $this->extractInputType($config)],
             ],
-            'resolve' => "@=resolver('relay_mutation_field', [args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload)])",
+            'resolve' => "@=$expFuncName('relay_mutation_field', args, context, info, mutateAndGetPayloadCallback($mutateAndGetPayload))",
         ];
     }
 

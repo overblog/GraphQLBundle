@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
-use Overblog\GraphQLBundle\Definition\GlobalVariables;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuthenticated;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
@@ -22,11 +21,11 @@ class IsAuthenticatedTest extends TestCase
             $this->matchesRegularExpression('/^IS_AUTHENTICATED_(REMEMBERED|FULLY)$/'),
             $this->any()
         );
-        $globalVars = new GlobalVariables(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices(['security' => $security]);
 
         $isAuthenticated = $this->expressionLanguage->evaluate(
             'isAuthenticated()',
-            [TypeGenerator::GLOBAL_VARS => $globalVars]
+            [TypeGenerator::GRAPHQL_SERVICES => $gqlServices]
         );
         $this->assertTrue($isAuthenticated);
     }

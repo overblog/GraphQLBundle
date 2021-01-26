@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Command;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,21 +25,21 @@ use function ucfirst;
 
 class DebugCommand extends Command
 {
-    private static array $categories = ['type', 'mutation', 'resolver'];
+    private static array $categories = ['type', 'mutation', 'query'];
 
     private TypeResolver $typeResolver;
     private MutationResolver $mutationResolver;
-    private ResolverResolver $resolverResolver;
+    private QueryResolver $queryResolver;
 
     public function __construct(
         TypeResolver $typeResolver,
         MutationResolver $mutationResolver,
-        ResolverResolver $resolverResolver
+        QueryResolver $resolverResolver
     ) {
         parent::__construct();
         $this->typeResolver = $typeResolver;
         $this->mutationResolver = $mutationResolver;
-        $this->resolverResolver = $resolverResolver;
+        $this->queryResolver = $resolverResolver;
     }
 
     protected function configure(): void
@@ -71,7 +71,7 @@ class DebugCommand extends Command
         $tableHeaders = ['solution id', 'aliases'];
 
         foreach ($categories as $category) {
-            $io->title(sprintf('GraphQL %ss Services', ucfirst($category)));
+            $io->title(sprintf('GraphQL %s Services', ucfirst($category)));
 
             /** @var FluentResolverInterface $resolver */
             $resolver = $this->{$category.'Resolver'};

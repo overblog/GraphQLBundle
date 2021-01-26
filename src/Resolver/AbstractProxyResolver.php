@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use function call_user_func_array;
 use function is_array;
 
 abstract class AbstractProxyResolver extends AbstractResolver
@@ -30,9 +29,11 @@ abstract class AbstractProxyResolver extends AbstractResolver
         }
 
         $options = $this->getSolutionOptions($alias);
+
+        /** @var callable $func */
         $func = [$solution, $options['method']];
 
-        return call_user_func_array($func, $funcArgs);
+        return $func(...$funcArgs);
     }
 
     abstract protected function unresolvableMessage(string $alias): string;

@@ -15,7 +15,7 @@ Mutation:
 
             simpleValidation:
                 type: Boolean
-                resolve: "@=mut('mutation_mock', [args, validator])"
+                resolve: "@=mut('mutation_mock', args, validator)"
                 args:
                     username:
                         type: String!
@@ -27,7 +27,7 @@ Mutation:
 
             linkedConstraintsValidation:
                 type: Boolean
-                resolve: "@=mut('mutation_mock', [args, validator])"
+                resolve: "@=mut('mutation_mock', args, validator)"
                 validation:
                     link: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity
                     constraints:
@@ -45,7 +45,7 @@ Mutation:
 
             collectionValidation:
                 type: Boolean
-                resolve: "@=mut('mutation_mock', [args, validator])"
+                resolve: "@=mut('mutation_mock', args, validator)"
                 args:
                     addresses:
                         type: "[Address]!"
@@ -61,7 +61,7 @@ Mutation:
 
             cascadeValidationWithGroups:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [args, validator])'
+                resolve: '@=mut("mutation_mock", args, validator)'
                 args:
                     groups:
                         type: "[String]!"
@@ -76,7 +76,7 @@ Mutation:
 
             userPasswordValidation:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [args, validator])'
+                resolve: '@=mut("mutation_mock", args, validator)'
                 args:
                     oldPassword:
                         type: "String"
@@ -85,16 +85,16 @@ Mutation:
 
             expressionVariablesValidation:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [args, validator])'
+                resolve: '@=mut("mutation_mock", args, validator)'
                 args:
                     username:
                         type: "String"
                         validation:
-                            - Expression: "service('service_validator').resolveVariablesAccessible(args, info)"
+                            - Expression: "service_validator.resolveVariablesAccessible(args, info)"
 
             autoValidationAutoThrow:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [args])'
+                resolve: '@=mut("mutation_mock", args)'
                 args:
                     username:
                         type: String!
@@ -106,7 +106,7 @@ Mutation:
 
             autoValidationNoThrow:
                 type: Boolean
-                resolve: '@=mut("mutation_errors", [errors])'
+                resolve: '@=mut("mutation_errors", errors)'
                 args:
                     username:
                         type: String!
@@ -118,7 +118,7 @@ Mutation:
 
             autoValidationAutoThrowWithGroups:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", [args])'
+                resolve: '@=mut("mutation_mock", args)'
                 validationGroups: ["Default", "Address", "Period", "group1", "group2"]
                 args:
                     address:

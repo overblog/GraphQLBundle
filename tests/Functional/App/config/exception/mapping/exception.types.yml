@@ -4,5 +4,5 @@ Query:
       fields:
         test:
           type: "Boolean"
-          resolve: "@=resolver('example_exception')"
+          resolve: "@=query('example_exception')"
 
