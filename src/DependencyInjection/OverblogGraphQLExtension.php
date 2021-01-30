@@ -65,15 +65,17 @@ class OverblogGraphQLExtension extends Extension
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return Configuration::NAME;
     }
 
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): Configuration
     {
         return new Configuration(
+            // @phpstan-ignore-next-line
             $container->getParameter('kernel.debug'),
+            // @phpstan-ignore-next-line
             $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
         );
     }
@@ -295,7 +297,7 @@ class OverblogGraphQLExtension extends Extension
     /**
      * Returns a list of custom exceptions mapped to error/warning classes.
      *
-     * @param array<string, string[]> $exceptionConfig
+     * @param array<string, array<string>> $exceptionConfig
      *
      * @return array<string, string> Custom exception map, [exception => UserError/UserWarning]
      */

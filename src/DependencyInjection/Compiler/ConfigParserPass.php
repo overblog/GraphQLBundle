@@ -177,6 +177,7 @@ class ConfigParserPass implements CompilerPassInterface
 
         // app only config files (yml or xml or graphql)
         if ($mappingConfig['auto_discover']['root_dir'] && $container->hasParameter('kernel.root_dir')) {
+            // @phpstan-ignore-next-line
             $typesMappings[] = ['dir' => $container->getParameter('kernel.root_dir').'/config/graphql', 'types' => null];
         }
         if ($mappingConfig['auto_discover']['bundles']) {
@@ -212,10 +213,12 @@ class ConfigParserPass implements CompilerPassInterface
     private function mappingFromBundles(ContainerBuilder $container): array
     {
         $typesMappings = [];
+
+        /** @var array<string, class-string> $bundles */
         $bundles = $container->getParameter('kernel.bundles');
 
         // auto detect from bundle
-        foreach ($bundles as $name => $class) {
+        foreach ($bundles as $class) {
             // skip this bundle
             if (OverblogGraphQLBundle::class === $class) {
                 continue;
