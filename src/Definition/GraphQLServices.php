@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
@@ -85,9 +86,14 @@ final class GraphQLServices
 
     /**
      * Creates an instance of InputValidator
+     *
+     * @param mixed $value
+     * @param mixed $context
      */
-    public function createInputValidator(array $resolverArgs): InputValidator
+    public function createInputValidator($value, ArgumentInterface $args, $context, ResolveInfo $info): InputValidator
     {
-        return $this->services['input_validator_factory']->create($resolverArgs);
+        return $this->services['input_validator_factory']->create(
+            new ResolverArgs($value, $args, $context, $info)
+        );
     }
 }

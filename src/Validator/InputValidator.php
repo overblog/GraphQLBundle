@@ -11,7 +11,7 @@ use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use Overblog\GraphQLBundle\Definition\ArgumentInterface;
+use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
@@ -35,7 +35,7 @@ class InputValidator
     private const TYPE_GETTER = 'getter';
     public const CASCADE = 'cascade';
 
-    private array $resolverArgs;
+    private ResolverArgs $resolverArgs;
     private ValidatorInterface $defaultValidator;
     private MetadataFactory $metadataFactory;
     private ResolveInfo $info;
@@ -46,33 +46,17 @@ class InputValidator
     private array $cachedMetadata = [];
 
     public function __construct(
-        array $resolverArgs,
+        ResolverArgs $resolverArgs,
         ValidatorInterface $validator,
         ConstraintValidatorFactoryInterface $constraintValidatorFactory,
         ?TranslatorInterface $translator
     ) {
-        $this->resolverArgs = $this->mapResolverArgs(...$resolverArgs);
-        $this->info = $this->resolverArgs['info'];
+        $this->resolverArgs = $resolverArgs;
+        $this->info = $this->resolverArgs->info;
         $this->defaultValidator = $validator;
         $this->constraintValidatorFactory = $constraintValidatorFactory;
         $this->defaultTranslator = $translator;
         $this->metadataFactory = new MetadataFactory();
-    }
-
-    /**
-     * Converts a numeric array of resolver args to an associative one.
-     *
-     * @param mixed $value
-     * @param mixed $context
-     */
-    private function mapResolverArgs($value, ArgumentInterface $args, $context, ResolveInfo $info): array
-    {
-        return [
-            'value' => $value,
-            'args' => $args,
-            'context' => $context,
-            'info' => $info,
-        ];
     }
 
     /**
@@ -82,20 +66,25 @@ class InputValidator
      */
     public function validate($groups = null, bool $throw = true): ?ConstraintViolationListInterface
     {
-        $rootObject = new ValidationNode($this->info->parentType, $this->info->fieldName, null, $this->resolverArgs);
+        $rootNode = new ValidationNode(
+            $this->info->parentType,
+            $this->info->fieldName,
+            null,
+            $this->resolverArgs
+        );
 
         $classMapping = $this->mergeClassValidation();
 
         $this->buildValidationTree(
-            $rootObject,
+            $rootNode,
             $this->info->fieldDefinition->config['args'],
             $classMapping,
-            $this->resolverArgs['args']->getArrayCopy()
+            $this->resolverArgs->args->getArrayCopy()
         );
 
         $validator = $this->createValidator($this->metadataFactory);
 
-        $errors = $validator->validate($rootObject, null, $groups);
+        $errors = $validator->validate($rootNode, null, $groups);
 
         if ($throw && $errors->count() > 0) {
             throw new ArgumentsValidationException($errors);
@@ -148,10 +137,10 @@ class InputValidator
 
         foreach ($fields as $name => $arg) {
             $property = $arg['name'] ?? $name;
-            $validation = static::normalizeConfig($arg['validation'] ?? []);
+            $config = static::normalizeConfig($arg['validation'] ?? []);
 
-            if (isset($validation['cascade']) && isset($inputData[$property])) {
-                $groups = $validation['cascade'];
+            if (isset($config['cascade']) && isset($inputData[$property])) {
+                $groups = $config['cascade'];
                 $argType = $this->unclosure($arg['type']);
 
                 /** @var ObjectType|InputObjectType $type */
@@ -174,9 +163,9 @@ class InputValidator
                 $rootObject->$property = $inputData[$property] ?? null;
             }
 
-            $validation = static::normalizeConfig($validation);
+            $config = static::normalizeConfig($config);
 
-            foreach ($validation as $key => $value) {
+            foreach ($config as $key => $value) {
                 switch ($key) {
                     case 'link':
                         [$fqcn, $property, $type] = $value;
@@ -253,7 +242,7 @@ class InputValidator
 
         return $this->buildValidationTree(
             new ValidationNode($type, null, $parent, $this->resolverArgs),
-            $type->config['fields'](),
+            self::unclosure($type->config['fields']),
             $classValidation,
             $value
         );

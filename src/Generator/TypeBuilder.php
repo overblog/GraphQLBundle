@@ -415,7 +415,7 @@ class TypeBuilder
      * Render example (with validation):
      *
      *      function ($value, $args, $context, $info) use ($services) {
-     *          $validator = $services->createInputValidator(func_get_args());
+     *          $validator = $services->createInputValidator(...func_get_args());
      *          return $services->mutation("create_post", $validator]);
      *      }
      *
@@ -424,7 +424,7 @@ class TypeBuilder
      *
      *      function ($value, $args, $context, $info) use ($services) {
      *          $errors = new ResolveErrors();
-     *          $validator = $services->createInputValidator(func_get_args());
+     *          $validator = $services->createInputValidator(...func_get_args());
      *
      *          $errors->setValidationErrors($validator->validate(null, false))
      *
@@ -458,7 +458,7 @@ class TypeBuilder
                     $closure->append('$errors = ', Instance::new(ResolveErrors::class));
                 }
 
-                $closure->append('$validator = ', "$this->gqlServices->createInputValidator(func_get_args())");
+                $closure->append('$validator = ', "$this->gqlServices->createInputValidator(...func_get_args())");
 
                 // If auto-validation on or errors are injected
                 if (!$injectValidator || $injectErrors) {

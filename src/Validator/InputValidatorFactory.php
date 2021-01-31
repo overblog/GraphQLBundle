@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator;
 
+use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -28,14 +29,14 @@ class InputValidatorFactory
         $this->constraintValidatorFactory = $constraintValidatorFactory;
     }
 
-    public function create(array $resolverArgs): InputValidator
+    public function create(ResolverArgs $args): InputValidator
     {
         if (null === $this->defaultValidator) {
             throw new ServiceNotFoundException("The 'validator' service is not found. To use the 'InputValidator' you need to install the Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'");
         }
 
         return new InputValidator(
-            $resolverArgs,
+            $args,
             $this->defaultValidator,
             $this->constraintValidatorFactory,
             $this->defaultTranslator

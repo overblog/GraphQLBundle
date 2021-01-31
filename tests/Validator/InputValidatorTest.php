@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Validator;
 
+use ArrayObject;
+use GraphQL\Type\Definition\ResolveInfo;
+use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Overblog\GraphQLBundle\Validator\InputValidatorFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -26,6 +30,11 @@ class InputValidatorTest extends TestCase
 
         $factory = new InputValidatorFactory(null, null, null);
 
-        $factory->create([]);
+        $factory->create(new ResolverArgs(
+            true,
+            new Argument(),
+            new ArrayObject(),
+            $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock(),
+        ));
     }
 }
