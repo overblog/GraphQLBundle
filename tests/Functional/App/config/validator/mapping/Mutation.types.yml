@@ -11,7 +11,7 @@ Mutation:
                 complexity: 1
                 public: true
                 type: Boolean
-                resolve: "@=mut('no_validation')"
+                resolve: "@=m('no_validation')"
                 args:
                     username:
                         type: String!
@@ -24,7 +24,7 @@ Mutation:
                         expression: this.getFieldName() == this.getFieldName()
                         message: "child"
                 type: Boolean
-                resolve: "@=mut('mutation_mock', args, validator)"
+                resolve: "@=m('mutation_mock', args, validator)"
                 args:
                     username:
                         type: String!
@@ -36,7 +36,7 @@ Mutation:
 
             linkedConstraintsValidation:
                 type: Boolean
-                resolve: "@=mut('mutation_mock', args, validator)"
+                resolve: "@=m('mutation_mock', args, validator)"
                 validation:
                     link: Overblog\GraphQLBundle\Tests\Functional\Validator\DummyEntity
                     constraints:
@@ -54,7 +54,7 @@ Mutation:
 
             collectionValidation:
                 type: Boolean
-                resolve: "@=mut('mutation_mock', args, validator)"
+                resolve: "@=m('mutation_mock', args, validator)"
                 args:
                     addresses:
                         type: "[Address]!"
@@ -70,7 +70,7 @@ Mutation:
 
             cascadeValidationWithGroups:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args, validator)'
+                resolve: '@=m("mutation_mock", args, validator)'
                 args:
                     groups:
                         type: "[String]!"
@@ -85,7 +85,7 @@ Mutation:
 
             userPasswordValidation:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args, validator)'
+                resolve: '@=m("mutation_mock", args, validator)'
                 args:
                     oldPassword:
                         type: "String"
@@ -94,7 +94,7 @@ Mutation:
 
             expressionVariablesValidation:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args, validator)'
+                resolve: '@=m("mutation_mock", args, validator)'
                 args:
                     username:
                         type: "String"
@@ -103,7 +103,7 @@ Mutation:
 
             autoValidationAutoThrow:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args)'
+                resolve: '@=m("mutation_mock", args)'
                 args:
                     username:
                         type: String!
@@ -115,7 +115,7 @@ Mutation:
 
             autoValidationNoThrow:
                 type: Boolean
-                resolve: '@=mut("mutation_errors", errors)'
+                resolve: '@=m("mutation_errors", errors)'
                 args:
                     username:
                         type: String!
@@ -127,7 +127,7 @@ Mutation:
 
             autoValidationAutoThrowWithGroups:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args)'
+                resolve: '@=m("mutation_mock", args)'
                 validationGroups: ["Default", "Address", "Period", "group1", "group2"]
                 args:
                     address:

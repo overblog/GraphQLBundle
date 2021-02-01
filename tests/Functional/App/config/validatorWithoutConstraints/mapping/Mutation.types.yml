@@ -4,7 +4,7 @@ Mutation:
         fields:
             noValidationDefined:
                 type: Boolean
-                resolve: '@=mut("mutation_mock", args, validator)'
+                resolve: '@=m("mutation_mock", args, validator)'
                 args:
                     username:
                         type: "String"

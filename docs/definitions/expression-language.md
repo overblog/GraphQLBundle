@@ -130,6 +130,7 @@ Examples:
 
 > The signature of this function is changed since version 0.14.  
 > The old signature is <code><b>mutation</b>(string <b>$alias</b>, array <b>$args</b> = []): mixed</code>, which is not used anymore.
+> The alias is also changed from `mut` to `m`.
 
 Calls a method on the tagged service `overblog_graphql.mutation` passing `$args` as arguments.
 
