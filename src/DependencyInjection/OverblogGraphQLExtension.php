@@ -23,7 +23,6 @@ use Overblog\GraphQLBundle\EventListener\DebugListener;
 use Overblog\GraphQLBundle\EventListener\ErrorHandlerListener;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
 use Overblog\GraphQLBundle\Request\Executor;
-use Overblog\GraphQLBundle\Validator\ValidatorFactory;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,9 +30,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\Validator\Validation;
 use function array_fill_keys;
-use function class_exists;
 use function realpath;
 use function sprintf;
 
@@ -59,21 +56,22 @@ class OverblogGraphQLExtension extends Extension
         $this->setCompilerCacheWarmer($config, $container);
         $this->registerForAutoconfiguration($container);
         $this->setDefaultFieldResolver($config, $container);
-        $this->registerValidatorFactory($container);
 
         $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return Configuration::NAME;
     }
 
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): Configuration
     {
         return new Configuration(
+            // @phpstan-ignore-next-line
             $container->getParameter('kernel.debug'),
+            // @phpstan-ignore-next-line
             $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
         );
     }
@@ -102,24 +100,6 @@ class OverblogGraphQLExtension extends Extension
 
         $container->registerForAutoconfiguration(Type::class)
             ->addTag('overblog_graphql.type');
-    }
-
-    private function registerValidatorFactory(ContainerBuilder $container): void
-    {
-        if (class_exists(Validation::class)) {
-            $container->register(ValidatorFactory::class)
-                ->setArguments([
-                    new Reference('validator.validator_factory'),
-                    new Reference('translator.default', $container::NULL_ON_INVALID_REFERENCE),
-                ])
-                ->addTag(
-                    'overblog_graphql.service',
-                    [
-                        'alias' => 'validatorFactory',
-                        'public' => false,
-                    ]
-                );
-        }
     }
 
     private function setDefaultFieldResolver(array $config, ContainerBuilder $container): void
@@ -295,7 +275,7 @@ class OverblogGraphQLExtension extends Extension
     /**
      * Returns a list of custom exceptions mapped to error/warning classes.
      *
-     * @param array<string, string[]> $exceptionConfig
+     * @param array<string, array<string>> $exceptionConfig
      *
      * @return array<string, string> Custom exception map, [exception => UserError/UserWarning]
      */

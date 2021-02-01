@@ -108,3 +108,11 @@ services:
         arguments:
             - '@Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter'
             - '%overblog_graphql.class_namespace%'
+
+    Overblog\GraphQLBundle\Validator\InputValidatorFactory:
+        arguments:
+            - '@?validator.validator_factory'
+            - '@?validator'
+            - '@?translator.default'
+        tags:
+            - { name: overblog_graphql.service, alias: input_validator_factory, public: false }

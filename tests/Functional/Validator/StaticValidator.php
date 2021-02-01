@@ -36,4 +36,9 @@ class StaticValidator
             $context->buildViolation('Class is invalid');
         }
     }
+
+    public static function alwaysTrue(): bool
+    {
+        return true;
+    }
 }

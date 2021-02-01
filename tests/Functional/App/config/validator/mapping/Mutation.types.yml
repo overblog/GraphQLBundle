@@ -1,6 +1,11 @@
 Mutation:
     type: object
     config:
+        validation: # Applied to all fields
+            - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, alwaysTrue]
+            - Expression:
+                expression: this.getFieldName() == this.getFieldName()
+                message: "parent"
         fields:
             noValidation:
                 complexity: 1
@@ -14,6 +19,10 @@ Mutation:
                         validation: ~
 
             simpleValidation:
+                validation: # Applied to all fields
+                    - Expression:
+                        expression: this.getFieldName() == this.getFieldName()
+                        message: "child"
                 type: Boolean
                 resolve: "@=m('mutation_mock', args, validator)"
                 args:

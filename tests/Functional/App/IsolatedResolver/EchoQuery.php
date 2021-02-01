@@ -14,6 +14,7 @@ final class EchoQuery implements QueryInterface, ContainerAwareInterface
 
     public function display(string $message): string
     {
+        // @phpstan-ignore-next-line
         return $this->container->getParameter('echo.prefix').$message;
     }
 }

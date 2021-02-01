@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use LogicException;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+use Overblog\GraphQLBundle\Validator\InputValidator;
 
 /**
  * Container for special services to be passed to all generated types.
@@ -80,5 +82,18 @@ final class GraphQLServices
     public function getType(string $typeName): ?Type
     {
         return $this->types->resolve($typeName);
+    }
+
+    /**
+     * Creates an instance of InputValidator
+     *
+     * @param mixed $value
+     * @param mixed $context
+     */
+    public function createInputValidator($value, ArgumentInterface $args, $context, ResolveInfo $info): InputValidator
+    {
+        return $this->services['input_validator_factory']->create(
+            new ResolverArgs($value, $args, $context, $info)
+        );
     }
 }
