@@ -17,6 +17,11 @@ User:
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
                 resolve: '@=query("friends", value, args)'
+            noFriend:
+                complexity: "@=15 + 20 + childrenComplexity"
+                type: friendConnection
+                argsBuilder: "Relay::Connection"
+                resolve: '@=query("friends", value, args)'
 
 friendConnection:
     type: relay-connection
