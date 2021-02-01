@@ -15,6 +15,7 @@ ObjectWithPrivateField:
                 type: String
             other:
                 type: String
+                public: "@=typeName == 'nonsense'"
             privateData:
                 type: String
                 public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"

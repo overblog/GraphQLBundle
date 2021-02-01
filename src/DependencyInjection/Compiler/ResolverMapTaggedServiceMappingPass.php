@@ -25,8 +25,10 @@ final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $resolverMapsSortedBySchema = [];
-        $resolverMapsBySchemas = $container->getParameter('overblog_graphql.resolver_maps');
         $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
+
+        /** @var array $resolverMapsBySchemas */
+        $resolverMapsBySchemas = $container->getParameter('overblog_graphql.resolver_maps');
 
         foreach ($container->findTaggedServiceIds(self::SERVICE_TAG, true) as $serviceId => $tags) {
             foreach ($tags as $tag) {

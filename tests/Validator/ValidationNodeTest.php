@@ -8,6 +8,7 @@ use ArrayObject;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
+use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 
@@ -39,13 +40,13 @@ class ValidationNodeTest extends TestCase
         $this->assertSame($childType, $childNode->getType());
     }
 
-    private function createResolveArgs(): array
+    private function createResolveArgs(): ResolverArgs
     {
-        return [
-            'value' => true,
-            'args' => new Argument(),
-            'context' => new ArrayObject(),
-            'info' => $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock(),
-        ];
+        return new ResolverArgs(
+            true,
+            new Argument(),
+            new ArrayObject(),
+            $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock(),
+        );
     }
 }
