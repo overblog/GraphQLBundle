@@ -48,15 +48,15 @@ class AnnotationParser extends MetadataParser
             }
 
             AnnotationRegistry::registerLoader('class_exists');
-
+            $cacheKey = md5(__DIR__);
             // @codeCoverageIgnoreStart
             if (extension_loaded('apcu') && apcu_enabled()) {
                 $annotationCache = new ApcuCache();
             } else {
-                $annotationCache = new PhpFileCache(sys_get_temp_dir().__DIR__);
+                $annotationCache = new PhpFileCache(sys_get_temp_dir().$cacheKey);
             }
-            $annotationCache->setNamespace(__DIR__);
             // @codeCoverageIgnoreEnd
+            $annotationCache->setNamespace($cacheKey);
 
             self::$annotationReader = new CachedReader(new AnnotationReader(), $annotationCache, true);
         }
