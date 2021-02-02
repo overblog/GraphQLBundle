@@ -53,7 +53,7 @@ class AnnotationParser extends MetadataParser
             if (extension_loaded('apcu') && apcu_enabled()) {
                 $annotationCache = new ApcuCache();
             } else {
-                $annotationCache = new PhpFileCache(sys_get_temp_dir().$cacheKey);
+                $annotationCache = new PhpFileCache(join(DIRECTORY_SEPARATOR, [sys_get_temp_dir(), $cacheKey]));
             }
             // @codeCoverageIgnoreEnd
             $annotationCache->setNamespace($cacheKey);
