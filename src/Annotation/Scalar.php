@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
  * @Annotation
  * @Target("CLASS")
  */
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class Scalar extends Annotation implements NamedArgumentConstructorAnnotation
 {
     public ?string $name;
