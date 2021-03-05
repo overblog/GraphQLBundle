@@ -72,7 +72,7 @@
         }
     },
     "scripts": {
-        "test": "bin/phpunit --color=always -v --debug",
+        "test": "bin/phpunit --testdox --color=always -v --debug",
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
