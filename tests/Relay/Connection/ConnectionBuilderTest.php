@@ -71,7 +71,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']
         );
 
-        $expected = $this->getExpectedConnection(['C', 'D'], false, true);
+        // there actually is previous page for ['A', 'B']
+        $expected = $this->getExpectedConnection(['C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -83,7 +84,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['first' => 10, 'after' => 'YXJyYXljb25uZWN0aW9uOjE=']
         );
 
-        $expected = $this->getExpectedConnection(['C', 'D', 'E'], false, false);
+        // there actually is previous page for ['A', 'B']
+        $expected = $this->getExpectedConnection(['C', 'D', 'E'], true, false);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -95,7 +97,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['last' => 2, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C'], true, false);
+        // there actually is next page for ['D', 'E']
+        $expected = $this->getExpectedConnection(['B', 'C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -107,7 +110,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['last' => 10, 'before' => 'YXJyYXljb25uZWN0aW9uOjM=']
         );
 
-        $expected = $this->getExpectedConnection(['A', 'B', 'C'], false, false);
+        // there actually is next page for ['E']
+        $expected = $this->getExpectedConnection(['A', 'B', 'C'], false, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -119,7 +123,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['first' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
+        // there actually is previous page for ['A']
+        $expected = $this->getExpectedConnection(['B', 'C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -131,7 +136,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['first' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
+        // there actually is previous and next page (for ['A'] or ['E'])
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -143,7 +149,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['first' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
+        // there actually is previous and next page (for ['A'] or ['E'])
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -155,7 +162,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['last' => 2, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['C', 'D'], true, false);
+        // there actually is next page for ['E']
+        $expected = $this->getExpectedConnection(['C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -167,7 +175,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['last' => 4, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
+        // there actually is previous and next page (for ['A'] or ['E'])
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -179,7 +188,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['last' => 3, 'after' => 'YXJyYXljb25uZWN0aW9uOjA=', 'before' => 'YXJyYXljb25uZWN0aW9uOjQ=']
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C', 'D'], false, false);
+        // there actually is previous and next page (for ['A'] or ['E'])
+        $expected = $this->getExpectedConnection(['B', 'C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -266,7 +276,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
+        // there actually is previous page for ['A']
+        $expected = $this->getExpectedConnection(['B', 'C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -282,7 +293,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 0, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['B', 'C'], false, true);
+        // there actually is previous page for ['A']
+        $expected = $this->getExpectedConnection(['B', 'C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -298,7 +310,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['C'], false, true);
+        // there actually is previous page for ['A', 'B']
+        $expected = $this->getExpectedConnection(['C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -314,7 +327,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 1, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['C'], false, true);
+        // there actually is previous page for ['A', 'B']
+        $expected = $this->getExpectedConnection(['C'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -330,7 +344,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['D', 'E'], false, false);
+        // there actually is previous page for ['A', 'B', 'C']
+        $expected = $this->getExpectedConnection(['D', 'E'], true, false);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -346,7 +361,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 2, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['C', 'D'], false, true);
+        // there actually is previous page for ['A', 'B']
+        $expected = $this->getExpectedConnection(['C', 'D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
@@ -362,7 +378,8 @@ class ConnectionBuilderTest extends AbstractConnectionBuilderTest
             ['sliceStart' => 3, 'arrayLength' => 5]
         );
 
-        $expected = $this->getExpectedConnection(['D'], false, true);
+        // there actually is previous page for ['A', 'B', 'C']
+        $expected = $this->getExpectedConnection(['D'], true, true);
 
         $this->assertSameConnection($expected, $actual);
     }
