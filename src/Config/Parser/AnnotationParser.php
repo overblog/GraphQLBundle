@@ -17,12 +17,16 @@ use ReflectionProperty;
 use Reflector;
 use RuntimeException;
 use function apcu_enabled;
+use function class_exists;
+use function extension_loaded;
+use function md5;
+use function sys_get_temp_dir;
 
 class AnnotationParser extends MetadataParser
 {
     const METADATA_FORMAT = '@%s';
 
-    protected static ?Reader $annotationReader = null;
+    protected static Reader $annotationReader;
 
     protected static function getMetadatas(Reflector $reflector): array
     {
@@ -39,11 +43,10 @@ class AnnotationParser extends MetadataParser
 
     protected static function getAnnotationReader(): Reader
     {
-        if (null === self::$annotationReader) {
-            if (!class_exists(AnnotationReader::class) ||
-                !class_exists(AnnotationRegistry::class)) {
+        if (!isset(self::$annotationReader)) {
+            if (!class_exists(AnnotationReader::class) || !class_exists(AnnotationRegistry::class)) {
                 // @codeCoverageIgnoreStart
-                throw new RuntimeException('In order to use graphql annotations, you need to require doctrine annotations');
+                throw new RuntimeException("In order to use annotations, you need to install 'doctrine/annotations' first. See: 'https://www.doctrine-project.org/projects/annotations.html'");
                 // @codeCoverageIgnoreEnd
             }
 
