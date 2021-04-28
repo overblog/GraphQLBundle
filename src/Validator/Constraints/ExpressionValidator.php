@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Validator\Constraints;
 
 use Overblog\GraphQLBundle\Definition\GraphQLServices;
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Expression;
@@ -23,10 +23,10 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->graphQLServices = $graphQLServices;
-        if (Kernel::VERSION_ID >= 40400) {  // @phpstan-ignore-line
-            parent::__construct($expressionLanguage);
-        } else {                            // @phpstan-ignore-line
-            parent::{'__construct'}(null, $expressionLanguage);
+        if (Kernel::VERSION_ID >= 40400) {
+            parent::__construct($expressionLanguage); // @phpstan-ignore-line
+        } else {
+            parent::__construct(null, $expressionLanguage); // @phpstan-ignore-line
         }
     }
 
@@ -47,9 +47,6 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
 
         $variables['this'] = $object;
 
-        // Make all tagged GraphQL services available in the expression constraint
-        $variables = array_merge($variables, $this->graphQLServices->getAll());
-
         if ($object instanceof ValidationNode) {
             $variables['parentValue'] = $object->getResolverArg('value');
             $variables['context'] = $object->getResolverArg('context');
@@ -57,11 +54,33 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
             $variables['info'] = $object->getResolverArg('info');
         }
 
+        // Make all tagged GraphQL public services available in the expression constraint
+        $this->addGlobalVariables($constraint->expression, $variables);
+
         if (!$this->expressionLanguage->evaluate($constraint->expression, $variables)) {
             $this->context->buildViolation($constraint->message)
                           ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
                           ->setCode(Expression::EXPRESSION_FAILED_ERROR)
                           ->addViolation();
+        }
+    }
+
+    /**
+     * @param string|\Symfony\Component\ExpressionLanguage\Expression $expression
+     */
+    private function addGlobalVariables($expression, array &$variables): void
+    {
+        $globalVariables = $this->expressionLanguage->getGlobalNames();
+        foreach (ExpressionLanguage::extractExpressionVarNames($expression) as $extractExpressionVarName) {
+            if (
+                isset($variables[$extractExpressionVarName])
+                || !$this->graphQLServices->has($extractExpressionVarName)
+                || !in_array($extractExpressionVarName, $globalVariables)
+            ) {
+                continue;
+            }
+
+            $variables[$extractExpressionVarName] = $this->graphQLServices->get($extractExpressionVarName);
         }
     }
 }

@@ -32,7 +32,7 @@ final class GraphQLServicesPass implements CompilerPassInterface
             $taggedServices = array_merge($taggedServices, $deprecatedTaggedServices);
         }
 
-        $serviceContainer = ['container' => new Reference('service_container')];
+        $locateableServices = [];
         $expressionLanguageDefinition = $container->findDefinition('overblog_graphql.expression_language');
 
         foreach ($taggedServices as $id => $tags) {
@@ -42,9 +42,9 @@ final class GraphQLServicesPass implements CompilerPassInterface
                         sprintf('Service "%s" tagged "overblog_graphql.service" should have a valid "alias" attribute.', $id)
                     );
                 }
-                $serviceContainer[$attributes['alias']] = new Reference($id);
+                $locateableServices[$attributes['alias']] = new Reference($id);
 
-                $isPublic = isset($attributes['public']) ? (bool) $attributes['public'] : true;
+                $isPublic = !isset($attributes['public']) || $attributes['public'];
                 if ($isPublic) {
                     $expressionLanguageDefinition->addMethodCall(
                         'addGlobalName',
@@ -56,6 +56,8 @@ final class GraphQLServicesPass implements CompilerPassInterface
                 }
             }
         }
-        $container->findDefinition(GraphQLServices::class)->addArgument($serviceContainer);
+        $locateableServices['container'] = new Reference('service_container');
+
+        $container->findDefinition(GraphQLServices::class)->addArgument($locateableServices);
     }
 }
