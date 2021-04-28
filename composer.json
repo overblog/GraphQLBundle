@@ -73,7 +73,7 @@
             "@composer rem --ansi --dev phpstan/phpstan phpstan/phpstan-phpunit"
         ],
         "bench":  [
-            "test -f phpbench.phar || wget https://phpbench.github.io/phpbench/phpbench.phar https://phpbench.github.io/phpbench/phpbench.phar.pubkey",
+            "test -f phpbench.phar || wget https://github.com/phpbench/phpbench/releases/download/1.0.0-alpha7/phpbench.phar -O phpbench.phar",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],
         "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.15.3/php-cs-fixer.phar -O php-cs-fixer.phar",

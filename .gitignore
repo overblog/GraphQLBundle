@@ -9,6 +9,6 @@ composer.phar
 .php_cs
 
 phpbench.phar
-phpbench.phar.pubkey
+phpbench.phar.*
 /.phpbench_storage
 php-cs-fixer.phar
