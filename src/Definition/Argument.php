@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use function array_key_exists;
 use function count;
 use function sprintf;
 use function trigger_error;
@@ -53,7 +54,7 @@ class Argument implements ArgumentInterface
      */
     public function offsetExists($offset): bool
     {
-        return \array_key_exists($offset, $this->rawArguments);
+        return array_key_exists($offset, $this->rawArguments);
     }
 
     /**
