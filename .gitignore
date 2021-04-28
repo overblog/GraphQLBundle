@@ -10,6 +10,6 @@ composer.phar
 .phpunit.result.cache
 
 phpbench.phar
-phpbench.phar.pubkey
+phpbench.phar.*
 /.phpbench_storage
 php-cs-fixer.phar
