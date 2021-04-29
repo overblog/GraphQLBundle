@@ -86,13 +86,14 @@ class Parser implements ParserInterface
                 static::PARAM_OPERATION_NAME => null,
             ];
 
-        // Keep a reference to the query-string
-        $qs = $request->query;
+        // Use all query parameters, since starting from Symfony 6 there will be an exception accessing array parameters
+        // via request->query->get(key), and another exception accessing non-array parameter via request->query->all(key)
+        $queryParameters = $request->query->all();
 
         // Override request using query-string parameters
-        $query = $qs->has(static::PARAM_QUERY) ? $qs->get(static::PARAM_QUERY) : $data[static::PARAM_QUERY];
-        $variables = $qs->has(static::PARAM_VARIABLES) ? $qs->get(static::PARAM_VARIABLES) : $data[static::PARAM_VARIABLES];
-        $operationName = $qs->has(static::PARAM_OPERATION_NAME) ? $qs->get(static::PARAM_OPERATION_NAME) : $data[static::PARAM_OPERATION_NAME];
+        $query = $queryParameters[static::PARAM_QUERY] ?? $data[static::PARAM_QUERY];
+        $variables = $queryParameters[static::PARAM_VARIABLES] ?? $data[static::PARAM_VARIABLES];
+        $operationName = $queryParameters[static::PARAM_OPERATION_NAME] ?? $data[static::PARAM_OPERATION_NAME];
 
         // `query` parameter is mandatory.
         if (empty($query)) {
