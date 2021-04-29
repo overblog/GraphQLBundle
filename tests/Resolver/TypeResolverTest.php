@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
-use Overblog\GraphQLBundle\Resolver\UnsupportedResolverException;
-use stdClass;
-use function sprintf;
 
 class TypeResolverTest extends AbstractResolverTest
 {
@@ -22,25 +18,14 @@ class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping(): array
     {
         return [
-            'Toto' => ['factory' => [[$this, 'createObjectType'], [['name' => 'Toto']]], 'aliases' => ['foo']],
-            'Tata' => ['factory' => [[$this, 'createObjectType'], [['name' => 'Tata']]], 'aliases' => ['bar']],
+            'Toto' => ['factory' => fn () => $this->createObjectType(['name' => 'Toto']), 'aliases' => ['foo']],
+            'Tata' => ['factory' => fn () => $this->createObjectType(['name' => 'Tata']), 'aliases' => ['bar']],
         ];
     }
 
     public function createObjectType(array $config): ObjectType
     {
         return new ObjectType($config);
-    }
-
-    public function testAddNotSupportedSolution(): void
-    {
-        $this->expectException(UnsupportedResolverException::class);
-        $this->expectExceptionMessage(sprintf(
-            'Resolver "not-supported" must be "%s" "stdClass" given.',
-            Type::class
-        ));
-        $this->resolver->addSolution('not-supported', new stdClass());
-        $this->resolver->getSolution('not-supported');
     }
 
     public function testResolveKnownType(): void

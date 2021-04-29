@@ -12,7 +12,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping(): array
     {
         return [
-            'Toto' => ['factory' => [[$this, 'createToto'], []], 'aliases' => ['foo', 'bar', 'baz'], 'method' => 'resolve'],
+            'Toto' => ['factory' => [$this, 'createToto'], 'aliases' => ['foo', 'bar', 'baz'], 'method' => 'resolve'],
         ];
     }
 
