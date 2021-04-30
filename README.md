@@ -19,6 +19,7 @@ It also supports:
 Browse your version documentation:
 
 * [1.0 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
+* [0.14 (DEV)](https://github.com/overblog/GraphQLBundle/blob/0.14/README.md)
 * [0.13 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.13/README.md)
 * [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
 * [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)

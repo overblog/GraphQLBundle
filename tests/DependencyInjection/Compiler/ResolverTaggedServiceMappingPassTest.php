@@ -40,6 +40,7 @@ class ResolverTaggedServiceMappingPassTest extends TestCase
     {
         $testResolver = new Definition(ResolverTestService::class);
         $testResolver
+            ->setPublic(true)
             ->addTag('overblog_graphql.query', [
                 'alias' => 'test_resolver', 'method' => 'doSomethingWithContainer',
             ]);

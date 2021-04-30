@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
-use GraphQL\Type\Definition\Type;
 use function array_keys;
-use function call_user_func_array;
-use function get_class;
-use function is_array;
-use function is_callable;
-use function sprintf;
 
 abstract class AbstractResolver implements FluentResolverInterface
 {
@@ -19,23 +13,12 @@ abstract class AbstractResolver implements FluentResolverInterface
     private array $solutionOptions = [];
     private array $fullyLoadedSolutions = [];
 
-    public function addSolution(string $id, $solutionOrFactory, array $aliases = [], array $options = []): self
+    public function addSolution(string $id, callable $factory, array $aliases = [], array $options = []): self
     {
         $this->fullyLoadedSolutions[$id] = false;
         $this->addAliases($id, $aliases);
 
-        $this->solutions[$id] = function () use ($id, $solutionOrFactory) {
-            $solution = $solutionOrFactory;
-            if (self::isSolutionFactory($solutionOrFactory)) {
-                if (!isset($solutionOrFactory[1])) {
-                    $solutionOrFactory[1] = [];
-                }
-                $solution = call_user_func_array(...$solutionOrFactory);
-            }
-            $this->checkSolution($id, $solution);
-
-            return $solution;
-        };
+        $this->solutions[$id] = $factory;
         $this->solutionOptions[$id] = $options;
 
         return $this;
@@ -78,7 +61,7 @@ abstract class AbstractResolver implements FluentResolverInterface
     {
         $id = $this->resolveAlias($id);
 
-        return isset($this->solutionOptions[$id]) ? $this->solutionOptions[$id] : [];
+        return $this->solutionOptions[$id] ?? [];
     }
 
     /**
@@ -117,17 +100,9 @@ abstract class AbstractResolver implements FluentResolverInterface
         }
     }
 
-    /**
-     * @param object|array $solutionOrFactory
-     */
-    private static function isSolutionFactory($solutionOrFactory): bool
-    {
-        return is_array($solutionOrFactory) && isset($solutionOrFactory[0]) && is_callable($solutionOrFactory[0]);
-    }
-
     private function resolveAlias(string $alias): string
     {
-        return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
+        return $this->aliases[$alias] ?? $alias;
     }
 
     /**
@@ -140,37 +115,5 @@ abstract class AbstractResolver implements FluentResolverInterface
         }
 
         return $this->solutions;
-    }
-
-    /**
-     * @param mixed $solution
-     */
-    protected function supportsSolution($solution): bool
-    {
-        $supportedClass = $this->supportedSolutionClass();
-
-        return  null === $supportedClass || $solution instanceof $supportedClass;
-    }
-
-    /**
-     * @param mixed $solution
-     */
-    protected function checkSolution(string $id, $solution): void
-    {
-        if (!$this->supportsSolution($solution)) {
-            throw new UnsupportedResolverException(
-                sprintf('Resolver "%s" must be "%s" "%s" given.', $id, $this->supportedSolutionClass(), get_class($solution))
-            );
-        }
-    }
-
-    /**
-     * default return null to accept mixed type.
-     *
-     * @return string|null supported class name
-     */
-    protected function supportedSolutionClass(): ?string
-    {
-        return null;
     }
 }
