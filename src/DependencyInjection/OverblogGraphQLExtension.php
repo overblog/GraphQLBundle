@@ -70,9 +70,7 @@ class OverblogGraphQLExtension extends Extension
     {
         return new Configuration(
             // @phpstan-ignore-next-line
-            $container->getParameter('kernel.debug'),
-            // @phpstan-ignore-next-line
-            $container->hasParameter('kernel.cache_dir') ? $container->getParameter('kernel.cache_dir') : null
+            $container->getParameter('kernel.debug')
         );
     }
 
