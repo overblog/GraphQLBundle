@@ -8,7 +8,6 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
@@ -106,11 +105,24 @@ abstract class TestCase extends BaseTestCase
 
     protected function createGraphQLServices(array $services = []): GraphQLServices
     {
-        return new GraphQLServices(
-            $this->createMock(TypeResolver::class),
-            $this->createMock(QueryResolver::class),
-            $this->createMock(MutationResolver::class),
-            $services
-        );
+        $locateableServices = [
+            'typeResolver' => function () {
+                return $this->createMock(TypeResolver::class);
+            },
+            'queryResolver' => function () {
+                return $this->createMock(TypeResolver::class);
+            },
+            'mutationResolver' => function () {
+                return $$this->createMock(MutationResolver::class);
+            },
+        ];
+
+        foreach ($services as $id => $service) {
+            $locateableServices[$id] = function () use ($service) {
+                return $service;
+            };
+        }
+
+        return new GraphQLServices($locateableServices);
     }
 }

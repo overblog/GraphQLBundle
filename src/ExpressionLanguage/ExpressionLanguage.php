@@ -27,6 +27,11 @@ class ExpressionLanguage extends BaseExpressionLanguage
         $this->globalNames[$index] = $name;
     }
 
+    public function getGlobalNames(): array
+    {
+        return array_values($this->globalNames);
+    }
+
     /**
      * @param string|Expression $expression
      * @param array             $names
@@ -51,6 +56,22 @@ class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function expressionContainsVar(string $name, $expression): bool
     {
+        foreach (static::extractExpressionVarNames($expression) as $varName) {
+            if ($name === $varName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string|Expression $expression - expression to search in (haystack)
+     *
+     * @throws SyntaxError
+     */
+    public static function extractExpressionVarNames($expression): iterable
+    {
         if ($expression instanceof Expression) {
             $expression = $expression->__toString();
         } elseif (self::stringHasTrigger($expression)) {
@@ -60,22 +81,30 @@ class ExpressionLanguage extends BaseExpressionLanguage
         /** @var string $expression */
         $stream = (new Lexer())->tokenize($expression);
         $current = &$stream->current;
+        $isProperty = false;
+        $varNames = [];
 
         while (!$stream->isEOF()) {
-            if ($name === $current->value && Token::NAME_TYPE === $current->type) {
-                // Also check that it's not a function's name
-                $stream->next();
-                if ('(' !== $current->value) {
-                    $contained = true;
-                    break;
+            if ('.' === $current->value) {
+                $isProperty = true;
+            } elseif (Token::NAME_TYPE === $current->type) {
+                if (!$isProperty) {
+                    $name = $current->value;
+                    // Also check that it's not a function's name
+                    $stream->next();
+                    if ('(' !== $current->value) {
+                        $varNames[] = $name;
+                    }
+                    continue;
+                } else {
+                    $isProperty = false;
                 }
-                continue;
             }
 
             $stream->next();
         }
 
-        return $contained ?? false;
+        return $varNames;
     }
 
     /**
