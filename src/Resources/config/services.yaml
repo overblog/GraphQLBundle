@@ -10,10 +10,7 @@ services:
     Overblog\GraphQLBundle\Resolver\FieldResolver: ~
 
     Overblog\GraphQLBundle\Definition\GraphQLServices:
-        arguments:
-            - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
-            - '@Overblog\GraphQLBundle\Resolver\QueryResolver'
-            - '@Overblog\GraphQLBundle\Resolver\MutationResolver'
+        tags: ['container.service_locator']
 
     Overblog\GraphQLBundle\Request\Executor:
         arguments:
@@ -48,7 +45,12 @@ services:
             - "%overblog_graphql_types.classes_map%"
 
     Overblog\GraphQLBundle\Resolver\QueryResolver:
+        tags:
+            - { name: overblog_graphql.service, alias: queryResolver }
+
     Overblog\GraphQLBundle\Resolver\MutationResolver:
+        tags:
+            - { name: overblog_graphql.service, alias: mutationResolver }
 
     Overblog\GraphQLBundle\Resolver\AccessResolver:
         arguments:
