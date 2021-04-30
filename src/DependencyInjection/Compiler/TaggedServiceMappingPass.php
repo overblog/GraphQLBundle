@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -63,13 +64,11 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
             $serviceID = $attributes['id'];
 
             $solutionDefinition = $container->findDefinition($serviceID);
-            // make solution service public to improve lazy loading
-            $solutionDefinition->setPublic(true);
             $this->autowireSolutionImplementingContainerAwareInterface($solutionDefinition, empty($attributes['generated']));
 
             $resolverDefinition->addMethodCall(
                 'addSolution',
-                [$solutionID, [[new Reference('service_container'), 'get'], [$serviceID]], $aliases, $attributes]
+                [$solutionID, new ServiceClosureArgument(new Reference($serviceID)), $aliases, $attributes]
             );
         }
     }
