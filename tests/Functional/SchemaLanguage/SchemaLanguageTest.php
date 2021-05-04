@@ -11,8 +11,8 @@ class SchemaLanguageTest extends TestCase
     public function testQueryHumans(): void
     {
         $query = <<<'QUERY'
-        { humans {id name direwolf {id name} } }
-        QUERY;
+            { humans {id name direwolf {id name} } }
+            QUERY;
 
         $expected = [
             'data' => [
@@ -57,8 +57,8 @@ class SchemaLanguageTest extends TestCase
     public function testQueryDirewolves(): void
     {
         $query = <<<'QUERY'
-{ direwolves {name status} }
-QUERY;
+            { direwolves {name status} }
+            QUERY;
 
         $expected = [
             'data' => [
@@ -79,15 +79,15 @@ QUERY;
     public function testQueryACharacter(): void
     {
         $query = <<<'QUERY'
-{
-  character(id: 1) {
-    name
-    ...on Human {
-      dateOfBirth
-    }
-  }
-}
-QUERY;
+            {
+              character(id: 1) {
+                name
+                ...on Human {
+                  dateOfBirth
+                }
+              }
+            }
+            QUERY;
 
         $expected = [
             'data' => [
@@ -104,13 +104,13 @@ QUERY;
     public function testQueryHumanByDateOfBirth(): void
     {
         $query = <<<'QUERY'
-{
-  findHumansByDateOfBirth(years: ["281 AC", "288 AC"]) {
-    name
-    dateOfBirth
-  }
-}
-QUERY;
+            {
+              findHumansByDateOfBirth(years: ["281 AC", "288 AC"]) {
+                name
+                dateOfBirth
+              }
+            }
+            QUERY;
 
         $expected = [
             'data' => [
@@ -137,13 +137,13 @@ QUERY;
     public function testQueryHumanByDateOfBirthUsingVariables(): void
     {
         $query = <<<'QUERY'
-query ($years: [Year!]!) {
-  findHumansByDateOfBirth(years: $years) {
-    name
-    dateOfBirth
-  }
-}
-QUERY;
+            query ($years: [Year!]!) {
+              findHumansByDateOfBirth(years: $years) {
+                name
+                dateOfBirth
+              }
+            }
+            QUERY;
 
         $expected = [
             'data' => [
@@ -162,8 +162,8 @@ QUERY;
     public function testMutation(): void
     {
         $query = <<<'QUERY'
-mutation { resurrectZigZag {name status} }
-QUERY;
+            mutation { resurrectZigZag {name status} }
+            QUERY;
 
         $expected = [
             'data' => [

@@ -23,12 +23,12 @@ class MutationTest extends TestCase
     public function testRequiresAnArgument(): void
     {
         $query = <<<MUTATION
-        mutation M {
-          simpleMutation {
-            result
-          }
-        }
-        MUTATION;
+            mutation M {
+              simpleMutation {
+                result
+              }
+            }
+            MUTATION;
 
         $result = $this->executeGraphQLRequest($query);
 
@@ -42,13 +42,13 @@ class MutationTest extends TestCase
     public function testReturnTheSameClientMutationId(): void
     {
         $query = <<<MUTATION
-        mutation M {
-          simpleMutation(input: {clientMutationId: "abc"}) {
-            result
-            clientMutationId
-          }
-        }
-        MUTATION;
+            mutation M {
+              simpleMutation(input: {clientMutationId: "abc"}) {
+                result
+                clientMutationId
+              }
+            }
+            MUTATION;
 
         $expectedData = [
             'simpleMutation' => [
@@ -63,13 +63,13 @@ class MutationTest extends TestCase
     public function testSupportsThunksAsInputAndOutputFields(): void
     {
         $query = <<<MUTATION
-        mutation M {
-          simpleMutationWithThunkFields(input: {inputData: 1234, clientMutationId: "abc"}) {
-            result
-            clientMutationId
-          }
-        }
-        MUTATION;
+            mutation M {
+              simpleMutationWithThunkFields(input: {inputData: 1234, clientMutationId: "abc"}) {
+                result
+                clientMutationId
+              }
+            }
+            MUTATION;
 
         $expectedData = [
             'simpleMutationWithThunkFields' => [
@@ -84,13 +84,13 @@ class MutationTest extends TestCase
     public function testSupportsPromiseMutations(): void
     {
         $query = <<<MUTATION
-        mutation M {
-          simplePromiseMutation(input: {clientMutationId: "abc"}) {
-            result
-            clientMutationId
-          }
-        }
-        MUTATION;
+            mutation M {
+              simplePromiseMutation(input: {clientMutationId: "abc"}) {
+                result
+                clientMutationId
+              }
+            }
+            MUTATION;
 
         $expectedData = [
             'simplePromiseMutation' => [
@@ -105,20 +105,20 @@ class MutationTest extends TestCase
     public function testContainsCorrectInput(): void
     {
         $query = <<<MUTATION
-        {
-          __type(name: "simpleMutationInput") {
-            name
-            kind
-            inputFields {
-              name
-              type {
+            {
+              __type(name: "simpleMutationInput") {
                 name
                 kind
+                inputFields {
+                  name
+                  type {
+                    name
+                    kind
+                  }
+                }
               }
             }
-          }
-        }
-        MUTATION;
+            MUTATION;
 
         $expectedData = [
             '__type' => [
@@ -142,20 +142,20 @@ class MutationTest extends TestCase
     public function testContainsCorrectPayload(): void
     {
         $query = <<<MUTATION
-        {
-          __type(name: "simpleMutationPayload") {
-            name
-            kind
-            fields {
-              name
-              type {
+            {
+              __type(name: "simpleMutationPayload") {
                 name
                 kind
+                fields {
+                  name
+                  type {
+                    name
+                    kind
+                  }
+                }
               }
             }
-          }
-        }
-        MUTATION;
+            MUTATION;
 
         $expectedData = [
             '__type' => [
@@ -186,31 +186,31 @@ class MutationTest extends TestCase
     public function testContainsCorrectField(): void
     {
         $query = <<<MUTATION
-        {
-          __schema {
-            mutationType {
-              fields {
-                name
-                args {
-                  name
-                  type {
+            {
+              __schema {
+                mutationType {
+                  fields {
                     name
-                    kind
-                    ofType {
+                    args {
+                      name
+                      type {
+                        name
+                        kind
+                        ofType {
+                          name
+                          kind
+                        }
+                      }
+                    }
+                    type {
                       name
                       kind
                     }
                   }
                 }
-                type {
-                  name
-                  kind
-                }
               }
             }
-          }
-        }
-        MUTATION;
+            MUTATION;
 
         $expectedData = [
             '__schema' => [

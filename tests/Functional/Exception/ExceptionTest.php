@@ -18,10 +18,10 @@ class ExceptionTest extends TestCase
     public function testExceptionIsMappedToAWarning(): void
     {
         $query = <<<'EOF'
-query ExceptionQuery {
-    test
-}
-EOF;
+            query ExceptionQuery {
+                test
+            }
+            EOF;
 
         $expectedData = [
             'test' => null,
