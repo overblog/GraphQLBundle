@@ -729,8 +729,14 @@ class TypeBuilder
             $field->addItem('useStrictAccess', false);
         }
 
-        if ('input-object' === $this->type && isset($c->validation)) {
-            $field->addItem('validation', $this->buildValidationRules($c->validation));
+        if ('input-object' === $this->type) {
+            if (property_exists($c, 'defaultValue')) {
+                $field->addItem('defaultValue', $c->defaultValue);
+            }
+
+            if (isset($c->validation)) {
+                $field->addItem('validation', $this->buildValidationRules($c->validation));
+            }
         }
 
         return $field;
@@ -770,8 +776,8 @@ class TypeBuilder
             $arg->addIfNotEmpty('description', $c->description);
         }
 
-        if (isset($c->defaultValue)) {
-            $arg->addIfNotEmpty('defaultValue', $c->defaultValue);
+        if (property_exists($c, 'defaultValue')) {
+            $arg->addItem('defaultValue', $c->defaultValue);
         }
 
         if (!empty($c->validation)) {
