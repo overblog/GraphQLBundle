@@ -6,12 +6,12 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 class DefaultValueTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         static::bootKernel(['test_case' => 'defaultValue']);
     }
 
-    public function testArgDefaultValue()
+    public function testArgDefaultValue(): void
     {
         $query = 'mutation { echo }';
 
@@ -21,7 +21,7 @@ class DefaultValueTest extends TestCase
         $this->assertSame('foo', $result['data']['echo']);
     }
 
-    public function testNullableDefaultValue()
+    public function testNullableDefaultValue(): void
     {
         $query = 'mutation { isStringNull }';
 
@@ -31,7 +31,7 @@ class DefaultValueTest extends TestCase
         $this->assertTrue($result['data']['isStringNull']);
     }
 
-    public function testArgDefaultValueWithInput()
+    public function testArgDefaultValueWithInput(): void
     {
         $query = 'mutation { echoUsingInput(input: {}) }';
 
@@ -41,7 +41,7 @@ class DefaultValueTest extends TestCase
         $this->assertSame('foo', $result['data']['echoUsingInput']);
     }
 
-    public function testNullableDefaultValueWithInput()
+    public function testNullableDefaultValueWithInput(): void
     {
         $query = 'mutation { isStringNullUsingInput(input: {}) }';
 
@@ -51,7 +51,7 @@ class DefaultValueTest extends TestCase
         $this->assertTrue($result['data']['isStringNullUsingInput']);
     }
 
-    public function testArgDefaultValueArgWithInput()
+    public function testArgDefaultValueArgWithInput(): void
     {
         $query = 'mutation { echoUsingInputWithDefaultArg }';
 
