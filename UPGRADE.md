@@ -13,6 +13,7 @@ UPGRADE FROM 0.13 to 0.14
 - [Replace `resolver` expression function](#replace-resolver-expression-function)
 - [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
 - [Remove Argument deprecated method](#remove-argument-deprecated-method)
+- [Remove ConnectionBuilder deprecated class](#remove-connectionbuilder-deprecated-class)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -205,6 +206,10 @@ Example:
 Method `Overblog\GraphQLBundle\Definition\Argument::getRawArguments` is replaced by
 `Overblog\GraphQLBundle\Definition\Argument::getArrayCopy`.
 
+### Remove ConnectionBuilder deprecated class
+
+Class `Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder` is replaced by
+`Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder`.
 
 UPGRADE FROM 0.12 to 0.13
 =======================
