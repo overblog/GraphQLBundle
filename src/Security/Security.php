@@ -59,9 +59,7 @@ final class Security
     {
         return array_reduce(
             $roles,
-            function ($isGranted, $role) {
-                return $isGranted || $this->isGranted($role);
-            },
+            fn ($isGranted, $role) => $isGranted || $this->isGranted($role),
             false
         );
     }

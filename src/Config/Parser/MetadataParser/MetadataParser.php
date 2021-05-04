@@ -44,8 +44,8 @@ use function trim;
 
 abstract class MetadataParser implements PreParserInterface
 {
-    const ANNOTATION_NAMESPACE = 'Overblog\GraphQLBundle\Annotation\\';
-    const METADATA_FORMAT = '%s';
+    public const ANNOTATION_NAMESPACE = 'Overblog\GraphQLBundle\Annotation\\';
+    public const METADATA_FORMAT = '%s';
 
     private static ClassesTypesMap $map;
     private static array $typeGuessers = [];
@@ -233,7 +233,7 @@ abstract class MetadataParser implements PreParserInterface
 
         if (null !== $gqlType) {
             if (!$gqlName) {
-                $gqlName = isset($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
+                $gqlName = !empty($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
             }
 
             if ($preProcess) {
@@ -346,9 +346,7 @@ abstract class MetadataParser implements PreParserInterface
 
         $buildersAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class), $typeAnnotation->builders);
         if (!empty($buildersAnnotations)) {
-            $typeConfiguration['builders'] = array_map(function ($fieldsBuilderAnnotation) {
-                return ['builder' => $fieldsBuilderAnnotation->name, 'builderConfig' => $fieldsBuilderAnnotation->config];
-            }, $buildersAnnotations);
+            $typeConfiguration['builders'] = array_map(fn ($fieldsBuilderAnnotation) => ['builder' => $fieldsBuilderAnnotation->name, 'builderConfig' => $fieldsBuilderAnnotation->config], $buildersAnnotations);
         }
 
         if (isset($typeAnnotation->isTypeOf)) {
@@ -593,7 +591,7 @@ abstract class MetadataParser implements PreParserInterface
             if (is_string($fieldMetadata->argsBuilder)) {
                 $fieldConfiguration['argsBuilder'] = ['builder' => $fieldMetadata->argsBuilder, 'config' => []];
             } elseif (is_array($fieldMetadata->argsBuilder)) {
-                list($builder, $builderConfig) = $fieldMetadata->argsBuilder;
+                [$builder, $builderConfig] = $fieldMetadata->argsBuilder;
                 $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
             } else {
                 throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
@@ -608,7 +606,7 @@ abstract class MetadataParser implements PreParserInterface
                 $fieldConfiguration['builder'] = $fieldMetadata->fieldBuilder;
                 $fieldConfiguration['builderConfig'] = [];
             } elseif (is_array($fieldMetadata->fieldBuilder)) {
-                list($builder, $builderConfig) = $fieldMetadata->fieldBuilder;
+                [$builder, $builderConfig] = $fieldMetadata->fieldBuilder;
                 $fieldConfiguration['builder'] = $builder;
                 $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
             } else {
@@ -929,7 +927,7 @@ abstract class MetadataParser implements PreParserInterface
             }
         }
 
-        throw new TypeGuessingException(join("\n", $errors));
+        throw new TypeGuessingException(implode("\n", $errors));
     }
 
     /**

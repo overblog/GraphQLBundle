@@ -40,7 +40,7 @@ class GlobalId
             return $decodeGlobalId;
         }
 
-        list($decodeGlobalId['type'], $decodeGlobalId['id']) = array_pad(explode(static::SEPARATOR, $unBasedGlobalId, 2), 2, null);
+        [$decodeGlobalId['type'], $decodeGlobalId['id']] = array_pad(explode(static::SEPARATOR, $unBasedGlobalId, 2), 2, null);
         // transform empty string to null
         foreach ($decodeGlobalId as &$v) {
             $v = '' === $v ? null : $v;

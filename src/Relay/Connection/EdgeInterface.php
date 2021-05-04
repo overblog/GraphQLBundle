@@ -25,7 +25,7 @@ interface EdgeInterface
      *
      * @return string
      */
-    public function getCursor(): ? string;
+    public function getCursor(): ?string;
 
     /**
      * Set the edge cursor.

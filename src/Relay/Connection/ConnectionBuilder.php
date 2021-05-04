@@ -85,9 +85,7 @@ class ConnectionBuilder
     {
         $this->checkPromise($dataPromise);
 
-        return $dataPromise->then(function ($data) use ($args) {
-            return $this->connectionFromArray($data, $args);
-        });
+        return $dataPromise->then(fn ($data) => $this->connectionFromArray($data, $args));
     }
 
     /**
@@ -189,9 +187,7 @@ class ConnectionBuilder
     {
         $this->checkPromise($dataPromise);
 
-        return $dataPromise->then(function ($arraySlice) use ($args, $meta) {
-            return $this->connectionFromArraySlice($arraySlice, $args, $meta);
-        });
+        return $dataPromise->then(fn ($arraySlice) => $this->connectionFromArraySlice($arraySlice, $args, $meta));
     }
 
     /**
@@ -199,7 +195,7 @@ class ConnectionBuilder
      *
      * @param mixed $object
      */
-    public function cursorForObjectInConnection(array $data, $object): ? string
+    public function cursorForObjectInConnection(array $data, $object): ?string
     {
         $offset = null;
 
