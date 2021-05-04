@@ -1,0 +1,54 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            echo:
+                type: String!
+                resolve: "@=args['output']"
+                args:
+                    output:
+                        type: String
+                        defaultValue: 'foo'
+            isStringNull:
+                type: Boolean!
+                resolve: "@=null === args.getRawArguments()['string']"
+                args:
+                    string:
+                        type: String
+                        defaultValue: null
+            echoUsingInput:
+                type: String!
+                resolve: "@=args['input']['output']"
+                args:
+                    input:
+                        type: EchoInput!
+            isStringNullUsingInput:
+                type: Boolean!
+                resolve: "@=null === args.getRawArguments()['input']['string']"
+                args:
+                    input:
+                        type: isStringNullInput!
+
+            echoUsingInputWithDefaultArg:
+                type: String!
+                resolve: "@=args['input']['output']"
+                args:
+                    input:
+                        type: EchoInput
+                        defaultValue: {"output": "bar"}
+
+EchoInput:
+    type: input-object
+    config:
+        fields:
+            output:
+                type: String
+                defaultValue: 'foo'
+
+isStringNullInput:
+    type: input-object
+    config:
+        fields:
+            string:
+                type: String
+                defaultValue: null
