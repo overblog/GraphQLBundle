@@ -50,9 +50,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
     private function treatFieldsDefaultAccess(ArrayNodeDefinition $node): void
     {
         $node->validate()
-            ->ifTrue(function ($v) {
-                return array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'];
-            })
+            ->ifTrue(fn ($v) => array_key_exists('fieldsDefaultAccess', $v) && null !== $v['fieldsDefaultAccess'])
             ->then(function ($v) {
                 foreach ($v['fields'] as &$field) {
                     if (array_key_exists('access', $field) && null !== $field['access']) {

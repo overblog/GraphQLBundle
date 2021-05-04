@@ -148,8 +148,6 @@ class GraphDumpSchemaCommandTest extends TestCase
             $data = &$entries['__schema'][$entryKey];
         }
 
-        usort($data, function ($data1, $data2) use ($sortBy) {
-            return strcmp($data1[$sortBy], $data2[$sortBy]);
-        });
+        usort($data, fn ($data1, $data2) => strcmp($data1[$sortBy], $data2[$sortBy]));
     }
 }

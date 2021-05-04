@@ -19,7 +19,6 @@ use function sys_get_temp_dir;
 
 class AccessTest extends TestCase
 {
-    /** @var Closure */
     private Closure $loader;
 
     private string $userNameQuery = 'query { user { name } }';

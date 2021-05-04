@@ -123,8 +123,6 @@ class Characters
 
     private static function findByType(string $type): array
     {
-        return array_filter(self::$characters, function ($character) use ($type) {
-            return $type === $character['type'];
-        });
+        return array_filter(self::$characters, fn ($character) => $type === $character['type']);
     }
 }

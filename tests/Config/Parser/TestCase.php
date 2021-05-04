@@ -35,8 +35,6 @@ abstract class TestCase extends WebTestCase
             }
         }
 
-        return array_filter($config, function ($item) {
-            return !is_array($item) || !empty($item);
-        });
+        return array_filter($config, fn ($item) => !is_array($item) || !empty($item));
     }
 }
