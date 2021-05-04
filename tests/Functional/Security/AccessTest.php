@@ -26,27 +26,27 @@ class AccessTest extends TestCase
     private string $userIsEnabledQuery = 'query ($hasAccess: Boolean = true) { user { isEnabled(hasAccess: $hasAccess) } }';
 
     private string $userFriendsQuery = <<<'QUERY'
-    query {
-      user {
-        friends(first: 2) {
-          edges {
-            node {
-              name
+        query {
+          user {
+            friends(first: 2) {
+              edges {
+                node {
+                  name
+                }
+              }
             }
           }
         }
-      }
-    }
-    QUERY;
+        QUERY;
 
     private string $simpleMutationWithThunkQuery = <<<'MUTATION'
-    mutation M {
-      simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
-        result
-        clientMutationId
-      }
-    }
-    MUTATION;
+        mutation M {
+          simpleMutationWithThunkFields(input: {inputData: %d, clientMutationId: "bac"}) {
+            result
+            clientMutationId
+          }
+        }
+        MUTATION;
 
     public function setUp(): void
     {
@@ -160,13 +160,13 @@ class AccessTest extends TestCase
         ];
 
         $query = <<<'QUERY'
-        {
-          youShallNotSeeThisUnauthenticated {
-            secretValue
-            youAreAuthenticated
-          }
-        }
-        QUERY;
+            {
+              youShallNotSeeThisUnauthenticated {
+                secretValue
+                youAreAuthenticated
+              }
+            }
+            QUERY;
 
         $this->assertResponse($query, $expected, static::ANONYMOUS_USER, 'access');
     }
@@ -231,12 +231,12 @@ class AccessTest extends TestCase
         ];
 
         $query = <<<'QUERY'
-        query MyQuery {
-          user {
-            forbidden
-          }
-        }
-        QUERY;
+            query MyQuery {
+              user {
+                forbidden
+              }
+            }
+            QUERY;
 
         $this->assertResponse($query, $expected, static::USER_ADMIN, 'access');
     }

@@ -10,7 +10,7 @@ return PhpCsFixer\Config::create()
     ->setRules(
         [
             '@Symfony' => true,
-            '@PHP71Migration' => true,
+            '@PHP74Migration' => true,
             '@PHP74Migration:risky' => true,
             'ordered_imports' => ['imports_order' => ['class', 'function', 'const']],
             'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],

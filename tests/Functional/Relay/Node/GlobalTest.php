@@ -22,12 +22,12 @@ class GlobalTest extends TestCase
     public function testGlobalIdFields(): void
     {
         $query = <<<'EOF'
-        {
-          allObjects {
-            id
-          }
-        }
-        EOF;
+            {
+              allObjects {
+                id
+              }
+            }
+            EOF;
 
         $expectedData = [
             'allObjects' => [
@@ -58,28 +58,28 @@ class GlobalTest extends TestCase
     public function testReFetchesTheIds(): void
     {
         $query = <<<'EOF'
-        {
-          user: node(id: "VXNlcjox") {
-            id
-            ... on User {
-              name
+            {
+              user: node(id: "VXNlcjox") {
+                id
+                ... on User {
+                  name
+                }
+              },
+              photo: node(id: "UGhvdG86MQ==") {
+                id
+                ... on Photo {
+                  width
+                }
+              },
+              post: node(id: "UG9zdDox") {
+                id
+                ... on Post {
+                  text
+                  status
+                }
+              }
             }
-          },
-          photo: node(id: "UGhvdG86MQ==") {
-            id
-            ... on Photo {
-              width
-            }
-          },
-          post: node(id: "UG9zdDox") {
-            id
-            ... on Post {
-              text
-              status
-            }
-          }
-        }
-        EOF;
+            EOF;
 
         $expectedData = [
             'user' => [

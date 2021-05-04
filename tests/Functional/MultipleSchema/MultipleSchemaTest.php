@@ -26,14 +26,14 @@ class MultipleSchemaTest extends TestCase
         $this->assertSame([['node' => ['username' => 'user1']]], $result['data']['users']['edges']);
 
         $query = <<<'EOF'
-        mutation M {
-          addUser(input: {username: "user1"}) {
-            user {
-              username
+            mutation M {
+              addUser(input: {username: "user1"}) {
+                user {
+                  username
+                }
+              }
             }
-          }
-        }
-        EOF;
+            EOF;
 
         $expectedData = [
             'addUser' => [
@@ -55,15 +55,15 @@ class MultipleSchemaTest extends TestCase
         $this->assertSame([['node' => ['username' => 'user1', 'email' => 'topsecret']]], $result['data']['users']['edges']);
 
         $query = <<<'EOF'
-        mutation M {
-          addUser(input: {username: "user1"}) {
-            user {
-              username
-              email
+            mutation M {
+              addUser(input: {username: "user1"}) {
+                user {
+                  username
+                  email
+                }
+              }
             }
-          }
-        }
-        EOF;
+            EOF;
 
         $expectedData = [
             'addUser' => [
