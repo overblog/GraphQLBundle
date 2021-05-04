@@ -10,6 +10,8 @@ return PhpCsFixer\Config::create()
     ->setRules(
         [
             '@Symfony' => true,
+            '@PHP71Migration' => true,
+            '@PHP74Migration:risky' => true,
             'ordered_imports' => ['imports_order' => ['class', 'function', 'const']],
             'general_phpdoc_annotation_remove' => ['author', 'category', 'copyright', 'created', 'license', 'package', 'since', 'subpackage', 'version'],
             'fully_qualified_strict_types' => true,
@@ -19,7 +21,9 @@ return PhpCsFixer\Config::create()
             'global_namespace_import' => ['import_functions' => true, 'import_classes' => true, 'import_constants' => true],
             'phpdoc_summary' => false,
             'hash_to_slash_comment' => false,
-            'single_line_comment_style' => false
+            'single_line_comment_style' => false,
+            'phpdoc_no_alias_tag' => ['type' => 'var'],
+            'no_mixed_echo_print' => ['use' => 'echo'],
         ]
     )
     ->setFinder($finder)

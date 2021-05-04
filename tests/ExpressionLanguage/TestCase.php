@@ -106,21 +106,13 @@ abstract class TestCase extends BaseTestCase
     protected function createGraphQLServices(array $services = []): GraphQLServices
     {
         $locateableServices = [
-            'typeResolver' => function () {
-                return $this->createMock(TypeResolver::class);
-            },
-            'queryResolver' => function () {
-                return $this->createMock(TypeResolver::class);
-            },
-            'mutationResolver' => function () {
-                return $$this->createMock(MutationResolver::class);
-            },
+            'typeResolver' => fn () => $this->createMock(TypeResolver::class),
+            'queryResolver' => fn () => $this->createMock(TypeResolver::class),
+            'mutationResolver' => fn () => $$this->createMock(MutationResolver::class),
         ];
 
         foreach ($services as $id => $service) {
-            $locateableServices[$id] = function () use ($service) {
-                return $service;
-            };
+            $locateableServices[$id] = fn () => $service;
         }
 
         return new GraphQLServices($locateableServices);

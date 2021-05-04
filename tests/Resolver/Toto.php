@@ -32,9 +32,7 @@ class Toto
 
     public function getPrivatePropertyWithoutGetterUsingCallBack(): Closure
     {
-        return function () {
-            return $this->privatePropertyWithoutGetter;
-        };
+        return fn () => $this->privatePropertyWithoutGetter;
     }
 
     public function resolve(): array

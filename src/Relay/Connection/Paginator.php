@@ -68,9 +68,7 @@ class Paginator
         if (!is_numeric($this->connectionBuilder->cursorToOffset($after)) || !$after) {
             $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
 
-            return $this->handleEntities($entities, function ($entities) use ($args) {
-                return $this->connectionBuilder->connectionFromArray($entities, $args);
-            });
+            return $this->handleEntities($entities, fn ($entities) => $this->connectionBuilder->connectionFromArray($entities, $args));
         } else {
             $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
 

@@ -156,9 +156,7 @@ class ConfigParserPass implements CompilerPassInterface
     private function checkTypesDuplication(array $typeConfigs): void
     {
         $types = array_merge(...array_map('array_keys', $typeConfigs));
-        $duplications = array_keys(array_filter(array_count_values($types), function ($count) {
-            return $count > 1;
-        }));
+        $duplications = array_keys(array_filter(array_count_values($types), fn ($count) => $count > 1));
         if (!empty($duplications)) {
             throw new ForbiddenOverwriteException(sprintf(
                 'Types (%s) cannot be overwritten. See inheritance doc section for more details.',

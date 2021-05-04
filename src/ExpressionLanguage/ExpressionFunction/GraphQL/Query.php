@@ -15,7 +15,7 @@ final class Query extends ExpressionFunction
         parent::__construct(
             $name,
             function (string $alias, ...$args) {
-                $args = (count($args) > 0) ? (', '.join(', ', $args)) : '';
+                $args = (count($args) > 0) ? (', '.implode(', ', $args)) : '';
 
                 return "$this->gqlServices->query({$alias}{$args})";
             }

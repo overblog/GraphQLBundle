@@ -53,6 +53,6 @@ class ExpressionLanguageTest extends TestCase
         yield ['f()', []];
         yield ['a.c + b', ['a', 'b']];
         yield ['(a.c) + b - d', ['a', 'b', 'd']];
-        yield['a && b && c', ['a', 'b', 'c']];
+        yield ['a && b && c', ['a', 'b', 'c']];
     }
 }

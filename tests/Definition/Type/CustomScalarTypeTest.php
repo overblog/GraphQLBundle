@@ -22,16 +22,12 @@ class CustomScalarTypeTest extends TestCase
     public function testScalarTypeConfig(): void
     {
         $this->assertScalarTypeConfig(new YearScalarType());
-        $this->assertScalarTypeConfig(function () {
-            return new YearScalarType();
-        });
+        $this->assertScalarTypeConfig(fn () => new YearScalarType());
     }
 
     public function testWithoutScalarTypeConfig(): void
     {
-        $genericFunc = function ($value) {
-            return $value;
-        };
+        $genericFunc = fn ($value) => $value;
         $type = new CustomScalarType([
             'serialize' => $genericFunc,
             'parseValue' => $genericFunc,
@@ -78,15 +74,11 @@ class CustomScalarTypeTest extends TestCase
         yield [false, 'false'];
         yield [new stdClass(), 'instance of stdClass'];
         yield [
-            function () {
-                return false;
-            },
+            fn () => false,
             'false',
         ];
         yield [
-            function () {
-                return new stdClass();
-            },
+            fn () => new stdClass(),
             'instance of stdClass',
         ];
     }
@@ -100,15 +92,9 @@ class CustomScalarTypeTest extends TestCase
     {
         $type = new CustomScalarType([
             'scalarType' => $scalarType,
-            'serialize' => function () {
-                return 'serialize';
-            },
-            'parseValue' => function () {
-                return 'parseValue';
-            },
-            'parseLiteral' => function () {
-                return 'parseLiteral';
-            },
+            'serialize' => fn () => 'serialize',
+            'parseValue' => fn () => 'parseValue',
+            'parseLiteral' => fn () => 'parseLiteral',
         ]);
 
         $this->assertSame('50 AC', $type->serialize(50));

@@ -46,7 +46,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getPageInfo(): ? PageInfoInterface
+    public function getPageInfo(): ?PageInfoInterface
     {
         return $this->pageInfo;
     }

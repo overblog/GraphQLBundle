@@ -75,9 +75,7 @@ class ArgumentsTransformer
         }
 
         if ($multiple) {
-            return array_map(function ($data) use ($type, $info) {
-                return $this->populateObject($type, $data, false, $info);
-            }, $data);
+            return array_map(fn ($data) => $this->populateObject($type, $data, false, $info), $data);
         }
 
         if ($type instanceof EnumType) {
