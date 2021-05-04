@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Overblog\GraphQLBundle\Tests\Functional\DefaultValue;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
