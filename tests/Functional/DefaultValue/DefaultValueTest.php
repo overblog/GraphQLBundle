@@ -1,6 +1,6 @@
 <?php
 
-namespace Overblog\GraphQLBundle\Tests\Functional\DisableBuiltInMapping;
+namespace Overblog\GraphQLBundle\Tests\Functional\DefaultValue;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
