@@ -6,9 +6,6 @@ namespace Overblog\GraphQLBundle\Definition;
 
 use function array_key_exists;
 use function count;
-use function sprintf;
-use function trigger_error;
-use const E_USER_DEPRECATED;
 
 class Argument implements ArgumentInterface
 {
@@ -30,23 +27,6 @@ class Argument implements ArgumentInterface
     public function getArrayCopy(): array
     {
         return $this->rawArguments;
-    }
-
-    /**
-     * @deprecated This method is deprecated since 0.12 and will be removed in 0.13. You should use getArrayCopy method instead.
-     */
-    public function getRawArguments(): array
-    {
-        @trigger_error(
-            sprintf(
-                'This "%s" method is deprecated since 0.12 and will be removed in 0.13. You should use "%s::getArrayCopy" instead.',
-                __METHOD__,
-                __CLASS__
-            ),
-            E_USER_DEPRECATED
-        );
-
-        return $this->getArrayCopy();
     }
 
     /**
