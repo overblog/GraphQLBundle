@@ -11,7 +11,7 @@ Mutation:
                         defaultValue: 'foo'
             isStringNull:
                 type: Boolean!
-                resolve: "@=null === args.getRawArguments()['string']"
+                resolve: "@=null === args.getArrayCopy()['string']"
                 args:
                     string:
                         type: String
@@ -24,7 +24,7 @@ Mutation:
                         type: EchoInput!
             isStringNullUsingInput:
                 type: Boolean!
-                resolve: "@=null === args.getRawArguments()['input']['string']"
+                resolve: "@=null === args.getArrayCopy()['input']['string']"
                 args:
                     input:
                         type: isStringNullInput!
