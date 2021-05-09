@@ -7,26 +7,24 @@ namespace Overblog\GraphQLBundle\Tests\Generator;
 use Generator;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
 use Overblog\GraphQLBundle\Generator\TypeBuilder;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Generator\TypeGeneratorOptions;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TypeGeneratorTest extends TestCase
 {
     /**
-     * @param int         $expectedMask
-     * @param string|null $cacheDir
-     * @param int|null    $cacheDirMask
-     *
      * @dataProvider getPermissionsProvider
      */
-    public function testCacheDirPermissions($expectedMask, $cacheDir, $cacheDirMask): void
+    public function testCacheDirPermissions(int $expectedMask, ?string $cacheDir, ?int $cacheDirMask): void
     {
         $typeBuilder = $this->createMock(TypeBuilder::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $mask = (new TypeGenerator(
-            'App', $cacheDir, [], $typeBuilder, $eventDispatcher, true, null, $cacheDirMask
-        ))->getCacheDirMask();
+        $options = new TypeGeneratorOptions('App', $cacheDir, [], true, null, $cacheDirMask);
+
+        $mask = (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->options->cacheDirMask;
 
         $this->assertSame($expectedMask, $mask);
     }
@@ -36,9 +34,13 @@ class TypeGeneratorTest extends TestCase
         $typeBuilder = $this->createMock(TypeBuilder::class);
         $eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
-        $eventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(new SchemaCompiledEvent()));
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(new SchemaCompiledEvent()));
 
-        (new TypeGenerator('App', null, [], $typeBuilder, $eventDispatcher))->compile(TypeGenerator::MODE_DRY_RUN);
+        $options = new TypeGeneratorOptions('App', null, []);
+
+        (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->compile(TypeGenerator::MODE_DRY_RUN);
     }
 
     public function getPermissionsProvider(): Generator

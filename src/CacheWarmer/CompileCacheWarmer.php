@@ -19,7 +19,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
      */
     public function isOptional()
     {
@@ -27,24 +27,25 @@ class CompileCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $cacheDir
      *
-     * @return string[]
+     * @return array
      */
     public function warmUp($cacheDir)
     {
         if ($this->compiled) {
-            // use warm up cache dir if type generator cache dir not already explicitly declare
-            $baseCacheDir = $this->typeGenerator->getBaseCacheDir();
-            if (null === $this->typeGenerator->getCacheDir(false)) {
-                $this->typeGenerator->setBaseCacheDir($cacheDir);
+            // use warm up cache dir if type generator cache dir not already explicitly declared
+            $options = $this->typeGenerator->options;
+            $cacheBaseDir = $options->cacheBaseDir;
+
+            if (null === $options->cacheDir) {
+                $options->cacheBaseDir = $cacheDir;
             }
+
             $this->typeGenerator->compile(TypeGenerator::MODE_WRITE | TypeGenerator::MODE_OVERRIDE);
 
-            if (null !== $baseCacheDir) {
-                $this->typeGenerator->setBaseCacheDir($baseCacheDir);
+            if (null !== $cacheBaseDir) {
+                $options->cacheBaseDir = $cacheBaseDir;
             }
         }
 

@@ -31,8 +31,9 @@ class CompileCommandTest extends TestCase
         $this->typesMapping = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
-        // @phpstan-ignore-next-line
-        $this->cacheDir = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')->getCacheDir();
+        /** @var TypeGenerator $generator */
+        $generator = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler');
+        $this->cacheDir = $generator->options->getCacheDirOrDefault();
         $this->commandTester = new CommandTester($command);
     }
 
@@ -48,7 +49,7 @@ class CompileCommandTest extends TestCase
         $this->commandTester->execute([]);
         $this->assertSame(0, $this->commandTester->getStatusCode());
         $this->assertSame($this->displayExpected(), $this->commandTester->getDisplay());
-        foreach ($this->typesMapping as $class => $path) {
+        foreach ($this->typesMapping as $path) {
             $this->assertFileExists($path);
         }
     }
