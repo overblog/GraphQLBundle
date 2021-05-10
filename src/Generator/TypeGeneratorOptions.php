@@ -22,6 +22,9 @@ class TypeGeneratorOptions
      */
     public int $cacheDirMask;
 
+    /**
+     * Whether a class map should be generated.
+     */
     public bool $useClassMap = true;
 
     /**

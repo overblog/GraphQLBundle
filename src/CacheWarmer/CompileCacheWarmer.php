@@ -19,7 +19,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isOptional()
     {
@@ -29,7 +29,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     /**
      * @param string $cacheDir
      *
-     * @return array
+     * @return string[]
      */
     public function warmUp($cacheDir)
     {
