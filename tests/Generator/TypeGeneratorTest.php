@@ -24,7 +24,7 @@ class TypeGeneratorTest extends TestCase
 
         $options = new TypeGeneratorOptions('App', $cacheDir, [], true, null, $cacheDirMask);
 
-        $mask = (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->options->cacheDirMask;
+        $mask = (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->getCacheDirMask();
 
         $this->assertSame($expectedMask, $mask);
     }

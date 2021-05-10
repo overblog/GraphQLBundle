@@ -33,7 +33,7 @@ class CompileCommandTest extends TestCase
 
         /** @var TypeGenerator $generator */
         $generator = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler');
-        $this->cacheDir = $generator->options->getCacheDirOrDefault();
+        $this->cacheDir = $generator->getCacheDirOrDefault();
         $this->commandTester = new CommandTester($command);
     }
 

@@ -27,7 +27,7 @@ class TypeGenerator
     public const GRAPHQL_SERVICES = 'services';
 
     private static bool $classMapLoaded = false;
-    public TypeGeneratorOptions $options;
+    private TypeGeneratorOptions $options;
     private TypeBuilder $typeBuilder;
     private EventDispatcherInterface $dispatcher;
 
@@ -40,7 +40,7 @@ class TypeGenerator
 
     public function compile(int $mode): array
     {
-        $cacheDir = $this->options->getCacheDirOrDefault();
+        $cacheDir = $this->getCacheDirOrDefault();
         $writeMode = $mode & self::MODE_WRITE;
 
         // Configure write mode
@@ -122,8 +122,33 @@ class TypeGenerator
         }
     }
 
+    public function getCacheDir(): ?string
+    {
+        return $this->options->cacheDir;
+    }
+
+    public function getCacheDirMask(): int
+    {
+        return $this->options->cacheDirMask;
+    }
+
+    public function getCacheBaseDir(): ?string
+    {
+        return $this->options->cacheBaseDir;
+    }
+
+    public function setCacheBaseDir(string $dir): void
+    {
+        $this->options->cacheBaseDir = $dir;
+    }
+
+    public function getCacheDirOrDefault(): string
+    {
+        return $this->options->cacheDir ?? $this->options->cacheBaseDir.'/overblog/graphql-bundle/__definitions__';
+    }
+
     private function getClassesMap(): string
     {
-        return $this->options->getCacheDirOrDefault().'/__classes.map';
+        return $this->getCacheDirOrDefault().'/__classes.map';
     }
 }

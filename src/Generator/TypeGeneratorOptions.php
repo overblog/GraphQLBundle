@@ -34,9 +34,4 @@ class TypeGeneratorOptions
 
         $this->cacheDirMask = $cacheDirMask;
     }
-
-    public function getCacheDirOrDefault(): string
-    {
-        return $this->cacheDir ?? $this->cacheBaseDir.'/overblog/graphql-bundle/__definitions__';
-    }
 }
