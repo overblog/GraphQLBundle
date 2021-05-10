@@ -27,12 +27,18 @@ class TypeGenerator
     public const GRAPHQL_SERVICES = 'services';
 
     private static bool $classMapLoaded = false;
+    private array $typeConfigs;
     private TypeGeneratorOptions $options;
     private TypeBuilder $typeBuilder;
     private EventDispatcherInterface $dispatcher;
 
-    public function __construct(TypeBuilder $typeBuilder, EventDispatcherInterface $dispatcher, TypeGeneratorOptions $options)
-    {
+    public function __construct(
+        array $typeConfigs,
+        TypeBuilder $typeBuilder,
+        EventDispatcherInterface $dispatcher,
+        TypeGeneratorOptions $options
+    ) {
+        $this->typeConfigs = $typeConfigs;
         $this->typeBuilder = $typeBuilder;
         $this->dispatcher = $dispatcher;
         $this->options = $options;
@@ -49,12 +55,9 @@ class TypeGenerator
             $fs->remove($cacheDir);
         }
 
-        // Process configs
-        $types = Processor::process($this->options->types);
-
         // Generate classes
         $classes = [];
-        foreach ($types as $name => $config) {
+        foreach (Processor::process($this->typeConfigs) as $name => $config) {
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
             $classMap = $this->generateClass($config, $cacheDir, $mode);

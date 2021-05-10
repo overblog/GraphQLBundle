@@ -6,24 +6,38 @@ namespace Overblog\GraphQLBundle\Generator;
 
 class TypeGeneratorOptions
 {
+    /**
+     * PSR-4 namespace for generated GraphQL classes.
+     */
     public string $namespace;
+
+    /**
+     * Relative path to a directory for generated GraphQL classes.
+     * Equals `null` unless explicitly set by user.
+     */
     public ?string $cacheDir;
-    public array $types;
+
+    /**
+     * Permission bitmask for the directory of generated classes.
+     */
     public int $cacheDirMask;
+
     public bool $useClassMap = true;
+
+    /**
+     * Base directory for generated classes.
+     */
     public ?string $cacheBaseDir;
 
     public function __construct(
         string $namespace,
         ?string $cacheDir,
-        array $types,
         bool $useClassMap = true,
         ?string $cacheBaseDir = null,
         ?int $cacheDirMask = null
     ) {
         $this->namespace = $namespace;
         $this->cacheDir = $cacheDir;
-        $this->types = $types;
         $this->useClassMap = $useClassMap;
         $this->cacheBaseDir = $cacheBaseDir;
 

@@ -22,9 +22,9 @@ class TypeGeneratorTest extends TestCase
         $typeBuilder = $this->createMock(TypeBuilder::class);
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $options = new TypeGeneratorOptions('App', $cacheDir, [], true, null, $cacheDirMask);
+        $options = new TypeGeneratorOptions('App', $cacheDir, true, null, $cacheDirMask);
 
-        $mask = (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->getCacheDirMask();
+        $mask = (new TypeGenerator([], $typeBuilder, $eventDispatcher, $options))->getCacheDirMask();
 
         $this->assertSame($expectedMask, $mask);
     }
@@ -38,9 +38,9 @@ class TypeGeneratorTest extends TestCase
             ->method('dispatch')
             ->with($this->equalTo(new SchemaCompiledEvent()));
 
-        $options = new TypeGeneratorOptions('App', null, []);
+        $options = new TypeGeneratorOptions('App', null);
 
-        (new TypeGenerator($typeBuilder, $eventDispatcher, $options))->compile(TypeGenerator::MODE_DRY_RUN);
+        (new TypeGenerator([], $typeBuilder, $eventDispatcher, $options))->compile(TypeGenerator::MODE_DRY_RUN);
     }
 
     public function getPermissionsProvider(): Generator

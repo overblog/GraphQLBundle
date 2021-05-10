@@ -48,6 +48,7 @@ overrode the service definition, please take into account the new constructor si
 
 ```php
 public function __construct(
+   array $typeConfigs,
    TypeBuilder $typeBuilder,
    EventDispatcherInterface $eventDispatcher,
    TypeGeneratorOptions $options
@@ -61,7 +62,6 @@ with the following constructor signature:
 public function __construct(
     string $namespace,
     ?string $cacheDir,
-    array $types,
     bool $useClassMap = true,
     ?string $cacheBaseDir = null,
     ?int $cacheDirMask = null
