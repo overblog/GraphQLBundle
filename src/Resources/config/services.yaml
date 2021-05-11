@@ -35,14 +35,14 @@ services:
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         calls:
-            - ["setDispatcher", ["@event_dispatcher"]]
+            - ['setDispatcher', ['@event_dispatcher']]
         tags:
             - { name: overblog_graphql.service, alias: typeResolver }
 
     Overblog\GraphQLBundle\Transformer\ArgumentsTransformer:
         arguments:
-            - "@?validator"
-            - "%overblog_graphql_types.classes_map%"
+            - '@?validator'
+            - '%overblog_graphql_types.classes_map%'
 
     Overblog\GraphQLBundle\Resolver\QueryResolver:
         tags:
@@ -54,22 +54,25 @@ services:
 
     Overblog\GraphQLBundle\Resolver\AccessResolver:
         arguments:
-            - "@overblog_graphql.promise_adapter"
+            - '@overblog_graphql.promise_adapter'
 
     Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage:
         arguments:
-            - "@?overblog_graphql.cache_expression_language_parser"
+            - '@?overblog_graphql.cache_expression_language_parser'
 
     Overblog\GraphQLBundle\Generator\TypeGenerator:
         arguments:
-            - "%overblog_graphql.class_namespace%"
-            - "%overblog_graphql.cache_dir%"
-            - "%overblog_graphql_types.config%"
+            - '%overblog_graphql_types.config%'
             - '@Overblog\GraphQLBundle\Generator\TypeBuilder'
             - '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
-            - "%overblog_graphql.use_classloader_listener%"
-            - "%kernel.cache_dir%"
-            - "%overblog_graphql.cache_dir_permissions%"
+            - !service
+                class: Overblog\GraphQLBundle\Generator\TypeGeneratorOptions
+                arguments:
+                    - '%overblog_graphql.class_namespace%'
+                    - '%overblog_graphql.cache_dir%'
+                    - '%overblog_graphql.use_classloader_listener%'
+                    - '%kernel.cache_dir%'
+                    - '%overblog_graphql.cache_dir_permissions%'
 
     Overblog\GraphQLBundle\Definition\ArgumentFactory:
         arguments:
