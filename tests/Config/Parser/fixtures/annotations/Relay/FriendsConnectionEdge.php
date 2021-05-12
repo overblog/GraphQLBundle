@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 /**
  * @GQL\Relay\Edge(node="Character")
  */
-#[GQL\Relay\Edge(node: "Character")]
+#[GQL\Relay\Edge(node: 'Character')]
 class FriendsConnectionEdge extends Edge
 {
 }

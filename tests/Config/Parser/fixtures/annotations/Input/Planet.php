@@ -12,25 +12,25 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Description("Planet Input type description")
  */
 #[GQL\Input]
-#[GQL\Description("Planet Input type description")]
+#[GQL\Description('Planet Input type description')]
 class Planet
 {
     /**
      * @GQL\Field(resolve="...")
      */
-    #[GQL\Field(resolve: "...")]
+    #[GQL\Field(resolve: '...')]
     protected string $skipField;
 
     /**
      * @GQL\Field(type="String!")
      */
-    #[GQL\Field(type: "String!")]
+    #[GQL\Field(type: 'String!')]
     protected string $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
-    #[GQL\Field(type: "Int!")]
+    #[GQL\Field(type: 'Int!')]
     protected string $population;
 
     /**

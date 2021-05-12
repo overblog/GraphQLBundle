@@ -15,7 +15,7 @@ use function implode;
  * @GQL\Description("The galaxy coordinates scalar")
  */
 #[GQL\Scalar]
-#[GQL\Description("The galaxy coordinates scalar")]
+#[GQL\Description('The galaxy coordinates scalar')]
 class GalaxyCoordinates
 {
     /**

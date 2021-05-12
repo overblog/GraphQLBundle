@@ -12,13 +12,13 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killab
  * @GQL\Type(interfaces={"Character"})
  * @GQL\Description("The Hero type")
  */
-#[GQL\Type(interfaces: ["Character"])]
-#[GQL\Description("The Hero type")]
+#[GQL\Type(interfaces: ['Character'])]
+#[GQL\Description('The Hero type')]
 class Hero extends Character implements Killable
 {
     /**
      * @GQL\Field(type="Race")
      */
-    #[GQL\Field(type: "Race")]
+    #[GQL\Field(type: 'Race')]
     protected Race $race;
 }
