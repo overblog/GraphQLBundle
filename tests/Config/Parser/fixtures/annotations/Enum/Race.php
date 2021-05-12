@@ -14,15 +14,15 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\Constants;
  * @GQL\Description("The list of races!")
  */
 #[GQL\Enum]
-#[GQL\Description("The list of races!")]
+#[GQL\Description('The list of races!')]
 class Race
 {
     public const HUMAIN = 1;
 
-    #[GQL\Description("The Chiss race")]
+    #[GQL\Description('The Chiss race')]
     public const CHISS = '2';
 
-    #[GQL\Deprecated("The Zabraks have been wiped out")]
+    #[GQL\Deprecated('The Zabraks have been wiped out')]
     public const ZABRAK = '3';
     public const TWILEK = Constants::TWILEK;
 
