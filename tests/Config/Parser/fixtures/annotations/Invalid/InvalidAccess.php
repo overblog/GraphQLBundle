@@ -15,6 +15,6 @@ class InvalidAccess
     /**
      * @GQL\Access("access")
      */
-    #[GQL\Access("access")]
+    #[GQL\Access('access')]
     protected string $field;
 }
