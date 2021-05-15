@@ -26,8 +26,7 @@ final class ServiceTest extends TestCase
     {
         $object = new stdClass();
 
-        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(['container' => $this->getDIContainerMock(['toto' => $object])]);
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('container');
+        ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(['service_container' => $this->getDIContainerMock(['toto' => $object])]);
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
@@ -37,7 +36,7 @@ final class ServiceTest extends TestCase
     public function testServiceEvaluation(string $name): void
     {
         $object = new stdClass();
-        $services = $this->createGraphQLServices(['container' => $this->getDIContainerMock(['toto' => $object])]);
+        $services = $this->createGraphQLServices(['service_container' => $this->getDIContainerMock(['toto' => $object])]);
 
         $this->assertSame(
             $object,

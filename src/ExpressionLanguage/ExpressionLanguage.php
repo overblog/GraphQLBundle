@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\ExpressionLanguage;
 
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Lexer;
@@ -19,16 +20,29 @@ final class ExpressionLanguage extends BaseExpressionLanguage
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];
     public const EXPRESSION_TRIGGER = '@=';
 
+    /** @var array<string, string> */
     public array $globalNames = [];
 
-    public function addGlobalName(string $index, string $name): void
+    /** @var array<string, string> */
+    public array $expressionVariableServiceIds = [];
+
+    public function addExpressionVariableNameServiceId(string $expressionVarName, string $serviceId): void
     {
-        $this->globalNames[$index] = $name;
+        $this->expressionVariableServiceIds[$expressionVarName] = $serviceId;
+        $this->addGlobalName(sprintf(TypeGenerator::GRAPHQL_SERVICES.'->get(\'%s\')', $serviceId), $expressionVarName);
     }
 
-    public function getGlobalNames(): array
+    /**
+     * @return array<string, string>
+     */
+    public function getExpressionVariableServiceIds(): array
     {
-        return array_values($this->globalNames);
+        return $this->expressionVariableServiceIds;
+    }
+
+    public function addGlobalName(string $code, string $expressionVarName): void
+    {
+        $this->globalNames[$code] = $expressionVarName;
     }
 
     /**

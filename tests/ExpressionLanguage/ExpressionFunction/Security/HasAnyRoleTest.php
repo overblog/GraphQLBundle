@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAnyRole;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 final class HasAnyRoleTest extends TestCase
@@ -18,7 +19,7 @@ final class HasAnyRoleTest extends TestCase
     public function testEvaluator(): void
     {
         $security = $this->getSecurityIsGrantedWithExpectation('ROLE_ADMIN', $this->any());
-        $services = $this->createGraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices([Security::class => $security]);
 
         $hasRole = $this->expressionLanguage->evaluate(
             'hasAnyRole(["ROLE_ADMIN", "ROLE_USER"])',

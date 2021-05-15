@@ -21,6 +21,7 @@ use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
+use Overblog\GraphQLBundle\Definition\ArgumentFactory;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
@@ -785,7 +786,7 @@ final class TypeBuilder
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
                     ->bindVar(TypeGenerator::GRAPHQL_SERVICES)
-                    ->append('$args = ', "$this->gqlServices->get('argumentFactory')->create(\$arguments)")
+                    ->append('$args = ', "$this->gqlServices->get('".ArgumentFactory::class."')->create(\$arguments)")
                     ->append('return ', $expression)
                 ;
             }

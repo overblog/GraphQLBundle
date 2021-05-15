@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsFullyAuthenticated;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 final class IsFullyAuthenticatedTest extends TestCase
@@ -21,7 +22,7 @@ final class IsFullyAuthenticatedTest extends TestCase
             'IS_AUTHENTICATED_FULLY',
             $this->any()
         );
-        $gqlServices = $this->createGraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices([Security::class => $security]);
 
         $isFullyAuthenticated = $this->expressionLanguage->evaluate(
             'isFullyAuthenticated()',

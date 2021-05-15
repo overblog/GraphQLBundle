@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
@@ -57,9 +58,8 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $code = $this->expressionLanguage->compile($expression, array_keys($vars));
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices([
-            'security' => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
+            Security::class => $this->getSecurityIsGrantedWithExpectation($with, $expects, $return),
         ]);
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         extract($vars);
 
         $this->$assertMethod(eval('return '.$code.';'));
@@ -106,9 +106,9 @@ abstract class TestCase extends BaseTestCase
     protected function createGraphQLServices(array $services = []): GraphQLServices
     {
         $locateableServices = [
-            'typeResolver' => fn () => $this->createMock(TypeResolver::class),
-            'queryResolver' => fn () => $this->createMock(TypeResolver::class),
-            'mutationResolver' => fn () => $$this->createMock(MutationResolver::class),
+            TypeResolver::class => fn () => $this->createMock(TypeResolver::class),
+            QueryResolver::class => fn () => $this->createMock(QueryResolver::class),
+            MutationResolver::class => fn () => $$this->createMock(MutationResolver::class),
         ];
 
         foreach ($services as $id => $service) {

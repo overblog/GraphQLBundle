@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnonymous;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 final class IsAnonymousTest extends TestCase
@@ -21,7 +22,7 @@ final class IsAnonymousTest extends TestCase
             'IS_AUTHENTICATED_ANONYMOUSLY',
             $this->any()
         );
-        $services = $this->createGraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices([Security::class => $security]);
 
         $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertTrue($isAnonymous);
