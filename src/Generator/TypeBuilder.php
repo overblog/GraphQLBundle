@@ -883,7 +883,7 @@ class TypeBuilder
                 return $expressionBuilder($callback->expression);
             }
         } elseif (null !== $callback->id) {
-            $fn = "$this->gqlServices->get('callbacks')->get('$callback->id')";
+            $fn = "$this->gqlServices->get('$callback->id')";
             if ($callback->method) {
                 return Collection::numeric([$fn, $callback->method]);
             } else {
