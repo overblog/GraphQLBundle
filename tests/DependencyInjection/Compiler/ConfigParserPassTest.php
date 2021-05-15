@@ -239,22 +239,22 @@ class ConfigParserPassTest extends TestCase
                             'createdAt' => [
                                 'description' => 'The creation date of the object',
                                 'type' => 'Int!',
-                                'resolve' => '@=value.createdAt',
+                                'resolver' => ['expression' => 'value.createdAt'],
                             ],
                             'updatedAt' => [
                                 'description' => 'The update date of the object',
                                 'type' => 'Int!',
-                                'resolve' => '@=value.updatedAt',
+                                'resolver' => ['expression' => 'value.updatedAt'],
                             ],
                             'rawIDWithDescriptionOverride' => [
                                 'description' => 'rawIDWithDescriptionOverride description',
                                 'type' => 'Int!',
-                                'resolve' => '@=value.id',
+                                'resolver' => ['expression' => 'value.id'],
                             ],
                             'rawID' => [
                                 'description' => 'The raw ID of an object',
                                 'type' => 'Int!',
-                                'resolve' => '@=value.id',
+                                'resolver' => ['expression' => 'value.id'],
                             ],
                             'rawIDs' => [
                                 'type' => '[RawID!]!',
@@ -325,10 +325,10 @@ class ConfigParserPassTest extends TestCase
                         'fields' => [
                             'foo' => [
                                 'type' => 'FooPayload!',
-                                'resolve' => '@=mutation("Mutation.foo", args.input)',
                                 'args' => [
                                     'input' => ['type' => 'FooInput!'],
                                 ],
+                                'resolver' => ['expression' => 'mutation("Mutation.foo", args.input)'],
                             ],
                         ],
                         'name' => 'Mutation',
@@ -385,8 +385,8 @@ class ConfigParserPassTest extends TestCase
                     'decorator' => false,
                     'config' => [
                         'types' => ['FooSuccessPayload', 'FooFailurePayload'],
-                        'resolveType' => '@=query("PayloadTypeResolver", value, "FooSuccessPayload", "FooFailurePayload")',
                         'name' => 'FooPayload',
+                        'typeResolver' => ['expression' => 'query("PayloadTypeResolver", value, "FooSuccessPayload", "FooFailurePayload")'],
                     ],
                 ],
                 'FooSuccessPayload' => [

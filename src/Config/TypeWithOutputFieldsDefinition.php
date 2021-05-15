@@ -18,6 +18,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
         $node->isRequired()->requiresAtLeastOneElement();
 
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
+        $this->resolverNormalization($prototype, 'resolver', 'resolve');
 
         /** @phpstan-ignore-next-line */
         $prototype
@@ -68,9 +69,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                         ->end()
                     ->end()
                 ->end()
-                ->variableNode('resolve')
-                    ->info('Value resolver (expression language can be used here)')
-                ->end()
+                ->append($this->resolverSection('resolver', 'GraphQL value resolver'))
                 ->append($this->descriptionSection())
                 ->append($this->deprecationReasonSection())
                 ->variableNode('access')
