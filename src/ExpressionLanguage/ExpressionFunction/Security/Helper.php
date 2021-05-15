@@ -21,11 +21,11 @@ final class Helper
      */
     private static function getToken(GraphQLServices $services)
     {
-        if (!$services->get('container')->has('security.token_storage')) {
+        if (!$services->get('service_container')->has('security.token_storage')) {
             return null;
         }
 
-        return $services->get('container')->get('security.token_storage')->getToken();
+        return $services->get('service_container')->get('security.token_storage')->getToken();
     }
 
     /**
