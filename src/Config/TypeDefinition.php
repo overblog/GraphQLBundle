@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config;
 
+use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
@@ -30,11 +32,6 @@ abstract class TypeDefinition
     public static function create(): self
     {
         return new static();
-    }
-
-    protected function resolveTypeSection(): VariableNodeDefinition
-    {
-        return self::createNode('resolveType', 'variable');
     }
 
     protected function nameSection(): ScalarNodeDefinition
@@ -152,6 +149,87 @@ abstract class TypeDefinition
         if ($isRequired) {
             $node->isRequired();
         }
+
+        return $node;
+    }
+
+    protected function resolverNormalization(NodeDefinition $node, string $new, string $old): void
+    {
+        $node
+            ->beforeNormalization()
+                ->ifTrue(fn ($options) => !empty($options[$old]) && empty($options[$new]))
+                ->then(function ($options) use ($old, $new) {
+                    if (is_callable($options[$old])) {
+                        if (is_array($options[$old])) {
+                            $options[$new]['method'] = implode('::', $options[$old]);
+                        } else {
+                            $options[$new]['method'] = $options[$old];
+                        }
+                    } elseif (is_string($options[$old])) {
+                        $options[$new]['expression'] = ExpressionLanguage::stringHasTrigger($options[$old]) ?
+                            ExpressionLanguage::unprefixExpression($options[$old]) :
+                            json_encode($options[$old]);
+                    } else {
+                        $options[$new]['expression'] = json_encode($options[$old]);
+                    }
+
+                    return $options;
+                })
+            ->end()
+            ->beforeNormalization()
+                ->ifTrue(fn ($options) => is_array($options) && array_key_exists($old, $options))
+                ->then(function ($options) use ($old) {
+                    unset($options[$old]);
+
+                    return $options;
+                })
+            ->end()
+            ->validate()
+                ->ifTrue(fn (array $v) => !empty($v[$new]) && !empty($v[$old]))
+                ->thenInvalid(sprintf(
+                    '"%s" and "%s" should not be use together in "%%s".',
+                    $new,
+                    $old,
+                ))
+            ->end()
+            ;
+    }
+
+    protected function resolverSection(string $name, string $info): ArrayNodeDefinition
+    {
+        /** @var ArrayNodeDefinition $node */
+        $node = self::createNode($name);
+        /** @phpstan-ignore-next-line */
+        $node
+            ->info($info)
+            ->validate()
+                ->ifTrue(fn (array $v) => !empty($v['method']) && !empty($v['expression']))
+                ->thenInvalid('"method" and "expression" should not be use together.')
+            ->end()
+            ->beforeNormalization()
+                // Allow short syntax
+                ->ifTrue(fn ($options) => is_string($options) && ExpressionLanguage::stringHasTrigger($options))
+                ->then(fn ($options) => ['expression' => ExpressionLanguage::unprefixExpression($options)])
+            ->end()
+            ->beforeNormalization()
+                ->ifTrue(fn ($options) => is_string($options) && !ExpressionLanguage::stringHasTrigger($options))
+                ->then(fn ($options) => ['method' => $options])
+            ->end()
+            ->beforeNormalization()
+                // clean expression
+                ->ifTrue(fn ($options) => isset($options['expression']) && is_string($options['expression']) && ExpressionLanguage::stringHasTrigger($options['expression']))
+                ->then(function ($options) {
+                    $options['expression'] = ExpressionLanguage::unprefixExpression($options['expression']);
+
+                    return $options;
+                })
+            ->end()
+            ->children()
+                ->scalarNode('method')->end()
+                ->scalarNode('expression')->end()
+                ->scalarNode('id')->end()
+            ->end()
+        ;
 
         return $node;
     }

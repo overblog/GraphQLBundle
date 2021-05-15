@@ -24,7 +24,7 @@ final class ExpressionConverter implements ConverterInterface
     public function convert($value)
     {
         return $this->expressionLanguage->compile(
-            ExpressionLanguage::unprefixExpression($value),
+            ExpressionLanguage::stringHasTrigger($value) ? ExpressionLanguage::unprefixExpression($value) : $value,
             ExpressionLanguage::KNOWN_NAMES
         );
     }
