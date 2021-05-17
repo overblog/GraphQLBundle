@@ -12,7 +12,7 @@ final class UnionTypeDefinition extends TypeDefinition
     {
         /** @var ArrayNodeDefinition $node */
         $node = self::createNode('_union_config');
-        $this->resolverNormalization($node, 'typeResolver', 'resolveType');
+        $this->callbackNormalization($node, 'typeResolver', 'resolveType');
 
         /** @phpstan-ignore-next-line */
         $node
@@ -25,7 +25,7 @@ final class UnionTypeDefinition extends TypeDefinition
                     ->isRequired()
                     ->requiresAtLeastOneElement()
                 ->end()
-                ->append($this->resolverSection('typeResolver', 'GraphQL type resolver'))
+                ->append($this->callbackSection('typeResolver', 'GraphQL type resolver'))
                 ->append($this->descriptionSection())
             ->end();
 
