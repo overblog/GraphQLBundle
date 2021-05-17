@@ -11,13 +11,12 @@ final class NodeDefinition implements MappingInterface
     public function toMappingDefinition(array $config): array
     {
         $name = $config['name'];
-        $resolveType = empty($config['resolveType']) ? null : $config['resolveType'];
 
         return [
             $name => [
                 'type' => 'interface',
                 'config' => [
-                    'name' => $config['name'],
+                    'name' => $name,
                     'description' => 'Fetches an object given its ID',
                     'fields' => [
                         'id' => [
@@ -25,7 +24,7 @@ final class NodeDefinition implements MappingInterface
                             'description' => 'The ID of an object',
                         ],
                     ],
-                    'resolveType' => $resolveType,
+                    'typeResolver' => $config['typeResolver'] ?? $config['resolveType'] ?? null,
                 ],
             ],
         ];

@@ -153,7 +153,7 @@ abstract class TypeDefinition
         return $node;
     }
 
-    protected function resolverNormalization(NodeDefinition $node, string $new, string $old): void
+    protected function callbackNormalization(NodeDefinition $node, string $new, string $old): void
     {
         $node
             ->beforeNormalization()
@@ -195,7 +195,7 @@ abstract class TypeDefinition
             ;
     }
 
-    protected function resolverSection(string $name, string $info): ArrayNodeDefinition
+    protected function callbackSection(string $name, string $info): ArrayNodeDefinition
     {
         /** @var ArrayNodeDefinition $node */
         $node = self::createNode($name);

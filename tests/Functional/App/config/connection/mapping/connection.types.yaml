@@ -16,11 +16,14 @@ User:
             friends:
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
-                resolver: 'overblog_graphql.test.resolver.node::friendsResolver'
+                resolver:
+                    method: 'overblog_graphql.test.resolver.node::friendsResolver'
             friendsForward:
                 type: userConnection
                 argsBuilder: "Relay::ForwardConnection"
-                resolver: 'overblog_graphql.test.resolver.node::friendsResolver'
+                resolver:
+                    id: 'overblog_graphql.test.resolver.node'
+                    method: 'friendsResolver'
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"
@@ -38,7 +41,7 @@ friendConnection:
         connectionFields:
             totalCount:
                 type: Int
-                resolve: '@=query("connection")'
+                resolver: '@=query("connection")'
 
 userConnection:
     type: relay-connection
