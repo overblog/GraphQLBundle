@@ -19,7 +19,7 @@ class CustomScalarType extends BaseCustomScalarType
         $config['name'] = $config['name'] ?? uniqid('CustomScalar');
         parent::__construct($config);
 
-        $this->config['scalarType'] = isset($this->config['scalarType']) ? $this->config['scalarType'] : null;
+        $this->config['scalarType'] = $this->config['scalarType'] ?? null;
     }
 
     /**

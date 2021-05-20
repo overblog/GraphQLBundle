@@ -9,15 +9,15 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 class DisableIntrospectionTest extends TestCase
 {
     private string $introspectionQuery = <<<'EOF'
-    query {
-      __schema {
-        types {
-          name
-          description
+        query {
+          __schema {
+            types {
+              name
+              description
+            }
+          }
         }
-      }
-    }
-    EOF;
+        EOF;
 
     public function testIntrospectionDisabled(): void
     {

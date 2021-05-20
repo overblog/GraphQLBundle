@@ -14,6 +14,6 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 class DeprecatedEnum
 {
-    const P1 = 1;
-    const P2 = 2;
+    public const P1 = 1;
+    public const P2 = 2;
 }

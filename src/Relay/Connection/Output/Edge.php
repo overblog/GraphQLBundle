@@ -43,7 +43,7 @@ class Edge implements EdgeInterface
     /**
      * {@inheritdoc}
      */
-    public function getCursor(): ? string
+    public function getCursor(): ?string
     {
         return $this->cursor;
     }

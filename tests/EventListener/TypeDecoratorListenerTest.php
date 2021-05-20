@@ -32,9 +32,7 @@ class TypeDecoratorListenerTest extends TestCase
     public function testSpecialField($fieldName, Type $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
-            $fieldValueRetriever = function (Type $type, $fieldName) {
-                return $type->config[$fieldName];
-            };
+            $fieldValueRetriever = fn (Type $type, $fieldName) => $type->config[$fieldName];
         }
         $expected = static function (): void {
         };
@@ -67,12 +65,8 @@ class TypeDecoratorListenerTest extends TestCase
                 ];
             },
         ]);
-        $barResolver = static function () {
-            return 'bar';
-        };
-        $bazResolver = static function () {
-            return 'baz';
-        };
+        $barResolver = static fn () => 'bar';
+        $bazResolver = static fn () => 'baz';
 
         $this->decorate(
             [$objectType->name => $objectType],
@@ -105,9 +99,7 @@ class TypeDecoratorListenerTest extends TestCase
             [$objectType->name => $objectType],
             [
                 $objectType->name => [
-                    'bar' => function ($value, $args) {
-                        return $args;
-                    },
+                    'bar' => fn ($value, $args) => $args,
                 ],
             ]
         );
@@ -256,9 +248,7 @@ class TypeDecoratorListenerTest extends TestCase
             [
                 ResolverMapInterface::RESOLVE_FIELD,
                 $objectWithResolveField,
-                function (ObjectType $type) {
-                    return $type->resolveFieldFn;
-                },
+                fn (ObjectType $type) => $type->resolveFieldFn,
                 false,
             ],
             [ResolverMapInterface::RESOLVE_FIELD, $objectWithResolveField, null, false],

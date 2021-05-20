@@ -9,39 +9,39 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 class QueryMaxDepthTest extends TestCase
 {
     private string $userFriendsWithoutViolationQuery = <<<'EOF'
-    query {
-      user {
-        friends(first:1) {
-          edges {
-            node {
-              name
+        query {
+          user {
+            friends(first:1) {
+              edges {
+                node {
+                  name
+                }
+              }
             }
           }
         }
-      }
-    }
-    EOF;
+        EOF;
 
     private string $userFriendsWithViolationQuery = <<<'EOF'
-    query {
-      user {
-        friends(first: 1) {
-          edges {
-            node {
-              name
-              friends {
-                edges {
-                  node {
-                    name
+        query {
+          user {
+            friends(first: 1) {
+              edges {
+                node {
+                  name
+                  friends {
+                    edges {
+                      node {
+                        name
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    }
-    EOF;
+        EOF;
 
     public function testMaxDepthReachLimitation(): void
     {

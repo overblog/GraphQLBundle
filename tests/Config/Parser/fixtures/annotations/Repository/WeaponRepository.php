@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 /**
  * @GQL\Provider(targetQueryTypes={"RootQuery2"}, targetMutationTypes="RootMutation2")
  */
-#[GQL\Provider(targetQueryTypes: ["RootQuery2"], targetMutationTypes: "RootMutation2")]
+#[GQL\Provider(targetQueryTypes: ['RootQuery2'], targetMutationTypes: 'RootMutation2')]
 class WeaponRepository
 {
     /**
@@ -24,7 +24,7 @@ class WeaponRepository
     /**
      * @GQL\Query(targetTypes="RootQuery")
      */
-    #[GQL\Query(targetTypes: "RootQuery")]
+    #[GQL\Query(targetTypes: 'RootQuery')]
     public function countSecretWeapons(): int
     {
         return 2;

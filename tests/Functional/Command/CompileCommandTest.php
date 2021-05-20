@@ -31,8 +31,9 @@ class CompileCommandTest extends TestCase
         $this->typesMapping = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')
             ->compile(TypeGenerator::MODE_MAPPING_ONLY);
 
-        // @phpstan-ignore-next-line
-        $this->cacheDir = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler')->getCacheDir();
+        /** @var TypeGenerator $generator */
+        $generator = static::$kernel->getContainer()->get('overblog_graphql.cache_compiler');
+        $this->cacheDir = $generator->getCacheDirOrDefault();
         $this->commandTester = new CommandTester($command);
     }
 
@@ -48,7 +49,7 @@ class CompileCommandTest extends TestCase
         $this->commandTester->execute([]);
         $this->assertSame(0, $this->commandTester->getStatusCode());
         $this->assertSame($this->displayExpected(), $this->commandTester->getDisplay());
-        foreach ($this->typesMapping as $class => $path) {
+        foreach ($this->typesMapping as $path) {
             $this->assertFileExists($path);
         }
     }
@@ -66,29 +67,29 @@ class CompileCommandTest extends TestCase
     private function displayExpected(bool $isVerbose = false): string
     {
         $display = <<<'OUTPUT'
-        Types compilation starts
-        Types compilation ends successfully
+            Types compilation starts
+            Types compilation ends successfully
 
-        OUTPUT;
+            OUTPUT;
 
         if ($isVerbose) {
             $display .= <<<'OUTPUT'
 
-            Summary
-            =======
+                Summary
+                =======
 
-             \-[\-]+\s+\-[\-]+\s
-              class\s+path\s*
-             \-[\-]+\s+\-[\-]+\s
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\QueryType              {{PATH}}/QueryType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\UserType               {{PATH}}/UserType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendConnectionType   {{PATH}}/friendConnectionType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userConnectionType     {{PATH}}/userConnectionType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\PageInfoType           {{PATH}}/PageInfoType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendEdgeType         {{PATH}}/friendEdgeType\.php
-              Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userEdgeType           {{PATH}}/userEdgeType\.php
-             \-[\-]+\s+\-[\-]+\s
-            OUTPUT;
+                 \-[\-]+\s+\-[\-]+\s
+                  class\s+path\s*
+                 \-[\-]+\s+\-[\-]+\s
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\QueryType              {{PATH}}/QueryType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\UserType               {{PATH}}/UserType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendConnectionType   {{PATH}}/friendConnectionType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userConnectionType     {{PATH}}/userConnectionType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\PageInfoType           {{PATH}}/PageInfoType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\friendEdgeType         {{PATH}}/friendEdgeType\.php
+                  Overblog\\GraphQLBundle\\Connection\\__DEFINITIONS__\\userEdgeType           {{PATH}}/userEdgeType\.php
+                 \-[\-]+\s+\-[\-]+\s
+                OUTPUT;
 
             $display = str_replace('{{PATH}}', preg_quote($this->cacheDir), $display);
         }

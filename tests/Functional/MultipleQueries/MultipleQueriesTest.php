@@ -56,11 +56,11 @@ class MultipleQueriesTest extends TestCase
     public function testRequiredFails(): void
     {
         $query = <<<'EOF'
-{
-  fail: failRequire
-  success: success
-}
-EOF;
+            {
+              fail: failRequire
+              success: success
+            }
+            EOF;
         $result = $this->executeGraphQLRequest($query);
         $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
         $this->assertTrue(empty($result['data']));
@@ -69,11 +69,11 @@ EOF;
     public function testOptionalFails(): void
     {
         $query = <<<'EOF'
-{
-  fail: failOptional
-  success: success
-}
-EOF;
+            {
+              fail: failOptional
+              success: success
+            }
+            EOF;
         $result = $this->executeGraphQLRequest($query);
         $this->assertSame(self::OPTIONAL_FAILS, $result);
     }
@@ -81,11 +81,11 @@ EOF;
     public function testMutationRequiredFails(): void
     {
         $query = <<<'EOF'
-mutation {
-  fail: failRequire
-  success: success
-}
-EOF;
+            mutation {
+              fail: failRequire
+              success: success
+            }
+            EOF;
         $result = $this->executeGraphQLRequest($query);
         $this->assertSame(self::REQUIRED_FAILS_ERRORS, $result['errors']);
         $this->assertTrue(empty($result['data']));
@@ -94,11 +94,11 @@ EOF;
     public function testMutationOptionalFails(): void
     {
         $query = <<<'EOF'
-mutation {
-  fail: failOptional
-  success: success
-}
-EOF;
+            mutation {
+              fail: failOptional
+              success: success
+            }
+            EOF;
         $result = $this->executeGraphQLRequest($query);
         $this->assertSame(self::OPTIONAL_FAILS, $result);
     }

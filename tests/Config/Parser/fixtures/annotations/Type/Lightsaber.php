@@ -93,7 +93,7 @@ class Lightsaber
      * @GQL\Deprecated("No more tags on lightsabers")
      */
     #[GQL\Field]
-    #[GQL\Deprecated("No more tags on lightsabers")]
+    #[GQL\Deprecated('No more tags on lightsabers')]
     protected array $tags;
 
     /**

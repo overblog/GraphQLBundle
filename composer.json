@@ -80,7 +80,7 @@
             "test -f phpbench.phar || wget https://github.com/phpbench/phpbench/releases/download/1.0.0-alpha7/phpbench.phar -O phpbench.phar",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.16.4/php-cs-fixer.phar -O php-cs-fixer.phar",
+        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.18.7/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"

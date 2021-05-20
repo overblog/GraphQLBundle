@@ -23,20 +23,20 @@ class ConnectionTest extends TestCase
     public function testIncludesConnectionAndEdgeFields(): void
     {
         $query = <<<'EOF'
-query FriendsQuery {
-  user {
-    friends(first: 2) {
-      totalCount
-      edges {
-        friendshipTime
-        node {
-          name
-        }
-      }
-    }
-  }
-}
-EOF;
+            query FriendsQuery {
+              user {
+                friends(first: 2) {
+                  totalCount
+                  edges {
+                    friendshipTime
+                    node {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+            EOF;
 
         $expectedData = [
             'user' => [
@@ -66,18 +66,18 @@ EOF;
     public function testWorksWithForwardConnectionArgs(): void
     {
         $query = <<<'EOF'
-query FriendsQuery {
-  user {
-    friendsForward(first: 2) {
-      edges {
-        node {
-          name
-        }
-      }
-    }
-  }
-}
-EOF;
+            query FriendsQuery {
+              user {
+                friendsForward(first: 2) {
+                  edges {
+                    node {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+            EOF;
 
         $expectedData = [
             'user' => [
@@ -104,18 +104,18 @@ EOF;
     public function testWorksWithBackwardConnectionArgs(): void
     {
         $query = <<<'EOF'
-      query FriendsQuery {
-        user {
-          friendsBackward(last: 2) {
-            edges {
-              node {
-                name
-              }
-            }
-          }
-        }
-      }
-EOF;
+                  query FriendsQuery {
+                    user {
+                      friendsBackward(last: 2) {
+                        edges {
+                          node {
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+            EOF;
 
         $expectedData = [
             'user' => [

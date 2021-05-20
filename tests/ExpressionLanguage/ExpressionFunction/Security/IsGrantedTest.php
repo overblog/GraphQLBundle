@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsGranted;
+use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Overblog\GraphQLBundle\Tests\Generator\TypeGenerator;
 
 class IsGrantedTest extends TestCase
 {

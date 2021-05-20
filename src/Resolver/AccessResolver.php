@@ -40,9 +40,7 @@ class AccessResolver
         if ($this->isThenable($resultOrPromise)) {
             return $this->createPromise(
                 $resultOrPromise,
-                function ($result) use ($accessChecker, $resolveArgs) {
-                    return $this->processFilter($result, $accessChecker, $resolveArgs);
-                }
+                fn ($result) => $this->processFilter($result, $accessChecker, $resolveArgs)
             );
         }
 

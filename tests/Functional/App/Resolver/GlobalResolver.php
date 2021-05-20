@@ -55,7 +55,7 @@ class GlobalResolver
 
     public function idFetcher(string $globalId): array
     {
-        list($type, $id) = array_values(GlobalId::fromGlobalId($globalId));
+        [$type, $id] = array_values(GlobalId::fromGlobalId($globalId));
 
         if ('User' === $type) {
             return $this->userData[$id];

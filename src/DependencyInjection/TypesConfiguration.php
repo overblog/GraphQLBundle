@@ -57,7 +57,7 @@ class TypesConfiguration implements ConfigurationInterface
                             }
                         }
 
-                        return  false;
+                        return false;
                     })
                         ->thenInvalid(
                             sprintf(

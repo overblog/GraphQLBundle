@@ -47,10 +47,10 @@ class ReactPromiseAdapterTest extends TestCase
     {
         $output = 'OK!';
         $process = new PhpProcess(<<<EOF
-<?php
-usleep(30);
-echo '$output';
-EOF
+            <?php
+            usleep(30);
+            echo '$output';
+            EOF
         );
         $result = new ExecutionResult(['output' => $output]);
 

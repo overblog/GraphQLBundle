@@ -96,9 +96,7 @@ abstract class TaggedServiceMappingPass implements CompilerPassInterface
     private function autowireSolutionImplementingContainerAwareInterface(Definition $solutionDefinition, bool $isGenerated): void
     {
         $methods = array_map(
-            function ($methodCall) {
-                return $methodCall[0];
-            },
+            fn ($methodCall) => $methodCall[0],
             $solutionDefinition->getMethodCalls()
         );
         if (

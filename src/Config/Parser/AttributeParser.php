@@ -14,7 +14,7 @@ use Reflector;
 
 class AttributeParser extends MetadataParser
 {
-    const METADATA_FORMAT = '#[%s]';
+    public const METADATA_FORMAT = '#[%s]';
 
     public static function getMetadatas(Reflector $reflector): array
     {

@@ -12,6 +12,8 @@ UPGRADE FROM 0.13 to 0.14
 - [Replace `overblog_graphql.global_variable` tag](#replace-overblog_graphqlglobal_variable-tag)
 - [Replace `resolver` expression function](#replace-resolver-expression-function)
 - [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
+- [Remove Argument deprecated method](#remove-argument-deprecated-method)
+- [Remove ConnectionBuilder deprecated class](#remove-connectionbuilder-deprecated-class)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -41,25 +43,30 @@ $connectionBuilder = new ConnectionBuilder(
 
 ### Change arguments of `TypeGenerator` class
 
-The `Overblog\GraphQLBundle\Generator\TypeGenerator` service is used internally for GraphQL types compilation. If you 
+The `Overblog\GraphQLBundle\Generator\TypeGenerator` service is used internally for compilation of GraphQL types. If you 
 overrode the service definition, please take into account the new constructor signature:
 
-```diff
+```php
 public function __construct(
-    string $classNamespace,
--   array $skeletonDirs,
-    ?string $cacheDir,
-    array $configs,
-+   TypeBuilder $typeBuilder
-+   EventDispatcherInterface $eventDispatcher
-    bool $useClassMap = true,
--   callable $configProcessor = null,
-    ?string $baseCacheDir = null,
-    ?int $cacheDirMask = null
-) {
+   array $typeConfigs,
+   TypeBuilder $typeBuilder,
+   EventDispatcherInterface $eventDispatcher,
+   TypeGeneratorOptions $options
+)
 ```
 `TypeBuilder` here is a new service `Overblog\GraphQLBundle\Generator\TypeBuilder`, which is also used internally.
+The rest of the arguments were moved into the separate class `Overblog\GraphQLBundle\Generator\TypeGeneratorOptions` 
+with the following constructor signature:
 
+```php
+public function __construct(
+    string $namespace,
+    ?string $cacheDir,
+    bool $useClassMap = true,
+    ?string $cacheBaseDir = null,
+    ?int $cacheDirMask = null
+)
+```
 ### Add magic `__get` method to `ArgumentInterface` implementors
 
 The interface `Overblog\GraphQLBundle\Definition\ArgumentInterface` as well as implementing it class 
@@ -199,6 +206,15 @@ Example:
 }
 ```
 
+### Remove Argument deprecated method
+
+Method `Overblog\GraphQLBundle\Definition\Argument::getRawArguments` is replaced by
+`Overblog\GraphQLBundle\Definition\Argument::getArrayCopy`.
+
+### Remove ConnectionBuilder deprecated class
+
+Class `Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder` is replaced by
+`Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder`.
 
 UPGRADE FROM 0.12 to 0.13
 =======================

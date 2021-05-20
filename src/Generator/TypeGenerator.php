@@ -24,74 +24,29 @@ class TypeGenerator
     public const MODE_MAPPING_ONLY = 2;
     public const MODE_WRITE = 4;
     public const MODE_OVERRIDE = 8;
-
     public const GRAPHQL_SERVICES = 'services';
 
     private static bool $classMapLoaded = false;
-    private ?string $cacheDir;
-    protected int $cacheDirMask;
-    private array $configs;
-    private bool $useClassMap;
-    private ?string $baseCacheDir;
-    private string $classNamespace;
+    private array $typeConfigs;
+    private TypeGeneratorOptions $options;
     private TypeBuilder $typeBuilder;
-    private EventDispatcherInterface $eventDispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
-        string $classNamespace,
-        ?string $cacheDir,
-        array $configs,
+        array $typeConfigs,
         TypeBuilder $typeBuilder,
-        EventDispatcherInterface $eventDispatcher,
-        bool $useClassMap = true,
-        ?string $baseCacheDir = null,
-        ?int $cacheDirMask = null
+        EventDispatcherInterface $dispatcher,
+        TypeGeneratorOptions $options
     ) {
-        $this->cacheDir = $cacheDir;
-        $this->configs = $configs;
-        $this->useClassMap = $useClassMap;
-        $this->baseCacheDir = $baseCacheDir;
+        $this->typeConfigs = $typeConfigs;
         $this->typeBuilder = $typeBuilder;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->classNamespace = $classNamespace;
-
-        if (null === $cacheDirMask) {
-            // Apply permission 0777 for default cache dir otherwise apply 0775.
-            $cacheDirMask = null === $cacheDir ? 0777 : 0775;
-        }
-
-        $this->cacheDirMask = $cacheDirMask;
-    }
-
-    public function getBaseCacheDir(): ?string
-    {
-        return $this->baseCacheDir;
-    }
-
-    public function setBaseCacheDir(string $baseCacheDir): void
-    {
-        $this->baseCacheDir = $baseCacheDir;
-    }
-
-    public function getCacheDir(bool $useDefault = true): ?string
-    {
-        if ($useDefault) {
-            return $this->cacheDir ?: $this->baseCacheDir.'/overblog/graphql-bundle/__definitions__';
-        } else {
-            return $this->cacheDir;
-        }
-    }
-
-    public function setCacheDir(?string $cacheDir): self
-    {
-        $this->cacheDir = $cacheDir;
-
-        return $this;
+        $this->dispatcher = $dispatcher;
+        $this->options = $options;
     }
 
     public function compile(int $mode): array
     {
-        $cacheDir = $this->getCacheDir();
+        $cacheDir = $this->getCacheDirOrDefault();
         $writeMode = $mode & self::MODE_WRITE;
 
         // Configure write mode
@@ -100,12 +55,9 @@ class TypeGenerator
             $fs->remove($cacheDir);
         }
 
-        // Process configs
-        $configs = Processor::process($this->configs);
-
         // Generate classes
         $classes = [];
-        foreach ($configs as $name => $config) {
+        foreach (Processor::process($this->typeConfigs) as $name => $config) {
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
             $classMap = $this->generateClass($config, $cacheDir, $mode);
@@ -113,7 +65,7 @@ class TypeGenerator
         }
 
         // Create class map file
-        if ($writeMode && $this->useClassMap && count($classes) > 0) {
+        if ($writeMode && $this->options->useClassMap && count($classes) > 0) {
             $content = "<?php\nreturn ".var_export($classes, true).';';
 
             // replaced hard-coded absolute paths by __DIR__
@@ -125,7 +77,7 @@ class TypeGenerator
             $this->loadClasses(true);
         }
 
-        $this->eventDispatcher->dispatch(new SchemaCompiledEvent());
+        $this->dispatcher->dispatch(new SchemaCompiledEvent());
 
         return $classes;
     }
@@ -145,12 +97,14 @@ class TypeGenerator
             }
         }
 
-        return ["$this->classNamespace\\$className" => $path];
+        $namespace = $this->options->namespace;
+
+        return ["$namespace\\$className" => $path];
     }
 
     public function loadClasses(bool $forceReload = false): void
     {
-        if ($this->useClassMap && (!self::$classMapLoaded || $forceReload)) {
+        if ($this->options->useClassMap && (!self::$classMapLoaded || $forceReload)) {
             $classMapFile = $this->getClassesMap();
             $classes = file_exists($classMapFile) ? require $classMapFile : [];
 
@@ -171,8 +125,33 @@ class TypeGenerator
         }
     }
 
+    public function getCacheDir(): ?string
+    {
+        return $this->options->cacheDir;
+    }
+
+    public function getCacheDirMask(): int
+    {
+        return $this->options->cacheDirMask;
+    }
+
+    public function getCacheBaseDir(): ?string
+    {
+        return $this->options->cacheBaseDir;
+    }
+
+    public function setCacheBaseDir(string $dir): void
+    {
+        $this->options->cacheBaseDir = $dir;
+    }
+
+    public function getCacheDirOrDefault(): string
+    {
+        return $this->options->cacheDir ?? $this->options->cacheBaseDir.'/overblog/graphql-bundle/__definitions__';
+    }
+
     private function getClassesMap(): string
     {
-        return $this->getCacheDir().'/__classes.map';
+        return $this->getCacheDirOrDefault().'/__classes.map';
     }
 }

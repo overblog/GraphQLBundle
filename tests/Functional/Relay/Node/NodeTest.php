@@ -25,12 +25,12 @@ class NodeTest extends TestCase
     public function testNodeInterfaceAndFields(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "1") {
-            id
-          }
-        }
-        QUERY;
+            {
+              node(id: "1") {
+                id
+              }
+            }
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -44,12 +44,12 @@ class NodeTest extends TestCase
     public function testGetsTheCorrectIdForPhotos(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "4") {
-            id
-          }
-        }
-        QUERY;
+            {
+              node(id: "4") {
+                id
+              }
+            }
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -63,15 +63,15 @@ class NodeTest extends TestCase
     public function testGetsTheCorrectWidthForPhotos(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "4") {
-            id
-            ... on Photo {
-              width
+            {
+              node(id: "4") {
+                id
+                ... on Photo {
+                  width
+                }
+              }
             }
-          }
-        }
-        QUERY;
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -86,13 +86,13 @@ class NodeTest extends TestCase
     public function testGetsTheCorrectTypeNameForUsers(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "1") {
-            id
-            __typename
-          }
-        }
-        QUERY;
+            {
+              node(id: "1") {
+                id
+                __typename
+              }
+            }
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -107,13 +107,13 @@ class NodeTest extends TestCase
     public function testGetsTheCorrectTypeNameForPhotos(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "4") {
-            id
-            __typename
-          }
-        }
-        QUERY;
+            {
+              node(id: "4") {
+                id
+                __typename
+              }
+            }
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -128,15 +128,15 @@ class NodeTest extends TestCase
     public function testIgnoresPhotoFragmentsOnUser(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "1") {
-            id
-            ... on Photo {
-              width
+            {
+              node(id: "1") {
+                id
+                ... on Photo {
+                  width
+                }
+              }
             }
-          }
-        }
-        QUERY;
+            QUERY;
 
         $expectedData = [
             'node' => [
@@ -150,12 +150,12 @@ class NodeTest extends TestCase
     public function testReturnsNullForBadIds(): void
     {
         $query = <<<QUERY
-        {
-          node(id: "5") {
-            id
-          }
-        }
-        QUERY;
+            {
+              node(id: "5") {
+                id
+              }
+            }
+            QUERY;
 
         $expectedData = [
             'node' => null,
@@ -167,23 +167,23 @@ class NodeTest extends TestCase
     public function testHasCorrectNodeInterface(): void
     {
         $query = <<<QUERY
-        {
-          __type(name: "Node") {
-            name
-            kind
-            fields {
-              name
-              type {
+            {
+              __type(name: "Node") {
+                name
                 kind
-                ofType {
+                fields {
                   name
-                  kind
+                  type {
+                    kind
+                    ofType {
+                      name
+                      kind
+                    }
+                  }
                 }
               }
             }
-          }
-        }
-        QUERY;
+            QUERY;
 
         $expectedData = [
             '__type' => [
@@ -210,30 +210,30 @@ class NodeTest extends TestCase
     public function testHasCorrectNodeRootField(): void
     {
         $query = <<<QUERY
-        {
-          __schema {
-            queryType {
-              fields {
-                name
-                type {
-                  name
-                  kind
-                }
-                args {
-                  name
-                  type {
-                    kind
-                    ofType {
+            {
+              __schema {
+                queryType {
+                  fields {
+                    name
+                    type {
                       name
                       kind
+                    }
+                    args {
+                      name
+                      type {
+                        kind
+                        ofType {
+                          name
+                          kind
+                        }
+                      }
                     }
                   }
                 }
               }
             }
-          }
-        }
-        QUERY;
+            QUERY;
 
         $expectedData = [
             '__schema' => [

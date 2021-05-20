@@ -24,7 +24,7 @@ use function sys_get_temp_dir;
 
 class AnnotationParser extends MetadataParser
 {
-    const METADATA_FORMAT = '@%s';
+    public const METADATA_FORMAT = '@%s';
 
     protected static Reader $annotationReader;
 

@@ -17,7 +17,7 @@ class InvalidArgumentGuessing
      *
      * @param mixed $test
      */
-    #[GQL\Field(name: "guessFailed")]
+    #[GQL\Field(name: 'guessFailed')]
     public function guessFail($test): int
     {
         return 12;

@@ -39,9 +39,7 @@ final class InheritanceProcessor implements ProcessorInterface
 
     private static function removedDecorators(array $configs): array
     {
-        return array_filter($configs, function ($config) {
-            return !isset($config['decorator']) || true !== $config['decorator'];
-        });
+        return array_filter($configs, fn ($config) => !isset($config['decorator']) || true !== $config['decorator']);
     }
 
     private static function processConfigsHeirs(array $configs): array
