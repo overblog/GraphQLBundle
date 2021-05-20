@@ -21,6 +21,7 @@ use function class_exists;
 use function extension_loaded;
 use function md5;
 use function sys_get_temp_dir;
+use function implode;
 
 class AnnotationParser extends MetadataParser
 {
@@ -56,7 +57,7 @@ class AnnotationParser extends MetadataParser
             if (extension_loaded('apcu') && apcu_enabled()) {
                 $annotationCache = new ApcuCache();
             } else {
-                $annotationCache = new PhpFileCache(join(DIRECTORY_SEPARATOR, [sys_get_temp_dir(), $cacheKey]));
+                $annotationCache = new PhpFileCache(implode(DIRECTORY_SEPARATOR, [sys_get_temp_dir(), $cacheKey]));
             }
             // @codeCoverageIgnoreEnd
             $annotationCache->setNamespace($cacheKey);
