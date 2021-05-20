@@ -19,9 +19,9 @@ use RuntimeException;
 use function apcu_enabled;
 use function class_exists;
 use function extension_loaded;
+use function implode;
 use function md5;
 use function sys_get_temp_dir;
-use function implode;
 
 class AnnotationParser extends MetadataParser
 {
