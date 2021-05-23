@@ -101,11 +101,6 @@ parameters:
 			path: src/Config/Parser/GraphQLParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Config/Parser/XmlParser.php
-
-		-
 			message: "#^Parameter \\#1 \\$file of static method Symfony\\\\Component\\\\Config\\\\Util\\\\XmlUtils\\:\\:loadFile\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Config/Parser/XmlParser.php
@@ -126,7 +121,7 @@ parameters:
 			path: src/DependencyInjection/Compiler/AliasedPass.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 

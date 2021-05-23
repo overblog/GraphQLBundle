@@ -16,5 +16,5 @@ overblog_graphql:
         mappings:
             types:
                 -
-                    type: xml
+                    type: yaml
                     dir: "%kernel.project_dir%/config/plural/mapping"
