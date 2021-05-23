@@ -9,7 +9,6 @@ use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
-use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
@@ -39,7 +38,6 @@ class ConfigParserPass implements CompilerPassInterface
 {
     public const SUPPORTED_TYPES_EXTENSIONS = [
         'yaml' => '{yaml,yml}',
-        'xml' => 'xml',
         'graphql' => '{graphql,graphqls}',
         'annotation' => 'php',
         'attribute' => 'php',
@@ -47,7 +45,6 @@ class ConfigParserPass implements CompilerPassInterface
 
     public const PARSERS = [
         'yaml' => YamlParser::class,
-        'xml' => XmlParser::class,
         'graphql' => GraphQLParser::class,
         'annotation' => AnnotationParser::class,
         'attribute' => AttributeParser::class,
@@ -224,7 +221,7 @@ class ConfigParserPass implements CompilerPassInterface
 
             $bundleDir = $this->bundleDir($class);
 
-            // only config files (yml or xml)
+            // only config files (yml)
             $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'types' => null];
         }
 

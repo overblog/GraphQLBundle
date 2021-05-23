@@ -14,6 +14,7 @@ UPGRADE FROM 0.13 to 0.14
 - [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
 - [Remove Argument deprecated method](#remove-argument-deprecated-method)
 - [Remove ConnectionBuilder deprecated class](#remove-connectionbuilder-deprecated-class)
+- [Remove XML type configuration](#remove-xml-type-configuration-support)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -215,6 +216,10 @@ Method `Overblog\GraphQLBundle\Definition\Argument::getRawArguments` is replaced
 
 Class `Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder` is replaced by
 `Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder`.
+
+### Remove XML type configuration support
+
+XML type configuration is no longer supported.
 
 UPGRADE FROM 0.12 to 0.13
 =======================
