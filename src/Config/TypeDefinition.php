@@ -187,7 +187,7 @@ abstract class TypeDefinition
             ->validate()
                 ->ifTrue(fn (array $v) => !empty($v[$new]) && !empty($v[$old]))
                 ->thenInvalid(sprintf(
-                    '"%s" and "%s" should not be use together in "%%s".',
+                    '"%s" and "%s" should not be used together in "%%s".',
                     $new,
                     $old,
                 ))
