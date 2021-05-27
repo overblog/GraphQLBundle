@@ -14,7 +14,7 @@ final class IsAnonymous extends ExpressionFunction
     {
         parent::__construct(
             'isAnonymous',
-            fn () => "$this->gqlServices->get('".Security::class.'\')->isAnonymous()',
+            fn () => "$this->gqlServices->get('".Security::class."')->isAnonymous()",
             static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get(Security::class)->isAnonymous()
         );
     }
