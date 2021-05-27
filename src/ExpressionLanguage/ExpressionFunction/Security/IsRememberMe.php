@@ -14,7 +14,7 @@ final class IsRememberMe extends ExpressionFunction
     {
         parent::__construct(
             'isRememberMe',
-            fn () => "$this->gqlServices->get('".Security::class.'\')->isRememberMe()',
+            fn () => "$this->gqlServices->get('".Security::class."')->isRememberMe()",
             static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get(Security::class)->isRememberMe()
         );
     }
