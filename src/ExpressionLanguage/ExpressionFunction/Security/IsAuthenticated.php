@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 
 final class IsAuthenticated extends ExpressionFunction
 {
@@ -13,8 +14,8 @@ final class IsAuthenticated extends ExpressionFunction
     {
         parent::__construct(
             'isAuthenticated',
-            fn () => "$this->gqlServices->get('security')->isAuthenticated()",
-            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->isAuthenticated()
+            fn () => "$this->gqlServices->get('".Security::class.'\')->isAuthenticated()',
+            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get(Security::class)->isAuthenticated()
         );
     }
 }

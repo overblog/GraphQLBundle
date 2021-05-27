@@ -70,17 +70,17 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
      */
     private function addGlobalVariables($expression, array &$variables): void
     {
-        $globalVariables = $this->expressionLanguage->getGlobalNames();
+        $expressionVariableServiceIds = $this->expressionLanguage->getExpressionVariableServiceIds();
         foreach (ExpressionLanguage::extractExpressionVarNames($expression) as $extractExpressionVarName) {
+            $serviceIds = $expressionVariableServiceIds[$extractExpressionVarName] ?? null;
             if (
                 isset($variables[$extractExpressionVarName])
-                || !$this->graphQLServices->has($extractExpressionVarName)
-                || !in_array($extractExpressionVarName, $globalVariables)
+                || !$this->graphQLServices->has($serviceIds)
             ) {
                 continue;
             }
 
-            $variables[$extractExpressionVarName] = $this->graphQLServices->get($extractExpressionVarName);
+            $variables[$extractExpressionVarName] = $this->graphQLServices->get($serviceIds);
         }
     }
 }

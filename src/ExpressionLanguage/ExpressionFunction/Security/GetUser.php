@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 
 final class GetUser extends ExpressionFunction
 {
@@ -13,8 +14,8 @@ final class GetUser extends ExpressionFunction
     {
         parent::__construct(
             'getUser',
-            fn () => "$this->gqlServices->get('security')->getUser()",
-            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('security')->getUser()
+            fn () => "$this->gqlServices->get('".Security::class."')->getUser()",
+            static fn (array $arguments) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get(Security::class)->getUser()
         );
     }
 }

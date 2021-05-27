@@ -82,7 +82,7 @@ class ArgumentsTest extends TestCase
 
         $services = $this->createGraphQLServices(
             [
-                'container' => $this->getDIContainerMock(['overblog_graphql.arguments_transformer' => $transformer]),
+                'service_container' => $this->getDIContainerMock(['overblog_graphql.arguments_transformer' => $transformer]),
             ]
         );
 

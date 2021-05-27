@@ -26,7 +26,7 @@ class GetUserTest extends TestCase
         $testUser = new User('testUser', 'testPassword');
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
-        $services = $this->createGraphQLServices(['security' => new Security($coreSecurity)]);
+        $services = $this->createGraphQLServices([Security::class => new Security($coreSecurity)]);
 
         $user = $this->expressionLanguage->evaluate('getUser()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertInstanceOf(UserInterface::class, $user);
@@ -35,9 +35,8 @@ class GetUserTest extends TestCase
     public function testGetUserNoTokenStorage(): void
     {
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
-            ['security' => new Security($this->createMock(CoreSecurity::class))]
+            [Security::class => new Security($this->createMock(CoreSecurity::class))]
         );
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         $this->assertNull(eval($this->getCompileCode()));
     }
 
@@ -46,14 +45,13 @@ class GetUserTest extends TestCase
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
-                'security' => new Security(
+                Security::class => new Security(
                     new CoreSecurity(
                         $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
                     )
                 ),
             ]
         );
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
 
         $this->getDIContainerMock(['security.token_storage' => $tokenStorage]);
         $this->assertNull(eval($this->getCompileCode()));
@@ -72,14 +70,13 @@ class GetUserTest extends TestCase
 
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
-                'security' => new Security(
+                Security::class => new Security(
                     new CoreSecurity(
                         $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
                     )
                 ),
             ]
         );
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
 
         $token
             ->expects($this->once())
