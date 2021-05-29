@@ -244,6 +244,26 @@ class Greetings implements QueryInterface
 }
 ````
 
+#### Total count caching
+
+You may want to cache your total count for paginator result 
+
+````php
+<?php
+
+use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+use Overblog\GraphQLBundle\Relay\Connection\TotalCountCache;
+
+/** @var Paginator $paginator */     
+return $paginator->auto(
+    $args,
+    new TotalCountCache (
+        fn () => $backend->countAll(),
+    ),
+);
+````
+
+
 #### Promise handling
 
 Paginator also supports promises if you [use that feature](https://github.com/webonyx/graphql-php/pull/67)
