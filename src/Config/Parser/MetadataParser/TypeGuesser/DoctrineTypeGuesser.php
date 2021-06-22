@@ -53,7 +53,7 @@ class DoctrineTypeGuesser extends TypeGuesser
         $columnAnnotation = $this->getAnnotation($reflector, Column::class);
 
         if (null !== $columnAnnotation) {
-            $type = $this->resolveTypeFromDoctrineType($columnAnnotation->type ?: "string");
+            $type = $this->resolveTypeFromDoctrineType($columnAnnotation->type ?: 'string');
             $nullable = $columnAnnotation->nullable;
             if ($type) {
                 return $nullable ? $type : sprintf('%s!', $type);
