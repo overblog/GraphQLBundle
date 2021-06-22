@@ -36,7 +36,7 @@ class AnnotationParser extends MetadataParser
         return [];
     }
 
-    protected static function getAnnotationReader(): PsrCachedReader
+    protected static function getAnnotationReader(): Reader
     {
         if (!isset(self::$annotationReader)) {
             if (!class_exists(AnnotationReader::class) || !class_exists(AnnotationRegistry::class)) {
