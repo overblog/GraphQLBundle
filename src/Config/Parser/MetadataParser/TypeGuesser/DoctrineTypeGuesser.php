@@ -53,7 +53,7 @@ class DoctrineTypeGuesser extends TypeGuesser
         $columnAnnotation = $this->getAnnotation($reflector, Column::class);
 
         if (null !== $columnAnnotation) {
-            $type = $this->resolveTypeFromDoctrineType($columnAnnotation->type);
+            $type = $this->resolveTypeFromDoctrineType($columnAnnotation->type ?: "string");
             $nullable = $columnAnnotation->nullable;
             if ($type) {
                 return $nullable ? $type : sprintf('%s!', $type);
@@ -125,7 +125,9 @@ class DoctrineTypeGuesser extends TypeGuesser
                 throw new RuntimeException('In order to use graphql annotation/attributes, you need to require doctrine annotations');
             }
 
-            AnnotationRegistry::registerLoader('class_exists');
+            if (class_exists(AnnotationRegistry::class)) {
+                AnnotationRegistry::registerLoader('class_exists');
+            }
             $this->annotationReader = new AnnotationReader();
         }
 
