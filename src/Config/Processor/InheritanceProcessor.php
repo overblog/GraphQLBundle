@@ -85,7 +85,7 @@ final class InheritanceProcessor implements ProcessorInterface
 
         // Restore initial order
         \uksort($parentTypes, function ($a, $b) use ($parents) {
-            return \array_search($a, $parents, true) > \array_search($b, $parents, true);
+            return \array_search($a, $parents, true) > \array_search($b, $parents, true) ? 1 : 0;
         });
 
         $mergedParentsConfig = self::mergeConfigs(...\array_column($parentTypes, 'config'));
