@@ -44,6 +44,12 @@ class AnnotationParser extends MetadataParser
                 throw new RuntimeException("In order to use annotations, you need to install 'doctrine/annotations' first. See: 'https://www.doctrine-project.org/projects/annotations.html'");
                 // @codeCoverageIgnoreEnd
             }
+            if (!class_exists(ApcuAdapter::class)) {
+                // @codeCoverageIgnoreStart
+                throw new RuntimeException("In order to use annotations, you need to install 'symfony/cache' first. See: 'https://symfony.com/doc/current/components/cache.html'");
+                // @codeCoverageIgnoreEnd
+            }
+
 
             if (class_exists(AnnotationRegistry::class)) {
                 AnnotationRegistry::registerLoader('class_exists');
