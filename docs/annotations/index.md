@@ -2,7 +2,9 @@
 
 In order to use annotations or attributes, you need to configure the mapping:
 
-To use annotations, use the `annotation` mapping type.
+To use annotations, You must install `symfony/cache` and `doctrine/annotation` and use the `annotation` mapping type.
+
+
 ```yaml
 # config/packages/graphql.yaml
 overblog_graphql:
