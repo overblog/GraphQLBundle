@@ -15,7 +15,6 @@ overblog_graphql:
           dir: "%kernel.project_dir%/src/GraphQL"
           suffix: ~
 ```
-To use annoation, you must instal   '  '' ' and use the annatotton mapping type
 To use attributes, use the `attribute` mapping type.
 
 ```yaml
