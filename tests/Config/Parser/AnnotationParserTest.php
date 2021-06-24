@@ -15,6 +15,9 @@ class AnnotationParserTest extends MetadataParserTest
     public function setUp(): void
     {
         if ('testNoDoctrineAnnotations' !== $this->getName()) {
+            if (!self::isDoctrineAnnotationInstalled()) {
+                $this->markTestSkipped('doctrine/annotations are not installed. Skipping annotation parser tests.');
+            }
             parent::setUp();
         }
     }
