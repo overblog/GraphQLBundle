@@ -26,6 +26,14 @@ jobs:
           - php-version: 7.4
             symfony-version: "4.4.*"
             validator: false
+          
+          - php-version: 7.4
+            symfony-version: "4.4.*"
+            annotations: false
+
+          - php-version: 7.4
+            symfony-version: "4.4.*"
+            cache: false
 
           - php-version: 7.4
             symfony-version: "5.0.*"
@@ -79,6 +87,14 @@ jobs:
       - name: "Disabled validator if needed"
         if: matrix.validator == false
         run: composer remove "symfony/validator" --dev --no-update;
+
+      - name: "Disabled doctrine/annotations if needed"
+        if: matrix.annotations == false
+        run: composer remove "doctrine/annotations" --dev --no-update;
+
+      - name: "Disabled symfony/cache if needed"
+        if: matrix.cache == false
+        run: composer remove "symfony/cache" --dev --no-update;
 
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress ${{ matrix.composer-flags }}

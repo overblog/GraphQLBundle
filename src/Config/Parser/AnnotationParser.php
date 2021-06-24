@@ -13,9 +13,9 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
-use RuntimeException;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class AnnotationParser extends MetadataParser
 {
@@ -39,17 +39,12 @@ class AnnotationParser extends MetadataParser
     protected static function getAnnotationReader(): Reader
     {
         if (!isset(self::$annotationReader)) {
-            if (!class_exists(AnnotationReader::class) || !class_exists(AnnotationRegistry::class)) {
-                // @codeCoverageIgnoreStart
-                throw new RuntimeException("In order to use annotations, you need to install 'doctrine/annotations' first. See: 'https://www.doctrine-project.org/projects/annotations.html'");
-                // @codeCoverageIgnoreEnd
+            if (!class_exists(AnnotationReader::class)) {
+                throw new ServiceNotFoundException("In order to use annotations, you need to install 'doctrine/annotations' first. See: 'https://www.doctrine-project.org/projects/annotations.html'");
             }
             if (!class_exists(ApcuAdapter::class)) {
-                // @codeCoverageIgnoreStart
-                throw new RuntimeException("In order to use annotations, you need to install 'symfony/cache' first. See: 'https://symfony.com/doc/current/components/cache.html'");
-                // @codeCoverageIgnoreEnd
+                throw new ServiceNotFoundException("In order to use annotations, you need to install 'symfony/cache' first. See: 'https://symfony.com/doc/current/components/cache.html'");
             }
-
 
             if (class_exists(AnnotationRegistry::class)) {
                 AnnotationRegistry::registerLoader('class_exists');
