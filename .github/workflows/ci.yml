@@ -25,15 +25,15 @@ jobs:
 
           - php-version: 7.4
             symfony-version: "4.4.*"
-            validator: false
+            uninstall_validator: true
           
           - php-version: 7.4
             symfony-version: "4.4.*"
-            annotations: false
+            uninstall_annotations: true
 
           - php-version: 7.4
             symfony-version: "4.4.*"
-            cache: false
+            uninstall_cache: true
 
           - php-version: 7.4
             symfony-version: "5.0.*"
@@ -85,15 +85,15 @@ jobs:
         run: composer req "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
 
       - name: "Disabled validator if needed"
-        if: matrix.validator == false
+        if: matrix.uninstall_validator
         run: composer remove "symfony/validator" --dev --no-update;
 
       - name: "Disabled doctrine/annotations if needed"
-        if: matrix.annotations == false
+        if: matrix.uninstall_annotations
         run: composer remove "doctrine/annotations" --dev --no-update;
 
       - name: "Disabled symfony/cache if needed"
-        if: matrix.cache == false
+        if: matrix.uninstall_cache
         run: composer remove "symfony/cache" --dev --no-update;
 
       - name: "Install dependencies"
