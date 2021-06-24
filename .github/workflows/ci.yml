@@ -26,14 +26,14 @@ jobs:
           - php-version: 7.4
             symfony-version: "4.4.*"
             uninstall_validator: true
-          
+
           - php-version: 7.4
             symfony-version: "4.4.*"
             uninstall_annotations: true
 
           - php-version: 7.4
             symfony-version: "4.4.*"
-            uninstall_cache: true
+            uninstall_doctrine: true
 
           - php-version: 7.4
             symfony-version: "5.0.*"
@@ -88,13 +88,13 @@ jobs:
         if: matrix.uninstall_validator
         run: composer remove "symfony/validator" --dev --no-update;
 
+      - name: "Disabled doctrine/orm if needed"
+        if: matrix.uninstall_doctrine
+        run: composer remove "doctrine/orm" --dev --no-update;
+
       - name: "Disabled doctrine/annotations if needed"
         if: matrix.uninstall_annotations
-        run: composer remove "doctrine/annotations" --dev --no-update;
-
-      - name: "Disabled symfony/cache if needed"
-        if: matrix.uninstall_cache
-        run: composer remove "symfony/cache" --dev --no-update;
+        run: composer remove "doctrine/orm" "doctrine/annotations" --dev --no-update;
 
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress ${{ matrix.composer-flags }}

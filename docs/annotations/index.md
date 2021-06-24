@@ -216,6 +216,7 @@ In this example, the type `String!` will be auto-guessed from the type hint of t
 ### @Field type auto-guessing from Doctrine ORM Annotations
 
 Based on other Doctrine annotations on your fields, the corresponding GraphQL type can sometimes be guessed automatically.  
+In order to activate this guesser, you must install `doctrine/orm` package.  
 
 The type can be auto-guessed from the following annotations:
 

@@ -102,6 +102,15 @@ overblog_graphql_multiple_endpoint:
     prefix: /graphql
 ```
 
+
+Optionnal features depencies
+------------
+
+- To use the Validator features, you must also install `symfony/validator`
+- To use the annotations, you must also install `doctrine/annotations`
+- To use the annotations doctrine type guesser, you must also install `doctrine/orm`
+
+
 Composer autoloader configuration (optional)
 ------------
 

@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
-use Doctrine\Common\Annotations\Reader;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use SplFileInfo;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class AnnotationParserTest extends MetadataParserTest
 {
+    public function setUp(): void
+    {
+        if ('testNoDoctrineAnnotations' !== $this->getName()) {
+            parent::setUp();
+        }
+    }
+
     public function parser(string $method, ...$args)
     {
         return AnnotationParser::$method(...$args);
@@ -24,24 +31,17 @@ class AnnotationParserTest extends MetadataParserTest
 
     public function testNoDoctrineAnnotations(): void
     {
-        if (class_exists(Reader::class)) {
+        if (self::isDoctrineAnnotationInstalled()) {
             $this->markTestSkipped('doctrine/annotations are installed');
         }
 
-        $this->expectException(ServiceNotFoundException::class);
-        $this->expectExceptionMessageMatches('/doctrine\/annotations/');
-        AnnotationParser::parse(new SplFileInfo(__DIR__.'/fixtures/annotations/Type/Animal.php'), $this->containerBuilder);
-    }
-
-    public function testNoSymfonyCache(): void
-    {
-        if (class_exists(AdapterInterface::class)) {
-            $this->markTestSkipped('symfony/cache is installed');
+        try {
+            $containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->disableOriginalConstructor()->getMock();
+            AnnotationParser::parse(new SplFileInfo(__DIR__.'/fixtures/annotations/Type/Animal.php'), $containerBuilder);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInstanceOf(ServiceNotFoundException::class, $e->getPrevious());
+            $this->assertMatchesRegularExpression('/doctrine\/annotations/', $e->getPrevious()->getMessage());
         }
-
-        $this->expectException(ServiceNotFoundException::class);
-        $this->expectExceptionMessageMatches('/symfony\/cache/');
-        AnnotationParser::parse(new SplFileInfo(__DIR__.'/fixtures/annotations/Type/Animal.php'), $this->containerBuilder);
     }
 
     public function testLegacyNestedAnnotations(): void
