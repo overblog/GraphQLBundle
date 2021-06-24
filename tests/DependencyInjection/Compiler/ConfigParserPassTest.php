@@ -50,13 +50,6 @@ class ConfigParserPassTest extends TestCase
         $this->processCompilerPass($this->getMappingConfig('yaml'));
     }
 
-    public function testBrokenXmlOnPrepend(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('#Unable to parse file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
-        $this->processCompilerPass($this->getMappingConfig('xml'));
-    }
-
     public function testPreparseOnPrepend(): void
     {
         if (!MetadataParserTest::isDoctrineAnnotationInstalled()) {
