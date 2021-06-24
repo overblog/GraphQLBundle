@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
+use Doctrine\Common\Annotations\Reader;
+use Doctrine\ORM\Mapping\Column;
 use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -45,12 +47,19 @@ abstract class MetadataParserTest extends TestCase
     {
         parent::setup();
 
+        if (!self::isDoctrineAnnotationInstalled()) {
+            $this->markTestSkipped('doctrine/annotations are not installed');
+        }
+
         $files = [];
         $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
         foreach ($rii as $file) {
             if (!$file->isDir() && '.php' === substr($file->getPathname(), -4)) {
                 foreach ($this->ignoredPaths as $ignoredPath) {
                     if (false !== strpos($file->getPathName(), $ignoredPath)) {
+                        continue 2;
+                    }
+                    if (!self::isDoctrineOrmInstalled() && 'Lightsaber.php' === $file->getFileName()) {
                         continue 2;
                     }
                 }
@@ -68,6 +77,16 @@ abstract class MetadataParserTest extends TestCase
         foreach ($files as $file) {
             $this->config += self::cleanConfig($this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
         }
+    }
+
+    public static function isDoctrineAnnotationInstalled(): bool
+    {
+        return interface_exists(Reader::class);
+    }
+
+    public static function isDoctrineOrmInstalled(): bool
+    {
+        return class_exists(Column::class);
     }
 
     protected function expect(string $name, string $type, array $config = []): void
@@ -395,6 +414,10 @@ abstract class MetadataParserTest extends TestCase
 
     public function testDoctrineGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
+
         $this->expect('Lightsaber', 'object', [
             'fields' => [
                 'color' => ['type' => 'String!'],
@@ -495,6 +518,9 @@ abstract class MetadataParserTest extends TestCase
 
     public function testInvalidDoctrineRelationGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineRelationGuessing.php';
             $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
@@ -507,6 +533,9 @@ abstract class MetadataParserTest extends TestCase
 
     public function testInvalidDoctrineTypeGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineTypeGuessing.php';
             $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);

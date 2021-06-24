@@ -159,7 +159,7 @@ Custom error handling / formatting
 -----------------------------------
 
 This can also be done by using events.
-* First totally disabled default errors handler:
+* First totally disable default errors handler:
     ```yaml
     overblog_graphql:
         errors_handler: false
