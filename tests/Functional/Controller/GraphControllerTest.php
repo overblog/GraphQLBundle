@@ -166,7 +166,7 @@ class GraphControllerTest extends TestCase
     public function testMultipleEndpointActionWithUnknownSchemaName(): void
     {
         $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage('Could not found "fake" schema.');
+        $this->expectExceptionMessage('Could not find "fake" schema.');
         $client = static::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 

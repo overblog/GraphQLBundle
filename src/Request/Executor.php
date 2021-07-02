@@ -87,7 +87,7 @@ class Executor
         }
 
         if (!isset($this->schemas[$name])) {
-            throw new NotFoundHttpException(sprintf('Could not found "%s" schema.', $name));
+            throw new NotFoundHttpException(sprintf('Could not find "%s" schema.', $name));
         }
 
         $schema = $this->schemas[$name];
