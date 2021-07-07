@@ -92,7 +92,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->booleanNode('enabled')->defaultTrue()->end()
-                ->scalarNode('internal_error_message')->defaultValue(ErrorHandler::DEFAULT_ERROR_MESSAGE)->end()
+                ->scalarNode('internal_error_message')->defaultValue(ErrorHandler::DEFAULT_ERROR_MESSAGE)->cannotBeEmpty()->end()
                 ->booleanNode('rethrow_internal_exceptions')->defaultFalse()->end()
                 ->booleanNode('debug')->defaultValue($this->debug)->end()
                 ->booleanNode('log')->defaultTrue()->end()
