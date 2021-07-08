@@ -4,7 +4,7 @@ services:
 
     Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand:
         arguments:
-            - "%kernel.cache_dir%/../.."
+            - "%kernel.cache_dir%/../../.."
             - '@Overblog\GraphQLBundle\Request\Executor'
         tags:
             - { name: console.command, command: graphql:dump-schema, alias: "graph:dump-schema" }
