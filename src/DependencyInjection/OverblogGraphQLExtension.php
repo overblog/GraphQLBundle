@@ -196,10 +196,12 @@ class OverblogGraphQLExtension extends Extension
             ->setArgument(0, $this->buildExceptionMap($config['errors_handler']['exceptions']))
             ->setArgument(1, $config['errors_handler']['map_exceptions_to_parent']);
 
-        $container->register(ErrorHandler::class)
+        $errorHandlerDefinition = $container->register(ErrorHandler::class)
             ->setArgument(0, new Reference(EventDispatcherInterface::class))
-            ->setArgument(1, new Reference(ExceptionConverterInterface::class))
-            ->setArgument(2, $config['errors_handler']['internal_error_message']);
+            ->setArgument(1, new Reference(ExceptionConverterInterface::class));
+        if (!empty($config['errors_handler']['internal_error_message'])) {
+            $errorHandlerDefinition->setArgument(2, $config['errors_handler']['internal_error_message']);
+        }
 
         $container->register(ErrorHandlerListener::class)
             ->setArgument(0, new Reference(ErrorHandler::class))
