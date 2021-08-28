@@ -129,6 +129,10 @@ class ConnectionBuilder
         $beforeOffset = $this->getOffsetWithDefault($before, $arrayLength);
         $afterOffset = $this->getOffsetWithDefault($after, -1);
 
+        if ($afterOffset > $beforeOffset) {
+            throw new InvalidArgumentException('Arguments "before" and "after" cannot be intersected');
+        }
+
         $startOffset = max($sliceStart - 1, $afterOffset, -1) + 1;
         $endOffset = min($sliceEnd, $beforeOffset, $arrayLength);
 
@@ -161,14 +165,12 @@ class ConnectionBuilder
 
         $firstEdge = $edges[0] ?? null;
         $lastEdge = end($edges);
-        $lowerBound = $after ? ($afterOffset + 1) : 0;
-        $upperBound = $before ? $beforeOffset : $arrayLength;
 
         $pageInfo = new PageInfo(
             $firstEdge instanceof EdgeInterface ? $firstEdge->getCursor() : null,
             $lastEdge instanceof EdgeInterface ? $lastEdge->getCursor() : null,
-            null !== $last ? $startOffset > $lowerBound : false,
-            null !== $first ? $endOffset < $upperBound : false
+            $startOffset > 0,
+            $endOffset < $arrayLength
         );
 
         return $this->createConnection($edges, $pageInfo);
