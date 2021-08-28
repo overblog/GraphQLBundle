@@ -51,7 +51,8 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         foreach (['getEndCursor', 'getHasNextPage', 'getHasPreviousPage', 'getStartCursor'] as $method) {
             $this->assertSame(
                 $expectedConnection->getPageInfo()->$method(),
-                $actualConnection->getPageInfo()->$method()
+                $actualConnection->getPageInfo()->$method(),
+                sprintf('Asserting failed on method "%s"', $method)
             );
         }
 

@@ -219,8 +219,8 @@ class PaginatorTest extends TestCase
 
         $this->assertCount(4, $result->getEdges());
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
-        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
-        $this->assertTrue($result->getPageInfo()->getHasNextPage()); // on previous page there is still ['A']
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage()); // on previous page there is still ['A']
+        $this->assertFalse($result->getPageInfo()->getHasNextPage());
     }
 
     public function testAutoForward(): void
