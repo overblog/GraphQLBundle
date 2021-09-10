@@ -30,7 +30,7 @@
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "psr/log": "^1.0",
+        "psr/log": "^1|^2|^3",
         "symfony/config": "^4.4 || ^5.0",
         "symfony/dependency-injection": "^4.4 || ^5.0",
         "symfony/event-dispatcher": "^4.4 || ^5.0",
