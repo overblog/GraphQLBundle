@@ -39,6 +39,9 @@ jobs:
           - php-version: 8.0
             symfony-version: "5.2.*"
 
+          - php-version: 8.0
+            symfony-version: "5.3.*"
+
     name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
 
     steps:
