@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -107,7 +107,7 @@ jobs:
         run: composer test
 
   coding-standard:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     name: Coding Standard
     steps:
       - name: "Checkout"
@@ -135,7 +135,7 @@ jobs:
         run: composer check-cs
 
   benchmark:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     name: Benchmark
     steps:
       - name: "Checkout"
@@ -163,7 +163,7 @@ jobs:
         run: composer bench
 
   static-analysis:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     name: "Static analysis"
     steps:
       - name: "Checkout"
@@ -191,7 +191,7 @@ jobs:
         run: composer static-analysis
 
   coverage:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     name: "Coverage"
     steps:
       - name: "Checkout"
