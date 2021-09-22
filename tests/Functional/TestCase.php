@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -89,7 +90,7 @@ abstract class TestCase extends WebTestCase
         static::assertSame($expected, $result, \json_encode($result));
     }
 
-    protected static function getContainer()
+    protected static function getContainer(): ContainerInterface
     {
         return static::$kernel->getContainer();
     }

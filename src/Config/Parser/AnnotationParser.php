@@ -856,7 +856,7 @@ class AnnotationParser implements PreParserInterface
     {
         $columnAnnotation = self::getFirstAnnotationMatching($annotations, Column::class);
         if ($columnAnnotation) {
-            $type = self::resolveTypeFromDoctrineType($columnAnnotation->type);
+            $type = self::resolveTypeFromDoctrineType($columnAnnotation->type ?: 'string');
             $nullable = $columnAnnotation->nullable;
             if ($type) {
                 return $nullable ? $type : \sprintf('%s!', $type);
