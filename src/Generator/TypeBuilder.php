@@ -23,6 +23,7 @@ use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GraphQLServices;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
@@ -120,6 +121,7 @@ class TypeBuilder
             ->setFinal()
             ->setExtends(static::EXTENDS[$type])
             ->addImplements(GeneratedTypeInterface::class)
+            ->addImplements(AliasedInterface::class)
             ->addConst('NAME', $config['name'])
             ->setDocBlock(static::DOCBLOCK_TEXT);
 
@@ -131,6 +133,10 @@ class TypeBuilder
             ->append('$config = ', $this->buildConfig($config))
             ->emptyLine()
             ->append('parent::__construct($configProcessor->process($config))');
+
+        $class->createMethod('getAliases', 'public static', 'array')
+            ->append('return [self::NAME]')
+            ->setDocBlock('{@inheritdoc}');
 
         return $this->file;
     }
