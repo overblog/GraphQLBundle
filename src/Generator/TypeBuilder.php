@@ -120,8 +120,7 @@ class TypeBuilder
         $class = $this->file->createClass($config['class_name'])
             ->setFinal()
             ->setExtends(static::EXTENDS[$type])
-            ->addImplements(GeneratedTypeInterface::class)
-            ->addImplements(AliasedInterface::class)
+            ->addImplements(GeneratedTypeInterface::class, AliasedInterface::class)
             ->addConst('NAME', $config['name'])
             ->setDocBlock(static::DOCBLOCK_TEXT);
 
@@ -134,9 +133,11 @@ class TypeBuilder
             ->emptyLine()
             ->append('parent::__construct($configProcessor->process($config))');
 
-        $class->createMethod('getAliases', 'public static', 'array')
-            ->append('return [self::NAME]')
-            ->setDocBlock('{@inheritdoc}');
+        $class->createMethod('getAliases', 'public')
+            ->setStatic()
+            ->setReturnType('array')
+            ->setDocBlock('{@inheritdoc}')
+            ->append('return [self::NAME]');
 
         return $this->file;
     }
