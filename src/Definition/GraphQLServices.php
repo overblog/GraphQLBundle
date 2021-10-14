@@ -34,9 +34,15 @@ final class GraphQLServices extends ServiceLocator
         return $this->get('mutationResolver')->resolve([$alias, $args]);
     }
 
-    public function getType(string $typeName): ?Type
+    public function getType(string $typeName): Type
     {
-        return $this->get('typeResolver')->resolve($typeName);
+        $type = $this->get('typeResolver')->resolve($typeName);
+        
+        if ($type === null) {
+            throw new \Exception(sprintf('Type "%s" not found.', $typeName));
+        }
+        
+        return $type;
     }
 
     /**
