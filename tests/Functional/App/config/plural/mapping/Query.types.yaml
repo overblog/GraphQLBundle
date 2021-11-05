@@ -1,0 +1,12 @@
+Query:
+    type: object
+    config:
+        fields:
+            usernames:
+                builder: Relay::PluralIdentifyingRoot
+                builderConfig:
+                    argName: usernames
+                    description: Map from a username to the user
+                    inputType: String
+                    outputType: User
+                    resolveSingleInput: '@=query("plural_resolver", value, info)'
