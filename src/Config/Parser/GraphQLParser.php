@@ -60,7 +60,12 @@ class GraphQLParser implements ParserInterface
              */
             if (isset($typeDef->kind) && in_array($typeDef->kind, array_keys(self::DEFINITION_TYPE_MAPPING))) {
                 $class = sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
-                $typesConfig[$typeDef->name->value] = call_user_func([$class, 'toConfig'], $typeDef);
+                $astConverterCallable = [$class, 'toConfig'];
+                if (is_callable($astConverterCallable)) {
+                    $typesConfig[$typeDef->name->value] = call_user_func($astConverterCallable, $typeDef);
+                } else {
+                    self::throwUnsupportedDefinitionNode($typeDef);
+                }
             } else {
                 self::throwUnsupportedDefinitionNode($typeDef);
             }
