@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Command;
 
 use Overblog\GraphQLBundle\Resolver\FluentResolverInterface;
-use Overblog\GraphQLBundle\Resolver\MutationResolver;
-use Overblog\GraphQLBundle\Resolver\ResolverResolver;
-use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,24 +16,24 @@ class DebugCommand extends Command
     private static $categories = ['type', 'mutation', 'resolver'];
 
     /**
-     * @var TypeResolver
+     * @var FluentResolverInterface
      */
     private $typeResolver;
 
     /**
-     * @var MutationResolver
+     * @var FluentResolverInterface
      */
     private $mutationResolver;
 
     /**
-     * @var ResolverResolver
+     * @var FluentResolverInterface
      */
     private $resolverResolver;
 
     public function __construct(
-        TypeResolver $typeResolver,
-        MutationResolver $mutationResolver,
-        ResolverResolver $resolverResolver
+        FluentResolverInterface $typeResolver,
+        FluentResolverInterface $mutationResolver,
+        FluentResolverInterface $resolverResolver
     ) {
         parent::__construct();
         $this->typeResolver = $typeResolver;
