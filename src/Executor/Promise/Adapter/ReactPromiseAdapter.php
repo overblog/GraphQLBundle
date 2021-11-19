@@ -19,7 +19,7 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     /**
      * {@inheritdoc}
      */
-    public function isThenable($value)
+    public function isThenable($value): bool
     {
         return parent::isThenable($value instanceof Promise ? $value->adoptedPromise : $value);
     }
@@ -27,7 +27,7 @@ class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdap
     /**
      * {@inheritdoc}
      */
-    public function convertThenable($thenable)
+    public function convertThenable($thenable): Promise
     {
         if ($thenable instanceof Promise) {
             return $thenable;
