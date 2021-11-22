@@ -197,7 +197,6 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "8.0"
-          symfony-version: "5.2.*"
           ini-values: pcov.directory=.
           coverage: "pcov"
 
