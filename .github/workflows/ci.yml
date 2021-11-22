@@ -214,7 +214,7 @@ jobs:
         run: composer update --no-interaction --no-progress
 
       - name: "Run tests with coverage"
-        run: bin/phpunit --color=always -v --debug --coverage-clover=build/logs/clover.xml
+        run: bin/phpunit --color=always --coverage-clover=build/logs/clover.xml
 
       - name: "Upload coverage results to Scrutinizer"
         run: vendor/scrutinizer/ocular/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml

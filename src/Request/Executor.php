@@ -34,7 +34,7 @@ class Executor
     private EventDispatcherInterface $dispatcher;
     private PromiseAdapter $promiseAdapter;
     private ExecutorInterface $executor;
-    private bool $useExperimentalExecutor;
+    private bool $useExperimentalExecutor; // TODO: remove in 1.0
 
     /**
      * @var callable|null
@@ -46,13 +46,13 @@ class Executor
         PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
         ?callable $defaultFieldResolver = null,
-        bool $useExperimental = false
+        bool $useExperimental = false // TODO: remove in 1.0
     ) {
         $this->executor = $executor;
         $this->promiseAdapter = $promiseAdapter;
         $this->dispatcher = $dispatcher;
         $this->defaultFieldResolver = $defaultFieldResolver;
-        $this->useExperimentalExecutor = $useExperimental;
+        $this->useExperimentalExecutor = $useExperimental; // TODO: remove in 1.0
     }
 
     public function setExecutor(ExecutorInterface $executor): self
@@ -133,7 +133,10 @@ class Executor
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
-        $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
+        // TODO: remove following if-block in 1.0
+        if (method_exists(GraphQL::class, 'useExperimentalExecutor')) {
+            $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
+        }
 
         $schema = $this->getSchema($schemaName);
         /** @var string $schemaName */
