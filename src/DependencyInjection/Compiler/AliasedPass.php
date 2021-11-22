@@ -8,7 +8,6 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\MutationInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
-use Overblog\GraphQLBundle\Definition\Resolver\ResolverInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -22,8 +21,6 @@ final class AliasedPass implements CompilerPassInterface
         MutationInterface::class => 'overblog_graphql.mutation',
         QueryInterface::class => 'overblog_graphql.query',
         Type::class => TypeTaggedServiceMappingPass::TAG_NAME,
-        // TODO: remove next line in 1.0
-        ResolverInterface::class => 'overblog_graphql.resolver',
     ];
 
     /**

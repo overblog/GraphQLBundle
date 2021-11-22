@@ -93,10 +93,10 @@ abstract class MetadataParserTest extends TestCase
         // Test an interface
         $this->expect('Character', 'interface', [
             'description' => 'The character interface',
-            'resolveType' => "@=resolver('character_type', [value])",
+            'resolveType' => "@=query('character_type', [value])",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
             ],
         ]);
 
@@ -106,7 +106,7 @@ abstract class MetadataParserTest extends TestCase
             'interfaces' => ['Character'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'race' => ['type' => 'Race'],
             ],
         ]);
@@ -117,7 +117,7 @@ abstract class MetadataParserTest extends TestCase
             'isTypeOf' => "@=isTypeOf('App\Entity\Droid')",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'memory' => ['type' => 'Int!'],
                 'planet_allowedPlanets' => [
                     'type' => '[Planet]',
@@ -143,7 +143,7 @@ abstract class MetadataParserTest extends TestCase
             'fieldsDefaultAccess' => '@=isAuthenticated()',
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'realName' => ['type' => 'String!', 'access' => "@=hasRole('SITH_LORD')"],
                 'location' => ['type' => 'String!', 'public' => "@=hasRole('SITH_LORD')"],
                 'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
@@ -172,7 +172,7 @@ abstract class MetadataParserTest extends TestCase
                         'builder' => 'PlanetFilterArgBuilder',
                         'config' => ['option2' => 'value2'],
                     ],
-                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=query('closest_planet', [args['filter']])",
                 ],
                 'notesDeprecated' => [
                     'builder' => 'NoteFieldBuilder',
@@ -184,7 +184,7 @@ abstract class MetadataParserTest extends TestCase
                         'builder' => 'PlanetFilterArgBuilder',
                         'config' => ['option2' => 'value2'],
                     ],
-                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=query('closest_planet', [args['filter']])",
                 ],
             ],
         ]);
@@ -227,7 +227,7 @@ abstract class MetadataParserTest extends TestCase
     {
         $this->expect('WithArmor', 'interface', [
             'description' => 'The armored interface',
-            'resolveType' => '@=resolver(\'character_type\', [value])',
+            'resolveType' => '@=query(\'character_type\', [value])',
         ]);
     }
 
@@ -272,7 +272,7 @@ abstract class MetadataParserTest extends TestCase
             'interfaces' => ['Character', 'WithArmor'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'planet_armorResistance' => [
                     'type' => 'Int!',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',

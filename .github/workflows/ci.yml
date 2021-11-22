@@ -153,6 +153,12 @@ jobs:
   static-analysis:
     runs-on: ubuntu-20.04
     name: "Static analysis"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-version: 7.4
+          - php-version: 8.0
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
@@ -162,7 +168,7 @@ jobs:
       - name: "Install PHP with coverage"
         uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "7.4"
+          php-version: ${{ matrix.php-version }}
           coverage: "none"
 
       - name: "Cache dependencies installed with composer"
@@ -191,6 +197,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "8.0"
+          symfony-version: "5.2.*"
           ini-values: pcov.directory=.
           coverage: "pcov"
 
