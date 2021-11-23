@@ -17,18 +17,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: 7.4
-            symfony-version: "4.4.*"
+          - php-version: "7.4"
+            symfony-version: "4.4"
 
-          - php-version: 7.4
-            symfony-version: "4.4.*"
+          - php-version: "7.4"
+            symfony-version: "4.4"
             remove-validator: true
 
-          - php-version: 7.4
-            symfony-version: "5.3.*"
+          - php-version: "7.4"
+            symfony-version: "5.3"
 
-          - php-version: 8.0
-            symfony-version: "5.3.*"
+          - php-version: "8.0"
+            symfony-version: "5.3"
 
     steps:
       - name: "Checkout"
@@ -45,7 +45,7 @@ jobs:
 
       - name: "Symfony version"
         if: "matrix.symfony-version != ''"
-        run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}"'"#' composer.json
+        run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}.\*"'"#' composer.json
 
       - name: "Webonyx GraphQL version"
         if: "matrix.graphql-version != ''"
