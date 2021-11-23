@@ -49,10 +49,6 @@ jobs:
         if: "matrix.symfony-version != ''"
         run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}"'"#' composer.json
 
-      - name: "PhpUnit version"
-        if: "matrix.phpunit-version != ''"
-        run: composer req "phpunit/phpunit:${{ matrix.phpunit-version }}" --dev --no-update
-
       - name: "Webonyx GraphQL version"
         if: "matrix.graphql-version != ''"
         run: composer require "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
@@ -63,14 +59,6 @@ jobs:
 
       - name: "Install dependencies"
         uses: ramsey/composer-install@1.3.0
-
-      - name: "Set USE_EXPERIMENTAL_EXECUTOR if needed"
-        if: "matrix.experimental-executor != ''"
-        run: export USE_EXPERIMENTAL_EXECUTOR=${{ matrix.experimental-executor }}
-
-      - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
-        if: "matrix.symfony-deprecation-helper != ''"
-        run: export SYMFONY_DEPRECATIONS_HELPER=${{ matrix.symfony-deprecation-helper }}
 
       - name: "Run tests"
         run: composer test
