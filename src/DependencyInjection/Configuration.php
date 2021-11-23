@@ -126,7 +126,6 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('argument_class')->defaultValue(Argument::class)->end()
-                ->scalarNode('use_experimental_executor')->defaultFalse()->end()
                 ->scalarNode('default_field_resolver')->defaultValue(FieldResolver::class)->end()
                 ->scalarNode('class_namespace')->defaultValue('Overblog\\GraphQLBundle\\__DEFINITIONS__')->end()
                 ->scalarNode('cache_dir')->defaultNull()->end()

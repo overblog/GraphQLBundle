@@ -99,7 +99,6 @@ class AccessTest extends TestCase
                     'warnings' => [
                         [
                             'message' => 'Access denied to this field.',
-                            'extensions' => ['category' => 'user'],
                             'locations' => [['line' => 1, 'column' => 45]],
                             'path' => ['user', 'isEnabled'],
                         ],
@@ -125,7 +124,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [['line' => 1, 'column' => 16]],
                         'path' => ['user', 'name'],
                     ],
@@ -146,7 +144,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 2,
@@ -217,7 +214,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -302,7 +298,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -325,7 +320,6 @@ class AccessTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Access denied to this field.',
-                    'extensions' => ['category' => 'user'],
                     'locations' => [
                         [
                             'line' => 2,
@@ -356,7 +350,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 1,

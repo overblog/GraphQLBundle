@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Error;
 
 use Exception;
+use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\UserError as GraphQLUserError;
 use GraphQL\Executor\ExecutionResult;
@@ -48,7 +49,7 @@ final class ErrorHandlerTest extends TestCase
         $executionResult = new ExecutionResult(
             null,
             [
-                new GraphQLError('Error without wrapped exception'),
+                new GraphQLError('Error without wrapped exception', null, null, null, null, null),
                 new GraphQLError('Error with wrapped exception', null, null, [], null, new Exception('My Exception message')),
                 new GraphQLError('Error with wrapped user error', null, null, [], null, new UserError('My User Error')),
                 new GraphQLError('Error with wrapped base user error', null, null, [], null, new GraphQLUserError('My bases User Error')),
@@ -63,38 +64,30 @@ final class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
-                    'extensions' => ['category' => 'graphql'],
                 ],
                 [
                     'message' => ErrorHandler::DEFAULT_ERROR_MESSAGE,
-                    'extensions' => ['category' => 'internal'],
                 ],
                 [
                     'message' => 'Error with wrapped user error',
-                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'Error with wrapped base user error',
-                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 1',
-                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 2',
-                    'extensions' => ['category' => 'user'],
                 ],
                 [
                     'message' => 'My User Error 3',
-                    'extensions' => ['category' => 'user'],
                 ],
             ],
             'extensions' => [
                 'warnings' => [
                     [
                         'message' => 'Error with wrapped user warning',
-                        'extensions' => ['category' => 'user'],
                     ],
                 ],
             ],
@@ -144,7 +137,6 @@ final class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error with wrapped user error',
-                    'extensions' => ['category' => 'user'],
                 ],
             ],
         ];
@@ -166,12 +158,13 @@ final class ErrorHandlerTest extends TestCase
 
             $this->errorHandler->handleErrors($executionResult, false, true);
 
-            $errors = $executionResult->toArray()['errors'];
+            $errors = $executionResult->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE)['errors'];
             $this->assertCount(1, $errors);
-            $this->assertArrayHasKey('debugMessage', $errors[0]);
-            $this->assertSame('Error wrapped exception', $errors[0]['debugMessage']);
+            $this->assertArrayHasKey('extensions', $errors[0]);
+            $this->assertArrayHasKey('debugMessage', $errors[0]['extensions']);
+            $this->assertSame('Error wrapped exception', $errors[0]['extensions']['debugMessage']);
             $this->assertSame(ErrorHandler::DEFAULT_ERROR_MESSAGE, $errors[0]['message']);
-            $this->assertArrayHasKey('trace', $errors[0]);
+            $this->assertArrayHasKey('trace', $errors[0]['extensions']);
         }
     }
 
@@ -190,7 +183,6 @@ final class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error without wrapped exception',
-                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -220,7 +212,6 @@ final class ErrorHandlerTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Error with invalid argument exception',
-                        'extensions' => ['category' => 'user'],
                     ],
                 ],
             ],
@@ -278,7 +269,6 @@ final class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -304,7 +294,6 @@ final class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -319,7 +308,6 @@ final class ErrorHandlerTest extends TestCase
                         'warnings' => [
                             [
                                 'message' => 'Error with invalid argument exception',
-                                'extensions' => ['category' => 'user'],
                             ],
                         ],
                     ],
@@ -335,7 +323,6 @@ final class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],
@@ -351,7 +338,6 @@ final class ErrorHandlerTest extends TestCase
                         'warnings' => [
                             [
                                 'message' => 'Error with invalid argument exception',
-                                'extensions' => ['category' => 'user'],
                             ],
                         ],
                     ],
@@ -367,7 +353,6 @@ final class ErrorHandlerTest extends TestCase
                     'errors' => [
                         [
                             'message' => 'Error with invalid argument exception',
-                            'extensions' => ['category' => 'user'],
                         ],
                     ],
                 ],

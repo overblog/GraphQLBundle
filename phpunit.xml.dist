@@ -26,7 +26,6 @@
     <php>
       <ini name="error_reporting" value="-1" />
       <env name="SYMFONY_DEPRECATIONS_HELPER" value="999999" />
-      <env name="USE_EXPERIMENTAL_EXECUTOR" value="0" />
     </php>
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
