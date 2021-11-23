@@ -187,7 +187,7 @@ jobs:
         with:
           fetch-depth: 50
 
-      - name: "Install PHP with coverage"
+      - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "8.0"
@@ -201,17 +201,11 @@ jobs:
           key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
-      - name: "Install Ocular as depencies"
-        run: composer req "scrutinizer/ocular" --dev --no-update
-
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress
 
       - name: "Run tests with coverage"
         run: bin/phpunit --color=always --coverage-clover=build/logs/clover.xml
-
-      - name: "Upload coverage results to Scrutinizer"
-        run: vendor/scrutinizer/ocular/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml
 
       - name: "Upload coverage results to Coveralls"
         env:
