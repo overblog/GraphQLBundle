@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -29,8 +29,6 @@ jobs:
 
           - php-version: 8.0
             symfony-version: "5.3.*"
-
-    name: "PHP ${{ matrix.php-version }} / Symfony ${{ matrix.symfony-version }} Test"
 
     steps:
       - name: "Checkout"
