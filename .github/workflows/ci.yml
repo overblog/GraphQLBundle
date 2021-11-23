@@ -46,6 +46,7 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           coverage: "${{ matrix.coverage }}"
+          tools: composer
 
       - name: "Change stability"
         if: "matrix.stability != ''"
