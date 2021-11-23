@@ -12,28 +12,29 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: "${{ matrix.operating-system }}"
     strategy:
       fail-fast: false
       matrix:
-        php-version:
-          - '7.4'
-          - '8.0'
-        symfony-version:
-          - '4.4.*'
-          - '5.3.*'
-        dependencies:
-          - 'lowest'
-          - 'highest'
-        remove-dependencies: [ '' ]
-        coverage: [ '' ]
+        operating-system: ['ubuntu-latest']
+        php-version: ['7.4', '8.0']
+        symfony-version: ['4.4', '5.3']
+        dependencies: ['lowest', 'highest']
+        remove-dependencies: ['']
+        coverage: ['']
         include:
-          - php-version: '8.0'
-            symfony-version: '5.3.*'
+          - operating-system: 'windows-latest'
+            php-version: '8.0'
+            symfony-version: '5.3'
+            dependencies: 'lowest'
+          - operating-system: 'linux-latest'
+            php-version: '8.0'
+            symfony-version: '5.3'
             dependencies: 'lowest'
             remove-dependencies: '--dev symfony/validator'
-          - php-version: '8.0'
-            symfony-version: '5.3.*'
+          - operating-system: 'linux-latest'
+            php-version: '8.0'
+            symfony-version: '5.3'
             dependencies: 'lowest'
             coverage: "pcov"
     steps:
