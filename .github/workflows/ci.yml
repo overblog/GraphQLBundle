@@ -52,7 +52,7 @@ jobs:
 
       - name: "Symfony version"
         if: "matrix.symfony-version != ''"
-        run: perl -pi -e 's#"(symfony/.*)":\s*"\^.*"#"$1":"'"${{ matrix.symfony-version }}.*"'"#' composer.json && cat composer.json
+        run: perl -pi -e 's#"(symfony/.*)":\s*".*\|\|.*"#"$1":"'"${{ matrix.symfony-version }}.*"'"#' composer.json && cat composer.json
 
       - name: "Webonyx GraphQL version"
         if: "matrix.graphql-version != ''"
