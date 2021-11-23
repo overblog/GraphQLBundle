@@ -148,7 +148,7 @@ class ConfigParserPass implements CompilerPassInterface
                 continue;
             }
 
-            $config[] = self::PARSERS[$type]->$method($file, $container, $configs);
+            $config[] = [self::PARSERS[$type], $method]($file, $container, $configs);
             $treatedFiles[$file->getRealPath()] = true;
         }
 
