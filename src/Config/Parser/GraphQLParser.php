@@ -11,7 +11,6 @@ use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\Parser;
-use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\NodeInterface;
 use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -42,7 +41,7 @@ class GraphQLParser implements ParserInterface
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
-        $content = trim(file_get_contents($file->getPathname()));
+        $content = trim((string) file_get_contents($file->getPathname()));
         $typesConfig = [];
 
         // allow empty files
@@ -61,7 +60,7 @@ class GraphQLParser implements ParserInterface
              */
             if (isset($typeDef->kind) && in_array($typeDef->kind, array_keys(self::DEFINITION_TYPE_MAPPING))) {
                 /**
-                 * @var class-string<NodeInterface> $class
+                 * @var class-string $class
                  */
                 $class = sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
                 $astConverterCallable = [$class, 'toConfig'];

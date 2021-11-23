@@ -1,49 +1,9 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$str of function strtolower expects string, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
+			message: "#^Abstract class Overblog\\\\GraphQLBundle\\\\Annotation\\\\Builder cannot be an Attribute class\\.$#"
 			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Binary operation \"\\.\" between '\\.' and \\(array\\<string\\>\\)\\|string\\|true results in an error\\.$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$schemaName of method Overblog\\\\GraphQLBundle\\\\Request\\\\Executor\\:\\:execute\\(\\) expects string\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$name of method Overblog\\\\GraphQLBundle\\\\Request\\\\Executor\\:\\:getSchema\\(\\) expects string\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$file of function file_put_contents expects string, \\(array\\<string\\>\\)\\|string\\|true given\\.$#"
-			count: 1
-			path: src/Command/GraphQLDumpSchemaCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$name of method Overblog\\\\GraphQLBundle\\\\Request\\\\Executor\\:\\:getSchema\\(\\) expects string\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Command/ValidateCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Config/Parser/MetadataParser/MetadataParser.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function file_get_contents expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Config/Parser/MetadataParser/MetadataParser.php
-
-		-
-			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Config/Parser/MetadataParser/MetadataParser.php
+			path: src/Annotation/Builder.php
 
 		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$description\\.$#"
@@ -91,19 +51,19 @@ parameters:
 			path: src/Config/Parser/GraphQLParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$filename of function file_get_contents expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/GraphQLParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string, 'toConfig'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/GraphQLParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$file of static method Symfony\\\\Component\\\\Config\\\\Util\\\\XmlUtils\\:\\:loadFile\\(\\) expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
 			count: 1
-			path: src/Config/Parser/XmlParser.php
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
 
 		-
 			message: "#^Parameter \\#1 \\$resource of class Symfony\\\\Component\\\\Config\\\\Resource\\\\FileResource constructor expects string, string\\|false given\\.$#"
@@ -116,24 +76,9 @@ parameters:
 			path: src/Config/Parser/YamlParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\(string\\|null, 'getAliases'\\) given\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/AliasedPass.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func expects callable\\(\\)\\: mixed, array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) given\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/ConfigParserPass.php
-
-		-
 			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
-
-		-
-			message: "#^Parameter \\#1 \\$str of function substr expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
 
 		-
 			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\|null given\\.$#"
@@ -141,12 +86,12 @@ parameters:
 			path: src/Error/ErrorHandler.php
 
 		-
-			message: "#^Result of \\|\\| is always false\\.$#"
+			message: "#^Array \\(array\\<Overblog\\\\GraphQLBundle\\\\Error\\\\UserError\\>\\) does not accept GraphQL\\\\Error\\\\UserError\\.$#"
 			count: 1
 			path: src/Error/UserErrors.php
 
 		-
-			message: "#^Array \\(array\\<Overblog\\\\GraphQLBundle\\\\Error\\\\UserError\\>\\) does not accept GraphQL\\\\Error\\\\UserError\\.$#"
+			message: "#^Result of \\|\\| is always false\\.$#"
 			count: 1
 			path: src/Error/UserErrors.php
 
@@ -176,14 +121,14 @@ parameters:
 			path: src/Relay/Mutation/PayloadDefinition.php
 
 		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, mixed\\) given\\.$#"
-			count: 1
-			path: src/Resolver/AbstractProxyResolver.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: src/Resolver/TypeResolver.php
+
+		-
+			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
+			count: 1
+			path: src/Validator/InputValidator.php
 
 		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\PropertyMetadata\\>\\) does not accept Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\.$#"
@@ -196,9 +141,9 @@ parameters:
 			path: src/Validator/Mapping/PropertyMetadata.php
 
 		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Scalar\\\\GalaxyCoordinates\\:\\:parseValue\\(\\) should return DateTimeInterface but returns array\\<int, string\\>\\.$#"
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Input\\\\Planet\\:\\:\\$diameter has no typehint specified\\.$#"
 			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php
+			path: tests/Config/Parser/fixtures/annotations/Input/Planet.php
 
 		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$value\\.$#"
@@ -211,17 +156,82 @@ parameters:
 			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php
 
 		-
-			message: "#^Call to method setMethods\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Scalar\\\\GalaxyCoordinates\\:\\:parseValue\\(\\) should return DateTimeInterface but returns array\\<int, string\\>\\.$#"
 			count: 1
-			path: tests/ExpressionLanguage/TestCase.php
+			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php
+
+		-
+			message: "#^Missing parameter \\$name \\(string\\|null\\) in call to Overblog\\\\GraphQLBundle\\\\Annotation\\\\TypeInterface constructor\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Character.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$battles has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$bool has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$boolean has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$color has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$creator has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$crystal has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$currentHolder has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$decimal has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$float has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$holders has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$size has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$string has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$text has no typehint specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
 
 		-
 			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, 'with'\\) given\\.$#"
-			count: 1
-			path: tests/ExpressionLanguage/TestCase.php
-
-		-
-			message: "#^Call to method disableOriginalConstructor\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
 			count: 1
 			path: tests/ExpressionLanguage/TestCase.php
 
@@ -241,6 +251,21 @@ parameters:
 			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
 
 		-
+			message: "#^Call to method disableOriginalConstructor\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
+			count: 1
+			path: tests/ExpressionLanguage/TestCase.php
+
+		-
+			message: "#^Call to method setMethods\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
+			count: 1
+			path: tests/ExpressionLanguage/TestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, 'with'\\) given\\.$#"
+			count: 1
+			path: tests/ExpressionLanguage/TestCase.php
+
+		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface\\:\\:isBooted\\(\\)\\.$#"
 			count: 1
 			path: tests/Functional/BootTest.php
@@ -256,27 +281,17 @@ parameters:
 			path: tests/Functional/Command/DebugCommandTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: tests/Functional/Command/DebugCommandTest.php
-
-		-
 			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
 			count: 1
 			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function trim expects string, string\\|false given\\.$#"
-			count: 2
-			path: tests/Functional/Command/GraphDumpSchemaCommandTest.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\ValidateCommandTest\\:\\:\\$command \\(Overblog\\\\GraphQLBundle\\\\Command\\\\ValidateCommand\\) does not accept object\\|null\\.$#"
+			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
 			count: 1
 			path: tests/Functional/Command/ValidateCommandTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$command of class Symfony\\\\Component\\\\Console\\\\Tester\\\\CommandTester constructor expects Symfony\\\\Component\\\\Console\\\\Command\\\\Command, object\\|null given\\.$#"
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Command\\\\ValidateCommandTest\\:\\:\\$command \\(Overblog\\\\GraphQLBundle\\\\Command\\\\ValidateCommand\\) does not accept object\\|null\\.$#"
 			count: 1
 			path: tests/Functional/Command/ValidateCommandTest.php
 
@@ -291,12 +306,12 @@ parameters:
 			path: tests/Functional/Controller/GraphControllerTest.php
 
 		-
-			message: "#^Parameter \\#3 \\$message of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#3 \\$message of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
 
@@ -311,7 +326,7 @@ parameters:
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 .* of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
 			count: 1
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
@@ -341,16 +356,6 @@ parameters:
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$edges\\.$#"
-			count: 2
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$pageInfo\\.$#"
-			count: 2
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
 			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\:\\:\\$cursor\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
@@ -361,7 +366,7 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\:\\:\\$startCursor\\.$#"
+			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$extra\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
@@ -371,13 +376,28 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
+			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\:\\:\\$hasNextPage\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
 			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\:\\:\\$hasPreviousPage\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\:\\:\\$hasNextPage\\.$#"
+			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\PageInfoInterface\\:\\:\\$startCursor\\.$#"
 			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$edges\\.$#"
+			count: 2
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$pageInfo\\.$#"
+			count: 2
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
@@ -391,17 +411,7 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$startCursor\\.$#"
-			count: 1
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
 			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$endCursor\\.$#"
-			count: 1
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$hasPreviousPage\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
@@ -411,34 +421,14 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$extra\\.$#"
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$hasPreviousPage\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Variable \\$.* in isset\\(\\) is never defined\\.$#"
-			count: 21
-			path: src/Generator/TypeBuilder.php
-
-		-
-			message: "#^Call to an undefined method Murtukov\\\\PHPCodeGenerator\\\\OOPStructure::createConstructor.*$#"
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$startCursor\\.$#"
 			count: 1
-			path: src/Generator/TypeBuilder.php
-
-		-
-			message: "#^Parameter \\#1 \\$str of function ltrim expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Generator/TypeBuilder.php
-
-		-
-			message: "#^Result of && is always false\\.$#"
-			count: 2
-			path: src/Generator/TypeBuilder.php
-
-		-
-			message: "#^Array \\(array<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
-			count: 1
-			path: src/Validator/InputValidator.php
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
 			message:  "#^Call to an undefined method ReflectionClass|ReflectionMethod|ReflectionProperty::getAttributes().$#"

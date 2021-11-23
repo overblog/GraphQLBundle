@@ -617,7 +617,7 @@ class TypeBuilder
             if (false !== strpos($name, '\\')) {
                 // Custom constraint
                 $fqcn = ltrim($name, '\\');
-                $name = ltrim(strrchr($name, '\\'), '\\');
+                $name = ltrim((string) strrchr($name, '\\'), '\\');
                 $this->file->addUse($fqcn);
             } else {
                 // Symfony constraint
