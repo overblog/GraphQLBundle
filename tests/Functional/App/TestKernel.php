@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App;
 
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -25,6 +26,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     {
         yield new FrameworkBundle();
         yield new SecurityBundle();
+        yield new MonologBundle();
         yield new OverblogGraphQLBundle();
     }
 
