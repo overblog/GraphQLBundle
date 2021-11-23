@@ -35,8 +35,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 50
 
       - name: "Install PHP without coverage"
         uses: "shivammathur/setup-php@v2"
@@ -91,8 +89,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 50
 
       - name: "Install PHP without coverage"
         uses: "shivammathur/setup-php@v2"
@@ -119,8 +115,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 50
 
       - name: "Install PHP without coverage"
         uses: "shivammathur/setup-php@v2"
@@ -147,8 +141,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 50
 
       - name: "Install PHP with coverage"
         uses: "shivammathur/setup-php@v2"
@@ -175,8 +167,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 50
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
