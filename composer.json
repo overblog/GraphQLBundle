@@ -73,7 +73,7 @@
         }
     },
     "scripts": {
-        "test": "bin/phpunit --color=always",
+        "test": "bin/phpunit --color=always --coverage-clover=build/logs/clover.xml",
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],

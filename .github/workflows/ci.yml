@@ -26,11 +26,16 @@ jobs:
           - 'lowest'
           - 'highest'
         remove-dependencies: [ '' ]
+        coverage: [ '' ]
         include:
           - php-version: '8.0'
             symfony-version: '5.3.*'
             dependencies: 'lowest'
             remove-dependencies: '--dev symfony/validator'
+          - php-version: '8.0'
+            symfony-version: '5.3.*'
+            dependencies: 'lowest'
+            coverage: "pcov"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
@@ -39,6 +44,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
+          coverage: "${{ matrix.coverage }}"
 
       - name: "Change stability"
         if: "matrix.stability != ''"
@@ -61,6 +67,14 @@ jobs:
 
       - name: "Run tests"
         run: composer test
+
+      - name: "Upload coverage results to Coveralls"
+        if: "matrix.coverage == 'pcov'"
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
 
   coding-standard:
     runs-on: ubuntu-20.04
@@ -115,30 +129,3 @@ jobs:
 
       - name: "Run static-analysis"
         run: composer static-analysis
-
-  coverage:
-    runs-on: ubuntu-20.04
-    name: "Coverage"
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          php-version: "8.0"
-          ini-values: pcov.directory=.
-          coverage: "pcov"
-
-      - name: "Install dependencies"
-        uses: ramsey/composer-install@1.3.0
-
-      - name: "Run tests with coverage"
-        run: bin/phpunit --color=always --coverage-clover=build/logs/clover.xml
-
-      - name: "Upload coverage results to Coveralls"
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          composer global require php-coveralls/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
