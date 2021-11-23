@@ -2,7 +2,7 @@ OverblogGraphQLBundle
 ======================
 
 This Symfony bundle provides integration of [GraphQL](https://facebook.github.io/graphql/) using [webonyx/graphql-php](https://github.com/webonyx/graphql-php)
-and [GraphQL Relay](https://relay.dev/docs/en/graphql-server-specification).
+and [GraphQL Relay](https://relay.dev/docs/guides/graphql-server-specification/).
 It also supports batching using libs like [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer) or [Apollo GraphQL](https://www.apollographql.com/docs/react/api/link/apollo-link-batch-http/).
 
 Versions requirements
