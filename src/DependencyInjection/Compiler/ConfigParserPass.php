@@ -27,7 +27,6 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace_recursive;
-use function call_user_func;
 use function dirname;
 use function implode;
 use function is_a;
@@ -36,6 +35,9 @@ use function sprintf;
 
 class ConfigParserPass implements CompilerPassInterface
 {
+    /**
+     * @var array<string, string>
+     */
     public const SUPPORTED_TYPES_EXTENSIONS = [
         'yaml' => '{yaml,yml}',
         'graphql' => '{graphql,graphqls}',
@@ -43,6 +45,9 @@ class ConfigParserPass implements CompilerPassInterface
         'attribute' => 'php',
     ];
 
+    /**
+     * @var array<string, class-string<PreParserInterface>>
+     */
     public const PARSERS = [
         'yaml' => YamlParser::class,
         'graphql' => GraphQLParser::class,
@@ -143,7 +148,7 @@ class ConfigParserPass implements CompilerPassInterface
                 continue;
             }
 
-            $config[] = call_user_func([self::PARSERS[$type], $method], $file, $container, $configs);
+            $config[] = self::PARSERS[$type]->$method($file, $container, $configs);
             $treatedFiles[$file->getRealPath()] = true;
         }
 
