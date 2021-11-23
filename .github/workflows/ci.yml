@@ -22,7 +22,7 @@ jobs:
 
           - php-version: 7.4
             symfony-version: "4.4.*"
-            validator: false
+            remove-validator: true
 
           - php-version: 7.4
             symfony-version: "5.3.*"
@@ -52,34 +52,34 @@ jobs:
           restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
 
       - name: "Change stability"
-        if: matrix.stability != ''
+        if: "matrix.stability != ''"
         run: perl -pi -e 's/^}$/,"minimum-stability":"'"${{ matrix.minimum-stability }}"'"}/' composer.json
 
       - name: "Symfony version"
-        if: matrix.symfony-version != ''
+        if: "matrix.symfony-version != ''"
         run: perl -pi -e 's#"(symfony/.*)":\s*".*"#"$1":"'"${{ matrix.symfony-version }}"'"#' composer.json
 
       - name: "PhpUnit version"
-        if: matrix.phpunit-version != ''
+        if: "matrix.phpunit-version != ''"
         run: composer req "phpunit/phpunit:${{ matrix.phpunit-version }}" --dev --no-update
 
       - name: "Webonyx GraphQL version"
-        if: matrix.graphql-version != ''
+        if: "matrix.graphql-version != ''"
         run: composer req "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
 
       - name: "Disabled validator if needed"
-        if: matrix.validator == false
+        if: "matrix.remove-validator == true"
         run: composer remove "symfony/validator" --dev --no-update;
 
       - name: "Install dependencies"
         run: composer update --no-interaction --no-progress ${{ matrix.composer-flags }}
 
       - name: "Set USE_EXPERIMENTAL_EXECUTOR if needed"
-        if: matrix.experimental-executor != ''
+        if: "matrix.experimental-executor != ''"
         run: export USE_EXPERIMENTAL_EXECUTOR=${{ matrix.experimental-executor }}
 
       - name: "Set SYMFONY_DEPRECATIONS_HELPER if needed"
-        if: matrix.symfony-deprecation-helper != ''
+        if: "matrix.symfony-deprecation-helper != ''"
         run: export SYMFONY_DEPRECATIONS_HELPER=${{ matrix.symfony-deprecation-helper }}
 
       - name: "Run tests"
