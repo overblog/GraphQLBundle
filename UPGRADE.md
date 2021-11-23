@@ -1,3 +1,8 @@
+UPGRADE FROM 0.14 to 1.0
+=========================
+
+* Signature of TypeInterface changed
+
 UPGRADE FROM 0.13 to 0.14
 =========================
 
