@@ -36,11 +36,10 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
-      - name: "Install PHP without coverage"
+      - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          coverage: "none"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
@@ -90,11 +89,10 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
-      - name: "Install PHP without coverage"
+      - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "7.4"
-          coverage: "none"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
@@ -116,11 +114,10 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
-      - name: "Install PHP without coverage"
+      - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "7.4"
-          coverage: "none"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
@@ -142,11 +139,10 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
-      - name: "Install PHP with coverage"
+      - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "7.4"
-          coverage: "none"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2"
