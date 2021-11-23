@@ -20,8 +20,8 @@ jobs:
           - '7.4'
           - '8.0'
         symfony-version:
-          - '4.4.*'
-          - '5.3.*'
+          - '4.4'
+          - '5.3'
         dependencies:
           - 'lowest'
           - 'highest'
@@ -29,11 +29,11 @@ jobs:
         coverage: [ '' ]
         include:
           - php-version: '8.0'
-            symfony-version: '5.3.*'
+            symfony-version: '5.3'
             dependencies: 'lowest'
             remove-dependencies: '--dev symfony/validator'
           - php-version: '8.0'
-            symfony-version: '5.3.*'
+            symfony-version: '5.3'
             dependencies: 'lowest'
             coverage: "pcov"
     steps:
@@ -119,8 +119,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: 7.4
-          - php-version: 8.0
+          - php-version: '7.4'
+          - php-version: '8.0'
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"

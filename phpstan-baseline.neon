@@ -81,6 +81,11 @@ parameters:
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
 		-
+			message: "#^Trying to invoke array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) but it might not be a callable\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/ConfigParserPass.php
+
+		-
 			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\|null given\\.$#"
 			count: 1
 			path: src/Error/ErrorHandler.php
