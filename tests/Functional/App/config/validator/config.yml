@@ -31,8 +31,7 @@ services:
 
     Overblog\GraphQLBundle\Tests\Functional\Validator\ServiceValidator:
         tags:
-            # TODO: replace the tag with 'overblog_graphql.service' in 1.0
-            - { name: overblog_graphql.global_variable, alias: service_validator }
+            - { name: overblog_graphql.service, alias: service_validator }
 
     Overblog\GraphQLBundle\Tests\Functional\App\Mutation\InputValidatorMutation:
         tags:
