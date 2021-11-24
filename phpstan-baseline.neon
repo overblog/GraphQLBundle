@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method ReflectionClass\\|ReflectionClassConstant\\|ReflectionMethod\\|ReflectionProperty\\:\\:getAttributes\\(\\)\\.$#"
+			count: 1
+			path: src/Config/Parser/AttributeParser.php
+
+		-
 			message: "#^Abstract class Overblog\\\\GraphQLBundle\\\\Annotation\\\\Builder cannot be an Attribute class\\.$#"
 			count: 1
 			path: src/Annotation/Builder.php
@@ -51,6 +56,11 @@ parameters:
 			path: src/Config/Parser/GraphQLParser.php
 
 		-
+			message: "#^Dead catch \\- Overblog\\\\GraphQLBundle\\\\Config\\\\Parser\\\\MetadataParser\\\\TypeGuesser\\\\TypeGuessingException is never thrown in the try block\\.$#"
+			count: 3
+			path: src/Config/Parser/MetadataParser/MetadataParser.php
+
+		-
 			message: "#^Parameter \\#1 \\$filename of function file_get_contents expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Config/Parser/MetadataParser/MetadataParser.php
@@ -76,12 +86,27 @@ parameters:
 			path: src/Config/Parser/YamlParser.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Config\\\\Processor\\\\BuilderProcessor\\:\\:getBuilder\\(\\) should return Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\MappingInterface but returns object\\.$#"
+			count: 1
+			path: src/Config/Processor/BuilderProcessor.php
+
+		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\TypeFactory\\:\\:create\\(\\) should return GraphQL\\\\Type\\\\Definition\\\\Type but returns object\\.$#"
+			count: 1
+			path: src/Definition/Builder/TypeFactory.php
+
+		-
+			message: "#^PHPDoc tag @var for constant Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\Compiler\\\\ConfigParserPass\\:\\:PARSERS with type array\\<string, class\\-string\\<Overblog\\\\GraphQLBundle\\\\Config\\\\Parser\\\\PreParserInterface\\>\\> is not subtype of value array\\{yaml\\: 'Overblog…', graphql\\: 'Overblog…', annotation\\: 'Overblog…', attribute\\: 'Overblog…'\\}\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/ConfigParserPass.php
+
+		-
 			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
 		-
-			message: "#^Trying to invoke array\\('Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\) but it might not be a callable\\.$#"
+			message: "#^Trying to invoke array\\{'Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\} but it might not be a callable\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
@@ -89,6 +114,11 @@ parameters:
 			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\|null given\\.$#"
 			count: 1
 			path: src/Error/ErrorHandler.php
+
+		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter\\:\\:convertException\\(\\) should return Throwable but returns object\\.$#"
+			count: 1
+			path: src/Error/ExceptionConverter.php
 
 		-
 			message: "#^Array \\(array\\<Overblog\\\\GraphQLBundle\\\\Error\\\\UserError\\>\\) does not accept GraphQL\\\\Error\\\\UserError\\.$#"
@@ -99,6 +129,16 @@ parameters:
 			message: "#^Result of \\|\\| is always false\\.$#"
 			count: 1
 			path: src/Error/UserErrors.php
+
+		-
+			message: "#^Cannot use array destructuring on callable\\.$#"
+			count: 1
+			path: src/Generator/TypeBuilder.php
+
+		-
+			message: "#^Offset 'validationGroups' on array\\{type\\: string, resolve\\?\\: string, description\\?\\: string, args\\?\\: array, complexity\\?\\: string, deprecatedReason\\?\\: string, validation\\?\\: array\\} on left side of \\?\\? does not exist\\.$#"
+			count: 1
+			path: src/Generator/TypeBuilder.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and Composer\\\\Autoload\\\\ClassLoader will always evaluate to false\\.$#"
@@ -126,12 +166,22 @@ parameters:
 			path: src/Relay/Mutation/PayloadDefinition.php
 
 		-
+			message: "#^Unsafe access to private constant Overblog\\\\GraphQLBundle\\\\Resolver\\\\FieldResolver\\:\\:PREFIXES through static\\:\\:\\.$#"
+			count: 1
+			path: src/Resolver/FieldResolver.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
 			path: src/Resolver/TypeResolver.php
 
 		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
+			count: 1
+			path: src/Validator/InputValidator.php
+
+		-
+			message: "#^Unsafe call to private method Overblog\\\\GraphQLBundle\\\\Validator\\\\InputValidator\\:\\:isListOfType\\(\\) through static\\:\\:\\.$#"
 			count: 1
 			path: src/Validator/InputValidator.php
 
@@ -144,11 +194,6 @@ parameters:
 			message: "#^Call to an undefined method ReflectionMethod\\|ReflectionProperty\\:\\:getValue\\(\\)\\.$#"
 			count: 1
 			path: src/Validator/Mapping/PropertyMetadata.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Input\\\\Planet\\:\\:\\$diameter has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Input/Planet.php
 
 		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$value\\.$#"
@@ -166,79 +211,19 @@ parameters:
 			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php
 
 		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Animal\\:\\:\\$lives is unused\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Animal.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Animal\\:\\:\\$name is unused\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Animal.php
+
+		-
 			message: "#^Missing parameter \\$name \\(string\\|null\\) in call to Overblog\\\\GraphQLBundle\\\\Annotation\\\\TypeInterface constructor\\.$#"
 			count: 1
 			path: tests/Config/Parser/fixtures/annotations/Type/Character.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$battles has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$bool has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$boolean has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$color has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$creator has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$crystal has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$currentHolder has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$decimal has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$float has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$holders has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$size has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$string has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$text has no typehint specified\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
-
-		-
-			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, 'with'\\) given\\.$#"
-			count: 1
-			path: tests/ExpressionLanguage/TestCase.php
 
 		-
 			message: "#^Parameter \\#1 \\$exceptionMap of class Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter constructor expects array\\<string, string\\>, array\\<string, array\\<string\\>\\> given\\.$#"
@@ -266,7 +251,7 @@ parameters:
 			path: tests/ExpressionLanguage/TestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(mixed, 'with'\\) given\\.$#"
+			message: "#^Parameter \\#1 \\$.* of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{mixed, 'with'\\} given\\.$#"
 			count: 1
 			path: tests/ExpressionLanguage/TestCase.php
 
@@ -311,6 +296,16 @@ parameters:
 			path: tests/Functional/Controller/GraphControllerTest.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\TestCase\\:\\:createKernel\\(\\) should return Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface but returns object\\.$#"
+			count: 1
+			path: tests/Functional/TestCase.php
+
+		-
+			message: "#^Missing call to parent\\:\\:tearDown\\(\\) method\\.$#"
+			count: 1
+			path: tests/Functional/TestCase.php
+
+		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
@@ -326,18 +321,28 @@ parameters:
 			path: tests/Functional/Upload/UploadTest.php
 
 		-
-			message: "#^Cannot call method getCursor\\(\\) on Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\|false\\.$#"
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Validator\\\\DummyEntity\\:\\:\\$string1 is never written, only read\\.$#"
 			count: 1
-			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
+			path: tests/Functional/Validator/DummyEntity.php
 
 		-
-			message: "#^Parameter \\#1 .* of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Validator\\\\DummyEntity\\:\\:\\$string2 is never written, only read\\.$#"
 			count: 1
-			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
+			path: tests/Functional/Validator/DummyEntity.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\Validator\\\\DummyEntity\\:\\:\\$string3 is never written, only read\\.$#"
+			count: 1
+			path: tests/Functional/Validator/DummyEntity.php
 
 		-
 			message: "#^Cannot access offset mixed on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
 			count: 2
+			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$.* of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
+			count: 1
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
@@ -435,7 +440,3 @@ parameters:
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
-		-
-			message:  "#^Call to an undefined method ReflectionClass|ReflectionMethod|ReflectionProperty::getAttributes().$#"
-			count: 1
-			path: src/Config/Parser/AttributeParser.php
