@@ -55,6 +55,10 @@ jobs:
         if: "matrix.symfony-version != ''"
         run: perl -pi -e 's#"(symfony/.*)":\s*".*\|\|.*"#"$1":"'"${{ matrix.symfony-version }}.*"'"#' composer.json && cat composer.json
 
+      - name: "Webonyx GraphQL version"
+        if: "matrix.graphql-version != ''"
+        run: composer require "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
+
       - name: Remove dependencies
         if: "matrix.remove-dependencies != ''"
         run: composer remove --no-update ${{ matrix.remove-dependencies }}
