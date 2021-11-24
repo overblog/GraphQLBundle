@@ -19,6 +19,7 @@ jobs:
         php-version:
           - '7.4'
           - '8.0'
+          - '8.1'
         symfony-version:
           - '4.4'
           - '5.3'
@@ -116,9 +117,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - php-version: '7.4'
-          - php-version: '8.0'
+        php-version:
+          - '7.4'
+          - '8.0'
+          - '8.1'
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
