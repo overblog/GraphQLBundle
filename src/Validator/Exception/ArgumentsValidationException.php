@@ -24,11 +24,6 @@ class ArgumentsValidationException extends Exception implements ClientAware
         return true;
     }
 
-    public function getCategory(): string
-    {
-        return 'arguments_validation_error';
-    }
-
     public function getViolations(): ConstraintViolationListInterface
     {
         return $this->violations;

@@ -10,8 +10,9 @@ class ExpectedErrors
 {
     public const LINKED_CONSTRAINTS = [
         'message' => 'validation',
+        'locations' => [['line' => 3, 'column' => 17]],
+        'path' => ['linkedConstraintsValidation'],
         'extensions' => [
-            'category' => 'arguments_validation_error',
             'validation' => [
                 '' => [
                     ['message' => 'This value is not valid.', 'code' => '6b3befbc-2f01-4ddf-be21-b57898905284'],
@@ -28,14 +29,13 @@ class ExpectedErrors
                 ],
             ],
         ],
-        'locations' => [['line' => 3, 'column' => 17]],
-        'path' => ['linkedConstraintsValidation'],
     ];
 
     public const COLLECTION = [
         'message' => 'validation',
+        'locations' => [['line' => 3, 'column' => 17]],
+        'path' => ['collectionValidation'],
         'extensions' => [
-            'category' => 'arguments_validation_error',
             'validation' => [
                 'addresses[0].street' => [
                     [
@@ -79,16 +79,20 @@ class ExpectedErrors
                 ],
             ],
         ],
-        'locations' => [['line' => 3, 'column' => 17]],
-        'path' => ['collectionValidation'],
     ];
 
     public static function simpleValidation(string $fieldName): array
     {
         return [
             'message' => 'validation',
+            'locations' => [
+                [
+                    'line' => 3,
+                    'column' => 17,
+                ],
+            ],
+            'path' => [$fieldName],
             'extensions' => [
-                'category' => 'arguments_validation_error',
                 'validation' => [
                     'username' => [
                         [
@@ -98,13 +102,6 @@ class ExpectedErrors
                     ],
                 ],
             ],
-            'locations' => [
-                [
-                    'line' => 3,
-                    'column' => 17,
-                ],
-            ],
-            'path' => [$fieldName],
         ];
     }
 
@@ -155,12 +152,11 @@ class ExpectedErrors
 
         return [
             'message' => 'validation',
-            'extensions' => [
-                'category' => 'arguments_validation_error',
-                'validation' => $validation,
-            ],
             'locations' => [['line' => 3, 'column' => 17]],
             'path' => [$fieldName],
+            'extensions' => [
+                'validation' => $validation,
+            ],
         ];
     }
 }
