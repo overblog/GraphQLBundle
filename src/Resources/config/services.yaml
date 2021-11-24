@@ -18,7 +18,6 @@ services:
             - "@overblog_graphql.promise_adapter"
             - "@event_dispatcher"
             - '@overblog_graphql.default_field_resolver'
-            - "%overblog_graphql.use_experimental_executor%"
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]

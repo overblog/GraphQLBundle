@@ -139,9 +139,6 @@ class UploadTest extends TestCase
                 'errors' => [
                     [
                         'message' => 'Field "singleUpload" argument "file" requires type Upload, found {}; GraphQLUpload scalar literal unsupported.',
-                        'extensions' => [
-                            'category' => 'graphql',
-                        ],
                         'locations' => [
                             [
                                 'line' => 1,

@@ -49,7 +49,6 @@ class QueryMaxDepthTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -63,7 +62,6 @@ class QueryMaxDepthTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];

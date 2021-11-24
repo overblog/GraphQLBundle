@@ -8,7 +8,6 @@ use ArrayObject;
 use Closure;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -34,7 +33,6 @@ class Executor
     private EventDispatcherInterface $dispatcher;
     private PromiseAdapter $promiseAdapter;
     private ExecutorInterface $executor;
-    private bool $useExperimentalExecutor; // TODO: remove in 1.0
 
     /**
      * @var callable|null
@@ -45,14 +43,12 @@ class Executor
         ExecutorInterface $executor,
         PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
-        ?callable $defaultFieldResolver = null,
-        bool $useExperimental = false // TODO: remove in 1.0
+        ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->promiseAdapter = $promiseAdapter;
         $this->dispatcher = $dispatcher;
         $this->defaultFieldResolver = $defaultFieldResolver;
-        $this->useExperimentalExecutor = $useExperimental; // TODO: remove in 1.0
     }
 
     public function setExecutor(ExecutorInterface $executor): self
@@ -133,11 +129,6 @@ class Executor
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
-        // TODO: remove following if-block in 1.0
-        if (method_exists(GraphQL::class, 'useExperimentalExecutor')) {
-            $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
-        }
-
         $schema = $this->getSchema($schemaName);
         /** @var string $schemaName */
         $schemaName = array_search($schema, $this->schemas);

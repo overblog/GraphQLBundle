@@ -30,7 +30,6 @@ class ExceptionTest extends TestCase
         $expectedErrors = [
             [
                 'message' => 'Invalid argument exception',
-                'extensions' => ['category' => 'user'],
                 'locations' => [
                     [
                         'line' => 2,

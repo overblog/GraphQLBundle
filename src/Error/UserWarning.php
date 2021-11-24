@@ -12,16 +12,8 @@ class UserWarning extends RuntimeException implements ClientAware
     /**
      * {@inheritdoc}
      */
-    public function isClientSafe()
+    public function isClientSafe(): bool
     {
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCategory()
-    {
-        return 'user';
     }
 }
