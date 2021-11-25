@@ -49,7 +49,6 @@
     "require-dev": {
         "doctrine/annotations": "^1.13",
         "doctrine/orm": "^2.5",
-        "doctrine/annotations": "^1.12.1",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^0.12.58",
         "phpstan/phpstan-phpunit": "^0.12.11",

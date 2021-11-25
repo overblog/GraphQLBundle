@@ -31,7 +31,7 @@ jobs:
           - php-version: '8.0'
             symfony-version: '5.3'
             dependencies: 'lowest'
-            remove-dependencies: '--dev symfony/validator'
+            remove-dependencies: '--dev symfony/validator doctrine/orm doctrine/annotations'
           - php-version: '8.0'
             symfony-version: '5.3'
             dependencies: 'lowest'
@@ -62,14 +62,6 @@ jobs:
         if: "matrix.remove-dependencies != ''"
         run: composer remove --no-update ${{ matrix.remove-dependencies }}
 
-      - name: "Disabled doctrine/orm if needed"
-        if: matrix.uninstall_doctrine
-        run: composer remove "doctrine/orm" --dev --no-update;
-
-      - name: "Disabled doctrine/annotations if needed"
-        if: matrix.uninstall_annotations
-        run: composer remove "doctrine/orm" "doctrine/annotations" --dev --no-update;
-
       - name: "Install dependencies"
         uses: ramsey/composer-install@1.3.0
         with:
@@ -85,7 +77,6 @@ jobs:
         run: |
           composer global require php-coveralls/php-coveralls
           php-coveralls --coverage_clover=build/logs/clover.xml -v
-
   coding-standard:
     runs-on: ubuntu-20.04
     name: Coding Standard
