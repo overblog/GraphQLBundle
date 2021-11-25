@@ -3,7 +3,6 @@ OverblogGraphQLBundle
 
 ![CI](https://github.com/overblog/GraphQLBundle/workflows/CI/badge.svg?branch=0.14)
 [![Build status](https://ci.appveyor.com/api/projects/status/7ksxlcgwt40q74hv/branch/0.14?svg=true)](https://ci.appveyor.com/project/overblog/graphqlbundle/branch/0.14)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=0.14)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=0.14)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=0.14)](https://coveralls.io/github/overblog/GraphQLBundle?branch=0.14)
 [![Latest Stable Version](https://poser.pugx.org/overblog/graphql-bundle/version)](https://packagist.org/packages/overblog/graphql-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/overblog/graphql-bundle/v/unstable)](https://packagist.org/packages/overblog/graphql-bundle)
