@@ -32,7 +32,7 @@ jobs:
           - php-version: '8.0'
             symfony-version: '5.3'
             dependencies: 'lowest'
-            remove-dependencies: '--dev symfony/validator'
+            remove-dependencies: '--dev symfony/validator doctrine/orm doctrine/annotations'
           - php-version: '8.0'
             symfony-version: '5.3'
             dependencies: 'lowest'
@@ -78,7 +78,6 @@ jobs:
         run: |
           composer global require php-coveralls/php-coveralls
           php-coveralls --coverage_clover=build/logs/clover.xml -v
-
   coding-standard:
     runs-on: ubuntu-20.04
     name: Coding Standard
