@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Input;
 
-use Doctrine\ORM\Mapping as ORM;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
@@ -41,15 +40,13 @@ class Planet
 
     /**
      * @GQL\Field
-     * @ORM\Column(type="integer", nullable=true)
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $diameter;
+    protected ?int $diameter;
 
     /**
      * @GQL\Field
-     * @ORM\Column(type="boolean")
      */
     #[GQL\Field]
     protected int $variable;
@@ -58,9 +55,8 @@ class Planet
     protected $dummy;
 
     /**
-     * @GQL\Field
-     * @ORM\Column(type="text[]")
+     * @GQL\Field(type="[String]!")
      */
-    #[GQL\Field]
+    #[GQL\Field(type: '[String]!')]
     protected array $tags;
 }

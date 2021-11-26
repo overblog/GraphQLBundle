@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "license": "MIT",
     "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
-    "keywords": ["GraphQL", "Relay"],
+    "keywords": ["GraphQL","Relay"],
     "authors": [
         {
             "name": "Overblog",
@@ -83,7 +83,7 @@
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "bench":  [
+        "bench": [
             "test -f phpbench.phar || wget https://github.com/phpbench/phpbench/releases/download/1.0.0-alpha7/phpbench.phar -O phpbench.phar",
             "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
         ],

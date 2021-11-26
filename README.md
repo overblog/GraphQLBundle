@@ -96,7 +96,7 @@ Talks and slides to help you start
 
 * GraphQL in Symfony *by Bernd Alter* - [Twitter](https://twitter.com/bazoo0815)
   - [Talk about GraphQL and its implementation with Symfony (26.04.2017)](https://www.slideshare.net/berndalter7/graphql-in-symfony) `English`
-* GraphQL is right in front of us, let's to it! *by Renato Mendes Figueiredo* - [Twitter](https://twitter.com/renatomefi), [GitHub](https://github.com/renatomefi)
+* GraphQL is right in front of us, let's do it! *by Renato Mendes Figueiredo* - [Twitter](https://twitter.com/renatomefi), [GitHub](https://github.com/renatomefi)
   - [Slides at http://talks.mefi.in/graphql-scotphp17](http://talks.mefi.in/graphql-scotphp17/) `English`
   - [Video at SymfonyCamp UA 2017](https://www.youtube.com/watch?v=jyoYlnCPNgk) `English`
   - [Video at DPC 2017](https://www.youtube.com/watch?v=E7MjoCOGSSY) `English`
