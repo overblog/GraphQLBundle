@@ -23,6 +23,7 @@ jobs:
         symfony-version:
           - '4.4'
           - '5.3'
+          - '5.4'
         dependencies:
           - 'lowest'
           - 'highest'
@@ -76,8 +77,8 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          composer global require php-coveralls/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
+          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.1/php-coveralls.phar
+          php php-coveralls.phar --coverage_clover=build/logs/clover.xml -v
   coding-standard:
     runs-on: ubuntu-20.04
     name: Coding Standard
@@ -95,24 +96,6 @@ jobs:
 
       - name: "Check coding standard"
         run: composer check-cs
-
-  benchmark:
-    runs-on: ubuntu-20.04
-    name: Benchmark
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
-
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          php-version: "7.4"
-
-      - name: "Install dependencies"
-        uses: ramsey/composer-install@1.3.0
-
-      - name: "Run benchmark"
-        run: composer bench
 
   static-analysis:
     runs-on: ubuntu-20.04

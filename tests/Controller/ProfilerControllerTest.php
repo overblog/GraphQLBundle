@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Controller;
 
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Controller\ProfilerController;
+use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
 use Overblog\GraphQLBundle\Request\Executor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -82,7 +83,6 @@ class ProfilerControllerTest extends TestCase
         /** @var Environment&MockObject $twigMock */
         $twigMock = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->onlyMethods(['render'])->getMock();
         $controller = new ProfilerController($profilerMock, $twigMock, $routerMock, $executorMock, null);
-        $graphqlData = ['graphql_data'];
 
         /** @var Profiler&MockObject $profilerMock */
         $profilerMock->expects($this->once())->method('disable');
@@ -93,7 +93,7 @@ class ProfilerControllerTest extends TestCase
             ->onlyMethods(['getCollector', 'hasCollector'])
             ->getMock();
 
-        $profileMock->expects($this->once())->method('getCollector')->willReturn($graphqlData);
+        $profileMock->expects($this->once())->method('getCollector')->willReturn($graphQLCollector = new GraphQLCollector());
         $profileMock->expects($this->once())->method('hasCollector')->willReturn(true);
         $profilerMock->expects($this->exactly(2))->method('loadProfile')->willReturn($profileMock);
 
@@ -101,7 +101,7 @@ class ProfilerControllerTest extends TestCase
         $twigMock->expects($this->once())->method('render')->with('@OverblogGraphQL/profiler/graphql.html.twig', [
             'request' => $request,
             'profile' => $profileMock,
-            'tokens' => [['token' => 'token', 'graphql' => $graphqlData]],
+            'tokens' => [['token' => 'token', 'graphql' => $graphQLCollector]],
             'token' => 'token',
             'panel' => null,
             'schemas' => ['schema' => "\n"],

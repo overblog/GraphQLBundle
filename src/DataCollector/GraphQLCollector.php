@@ -20,7 +20,7 @@ use function microtime;
 class GraphQLCollector extends DataCollector
 {
     /**
-     * GraphQL Batchs executed.
+     * GraphQL Batches executed.
      */
     protected array $batches = [];
 
