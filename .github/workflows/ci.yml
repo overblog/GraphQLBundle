@@ -75,8 +75,8 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          composer global require php-coveralls/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
+          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.5.1/php-coveralls.phar
+          php php-coveralls.phar --coverage_clover=build/logs/clover.xml -v
   coding-standard:
     runs-on: ubuntu-20.04
     name: Coding Standard
