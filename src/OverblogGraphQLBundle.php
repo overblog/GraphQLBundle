@@ -52,7 +52,7 @@ class OverblogGraphQLBundle extends Bundle
         $container->addCompilerPass(new ResolverTaggedServiceMappingPass(), PassConfig::TYPE_BEFORE_REMOVING);
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         if (!$this->extension instanceof ExtensionInterface) {
             $this->extension = new OverblogGraphQLExtension();
