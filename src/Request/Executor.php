@@ -103,14 +103,14 @@ class Executor
     public function setMaxQueryDepth(int $maxQueryDepth): void
     {
         /** @var QueryDepth $queryDepth */
-        $queryDepth = DocumentValidator::getRule('QueryDepth');
+        $queryDepth = DocumentValidator::getRule(QueryDepth::class);
         $queryDepth->setMaxQueryDepth($maxQueryDepth);
     }
 
     public function setMaxQueryComplexity(int $maxQueryComplexity): void
     {
         /** @var QueryComplexity $queryComplexity */
-        $queryComplexity = DocumentValidator::getRule('QueryComplexity');
+        $queryComplexity = DocumentValidator::getRule(QueryComplexity::class);
         $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
     }
 
