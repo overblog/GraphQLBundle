@@ -17,7 +17,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
             "Overblog\\GraphQLBundle\\Tests\\": "tests/"
         }
     },
@@ -83,10 +82,6 @@
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "bench": [
-            "test -f phpbench.phar || wget https://github.com/phpbench/phpbench/releases/download/1.0.0-alpha7/phpbench.phar -O phpbench.phar",
-            "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
-        ],
         "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.18.7/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
@@ -100,7 +95,6 @@
             "rm composer.lock",
             "@composer install --ansi",
             "@static-analysis",
-            "@bench",
             "@check-cs"
         ],
         "docker-clean": "docker image rm $(docker image ls -qf reference=graphql-test)",
