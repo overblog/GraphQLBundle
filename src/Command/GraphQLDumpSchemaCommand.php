@@ -118,7 +118,7 @@ final class GraphQLDumpSchemaCommand extends Command
                     ->execute($schemaName, $request)
                     ->toArray();
 
-                $content = json_encode($modern ? $result : $result['data'], JSON_PRETTY_PRINT);
+                $content = json_encode($modern ? $result : ($result['data'] ?? null), JSON_PRETTY_PRINT);
                 break;
 
             case 'graphql':

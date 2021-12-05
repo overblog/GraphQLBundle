@@ -158,7 +158,7 @@ final class ErrorHandlerTest extends TestCase
 
             $this->errorHandler->handleErrors($executionResult, false, true);
 
-            $errors = $executionResult->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE)['errors'];
+            $errors = $executionResult->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE)['errors'] ?? [];
             $this->assertCount(1, $errors);
             $this->assertArrayHasKey('extensions', $errors[0]);
             $this->assertArrayHasKey('debugMessage', $errors[0]['extensions']);
