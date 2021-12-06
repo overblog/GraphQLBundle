@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Annotation for GraphQL argument.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"ANNOTATION","PROPERTY","METHOD"})
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-final class Arg extends Annotation implements NamedArgumentConstructorAnnotation
+final class Arg extends Annotation
 {
     /**
      * Argument name.
