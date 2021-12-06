@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
-use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Annotation for GraphQL enum value.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"ANNOTATION", "CLASS"})
  */
-final class EnumValue extends Annotation implements NamedArgumentConstructorAnnotation
+final class EnumValue extends Annotation
 {
     /**
      * @var string
