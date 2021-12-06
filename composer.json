@@ -59,7 +59,7 @@
         "symfony/console": "^4.4 || ^5.3",
         "symfony/css-selector": "^4.4 || ^5.3",
         "symfony/monolog-bundle": "^3.7",
-        "symfony/phpunit-bridge": "^4.4 || ^5.3",
+        "symfony/phpunit-bridge": "^6.0",
         "symfony/process": "^4.4 || ^5.3",
         "symfony/security-bundle": "^4.4 || ^5.3",
         "symfony/validator": "^4.4 || ^5.3",
@@ -69,8 +69,7 @@
     },
     "conflict": {
         "phpdocumentor/type-resolver": "<1.4.0",
-        "react/promise": "<2.8",
-        "symfony/phpunit-bridge": "<4.4.9"
+        "react/promise": "<2.8"
     },
     "extra": {
         "branch-alias": {
