@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -23,7 +24,11 @@ class GetUserTest extends TestCase
 
     public function testEvaluator(): void
     {
-        $testUser = new User('testUser', 'testPassword');
+        if (class_exists(InMemoryUser::class)) {
+            $testUser = new InMemoryUser('testUser', 'testPassword');
+        } else {
+            $testUser = new User('testUser', 'testPassword');
+        }
         $coreSecurity = $this->createMock(CoreSecurity::class);
         $coreSecurity->method('getUser')->willReturn($testUser);
         $services = $this->createGraphQLServices(['security' => new Security($coreSecurity)]);

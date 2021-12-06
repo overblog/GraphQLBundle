@@ -12,7 +12,7 @@ class UserWarning extends RuntimeException implements ClientAware
     /**
      * {@inheritdoc}
      */
-    public function isClientSafe()
+    public function isClientSafe(): bool
     {
         return true;
     }
@@ -20,7 +20,7 @@ class UserWarning extends RuntimeException implements ClientAware
     /**
      * {@inheritdoc}
      */
-    public function getCategory()
+    public function getCategory(): string
     {
         return 'user';
     }
