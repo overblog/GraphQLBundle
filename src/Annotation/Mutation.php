@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use Attribute;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Annotation for GraphQL mutation.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD"})
  */
 #[Attribute(Attribute::TARGET_METHOD)]

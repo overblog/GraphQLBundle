@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Annotation for GraphQL type.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target("CLASS")
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-class Type extends Annotation implements NamedArgumentConstructorAnnotation
+class Type extends Annotation
 {
     /**
      * Type name.
