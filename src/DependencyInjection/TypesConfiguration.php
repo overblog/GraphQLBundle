@@ -30,7 +30,7 @@ class TypesConfiguration implements ConfigurationInterface
         'custom-scalar',
     ];
 
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('overblog_graphql_types');
 
