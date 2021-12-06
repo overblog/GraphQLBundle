@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\NamedArgumentConstructorAnnotation;
+use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
  * Annotation for operations provider.
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS"})
  */
 #[Attribute(Attribute::TARGET_CLASS)]
-final class Provider extends Annotation implements NamedArgumentConstructorAnnotation
+final class Provider extends Annotation
 {
     /**
      * Optionnal prefix for provider fields.

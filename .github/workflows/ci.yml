@@ -21,9 +21,9 @@ jobs:
           - '8.0'
           - '8.1'
         symfony-version:
-          - '4.4'
-          - '5.3'
-          - '5.4'
+          - '4.4.*'
+          - '5.3.*'
+          - '5.4.*'
         dependencies:
           - 'lowest'
           - 'highest'
@@ -31,11 +31,11 @@ jobs:
         coverage: [ 'none' ]
         include:
           - php-version: '8.0'
-            symfony-version: '5.3'
+            symfony-version: '5.3.*'
             dependencies: 'lowest'
             remove-dependencies: '--dev symfony/validator doctrine/orm doctrine/annotations'
           - php-version: '8.0'
-            symfony-version: '5.3'
+            symfony-version: '5.3.*'
             dependencies: 'lowest'
             coverage: "pcov"
     steps:
@@ -45,16 +45,13 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
+          tools: flex
           php-version: "${{ matrix.php-version }}"
           coverage: "${{ matrix.coverage }}"
 
       - name: "Change stability"
         if: "matrix.stability != ''"
         run: perl -pi -e 's/^}$/,"minimum-stability":"'"${{ matrix.minimum-stability }}"'"}/' composer.json && cat composer.json
-
-      - name: "Symfony version"
-        if: "matrix.symfony-version != ''"
-        run: perl -pi -e 's#"(symfony/.*)":\s*".*\|\|.*"#"$1":"'"${{ matrix.symfony-version }}.*"'"#' composer.json && cat composer.json
 
       - name: "Webonyx GraphQL version"
         if: "matrix.graphql-version != ''"
@@ -68,6 +65,8 @@ jobs:
         uses: ramsey/composer-install@1.3.0
         with:
           dependency-versions: ${{ matrix.dependencies }}
+        env:
+          SYMFONY_REQUIRE: "${{ matrix.symfony-version }}"
 
       - name: "Run tests"
         run: composer test
@@ -89,6 +88,7 @@ jobs:
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
         with:
+          tools: flex
           php-version: "7.4"
 
       - name: "Install dependencies"
