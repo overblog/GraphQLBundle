@@ -91,6 +91,16 @@ parameters:
 			path: src/Config/Processor/BuilderProcessor.php
 
 		-
+			message: "#^Attribute class Overblog\\\\GraphQLBundle\\\\Definition\\\\ReturnTypeWillChange does not exist\\.$#"
+			count: 1
+			path: src/Definition/Argument.php
+
+		-
+			message: "#^Used constant ReturnTypeWillChange not found\\.$#"
+			count: 1
+			path: src/Definition/Argument.php
+
+		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\TypeFactory\\:\\:create\\(\\) should return GraphQL\\\\Type\\\\Definition\\\\Type but returns object\\.$#"
 			count: 1
 			path: src/Definition/Builder/TypeFactory.php
