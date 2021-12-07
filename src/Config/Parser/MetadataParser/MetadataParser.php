@@ -431,7 +431,7 @@ abstract class MetadataParser implements PreParserInterface
     private static function enumMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Enum $enumMetadata): array
     {
         $metadatas = static::getMetadatas($reflectionClass);
-        $enumValues = array_merge(self::getMetadataMatching($metadatas, Metadata\EnumValue::class), $enumMetadata->values);
+        $enumValues = self::getMetadataMatching($metadatas, Metadata\EnumValue::class);
 
         $values = [];
 

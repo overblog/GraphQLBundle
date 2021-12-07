@@ -8,6 +8,7 @@ UPGRADE FROM 0.14 to 1.0
 * Removed deprecated `argsBuilder` from `Field`
 * Removed deprecated `args` from `Field`
 * Removed deprecated `builders` from `Type`
+* Removed deprecated `values` from `Enum`
 
 UPGRADE FROM 0.13 to 0.14
 =========================
