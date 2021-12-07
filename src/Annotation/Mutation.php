@@ -34,11 +34,10 @@ final class Mutation extends Field
         ?string $type = null,
         array $args = [],
         ?string $resolve = null,
-        $argsBuilder = null,
         ?string $complexity = null,
         array|string|null $targetTypes = null
     ) {
-        parent::__construct($name, $type, $args, $resolve, $argsBuilder, $complexity);
+        parent::__construct($name, $type, $args, $resolve, $complexity);
         if ($targetTypes) {
             $this->targetTypes = is_string($targetTypes) ? [$targetTypes] : $targetTypes;
         }

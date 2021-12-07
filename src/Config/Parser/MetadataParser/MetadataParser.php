@@ -586,15 +586,6 @@ abstract class MetadataParser implements PreParserInterface
         $argsBuilder = self::getFirstMetadataMatching($metadatas, Metadata\ArgsBuilder::class);
         if ($argsBuilder) {
             $fieldConfiguration['argsBuilder'] = ['builder' => $argsBuilder->name, 'config' => $argsBuilder->config];
-        } elseif ($fieldMetadata->argsBuilder) {
-            if (is_string($fieldMetadata->argsBuilder)) {
-                $fieldConfiguration['argsBuilder'] = ['builder' => $fieldMetadata->argsBuilder, 'config' => []];
-            } elseif (is_array($fieldMetadata->argsBuilder)) {
-                [$builder, $builderConfig] = $fieldMetadata->argsBuilder;
-                $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
-            } else {
-                throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
-            }
         }
         $fieldBuilder = self::getFirstMetadataMatching($metadatas, Metadata\FieldBuilder::class);
         if ($fieldBuilder) {

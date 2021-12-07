@@ -5,6 +5,7 @@ UPGRADE FROM 0.14 to 1.0
 * Signature of TypeInterface changed from `string $name = null, string $resolveType` to `string $resolveType, ?string $name = null`
 * Removed deprecated `targetType` from `Query`
 * Removed deprecated `fieldBuilder` from `Field`
+* Removed deprecated `argsBuilder` from `Field`
 
 UPGRADE FROM 0.13 to 0.14
 =========================
