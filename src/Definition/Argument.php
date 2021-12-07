@@ -42,8 +42,11 @@ class Argument implements ArgumentInterface
      *
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
+        // TODO 1.0: Drop PHP 7.4 support and add mixed return type.
+
         return $this->offsetExists($offset) ? $this->rawArguments[$offset] : null;
     }
 
