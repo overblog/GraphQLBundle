@@ -51,19 +51,6 @@ class AnnotationParserTest extends MetadataParserTest
         }
     }
 
-    public function testLegacyFieldsBuilderAttributes(): void
-    {
-        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedBuilderAttributes.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
-        $this->expect('DeprecatedBuilderAttributes', 'object', [
-            'fields' => [
-                'color' => ['type' => 'String!'],
-            ],
-            'builders' => [
-                ['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']],
-            ],
-        ]);
-    }
-
     public function testLegacyEnumNestedValue(): void
     {
         $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedEnum.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));

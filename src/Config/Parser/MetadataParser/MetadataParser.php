@@ -343,7 +343,7 @@ abstract class MetadataParser implements PreParserInterface
             $typeConfiguration['resolveField'] = self::formatExpression($typeAnnotation->resolveField);
         }
 
-        $buildersAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class), $typeAnnotation->builders);
+        $buildersAnnotations = self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class);
         if (!empty($buildersAnnotations)) {
             $typeConfiguration['builders'] = array_map(fn ($fieldsBuilderAnnotation) => ['builder' => $fieldsBuilderAnnotation->name, 'builderConfig' => $fieldsBuilderAnnotation->config], $buildersAnnotations);
         }
@@ -858,7 +858,7 @@ abstract class MetadataParser implements PreParserInterface
             $metadataClasses = [$metadataClasses];
         }
 
-        return array_filter($metadatas, function ($metadata) use ($metadataClasses) {
+        return array_values(array_filter($metadatas, function ($metadata) use ($metadataClasses) {
             foreach ($metadataClasses as $metadataClass) {
                 if ($metadata instanceof $metadataClass) {
                     return true;
@@ -866,7 +866,7 @@ abstract class MetadataParser implements PreParserInterface
             }
 
             return false;
-        });
+        }));
     }
 
     /**
