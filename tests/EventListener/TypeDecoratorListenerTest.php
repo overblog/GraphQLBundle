@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use InvalidArgumentException;
@@ -29,10 +30,10 @@ class TypeDecoratorListenerTest extends TestCase
      *
      * @dataProvider specialTypeFieldProvider
      */
-    public function testSpecialField($fieldName, Type $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
+    public function testSpecialField($fieldName, ObjectType | UnionType | InterfaceType | CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
-            $fieldValueRetriever = fn (Type $type, $fieldName) => $type->config[$fieldName];
+            $fieldValueRetriever = fn (ObjectType | UnionType | InterfaceType | CustomScalarType $type, $fieldName) => $type->config[$fieldName];
         }
         $expected = static function (): void {
         };
@@ -106,7 +107,8 @@ class TypeDecoratorListenerTest extends TestCase
         $expected = ['foo' => 'baz'];
         $resolveFn = $objectType->getField('bar')->resolveFn;
         /** @var Argument $args */
-        $args = $resolveFn(null, $expected);
+        $args = $resolveFn(null, $expected, [], $this->createMock(ResolveInfo::class));
+
         $this->assertInstanceOf(Argument::class, $args);
         $this->assertSame($expected, $args->getArrayCopy());
     }
