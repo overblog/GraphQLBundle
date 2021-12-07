@@ -101,6 +101,16 @@ parameters:
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
 		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\Compiler\\\\ConfigParserPass\\:\\:\\$preTreatedFiles is never read, only written\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/ConfigParserPass.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\DependencyInjection\\\\Compiler\\\\ConfigParserPass\\:\\:\\$treatedFiles is never read, only written\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/ConfigParserPass.php
+
+		-
 			message: "#^Trying to invoke array\\{'Overblog…'\\|'Overblog…'\\|'Overblog…'\\|'Overblog…', 'parse'\\|'preParse'\\} but it might not be a callable\\.$#"
 			count: 1
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
@@ -176,6 +186,11 @@ parameters:
 			path: src/Resolver/TypeResolver.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Validator\\\\Constraints\\\\ExpressionValidator\\:\\:validate\\(\\) has parameter \\$value with no type specified\\.$#"
+			count: 1
+			path: src/Validator/Constraints/ExpressionValidator.php
+
+		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
 			count: 1
 			path: src/Validator/InputValidator.php
@@ -191,12 +206,32 @@ parameters:
 			path: src/Validator/InputValidator.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\MetadataFactory\\:\\:getMetadataFor\\(\\) has parameter \\$object with no type specified\\.$#"
+			count: 1
+			path: src/Validator/Mapping/MetadataFactory.php
+
+		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\MetadataFactory\\:\\:hasMetadataFor\\(\\) has parameter \\$object with no type specified\\.$#"
+			count: 1
+			path: src/Validator/Mapping/MetadataFactory.php
+
+		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\PropertyMetadata\\>\\) does not accept Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\.$#"
 			count: 1
 			path: src/Validator/Mapping/ObjectMetadata.php
 
 		-
+			message: "#^PHPDoc tag @return with type Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\ObjectMetadata is not subtype of native type static\\(Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\ObjectMetadata\\)\\.$#"
+			count: 1
+			path: src/Validator/Mapping/ObjectMetadata.php
+
+		-
 			message: "#^Call to an undefined method ReflectionMethod\\|ReflectionProperty\\:\\:getValue\\(\\)\\.$#"
+			count: 1
+			path: src/Validator/Mapping/PropertyMetadata.php
+
+		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Validator\\\\Mapping\\\\PropertyMetadata\\:\\:getPropertyValue\\(\\) has parameter \\$object with no type specified\\.$#"
 			count: 1
 			path: src/Validator/Mapping/PropertyMetadata.php
 
@@ -226,6 +261,71 @@ parameters:
 			path: tests/Config/Parser/fixtures/annotations/Type/Animal.php
 
 		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$battles has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$bool has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$boolean has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$color has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$creator has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$crystal has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$currentHolder has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$decimal has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$float has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$holders has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$size has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$string has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Type\\\\Lightsaber\\:\\:\\$text has no type specified\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Type/Lightsaber.php
+
+		-
 			message: "#^Parameter \\#1 \\$exceptionMap of class Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter constructor expects array\\<string, string\\>, array\\<string, array\\<string\\>\\> given\\.$#"
 			count: 1
 			path: tests/Error/ExceptionConverterTest.php
@@ -238,6 +338,11 @@ parameters:
 		-
 			message: "#^Call to method getMock\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
 			count: 4
+			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
+
+		-
+			message: "#^Instantiated class Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\User not found\\.$#"
+			count: 1
 			path: tests/ExpressionLanguage/ExpressionFunction/Security/GetUserTest.php
 
 		-
@@ -297,11 +402,6 @@ parameters:
 
 		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\TestCase\\:\\:createKernel\\(\\) should return Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface but returns object\\.$#"
-			count: 1
-			path: tests/Functional/TestCase.php
-
-		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\TestCase\\:\\:getContainer\\(\\) should return Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\TestContainer but returns Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php
 

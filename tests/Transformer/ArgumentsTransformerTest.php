@@ -38,7 +38,7 @@ class ArgumentsTransformerTest extends TestCase
     private function getTransformer(array $classesMap = null, ConstraintViolationList $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn($validateReturn ?: []);
+        $validator->method('validate')->willReturn($validateReturn ?? new ConstraintViolationList());
 
         return new ArgumentsTransformer($validator, $classesMap);
     }

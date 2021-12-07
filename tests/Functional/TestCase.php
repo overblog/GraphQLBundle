@@ -103,6 +103,7 @@ abstract class TestCase extends WebTestCase
 
     protected static function getContainer(): ContainerInterface
     {
+        /** @phpstan-ignore-next-line */
         return static::$kernel->getContainer();
     }
 

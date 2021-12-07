@@ -35,10 +35,8 @@ class ExpressionLanguage extends BaseExpressionLanguage
     /**
      * @param string|Expression $expression
      * @param array             $names
-     *
-     * @return string
      */
-    public function compile($expression, $names = [])
+    public function compile($expression, $names = []): string
     {
         return parent::compile($expression, array_merge($names, $this->globalNames));
     }
