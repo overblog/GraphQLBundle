@@ -54,7 +54,7 @@
         "phpstan/phpstan": "^0.12.58",
         "phpstan/phpstan-phpunit": "^0.12.11",
         "phpstan/phpstan-symfony": "^0.12.6",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.5.10",
         "react/promise": "^2.5",
         "symfony/asset": "^4.4 || ^5.3",
         "symfony/browser-kit": "^4.4 || ^5.3",
