@@ -46,10 +46,10 @@ class Field extends Annotation
      * @param string|null $complexity   A complexity expression
      */
     public function __construct(
-        string $name = null,
-        string $type = null,
-        string $resolve = null,
-        string $complexity = null
+        ?string $name = null,
+        ?string $type = null,
+        ?string $resolve = null,
+        ?string $complexity = null
     ) {
         $this->name = $name;
         $this->type = $type;

@@ -30,10 +30,10 @@ final class Query extends Field
      * @param string|string[]|null $targetTypes
      */
     public function __construct(
-        string $name = null,
-        string $type = null,
-        string $resolve = null,
-        string $complexity = null,
+        ?string $name = null,
+        ?string $type = null,
+        ?string $resolve = null,
+        ?string $complexity = null,
         array|string|null $targetTypes = null
     ) {
         parent::__construct($name, $type, $resolve, $complexity);
