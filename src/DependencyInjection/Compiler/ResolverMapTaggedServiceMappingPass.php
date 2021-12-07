@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
+use Overblog\GraphQLBundle\DependencyInjection\Configuration;
 use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,9 +28,7 @@ final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
         $resolverMapsSortedBySchema = [];
         $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
 
-        /** @var array $resolverMapsBySchemas */
-        $resolverMapsBySchemas = $container->getParameter('overblog_graphql.resolver_maps');
-
+        $resolverMapsBySchemas = array_fill_keys($container->getParameter(Configuration::NAME.'.schemas'), []);
         foreach ($container->findTaggedServiceIds(self::SERVICE_TAG, true) as $serviceId => $tags) {
             foreach ($tags as $tag) {
                 if (!isset($tag['schema'])) {
@@ -64,7 +63,5 @@ final class ResolverMapTaggedServiceMappingPass implements CompilerPassInterface
                 $resolverMaps,
             ]);
         }
-
-        $container->getParameterBag()->remove('overblog_graphql.resolver_maps');
     }
 }

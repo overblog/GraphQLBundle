@@ -33,7 +33,6 @@ use function current;
 use function file_get_contents;
 use function implode;
 use function in_array;
-use function is_array;
 use function is_string;
 use function preg_match;
 use function sprintf;
@@ -344,7 +343,7 @@ abstract class MetadataParser implements PreParserInterface
             $typeConfiguration['resolveField'] = self::formatExpression($typeAnnotation->resolveField);
         }
 
-        $buildersAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class), $typeAnnotation->builders);
+        $buildersAnnotations = self::getMetadataMatching($metadatas, Metadata\FieldsBuilder::class);
         if (!empty($buildersAnnotations)) {
             $typeConfiguration['builders'] = array_map(fn ($fieldsBuilderAnnotation) => ['builder' => $fieldsBuilderAnnotation->name, 'builderConfig' => $fieldsBuilderAnnotation->config], $buildersAnnotations);
         }
@@ -432,7 +431,7 @@ abstract class MetadataParser implements PreParserInterface
     private static function enumMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\Enum $enumMetadata): array
     {
         $metadatas = static::getMetadatas($reflectionClass);
-        $enumValues = array_merge(self::getMetadataMatching($metadatas, Metadata\EnumValue::class), $enumMetadata->values);
+        $enumValues = self::getMetadataMatching($metadatas, Metadata\EnumValue::class);
 
         $values = [];
 
@@ -548,7 +547,7 @@ abstract class MetadataParser implements PreParserInterface
         $args = [];
 
         /** @var Metadata\Arg[] $argAnnotations */
-        $argAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\Arg::class), $fieldMetadata->args);
+        $argAnnotations = self::getMetadataMatching($metadatas, Metadata\Arg::class);
 
         foreach ($argAnnotations as $arg) {
             $args[$arg->name] = ['type' => $arg->type];
@@ -587,31 +586,11 @@ abstract class MetadataParser implements PreParserInterface
         $argsBuilder = self::getFirstMetadataMatching($metadatas, Metadata\ArgsBuilder::class);
         if ($argsBuilder) {
             $fieldConfiguration['argsBuilder'] = ['builder' => $argsBuilder->name, 'config' => $argsBuilder->config];
-        } elseif ($fieldMetadata->argsBuilder) {
-            if (is_string($fieldMetadata->argsBuilder)) {
-                $fieldConfiguration['argsBuilder'] = ['builder' => $fieldMetadata->argsBuilder, 'config' => []];
-            } elseif (is_array($fieldMetadata->argsBuilder)) {
-                [$builder, $builderConfig] = $fieldMetadata->argsBuilder;
-                $fieldConfiguration['argsBuilder'] = ['builder' => $builder, 'config' => $builderConfig];
-            } else {
-                throw new InvalidArgumentException(sprintf('The attribute "argsBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
-            }
         }
         $fieldBuilder = self::getFirstMetadataMatching($metadatas, Metadata\FieldBuilder::class);
         if ($fieldBuilder) {
             $fieldConfiguration['builder'] = $fieldBuilder->name;
             $fieldConfiguration['builderConfig'] = $fieldBuilder->config;
-        } elseif ($fieldMetadata->fieldBuilder) {
-            if (is_string($fieldMetadata->fieldBuilder)) {
-                $fieldConfiguration['builder'] = $fieldMetadata->fieldBuilder;
-                $fieldConfiguration['builderConfig'] = [];
-            } elseif (is_array($fieldMetadata->fieldBuilder)) {
-                [$builder, $builderConfig] = $fieldMetadata->fieldBuilder;
-                $fieldConfiguration['builder'] = $builder;
-                $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
-            } else {
-                throw new InvalidArgumentException(sprintf('The attribute "fieldBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
-            }
         } else {
             if (!isset($fieldMetadata->type)) {
                 try {
@@ -879,7 +858,7 @@ abstract class MetadataParser implements PreParserInterface
             $metadataClasses = [$metadataClasses];
         }
 
-        return array_filter($metadatas, function ($metadata) use ($metadataClasses) {
+        return array_values(array_filter($metadatas, function ($metadata) use ($metadataClasses) {
             foreach ($metadataClasses as $metadataClass) {
                 if ($metadata instanceof $metadataClass) {
                     return true;
@@ -887,7 +866,7 @@ abstract class MetadataParser implements PreParserInterface
             }
 
             return false;
-        });
+        }));
     }
 
     /**

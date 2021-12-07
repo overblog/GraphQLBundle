@@ -50,49 +50,4 @@ class AnnotationParserTest extends MetadataParserTest
             $this->assertMatchesRegularExpression('/doctrine\/annotations/', $e->getPrevious()->getMessage());
         }
     }
-
-    public function testLegacyNestedAnnotations(): void
-    {
-        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedNestedAnnotations.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
-        $this->expect('DeprecatedNestedAnnotations', 'object', [
-            'fields' => [
-                'color' => ['type' => 'String!'],
-                'getList' => [
-                    'args' => [
-                        'arg1' => ['type' => 'String!'],
-                        'arg2' => ['type' => 'Int!'],
-                    ],
-                    'resolve' => '@=call(value.getList, arguments({arg1: "String!", arg2: "Int!"}, args))',
-                    'type' => 'Boolean!',
-                ],
-            ],
-            'builders' => [
-                ['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']],
-            ],
-        ]);
-    }
-
-    public function testLegacyFieldsBuilderAttributes(): void
-    {
-        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedBuilderAttributes.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
-        $this->expect('DeprecatedBuilderAttributes', 'object', [
-            'fields' => [
-                'color' => ['type' => 'String!'],
-            ],
-            'builders' => [
-                ['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']],
-            ],
-        ]);
-    }
-
-    public function testLegacyEnumNestedValue(): void
-    {
-        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedEnum.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
-        $this->expect('DeprecatedEnum', 'enum', [
-            'values' => [
-                'P1' => ['value' => 1, 'description' => 'P1 description'],
-                'P2' => ['value' => 2, 'deprecationReason' => 'P2 deprecated'],
-            ],
-        ]);
-    }
 }
