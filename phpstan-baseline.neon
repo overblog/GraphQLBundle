@@ -301,6 +301,11 @@ parameters:
 			path: tests/Functional/TestCase.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\TestCase\\:\\:getContainer\\(\\) should return Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\TestContainer but returns Symfony\\\\Component\\\\DependencyInjection\\\\ContainerInterface\\.$#"
+			count: 1
+			path: tests/Functional/TestCase.php
+
+		-
 			message: "#^Missing call to parent\\:\\:tearDown\\(\\) method\\.$#"
 			count: 1
 			path: tests/Functional/TestCase.php

@@ -37,7 +37,7 @@
         "symfony/framework-bundle": "^4.4 || ^5.2",
         "symfony/options-resolver": "^4.4 || ^5.2",
         "symfony/property-access": "^4.4 || ^5.2",
-        "webonyx/graphql-php": "dev-master"
+        "webonyx/graphql-php": "dev-master#d36e80962bd82b2f515617de50e0c87c8049bc3c"
     },
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
