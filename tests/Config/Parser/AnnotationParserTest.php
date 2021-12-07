@@ -10,6 +10,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
+/**
+ * @group legacy
+ */
 class AnnotationParserTest extends MetadataParserTest
 {
     public function setUp(): void

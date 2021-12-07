@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Validator\Mapping;
 
 use ReflectionException;
 use ReflectionProperty;
+use ReturnTypeWillChange;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
 class PropertyMetadata extends MemberMetadata
@@ -28,6 +29,7 @@ class PropertyMetadata extends MemberMetadata
         return $member;
     }
 
+    #[ReturnTypeWillChange]
     public function getPropertyValue($object)
     {
         return $this->getReflectionMember($object)->getValue($object);
