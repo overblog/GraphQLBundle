@@ -20,7 +20,7 @@ security:
                         password: 123
                         roles: 'ROLE_ADMIN'
     password_hashers:
-        Symfony\Component\Security\Core\User\User: plaintext
+        Symfony\Component\Security\Core\User\InMemoryUser: plaintext
     firewalls:
         graph:
             pattern: ^/

@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Tests\Transformer\Enum1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType2;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
 use function class_exists;
@@ -45,7 +46,7 @@ class ArgumentsTest extends TestCase
     private function getTransformer(array $classesMap = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn([]);
+        $validator->method('validate')->willReturn(new ConstraintViolationList());
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
