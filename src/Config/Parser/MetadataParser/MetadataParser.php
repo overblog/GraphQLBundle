@@ -33,7 +33,6 @@ use function current;
 use function file_get_contents;
 use function implode;
 use function in_array;
-use function is_array;
 use function is_string;
 use function preg_match;
 use function sprintf;
@@ -601,17 +600,6 @@ abstract class MetadataParser implements PreParserInterface
         if ($fieldBuilder) {
             $fieldConfiguration['builder'] = $fieldBuilder->name;
             $fieldConfiguration['builderConfig'] = $fieldBuilder->config;
-        } elseif ($fieldMetadata->fieldBuilder) {
-            if (is_string($fieldMetadata->fieldBuilder)) {
-                $fieldConfiguration['builder'] = $fieldMetadata->fieldBuilder;
-                $fieldConfiguration['builderConfig'] = [];
-            } elseif (is_array($fieldMetadata->fieldBuilder)) {
-                [$builder, $builderConfig] = $fieldMetadata->fieldBuilder;
-                $fieldConfiguration['builder'] = $builder;
-                $fieldConfiguration['builderConfig'] = $builderConfig ?: [];
-            } else {
-                throw new InvalidArgumentException(sprintf('The attribute "fieldBuilder" on metadata %s defined on "%s" must be a string or an array where first index is the builder name and the second is the config.', static::formatMetadata($fieldMetadataName), $reflector->getName()));
-            }
         } else {
             if (!isset($fieldMetadata->type)) {
                 try {

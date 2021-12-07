@@ -53,12 +53,6 @@ class Planet
     public Planet $closestPlanet;
 
     /**
-     * @GQL\Field(fieldBuilder={"NoteFieldBuilder", {"option1": "value1"}})
-     */
-    #[GQL\Field(fieldBuilder: ['NoteFieldBuilder', ['option1' => 'value1']])]
-    public array $notesDeprecated;
-
-    /**
      * @GQL\Field(
      *   type="Planet",
      *   argsBuilder={"PlanetFilterArgBuilder", {"option2": "value2"}},

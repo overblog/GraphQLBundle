@@ -3,7 +3,8 @@ UPGRADE FROM 0.14 to 1.0
 
 * Removed `use_experimental_executor` configuraton option.
 * Signature of TypeInterface changed from `string $name = null, string $resolveType` to `string $resolveType, ?string $name = null`
-* Remove deprecated `targetType` from `Query`
+* Removed deprecated `targetType` from `Query`
+* Removed deprecated `fieldBuilder` from `Field`
 
 UPGRADE FROM 0.13 to 0.14
 =========================

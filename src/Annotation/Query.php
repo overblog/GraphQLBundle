@@ -35,11 +35,10 @@ final class Query extends Field
         array $args = [],
         string $resolve = null,
         $argsBuilder = null,
-        $fieldBuilder = null,
         string $complexity = null,
         array|string|null $targetTypes = null
     ) {
-        parent::__construct($name, $type, $args, $resolve, $argsBuilder, $fieldBuilder, $complexity);
+        parent::__construct($name, $type, $args, $resolve, $argsBuilder, $complexity);
         if ($targetTypes) {
             $this->targetTypes = is_string($targetTypes) ? [$targetTypes] : $targetTypes;
         }
