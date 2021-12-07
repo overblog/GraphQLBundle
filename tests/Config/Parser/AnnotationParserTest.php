@@ -51,27 +51,6 @@ class AnnotationParserTest extends MetadataParserTest
         }
     }
 
-    public function testLegacyNestedAnnotations(): void
-    {
-        $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedNestedAnnotations.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));
-        $this->expect('DeprecatedNestedAnnotations', 'object', [
-            'fields' => [
-                'color' => ['type' => 'String!'],
-                'getList' => [
-                    'args' => [
-                        'arg1' => ['type' => 'String!'],
-                        'arg2' => ['type' => 'Int!'],
-                    ],
-                    'resolve' => '@=call(value.getList, arguments({arg1: "String!", arg2: "Int!"}, args))',
-                    'type' => 'Boolean!',
-                ],
-            ],
-            'builders' => [
-                ['builder' => 'MyFieldsBuilder', 'builderConfig' => ['param1' => 'val1']],
-            ],
-        ]);
-    }
-
     public function testLegacyFieldsBuilderAttributes(): void
     {
         $this->config = self::cleanConfig($this->parser('parse', new SplFileInfo(__DIR__.'/fixtures/annotations/Deprecated/DeprecatedBuilderAttributes.php'), $this->containerBuilder, ['doctrine' => ['types_mapping' => []]]));

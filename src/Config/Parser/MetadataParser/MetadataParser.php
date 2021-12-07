@@ -547,7 +547,7 @@ abstract class MetadataParser implements PreParserInterface
         $args = [];
 
         /** @var Metadata\Arg[] $argAnnotations */
-        $argAnnotations = array_merge(self::getMetadataMatching($metadatas, Metadata\Arg::class), $fieldMetadata->args);
+        $argAnnotations = self::getMetadataMatching($metadatas, Metadata\Arg::class);
 
         foreach ($argAnnotations as $arg) {
             $args[$arg->name] = ['type' => $arg->type];
