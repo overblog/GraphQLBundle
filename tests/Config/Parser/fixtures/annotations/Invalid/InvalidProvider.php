@@ -13,18 +13,18 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 class InvalidProvider
 {
     /**
-     * @GQL\Query(type="Int", targetType="RootMutation2")
+     * @GQL\Query(type="Int", targetTypes="RootMutation2")
      */
-    #[GQL\Query(type: 'Int', targetType: 'RootMutation2')]
+    #[GQL\Query(type: 'Int', targetTypes: 'RootMutation2')]
     public function noQueryOnMutation(): array
     {
         return [];
     }
 
     /**
-     * @GQL\Mutation(type="Int", targetType="RootQuery2")
+     * @GQL\Mutation(type="Int", targetTypes="RootQuery2")
      */
-    #[GQL\Mutation(type: 'Int', targetType: 'RootQuery2')]
+    #[GQL\Mutation(type: 'Int', targetTypes: 'RootQuery2')]
     public function noMutationOnQuery(): array
     {
         return [];
