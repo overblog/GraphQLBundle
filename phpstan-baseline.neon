@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method ReflectionClass\\|ReflectionClassConstant\\|ReflectionMethod\\|ReflectionProperty\\:\\:getAttributes\\(\\)\\.$#"
-			count: 1
-			path: src/Config/Parser/AttributeParser.php
-
-		-
 			message: "#^Abstract class Overblog\\\\GraphQLBundle\\\\Annotation\\\\Builder cannot be an Attribute class\\.$#"
 			count: 1
 			path: src/Annotation/Builder.php
@@ -91,16 +86,6 @@ parameters:
 			path: src/Config/Processor/BuilderProcessor.php
 
 		-
-			message: "#^Attribute class Overblog\\\\GraphQLBundle\\\\Definition\\\\ReturnTypeWillChange does not exist\\.$#"
-			count: 1
-			path: src/Definition/Argument.php
-
-		-
-			message: "#^Used constant ReturnTypeWillChange not found\\.$#"
-			count: 1
-			path: src/Definition/Argument.php
-
-		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\TypeFactory\\:\\:create\\(\\) should return GraphQL\\\\Type\\\\Definition\\\\Type but returns object\\.$#"
 			count: 1
 			path: src/Definition/Builder/TypeFactory.php
@@ -121,9 +106,14 @@ parameters:
 			path: src/DependencyInjection/Compiler/ConfigParserPass.php
 
 		-
-			message: "#^Parameter \\#2 \\$nodes of class GraphQL\\\\Error\\\\Error constructor expects GraphQL\\\\Language\\\\AST\\\\Node\\|\\(iterable\\<GraphQL\\\\Language\\\\AST\\\\Node\\>&Traversable\\)\\|null, array\\<GraphQL\\\\Language\\\\AST\\\\Node\\>\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$id of class Symfony\\\\Component\\\\DependencyInjection\\\\Reference constructor expects string, string\\|Symfony\\\\Component\\\\DependencyInjection\\\\Reference given\\.$#"
 			count: 1
-			path: src/Error/ErrorHandler.php
+			path: src/DependencyInjection/Compiler/ResolverMapTaggedServiceMappingPass.php
+
+		-
+			message: "#^Parameter \\#1 \\$keys of function array_fill_keys expects array, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/ResolverMapTaggedServiceMappingPass.php
 
 		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter\\:\\:convertException\\(\\) should return Throwable but returns object\\.$#"
@@ -236,11 +226,6 @@ parameters:
 			path: tests/Config/Parser/fixtures/annotations/Type/Animal.php
 
 		-
-			message: "#^Missing parameter \\$name \\(string\\|null\\) in call to Overblog\\\\GraphQLBundle\\\\Annotation\\\\TypeInterface constructor\\.$#"
-			count: 1
-			path: tests/Config/Parser/fixtures/annotations/Type/Character.php
-
-		-
 			message: "#^Parameter \\#1 \\$exceptionMap of class Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter constructor expects array\\<string, string\\>, array\\<string, array\\<string\\>\\> given\\.$#"
 			count: 1
 			path: tests/Error/ExceptionConverterTest.php
@@ -266,7 +251,7 @@ parameters:
 			path: tests/ExpressionLanguage/TestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$.* of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{mixed, 'with'\\} given\\.$#"
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{mixed, 'with'\\} given\\.$#"
 			count: 1
 			path: tests/ExpressionLanguage/TestCase.php
 
@@ -361,7 +346,7 @@ parameters:
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$.* of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
 			count: 1
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
