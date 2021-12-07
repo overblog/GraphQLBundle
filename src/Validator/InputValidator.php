@@ -77,7 +77,7 @@ class InputValidator
 
         $this->buildValidationTree(
             $rootNode,
-            $this->info->fieldDefinition->config['args'],
+            $this->info->fieldDefinition->config['args'] ?? [],
             $classMapping,
             $this->resolverArgs->args->getArrayCopy()
         );
@@ -212,7 +212,7 @@ class InputValidator
      */
     private static function isListOfType($type): bool
     {
-        if ($type instanceof ListOfType || ($type instanceof NonNull && $type->getOfType() instanceof ListOfType)) {
+        if ($type instanceof ListOfType || ($type instanceof NonNull && $type->getWrappedType() instanceof ListOfType)) {
             return true;
         }
 

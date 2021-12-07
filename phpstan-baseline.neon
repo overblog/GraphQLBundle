@@ -91,6 +91,16 @@ parameters:
 			path: src/Config/Processor/BuilderProcessor.php
 
 		-
+			message: "#^Attribute class Overblog\\\\GraphQLBundle\\\\Definition\\\\ReturnTypeWillChange does not exist\\.$#"
+			count: 1
+			path: src/Definition/Argument.php
+
+		-
+			message: "#^Used constant ReturnTypeWillChange not found\\.$#"
+			count: 1
+			path: src/Definition/Argument.php
+
+		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Definition\\\\Builder\\\\TypeFactory\\:\\:create\\(\\) should return GraphQL\\\\Type\\\\Definition\\\\Type but returns object\\.$#"
 			count: 1
 			path: src/Definition/Builder/TypeFactory.php
@@ -177,6 +187,11 @@ parameters:
 
 		-
 			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Validator\\\\Mapping\\\\ClassMetadataInterface\\>\\) does not accept Symfony\\\\Component\\\\Validator\\\\Mapping\\\\MetadataInterface\\.$#"
+			count: 1
+			path: src/Validator/InputValidator.php
+
+		-
+			message: "#^Offset 'validation' on array\\{name\\: string, type\\: \\(callable\\(\\)\\: GraphQL\\\\Type\\\\Definition\\\\OutputType&GraphQL\\\\Type\\\\Definition\\\\Type\\)\\|\\(GraphQL\\\\Type\\\\Definition\\\\OutputType&GraphQL\\\\Type\\\\Definition\\\\Type\\), resolve\\?\\: \\(callable\\(mixed, array\\<string, mixed\\>, mixed, GraphQL\\\\Type\\\\Definition\\\\ResolveInfo\\)\\: mixed\\)\\|null, args\\?\\: array\\<string, array\\{name\\: string, defaultValue\\?\\: mixed, description\\?\\: string\\|null, astNode\\?\\: GraphQL\\\\Language\\\\AST\\\\InputValueDefinitionNode\\|null\\}\\|GraphQL\\\\Type\\\\Definition\\\\Type\\>\\|null, description\\?\\: string\\|null, deprecationReason\\?\\: string\\|null, astNode\\?\\: GraphQL\\\\Language\\\\AST\\\\FieldDefinitionNode\\|null, complexity\\?\\: \\(callable\\(int, array\\<string, mixed\\>\\)\\: int\\)\\|null\\} on left side of \\?\\? does not exist\\.$#"
 			count: 1
 			path: src/Validator/InputValidator.php
 

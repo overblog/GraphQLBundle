@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\EventListener;
 
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InterfaceType;
+use GraphQL\Type\Definition\NamedType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
@@ -56,12 +57,12 @@ final class TypeDecoratorListener
         } elseif ($type instanceof CustomScalarType) {
             $this->decorateCustomScalarType($type, $resolverMap);
         } else {
-            $covered = $resolverMap->covered($type->name);
+            $covered = $resolverMap->covered($type instanceof NamedType ? $type->name : null);
             if (!empty($covered)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         '"%s".{"%s"} defined in resolverMap, but type is not managed by TypeDecorator.',
-                        $type->name,
+                        $type instanceof NamedType ? $type->name : get_class($type),
                         implode('", "', $covered)
                     )
                 );
@@ -86,10 +87,7 @@ final class TypeDecoratorListener
         $this->decorateObjectTypeFields($type, $fieldsResolved, $resolverMap);
     }
 
-    /**
-     * @param InterfaceType|UnionType $type
-     */
-    private function decorateInterfaceOrUnionType($type, ResolverMapInterface $resolverMap): void
+    private function decorateInterfaceOrUnionType(InterfaceType | UnionType $type, ResolverMapInterface $resolverMap): void
     {
         $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE, $resolverMap);
         $covered = $resolverMap->covered($type->name);
@@ -190,7 +188,7 @@ final class TypeDecoratorListener
         $type->config['fields'] = is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
-    private function configTypeMapping(Type $type, string $fieldName, ResolverMapInterface $resolverMap): void
+    private function configTypeMapping(ObjectType | InterfaceType | UnionType | CustomScalarType $type, string $fieldName, ResolverMapInterface $resolverMap): void
     {
         if ($resolverMap->isResolvable($type->name, $fieldName)) {
             $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
