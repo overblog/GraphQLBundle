@@ -30,7 +30,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use function array_fill_keys;
 use function realpath;
 use function sprintf;
 
@@ -57,6 +56,7 @@ class OverblogGraphQLExtension extends Extension
         $this->registerForAutoconfiguration($container);
         $this->setDefaultFieldResolver($config, $container);
 
+        $container->setParameter($this->getAlias().'.schemas', array_keys($config['definitions']['schema']));
         $container->setParameter($this->getAlias().'.config', $config);
         $container->setParameter($this->getAlias().'.resources_dir', realpath(__DIR__.'/../Resources'));
     }
@@ -232,7 +232,6 @@ class OverblogGraphQLExtension extends Extension
         }
 
         $executorDefinition = $container->getDefinition(Executor::class);
-        $resolverMapsBySchema = [];
 
         foreach ($config['definitions']['schema'] as $schemaName => $schemaConfig) {
             // builder
@@ -252,11 +251,7 @@ class OverblogGraphQLExtension extends Extension
             $definition->setFactory([new Reference($schemaBuilderID), 'call']);
 
             $executorDefinition->addMethodCall('addSchemaBuilder', [$schemaName, new Reference($schemaBuilderID)]);
-
-            $resolverMapsBySchema[$schemaName] = array_fill_keys($schemaConfig['resolver_maps'], 0);
         }
-
-        $container->setParameter(sprintf('%s.resolver_maps', $this->getAlias()), $resolverMapsBySchema);
     }
 
     private function setServicesAliases(array $config, ContainerBuilder $container): void

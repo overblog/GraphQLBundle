@@ -16,10 +16,7 @@ final class ResolverMapTaggedServiceMappingPassTest extends TestCase
     public function testProcess(): void
     {
         $container = new ContainerBuilder();
-        $container->setParameter('overblog_graphql.resolver_maps', [
-            'foo' => [],
-            'bar' => [],
-        ]);
+        $container->setParameter('overblog_graphql.schemas', ['foo', 'bar']);
 
         $container->register(TypeDecoratorListener::class);
         $container->register('App\\GraphQl\\Resolver\\ResolverMap1')
@@ -64,7 +61,7 @@ final class ResolverMapTaggedServiceMappingPassTest extends TestCase
     public function testProcessThrowsIfSchemaAttributeIsNotDefinedOnTag(): void
     {
         $container = new ContainerBuilder();
-        $container->setParameter('overblog_graphql.resolver_maps', []);
+        $container->setParameter('overblog_graphql.schemas', ['foo', 'bar']);
 
         $container->register(TypeDecoratorListener::class);
         $container->register('App\\GraphQl\\Resolver\\ResolverMap')
@@ -76,44 +73,11 @@ final class ResolverMapTaggedServiceMappingPassTest extends TestCase
         (new ResolverMapTaggedServiceMappingPass())->process($container);
     }
 
-    public function testProcessWithResolverMapBothTaggedAndInConfigDoesNotAddItTwice(): void
-    {
-        $container = new ContainerBuilder();
-        $container->setParameter('overblog_graphql.resolver_maps', [
-            'foo' => [
-                'App\\GraphQl\\Resolver\\ResolverMap1' => -10,
-                'App\\GraphQl\\Resolver\\ResolverMap2' => 0,
-            ],
-        ]);
-
-        $container->register(TypeDecoratorListener::class);
-        $container->register('App\\GraphQl\\Resolver\\ResolverMap1')
-            ->addTag('overblog_graphql.resolver_map', ['schema' => 'foo', 'priority' => 10]);
-
-        $container->register('App\\GraphQl\\Resolver\\ResolverMap2');
-
-        (new ResolverMapTaggedServiceMappingPass())->process($container);
-
-        $typeDecoratorListenerDefinition = $container->getDefinition(TypeDecoratorListener::class);
-
-        $methodCalls = $typeDecoratorListenerDefinition->getMethodCalls();
-
-        $this->assertCount(1, $methodCalls);
-        $this->assertSame('foo', $methodCalls[0][1][0]);
-        $this->assertEquals([
-            new Reference('App\\GraphQl\\Resolver\\ResolverMap1'),
-            new Reference('App\\GraphQl\\Resolver\\ResolverMap2'),
-        ], $methodCalls[0][1][1]);
-    }
-
     public function testProcessThrowsIfTagReferencesUnknownSchema(): void
     {
         $container = new ContainerBuilder();
         $container->register(TypeDecoratorListener::class);
-        $container->setParameter('overblog_graphql.resolver_maps', [
-            'foo' => [],
-            'bar' => [],
-        ]);
+        $container->setParameter('overblog_graphql.schemas', ['foo', 'bar']);
 
         $container->register('App\\GraphQl\\Resolver\\ResolverMap')
             ->addTag('overblog_graphql.resolver_map', ['schema' => 'baz']);
