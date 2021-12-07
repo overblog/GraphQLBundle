@@ -20,7 +20,7 @@ final class TypeInterface extends Annotation
     /**
      * Resolver type for interface.
      */
-    public ?string $resolveType;
+    public string $resolveType;
 
     /**
      * Interface name.
@@ -28,16 +28,12 @@ final class TypeInterface extends Annotation
     public ?string $name;
 
     /**
-     * @param string|null      $resolveType The express resolve type
-     * @param string|null      $name        The GraphQL name of the interface
+     * @param string        $resolveType The express resolve type
+     * @param string|null   $name        The GraphQL name of the interface
      */
-    public function __construct(string $name = null, string $resolveType = null)
+    public function __construct(string $resolveType, ?string $name = null)
     {
-        // TODO: 1.0: Remove optionality for both parameters.
-        // Previously, only the name was optional, but resolveType was always required
-        // But in PHP 8.1 you cannot define an optional parameter before a required one.
-        // To not break BC we now also make the resolveType optional.
-        $this->name = $name;
         $this->resolveType = $resolveType;
+        $this->name = $name;
     }
 }
