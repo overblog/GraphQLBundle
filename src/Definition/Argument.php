@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition;
 
+use ReturnTypeWillChange;
 use function array_key_exists;
 use function count;
 
@@ -42,7 +43,7 @@ class Argument implements ArgumentInterface
      *
      * @return mixed|null
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         // TODO 1.0: Drop PHP 7.4 support and add mixed return type.

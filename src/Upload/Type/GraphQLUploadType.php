@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Upload\Type;
 
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\ScalarType;
+use ReturnTypeWillChange;
 use Symfony\Component\HttpFoundation\File\File;
 use function get_class;
 use function gettype;
@@ -31,6 +32,7 @@ class GraphQLUploadType extends ScalarType
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function parseValue($value)
     {
         if (null !== $value && !$value instanceof File) {

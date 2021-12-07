@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Definition\Type;
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
+use ReturnTypeWillChange;
 use function call_user_func;
 use function is_callable;
 use function sprintf;
@@ -25,6 +26,7 @@ class CustomScalarType extends BaseCustomScalarType
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function serialize($value)
     {
         return $this->call('serialize', $value);
@@ -33,6 +35,7 @@ class CustomScalarType extends BaseCustomScalarType
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function parseValue($value)
     {
         return $this->call('parseValue', $value);
@@ -41,6 +44,7 @@ class CustomScalarType extends BaseCustomScalarType
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function parseLiteral(/* GraphQL\Language\AST\ValueNode */ $valueNode, array $variables = null)
     {
         return $this->call('parseLiteral', $valueNode);
