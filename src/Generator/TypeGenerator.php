@@ -15,10 +15,7 @@ use function file_put_contents;
 use function str_replace;
 use function var_export;
 
-/**
- * @final
- */
-class TypeGenerator
+final class TypeGenerator
 {
     public const MODE_DRY_RUN = 1;
     public const MODE_MAPPING_ONLY = 2;
