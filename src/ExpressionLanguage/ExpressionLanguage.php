@@ -14,7 +14,7 @@ use function strlen;
 use function strpos;
 use function substr;
 
-class ExpressionLanguage extends BaseExpressionLanguage
+final class ExpressionLanguage extends BaseExpressionLanguage
 {
     // TODO (murtukov): make names conditional
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];

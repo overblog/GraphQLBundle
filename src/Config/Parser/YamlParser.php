@@ -15,7 +15,7 @@ use function file_get_contents;
 use function is_array;
 use function sprintf;
 
-class YamlParser implements ParserInterface
+final class YamlParser implements ParserInterface
 {
     private static Parser $yamlParser;
 

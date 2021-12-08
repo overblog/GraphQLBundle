@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
 use PHPUnit\Framework\TestCase;
 
-class NodeFieldDefinitionTest extends TestCase
+final class NodeFieldDefinitionTest extends TestCase
 {
     private NodeFieldDefinition $definition;
 

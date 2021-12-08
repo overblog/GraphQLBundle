@@ -14,7 +14,7 @@ use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
  *
  * @see https://github.com/overblog/GraphQLBundle/blob/master/docs/validation/index.md#error-messages
  */
-class Formatter
+final class Formatter
 {
     public function onErrorFormatting(ErrorFormattingEvent $event): void
     {

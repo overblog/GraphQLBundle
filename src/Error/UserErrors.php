@@ -11,7 +11,7 @@ use function is_object;
 use function is_string;
 use function sprintf;
 
-class UserErrors extends RuntimeException
+final class UserErrors extends RuntimeException
 {
     /** @var UserError[] */
     private array $errors = [];

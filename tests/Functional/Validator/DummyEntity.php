@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Assert\Callback({"Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator", "validateClass"})
  */
-class DummyEntity
+final class DummyEntity
 {
     /**
      * @Assert\EqualTo("Lorem Ipsum")

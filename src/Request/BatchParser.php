@@ -15,7 +15,7 @@ use function json_last_error;
 use function sprintf;
 use const JSON_ERROR_NONE;
 
-class BatchParser implements ParserInterface
+final class BatchParser implements ParserInterface
 {
     use UploadParserTrait;
 

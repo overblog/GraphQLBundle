@@ -21,7 +21,7 @@ use ReflectionProperty;
 use Reflector;
 use function sprintf;
 
-class DocBlockTypeGuesser extends PhpTypeGuesser
+final class DocBlockTypeGuesser extends PhpTypeGuesser
 {
     protected ?DocBlockFactory $factory;
 

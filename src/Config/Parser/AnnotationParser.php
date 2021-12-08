@@ -17,7 +17,7 @@ use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-class AnnotationParser extends MetadataParser
+final class AnnotationParser extends MetadataParser
 {
     public const METADATA_FORMAT = '@%s';
 

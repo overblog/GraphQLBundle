@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\MultipleSchema;
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class MultipleSchemaTest extends TestCase
+final class MultipleSchemaTest extends TestCase
 {
     protected function setUp(): void
     {

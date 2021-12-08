@@ -14,7 +14,7 @@ use function is_callable;
 use function is_numeric;
 use function max;
 
-class Paginator
+final class Paginator
 {
     public const MODE_REGULAR = false;
     public const MODE_PROMISE = true;

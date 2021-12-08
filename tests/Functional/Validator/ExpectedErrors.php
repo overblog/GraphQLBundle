@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 
-class ExpectedErrors
+final class ExpectedErrors
 {
     public const LINKED_CONSTRAINTS = [
         'message' => 'validation',

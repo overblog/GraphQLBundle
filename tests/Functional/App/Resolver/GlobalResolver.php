@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use function array_values;
 
-class GlobalResolver
+final class GlobalResolver
 {
     private TypeResolver $typeResolver;
 

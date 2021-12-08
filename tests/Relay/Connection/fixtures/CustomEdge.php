@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\fixtures;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 
-class CustomEdge extends Edge
+final class CustomEdge extends Edge
 {
     public string $customProperty;
 }

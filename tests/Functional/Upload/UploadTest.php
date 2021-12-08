@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use function json_decode;
 use function json_encode;
 
-class UploadTest extends TestCase
+final class UploadTest extends TestCase
 {
     public function testSingleUpload(): void
     {

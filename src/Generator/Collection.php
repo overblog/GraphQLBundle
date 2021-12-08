@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 /**
  * Extends the default Collection to properly convert expressions.
  */
-class Collection extends BaseCollection
+final class Collection extends BaseCollection
 {
     /**
      * Mark converters to be used by convertion of array values.

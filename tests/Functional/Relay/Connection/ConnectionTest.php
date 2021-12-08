@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/__tests__/connection.js
  */
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     protected function setUp(): void
     {

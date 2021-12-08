@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
+final class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
 {
     private ExpressionLanguage $expressionLanguage;
 

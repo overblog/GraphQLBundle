@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Builder;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class PagerArgs implements MappingInterface
+final class PagerArgs implements MappingInterface
 {
     public function toMappingDefinition(array $config): array
     {

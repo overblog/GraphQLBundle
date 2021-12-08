@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Router;
 use Twig\Environment;
 
-class ProfilerControllerTest extends TestCase
+final class ProfilerControllerTest extends TestCase
 {
     /**
      * @return Router&MockObject

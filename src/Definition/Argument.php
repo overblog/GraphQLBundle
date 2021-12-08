@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Definition;
 use function array_key_exists;
 use function count;
 
-class Argument implements ArgumentInterface
+final class Argument implements ArgumentInterface
 {
     private array $rawArguments = [];
 

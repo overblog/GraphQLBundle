@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 
-class NullResolverMap extends ResolverMap
+final class NullResolverMap extends ResolverMap
 {
     protected function map(): array
     {

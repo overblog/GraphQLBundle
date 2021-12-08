@@ -19,7 +19,7 @@ use function preg_match;
 use function sprintf;
 use function str_replace;
 
-class TypesConfiguration implements ConfigurationInterface
+final class TypesConfiguration implements ConfigurationInterface
 {
     private static array $types = [
         'object',

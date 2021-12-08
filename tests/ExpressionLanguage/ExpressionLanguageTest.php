@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 
-class ExpressionLanguageTest extends TestCase
+final class ExpressionLanguageTest extends TestCase
 {
     /**
      * @dataProvider expressionContainsVarProvider

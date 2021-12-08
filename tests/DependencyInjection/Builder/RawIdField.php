@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Builder;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 
-class RawIdField implements MappingInterface
+final class RawIdField implements MappingInterface
 {
     public function toMappingDefinition(array $config): array
     {

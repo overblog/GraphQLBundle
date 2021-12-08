@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\Data;
 
-class GraphQLCollectorTest extends TestCase
+final class GraphQLCollectorTest extends TestCase
 {
     public function testCollect(): void
     {

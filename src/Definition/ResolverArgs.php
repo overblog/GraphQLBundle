@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Definition;
 use ArrayObject;
 use GraphQL\Type\Definition\ResolveInfo;
 
-class ResolverArgs
+final class ResolverArgs
 {
     public ArgumentInterface $args;
     public ResolveInfo $info;

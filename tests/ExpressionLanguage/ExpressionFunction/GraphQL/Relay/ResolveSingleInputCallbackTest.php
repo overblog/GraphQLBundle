@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedExc
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\ResolveSingleInputCallback;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class ResolveSingleInputCallbackTest extends TestCase
+final class ResolveSingleInputCallbackTest extends TestCase
 {
     protected function getFunctions()
     {

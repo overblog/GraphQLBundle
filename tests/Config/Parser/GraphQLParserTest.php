@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use function sprintf;
 use const DIRECTORY_SEPARATOR;
 
-class GraphQLParserTest extends TestCase
+final class GraphQLParserTest extends TestCase
 {
     public function testParse(): void
     {

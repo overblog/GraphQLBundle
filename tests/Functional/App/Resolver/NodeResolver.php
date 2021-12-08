@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class NodeResolver implements ContainerAwareInterface
+final class NodeResolver implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 

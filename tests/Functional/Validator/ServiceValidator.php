@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 
-class ServiceValidator
+final class ServiceValidator
 {
     public function isZipCodeValid(int $code): bool
     {

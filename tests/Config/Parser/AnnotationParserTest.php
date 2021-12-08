@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 /**
  * @group legacy
  */
-class AnnotationParserTest extends MetadataParserTest
+final class AnnotationParserTest extends MetadataParserTest
 {
     public function setUp(): void
     {

@@ -8,7 +8,7 @@ use Exception;
 use GraphQL\Error\UserError as GraphQLUserError;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class InvalidArgumentError extends GraphQLUserError
+final class InvalidArgumentError extends GraphQLUserError
 {
     private string $name;
     private ConstraintViolationListInterface $errors;

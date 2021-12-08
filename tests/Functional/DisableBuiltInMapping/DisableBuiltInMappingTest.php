@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class DisableBuiltInMappingTest extends TestCase
+final class DisableBuiltInMappingTest extends TestCase
 {
     protected function setUp(): void
     {

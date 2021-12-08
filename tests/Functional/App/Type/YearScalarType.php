@@ -10,7 +10,7 @@ use GraphQL\Type\Definition\ScalarType;
 use function sprintf;
 use function str_replace;
 
-class YearScalarType extends ScalarType
+final class YearScalarType extends ScalarType
 {
     /**
      * {@inheritdoc}

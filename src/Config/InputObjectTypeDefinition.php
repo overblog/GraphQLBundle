@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Config;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use function is_string;
 
-class InputObjectTypeDefinition extends TypeDefinition
+final class InputObjectTypeDefinition extends TypeDefinition
 {
     public function getDefinition(): ArrayNodeDefinition
     {

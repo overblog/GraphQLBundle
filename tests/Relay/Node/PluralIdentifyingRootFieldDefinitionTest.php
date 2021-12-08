@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
 use PHPUnit\Framework\TestCase;
 
-class PluralIdentifyingRootFieldDefinitionTest extends TestCase
+final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
 {
     /** @var PluralIdentifyingRootFieldDefinition */
     private $definition;

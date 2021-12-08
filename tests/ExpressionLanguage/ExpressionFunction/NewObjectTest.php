@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\NewObject;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class NewObjectTest extends TestCase
+final class NewObjectTest extends TestCase
 {
     protected function getFunctions()
     {

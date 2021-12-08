@@ -26,7 +26,7 @@ use function is_numeric;
 use function is_string;
 use function sprintf;
 
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     public const NAME = 'overblog_graphql';
 

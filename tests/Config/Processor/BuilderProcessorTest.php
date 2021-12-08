@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class BuilderProcessorTest extends TestCase
+final class BuilderProcessorTest extends TestCase
 {
     /**
      * @dataProvider apiAbuseProvider

@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use function in_array;
 
-class InputValidator
+final class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
@@ -127,7 +127,7 @@ class InputValidator
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      */
-    protected function buildValidationTree(ValidationNode $rootObject, array $fields, array $classValidation, array $inputData): ValidationNode
+    private function buildValidationTree(ValidationNode $rootObject, array $fields, array $classValidation, array $inputData): ValidationNode
     {
         $metadata = new ObjectMetadata($rootObject);
 

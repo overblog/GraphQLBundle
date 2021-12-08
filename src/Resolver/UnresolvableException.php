@@ -6,6 +6,6 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use InvalidArgumentException;
 
-class UnresolvableException extends InvalidArgumentException
+final class UnresolvableException extends InvalidArgumentException
 {
 }

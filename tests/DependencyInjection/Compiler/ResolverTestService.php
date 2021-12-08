@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Class ResolverTestService.
  */
-class ResolverTestService implements ContainerAwareInterface
+final class ResolverTestService implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 

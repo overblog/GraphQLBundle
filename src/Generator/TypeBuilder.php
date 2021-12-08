@@ -59,13 +59,13 @@ use function substr;
  *
  * Every method with prefix 'build' has a render example in it's PHPDoc.
  */
-class TypeBuilder
+final class TypeBuilder
 {
-    protected const CONSTRAINTS_NAMESPACE = 'Symfony\Component\Validator\Constraints';
-    protected const DOCBLOCK_TEXT = 'THIS FILE WAS GENERATED AND SHOULD NOT BE EDITED MANUALLY.';
-    protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
+    private const CONSTRAINTS_NAMESPACE = 'Symfony\Component\Validator\Constraints';
+    private const DOCBLOCK_TEXT = 'THIS FILE WAS GENERATED AND SHOULD NOT BE EDITED MANUALLY.';
+    private const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
 
-    protected const EXTENDS = [
+    private const EXTENDS = [
         'object' => ObjectType::class,
         'input-object' => InputObjectType::class,
         'interface' => InterfaceType::class,
@@ -74,13 +74,13 @@ class TypeBuilder
         'custom-scalar' => CustomScalarType::class,
     ];
 
-    protected ExpressionConverter $expressionConverter;
-    protected PhpFile $file;
-    protected string $namespace;
-    protected array $config;
-    protected string $type;
-    protected string $currentField;
-    protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
+    private ExpressionConverter $expressionConverter;
+    private PhpFile $file;
+    private string $namespace;
+    private array $config;
+    private string $type;
+    private string $currentField;
+    private string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -156,7 +156,7 @@ class TypeBuilder
      *
      * @return GeneratorInterface|string
      */
-    protected function buildType(string $typeDefinition)
+    private function buildType(string $typeDefinition)
     {
         $typeNode = Parser::parseType($typeDefinition);
 
@@ -179,7 +179,7 @@ class TypeBuilder
      *
      * @return Literal|string
      */
-    protected function wrapTypeRecursive($typeNode, bool &$isReference)
+    private function wrapTypeRecursive($typeNode, bool &$isReference)
     {
         switch ($typeNode->kind) {
             case NodeKind::NON_NULL_TYPE:
@@ -292,7 +292,7 @@ class TypeBuilder
      *
      * @throws GeneratorException
      */
-    protected function buildConfig(array $config): Collection
+    private function buildConfig(array $config): Collection
     {
         // Convert to an object for a better readability
         $c = (object) $config;
@@ -374,7 +374,7 @@ class TypeBuilder
      *
      * @return ArrowFunction
      */
-    protected function buildScalarCallback($callback, string $fieldName)
+    private function buildScalarCallback($callback, string $fieldName)
     {
         if (!is_callable($callback)) {
             throw new GeneratorException("Value of '$fieldName' is not callable.");
@@ -444,7 +444,7 @@ class TypeBuilder
      *
      * @return GeneratorInterface|string
      */
-    protected function buildResolve($resolve, ?array $groups = null)
+    private function buildResolve($resolve, ?array $groups = null)
     {
         if (is_callable($resolve) && is_array($resolve)) {
             return Collection::numeric($resolve);
@@ -538,7 +538,7 @@ class TypeBuilder
      *
      * @throws GeneratorException
      */
-    protected function buildValidationRules(array $config): GeneratorInterface
+    private function buildValidationRules(array $config): GeneratorInterface
     {
         // Convert to object for better readability
         $c = (object) $config;
@@ -606,7 +606,7 @@ class TypeBuilder
      *
      * @return ArrowFunction|Collection
      */
-    protected function buildConstraints(array $constraints = [], bool $inClosure = true)
+    private function buildConstraints(array $constraints = [], bool $inClosure = true)
     {
         $result = Collection::numeric()->setMultiline();
 
@@ -816,7 +816,7 @@ class TypeBuilder
      *
      * @return Closure|mixed
      */
-    protected function buildComplexity($complexity)
+    private function buildComplexity($complexity)
     {
         if (EL::isStringWithTrigger($complexity)) {
             $expression = $this->expressionConverter->convert($complexity);
@@ -855,7 +855,7 @@ class TypeBuilder
      *
      * @return ArrowFunction|mixed
      */
-    protected function buildPublic($public)
+    private function buildPublic($public)
     {
         if (EL::isStringWithTrigger($public)) {
             $expression = $this->expressionConverter->convert($public);
@@ -888,7 +888,7 @@ class TypeBuilder
      *
      * @return ArrowFunction|mixed
      */
-    protected function buildAccess($access)
+    private function buildAccess($access)
     {
         if (EL::isStringWithTrigger($access)) {
             $expression = $this->expressionConverter->convert($access);
@@ -913,7 +913,7 @@ class TypeBuilder
      *
      * @return mixed|ArrowFunction
      */
-    protected function buildResolveType($resolveType)
+    private function buildResolveType($resolveType)
     {
         if (EL::isStringWithTrigger($resolveType)) {
             $expression = $this->expressionConverter->convert($resolveType);
@@ -935,7 +935,7 @@ class TypeBuilder
      *      "App\Entity\User::firstName()" -> ['App\Entity\User', 'firstName', 'getter']
      *      "App\Entity\User::firstName"   -> ['App\Entity\User', 'firstName', 'member']
      */
-    protected function normalizeLink(string $link): array
+    private function normalizeLink(string $link): array
     {
         [$fqcn, $classMember] = explode('::', $link);
 

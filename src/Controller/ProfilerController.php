@@ -17,7 +17,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use function array_map;
 
-class ProfilerController
+final class ProfilerController
 {
     private ?Profiler $profiler;
     private ?Environment $twig;

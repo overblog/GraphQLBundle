@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedExc
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\MutateAndGetPayloadCallback;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class MutateAndGetPayloadCallbackTest extends TestCase
+final class MutateAndGetPayloadCallbackTest extends TestCase
 {
     protected function getFunctions()
     {

@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\fixtures;
 
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 
-class CustomConnection extends Connection
+final class CustomConnection extends Connection
 {
     public int $averageAge;
 }

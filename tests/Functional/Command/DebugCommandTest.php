@@ -14,7 +14,7 @@ use function str_replace;
 use function trim;
 use const PHP_EOL;
 
-class DebugCommandTest extends TestCase
+final class DebugCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private array $logs = [];

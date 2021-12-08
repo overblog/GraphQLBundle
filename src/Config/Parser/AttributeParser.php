@@ -12,7 +12,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
 
-class AttributeParser extends MetadataParser
+final class AttributeParser extends MetadataParser
 {
     public const METADATA_FORMAT = '#[%s]';
 

@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class DisableIntrospectionTest extends TestCase
+final class DisableIntrospectionTest extends TestCase
 {
     private string $introspectionQuery = <<<'EOF'
         query {

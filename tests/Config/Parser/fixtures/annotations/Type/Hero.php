@@ -14,7 +14,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killab
  */
 #[GQL\Type(interfaces: ['Character'])]
 #[GQL\Description('The Hero type')]
-class Hero extends Character implements Killable
+final class Hero extends Character implements Killable
 {
     /**
      * @GQL\Field(type="Race")

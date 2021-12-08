@@ -9,6 +9,6 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 /**
  * @GQL\Type
  */
-class Type
+final class Type
 {
 }

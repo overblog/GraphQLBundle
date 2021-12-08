@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Validation;
 use function class_exists;
 use function json_decode;
 
-class InputValidatorTest extends TestCase
+final class InputValidatorTest extends TestCase
 {
     protected function setUp(): void
     {

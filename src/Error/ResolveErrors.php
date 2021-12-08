@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Error;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ResolveErrors
+final class ResolveErrors
 {
     private ?ConstraintViolationListInterface $validationErrors = null;
 

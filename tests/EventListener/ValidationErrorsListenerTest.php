@@ -15,7 +15,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use function class_exists;
 
-class ValidationErrorsListenerTest extends TestCase
+final class ValidationErrorsListenerTest extends TestCase
 {
     /** @var ValidationErrorsListener */
     private $listener;

@@ -24,11 +24,11 @@ use function sprintf;
 use function strlen;
 use function substr;
 
-class ArgumentsTransformer
+final class ArgumentsTransformer
 {
-    protected PropertyAccessor $accessor;
-    protected ?ValidatorInterface $validator;
-    protected array $classesMap;
+    private PropertyAccessor $accessor;
+    private ?ValidatorInterface $validator;
+    private array $classesMap;
 
     public function __construct(ValidatorInterface $validator = null, array $classesMap = [])
     {

@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use function json_decode;
 
-class TypeGeneratorTest extends TestCase
+final class TypeGeneratorTest extends TestCase
 {
     public function testPublicCallback(): void
     {

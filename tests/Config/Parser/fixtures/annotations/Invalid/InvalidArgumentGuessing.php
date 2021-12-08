@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type
  */
 #[GQL\Type]
-class InvalidArgumentGuessing
+final class InvalidArgumentGuessing
 {
     /**
      * @GQL\Field(name="guessFailed")

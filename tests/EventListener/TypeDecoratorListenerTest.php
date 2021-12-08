@@ -22,7 +22,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
 use function substr;
 
-class TypeDecoratorListenerTest extends TestCase
+final class TypeDecoratorListenerTest extends TestCase
 {
     /**
      * @param string $fieldName
