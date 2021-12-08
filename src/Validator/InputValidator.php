@@ -60,11 +60,9 @@ final class InputValidator
     }
 
     /**
-     * @param string|array|null $groups
-     *
      * @throws ArgumentsValidationException
      */
-    public function validate($groups = null, bool $throw = true): ?ConstraintViolationListInterface
+    public function validate(string|array|null $groups = null, bool $throw = true): ?ConstraintViolationListInterface
     {
         $rootNode = new ValidationNode(
             $this->info->parentType,
@@ -207,10 +205,7 @@ final class InputValidator
         return $rootObject;
     }
 
-    /**
-     * @param GeneratedTypeInterface|ListOfType|NonNull $type
-     */
-    private static function isListOfType($type): bool
+    private static function isListOfType(GeneratedTypeInterface|ListOfType|NonNull $type): bool
     {
         if ($type instanceof ListOfType || ($type instanceof NonNull && $type->getWrappedType() instanceof ListOfType)) {
             return true;
@@ -219,10 +214,7 @@ final class InputValidator
         return false;
     }
 
-    /**
-     * @param ObjectType|InputObjectType $type
-     */
-    private function createCollectionNode(array $values, $type, ValidationNode $parent): array
+    private function createCollectionNode(array $values, ObjectType|InputObjectType $type, ValidationNode $parent): array
     {
         $collection = [];
 
@@ -233,10 +225,7 @@ final class InputValidator
         return $collection;
     }
 
-    /**
-     * @param ObjectType|InputObjectType $type
-     */
-    private function createObjectNode(array $value, $type, ValidationNode $parent): ValidationNode
+    private function createObjectNode(array $value, ObjectType|InputObjectType $type, ValidationNode $parent): ValidationNode
     {
         $classValidation = static::normalizeConfig($type->config['validation'] ?? []);
 
