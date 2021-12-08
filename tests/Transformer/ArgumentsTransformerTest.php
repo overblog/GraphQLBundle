@@ -321,9 +321,11 @@ final class ArgumentsTransformerTest extends TestCase
     /** @dataProvider getWrappedInputObject */
     public function testInputObjectWithWrappingType(Type $type): void
     {
-        $transformer = $this->getTransformer([
+        $transformer = $this->getTransformer(
+            [
                 'InputType1' => ['type' => 'input', 'class' => InputType1::class],
-            ], new ConstraintViolationList()
+            ],
+            new ConstraintViolationList()
         );
         $info = $this->getResolveInfo(self::getTypes());
 

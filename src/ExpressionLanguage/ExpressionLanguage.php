@@ -11,7 +11,6 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\Token;
 use function array_merge;
 use function strlen;
-use function strpos;
 use function substr;
 
 final class ExpressionLanguage extends BaseExpressionLanguage
@@ -124,7 +123,7 @@ final class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function stringHasTrigger(string $maybeExpression): bool
     {
-        return 0 === strpos($maybeExpression, self::EXPRESSION_TRIGGER);
+        return str_starts_with($maybeExpression, self::EXPRESSION_TRIGGER);
     }
 
     /**

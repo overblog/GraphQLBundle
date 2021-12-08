@@ -46,7 +46,7 @@ final class ValidationNode
     private ?ResolverArgs $__resolverArgs;
 
     public function __construct(
-        ObjectType | InputObjectType $type,
+        ObjectType|InputObjectType $type,
         string $field = null,
         ?ValidationNode $parent = null,
         ?ResolverArgs $resolverArgs = null

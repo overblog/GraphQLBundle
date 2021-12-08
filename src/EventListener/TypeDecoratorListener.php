@@ -87,7 +87,7 @@ final class TypeDecoratorListener
         $this->decorateObjectTypeFields($type, $fieldsResolved, $resolverMap);
     }
 
-    private function decorateInterfaceOrUnionType(InterfaceType | UnionType $type, ResolverMapInterface $resolverMap): void
+    private function decorateInterfaceOrUnionType(InterfaceType|UnionType $type, ResolverMapInterface $resolverMap): void
     {
         $this->configTypeMapping($type, ResolverMapInterface::RESOLVE_TYPE, $resolverMap);
         $covered = $resolverMap->covered($type->name);
@@ -188,7 +188,7 @@ final class TypeDecoratorListener
         $type->config['fields'] = is_callable($fields) ? $decoratedFields : $decoratedFields();
     }
 
-    private function configTypeMapping(ObjectType | InterfaceType | UnionType | CustomScalarType $type, string $fieldName, ResolverMapInterface $resolverMap): void
+    private function configTypeMapping(ObjectType|InterfaceType|UnionType|CustomScalarType $type, string $fieldName, ResolverMapInterface $resolverMap): void
     {
         if ($resolverMap->isResolvable($type->name, $fieldName)) {
             $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);

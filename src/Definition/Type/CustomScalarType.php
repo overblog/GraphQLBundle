@@ -16,10 +16,10 @@ class CustomScalarType extends BaseCustomScalarType
 {
     public function __construct(array $config = [])
     {
-        $config['name'] = $config['name'] ?? uniqid('CustomScalar');
+        $config['name'] ??= uniqid('CustomScalar');
         parent::__construct($config);
 
-        $this->config['scalarType'] = $this->config['scalarType'] ?? null;
+        $this->config['scalarType'] ??= null;
     }
 
     /**
