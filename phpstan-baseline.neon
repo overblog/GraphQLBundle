@@ -126,6 +126,41 @@ parameters:
 			path: src/DependencyInjection/Compiler/ResolverMapTaggedServiceMappingPass.php
 
 		-
+			message: "#^Parameter \\#1 \\$namespace of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGeneratorOptions constructor expects string, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#1 \\$typeConfigs of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGenerator constructor expects array, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#2 \\$cacheDir of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGeneratorOptions constructor expects string\\|null, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#2 \\$namespace of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeBuilder constructor expects string, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#3 \\$useClassMap of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGeneratorOptions constructor expects bool, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#4 \\$cacheBaseDir of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGeneratorOptions constructor expects string\\|null, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
+			message: "#^Parameter \\#5 \\$cacheDirMask of class Overblog\\\\GraphQLBundle\\\\Generator\\\\TypeGeneratorOptions constructor expects int\\|null, array\\|bool\\|float\\|int\\|string\\|null given\\.$#"
+			count: 1
+			path: src/DependencyInjection/Compiler/TypeGeneratorPass.php
+
+		-
 			message: "#^Method Overblog\\\\GraphQLBundle\\\\Error\\\\ExceptionConverter\\:\\:convertException\\(\\) should return Throwable but returns object\\.$#"
 			count: 1
 			path: src/Error/ExceptionConverter.php
