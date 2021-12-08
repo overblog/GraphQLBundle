@@ -10,6 +10,7 @@ UPGRADE FROM 0.14 to 1.0
 * Removed deprecated `builders` from `Type`
 * Removed deprecated `values` from `Enum`
 * Removed deprecated `resolver_maps` configuration option
+* Removed `request_files` from context, use `request` object instead
 
 UPGRADE FROM 0.13 to 0.14
 =========================

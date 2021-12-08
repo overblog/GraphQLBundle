@@ -1,5 +1,5 @@
 services:
-    Overblog\GraphQLBundle\EventListener\RequestFilesListener:
+    Overblog\GraphQLBundle\EventListener\RequestListener:
         arguments:
             - "@request_stack"
         tags:

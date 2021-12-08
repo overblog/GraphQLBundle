@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class RequestFilesListener
+final class RequestListener
 {
     private RequestStack $requestStack;
 
@@ -27,6 +27,5 @@ final class RequestFilesListener
 
         $context = $event->getExecutorContext();
         $context['request'] = $request;
-        $context['request_files'] = $request->files;
     }
 }
