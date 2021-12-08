@@ -43,7 +43,6 @@ use function key;
 use function ltrim;
 use function reset;
 use function rtrim;
-use function strpos;
 use function strrchr;
 use function strtolower;
 use function substr;
@@ -546,7 +545,7 @@ final class TypeBuilder
         $array = Collection::assoc();
 
         if (!empty($c->link)) {
-            if (false === strpos($c->link, '::')) {
+            if (!str_contains($c->link, '::')) {
                 // e.g. App\Entity\Droid
                 $array->addItem('link', $c->link);
             } else {
@@ -614,7 +613,7 @@ final class TypeBuilder
             $name = key($wrapper);
             $args = reset($wrapper);
 
-            if (false !== strpos($name, '\\')) {
+            if (str_contains($name, '\\')) {
                 // Custom constraint
                 $fqcn = ltrim($name, '\\');
                 $name = ltrim((string) strrchr($name, '\\'), '\\');

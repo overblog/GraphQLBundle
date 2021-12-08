@@ -30,10 +30,10 @@ final class TypeDecoratorListenerTest extends TestCase
      *
      * @dataProvider specialTypeFieldProvider
      */
-    public function testSpecialField($fieldName, ObjectType | UnionType | InterfaceType | CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
+    public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
-            $fieldValueRetriever = fn (ObjectType | UnionType | InterfaceType | CustomScalarType $type, $fieldName) => $type->config[$fieldName];
+            $fieldValueRetriever = fn (ObjectType|UnionType|InterfaceType|CustomScalarType $type, $fieldName) => $type->config[$fieldName];
         }
         $expected = static function (): void {
         };
