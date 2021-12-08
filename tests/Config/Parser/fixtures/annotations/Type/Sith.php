@@ -17,7 +17,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Union\Killab
 #[GQL\Description('The Sith type')]
 #[GQL\Access('isAuthenticated()')]
 #[GQL\IsPublic('isAuthenticated()')]
-class Sith extends Character implements Killable
+final class Sith extends Character implements Killable
 {
     /**
      * @GQL\Field(type="String!")

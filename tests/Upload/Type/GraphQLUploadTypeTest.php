@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use function sprintf;
 
-class GraphQLUploadTypeTest extends TestCase
+final class GraphQLUploadTypeTest extends TestCase
 {
     /**
      * @param mixed $invalidValue

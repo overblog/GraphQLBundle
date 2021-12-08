@@ -9,7 +9,7 @@ use Exception;
 use GraphQL\Language\AST\StringValueNode;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 
-class DateTimeType
+final class DateTimeType
 {
     /**
      * @return string

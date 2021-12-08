@@ -17,7 +17,7 @@ use function call_user_func;
 use function func_get_args;
 use function React\Promise\resolve;
 
-class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
+final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {

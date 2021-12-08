@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use stdClass;
 
-class HasPermissionTest extends TestCase
+final class HasPermissionTest extends TestCase
 {
     private string $testedExpression = 'hasPermission(object,"OWNER")';
 

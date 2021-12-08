@@ -18,7 +18,7 @@ use function array_merge;
 use function get_class;
 use function sprintf;
 
-class ResolverMapTest extends TestCase
+final class ResolverMapTest extends TestCase
 {
     /**
      * @param array|ArrayAccess $map

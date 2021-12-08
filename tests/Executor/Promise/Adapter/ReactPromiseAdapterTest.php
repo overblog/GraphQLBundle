@@ -15,7 +15,7 @@ use stdClass;
 use Symfony\Component\Process\PhpProcess;
 use function sprintf;
 
-class ReactPromiseAdapterTest extends TestCase
+final class ReactPromiseAdapterTest extends TestCase
 {
     private ReactPromiseAdapter $adapter;
 

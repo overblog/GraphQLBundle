@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
-class UnionNode implements NodeInterface
+final class UnionNode implements NodeInterface
 {
     public static function toConfig(Node $node): array
     {

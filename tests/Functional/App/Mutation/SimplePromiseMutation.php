@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 
-class SimplePromiseMutation
+final class SimplePromiseMutation
 {
     private PromiseAdapter $promiseAdapter;
 

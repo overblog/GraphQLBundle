@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\QueryResolver;
 
-class ResolverResolverTest extends AbstractProxyResolverTest
+final class ResolverResolverTest extends AbstractProxyResolverTest
 {
     protected function createResolver(): QueryResolver
     {

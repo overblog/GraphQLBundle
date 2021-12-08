@@ -27,7 +27,7 @@ use function sprintf;
 use function trim;
 use function ucfirst;
 
-class GraphQLParser implements ParserInterface
+final class GraphQLParser implements ParserInterface
 {
     private const DEFINITION_TYPE_MAPPING = [
         NodeKind::OBJECT_TYPE_DEFINITION => 'object',

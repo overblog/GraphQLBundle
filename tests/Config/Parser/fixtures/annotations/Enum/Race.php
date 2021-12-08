@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\Constants;
  */
 #[GQL\Enum]
 #[GQL\Description('The list of races!')]
-class Race
+final class Race
 {
     public const HUMAIN = 1;
 

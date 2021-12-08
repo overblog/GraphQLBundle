@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Config\Processor\NamedConfigProcessor;
 use Overblog\GraphQLBundle\Config\Processor\ProcessorInterface;
 use Overblog\GraphQLBundle\Config\Processor\RelayProcessor;
 
-class Processor implements ProcessorInterface
+final class Processor implements ProcessorInterface
 {
     public const BEFORE_NORMALIZATION = 0;
     public const NORMALIZATION = 2;

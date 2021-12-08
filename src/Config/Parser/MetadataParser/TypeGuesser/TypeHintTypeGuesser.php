@@ -11,7 +11,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
 
-class TypeHintTypeGuesser extends PhpTypeGuesser
+final class TypeHintTypeGuesser extends PhpTypeGuesser
 {
     public function getName(): string
     {

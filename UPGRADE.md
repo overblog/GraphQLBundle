@@ -11,6 +11,8 @@ UPGRADE FROM 0.14 to 1.0
 * Removed deprecated `values` from `Enum`
 * Removed deprecated `resolver_maps` configuration option
 * Removed `request_files` from context, use `request` object instead
+* All classes are now final. If you need an extension point, try to use composition, 
+  implementing the interface or raise an issue.
 
 UPGRADE FROM 0.13 to 0.14
 =========================

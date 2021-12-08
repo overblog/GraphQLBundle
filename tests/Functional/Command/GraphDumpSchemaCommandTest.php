@@ -14,7 +14,7 @@ use function strcmp;
 use function trim;
 use function usort;
 
-class GraphDumpSchemaCommandTest extends TestCase
+final class GraphDumpSchemaCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private string $cacheDir;

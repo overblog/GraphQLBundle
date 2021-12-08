@@ -17,7 +17,7 @@ use stdClass;
 use function sprintf;
 use function uniqid;
 
-class CustomScalarTypeTest extends TestCase
+final class CustomScalarTypeTest extends TestCase
 {
     public function testScalarTypeConfig(): void
     {

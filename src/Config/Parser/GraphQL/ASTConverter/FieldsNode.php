@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 use GraphQL\Language\AST\Node;
 use GraphQL\Utils\AST;
 
-class FieldsNode implements NodeInterface
+final class FieldsNode implements NodeInterface
 {
     public static function toConfig(Node $node, string $property = 'fields'): array
     {

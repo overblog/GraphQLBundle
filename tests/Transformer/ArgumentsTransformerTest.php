@@ -25,7 +25,7 @@ use function class_exists;
 use function count;
 use function is_array;
 
-class ArgumentsTransformerTest extends TestCase
+final class ArgumentsTransformerTest extends TestCase
 {
     protected function setUp(): void
     {

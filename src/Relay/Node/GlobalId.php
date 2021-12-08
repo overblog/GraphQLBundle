@@ -11,7 +11,7 @@ use function explode;
 use function is_string;
 use function sprintf;
 
-class GlobalId
+final class GlobalId
 {
     public const SEPARATOR = ':';
 

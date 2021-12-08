@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\SchemaLanguage;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class SchemaLanguageTest extends TestCase
+final class SchemaLanguageTest extends TestCase
 {
     public function testQueryHumans(): void
     {

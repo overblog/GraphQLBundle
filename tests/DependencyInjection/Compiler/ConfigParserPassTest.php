@@ -25,7 +25,7 @@ use function preg_quote;
 use function sprintf;
 use const DIRECTORY_SEPARATOR;
 
-class ConfigParserPassTest extends TestCase
+final class ConfigParserPassTest extends TestCase
 {
     private ContainerBuilder $container;
     private ConfigParserPass $compilerPass;

@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsReme
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class IsRememberMeTest extends TestCase
+final class IsRememberMeTest extends TestCase
 {
     protected function getFunctions()
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-class TypeGeneratorOptions
+final class TypeGeneratorOptions
 {
     /**
      * PSR-4 namespace for generated GraphQL classes.

@@ -8,7 +8,7 @@ use LogicException;
 use Overblog\GraphQLBundle\Security\Security;
 use PHPUnit\Framework\TestCase;
 
-class SecurityTest extends TestCase
+final class SecurityTest extends TestCase
 {
     public function testIsGrantedSecurityCoreComponentRequired(): void
     {

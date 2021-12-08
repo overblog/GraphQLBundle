@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\DefaultValue;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class DefaultValueTest extends TestCase
+final class DefaultValueTest extends TestCase
 {
     protected function setUp(): void
     {

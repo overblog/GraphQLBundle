@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use function sprintf;
 
-class ExecutorTest extends TestCase
+final class ExecutorTest extends TestCase
 {
     public function testInvalidExecutorAdapterPromise(): void
     {

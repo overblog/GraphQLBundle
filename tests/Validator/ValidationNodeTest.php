@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 
-class ValidationNodeTest extends TestCase
+final class ValidationNodeTest extends TestCase
 {
     public function testValidationNode(): void
     {

@@ -23,7 +23,7 @@ use function in_array;
  * It also contains variables of the resolver context, in which this class was
  * instantiated.
  */
-class ValidationNode
+final class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 

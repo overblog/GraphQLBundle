@@ -26,25 +26,25 @@ use function str_replace;
  *
  * https://github.com/graphql/graphql-relay-js/blob/master/src/connection/arrayconnection.js
  */
-class ConnectionBuilder
+final class ConnectionBuilder
 {
     public const PREFIX = 'arrayconnection:';
 
-    protected CursorEncoderInterface $cursorEncoder;
+    private CursorEncoderInterface $cursorEncoder;
 
     /**
      * If set, used to generate the connection object.
      *
      * @var callable|null
      */
-    protected $connectionCallback;
+    private $connectionCallback;
 
     /**
      * If set, used to generate the edge object.
      *
      * @var ?callable
      */
-    protected $edgeCallback;
+    private $edgeCallback;
 
     public function __construct(?CursorEncoderInterface $cursorEncoder = null, callable $connectionCallback = null, callable $edgeCallback = null)
     {

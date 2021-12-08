@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Generator\Converter;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 
-class ExpressionConverter implements ConverterInterface
+final class ExpressionConverter implements ConverterInterface
 {
     private ExpressionLanguage $expressionLanguage;
 

@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjec
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class ParameterTest extends TestCase
+final class ParameterTest extends TestCase
 {
     protected function getFunctions()
     {

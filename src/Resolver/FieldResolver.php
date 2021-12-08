@@ -11,7 +11,7 @@ use function is_callable;
 use function is_object;
 use function str_replace;
 
-class FieldResolver
+final class FieldResolver
 {
     /**
      * Allowed method prefixes

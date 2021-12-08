@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class ExecutorTest extends TestCase
+final class ExecutorTest extends TestCase
 {
     protected function getMockedExecutor(): RequestExecutor
     {

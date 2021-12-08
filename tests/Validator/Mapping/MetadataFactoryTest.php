@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Validation;
 use function class_exists;
 
-class MetadataFactoryTest extends TestCase
+final class MetadataFactoryTest extends TestCase
 {
     public function setUp(): void
     {

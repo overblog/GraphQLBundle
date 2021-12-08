@@ -33,7 +33,7 @@ use function is_a;
 use function is_dir;
 use function sprintf;
 
-class ConfigParserPass implements CompilerPassInterface
+final class ConfigParserPass implements CompilerPassInterface
 {
     /**
      * @var array<string, string>

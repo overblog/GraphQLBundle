@@ -14,7 +14,7 @@ use React\Promise\PromiseInterface;
 use function sprintf;
 use function usleep;
 
-class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdapterInterface
+final class ReactPromiseAdapter extends BaseReactPromiseAdapter implements PromiseAdapterInterface
 {
     /**
      * {@inheritdoc}

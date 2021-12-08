@@ -13,7 +13,7 @@ use function json_decode;
 use function json_last_error;
 use const JSON_ERROR_NONE;
 
-class Parser implements ParserInterface
+final class Parser implements ParserInterface
 {
     use UploadParserTrait;
 

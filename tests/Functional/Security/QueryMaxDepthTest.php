@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class QueryMaxDepthTest extends TestCase
+final class QueryMaxDepthTest extends TestCase
 {
     private string $userFriendsWithoutViolationQuery = <<<'EOF'
         query {

@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Validator\RecursiveValidator;
 use function class_exists;
 use function count;
 
-class ArgumentsTest extends TestCase
+final class ArgumentsTest extends TestCase
 {
     public function setUp(): void
     {

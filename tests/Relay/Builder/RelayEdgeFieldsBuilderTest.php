@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Builder\RelayEdgeFieldsBuilder;
 use PHPUnit\Framework\TestCase;
 
-class RelayEdgeFieldsBuilderTest extends TestCase
+final class RelayEdgeFieldsBuilderTest extends TestCase
 {
     protected function doMapping(array $config): array
     {

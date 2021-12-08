@@ -17,7 +17,7 @@ use function spl_autoload_unregister;
 use function sprintf;
 use function sys_get_temp_dir;
 
-class AccessTest extends TestCase
+final class AccessTest extends TestCase
 {
     private Closure $loader;
 

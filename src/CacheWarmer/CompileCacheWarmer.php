@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\CacheWarmer;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
-class CompileCacheWarmer implements CacheWarmerInterface
+final class CompileCacheWarmer implements CacheWarmerInterface
 {
     private TypeGenerator $typeGenerator;
     private bool $compiled;

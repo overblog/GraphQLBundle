@@ -9,7 +9,7 @@ use function array_key_exists;
 use function is_array;
 use function is_null;
 
-class EnumTypeDefinition extends TypeDefinition
+final class EnumTypeDefinition extends TypeDefinition
 {
     public function getDefinition(): ArrayNodeDefinition
     {

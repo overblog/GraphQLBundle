@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
 /**
  * Class FakeCompilerPass.
  */
-class FakeCompilerPass implements CompilerPassInterface
+final class FakeCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {

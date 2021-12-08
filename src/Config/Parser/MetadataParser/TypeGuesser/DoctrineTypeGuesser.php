@@ -18,7 +18,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
 
-class DoctrineTypeGuesser extends TypeGuesser
+final class DoctrineTypeGuesser extends TypeGuesser
 {
     protected array $doctrineMapping = [];
 

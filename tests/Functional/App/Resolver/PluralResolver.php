@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 use GraphQL\Type\Definition\ResolveInfo;
 use function sprintf;
 
-class PluralResolver
+final class PluralResolver
 {
     public function __invoke(string $username, ResolveInfo $info): array
     {

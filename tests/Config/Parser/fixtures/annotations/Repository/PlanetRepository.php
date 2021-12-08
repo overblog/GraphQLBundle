@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type\Planet;
 #[GQL\Provider(prefix: 'planet_')]
 #[GQL\Access('default_access')]
 #[GQL\IsPublic('default_public')]
-class PlanetRepository
+final class PlanetRepository
 {
     /**
      * @GQL\Query(type="[Planet]")

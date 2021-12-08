@@ -11,7 +11,7 @@ use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use function json_encode;
 
-class UploadParserTraitTest extends TestCase
+final class UploadParserTraitTest extends TestCase
 {
     use UploadParserTrait;
 

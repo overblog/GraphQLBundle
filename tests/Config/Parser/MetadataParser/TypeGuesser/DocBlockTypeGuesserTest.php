@@ -13,7 +13,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use function sprintf;
 
-class DocBlockTypeGuesserTest extends TestCase
+final class DocBlockTypeGuesserTest extends TestCase
 {
     protected array $reflectors = [
         ReflectionProperty::class => 'var',

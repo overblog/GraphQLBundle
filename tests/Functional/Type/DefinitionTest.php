@@ -9,7 +9,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class DefinitionTest extends TestCase
+final class DefinitionTest extends TestCase
 {
     protected function setUp(): void
     {

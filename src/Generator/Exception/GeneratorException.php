@@ -6,6 +6,6 @@ namespace Overblog\GraphQLBundle\Generator\Exception;
 
 use Exception;
 
-class GeneratorException extends Exception
+final class GeneratorException extends Exception
 {
 }
