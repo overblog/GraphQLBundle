@@ -18,14 +18,9 @@ final class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping(): array
     {
         return [
-            'Toto' => ['factory' => fn () => $this->createObjectType(['name' => 'Toto']), 'aliases' => ['foo']],
-            'Tata' => ['factory' => fn () => $this->createObjectType(['name' => 'Tata']), 'aliases' => ['bar']],
+            'Toto' => ['factory' => fn () => new ObjectType(['name' => 'Toto']), 'aliases' => ['foo']],
+            'Tata' => ['factory' => fn () => new ObjectType(['name' => 'Tata']), 'aliases' => ['bar']],
         ];
-    }
-
-    public function createObjectType(array $config): ObjectType
-    {
-        return new ObjectType($config);
     }
 
     public function testResolveKnownType(): void
