@@ -18,5 +18,5 @@ final class InvalidDoctrineRelationGuessing
      * @GQL\Field
      */
     #[GQL\Field]
-    private object $myRelation;
+    public object $myRelation;
 }

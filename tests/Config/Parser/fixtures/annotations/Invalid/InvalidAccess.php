@@ -16,5 +16,5 @@ final class InvalidAccess
      * @GQL\Access("access")
      */
     #[GQL\Access('access')]
-    private string $field;
+    public string $field;
 }

@@ -93,6 +93,7 @@ final class InputValidator
 
     private function mergeClassValidation(): array
     {
+        /** @phpstan-ignore-next-line */
         $common = static::normalizeConfig($this->info->parentType->config['validation'] ?? []);
         $specific = static::normalizeConfig($this->info->fieldDefinition->config['validation'] ?? []);
 
@@ -227,6 +228,7 @@ final class InputValidator
 
     private function createObjectNode(array $value, ObjectType|InputObjectType $type, ValidationNode $parent): ValidationNode
     {
+        /** @phpstan-ignore-next-line */
         $classValidation = static::normalizeConfig($type->config['validation'] ?? []);
 
         return $this->buildValidationTree(

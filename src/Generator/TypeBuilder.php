@@ -440,10 +440,8 @@ final class TypeBuilder
      * @param mixed $resolve
      *
      * @throws GeneratorException
-     *
-     * @return GeneratorInterface|string
      */
-    private function buildResolve($resolve, ?array $groups = null)
+    private function buildResolve($resolve, ?array $groups = null): GeneratorInterface
     {
         if (is_callable($resolve) && is_array($resolve)) {
             return Collection::numeric($resolve);

@@ -18,45 +18,45 @@ final class Planet
      * @GQL\Field(resolve="...")
      */
     #[GQL\Field(resolve: '...')]
-    private string $skipField;
+    public string $skipField;
 
     /**
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    private string $name;
+    public string $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
     #[GQL\Field(type: 'Int!')]
-    private string $population;
+    public string $population;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
-    private string $description;
+    public string $description;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private ?int $diameter;
+    public ?int $diameter;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
-    private int $variable;
+    public int $variable;
 
     // @phpstan-ignore-next-line
-    private $dummy;
+    public $dummy;
 
     /**
      * @GQL\Field(type="[String]!")
      */
     #[GQL\Field(type: '[String]!')]
-    private array $tags;
+    public array $tags;
 }

@@ -78,7 +78,7 @@ final class TypeDecoratorListener
                 $this->configTypeMapping($type, ResolverMapInterface::IS_TYPEOF, $resolverMap);
             } elseif (ResolverMapInterface::RESOLVE_FIELD === $fieldName) {
                 $resolveFieldFn = $this->argumentFactory->wrapResolverArgs($resolverMap->resolve($type->name, ResolverMapInterface::RESOLVE_FIELD));
-                $type->config[substr(ResolverMapInterface::RESOLVE_FIELD, 2)] = $resolveFieldFn;
+                $type->config['resolveField'] = $resolveFieldFn;
                 $type->resolveFieldFn = $resolveFieldFn;
             } else {
                 $fieldsResolved[] = $fieldName;

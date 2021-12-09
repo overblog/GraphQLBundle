@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\Type;
 
+use GraphQL\Language\AST\Node;
+use GraphQL\Language\AST\ScalarTypeDefinitionNode;
+use GraphQL\Language\AST\ScalarTypeExtensionNode;
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
@@ -12,14 +15,31 @@ use function is_callable;
 use function sprintf;
 use function uniqid;
 
+/**
+ * @phpstan-type CustomScalarConfig array{
+ *   name?: string|null,
+ *   description?: string|null,
+ *   serialize: callable(mixed): mixed,
+ *   parseValue?: callable(mixed): mixed,
+ *   parseLiteral?: callable(Node $valueNode, array|null $variables): mixed,
+ *   astNode?: ScalarTypeDefinitionNode|null,
+ *   extensionASTNodes?: array<ScalarTypeExtensionNode>|null,
+ *   scalarType: ScalarType|null,
+ * }
+ */
 class CustomScalarType extends BaseCustomScalarType
 {
-    public function __construct(array $config = [])
-    {
-        $config['name'] ??= uniqid('CustomScalar');
-        parent::__construct($config);
+    /** @phpstan-var CustomScalarConfig */
+    public array $config;
 
-        $this->config['scalarType'] ??= null;
+    /**
+     * @phpstan-param CustomScalarConfig $config
+     */
+    public function __construct(array $config)
+    {
+        $config['name'] ??= uniqid('CustomScalar', true);
+
+        parent::__construct($config);
     }
 
     /**

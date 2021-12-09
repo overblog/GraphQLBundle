@@ -20,7 +20,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $color;
+    public $color;
 
     /**
      * @ORM\Column(type="text")
@@ -28,7 +28,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $text;
+    public $text;
 
     /**
      * @ORM\Column(type="string")
@@ -36,7 +36,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $string;
+    public $string;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -44,7 +44,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $size;
+    public $size;
 
     /**
      * @ORM\OneToMany(targetEntity="Hero")
@@ -52,7 +52,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $holders;
+    public $holders;
 
     /**
      * @ORM\ManyToOne(targetEntity="Hero")
@@ -60,7 +60,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $creator;
+    public $creator;
 
     /**
      * @ORM\OneToOne(targetEntity="Crystal")
@@ -68,7 +68,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $crystal;
+    public $crystal;
 
     /**
      * @ORM\ManyToMany(targetEntity="Battle")
@@ -76,7 +76,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $battles;
+    public $battles;
 
     /**
      * @GQL\Field
@@ -85,7 +85,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $currentHolder;
+    public $currentHolder;
 
     /**
      * @GQL\Field
@@ -94,7 +94,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     #[GQL\Deprecated('No more tags on lightsabers')]
-    private array $tags;
+    public array $tags;
 
     /**
      * @ORM\Column(type="float")
@@ -102,7 +102,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $float;
+    public $float;
 
     /**
      * @ORM\Column(type="decimal")
@@ -110,7 +110,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $decimal;
+    public $decimal;
 
     /**
      * @ORM\Column(type="bool")
@@ -118,7 +118,7 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $bool;
+    public $bool;
 
     /**
      * @ORM\Column(type="boolean")
@@ -126,5 +126,5 @@ final class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    private $boolean;
+    public $boolean;
 }

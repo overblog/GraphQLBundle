@@ -18,8 +18,8 @@ final class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping(): array
     {
         return [
-            'Toto' => ['factory' => fn () => new ObjectType(['name' => 'Toto']), 'aliases' => ['foo']],
-            'Tata' => ['factory' => fn () => new ObjectType(['name' => 'Tata']), 'aliases' => ['bar']],
+            'Toto' => ['factory' => fn () => new ObjectType(['name' => 'Toto', 'fields' => []]), 'aliases' => ['foo']],
+            'Tata' => ['factory' => fn () => new ObjectType(['name' => 'Tata', 'fields' => []]), 'aliases' => ['bar']],
         ];
     }
 
