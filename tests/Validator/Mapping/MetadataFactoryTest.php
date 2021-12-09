@@ -28,7 +28,7 @@ final class MetadataFactoryTest extends TestCase
     {
         $metadataFactory = new MetadataFactory();
 
-        $type = new ObjectType(['name' => 'testType']);
+        $type = new ObjectType(['name' => 'testType', 'fields' => []]);
         $validationNode = new ValidationNode($type);
         $objectMetadata = new ObjectMetadata($validationNode);
 

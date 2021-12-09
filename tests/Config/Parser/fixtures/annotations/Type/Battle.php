@@ -17,7 +17,7 @@ final class Battle
      * @GQL\Field(type="Planet", complexity="100 + childrenComplexity")
      */
     #[GQL\Field(type: 'Planet', complexity: '100 + childrenComplexity')]
-    private object $planet;
+    public object $planet;
 
     /**
      * @GQL\Field(name="casualties", complexity="childrenComplexity * 5")

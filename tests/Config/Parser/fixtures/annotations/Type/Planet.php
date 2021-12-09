@@ -19,19 +19,19 @@ final class Planet
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    private string $name;
+    public string $name;
 
     /**
      * @GQL\Field(type="GalaxyCoordinates")
      */
     #[GQL\Field(type: 'GalaxyCoordinates')]
-    private GalaxyCoordinates $location;
+    public GalaxyCoordinates $location;
 
     /**
      * @GQL\Field(type="Int!")
      */
     #[GQL\Field(type: 'Int!')]
-    private int $population;
+    public int $population;
 
     /**
      * @GQL\Field

@@ -20,5 +20,5 @@ final class InvalidDoctrineTypeGuessing
      * @var mixed
      */
     #[GQL\Field]
-    private $myRelation;
+    public $myRelation;
 }

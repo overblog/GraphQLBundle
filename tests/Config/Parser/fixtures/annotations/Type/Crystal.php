@@ -18,5 +18,5 @@ final class Crystal
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    private string $color;
+    public string $color;
 }
