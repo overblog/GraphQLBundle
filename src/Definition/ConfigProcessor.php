@@ -30,6 +30,11 @@ final class ConfigProcessor
         $this->processors[] = $configProcessor;
     }
 
+    /**
+     * @phpstan-template T of array
+     * @phpstan-param T $config
+     * @phpstan-return T
+     */
     public function process(array $config): array
     {
         foreach ($this->processors as $processor) {
