@@ -24,7 +24,7 @@ use function uniqid;
  *   parseLiteral?: callable(Node $valueNode, array|null $variables): mixed,
  *   astNode?: ScalarTypeDefinitionNode|null,
  *   extensionASTNodes?: array<ScalarTypeExtensionNode>|null,
- *   scalarType: ScalarType|null,
+ *   scalarType?: ScalarType|callable(): ScalarType|null,
  * }
  */
 class CustomScalarType extends BaseCustomScalarType
@@ -73,43 +73,41 @@ class CustomScalarType extends BaseCustomScalarType
      */
     private function call(string $type, $value)
     {
-        if (isset($this->config['scalarType'])) {
-            return call_user_func([$this->loadScalarType(), $type], $value); // @phpstan-ignore-line
-        } else {
+        if (!isset($this->config['scalarType'])) {
             return parent::$type($value);
         }
+
+        $scalarType = match (true) {
+            $this->config['scalarType'] instanceof ScalarType => $this->config['scalarType'],
+            is_callable($this->config['scalarType']) => $this->config['scalarType'](),
+            default => $this->config['scalarType'],
+        };
+
+        return call_user_func([$scalarType, $type], $value); // @phpstan-ignore-line
     }
 
     public function assertValid(): void
     {
-        if (isset($this->config['scalarType'])) {
-            $scalarType = $this->loadScalarType();
-
-            Utils::invariant(
-                $scalarType instanceof ScalarType,
-                sprintf(
-                    '%s must provide a valid "scalarType" instance of %s but got: %s',
-                    $this->name,
-                    ScalarType::class,
-                    Utils::printSafe($scalarType)
-                )
-            );
-        } else {
+        if (!isset($this->config['scalarType'])) {
             parent::assertValid();
-        }
-    }
 
-    /**
-     * @return mixed
-     */
-    private function loadScalarType()
-    {
-        if ($this->config['scalarType'] instanceof ScalarType) {
-            return $this->config['scalarType'];
-        } elseif (is_callable($this->config['scalarType'])) {
-            return $this->config['scalarType'] = $this->config['scalarType']();
-        } else {
-            return $this->config['scalarType'];
+            return;
         }
+
+        $scalarType = match (true) {
+            $this->config['scalarType'] instanceof ScalarType => $this->config['scalarType'],
+            is_callable($this->config['scalarType']) => $this->config['scalarType'](),
+            default => $this->config['scalarType'],
+        };
+
+        Utils::invariant(
+            $scalarType instanceof ScalarType,
+            sprintf(
+                '%s must provide a valid "scalarType" instance of %s but got: %s',
+                $this->name,
+                ScalarType::class,
+                Utils::printSafe($scalarType)
+            )
+        );
     }
 }
