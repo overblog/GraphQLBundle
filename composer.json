@@ -33,7 +33,7 @@
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
         "symfony/config": "^5.3.7 || ^6.0",
         "symfony/dependency-injection": "^5.3.7 || ^6.0",
         "symfony/event-dispatcher": "^5.3 || ^6.0",
