@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\App\Validator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Component\Validator\Validation;
 use function json_decode;
 
 class TypeGeneratorTest extends TestCase
@@ -106,6 +107,10 @@ class TypeGeneratorTest extends TestCase
      */
     public function testConflictingValidatorNamespaces(): void
     {
+        if (!class_exists(Validation::class)) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+
         parent::setUp();
         $kernel = static::bootKernel(['test_case' => 'conflictingValidatorNamespaces']);
 
