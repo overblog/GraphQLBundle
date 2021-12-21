@@ -121,7 +121,7 @@ class Executor
 
     public function disableIntrospectionQuery(): void
     {
-        DocumentValidator::addRule(new DisableIntrospection());
+        DocumentValidator::addRule(new DisableIntrospection(DisableIntrospection::ENABLED));
     }
 
     /**
