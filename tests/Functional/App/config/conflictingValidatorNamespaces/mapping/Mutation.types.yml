@@ -1,0 +1,27 @@
+Mutation:
+    type: object
+    config:
+        fields:
+            conflictingValidatorNamespaces:
+                type: Boolean
+                resolve: '@=m("mutation_mock", args, validator)'
+                args:
+                    # Covers case where Symfony's Symfony\Component\Validator\Constraints\Type constraint
+                    # conflicts with GraphQL\Type\Definition\Type
+                    # in generated definition file
+                    test:
+                        type: "String"
+                        validation:
+                            -   Type:
+                                    type: numeric
+                    # Following two args cover the case, where custom constraints with same class name
+                    # but different FQCN conflict with each other
+                    # in generated definition file
+                    test2:
+                        type: "String"
+                        validation:
+                            -   Overblog\GraphQLBundle\Tests\Functional\App\Validator\CustomValidator1\Constraint: ~
+                    test3:
+                        type: "String"
+                        validation:
+                            -   Overblog\GraphQLBundle\Tests\Functional\App\Validator\CustomValidator2\Constraint: ~
