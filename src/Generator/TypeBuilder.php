@@ -43,7 +43,6 @@ use function key;
 use function ltrim;
 use function reset;
 use function rtrim;
-use function strpos;
 use function strtolower;
 use function substr;
 
