@@ -43,7 +43,7 @@ use function key;
 use function ltrim;
 use function reset;
 use function rtrim;
-use function strrchr;
+use function strpos;
 use function strtolower;
 use function substr;
 
@@ -614,19 +614,17 @@ final class TypeBuilder
             if (str_contains($name, '\\')) {
                 // Custom constraint
                 $fqcn = ltrim($name, '\\');
-                $name = ltrim((string) strrchr($name, '\\'), '\\');
-                $this->file->addUse($fqcn);
+                $instance = Instance::new("@\\$fqcn");
             } else {
                 // Symfony constraint
-                $this->file->addUseGroup(static::CONSTRAINTS_NAMESPACE, $name);
                 $fqcn = static::CONSTRAINTS_NAMESPACE."\\$name";
+                $this->file->addUse(static::CONSTRAINTS_NAMESPACE.' as SymfonyConstraints');
+                $instance = Instance::new("@SymfonyConstraints\\$name");
             }
 
             if (!class_exists($fqcn)) {
                 throw new GeneratorException("Constraint class '$fqcn' doesn't exist.");
             }
-
-            $instance = Instance::new($name);
 
             if (is_array($args)) {
                 if (isset($args[0]) && is_array($args[0])) {

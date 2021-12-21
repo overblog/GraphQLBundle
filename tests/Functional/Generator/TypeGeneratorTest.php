@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
+use Overblog\GraphQLBundle\Tests\Functional\App\Validator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use Symfony\Component\Validator\Validation;
 use function json_decode;
 
 final class TypeGeneratorTest extends TestCase
@@ -93,5 +95,59 @@ final class TypeGeneratorTest extends TestCase
 
         parent::setUp();
         static::bootKernel(['test_case' => 'validatorWithoutConstraints']);
+    }
+
+    /**
+     * In generated type definitions:
+     *  1. Custom constraints should be used by FQCN, to ensure no namespace conflicts occur
+     *  2. Default Symfony validators should be used with aliased namespace to ensure that no
+     *     namespace conflicts occur with Graphql bundle classes (Type for example).
+     *
+     * @runInSeparateProcess
+     */
+    public function testConflictingValidatorNamespaces(): void
+    {
+        if (!class_exists(Validation::class)) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+
+        parent::setUp();
+        $kernel = static::bootKernel(['test_case' => 'conflictingValidatorNamespaces']);
+
+        // this is the part is why we must make this test run in separate process
+        $query = <<<'EOF'
+            mutation {
+              conflictingValidatorNamespaces(test: "123", test2: "1", test3: "4")
+            }
+            EOF;
+
+        $response = static::query(
+            $query,
+            self::USER_RYAN,
+            'conflictingValidatorNamespaces'
+        )->getResponse()->getContent();
+
+        $this->assertEquals('{"data":{"conflictingValidatorNamespaces":true}}', $response);
+        // end part
+
+        // Validate definition file
+        /** @var string $definitionFile */
+        $definitionFile = file_get_contents($kernel->getCacheDir().'/overblog/graphql-bundle/__definitions__/MutationType.php');
+
+        $this->assertStringContainsString(
+            'use Symfony\Component\Validator\Constraints as SymfonyConstraints;',
+            $definitionFile,
+            'Generated definition file should contain import of Symfony\Component\Validator\Constraints aliased as SymfonyConstraints'
+        );
+        $this->assertStringNotContainsString(
+            'use '.Validator\CustomValidator1\Constraint::class,
+            $definitionFile,
+            'Generated definition file should not contain imports of custom constraints, FQCN should be used instead'
+        );
+        $this->assertStringNotContainsString(
+            'use '.Validator\CustomValidator2\Constraint::class,
+            $definitionFile,
+            'Generated definition file should not contain imports of custom constraints, FQCN should be used instead'
+        );
     }
 }
