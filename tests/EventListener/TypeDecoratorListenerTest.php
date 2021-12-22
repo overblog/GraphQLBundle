@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\EventListener;
 
 use Closure;
+use GraphQL\Language\AST\Node;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
@@ -20,9 +21,10 @@ use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
+use Traversable;
 use function substr;
 
-class TypeDecoratorListenerTest extends TestCase
+final class TypeDecoratorListenerTest extends TestCase
 {
     /**
      * @param string $fieldName
@@ -30,10 +32,10 @@ class TypeDecoratorListenerTest extends TestCase
      *
      * @dataProvider specialTypeFieldProvider
      */
-    public function testSpecialField($fieldName, ObjectType | UnionType | InterfaceType | CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
+    public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
-            $fieldValueRetriever = fn (ObjectType | UnionType | InterfaceType | CustomScalarType $type, $fieldName) => $type->config[$fieldName];
+            $fieldValueRetriever = fn (ObjectType|UnionType|InterfaceType|CustomScalarType $type, $fieldName) => $type->config[$fieldName];
         }
         $expected = static function (): void {
         };
@@ -73,9 +75,11 @@ class TypeDecoratorListenerTest extends TestCase
             [$objectType->name => $objectType],
             [$objectType->name => ['bar' => $barResolver, 'baz' => $bazResolver]]
         );
-        $fields = $objectType->config['fields']();
+        $fields = is_callable($objectType->config['fields']) ? $objectType->config['fields']() : $objectType->config['fields'];
+        $fields = $fields instanceof Traversable ? iterator_to_array($fields) : (array) $fields;
 
         foreach (['bar', 'baz'] as $fieldName) {
+            $this->assertArrayHasKey($fieldName, $fields);
             $this->assertInstanceOf(Closure::class, $fields[$fieldName]['resolve']);
             $this->assertSame($fieldName, $fields[$fieldName]['resolve']());
         }
@@ -157,7 +161,7 @@ class TypeDecoratorListenerTest extends TestCase
 
     public function testUnionTypeUnknownField(): void
     {
-        $unionType = new UnionType(['name' => 'Foo']);
+        $unionType = new UnionType(['name' => 'Foo', 'types' => []]);
         $this->assertDecorateException(
             [$unionType->name => $unionType],
             [
@@ -173,7 +177,7 @@ class TypeDecoratorListenerTest extends TestCase
 
     public function testInterfaceTypeUnknownField(): void
     {
-        $interfaceType = new InterfaceType(['name' => 'Foo']);
+        $interfaceType = new InterfaceType(['name' => 'Foo', 'fields' => []]);
         $this->assertDecorateException(
             [$interfaceType->name => $interfaceType],
             [
@@ -189,7 +193,7 @@ class TypeDecoratorListenerTest extends TestCase
 
     public function testCustomScalarTypeUnknownField(): void
     {
-        $customScalarType = new CustomScalarType(['name' => 'Foo']);
+        $customScalarType = new CustomScalarType(['name' => 'Foo', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '']);
         $this->assertDecorateException(
             [$customScalarType->name => $customScalarType],
             [
@@ -241,7 +245,7 @@ class TypeDecoratorListenerTest extends TestCase
 
     public function specialTypeFieldProvider(): array
     {
-        $objectWithResolveField = new ObjectType(['name' => 'Bar', 'fields' => [], 'resolveField' => null]);
+        $objectWithResolveField = new ObjectType(['name' => 'Bar', 'fields' => [], 'resolveField' => fn () => '']);
 
         return [
             // isTypeOf
@@ -255,13 +259,13 @@ class TypeDecoratorListenerTest extends TestCase
             ],
             [ResolverMapInterface::RESOLVE_FIELD, $objectWithResolveField, null, false],
             // resolveType
-            [ResolverMapInterface::RESOLVE_TYPE, new UnionType(['name' => 'Baz', 'resolveType' => null])],
-            [ResolverMapInterface::RESOLVE_TYPE, new InterfaceType(['name' => 'Baz', 'resolveType' => null])],
+            [ResolverMapInterface::RESOLVE_TYPE, new UnionType(['name' => 'Baz', 'resolveType' => fn () => '', 'types' => []])],
+            [ResolverMapInterface::RESOLVE_TYPE, new InterfaceType(['name' => 'Baz', 'fields' => [], 'resolveType' => fn (mixed $objectValue, mixed $context, ResolveInfo $resolveInfo): string => ''])],
             // custom scalar
-            [ResolverMapInterface::SERIALIZE, new CustomScalarType(['name' => 'Custom', 'serialize' => null])],
-            [ResolverMapInterface::PARSE_VALUE, new CustomScalarType(['name' => 'Custom', 'parseValue' => null])],
-            [ResolverMapInterface::PARSE_LITERAL, new CustomScalarType(['name' => 'Custom', 'parseLiteral' => null])],
-            [ResolverMapInterface::SCALAR_TYPE, new CustomScalarType(['name' => 'Custom'])],
+            [ResolverMapInterface::SERIALIZE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => ''])],
+            [ResolverMapInterface::PARSE_VALUE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '', 'parseValue' => fn (mixed $input): mixed => ''])],
+            [ResolverMapInterface::PARSE_LITERAL, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '', 'parseLiteral' => fn (Node $a, array|null $b): mixed => ''])],
+            [ResolverMapInterface::SCALAR_TYPE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => ''])],
         ];
     }
 

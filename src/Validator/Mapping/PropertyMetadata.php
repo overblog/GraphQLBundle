@@ -8,7 +8,7 @@ use ReflectionException;
 use ReflectionProperty;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
-class PropertyMetadata extends MemberMetadata
+final class PropertyMetadata extends MemberMetadata
 {
     public function __construct(string $name)
     {

@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Provider
  */
 #[GQL\Provider]
-class InvalidProvider
+final class InvalidProvider
 {
     /**
      * @GQL\Query(type="Int", targetTypes="RootMutation2")

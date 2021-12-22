@@ -15,7 +15,7 @@ use stdClass;
 use Symfony\Component\Process\PhpProcess;
 use function sprintf;
 
-class ReactPromiseAdapterTest extends TestCase
+final class ReactPromiseAdapterTest extends TestCase
 {
     private ReactPromiseAdapter $adapter;
 
@@ -46,11 +46,12 @@ class ReactPromiseAdapterTest extends TestCase
     public function testWaitAsyncPromise(): void
     {
         $output = 'OK!';
-        $process = new PhpProcess(<<<EOF
-            <?php
-            usleep(30);
-            echo '$output';
-            EOF
+        $process = new PhpProcess(
+            <<<EOF
+                <?php
+                usleep(30);
+                echo '$output';
+                EOF
         );
         $result = new ExecutionResult(['output' => $output]);
 

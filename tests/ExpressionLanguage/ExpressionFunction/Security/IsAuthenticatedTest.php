@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAuth
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class IsAuthenticatedTest extends TestCase
+final class IsAuthenticatedTest extends TestCase
 {
     protected function getFunctions()
     {

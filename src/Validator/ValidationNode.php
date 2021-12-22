@@ -23,7 +23,7 @@ use function in_array;
  * It also contains variables of the resolver context, in which this class was
  * instantiated.
  */
-class ValidationNode
+final class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
@@ -46,7 +46,7 @@ class ValidationNode
     private ?ResolverArgs $__resolverArgs;
 
     public function __construct(
-        ObjectType | InputObjectType $type,
+        ObjectType|InputObjectType $type,
         string $field = null,
         ?ValidationNode $parent = null,
         ?ResolverArgs $resolverArgs = null

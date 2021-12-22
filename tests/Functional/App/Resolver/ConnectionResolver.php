@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use React\Promise\Promise as ReactPromise;
 use function count;
 
-class ConnectionResolver
+final class ConnectionResolver
 {
     private array $allUsers = [
         [

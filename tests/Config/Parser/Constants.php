@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
-class Constants
+final class Constants
 {
     public const TWILEK = '4';
 }

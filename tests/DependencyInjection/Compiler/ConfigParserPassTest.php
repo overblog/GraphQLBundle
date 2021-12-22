@@ -25,7 +25,7 @@ use function preg_quote;
 use function sprintf;
 use const DIRECTORY_SEPARATOR;
 
-class ConfigParserPassTest extends TestCase
+final class ConfigParserPassTest extends TestCase
 {
     private ContainerBuilder $container;
     private ConfigParserPass $compilerPass;
@@ -563,8 +563,8 @@ class ConfigParserPassTest extends TestCase
 
     private function processCompilerPass(array $configs, ?ConfigParserPass $compilerPass = null, ?ContainerBuilder $container = null): void
     {
-        $container = $container ?? $this->container;
-        $compilerPass = $compilerPass ?? $this->compilerPass;
+        $container ??= $this->container;
+        $compilerPass ??= $this->compilerPass;
         $container->setParameter('overblog_graphql.config', $configs);
         $compilerPass->process($container);
     }

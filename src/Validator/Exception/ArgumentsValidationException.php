@@ -9,7 +9,7 @@ use GraphQL\Error\ClientAware;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Throwable;
 
-class ArgumentsValidationException extends Exception implements ClientAware
+final class ArgumentsValidationException extends Exception implements ClientAware
 {
     private ConstraintViolationListInterface $violations;
 

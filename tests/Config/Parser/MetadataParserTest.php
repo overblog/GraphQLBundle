@@ -12,7 +12,6 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use function sprintf;
-use function strpos;
 use function substr;
 
 abstract class MetadataParserTest extends TestCase
@@ -56,7 +55,7 @@ abstract class MetadataParserTest extends TestCase
         foreach ($rii as $file) {
             if (!$file->isDir() && '.php' === substr($file->getPathname(), -4)) {
                 foreach ($this->ignoredPaths as $ignoredPath) {
-                    if (false !== strpos($file->getPathName(), $ignoredPath)) {
+                    if (str_contains($file->getPathName(), $ignoredPath)) {
                         continue 2;
                     }
                     if (!self::isDoctrineOrmInstalled() && 'Lightsaber.php' === $file->getFileName()) {

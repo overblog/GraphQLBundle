@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
 use PHPUnit\Framework\TestCase;
 
-class ResolverFieldTest extends TestCase
+final class ResolverFieldTest extends TestCase
 {
     /**
      * @dataProvider resolverProvider

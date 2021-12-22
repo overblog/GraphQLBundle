@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Type;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class CustomScalarTest extends TestCase
+final class CustomScalarTest extends TestCase
 {
     protected function setUp(): void
     {

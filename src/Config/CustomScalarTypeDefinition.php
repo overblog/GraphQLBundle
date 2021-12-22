@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-class CustomScalarTypeDefinition extends TypeDefinition
+final class CustomScalarTypeDefinition extends TypeDefinition
 {
     public function getDefinition(): ArrayNodeDefinition
     {

@@ -19,7 +19,7 @@ use function preg_replace;
 use function strrchr;
 use function substr;
 
-class TypeGeneratorPass implements CompilerPassInterface
+final class TypeGeneratorPass implements CompilerPassInterface
 {
     /**
      * @throws Exception

@@ -20,7 +20,7 @@ use function sort;
 use function sprintf;
 use function ucfirst;
 
-class DebugCommand extends Command
+final class DebugCommand extends Command
 {
     private static array $categories = ['type', 'mutation', 'query'];
 

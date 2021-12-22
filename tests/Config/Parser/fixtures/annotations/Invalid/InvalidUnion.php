@@ -10,6 +10,6 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Union(types={"Hero", "Droid", "Sith"})
  */
 #[GQL\Union(types: ['Hero', 'Droid', 'Sith'])]
-class InvalidUnion
+final class InvalidUnion
 {
 }

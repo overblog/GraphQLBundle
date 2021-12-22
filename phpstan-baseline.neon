@@ -271,6 +271,11 @@ parameters:
 			path: src/Validator/Mapping/PropertyMetadata.php
 
 		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Invalid\\\\InvalidPrivateMethod\\:\\:gql\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Config/Parser/fixtures/annotations/Invalid/InvalidPrivateMethod.php
+
+		-
 			message: "#^Access to an undefined property GraphQL\\\\Language\\\\AST\\\\Node\\:\\:\\$value\\.$#"
 			count: 1
 			path: tests/Config/Parser/fixtures/annotations/Scalar/GalaxyCoordinates.php

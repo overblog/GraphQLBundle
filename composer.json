@@ -33,7 +33,7 @@
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "psr/log": "^1.0",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
         "symfony/config": "^5.3.7 || ^6.0",
         "symfony/dependency-injection": "^5.3.7 || ^6.0",
         "symfony/event-dispatcher": "^5.3 || ^6.0",
@@ -91,7 +91,7 @@
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.18.7/php-cs-fixer.phar -O php-cs-fixer.phar",
+        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.3.2/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"

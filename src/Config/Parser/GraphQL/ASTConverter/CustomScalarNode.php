@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 use GraphQL\Language\AST\Node;
 use RuntimeException;
 
-class CustomScalarNode implements NodeInterface
+final class CustomScalarNode implements NodeInterface
 {
     public static function toConfig(Node $node): array
     {

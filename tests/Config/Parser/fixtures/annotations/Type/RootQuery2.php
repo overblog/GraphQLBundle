@@ -10,6 +10,6 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type
  */
 #[GQL\Type]
-class RootQuery2
+final class RootQuery2
 {
 }

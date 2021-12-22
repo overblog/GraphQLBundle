@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 
-class MetadataFactory implements MetadataFactoryInterface
+final class MetadataFactory implements MetadataFactoryInterface
 {
     private array $metadataPool;
 

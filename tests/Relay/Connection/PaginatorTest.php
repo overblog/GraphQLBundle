@@ -14,7 +14,7 @@ use function array_slice;
 use function base64_encode;
 use function count;
 
-class PaginatorTest extends TestCase
+final class PaginatorTest extends TestCase
 {
     protected array $data = ['A', 'B', 'C', 'D', 'E'];
 

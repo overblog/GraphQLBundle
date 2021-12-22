@@ -12,51 +12,51 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 #[GQL\Input]
 #[GQL\Description('Planet Input type description')]
-class Planet
+final class Planet
 {
     /**
      * @GQL\Field(resolve="...")
      */
     #[GQL\Field(resolve: '...')]
-    protected string $skipField;
+    public string $skipField;
 
     /**
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    protected string $name;
+    public string $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
     #[GQL\Field(type: 'Int!')]
-    protected string $population;
+    public string $population;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
-    protected string $description;
+    public string $description;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected ?int $diameter;
+    public ?int $diameter;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
-    protected int $variable;
+    public int $variable;
 
     // @phpstan-ignore-next-line
-    protected $dummy;
+    public $dummy;
 
     /**
      * @GQL\Field(type="[String]!")
      */
     #[GQL\Field(type: '[String]!')]
-    protected array $tags;
+    public array $tags;
 }

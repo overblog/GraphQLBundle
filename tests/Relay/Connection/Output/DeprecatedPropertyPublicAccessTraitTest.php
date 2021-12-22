@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 use PHPUnit\Framework\TestCase;
 
-class DeprecatedPropertyPublicAccessTraitTest extends TestCase
+final class DeprecatedPropertyPublicAccessTraitTest extends TestCase
 {
     /**
      * @group legacy

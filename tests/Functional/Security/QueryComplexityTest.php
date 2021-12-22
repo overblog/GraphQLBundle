@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class QueryComplexityTest extends TestCase
+final class QueryComplexityTest extends TestCase
 {
     private string $userFriendsWithoutLimitQuery = <<<'EOF'
         query {

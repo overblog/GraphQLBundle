@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedExc
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class QueryTest extends TestCase
+final class QueryTest extends TestCase
 {
     protected function getFunctions()
     {

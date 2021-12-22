@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedExc
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\IdFetcherCallback;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class IdFetcherCallbackTest extends TestCase
+final class IdFetcherCallbackTest extends TestCase
 {
     protected function getFunctions()
     {

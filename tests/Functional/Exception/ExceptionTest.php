@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Exception;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class ExceptionTest extends TestCase
+final class ExceptionTest extends TestCase
 {
     protected function setUp(): void
     {

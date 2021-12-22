@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\EventListener;
 use GraphQL\Type\Introspection;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class DebugListenerTest extends TestCase
+final class DebugListenerTest extends TestCase
 {
     public function testDisabledDebugInfo(): void
     {

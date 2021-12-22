@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\MultipleQueries;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class MultipleQueriesTest extends TestCase
+final class MultipleQueriesTest extends TestCase
 {
     private const REQUIRED_FAILS_ERRORS = [
         [

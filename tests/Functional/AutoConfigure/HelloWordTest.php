@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 /**
  * @group legacy
  */
-class HelloWordTest extends TestCase
+final class HelloWordTest extends TestCase
 {
     protected function setUp(): void
     {

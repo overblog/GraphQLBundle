@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Exception;
 
 use InvalidArgumentException;
 
-class ExampleException
+final class ExampleException
 {
     public function __invoke(): void
     {

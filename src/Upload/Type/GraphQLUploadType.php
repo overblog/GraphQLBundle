@@ -12,7 +12,7 @@ use function gettype;
 use function is_object;
 use function sprintf;
 
-class GraphQLUploadType extends ScalarType
+final class GraphQLUploadType extends ScalarType
 {
     /**
      * @param string $name

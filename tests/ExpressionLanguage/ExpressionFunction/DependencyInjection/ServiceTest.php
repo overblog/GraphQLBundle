@@ -9,7 +9,7 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use stdClass;
 
-class ServiceTest extends TestCase
+final class ServiceTest extends TestCase
 {
     protected function getFunctions()
     {

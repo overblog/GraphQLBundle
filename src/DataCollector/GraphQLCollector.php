@@ -17,7 +17,7 @@ use Throwable;
 use function count;
 use function microtime;
 
-class GraphQLCollector extends DataCollector
+final class GraphQLCollector extends DataCollector
 {
     /**
      * GraphQL Batches executed.

@@ -10,7 +10,7 @@ use function base64_decode;
 use function base64_encode;
 use function sprintf;
 
-class GlobalIdTest extends TestCase
+final class GlobalIdTest extends TestCase
 {
     public function testToGlobalId(): void
     {

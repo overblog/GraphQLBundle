@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineType
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
 use ReflectionClass;
 
-class DoctrineTypeGuesserTest extends TestCase
+final class DoctrineTypeGuesserTest extends TestCase
 {
     // @phpstan-ignore-next-line
     protected $property;

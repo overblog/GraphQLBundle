@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @ORM\Entity
  */
 #[GQL\Type]
-class Lightsaber
+final class Lightsaber
 {
     /**
      * @ORM\Column
@@ -20,7 +20,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $color;
+    public $color;
 
     /**
      * @ORM\Column(type="text")
@@ -28,7 +28,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $text;
+    public $text;
 
     /**
      * @ORM\Column(type="string")
@@ -36,7 +36,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $string;
+    public $string;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -44,7 +44,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $size;
+    public $size;
 
     /**
      * @ORM\OneToMany(targetEntity="Hero")
@@ -52,7 +52,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $holders;
+    public $holders;
 
     /**
      * @ORM\ManyToOne(targetEntity="Hero")
@@ -60,7 +60,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $creator;
+    public $creator;
 
     /**
      * @ORM\OneToOne(targetEntity="Crystal")
@@ -68,7 +68,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $crystal;
+    public $crystal;
 
     /**
      * @ORM\ManyToMany(targetEntity="Battle")
@@ -76,7 +76,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $battles;
+    public $battles;
 
     /**
      * @GQL\Field
@@ -85,7 +85,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $currentHolder;
+    public $currentHolder;
 
     /**
      * @GQL\Field
@@ -94,7 +94,7 @@ class Lightsaber
      */
     #[GQL\Field]
     #[GQL\Deprecated('No more tags on lightsabers')]
-    protected array $tags;
+    public array $tags;
 
     /**
      * @ORM\Column(type="float")
@@ -102,7 +102,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $float;
+    public $float;
 
     /**
      * @ORM\Column(type="decimal")
@@ -110,7 +110,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $decimal;
+    public $decimal;
 
     /**
      * @ORM\Column(type="bool")
@@ -118,7 +118,7 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $bool;
+    public $bool;
 
     /**
      * @ORM\Column(type="boolean")
@@ -126,5 +126,5 @@ class Lightsaber
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $boolean;
+    public $boolean;
 }

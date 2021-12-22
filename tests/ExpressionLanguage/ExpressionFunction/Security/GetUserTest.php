@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class GetUserTest extends TestCase
+final class GetUserTest extends TestCase
 {
     protected function getFunctions()
     {

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use function sprintf;
 
-class ResolverMapsTest extends TestCase
+final class ResolverMapsTest extends TestCase
 {
     public function testUnresolvable(): void
     {

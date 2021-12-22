@@ -17,7 +17,7 @@ use function array_map;
 use function call_user_func_array;
 use function is_iterable;
 
-class AccessResolver
+final class AccessResolver
 {
     private PromiseAdapter $promiseAdapter;
 

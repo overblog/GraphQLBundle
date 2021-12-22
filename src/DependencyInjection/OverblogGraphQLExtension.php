@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use function realpath;
 use function sprintf;
 
-class OverblogGraphQLExtension extends Extension
+final class OverblogGraphQLExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {

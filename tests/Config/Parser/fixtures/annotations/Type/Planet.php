@@ -13,25 +13,25 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\Galax
  */
 #[GQL\Type]
 #[GQL\Description('The Planet type')]
-class Planet
+final class Planet
 {
     /**
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    protected string $name;
+    public string $name;
 
     /**
      * @GQL\Field(type="GalaxyCoordinates")
      */
     #[GQL\Field(type: 'GalaxyCoordinates')]
-    protected GalaxyCoordinates $location;
+    public GalaxyCoordinates $location;
 
     /**
      * @GQL\Field(type="Int!")
      */
     #[GQL\Field(type: 'Int!')]
-    protected int $population;
+    public int $population;
 
     /**
      * @GQL\Field

@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 
-class TypeNode implements NodeInterface
+final class TypeNode implements NodeInterface
 {
     public static function toConfig(Node $node): array
     {

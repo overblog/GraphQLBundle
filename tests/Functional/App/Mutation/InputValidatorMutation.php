@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 
-class InputValidatorMutation implements MutationInterface
+final class InputValidatorMutation implements MutationInterface
 {
     /**
      * @throws ArgumentsValidationException

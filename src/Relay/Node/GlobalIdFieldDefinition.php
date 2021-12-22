@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Relay\Node;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use function is_string;
-use function strpos;
 use function substr;
 use function var_export;
 
@@ -28,7 +27,7 @@ final class GlobalIdFieldDefinition implements MappingInterface
     {
         $cleanIdFetcher = $idFetcher;
 
-        if (0 === strpos($idFetcher, '@=')) {
+        if (str_starts_with($idFetcher, '@=')) {
             $cleanIdFetcher = substr($idFetcher, 2);
         }
 

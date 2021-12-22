@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use function in_array;
 
-class InputValidator
+final class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
@@ -60,11 +60,9 @@ class InputValidator
     }
 
     /**
-     * @param string|array|null $groups
-     *
      * @throws ArgumentsValidationException
      */
-    public function validate($groups = null, bool $throw = true): ?ConstraintViolationListInterface
+    public function validate(string|array|null $groups = null, bool $throw = true): ?ConstraintViolationListInterface
     {
         $rootNode = new ValidationNode(
             $this->info->parentType,
@@ -95,6 +93,7 @@ class InputValidator
 
     private function mergeClassValidation(): array
     {
+        /** @phpstan-ignore-next-line */
         $common = static::normalizeConfig($this->info->parentType->config['validation'] ?? []);
         $specific = static::normalizeConfig($this->info->fieldDefinition->config['validation'] ?? []);
 
@@ -127,7 +126,7 @@ class InputValidator
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      */
-    protected function buildValidationTree(ValidationNode $rootObject, array $fields, array $classValidation, array $inputData): ValidationNode
+    private function buildValidationTree(ValidationNode $rootObject, array $fields, array $classValidation, array $inputData): ValidationNode
     {
         $metadata = new ObjectMetadata($rootObject);
 
@@ -207,10 +206,7 @@ class InputValidator
         return $rootObject;
     }
 
-    /**
-     * @param GeneratedTypeInterface|ListOfType|NonNull $type
-     */
-    private static function isListOfType($type): bool
+    private static function isListOfType(GeneratedTypeInterface|ListOfType|NonNull $type): bool
     {
         if ($type instanceof ListOfType || ($type instanceof NonNull && $type->getWrappedType() instanceof ListOfType)) {
             return true;
@@ -219,10 +215,7 @@ class InputValidator
         return false;
     }
 
-    /**
-     * @param ObjectType|InputObjectType $type
-     */
-    private function createCollectionNode(array $values, $type, ValidationNode $parent): array
+    private function createCollectionNode(array $values, ObjectType|InputObjectType $type, ValidationNode $parent): array
     {
         $collection = [];
 
@@ -233,11 +226,9 @@ class InputValidator
         return $collection;
     }
 
-    /**
-     * @param ObjectType|InputObjectType $type
-     */
-    private function createObjectNode(array $value, $type, ValidationNode $parent): ValidationNode
+    private function createObjectNode(array $value, ObjectType|InputObjectType $type, ValidationNode $parent): ValidationNode
     {
+        /** @phpstan-ignore-next-line */
         $classValidation = static::normalizeConfig($type->config['validation'] ?? []);
 
         return $this->buildValidationTree(

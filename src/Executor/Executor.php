@@ -14,7 +14,7 @@ use function func_get_args;
 use function method_exists;
 use function sprintf;
 
-class Executor implements ExecutorInterface
+final class Executor implements ExecutorInterface
 {
     /**
      * {@inheritdoc}

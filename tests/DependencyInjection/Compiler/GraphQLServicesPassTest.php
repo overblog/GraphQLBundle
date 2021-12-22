@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class GraphQLServicesPassTest extends TestCase
+final class GraphQLServicesPassTest extends TestCase
 {
     /**
      * @param mixed $invalidAlias

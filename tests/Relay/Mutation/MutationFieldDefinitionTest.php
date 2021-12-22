@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
 use PHPUnit\Framework\TestCase;
 
-class MutationFieldDefinitionTest extends TestCase
+final class MutationFieldDefinitionTest extends TestCase
 {
     /** @var MutationFieldDefinition */
     private $definition;

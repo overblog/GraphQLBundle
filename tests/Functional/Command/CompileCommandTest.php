@@ -14,7 +14,7 @@ use function preg_replace;
 use function str_replace;
 use const PHP_EOL;
 
-class CompileCommandTest extends TestCase
+final class CompileCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private array $typesMapping;

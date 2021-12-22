@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
 use function array_filter;
 use function in_array;
 
-class SchemaLanguageQueryResolverMap extends ResolverMap
+final class SchemaLanguageQueryResolverMap extends ResolverMap
 {
     protected function map(): array
     {

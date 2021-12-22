@@ -10,7 +10,6 @@ use function array_key_exists;
 use function is_string;
 use function json_encode;
 use function sprintf;
-use function strpos;
 use function substr;
 
 final class PluralIdentifyingRootFieldDefinition implements MappingInterface
@@ -52,7 +51,7 @@ final class PluralIdentifyingRootFieldDefinition implements MappingInterface
      */
     private function cleanResolveSingleInput($resolveSingleInput)
     {
-        if (is_string($resolveSingleInput) && 0 === strpos($resolveSingleInput, '@=')) {
+        if (is_string($resolveSingleInput) && str_starts_with($resolveSingleInput, '@=')) {
             $cleanResolveSingleInput = substr($resolveSingleInput, 2);
         } else {
             $cleanResolveSingleInput = json_encode($resolveSingleInput);
