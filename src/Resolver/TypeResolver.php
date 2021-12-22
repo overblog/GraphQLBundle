@@ -51,6 +51,9 @@ class TypeResolver extends AbstractResolver
         if (!isset($this->cache[$alias])) {
             $type = $this->baseType($alias);
             $this->cache[$alias] = $type;
+            if (isset($type->name) && $type->name !== $alias) {
+                $this->cache[$type->name] = $type;
+            }
         }
 
         return $this->cache[$alias];

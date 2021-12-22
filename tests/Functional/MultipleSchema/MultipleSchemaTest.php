@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\MultipleSchema;
 
+use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
 final class MultipleSchemaTest extends TestCase
@@ -73,11 +74,13 @@ final class MultipleSchemaTest extends TestCase
         $this->assertGraphQL($query, $expectedData, null, [], 'internal');
     }
 
-    public function testUnknownTypeShouldReturnNull(): void
+    public function testUnknownTypeShouldThrowAnUnresolvableException(): void
     {
         // @phpstan-ignore-next-line
         $schema = $this->getContainer()->get('overblog_graphql.request_executor')->getSchema('public');
-        $this->assertNull($schema->getType('unknown'));
+        $this->expectException(UnresolvableException::class);
+        $this->expectExceptionMessage('Could not find type with alias "unknown". Did you forget to define it?');
+        $schema->getType('unknown');
     }
 
     private function assertSchemaQueryTypeName(string $typeName): void
