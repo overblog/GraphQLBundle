@@ -31,6 +31,7 @@ use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Config\Arg;
 use Overblog\GraphQLBundle\Generator\Config\Callback;
+use Overblog\GraphQLBundle\Generator\Config\Config as GeneratorConfig;
 use Overblog\GraphQLBundle\Generator\Config\Field;
 use Overblog\GraphQLBundle\Generator\Config\Validation;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
@@ -79,7 +80,7 @@ final class TypeBuilder
     private ExpressionConverter $expressionConverter;
     private PhpFile $file;
     private string $namespace;
-    private Config\Config $config;
+    private GeneratorConfig $config;
     private string $type;
     private string $currentField;
     private string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
@@ -114,7 +115,7 @@ final class TypeBuilder
     public function build(array $config, string $type): PhpFile
     {
         // This values should be accessible from every method
-        $this->config = new Config\Config($config);
+        $this->config = new GeneratorConfig($config);
         $this->type = $type;
 
         $this->file = PhpFile::new()->setNamespace($this->namespace);
@@ -439,7 +440,7 @@ final class TypeBuilder
      *
      * @throws GeneratorException
      */
-    private function buildResolver(Callback $resolver, ?array $groups = null): ?GeneratorInterface
+    private function buildResolver(Callback $resolver, ?array $groups = null): GeneratorInterface
     {
         // TODO: before creating an input validator, check if any validation rules are defined
         return $this->buildCallback(
@@ -874,7 +875,7 @@ final class TypeBuilder
         return $this->buildCallback($typeResolver, ['value', 'context', 'info']);
     }
 
-    protected function buildCallback(Callback $callback, array $argNames, ?callable $expressionBuilder = null): GeneratorInterface
+    private function buildCallback(Callback $callback, array $argNames, ?callable $expressionBuilder = null): GeneratorInterface
     {
         if (null !== $callback->expression) {
             if (null === $expressionBuilder) {

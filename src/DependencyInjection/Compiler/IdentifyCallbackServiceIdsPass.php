@@ -71,7 +71,7 @@ final class IdentifyCallbackServiceIdsPass implements CompilerPassInterface
                 $alias = $container->getAlias($id);
                 $id = (string) $alias;
                 $definition = $container->getDefinition($id);
-            } catch (ServiceNotFoundException | InvalidArgumentException $e) {
+            } catch (ServiceNotFoundException|InvalidArgumentException $e) {
                 if ($throw) {
                     throw $e;
                 }
