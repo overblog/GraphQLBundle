@@ -60,12 +60,10 @@ final class TypeDecoratorListenerTest extends TestCase
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
-            'fields' => function () {
-                return [
-                    'bar' => ['type' => Type::string()],
-                    'baz' => ['type' => Type::string()],
-                    'toto' => ['type' => Type::boolean(), 'resolve' => null],
-                ];
+            'fields' => function (): iterable {
+                yield 'bar' => ['type' => Type::string()];
+                yield 'baz' => ['type' => Type::string()];
+                yield 'toto' => ['type' => Type::boolean(), 'resolve' => null];
             },
         ]);
         $barResolver = static fn () => 'bar';

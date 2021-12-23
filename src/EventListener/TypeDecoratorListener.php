@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
+use Traversable;
 use function array_diff;
 use function count;
 use function current;
@@ -163,6 +164,10 @@ final class TypeDecoratorListener
             if (is_callable($fields)) {
                 $fields = $fields();
             }
+
+            // Convert a Generator to an array so that can modify it (by reference)
+            // and return the new array.
+            $fields = $fields instanceof Traversable ? iterator_to_array($fields) : (array) $fields;
 
             $fieldNames = [];
             foreach ($fields as $key => &$field) {
