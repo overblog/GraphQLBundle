@@ -141,6 +141,35 @@ final class TypeDecoratorListenerTest extends TestCase
         );
     }
 
+    public function testEnumTypeLazyValuesDecoration(): void
+    {
+        $enumType = new EnumType([
+            'name' => 'Foo',
+            'values' => function (): iterable {
+                yield 'BAR' => ['name' => 'BAR', 'value' => 'BAR'];
+                yield 'BAZ' => ['name' => 'BAZ', 'value' => 'BAZ'];
+                yield 'TOTO' => ['name' => 'TOTO', 'value' => 'TOTO'];
+            },
+        ]);
+
+        $this->decorate(
+            [$enumType->name => $enumType],
+            [$enumType->name => ['BAR' => 1, 'BAZ' => 2]]
+        );
+
+        $values = is_callable($enumType->config['values']) ? $enumType->config['values']() : $enumType->config['values'];
+        $values = $values instanceof Traversable ? iterator_to_array($values) : (array) $values;
+
+        $this->assertSame(
+            [
+                'BAR' => ['name' => 'BAR', 'value' => 1],
+                'BAZ' => ['name' => 'BAZ', 'value' => 2],
+                'TOTO' => ['name' => 'TOTO', 'value' => 'TOTO'],
+            ],
+            $values
+        );
+    }
+
     public function testEnumTypeUnknownField(): void
     {
         $enumType = new EnumType([
