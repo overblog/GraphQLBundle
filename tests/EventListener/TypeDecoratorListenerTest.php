@@ -60,12 +60,10 @@ final class TypeDecoratorListenerTest extends TestCase
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
-            'fields' => function () {
-                return [
-                    'bar' => ['type' => Type::string()],
-                    'baz' => ['type' => Type::string()],
-                    'toto' => ['type' => Type::boolean(), 'resolve' => null],
-                ];
+            'fields' => function (): iterable {
+                yield 'bar' => ['type' => Type::string()];
+                yield 'baz' => ['type' => Type::string()];
+                yield 'toto' => ['type' => Type::boolean(), 'resolve' => null];
             },
         ]);
         $barResolver = static fn () => 'bar';
@@ -140,6 +138,35 @@ final class TypeDecoratorListenerTest extends TestCase
                 'TOTO' => ['name' => 'TOTO', 'value' => 'TOTO'],
             ],
             $enumType->config['values']
+        );
+    }
+
+    public function testEnumTypeLazyValuesDecoration(): void
+    {
+        $enumType = new EnumType([
+            'name' => 'Foo',
+            'values' => function (): iterable {
+                yield 'BAR' => ['name' => 'BAR', 'value' => 'BAR'];
+                yield 'BAZ' => ['name' => 'BAZ', 'value' => 'BAZ'];
+                yield 'TOTO' => ['name' => 'TOTO', 'value' => 'TOTO'];
+            },
+        ]);
+
+        $this->decorate(
+            [$enumType->name => $enumType],
+            [$enumType->name => ['BAR' => 1, 'BAZ' => 2]]
+        );
+
+        $values = is_callable($enumType->config['values']) ? $enumType->config['values']() : $enumType->config['values'];
+        $values = $values instanceof Traversable ? iterator_to_array($values) : (array) $values;
+
+        $this->assertSame(
+            [
+                'BAR' => ['name' => 'BAR', 'value' => 1],
+                'BAZ' => ['name' => 'BAZ', 'value' => 2],
+                'TOTO' => ['name' => 'TOTO', 'value' => 'TOTO'],
+            ],
+            $values
         );
     }
 

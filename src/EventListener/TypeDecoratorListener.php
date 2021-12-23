@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
+use Traversable;
 use function array_diff;
 use function count;
 use function current;
@@ -135,24 +136,41 @@ final class TypeDecoratorListener
 
     private function decorateEnumType(EnumType $type, ResolverMapInterface $resolverMap): void
     {
-        $fieldNames = [];
-        foreach ($type->config['values'] as $key => &$value) {
-            $fieldName = $value['name'] ?? $key;
-            if ($resolverMap->isResolvable($type->name, $fieldName)) {
-                $value['value'] = $resolverMap->resolve($type->name, $fieldName);
+        $values = $type->config['values'];
+
+        $decoratedValues = function () use ($type, $resolverMap, $values) {
+            if (is_callable($values)) {
+                $values = $values();
             }
-            $fieldNames[] = $fieldName;
-        }
-        $unknownFields = array_diff($resolverMap->covered($type->name), $fieldNames);
-        if (!empty($unknownFields)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    '"%s".{"%s"} defined in resolverMap, was defined in resolvers, but enum is not in schema.',
-                    $type->name,
-                    implode('", "', $unknownFields)
-                )
-            );
-        }
+
+            // Convert a Generator to an array so that can modify it (by reference)
+            // and return the new array.
+            $values = $values instanceof Traversable ? iterator_to_array($values) : (array) $values;
+
+            $fieldNames = [];
+            foreach ($values as $key => &$value) {
+                $fieldName = $value['name'] ?? $key;
+                if ($resolverMap->isResolvable($type->name, $fieldName)) {
+                    $value['value'] = $resolverMap->resolve($type->name, $fieldName);
+                }
+                $fieldNames[] = $fieldName;
+            }
+            $unknownFields = array_diff($resolverMap->covered($type->name), $fieldNames);
+            if (!empty($unknownFields)) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        '"%s".{"%s"} defined in resolverMap, was defined in resolvers, but enum is not in schema.',
+                        $type->name,
+                        implode('", "', $unknownFields)
+                    )
+                );
+            }
+
+            return $values;
+        };
+
+        /** @phpstan-ignore-next-line see https://github.com/webonyx/graphql-php/issues/1041  */
+        $type->config['values'] = is_callable($values) ? $decoratedValues : $decoratedValues();
     }
 
     private function decorateObjectTypeFields(ObjectType $type, array $fieldsResolved, ResolverMapInterface $resolverMap): void
@@ -163,6 +181,10 @@ final class TypeDecoratorListener
             if (is_callable($fields)) {
                 $fields = $fields();
             }
+
+            // Convert a Generator to an array so that can modify it (by reference)
+            // and return the new array.
+            $fields = $fields instanceof Traversable ? iterator_to_array($fields) : (array) $fields;
 
             $fieldNames = [];
             foreach ($fields as $key => &$field) {
