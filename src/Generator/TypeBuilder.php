@@ -49,7 +49,6 @@ use function ltrim;
 use function reset;
 use function rtrim;
 use function strtolower;
-use function substr;
 
 /**
  * Service that exposes a single method `build` called for each GraphQL
@@ -531,7 +530,7 @@ final class TypeBuilder
         $array = Collection::assoc();
 
         if (null !== $validationConfig->link) {
-            if (str_contains($validationConfig->link, '::')) {
+            if (!str_contains($validationConfig->link, '::')) {
                 // e.g. App\Entity\Droid
                 $array->addItem('link', $validationConfig->link);
             } else {
@@ -911,9 +910,9 @@ final class TypeBuilder
     {
         [$fqcn, $classMember] = explode('::', $link);
 
-        if ('$' === $classMember[0]) {
+        if (str_starts_with($classMember, '$')) {
             return [$fqcn, ltrim($classMember, '$'), 'property'];
-        } elseif (')' === substr($classMember, -1)) {
+        } elseif (str_ends_with($classMember, ')')) {
             return [$fqcn, rtrim($classMember, '()'), 'getter'];
         } else {
             return [$fqcn, $classMember, 'member'];

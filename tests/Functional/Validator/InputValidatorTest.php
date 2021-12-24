@@ -30,7 +30,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['noValidation']);
     }
 
@@ -47,7 +47,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['simpleValidation']);
     }
 
@@ -82,7 +82,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['linkedConstraintsValidation']);
     }
 
@@ -128,7 +128,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['collectionValidation']);
     }
 
@@ -189,7 +189,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['cascadeValidationWithGroups']);
     }
 
@@ -249,7 +249,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['expressionVariablesValidation']);
     }
 
@@ -266,7 +266,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['autoValidationAutoThrow']);
     }
 
@@ -296,7 +296,7 @@ final class InputValidatorTest extends TestCase
         $query = 'mutation { autoValidationNoThrow(username: "Andrew") }';
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue(false === $result['data']['autoValidationNoThrow']);
     }
 
@@ -309,7 +309,7 @@ final class InputValidatorTest extends TestCase
         $query = 'mutation { autoValidationNoThrow(username: "Tim") }';
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue(true === $result['data']['autoValidationNoThrow']);
     }
 
@@ -341,7 +341,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertTrue(empty($result['errors']));
+        $this->assertArrayNotHasKey('errors', $result);
         $this->assertTrue($result['data']['autoValidationAutoThrowWithGroups']);
     }
 
