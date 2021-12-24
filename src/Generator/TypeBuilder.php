@@ -887,11 +887,8 @@ final class TypeBuilder
             }
         } elseif (null !== $callback->id) {
             $fn = "$this->gqlServices->get('$callback->id')";
-            if ($callback->method) {
-                return Collection::numeric([$fn, $callback->method]);
-            } else {
-                return Literal::new($fn);
-            }
+
+            return Collection::numeric([$fn, $callback->method ?? '__invoke']);
         } else {
             return Literal::new("'$callback->method'");
         }
