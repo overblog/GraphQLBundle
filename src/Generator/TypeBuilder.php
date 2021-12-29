@@ -886,9 +886,14 @@ final class TypeBuilder
                 return $expressionBuilder($callback->expression);
             }
         } elseif (null !== $callback->id) {
-            $fn = "$this->gqlServices->get('$callback->id')";
+            $fnExpression = "$this->gqlServices->get('$callback->id')";
+            if (null !== $callback->method) {
+                $fnExpression = "[$fnExpression, '$callback->method']";
+            }
 
-            return Collection::numeric([$fn, $callback->method ?? '__invoke']);
+            return ArrowFunction::new()
+                ->addArguments(...$argNames)
+                ->setExpression(Literal::new("($fnExpression)(...\\func_get_args())"));
         } else {
             return Literal::new("'$callback->method'");
         }
