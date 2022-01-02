@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator\Config;
 
 final class Callback extends AbstractConfig
 {
-    public ?string $method = null;
+    public ?string $function = null;
     public ?string $expression = null;
-    public ?string $id = null;
 }

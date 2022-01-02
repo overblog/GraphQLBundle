@@ -48,20 +48,10 @@ final class IdentifyCallbackServiceIdsPass implements CompilerPassInterface
 
     private function resolveServiceIdAndMethod(ContainerBuilder $container, ?array &$callback): void
     {
-        if (!isset($callback['id']) && !isset($callback['method'])) {
+        if (!isset($callback['function'])) {
             return;
         }
-        $originalId = $callback['id'] ?? null;
-        $originalMethod = $callback['method'] ?? null;
-
-        if (null === $originalId) {
-            [$id, $method] = explode('::', $originalMethod, 2) + [null, null];
-            $throw = false;
-        } else {
-            $id = $originalId;
-            $method = $originalMethod;
-            $throw = true;
-        }
+        [$id, $method] = explode('::', $callback['function'], 2) + [null, null];
 
         try {
             $definition = $container->getDefinition($id);
@@ -72,12 +62,6 @@ final class IdentifyCallbackServiceIdsPass implements CompilerPassInterface
                 $id = (string) $alias;
                 $definition = $container->getDefinition($id);
             } catch (ServiceNotFoundException|InvalidArgumentException $e) {
-                if ($throw) {
-                    throw $e;
-                }
-                $callback['id'] = null;
-                $callback['method'] = $originalMethod;
-
                 return;
             }
         }
@@ -88,7 +72,6 @@ final class IdentifyCallbackServiceIdsPass implements CompilerPassInterface
             $definition->addTag('overblog_graphql.service');
         }
 
-        $callback['id'] = $id;
-        $callback['method'] = $method;
+        $callback['function'] = "$id::$method";
     }
 }

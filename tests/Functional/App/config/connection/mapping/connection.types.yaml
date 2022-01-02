@@ -17,13 +17,11 @@ User:
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
                 resolver:
-                    method: 'overblog_graphql.test.resolver.node::friendsResolver'
+                    function: 'overblog_graphql.test.resolver.node::friendsResolver'
             friendsForward:
                 type: userConnection
                 argsBuilder: "Relay::ForwardConnection"
-                resolver:
-                    id: 'overblog_graphql.test.resolver.node'
-                    method: 'friendsResolver'
+                resolver: 'overblog_graphql.test.resolver.node::friendsResolver'
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"

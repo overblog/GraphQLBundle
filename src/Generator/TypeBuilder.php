@@ -17,6 +17,7 @@ use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\Config;
 use Murtukov\PHPCodeGenerator\ConverterInterface;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
+use Murtukov\PHPCodeGenerator\IfElse;
 use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
@@ -885,17 +886,37 @@ final class TypeBuilder
             } else {
                 return $expressionBuilder($callback->expression);
             }
-        } elseif (null !== $callback->id) {
-            $fnExpression = "$this->gqlServices->get('$callback->id')";
-            if (null !== $callback->method) {
-                $fnExpression = "[$fnExpression, '$callback->method']";
+        } else {
+            if (str_contains($callback->function, '::')) {
+                $function = explode('::', $callback->function, 2);
+                $isArray = true;
+            } else {
+                $function = $callback->function;
+                $isArray = false;
             }
 
-            return ArrowFunction::new()
+            $resolverExpression = IfElse::new("$this->gqlServices->has('".($isArray ? $function[0] : $function)."')");
+            if ($isArray) {
+                $resolverExpression
+                    ->append('$resolver = ', "[$this->gqlServices->get('$function[0]'), '$function[1]']")
+                    ->createElse()
+                        ->append('$resolver = ', "'$callback->function'")
+                    ->end()
+                ;
+            } else {
+                $resolverExpression
+                    ->append('$resolver = ', "$this->gqlServices->get('$function')")
+                    ->createElse()
+                        ->append('$resolver = ', "'$function'")
+                    ->end()
+                ;
+            }
+
+            return Closure::new()
                 ->addArguments(...$argNames)
-                ->setExpression(Literal::new("($fnExpression)(...\\func_get_args())"));
-        } else {
-            return Literal::new("'$callback->method'");
+                ->bindVar(TypeGenerator::GRAPHQL_SERVICES)
+                ->append($resolverExpression)
+                ->append('return $resolver(...\\func_get_args())');
         }
     }
 

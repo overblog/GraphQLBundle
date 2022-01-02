@@ -161,9 +161,9 @@ abstract class TypeDefinition
                 ->then(function ($options) use ($old, $new) {
                     if (is_callable($options[$old])) {
                         if (is_array($options[$old])) {
-                            $options[$new]['method'] = implode('::', $options[$old]);
+                            $options[$new]['function'] = implode('::', $options[$old]);
                         } else {
-                            $options[$new]['method'] = $options[$old];
+                            $options[$new]['function'] = $options[$old];
                         }
                     } elseif (is_string($options[$old])) {
                         $options[$new]['expression'] = ExpressionLanguage::stringHasTrigger($options[$old]) ?
@@ -203,8 +203,8 @@ abstract class TypeDefinition
         $node
             ->info($info)
             ->validate()
-                ->ifTrue(fn (array $v) => !empty($v['method']) && !empty($v['expression']))
-                ->thenInvalid('"method" and "expression" should not be use together.')
+                ->ifTrue(fn (array $v) => !empty($v['function']) && !empty($v['expression']))
+                ->thenInvalid('"function" and "expression" should not be use together.')
             ->end()
             ->beforeNormalization()
                 // Allow short syntax
@@ -213,12 +213,11 @@ abstract class TypeDefinition
             ->end()
             ->beforeNormalization()
                 ->ifTrue(fn ($options) => is_string($options) && !ExpressionLanguage::stringHasTrigger($options))
-                ->then(fn ($options) => ['method' => $options])
+                ->then(fn ($options) => ['function' => $options])
             ->end()
             ->children()
-                ->scalarNode('method')->end()
+                ->scalarNode('function')->end()
                 ->scalarNode('expression')->end()
-                ->scalarNode('id')->end()
             ->end()
         ;
 
