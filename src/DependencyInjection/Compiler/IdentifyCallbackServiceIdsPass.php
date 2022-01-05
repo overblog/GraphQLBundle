@@ -52,6 +52,9 @@ final class IdentifyCallbackServiceIdsPass implements CompilerPassInterface
             return;
         }
         [$id, $method] = explode('::', $callback['function'], 2) + [null, null];
+        if (str_starts_with($id, '\\')) {
+            $id = ltrim($id, '\\');
+        }
 
         try {
             $definition = $container->getDefinition($id);

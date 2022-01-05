@@ -25,7 +25,7 @@ User:
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"
-                resolver: 'overblog_graphql.test.resolver.node::friendsResolver'
+                resolver: '\Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver::friendsResolver'
 
 friendConnection:
     type: relay-connection
