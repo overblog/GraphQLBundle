@@ -95,6 +95,7 @@ final class InputValidator
     {
         /** @phpstan-ignore-next-line */
         $common = static::normalizeConfig($this->info->parentType->config['validation'] ?? []);
+        /** @phpstan-ignore-next-line */
         $specific = static::normalizeConfig($this->info->fieldDefinition->config['validation'] ?? []);
 
         return array_filter([
@@ -126,7 +127,7 @@ final class InputValidator
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      */
-    private function buildValidationTree(ValidationNode $rootObject, array $fields, array $classValidation, array $inputData): ValidationNode
+    private function buildValidationTree(ValidationNode $rootObject, iterable $fields, array $classValidation, array $inputData): ValidationNode
     {
         $metadata = new ObjectMetadata($rootObject);
 
