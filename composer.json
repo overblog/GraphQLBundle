@@ -29,6 +29,7 @@
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "phpdocumentor/type-resolver": ">1.4.0,<1.6.0",
         "psr/log": "^1.0 || ^2.0 || ^3.0",
         "symfony/config": "^4.4.30 || ^5.3.7",
         "symfony/dependency-injection": "^4.4.30 || ^5.3.7",
@@ -74,7 +75,6 @@
         "twig/twig": "^2.10|^3.0"
     },
     "conflict": {
-        "phpdocumentor/type-resolver": "<1.4.0",
         "react/promise": "<2.8"
     },
     "extra": {
