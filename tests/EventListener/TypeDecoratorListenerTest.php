@@ -258,7 +258,7 @@ final class TypeDecoratorListenerTest extends TestCase
     public function testUnSupportedTypeDefineInResolverMapShouldThrowAnException(): void
     {
         $this->assertDecorateException(
-            ['myType' => new InputObjectType(['name' => 'myType'])],
+            ['myType' => new InputObjectType(['name' => 'myType', 'fields' => []])],
             [
                 'myType' => [
                     'foo' => null,
