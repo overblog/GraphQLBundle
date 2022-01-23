@@ -17,13 +17,12 @@ final class ObjectMetadata extends ClassMetadata
     }
 
     /**
-     * @param string $property
-     *
-     * @return $this|ObjectMetadata
+     * @return self
      */
-    public function addPropertyConstraint($property, Constraint $constraint): static
+    public function addPropertyConstraint(string $property, Constraint $constraint): static
     {
         if (!isset($this->properties[$property])) {
+            /** @phpstan-ignore-next-line */
             $this->properties[$property] = new PropertyMetadata($property);
 
             $this->addPropertyMetadata($this->properties[$property]);
@@ -39,7 +38,7 @@ final class ObjectMetadata extends ClassMetadata
     private function addPropertyMetadata(PropertyMetadataInterface $metadata): void
     {
         $property = $metadata->getPropertyName();
-
+        /** @phpstan-ignore-next-line */
         $this->members[$property][] = $metadata;
     }
 }

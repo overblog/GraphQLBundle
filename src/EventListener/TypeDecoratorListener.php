@@ -213,6 +213,7 @@ final class TypeDecoratorListener
     private function configTypeMapping(ObjectType|InterfaceType|UnionType|CustomScalarType $type, string $fieldName, ResolverMapInterface $resolverMap): void
     {
         if ($resolverMap->isResolvable($type->name, $fieldName)) {
+            /** @phpstan-ignore-next-line */
             $type->config[substr($fieldName, 2)] = $resolverMap->resolve($type->name, $fieldName);
         }
     }

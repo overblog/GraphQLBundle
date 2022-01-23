@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 
 final class MetadataFactory implements MetadataFactoryInterface
 {
+    /** @var ObjectMetadata[] */
     private array $metadataPool;
 
     public function __construct()

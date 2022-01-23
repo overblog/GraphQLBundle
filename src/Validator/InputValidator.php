@@ -171,6 +171,7 @@ final class InputValidator
                         [$fqcn, $property, $type] = $value;
 
                         if (!in_array($fqcn, $this->cachedMetadata)) {
+                            /** @phpstan-ignore-next-line */
                             $this->cachedMetadata[$fqcn] = $this->defaultValidator->getMetadataFor($fqcn);
                         }
 
