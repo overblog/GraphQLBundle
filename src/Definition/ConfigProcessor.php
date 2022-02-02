@@ -11,7 +11,7 @@ final class ConfigProcessor
     /**
      * @var ConfigProcessorInterface[]
      */
-    private array $processors;
+    private array $processors = [];
 
     public function __construct(iterable $processors)
     {
