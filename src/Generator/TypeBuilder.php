@@ -329,6 +329,10 @@ class TypeBuilder
             $configLoader->addItem('resolveType', $this->buildResolveType($c->resolveType));
         }
 
+        if (isset($c->isTypeOf)) {
+            $configLoader->addItem('isTypeOf', $this->buildIsTypeOf($c->isTypeOf));
+        }
+
         if (isset($c->resolveField)) {
             $configLoader->addItem('resolveField', $this->buildResolve($c->resolveField));
         }
@@ -921,6 +925,32 @@ class TypeBuilder
         }
 
         return $resolveType;
+    }
+
+    /**
+     * Builds an arrow function from a string with an expression prefix,
+     * otherwise just returns the provided value back untouched.
+     *
+     * Render example:
+     *
+     *      fn($className) => (($className = "App\\ClassName") && $value instanceof $className)
+     *
+     * @param mixed $isTypeOf
+     *
+     * @return mixed|ArrowFunction
+     */
+    private function buildIsTypeOf($isTypeOf)
+    {
+        if (EL::isStringWithTrigger($isTypeOf)) {
+            $expression = $this->expressionConverter->convert($isTypeOf);
+
+            return ArrowFunction::new()
+                ->addArguments('className')
+                ->setExpression(Literal::new($expression))
+                ->setStatic();
+        }
+
+        return $isTypeOf;
     }
 
     /**
