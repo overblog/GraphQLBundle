@@ -25,9 +25,8 @@ final class ParameterTest extends TestCase
     public function testParameterCompilation($name): void
     {
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
-            ['container' => $this->getDIContainerMock([], ['test' => 5])]
+            ['service_container' => $this->getDIContainerMock([], ['test' => 5])]
         );
-        ${TypeGenerator::GRAPHQL_SERVICES}->get('container');
         $this->assertSame(5, eval('return '.$this->expressionLanguage->compile($name.'("test")').';'));
     }
 
@@ -37,7 +36,7 @@ final class ParameterTest extends TestCase
      */
     public function testParameterEvaluation($name): void
     {
-        $services = $this->createGraphQLServices(['container' => $this->getDIContainerMock([], ['test' => 5])]);
+        $services = $this->createGraphQLServices(['service_container' => $this->getDIContainerMock([], ['test' => 5])]);
         $this->assertSame(
             5,
             $this->expressionLanguage->evaluate($name.'("test")', [TypeGenerator::GRAPHQL_SERVICES => $services])

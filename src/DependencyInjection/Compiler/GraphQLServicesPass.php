@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
-use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\GraphQLServices;
-use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 use function is_string;
 use function sprintf;
@@ -27,27 +26,31 @@ final class GraphQLServicesPass implements CompilerPassInterface
 
         foreach ($taggedServices as $id => $tags) {
             foreach ($tags as $attributes) {
-                if (empty($attributes['alias']) || !is_string($attributes['alias'])) {
-                    throw new InvalidArgumentException(
-                        sprintf('Service "%s" tagged "overblog_graphql.service" should have a valid "alias" attribute.', $id)
-                    );
-                }
-                $locateableServices[$attributes['alias']] = new Reference($id);
+                $locateableServices[] = new Reference($id);
 
-                $isPublic = !isset($attributes['public']) || $attributes['public'];
-                if ($isPublic) {
+                if (array_key_exists('alias', $attributes)) {
+                    if (empty($attributes['alias']) || !is_string($attributes['alias'])) {
+                        throw new InvalidArgumentException(
+                            sprintf('Service "%s" tagged "overblog_graphql.service" should have a valid "alias" attribute.', $id)
+                        );
+                    }
+
                     $expressionLanguageDefinition->addMethodCall(
-                        'addGlobalName',
+                        'addExpressionVariableNameServiceId',
                         [
-                            sprintf(TypeGenerator::GRAPHQL_SERVICES.'->get(\'%s\')', $attributes['alias']),
                             $attributes['alias'],
+                            $id,
                         ]
                     );
                 }
             }
         }
-        $locateableServices['container'] = new Reference('service_container');
+        $locateableServices[] = new Reference('service_container');
+        $expressionLanguageDefinition->addMethodCall(
+            'addExpressionVariableNameServiceId',
+            ['container', 'service_container']
+        );
 
-        $container->findDefinition(GraphQLServices::class)->addArgument($locateableServices);
+        $container->findDefinition(GraphQLServices::class)->addArgument(array_unique($locateableServices));
     }
 }

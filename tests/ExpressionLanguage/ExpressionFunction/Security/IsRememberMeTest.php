@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsRememberMe;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 final class IsRememberMeTest extends TestCase
@@ -21,7 +22,7 @@ final class IsRememberMeTest extends TestCase
             'IS_AUTHENTICATED_REMEMBERED',
             $this->any()
         );
-        $gqlServices = $this->createGraphQLServices(['security' => $security]);
+        $gqlServices = $this->createGraphQLServices([Security::class => $security]);
 
         $isRememberMe = $this->expressionLanguage->evaluate('isRememberMe()', [TypeGenerator::GRAPHQL_SERVICES => $gqlServices]);
         $this->assertTrue($isRememberMe);

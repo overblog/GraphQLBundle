@@ -6,7 +6,11 @@ namespace Overblog\GraphQLBundle\Definition;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Resolver\MutationResolver;
+use Overblog\GraphQLBundle\Resolver\QueryResolver;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Validator\InputValidator;
+use Overblog\GraphQLBundle\Validator\InputValidatorFactory;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
@@ -21,7 +25,7 @@ final class GraphQLServices extends ServiceLocator
      */
     public function query(string $alias, ...$args)
     {
-        return $this->get('queryResolver')->resolve([$alias, $args]);
+        return $this->get(QueryResolver::class)->resolve([$alias, $args]);
     }
 
     /**
@@ -31,7 +35,7 @@ final class GraphQLServices extends ServiceLocator
      */
     public function mutation(string $alias, ...$args)
     {
-        return $this->get('mutationResolver')->resolve([$alias, $args]);
+        return $this->get(MutationResolver::class)->resolve([$alias, $args]);
     }
 
     /**
@@ -41,7 +45,7 @@ final class GraphQLServices extends ServiceLocator
      */
     public function getType(string $typeName): ?Type
     {
-        return $this->get('typeResolver')->resolve($typeName);
+        return $this->get(TypeResolver::class)->resolve($typeName);
     }
 
     /**
@@ -52,7 +56,7 @@ final class GraphQLServices extends ServiceLocator
      */
     public function createInputValidator($value, ArgumentInterface $args, $context, ResolveInfo $info): InputValidator
     {
-        return $this->get('input_validator_factory')->create(
+        return $this->get(InputValidatorFactory::class)->create(
             new ResolverArgs($value, $args, $context, $info)
         );
     }

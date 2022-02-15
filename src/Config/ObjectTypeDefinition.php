@@ -16,6 +16,7 @@ final class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 
         /** @var ArrayNodeDefinition $node */
         $node = $builder->getRootNode();
+        $this->callbackNormalization($node, 'fieldResolver', 'resolveField');
 
         /** @phpstan-ignore-next-line */
         $node
@@ -29,7 +30,7 @@ final class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
                     ->prototype('scalar')->info('One of internal or custom interface types.')->end()
                 ->end()
                 ->variableNode('isTypeOf')->end()
-                ->variableNode('resolveField')->end()
+                ->append($this->callbackSection('fieldResolver', 'GraphQL field value resolver'))
                 ->variableNode('fieldsDefaultAccess')
                     ->info('Default access control to fields (expression language can be use here)')
                 ->end()

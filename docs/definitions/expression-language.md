@@ -386,7 +386,7 @@ MyType:
         fields:
             name:
                 type: String!
-                resolve: "@=service('my_private_service').formatName(value)"
+                resolve: "@=my_private_service.formatName(value)"
 ```
 
 To use a vendor private services:

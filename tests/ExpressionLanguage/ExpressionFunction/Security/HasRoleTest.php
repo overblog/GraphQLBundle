@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasRole;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
 final class HasRoleTest extends TestCase
@@ -21,7 +22,7 @@ final class HasRoleTest extends TestCase
             'ROLE_USER',
             $this->any()
         );
-        $services = $this->createGraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices([Security::class => $security]);
 
         $hasRole = $this->expressionLanguage->evaluate('hasRole("ROLE_USER")', [TypeGenerator::GRAPHQL_SERVICES => $services]);
         $this->assertTrue($hasRole);

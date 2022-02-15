@@ -1,6 +1,5 @@
 services:
-    overblog_graphql.test.resolver.node:
-        class: Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver
+    Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver:
         arguments:
             - "@overblog_graphql.promise_adapter"
         tags:
@@ -9,3 +8,5 @@ services:
             - { name: "overblog_graphql.query", alias: "query", method: "resolveQuery" }
             - { name: "overblog_graphql.query", alias: "connection", method: "resolveConnection" }
             - { name: "overblog_graphql.query", alias: "promise", method: "resolvePromiseFullFilled" }
+
+    overblog_graphql.test.resolver.node: '@Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver'

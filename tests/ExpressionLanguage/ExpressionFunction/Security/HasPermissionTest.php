@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Sec
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasPermission;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
+use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use stdClass;
 
@@ -28,7 +29,7 @@ final class HasPermissionTest extends TestCase
             ],
             $this->any()
         );
-        $services = $this->createGraphQLServices(['security' => $security]);
+        $services = $this->createGraphQLServices([Security::class => $security]);
 
         $hasPermission = $this->expressionLanguage->evaluate(
             $this->testedExpression,

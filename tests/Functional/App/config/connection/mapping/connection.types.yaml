@@ -4,7 +4,7 @@ Query:
         fields:
             user:
                 type: User
-                resolve: '@=query("query")'
+                resolver: 'Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver::resolveQuery'
 
 User:
     type: object
@@ -16,15 +16,16 @@ User:
             friends:
                 type: friendConnection
                 argsBuilder: "Relay::Connection"
-                resolve: '@=query("friends", value, args)'
+                resolver:
+                    function: 'overblog_graphql.test.resolver.node::friendsResolver'
             friendsForward:
                 type: userConnection
                 argsBuilder: "Relay::ForwardConnection"
-                resolve: '@=query("friends", value, args)'
+                resolver: 'overblog_graphql.test.resolver.node::friendsResolver'
             friendsBackward:
                 type: userConnection
                 argsBuilder: "Relay::BackwardConnection"
-                resolve: '@=query("friends", value, args)'
+                resolver: '\Overblog\GraphQLBundle\Tests\Functional\App\Resolver\ConnectionResolver::friendsResolver'
 
 friendConnection:
     type: relay-connection
@@ -38,7 +39,7 @@ friendConnection:
         connectionFields:
             totalCount:
                 type: Int
-                resolve: '@=query("connection")'
+                resolver: '@=query("connection")'
 
 userConnection:
     type: relay-connection

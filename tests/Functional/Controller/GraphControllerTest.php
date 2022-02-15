@@ -66,7 +66,7 @@ final class GraphControllerTest extends TestCase
      */
     public function testEndpointAction(string $uri): void
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+        $client = self::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
 
         $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
@@ -87,7 +87,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Must provide query parameter');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', []);
         $client->getResponse()->getContent();
@@ -97,14 +97,14 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('The request content body must not be empty when using json content type request.');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('POST', '/', [], [], ['CONTENT_TYPE' => 'application/json']);
     }
 
     public function testEndpointWithJsonContentTypeAndGetQuery(): void
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+        $client = self::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/json']);
         $result = $client->getResponse()->getContent();
@@ -115,7 +115,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('POST body sent invalid JSON');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
@@ -123,7 +123,7 @@ final class GraphControllerTest extends TestCase
 
     public function testEndpointActionWithVariables(): void
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
@@ -151,7 +151,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Variables are invalid JSON');
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
@@ -167,7 +167,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(NotFoundHttpException::class);
         $this->expectExceptionMessage('Could not find "fake" schema.');
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 
         $query = <<<'EOF'
@@ -181,7 +181,7 @@ final class GraphControllerTest extends TestCase
 
     public function testEndpointActionWithOperationName(): void
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 
         $query = $this->friendsQuery."\n".$this->friendsTotalCountQuery;
@@ -196,7 +196,7 @@ final class GraphControllerTest extends TestCase
      */
     public function testBatchEndpointAction(string $uri): void
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
 
         $data = [
@@ -233,7 +233,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Must provide at least one valid query.');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{}');
         $client->getResponse()->getContent();
@@ -243,7 +243,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Batching parser only accepts "application/json" or "multipart/form-data" content-type but got "".');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/batch');
         $client->getResponse()->getContent();
@@ -253,7 +253,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('POST body sent invalid JSON');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{');
         $client->getResponse()->getContent();
@@ -263,7 +263,7 @@ final class GraphControllerTest extends TestCase
     {
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('1 is not a valid query');
-        $client = static::createClient();
+        $client = self::createClient();
         $this->disableCatchExceptions($client);
         $client->request('GET', '/batch', [], [], ['CONTENT_TYPE' => 'application/json'], '{"test" : {"query": 1}}');
         $client->getResponse()->getContent();
@@ -271,7 +271,7 @@ final class GraphControllerTest extends TestCase
 
     public function testPreflightedRequestWhenDisabled(): void
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
         $client->request('OPTIONS', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
         $response = $client->getResponse();
@@ -281,7 +281,7 @@ final class GraphControllerTest extends TestCase
 
     public function testUnAuthorizedMethod(): void
     {
-        $client = static::createClient(['test_case' => 'connection']);
+        $client = self::createClient(['test_case' => 'connection']);
         $this->disableCatchExceptions($client);
         $client->request('PUT', '/', [], [], ['HTTP_Origin' => 'http://example.com']);
         $this->assertSame(405, $client->getResponse()->getStatusCode());
@@ -289,7 +289,7 @@ final class GraphControllerTest extends TestCase
 
     public function testPreflightedRequestWhenEnabled(): void
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+        $client = self::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
         $client->request('OPTIONS', '/batch', [], [], ['HTTP_Origin' => 'http://example.com']);
         $this->assertCORSHeadersExists($client);
@@ -297,7 +297,7 @@ final class GraphControllerTest extends TestCase
 
     public function testNoCORSHeadersIfOriginHeaderNotExists(): void
     {
-        $client = static::createClient(['test_case' => 'connectionWithCORS']);
+        $client = self::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
         $result = $client->getResponse()->getContent();
@@ -305,10 +305,7 @@ final class GraphControllerTest extends TestCase
         $this->assertCORSHeadersNotExists($client);
     }
 
-    /**
-     * @param KernelBrowser $client
-     */
-    private function assertCORSHeadersNotExists($client): void
+    private function assertCORSHeadersNotExists(KernelBrowser $client): void
     {
         $headers = $client->getResponse()->headers->all();
         $this->assertArrayNotHasKey('access-control-allow-origin', $headers);
@@ -318,10 +315,7 @@ final class GraphControllerTest extends TestCase
         $this->assertArrayNotHasKey('access-control-max-age', $headers);
     }
 
-    /**
-     * @param KernelBrowser $client
-     */
-    private function assertCORSHeadersExists($client): void
+    private function assertCORSHeadersExists(KernelBrowser $client): void
     {
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());

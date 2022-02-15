@@ -13,8 +13,8 @@ final class Arguments extends ExpressionFunction
     {
         parent::__construct(
             'arguments',
-            fn ($mapping, $data) => "$this->gqlServices->get('container')->get('overblog_graphql.arguments_transformer')->getArguments($mapping, $data, \$info)",
-            static fn (array $arguments, $mapping, $data) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('container')->get('overblog_graphql.arguments_transformer')->getArguments($mapping, $data, $arguments['info'])
+            fn ($mapping, $data) => "$this->gqlServices->get('service_container')->get('overblog_graphql.arguments_transformer')->getArguments($mapping, $data, \$info)",
+            static fn (array $arguments, $mapping, $data) => $arguments[TypeGenerator::GRAPHQL_SERVICES]->get('service_container')->get('overblog_graphql.arguments_transformer')->getArguments($mapping, $data, $arguments['info'])
         );
     }
 }
