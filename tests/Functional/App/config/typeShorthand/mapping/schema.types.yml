@@ -1,0 +1,41 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            user:
+               type: User!
+               args:
+                    auth:
+                        type: AuthInput!
+                        validation: cascade
+               resolve: >
+                     @={
+                       "username": args["auth"]["username"],
+                       "address": {
+                         "street": args["auth"]["username"] ~ " foo street",
+                         "zipcode": "12345"
+                       }
+                     }
+
+AuthInput:
+    type: input-object
+    config:
+        fields:
+            username:
+                type: String!
+                validation:
+                  - NotBlank: ~
+            password: String!
+User:
+    type: object
+    config:
+        fields:
+            username: String!
+            address: Address!
+
+Address:
+    type: object
+    config:
+        fields:
+            street: String!
+            zipcode: String!
