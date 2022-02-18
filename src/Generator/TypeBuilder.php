@@ -10,6 +10,7 @@ use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\UnionType;
 use Murtukov\PHPCodeGenerator\ArrowFunction;
@@ -327,6 +328,10 @@ class TypeBuilder
 
         if (isset($c->resolveType)) {
             $configLoader->addItem('resolveType', $this->buildResolveType($c->resolveType));
+        }
+
+        if (isset($c->isTypeOf)) {
+            $configLoader->addItem('isTypeOf', $this->buildIsTypeOf($c->isTypeOf));
         }
 
         if (isset($c->resolveField)) {
@@ -921,6 +926,30 @@ class TypeBuilder
         }
 
         return $resolveType;
+    }
+
+    /**
+     * Builds an arrow function from a string with an expression prefix,
+     * otherwise just returns the provided value back untouched.
+     *
+     * Render example:
+     *
+     *      fn($className) => (($className = "App\\ClassName") && $value instanceof $className)
+     *
+     * @param mixed $isTypeOf
+     */
+    private function buildIsTypeOf($isTypeOf): ArrowFunction
+    {
+        if (EL::isStringWithTrigger($isTypeOf)) {
+            $expression = $this->expressionConverter->convert($isTypeOf);
+
+            return ArrowFunction::new(Literal::new($expression), 'bool')
+                ->setStatic()
+                ->addArguments('value', 'context')
+                ->addArgument('info', ResolveInfo::class);
+        }
+
+        return ArrowFunction::new($isTypeOf);
     }
 
     /**
