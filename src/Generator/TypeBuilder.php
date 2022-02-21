@@ -694,10 +694,12 @@ class TypeBuilder
         // Convert to object for better readability
         $c = (object) $fieldConfig;
 
+        // TODO(any): modify `InputValidator` and `TypeDecoratorListener` to support it before re-enabling this
+        // see https://github.com/overblog/GraphQLBundle/issues/973
         // If there is only 'type', use shorthand
-        if (1 === count($fieldConfig) && isset($c->type)) {
+        /*if (1 === count($fieldConfig) && isset($c->type)) {
             return $this->buildType($c->type);
-        }
+        }*/
 
         $field = Collection::assoc()
             ->addItem('type', $this->buildType($c->type));
