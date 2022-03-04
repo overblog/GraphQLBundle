@@ -637,6 +637,21 @@ class TypeBuilder
                 if (isset($args[0]) && is_array($args[0])) {
                     // Nested instance
                     $instance->addArgument($this->buildConstraints($args, false));
+                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0])) {
+                    // Nested instance with "constraints" key (full syntax)
+                    $options = [
+                        'constraints' => $this->buildConstraints($args['constraints'], false),
+                    ];
+
+                    // Check for additional options
+                    foreach ($args as $key => $option) {
+                        if ('constraints' === $key) {
+                            continue;
+                        }
+                        $options[$key] = $option;
+                    }
+
+                    $instance->addArgument($options);
                 } else {
                     // Numeric or Assoc array?
                     $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
