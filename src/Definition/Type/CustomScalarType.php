@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Definition\Type;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeExtensionNode;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
@@ -100,14 +101,15 @@ class CustomScalarType extends BaseCustomScalarType
             default => $this->config['scalarType'],
         };
 
-        Utils::invariant(
-            $scalarType instanceof ScalarType,
-            sprintf(
-                '%s must provide a valid "scalarType" instance of %s but got: %s',
-                $this->name,
-                ScalarType::class,
-                Utils::printSafe($scalarType)
-            )
-        );
+        if (!$scalarType instanceof ScalarType) {
+            throw new InvariantViolation(
+                sprintf(
+                    '%s must provide a valid "scalarType" instance of %s but got: %s',
+                    $this->name,
+                    ScalarType::class,
+                    Utils::printSafe($scalarType)
+                )
+            );
+        }
     }
 }
