@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Definition\Type;
 
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeExtensionNode;
-use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
