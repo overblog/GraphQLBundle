@@ -11,6 +11,10 @@ UPGRADE FROM 0.14 to 1.0
 * Removed deprecated `values` from `Enum`
 * Removed deprecated `resolver_maps` configuration option
 * Removed `request_files` from context, use `request` object instead
+* Removed deprecated `builder` from `FieldsBuilder`, use `name` attribute instead
+* Removed deprecated `builderConfig` from `FieldsBuilder`, use `config` attribute instead
+* Removed deprecated autowire for type, resolver or mutation
+  implementing `Symfony\Component\DependencyInjection::setContainer`, use  Symfony native autowire config instead
 * All classes are now final. If you need an extension point, try to use composition, 
   implementing the interface or raise an issue.
 
