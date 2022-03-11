@@ -6,6 +6,11 @@ Period:
                 type: String!
                 validation:
                     - Date: ~
+                    - AtLeastOneOf:
+                        constraints:
+                            - GreaterThanOrEqual: '-100 years'
+                        message: "Year should be GreaterThanOrEqual -100."
+                        includeInternalMessages: false
             endDate:
                 type: String!
                 validation:
