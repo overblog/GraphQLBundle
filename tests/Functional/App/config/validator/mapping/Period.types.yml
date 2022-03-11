@@ -6,7 +6,7 @@ Period:
                 type: String!
                 validation:
                     - Date: ~
-                    - AtLeastOneOf:
+                    - Overblog\GraphQLBundle\Tests\Functional\App\Validator\AtLeastOneOf:
                         constraints:
                             - GreaterThanOrEqual: '-100 years'
                         message: "Year should be GreaterThanOrEqual -100."
