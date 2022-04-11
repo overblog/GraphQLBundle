@@ -55,7 +55,7 @@
     "require-dev": {
         "doctrine/annotations": "^1.13",
         "doctrine/orm": "^2.5",
-        "monolog/monolog": "^1.26.1",
+        "monolog/monolog": "^2.5.0",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
