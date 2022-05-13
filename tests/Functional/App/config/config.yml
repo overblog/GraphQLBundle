@@ -8,6 +8,7 @@ framework:
         enabled: false
 
 security:
+    enable_authenticator_manager: true
     providers:
         in_memory:
             memory:
@@ -18,14 +19,13 @@ security:
                     admin:
                         password: 123
                         roles: 'ROLE_ADMIN'
-    encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+    password_hashers:
+        Symfony\Component\Security\Core\User\InMemoryUser: plaintext
     firewalls:
         graph:
             pattern: ^/
             http_basic: ~
             stateless: true
-            anonymous: true
 
 overblog_graphql:
     errors_handler:

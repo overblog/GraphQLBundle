@@ -49,7 +49,7 @@ abstract class TestCase extends WebTestCase
             static::$class = static::getKernelClass();
         }
 
-        $options['test_case'] = $options['test_case'] ?? '';
+        $options['test_case'] ??= '';
 
         $env = $options['environment'] ?? 'test'.strtolower($options['test_case']);
         $debug = $options['debug'] ?? true;

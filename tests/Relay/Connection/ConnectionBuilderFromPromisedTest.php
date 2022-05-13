@@ -57,7 +57,8 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     public function testRespectsASmallerFirstWhenSlicing(): void
     {
-        $promise = call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'],
+        $promise = call_user_func(
+            [static::getBuilder(), 'connectionFromPromisedArraySlice'],
             $this->promisedLetters(['A', 'B', 'C']),
             ['first' => 2],
             [

@@ -104,10 +104,7 @@ class GetUserTest extends TestCase
 
         return [
             [$user, $user],
-            ['Anon.', null],
             [null, null],
-            [10, null],
-            [true, null],
         ];
     }
 

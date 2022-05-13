@@ -38,7 +38,7 @@ class ArgumentsTransformerTest extends TestCase
     private function getTransformer(array $classesMap = null, ConstraintViolationList $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn($validateReturn ?: []);
+        $validator->method('validate')->willReturn($validateReturn ?? new ConstraintViolationList());
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
@@ -321,9 +321,11 @@ class ArgumentsTransformerTest extends TestCase
     /** @dataProvider getWrappedInputObject */
     public function testInputObjectWithWrappingType(Type $type): void
     {
-        $transformer = $this->getTransformer([
+        $transformer = $this->getTransformer(
+            [
                 'InputType1' => ['type' => 'input', 'class' => InputType1::class],
-            ], new ConstraintViolationList()
+            ],
+            new ConstraintViolationList()
         );
         $info = $this->getResolveInfo(self::getTypes());
 

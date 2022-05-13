@@ -46,11 +46,12 @@ class ReactPromiseAdapterTest extends TestCase
     public function testWaitAsyncPromise(): void
     {
         $output = 'OK!';
-        $process = new PhpProcess(<<<EOF
-            <?php
-            usleep(30);
-            echo '$output';
-            EOF
+        $process = new PhpProcess(
+            <<<EOF
+                <?php
+                usleep(30);
+                echo '$output';
+                EOF
         );
         $result = new ExecutionResult(['output' => $output]);
 

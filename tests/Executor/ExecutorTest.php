@@ -22,7 +22,7 @@ class ExecutorTest extends TestCase
             'PromiseAdapter should be an object instantiating "%s" or "%s" with a "wait" method.',
             PromiseAdapterInterface::class,
             PromiseAdapter::class
-            ));
+        ));
         $schema = $this->getMockBuilder(Schema::class)->disableOriginalConstructor()->getMock();
         $executor = new Executor();
         $executor->execute(new ReactPromiseAdapter(), $schema, '');
