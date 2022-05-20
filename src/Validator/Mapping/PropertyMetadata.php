@@ -17,7 +17,7 @@ class PropertyMetadata extends MemberMetadata
     }
 
     /**
-     * @param mixed $object
+     * @param object|string $object
      *
      * @throws ReflectionException
      */
@@ -29,6 +29,11 @@ class PropertyMetadata extends MemberMetadata
         return $member;
     }
 
+    /**
+     * @param object|string $object
+     *
+     * @return mixed
+     */
     #[ReturnTypeWillChange]
     public function getPropertyValue($object)
     {

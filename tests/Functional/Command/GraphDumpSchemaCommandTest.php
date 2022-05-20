@@ -129,8 +129,8 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->commandTester->execute($input);
 
         $this->assertSame($expectedStatusCode, $this->commandTester->getStatusCode());
-        $expected = trim(file_get_contents($expectedFile));
-        $actual = trim(file_get_contents($actualFile));
+        $expected = trim((string) file_get_contents($expectedFile));
+        $actual = trim((string) file_get_contents($actualFile));
         if ('json' === $format) {
             $expected = json_decode($expected, true);
             $actual = json_decode($actual, true);

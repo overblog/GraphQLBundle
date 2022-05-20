@@ -42,7 +42,7 @@ class GraphQLParser implements ParserInterface
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
-        $content = trim(file_get_contents($file->getPathname()));
+        $content = trim((string) file_get_contents($file->getPathname()));
         $typesConfig = [];
 
         // allow empty files

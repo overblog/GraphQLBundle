@@ -95,10 +95,10 @@ class ErrorHandler
                 continue;
             }
 
-            // recreate a error with converted exception
+            // recreate an error with converted exception
             $errorWithConvertedException = new GraphQLError(
                 $error->getMessage(),
-                $error->nodes,
+                $error->nodes, // @phpstan-ignore-line
                 $error->getSource(),
                 $error->getPositions(),
                 $error->path,

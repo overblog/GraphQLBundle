@@ -30,12 +30,13 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         ];
 
         $expectedEdges = array_values(array_intersect_key($edges, array_flip($wantedEdges)));
+        $endEdge = end($expectedEdges);
 
         return new Connection(
             $expectedEdges,
             new PageInfo(
                 isset($expectedEdges[0]) ? $expectedEdges[0]->getCursor() : null,
-                end($expectedEdges) ? end($expectedEdges)->getCursor() : null,
+                $endEdge ? $endEdge->getCursor() : null,
                 $hasPreviousPage,
                 $hasNextPage
             )
