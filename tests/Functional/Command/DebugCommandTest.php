@@ -28,7 +28,7 @@ class DebugCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
 
         foreach (DebugCommand::getCategories() as $category) {
-            $content = file_get_contents(
+            $content = (string) file_get_contents(
                 sprintf(
                     __DIR__.'/fixtures/debug/debug-%s.txt',
                     $category

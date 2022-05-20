@@ -139,7 +139,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function unprefixExpression(string $expression)
     {
-        $string = substr($expression, strlen(self::EXPRESSION_TRIGGER));
+        $string = substr($expression, strlen(self::EXPRESSION_TRIGGER)) ?: '';
 
         return '' !== $string ? $string : $expression;
     }

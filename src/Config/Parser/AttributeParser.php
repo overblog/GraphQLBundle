@@ -25,7 +25,9 @@ class AttributeParser extends MetadataParser
             case $reflector instanceof ReflectionMethod:
             case $reflector instanceof ReflectionProperty:
             case $reflector instanceof ReflectionClassConstant:
-                $attributes = $reflector->getAttributes();
+                if (is_callable([$reflector, 'getAttributes'])) {
+                    $attributes = $reflector->getAttributes();
+                }
         }
 
         // @phpstan-ignore-next-line
