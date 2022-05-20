@@ -18,6 +18,9 @@ final class MetadataFactory implements MetadataFactoryInterface
         $this->metadataPool = [];
     }
 
+    /**
+     * @param mixed $object
+     */
     public function getMetadataFor($object): ObjectMetadata
     {
         if ($object instanceof ValidationNode) {
@@ -27,6 +30,9 @@ final class MetadataFactory implements MetadataFactoryInterface
         throw new NoSuchMetadataException();
     }
 
+    /**
+     * @param mixed $object
+     */
     public function hasMetadataFor($object): bool
     {
         if ($object instanceof ValidationNode) {
