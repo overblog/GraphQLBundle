@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Validator\Mapping;
 
 use ReflectionException;
 use ReflectionProperty;
+use ReturnTypeWillChange;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
 final class PropertyMetadata extends MemberMetadata
