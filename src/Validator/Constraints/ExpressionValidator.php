@@ -29,7 +29,7 @@ final class ExpressionValidator extends \Symfony\Component\Validator\Constraints
     /**
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof Expression) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Expression');
