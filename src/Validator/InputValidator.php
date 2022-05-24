@@ -60,11 +60,9 @@ class InputValidator
     }
 
     /**
-     * @param string|array|null $groups
-     *
      * @throws ArgumentsValidationException
      */
-    public function validate($groups = null, bool $throw = true): ?ConstraintViolationListInterface
+    public function validate(string|array|null $groups = null, bool $throw = true): ?ConstraintViolationListInterface
     {
         $rootNode = new ValidationNode(
             $this->info->parentType,

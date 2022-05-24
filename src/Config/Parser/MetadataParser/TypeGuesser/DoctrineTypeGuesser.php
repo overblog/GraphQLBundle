@@ -126,7 +126,7 @@ class DoctrineTypeGuesser extends TypeGuesser
      */
     public function fullyQualifiedClassName(string $className, string $namespace): string
     {
-        if (false === strpos($className, '\\') && $namespace) {
+        if (!str_contains($className, '\\') && $namespace) {
             return $namespace.'\\'.$className;
         }
 
