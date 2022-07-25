@@ -8,21 +8,22 @@ use Exception;
 use GraphQL\Language\AST\DefinitionNode;
 use GraphQL\Language\AST\EnumTypeDefinitionNode;
 use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
+use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use GraphQL\Language\AST\ScalarTypeDefinitionNode;
+use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Language\Parser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\NodeInterface;
 use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use function array_keys;
 use function array_pop;
 use function call_user_func;
 use function explode;
 use function file_get_contents;
 use function get_class;
-use function in_array;
 use function preg_replace;
 use function sprintf;
 use function trim;
@@ -57,20 +58,38 @@ class GraphQLParser implements ParserInterface
 
         foreach ($ast->definitions as $typeDef) {
             /**
-             * @var ObjectTypeDefinitionNode|InputObjectTypeDefinitionNode|EnumTypeDefinitionNode $typeDef
+             * @var ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode|EnumTypeDefinitionNode|UnionTypeDefinitionNode|InputObjectTypeDefinitionNode|ScalarTypeDefinitionNode $typeDef
              */
-            if (isset($typeDef->kind) && in_array($typeDef->kind, array_keys(self::DEFINITION_TYPE_MAPPING))) {
-                /**
-                 * @var class-string<NodeInterface> $class
-                 */
-                $class = sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
-                $typesConfig[$typeDef->name->value] = call_user_func([$class, 'toConfig'], $typeDef);
-            } else {
-                self::throwUnsupportedDefinitionNode($typeDef);
-            }
+            $config = static::prepareConfig($typeDef);
+            $typesConfig[$typeDef->name->value] = $config;
         }
 
         return $typesConfig;
+    }
+
+    /**
+     * @return class-string<NodeInterface>
+     */
+    protected static function getNodeClass(DefinitionNode $typeDef): string
+    {
+        if (isset($typeDef->kind) && array_key_exists($typeDef->kind, self::DEFINITION_TYPE_MAPPING)) {
+            /**
+             * @var class-string<NodeInterface> $class
+             */
+            return sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
+        }
+
+        self::throwUnsupportedDefinitionNode($typeDef);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    protected static function prepareConfig(DefinitionNode $typeDef): array
+    {
+        $nodeClass = static::getNodeClass($typeDef);
+
+        return call_user_func([$nodeClass, 'toConfig'], $typeDef);
     }
 
     private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef): void
