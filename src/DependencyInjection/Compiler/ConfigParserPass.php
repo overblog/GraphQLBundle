@@ -52,7 +52,7 @@ class ConfigParserPass implements CompilerPassInterface
         'attribute' => AttributeParser::class,
     ];
 
-    private static array $defaultDefaultConfig = [
+    private const DEFAULT_CONFIG = [
         'definitions' => [
             'mappings' => [
                 'auto_discover' => [
@@ -64,6 +64,12 @@ class ConfigParserPass implements CompilerPassInterface
             ],
         ],
     ];
+
+    /**
+     * @deprecated Use {@see ConfigParserPass::PARSERS }. Added for the backward compatibility.
+     * @var array<string,array<string,mixed>>
+     */
+    private static array $defaultDefaultConfig = self::DEFAULT_CONFIG;
 
     private array $treatedFiles = [];
     private array $preTreatedFiles = [];
@@ -170,7 +176,7 @@ class ConfigParserPass implements CompilerPassInterface
     private function mappingConfig(array $config, ContainerBuilder $container): array
     {
         // use default value if needed
-        $config = array_replace_recursive(self::$defaultDefaultConfig, $config);
+        $config = array_replace_recursive(self::DEFAULT_CONFIG, $config);
 
         $mappingConfig = $config['definitions']['mappings'];
         $typesMappings = $mappingConfig['types'];
