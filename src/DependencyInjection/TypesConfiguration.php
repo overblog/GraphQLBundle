@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
+use Overblog\GraphQLBundle\Config\TypeDefinition;
 use Overblog\GraphQLBundle\Enum\TypeEnum;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -22,6 +23,23 @@ use function str_replace;
 
 class TypesConfiguration implements ConfigurationInterface
 {
+    /**
+     * TODO: refactor. This is dirty solution but quick and with minimal impact on existing structure.
+     *
+     * @var array<class-string<TypeDefinition>>
+     */
+    private static array $configBuilderClasses = [
+        Config\ObjectTypeDefinition::CONFIG_NAME => Config\ObjectTypeDefinition::class,
+        Config\EnumTypeDefinition::CONFIG_NAME => Config\EnumTypeDefinition::class,
+        Config\InterfaceTypeDefinition::CONFIG_NAME => Config\InterfaceTypeDefinition::class,
+        Config\UnionTypeDefinition::CONFIG_NAME => Config\UnionTypeDefinition::class,
+        Config\InputObjectTypeDefinition::CONFIG_NAME => Config\InputObjectTypeDefinition::class,
+        Config\CustomScalarTypeDefinition::CONFIG_NAME => Config\CustomScalarTypeDefinition::class,
+    ];
+
+    /**
+     * @var string[]
+     */
     private static array $types = [
         TypeEnum::OBJECT,
         TypeEnum::ENUM,
@@ -30,6 +48,22 @@ class TypesConfiguration implements ConfigurationInterface
         TypeEnum::INPUT_OBJECT,
         TypeEnum::CUSTOM_SCALAR,
     ];
+
+    /**
+     * @param class-string<TypeDefinition> $fqcn
+     */
+    public static function setConfigBuilderClass(string $fqcn): void
+    {
+        if (!is_subclass_of($fqcn, TypeDefinition::class, true)) {
+            throw new \InvalidArgumentException(sprintf('Options must be a FQCN implementing %s', TypeDefinition::class));
+        }
+        self::$configBuilderClasses[$fqcn::getName()] = $fqcn;
+    }
+
+    public static function addType(string $type): void
+    {
+        self::$types[] = $type;
+    }
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -43,9 +77,11 @@ class TypesConfiguration implements ConfigurationInterface
         $this->addBeforeNormalization($rootNode);
 
         // @phpstan-ignore-next-line
-        $rootNode
+        $prototype = $rootNode
             ->useAttributeAsKey('name')
-            ->prototype('array')
+            ->prototype('array');
+
+        $prototype
                 // config is the unique config entry allowed
                 ->beforeNormalization()
                     ->ifTrue(function ($v) use ($configTypeKeys) {
@@ -81,8 +117,9 @@ class TypesConfiguration implements ConfigurationInterface
                         return $v;
                     })
                 ->end()
-                ->cannotBeOverwritten()
-                ->children()
+                ->cannotBeOverwritten();
+        $prototypeChildren = $prototype->children();
+        $prototypeChildren
                     ->scalarNode('class_name')
                         ->isRequired()
                         ->validate()
@@ -95,12 +132,14 @@ class TypesConfiguration implements ConfigurationInterface
                         ->prototype('scalar')->info('Types to inherit of.')->end()
                     ->end()
                     ->booleanNode('decorator')->info('Decorator will not be generated.')->defaultFalse()->end()
-                    ->append(Config\ObjectTypeDefinition::create()->getDefinition())
-                    ->append(Config\EnumTypeDefinition::create()->getDefinition())
-                    ->append(Config\InterfaceTypeDefinition::create()->getDefinition())
-                    ->append(Config\UnionTypeDefinition::create()->getDefinition())
-                    ->append(Config\InputObjectTypeDefinition::create()->getDefinition())
-                    ->append(Config\CustomScalarTypeDefinition::create()->getDefinition())
+            ;
+
+        foreach (self::$configBuilderClasses as $configBuilderClass) {
+            /** @var class-string<TypeDefinition> $configBuilderClass */
+            $prototypeChildren->append($configBuilderClass::create()->getDefinition());
+        }
+
+        $prototypeChildren
                     ->variableNode('config')->end()
                 ->end()
                 // _{TYPE}_config is renamed config

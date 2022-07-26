@@ -8,5 +8,8 @@ use GraphQL\Language\AST\Node;
 
 interface NodeInterface
 {
+    /**
+     * @return array<string,mixed>
+     */
     public static function toConfig(Node $node): array;
 }

@@ -10,7 +10,12 @@ use function array_key_exists;
 
 class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 {
-    protected const CONFIG_NAME = '_object_config';
+    public const CONFIG_NAME = '_object_config';
+
+    public static function getName(): string
+    {
+        return static::CONFIG_NAME;
+    }
 
     public function getDefinition(): ArrayNodeDefinition
     {

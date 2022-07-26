@@ -32,6 +32,8 @@ abstract class TypeDefinition
         return new static();
     }
 
+    abstract public static function getName(): string;
+
     protected function resolveTypeSection(): VariableNodeDefinition
     {
         return self::createNode('resolveType', 'variable');
