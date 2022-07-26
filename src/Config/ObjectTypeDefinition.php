@@ -10,9 +10,11 @@ use function array_key_exists;
 
 class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 {
+    protected const CONFIG_NAME = '_object_config';
+
     public function getDefinition(): ArrayNodeDefinition
     {
-        $builder = new TreeBuilder('_object_config', 'array');
+        $builder = new TreeBuilder(static::CONFIG_NAME, 'array');
 
         /** @var ArrayNodeDefinition $node */
         $node = $builder->getRootNode();
@@ -20,7 +22,7 @@ class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
         /** @phpstan-ignore-next-line */
         $node
             ->children()
-                ->append($this->validationSection(self::VALIDATION_LEVEL_CLASS))
+                ->append($this->validationSection(static::VALIDATION_LEVEL_CLASS))
                 ->append($this->nameSection())
                 ->append($this->outputFieldsSection())
                 ->append($this->fieldsBuilderSection())
