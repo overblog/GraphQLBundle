@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 
 class UnionNode implements NodeInterface
 {
@@ -21,7 +22,7 @@ class UnionNode implements NodeInterface
         }
 
         return [
-            'type' => 'union',
+            'type' => TypeEnum::UNION,
             'config' => $config,
         ];
     }

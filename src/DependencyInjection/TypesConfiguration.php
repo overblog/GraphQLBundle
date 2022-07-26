@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 
 use Overblog\GraphQLBundle\Config;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -22,12 +23,12 @@ use function str_replace;
 class TypesConfiguration implements ConfigurationInterface
 {
     private static array $types = [
-        'object',
-        'enum',
-        'interface',
-        'union',
-        'input-object',
-        'custom-scalar',
+        TypeEnum::OBJECT,
+        TypeEnum::ENUM,
+        TypeEnum::INTERFACE,
+        TypeEnum::UNION,
+        TypeEnum::INPUT_OBJECT,
+        TypeEnum::CUSTOM_SCALAR,
     ];
 
     public function getConfigTreeBuilder(): TreeBuilder

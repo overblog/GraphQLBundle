@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use function array_merge;
 use function is_array;
 use function is_string;
@@ -33,7 +34,7 @@ final class ConnectionDefinition implements MappingInterface
 
         return [
             $edgeAlias => [
-                'type' => 'object',
+                'type' => TypeEnum::OBJECT,
                 'config' => [
                     'name' => $edgeName,
                     'description' => 'An edge in a connection.',
@@ -55,7 +56,7 @@ final class ConnectionDefinition implements MappingInterface
                 ],
             ],
             $connectionAlias => [
-                'type' => 'object',
+                'type' => TypeEnum::OBJECT,
                 'config' => [
                     'name' => $connectionName,
                     'description' => 'A connection to a list of items.',

@@ -12,6 +12,7 @@ use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineType
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeHintTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use ReflectionClass;
@@ -169,7 +170,7 @@ abstract class MetadataParser implements PreParserInterface
                         if (!$edgeType) {
                             $edgeType = $gqlName.'Edge';
                             $gqlTypes[$edgeType] = [
-                                'type' => 'object',
+                                'type' => TypeEnum::OBJECT,
                                 'config' => [
                                     'builders' => [
                                         ['builder' => 'relay-edge', 'builderConfig' => ['nodeType' => $classMetadata->node]],
@@ -397,7 +398,7 @@ abstract class MetadataParser implements PreParserInterface
             'fields' => self::getGraphQLInputFieldsFromMetadatas($reflectionClass, self::getClassProperties($reflectionClass)),
         ], self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)));
 
-        return ['type' => $inputAnnotation->isRelay ? 'relay-mutation-input' : 'input-object', 'config' => $inputConfiguration];
+        return ['type' => $inputAnnotation->isRelay ? 'relay-mutation-input' : TypeEnum::INPUT_OBJECT, 'config' => $inputConfiguration];
     }
 
     /**
@@ -421,7 +422,7 @@ abstract class MetadataParser implements PreParserInterface
 
         $scalarConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $scalarConfiguration;
 
-        return ['type' => 'custom-scalar', 'config' => $scalarConfiguration];
+        return ['type' => TypeEnum::CUSTOM_SCALAR, 'config' => $scalarConfiguration];
     }
 
     /**
@@ -459,7 +460,7 @@ abstract class MetadataParser implements PreParserInterface
         $enumConfiguration = ['values' => $values];
         $enumConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $enumConfiguration;
 
-        return ['type' => 'enum', 'config' => $enumConfiguration];
+        return ['type' => TypeEnum::ENUM, 'config' => $enumConfiguration];
     }
 
     /**
@@ -504,7 +505,7 @@ abstract class MetadataParser implements PreParserInterface
             }
         }
 
-        return ['type' => 'union', 'config' => $unionConfiguration];
+        return ['type' => TypeEnum::UNION, 'config' => $unionConfiguration];
     }
 
     /**

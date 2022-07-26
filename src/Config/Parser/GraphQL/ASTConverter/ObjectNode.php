@@ -6,10 +6,11 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 
 class ObjectNode implements NodeInterface
 {
-    protected const TYPENAME = 'object';
+    protected const TYPENAME = TypeEnum::OBJECT;
 
     public static function toConfig(Node $node): array
     {

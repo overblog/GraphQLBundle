@@ -27,6 +27,7 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
@@ -66,12 +67,12 @@ class TypeBuilder
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
 
     protected const EXTENDS = [
-        'object' => ObjectType::class,
-        'input-object' => InputObjectType::class,
-        'interface' => InterfaceType::class,
-        'union' => UnionType::class,
-        'enum' => EnumType::class,
-        'custom-scalar' => CustomScalarType::class,
+        TypeEnum::OBJECT => ObjectType::class,
+        TypeEnum::INPUT_OBJECT => InputObjectType::class,
+        TypeEnum::INTERFACE => InterfaceType::class,
+        TypeEnum::UNION => UnionType::class,
+        TypeEnum::ENUM => EnumType::class,
+        TypeEnum::CUSTOM_SCALAR => CustomScalarType::class,
     ];
 
     protected ExpressionConverter $expressionConverter;
@@ -344,7 +345,7 @@ class TypeBuilder
         }
 
         // only by custom-scalar types
-        if ('custom-scalar' === $this->type) {
+        if (TypeEnum::CUSTOM_SCALAR === $this->type) {
             if (isset($c->scalarType)) {
                 $configLoader->addItem('scalarType', $c->scalarType);
             }
@@ -755,7 +756,7 @@ class TypeBuilder
             $field->addItem('useStrictAccess', false);
         }
 
-        if ('input-object' === $this->type) {
+        if (TypeEnum::INPUT_OBJECT === $this->type) {
             if (property_exists($c, 'defaultValue')) {
                 $field->addItem('defaultValue', $c->defaultValue);
             }

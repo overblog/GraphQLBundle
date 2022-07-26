@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use RuntimeException;
 
 class CustomScalarNode implements NodeInterface
@@ -19,7 +20,7 @@ class CustomScalarNode implements NodeInterface
         ];
 
         return [
-            'type' => 'custom-scalar',
+            'type' => TypeEnum::CUSTOM_SCALAR,
             'config' => $config,
         ];
     }

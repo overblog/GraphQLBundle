@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Exception;
 use InvalidArgumentException;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use function array_column;
 use function array_filter;
 use function array_flip;
@@ -80,8 +81,8 @@ final class InheritanceProcessor implements ProcessorInterface
             }
 
             $allowedTypes = [$config['type']];
-            if ('object' === $config['type']) {
-                $allowedTypes[] = 'interface';
+            if (TypeEnum::OBJECT === $config['type']) {
+                $allowedTypes[] = TypeEnum::INTERFACE;
             }
             $flattenInherits = self::flattenInherits($name, $configs, $allowedTypes);
             if (empty($flattenInherits)) {
@@ -106,7 +107,7 @@ final class InheritanceProcessor implements ProcessorInterface
         $mergedParentsConfig = self::mergeConfigs(...array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
-        if ('object' === $childType['type']) {
+        if (TypeEnum::OBJECT === $childType['type']) {
             unset($mergedParentsConfig['resolveType']);
         }
 
