@@ -2,6 +2,9 @@ parameters:
     overblog_graphql_types.config: []
 
 services:
+    _defaults:
+        autowire: true
+
     Overblog\GraphQLBundle\Executor\Executor: ~
     Overblog\GraphQLBundle\Request\Parser: ~
     Overblog\GraphQLBundle\Request\BatchParser: ~
@@ -28,10 +31,7 @@ services:
             - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
             - false
 
-    Overblog\GraphQLBundle\Definition\Builder\TypeFactory:
-        arguments:
-            - '@Overblog\GraphQLBundle\Definition\ConfigProcessor'
-            - '@Overblog\GraphQLBundle\Definition\GraphQLServices'
+    Overblog\GraphQLBundle\Definition\Builder\TypeFactory: ~
 
     Overblog\GraphQLBundle\Resolver\TypeResolver:
         calls:
@@ -62,10 +62,8 @@ services:
 
     Overblog\GraphQLBundle\Generator\TypeGenerator:
         arguments:
-            - '%overblog_graphql_types.config%'
-            - '@Overblog\GraphQLBundle\Generator\TypeBuilder'
-            - '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
-            - !service
+            $typeConfigs: '%overblog_graphql_types.config%'
+            $options: !service
                 class: Overblog\GraphQLBundle\Generator\TypeGeneratorOptions
                 arguments:
                     - '%overblog_graphql.class_namespace%'
@@ -83,11 +81,8 @@ services:
     Overblog\GraphQLBundle\Controller\GraphController:
         public: true
         arguments:
-            - '@Overblog\GraphQLBundle\Request\BatchParser'
-            - '@Overblog\GraphQLBundle\Request\Executor'
-            - '@Overblog\GraphQLBundle\Request\Parser'
-            - "%overblog_graphql.handle_cors%"
-            - "%overblog_graphql.batching_method%"
+            $shouldHandleCORS: "%overblog_graphql.handle_cors%"
+            $graphQLBatchingMethod: "%overblog_graphql.batching_method%"
 
     Overblog\GraphQLBundle\Definition\ConfigProcessor:
         arguments:
@@ -105,14 +100,11 @@ services:
         tags:
             - { name: overblog_graphql.service, alias: security, public: false }
 
-    Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter:
-        arguments:
-            - '@Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage'
+    Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter: ~
 
     Overblog\GraphQLBundle\Generator\TypeBuilder:
         arguments:
-            - '@Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter'
-            - '%overblog_graphql.class_namespace%'
+            $namespace: '%overblog_graphql.class_namespace%'
 
     Overblog\GraphQLBundle\Validator\InputValidatorFactory:
         arguments:
