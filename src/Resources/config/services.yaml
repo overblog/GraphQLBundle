@@ -5,6 +5,10 @@ services:
     _defaults:
         autowire: true
 
+    _instanceof:
+        Overblog\GraphQLBundle\Generator\TypeBaseClassProvider\TypeBaseClassProviderInterface:
+            tags: [ 'overblog_graphql.type_base_class.provider' ]
+
     Overblog\GraphQLBundle\Executor\Executor: ~
     Overblog\GraphQLBundle\Request\Parser: ~
     Overblog\GraphQLBundle\Request\BatchParser: ~
@@ -105,6 +109,13 @@ services:
     Overblog\GraphQLBundle\Generator\TypeBuilder:
         arguments:
             $namespace: '%overblog_graphql.class_namespace%'
+
+    Overblog\GraphQLBundle\Generator\AwareTypeBaseClassProvider:
+        arguments:
+            $providers: !tagged_iterator 'overblog_graphql.type_base_class.provider'
+
+    Overblog\GraphQLBundle\Generator\TypeBaseClassProvider\:
+        resource: '../../Generator/TypeBaseClassProvider/*'
 
     Overblog\GraphQLBundle\Validator\InputValidatorFactory:
         arguments:

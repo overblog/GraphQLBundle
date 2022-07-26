@@ -6,13 +6,8 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
-use GraphQL\Type\Definition\EnumType;
-use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\InterfaceType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\UnionType;
 use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Closure;
 use Murtukov\PHPCodeGenerator\Config;
@@ -25,7 +20,6 @@ use Murtukov\PHPCodeGenerator\Utils;
 use Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
-use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Enum\TypeEnum;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
@@ -35,7 +29,6 @@ use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use function array_map;
 use function class_exists;
-use function count;
 use function explode;
 use function in_array;
 use function is_array;
@@ -66,15 +59,7 @@ class TypeBuilder
     protected const DOCBLOCK_TEXT = 'THIS FILE WAS GENERATED AND SHOULD NOT BE EDITED MANUALLY.';
     protected const BUILT_IN_TYPES = [Type::STRING, Type::INT, Type::FLOAT, Type::BOOLEAN, Type::ID];
 
-    protected const EXTENDS = [
-        TypeEnum::OBJECT => ObjectType::class,
-        TypeEnum::INPUT_OBJECT => InputObjectType::class,
-        TypeEnum::INTERFACE => InterfaceType::class,
-        TypeEnum::UNION => UnionType::class,
-        TypeEnum::ENUM => EnumType::class,
-        TypeEnum::CUSTOM_SCALAR => CustomScalarType::class,
-    ];
-
+    protected AwareTypeBaseClassProvider $baseClassProvider;
     protected ExpressionConverter $expressionConverter;
     protected PhpFile $file;
     protected string $namespace;
@@ -83,8 +68,9 @@ class TypeBuilder
     protected string $currentField;
     protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
 
-    public function __construct(ExpressionConverter $expressionConverter, string $namespace)
+    public function __construct(AwareTypeBaseClassProvider $baseClassProvider, ExpressionConverter $expressionConverter, string $namespace)
     {
+        $this->baseClassProvider = $baseClassProvider;
         $this->expressionConverter = $expressionConverter;
         $this->namespace = $namespace;
 
@@ -120,7 +106,7 @@ class TypeBuilder
 
         $class = $this->file->createClass($config['class_name'])
             ->setFinal()
-            ->setExtends(static::EXTENDS[$type])
+            ->setExtends($this->baseClassProvider->getFQCN($type))
             ->addImplements(GeneratedTypeInterface::class, AliasedInterface::class)
             ->addConst('NAME', $config['name'])
             ->setDocBlock(static::DOCBLOCK_TEXT);
