@@ -12,15 +12,11 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 
 class InterfacesBuilder implements ConfigBuilderInterface
 {
-    /**
-     * TODO: use single source for all usages (create a provider).
-     */
-    protected string $gqlServices = '$' . TypeGenerator::GRAPHQL_SERVICES;
-
     public function build(TypeConfig $typeConfig, Collection $builder, PhpFile $phpFile): void
     {
         if (isset($typeConfig->interfaces) && !empty($typeConfig->interfaces)) {
-            $items = array_map(fn ($type) => "$this->gqlServices->getType('$type')", $typeConfig->interfaces);
+            $gqlServices = TypeGenerator::GRAPHQL_SERVICES_EXPR;
+            $items = array_map(static fn ($type) => "{$gqlServices}->getType('$type')", $typeConfig->interfaces);
             $builder->addItem('interfaces', ArrowFunction::new(Collection::numeric($items, true)));
         }
     }

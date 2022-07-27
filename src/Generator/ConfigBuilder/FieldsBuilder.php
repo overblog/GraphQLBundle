@@ -33,11 +33,6 @@ class FieldsBuilder implements ConfigBuilderInterface
     protected ResolveInstructionBuilder $resolveInstructionBuilder;
     protected ValidationRulesBuilder $validationRulesBuilder;
 
-    /**
-     * TODO: use single source for all usages (create a provider).
-     */
-    protected string $gqlServices = '$' . TypeGenerator::GRAPHQL_SERVICES;
-
     public function __construct(
         ExpressionConverter $expressionConverter,
         ResolveInstructionBuilder $resolveInstructionBuilder,
@@ -241,11 +236,13 @@ class FieldsBuilder implements ConfigBuilderInterface
             $expression = $this->expressionConverter->convert($complexity);
 
             if (EL::expressionContainsVar('args', $complexity)) {
+                $gqlServices = TypeGenerator::GRAPHQL_SERVICES_EXPR;
+
                 return Closure::new()
                     ->addArgument('childrenComplexity')
                     ->addArgument('arguments', '', [])
                     ->bindVar(TypeGenerator::GRAPHQL_SERVICES)
-                    ->append('$args = ', "$this->gqlServices->get('argumentFactory')->create(\$arguments)")
+                    ->append('$args = ', "{$gqlServices}->get('argumentFactory')->create(\$arguments)")
                     ->append('return ', $expression);
             }
 
@@ -351,7 +348,8 @@ class FieldsBuilder implements ConfigBuilderInterface
                     $phpFile->addUse(Type::class);
                 } else {
                     $name = $typeNode->name->value;
-                    $type = "$this->gqlServices->getType('$name')";
+                    $gqlServices = TypeGenerator::GRAPHQL_SERVICES_EXPR;
+                    $type = "{$gqlServices}->getType('$name')";
                     $isReference = true;
                 }
                 break;

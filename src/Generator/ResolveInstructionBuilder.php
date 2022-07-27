@@ -18,11 +18,6 @@ class ResolveInstructionBuilder
 {
     protected ExpressionConverter $expressionConverter;
 
-    /**
-     * TODO: use single source for all usages (create a provider).
-     */
-    protected string $gqlServices = '$' . TypeGenerator::GRAPHQL_SERVICES;
-
     public function __construct(ExpressionConverter $expressionConverter)
     {
         $this->expressionConverter = $expressionConverter;
@@ -90,7 +85,8 @@ class ResolveInstructionBuilder
                     $closure->append('$errors = ', Instance::new(ResolveErrors::class));
                 }
 
-                $closure->append('$validator = ', "$this->gqlServices->createInputValidator(...func_get_args())");
+                $gqlServices = TypeGenerator::GRAPHQL_SERVICES_EXPR;
+                $closure->append('$validator = ', "{$gqlServices}->createInputValidator(...func_get_args())");
 
                 // If auto-validation on or errors are injected
                 if (!$injectValidator || $injectErrors) {

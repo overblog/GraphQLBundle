@@ -25,6 +25,7 @@ class TypeGenerator
     public const MODE_WRITE = 4;
     public const MODE_OVERRIDE = 8;
     public const GRAPHQL_SERVICES = 'services';
+    public const GRAPHQL_SERVICES_EXPR = '$' . self::GRAPHQL_SERVICES;
 
     private static bool $classMapLoaded = false;
     private array $typeConfigs;
