@@ -66,6 +66,22 @@ services:
         arguments:
             - '@?overblog_graphql.cache_expression_language_parser'
 
+    Overblog\GraphQLBundle\Generator\:
+        resource: '../../Generator/*'
+        exclude: '../../Generator/{Collection.php,Exception,Model,TypeGeneratorOptions.php}'
+
+    Overblog\GraphQLBundle\Generator\AwareTypeBaseClassProvider:
+        arguments:
+            $providers: !tagged_iterator 'overblog_graphql.type_base_class.provider'
+
+    Overblog\GraphQLBundle\Generator\ConfigBuilder:
+        arguments:
+            $builders: !tagged_iterator 'overblog_graphql.config_builder'
+
+    Overblog\GraphQLBundle\Generator\TypeBuilder:
+        arguments:
+            $namespace: '%overblog_graphql.class_namespace%'
+
     Overblog\GraphQLBundle\Generator\TypeGenerator:
         arguments:
             $typeConfigs: '%overblog_graphql_types.config%'
@@ -105,29 +121,6 @@ services:
             - '@?security.helper'
         tags:
             - { name: overblog_graphql.service, alias: security, public: false }
-
-    Overblog\GraphQLBundle\Generator\ConfigBuilder\:
-        resource: '../../Generator/ConfigBuilder/*'
-
-    Overblog\GraphQLBundle\Generator\ConfigBuilder:
-        arguments:
-            $builders: !tagged_iterator 'overblog_graphql.config_builder'
-
-    Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter: ~
-
-    Overblog\GraphQLBundle\Generator\TypeBuilder:
-        arguments:
-            $namespace: '%overblog_graphql.class_namespace%'
-
-    Overblog\GraphQLBundle\Generator\AwareTypeBaseClassProvider:
-        arguments:
-            $providers: !tagged_iterator 'overblog_graphql.type_base_class.provider'
-
-    Overblog\GraphQLBundle\Generator\TypeBaseClassProvider\:
-        resource: '../../Generator/TypeBaseClassProvider/*'
-
-    Overblog\GraphQLBundle\Generator\ResolveInstructionBuilder: ~
-    Overblog\GraphQLBundle\Generator\ValidationRulesBuilder: ~
 
     Overblog\GraphQLBundle\Validator\InputValidatorFactory:
         arguments:
