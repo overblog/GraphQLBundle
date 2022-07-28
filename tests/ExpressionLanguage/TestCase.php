@@ -112,7 +112,7 @@ abstract class TestCase extends BaseTestCase
         $locateableServices = [
             'typeResolver' => fn () => $this->createMock(TypeResolver::class),
             'queryResolver' => fn () => $this->createMock(TypeResolver::class),
-            'mutationResolver' => fn () => $$this->createMock(MutationResolver::class),
+            'mutationResolver' => fn () => $this->createMock(MutationResolver::class),
         ];
 
         foreach ($services as $id => $service) {
