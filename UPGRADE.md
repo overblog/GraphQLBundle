@@ -56,7 +56,7 @@ public function __construct(
 )
 ```
 `TypeBuilder` here is a new service `Overblog\GraphQLBundle\Generator\TypeBuilder`, which is also used internally.
-The rest of the arguments were moved into the separate class `Overblog\GraphQLBundle\Generator\TypeGeneratorOptions` 
+The rest of the arguments were moved into the separate class `Overblog\GraphQLBundle\Generator\Model\TypeGeneratorOptions` 
 with the following constructor signature:
 
 ```php

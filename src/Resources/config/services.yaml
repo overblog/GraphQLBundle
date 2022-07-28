@@ -86,7 +86,7 @@ services:
         arguments:
             $typeConfigs: '%overblog_graphql_types.config%'
             $options: !service
-                class: Overblog\GraphQLBundle\Generator\TypeGeneratorOptions
+                class: Overblog\GraphQLBundle\Generator\Model\TypeGeneratorOptions
                 arguments:
                     - '%overblog_graphql.class_namespace%'
                     - '%overblog_graphql.cache_dir%'

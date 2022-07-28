@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Generator;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
+use Overblog\GraphQLBundle\Generator\Model\TypeGeneratorOptions;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_merge;

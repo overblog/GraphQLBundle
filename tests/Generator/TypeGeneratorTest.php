@@ -6,9 +6,9 @@ namespace Overblog\GraphQLBundle\Tests\Generator;
 
 use Generator;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
+use Overblog\GraphQLBundle\Generator\Model\TypeGeneratorOptions;
 use Overblog\GraphQLBundle\Generator\TypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
-use Overblog\GraphQLBundle\Generator\TypeGeneratorOptions;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
