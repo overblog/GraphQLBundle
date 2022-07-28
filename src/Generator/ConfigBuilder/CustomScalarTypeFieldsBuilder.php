@@ -55,10 +55,12 @@ class CustomScalarTypeFieldsBuilder implements ConfigBuilderInterface
 
         $closure = new ArrowFunction();
 
-        if (!is_string($callback)) {
+        if (\is_array($callback)) {
             [$class, $method] = $callback;
-        } else {
+        } elseif(\is_string($callback)) {
             [$class, $method] = explode('::', $callback);
+        } else {
+            throw new GeneratorException(sprintf('Invalid type of "%s" value passed.', $fieldName));
         }
 
         $className = Utils::resolveQualifier($class);
