@@ -12,6 +12,11 @@ class ObjectNode implements NodeInterface
 {
     protected const TYPENAME = TypeEnum::OBJECT;
 
+    /**
+     * @param ObjectTypeDefinitionNode $node
+     *
+     * @return array<string,mixed>
+     */
     public static function toConfig(Node $node): array
     {
         return [
