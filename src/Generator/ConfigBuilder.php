@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Generator\ConfigBuilder\ConfigBuilderInterface;
+use Overblog\GraphQLBundle\Generator\Model\Collection;
 use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 
 class ConfigBuilder

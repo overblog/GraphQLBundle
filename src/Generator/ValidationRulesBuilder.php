@@ -10,6 +10,7 @@ use Murtukov\PHPCodeGenerator\Instance;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
+use Overblog\GraphQLBundle\Generator\Model\Collection;
 use Overblog\GraphQLBundle\Generator\Model\ValidationConfig;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 

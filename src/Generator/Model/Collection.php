@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Generator;
+namespace Overblog\GraphQLBundle\Generator\Model;
 
 use Murtukov\PHPCodeGenerator\Collection as BaseCollection;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;

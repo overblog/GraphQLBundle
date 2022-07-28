@@ -12,6 +12,7 @@ use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
+use Overblog\GraphQLBundle\Generator\Model\Collection;
 use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 
 class ResolveInstructionBuilder

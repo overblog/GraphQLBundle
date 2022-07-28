@@ -8,8 +8,8 @@ use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Murtukov\PHPCodeGenerator\Utils;
-use Overblog\GraphQLBundle\Generator\Collection;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
+use Overblog\GraphQLBundle\Generator\Model\Collection;
 use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 
 class CustomScalarTypeFieldsBuilder implements ConfigBuilderInterface

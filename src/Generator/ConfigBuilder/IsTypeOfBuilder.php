@@ -9,8 +9,8 @@ use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
-use Overblog\GraphQLBundle\Generator\Collection;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
+use Overblog\GraphQLBundle\Generator\Model\Collection;
 use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 
 class IsTypeOfBuilder implements ConfigBuilderInterface
