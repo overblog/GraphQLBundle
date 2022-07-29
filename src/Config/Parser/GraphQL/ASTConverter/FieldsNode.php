@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
+use GraphQL\Language\AST\FieldDefinitionNode;
+use GraphQL\Language\AST\InputValueDefinitionNode;
 use GraphQL\Language\AST\Node;
 use GraphQL\Utils\AST;
 
@@ -17,7 +19,7 @@ class FieldsNode implements NodeInterface
                 $fieldConfig = TypeNode::toConfig($definition) + DescriptionNode::toConfig($definition);
 
                 if (!empty($definition->arguments)) {
-                    $fieldConfig['args'] = self::toConfig($definition, 'arguments');
+                    $fieldConfig['args'] = static::toConfig($definition, 'arguments');
                 }
 
                 if (!empty($definition->defaultValue)) {
@@ -29,10 +31,21 @@ class FieldsNode implements NodeInterface
                     $fieldConfig['deprecationReason'] = $directiveConfig['deprecationReason'];
                 }
 
-                $config[$definition->name->value] = $fieldConfig;
+                $config[$definition->name->value] = static::extendFieldConfig($fieldConfig, $definition);
             }
         }
 
         return $config;
+    }
+
+    /**
+     * @param array<string,mixed> $fieldConfig
+     * @param FieldDefinitionNode|InputValueDefinitionNode $fieldDefinition
+     *
+     * @return array<string,mixed>
+     */
+    protected static function extendFieldConfig(array $fieldConfig, Node $fieldDefinition): array
+    {
+        return $fieldConfig;
     }
 }

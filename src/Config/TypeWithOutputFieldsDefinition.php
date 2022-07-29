@@ -17,6 +17,7 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
 
         $node->isRequired()->requiresAtLeastOneElement();
 
+        /** @var ArrayNodeDefinition $prototype */
         $prototype = $node->useAttributeAsKey('name', false)->prototype('array');
 
         /** @phpstan-ignore-next-line */
@@ -84,6 +85,8 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
                 ->end()
             ->end();
 
+        $this->extendFieldPrototype($prototype);
+
         return $node;
     }
 
@@ -100,5 +103,10 @@ abstract class TypeWithOutputFieldsDefinition extends TypeDefinition
             ->end();
 
         return $node;
+    }
+
+    protected function extendFieldPrototype(ArrayNodeDefinition $prototype): void
+    {
+
     }
 }

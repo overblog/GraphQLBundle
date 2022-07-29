@@ -32,9 +32,7 @@ class ObjectNode implements NodeInterface
      */
     protected static function parseConfig(Node $node): array
     {
-        $config = DescriptionNode::toConfig($node) + [
-            'fields' => FieldsNode::toConfig($node),
-        ];
+        $config = DescriptionNode::toConfig($node) + static::parseFields($node);
 
         if (!empty($node->interfaces)) {
             $interfaces = [];
@@ -45,5 +43,15 @@ class ObjectNode implements NodeInterface
         }
 
         return $config;
+    }
+
+    /**
+     * @return array{fields: array<string,mixed> }
+     */
+    protected static function parseFields(Node $node): array
+    {
+        return [
+            'fields' => FieldsNode::toConfig($node),
+        ];
     }
 }
