@@ -33,14 +33,7 @@ class ObjectNode implements NodeInterface
     protected static function parseConfig(Node $node): array
     {
         $config = DescriptionNode::toConfig($node) + static::parseFields($node);
-
-        if (!empty($node->interfaces)) {
-            $interfaces = [];
-            foreach ($node->interfaces as $interface) {
-                $interfaces[] = TypeNode::astTypeNodeToString($interface);
-            }
-            $config['interfaces'] = $interfaces;
-        }
+        $config += static::parseInterfaces($node);
 
         return $config;
     }
@@ -53,5 +46,22 @@ class ObjectNode implements NodeInterface
         return [
             'fields' => FieldsNode::toConfig($node),
         ];
+    }
+
+    /**
+     * @return array<string,array<string>>
+     */
+    protected static function parseInterfaces(Node $node): array
+    {
+        $config = [];
+        if (isset($node->interfaces) && !empty($node->interfaces)) {
+            $interfaces = [];
+            foreach ($node->interfaces as $interface) {
+                $interfaces[] = TypeNode::astTypeNodeToString($interface);
+            }
+            $config['interfaces'] = $interfaces;
+        }
+
+        return $config;
     }
 }
