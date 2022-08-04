@@ -19,6 +19,9 @@ final class TypeFactory
         $this->graphQLServices = $graphQLServices;
     }
 
+    /**
+     * @param class-string<Type> $class
+     */
     public function create(string $class): Type
     {
         return new $class($this->configProcessor, $this->graphQLServices);

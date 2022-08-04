@@ -9,5 +9,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 interface ParserInterface
 {
+    /**
+     * @param array<string,mixed> $configs
+     *
+     * @return array<string,mixed>
+     */
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array;
 }
