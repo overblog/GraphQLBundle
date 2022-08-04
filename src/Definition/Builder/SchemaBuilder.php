@@ -22,8 +22,16 @@ class SchemaBuilder
         $this->enableValidation = $enableValidation;
     }
 
-    public function getBuilder(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): Closure
-    {
+    /**
+     * @param string[] $types
+     */
+    public function getBuilder(
+        string $name,
+        ?string $queryAlias,
+        ?string $mutationAlias = null,
+        ?string $subscriptionAlias = null,
+        array $types = []
+    ): Closure {
         return function () use ($name, $queryAlias, $mutationAlias, $subscriptionAlias, $types): ExtensibleSchema {
             static $schema = null;
             if (null === $schema) {
@@ -37,14 +45,22 @@ class SchemaBuilder
     /**
      * @param string[] $types
      */
-    public function create(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): ExtensibleSchema
-    {
+    public function create(
+        string $name,
+        ?string $queryAlias,
+        ?string $mutationAlias = null,
+        ?string $subscriptionAlias = null,
+        array $types = []
+    ): ExtensibleSchema {
         $this->typeResolver->setCurrentSchemaName($name);
         $query = $this->typeResolver->resolve($queryAlias);
         $mutation = $this->typeResolver->resolve($mutationAlias);
         $subscription = $this->typeResolver->resolve($subscriptionAlias);
 
-        $schema = new ExtensibleSchema($this->buildSchemaArguments($name, $query, $mutation, $subscription, $types));
+        /** @var class-string<ExtensibleSchema> $class */
+        $class = $this->getSchemaClass();
+
+        $schema = new $class($this->buildSchemaArguments($name, $query, $mutation, $subscription, $types));
         $extensions = [];
 
         if ($this->enableValidation) {
@@ -55,22 +71,53 @@ class SchemaBuilder
         return $schema;
     }
 
-    private function buildSchemaArguments(string $schemaName, Type $query, ?Type $mutation, ?Type $subscription, array $types = []): array
-    {
+    /**
+     * @param string[] $types
+     *
+     * @return array<string,mixed>
+     */
+    protected function buildSchemaArguments(
+        string $schemaName,
+        ?Type $query,
+        ?Type $mutation,
+        ?Type $subscription,
+        array $types = []
+    ): array {
         return [
             'query' => $query,
             'mutation' => $mutation,
             'subscription' => $subscription,
-            'typeLoader' => function ($name) use ($schemaName) {
-                $this->typeResolver->setCurrentSchemaName($schemaName);
-
-                return $this->typeResolver->resolve($name);
-            },
-            'types' => function () use ($types, $schemaName) {
-                $this->typeResolver->setCurrentSchemaName($schemaName);
-
-                return array_map([$this->typeResolver, 'resolve'], $types);
-            },
+            'typeLoader' => $this->createTypeLoaderClosure($schemaName),
+            'types' => $this->createTypesClosure($schemaName, $types),
         ];
+    }
+
+    protected function createTypeLoaderClosure(string $schemaName): Closure
+    {
+        return function ($name) use ($schemaName): ?Type {
+            $this->typeResolver->setCurrentSchemaName($schemaName);
+
+            return $this->typeResolver->resolve($name);
+        };
+    }
+
+    /**
+     * @param string[] $types
+     */
+    protected function createTypesClosure(string $schemaName, array $types): Closure
+    {
+        return function () use ($types, $schemaName): array {
+            $this->typeResolver->setCurrentSchemaName($schemaName);
+
+            return array_map(fn (string $x): ?Type => $this->typeResolver->resolve($x), $types);
+        };
+    }
+
+    /**
+     * @return class-string<ExtensibleSchema>
+     */
+    protected function getSchemaClass(): string
+    {
+        return ExtensibleSchema::class;
     }
 }

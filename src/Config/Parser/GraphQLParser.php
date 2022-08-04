@@ -6,10 +6,12 @@ namespace Overblog\GraphQLBundle\Config\Parser;
 
 use Exception;
 use GraphQL\Language\AST\DefinitionNode;
+use GraphQL\Language\AST\DocumentNode;
 use GraphQL\Language\AST\EnumTypeDefinitionNode;
 use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
 use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use GraphQL\Language\AST\NodeKind;
+use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
@@ -47,25 +49,24 @@ class GraphQLParser implements ParserInterface
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
-        $content = trim((string) file_get_contents($file->getPathname()));
-        $typesConfig = [];
 
-        // allow empty files
-        if (empty($content)) {
-            return [];
-        }
-        try {
-            $ast = Parser::parse($content);
-        } catch (Exception $e) {
-            throw new InvalidArgumentException(sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
-        }
+        return static::buildTypes(static::parseFile($file));
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    protected static function buildTypes(DocumentNode $ast): array
+    {
+        $nameGeneratorBag = [];
+        $typesConfig = [];
 
         foreach ($ast->definitions as $typeDef) {
             /**
              * @var ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode|EnumTypeDefinitionNode|UnionTypeDefinitionNode|InputObjectTypeDefinitionNode|ScalarTypeDefinitionNode $typeDef
              */
             $config = static::prepareConfig($typeDef);
-            $typesConfig[$typeDef->name->value] = $config;
+            $typesConfig[static::getTypeDefinitionName($typeDef, $nameGeneratorBag)] = $config;
         }
 
         return $typesConfig;
@@ -96,6 +97,18 @@ class GraphQLParser implements ParserInterface
     }
 
     /**
+     * @param array<string,mixed> $nameGeneratorBag
+     */
+    protected static function getTypeDefinitionName(DefinitionNode $typeDef, array &$nameGeneratorBag): string
+    {
+        if (isset($typeDef->name)) {
+            return $typeDef->name->value;
+        }
+
+        throw static::createUnsupportedDefinitionNodeException($typeDef);
+    }
+
+    /**
      * @return array<string,mixed>
      */
     protected static function prepareConfig(DefinitionNode $typeDef): array
@@ -103,5 +116,21 @@ class GraphQLParser implements ParserInterface
         $nodeClass = static::getNodeClass($typeDef);
 
         return \call_user_func([$nodeClass, 'toConfig'], $typeDef);
+    }
+
+    protected static function parseFile(SplFileInfo $file): DocumentNode
+    {
+        $content = trim((string) file_get_contents($file->getPathname()));
+
+        // allow empty files
+        if (empty($content)) {
+            return new DocumentNode(['definitions' => new NodeList([])]);
+        }
+
+        try {
+            return Parser::parse($content);
+        } catch (Exception $e) {
+            throw new InvalidArgumentException(sprintf('An error occurred while parsing the file "%s".', $file), $e->getCode(), $e);
+        }
     }
 }
