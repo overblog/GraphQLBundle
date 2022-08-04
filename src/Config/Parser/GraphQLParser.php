@@ -14,30 +14,34 @@ use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\AST\ScalarTypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Language\Parser;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\EnumNode;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\InputObjectNode;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\InterfaceNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\NodeInterface;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\ObjectNode;
+use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\UnionNode;
 use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function array_pop;
-use function call_user_func;
 use function explode;
 use function file_get_contents;
-use function get_class;
 use function preg_replace;
 use function sprintf;
 use function trim;
-use function ucfirst;
 
 class GraphQLParser implements ParserInterface
 {
-    private const DEFINITION_TYPE_MAPPING = [
-        NodeKind::OBJECT_TYPE_DEFINITION => 'object',
-        NodeKind::INTERFACE_TYPE_DEFINITION => 'interface',
-        NodeKind::ENUM_TYPE_DEFINITION => 'enum',
-        NodeKind::UNION_TYPE_DEFINITION => 'union',
-        NodeKind::INPUT_OBJECT_TYPE_DEFINITION => 'inputObject',
-        NodeKind::SCALAR_TYPE_DEFINITION => 'customScalar',
+    protected const DEFINITION_TYPE_MAPPING = [
+        NodeKind::OBJECT_TYPE_DEFINITION => ObjectNode::class,
+        NodeKind::INTERFACE_TYPE_DEFINITION => InterfaceNode::class,
+        NodeKind::ENUM_TYPE_DEFINITION => EnumNode::class,
+        NodeKind::UNION_TYPE_DEFINITION => UnionNode::class,
+        NodeKind::INPUT_OBJECT_TYPE_DEFINITION => InputObjectNode::class,
+        NodeKind::SCALAR_TYPE_DEFINITION => CustomScalarNode::class,
     ];
 
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
@@ -67,19 +71,28 @@ class GraphQLParser implements ParserInterface
         return $typesConfig;
     }
 
+    protected static function createUnsupportedDefinitionNodeException(DefinitionNode $typeDef): InvalidArgumentException
+    {
+        $path = explode('\\', \get_class($typeDef));
+
+        return new InvalidArgumentException(
+            sprintf(
+                '%s definition is not supported right now.',
+                preg_replace('@DefinitionNode$@', '', array_pop($path))
+            )
+        );
+    }
+
     /**
      * @return class-string<NodeInterface>
      */
     protected static function getNodeClass(DefinitionNode $typeDef): string
     {
-        if (isset($typeDef->kind) && array_key_exists($typeDef->kind, self::DEFINITION_TYPE_MAPPING)) {
-            /**
-             * @var class-string<NodeInterface> $class
-             */
-            return sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
+        if (isset($typeDef->kind) && \array_key_exists($typeDef->kind, static::DEFINITION_TYPE_MAPPING)) {
+            return static::DEFINITION_TYPE_MAPPING[$typeDef->kind];
         }
 
-        self::throwUnsupportedDefinitionNode($typeDef);
+        throw static::createUnsupportedDefinitionNodeException($typeDef);
     }
 
     /**
@@ -89,17 +102,6 @@ class GraphQLParser implements ParserInterface
     {
         $nodeClass = static::getNodeClass($typeDef);
 
-        return call_user_func([$nodeClass, 'toConfig'], $typeDef);
-    }
-
-    private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef): void
-    {
-        $path = explode('\\', get_class($typeDef));
-        throw new InvalidArgumentException(
-            sprintf(
-                '%s definition is not supported right now.',
-                preg_replace('@DefinitionNode$@', '', array_pop($path))
-            )
-        );
+        return \call_user_func([$nodeClass, 'toConfig'], $typeDef);
     }
 }
