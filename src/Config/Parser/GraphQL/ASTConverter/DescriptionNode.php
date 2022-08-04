@@ -6,12 +6,17 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Language\AST\TypeExtensionNode;
 use function trim;
 
 class DescriptionNode implements NodeInterface
 {
     public static function toConfig(Node $node): array
     {
+        if ($node instanceof TypeExtensionNode) {
+            return [];
+        }
+
         return ['description' => self::cleanAstDescription($node->description)];
     }
 
@@ -21,8 +26,6 @@ class DescriptionNode implements NodeInterface
             return null;
         }
 
-        $description = trim($description->value);
-
-        return empty($description) ? null : $description;
+        return trim($description->value) ?: null;
     }
 }
