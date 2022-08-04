@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Functional\AutoConfigure;
+namespace Overblog\GraphQLBundle\Tests\Functional\TypeShorthand;
 
 use Doctrine\Common\Annotations\Reader;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
@@ -26,6 +26,6 @@ class TypeShorthandTest extends TestCase
         $query = 'query { user(auth: {username: "bar", password: "baz"}) {username, address {street, zipcode}} }';
         $expectedData = ['user' => ['username' => 'bar', 'address' => ['street' => 'bar foo street', 'zipcode' => '12345']]];
 
-        $this->assertGraphQL($query, $expectedData);
+        static::assertGraphQL($query, $expectedData);
     }
 }

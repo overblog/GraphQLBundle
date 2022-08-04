@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Config\Parser;
+namespace Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParser\TypeGuesser;
 
 use Exception;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\ClassesTypesMap;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DocBlockTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
+use Overblog\GraphQLBundle\Tests\Config\Parser\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -83,7 +84,7 @@ class DocBlockTypeGuesserTest extends TestCase
         foreach ($this->reflectors as $reflectorClass => $tag) {
             yield ['int|float', $reflectorClass, 'Tag @'.$tag.' found, but composite types are only allowed with null'];
             yield ['array<int|float>', $reflectorClass, 'Tag @'.$tag.' found, but composite types in array or iterable are only allowed with null'];
-            yield ['UnknownClass', $reflectorClass, 'Tag @'.$tag.' found, but target object "Overblog\GraphQLBundle\Tests\Config\Parser\UnknownClass" is not a GraphQL Type class'];
+            yield ['UnknownClass', $reflectorClass, 'Tag @'.$tag.' found, but target object "Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParser\TypeGuesser\UnknownClass" is not a GraphQL Type class'];
             yield ['object', $reflectorClass, 'Tag @'.$tag.' found, but type "object" is too generic'];
             yield ['mixed[]', $reflectorClass, 'Tag @'.$tag.' found, but the array values cannot be mixed type'];
             yield ['array<mixed>', $reflectorClass, 'Tag @'.$tag.' found, but the array values cannot be mixed type'];

@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Overblog\GraphQLBundle\Tests\Config\Parser;
+namespace Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParser\TypeGuesser;
 
 use Doctrine\ORM\Mapping\Column;
 use Exception;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\ClassesTypesMap;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
+use Overblog\GraphQLBundle\Tests\Config\Parser\TestCase;
 use ReflectionClass;
 
 class DoctrineTypeGuesserTest extends TestCase
