@@ -13,8 +13,8 @@ use function array_map;
 
 class SchemaBuilder
 {
-    private TypeResolver $typeResolver;
-    private bool $enableValidation;
+    protected TypeResolver $typeResolver;
+    protected bool $enableValidation;
 
     public function __construct(TypeResolver $typeResolver, bool $enableValidation = false)
     {
