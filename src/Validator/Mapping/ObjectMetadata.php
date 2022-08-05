@@ -17,11 +17,9 @@ class ObjectMetadata extends ClassMetadata
     }
 
     /**
-     * @param string $property
-     *
      * @return $this|ObjectMetadata
      */
-    public function addPropertyConstraint($property, Constraint $constraint): self
+    public function addPropertyConstraint(string $property, Constraint $constraint): self
     {
         if (!isset($this->properties[$property])) {
             $this->properties[$property] = new PropertyMetadata($property);

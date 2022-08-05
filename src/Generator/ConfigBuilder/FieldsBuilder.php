@@ -10,7 +10,6 @@ use GraphQL\Language\Parser;
 use GraphQL\Type\Definition\Type;
 use Murtukov\PHPCodeGenerator\ArrowFunction;
 use Murtukov\PHPCodeGenerator\Closure;
-use Murtukov\PHPCodeGenerator\Collection as MurtucovCollection;
 use Murtukov\PHPCodeGenerator\GeneratorInterface;
 use Murtukov\PHPCodeGenerator\Literal;
 use Murtukov\PHPCodeGenerator\PhpFile;
@@ -24,6 +23,9 @@ use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 use Overblog\GraphQLBundle\Generator\ResolveInstructionBuilder;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Generator\ValidationRulesBuilder;
+use function array_key_exists;
+use function in_array;
+use function is_string;
 
 class FieldsBuilder implements ConfigBuilderInterface
 {
@@ -71,15 +73,13 @@ class FieldsBuilder implements ConfigBuilderInterface
      *          'resolve' => {@see \Overblog\GraphQLBundle\Generator\ResolveInstructionBuilder::build()},
      *          'complexity' => {@see buildComplexity},
      *      ]
-     * </code>
-     *
-     * @return GeneratorInterface|Collection|string
+     * </code>.
      *
      * @throws GeneratorException
      *
      * @internal
      */
-    protected function buildField(FieldConfig $fieldConfig, TypeConfig $typeConfig, PhpFile $phpFile): MurtucovCollection
+    protected function buildField(FieldConfig $fieldConfig, TypeConfig $typeConfig, PhpFile $phpFile): Collection
     {
         // TODO(any): modify `InputValidator` and `TypeDecoratorListener` to support it before re-enabling this
         // see https://github.com/overblog/GraphQLBundle/issues/973
@@ -179,7 +179,7 @@ class FieldsBuilder implements ConfigBuilderInterface
      *      'description' => 'Some fancy description.',
      *      'defaultValue' => 'admin',
      *  ]
-     * </code>
+     * </code>.
      *
      * @throws GeneratorException
      *

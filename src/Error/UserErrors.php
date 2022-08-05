@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Error;
 
 use Exception;
+use GraphQL\Error\UserError as WebonyxUserError;
 use InvalidArgumentException;
 use RuntimeException;
 use function is_object;
@@ -13,9 +14,12 @@ use function sprintf;
 
 class UserErrors extends RuntimeException
 {
-    /** @var UserError[] */
+    /** @var WebonyxUserError[] */
     private array $errors = [];
 
+    /**
+     * @param array<WebonyxUserError|string> $errors
+     */
     public function __construct(
         array $errors,
         string $message = '',
@@ -27,7 +31,7 @@ class UserErrors extends RuntimeException
     }
 
     /**
-     * @param UserError[]|string[] $errors
+     * @param WebonyxUserError[]|string[] $errors
      */
     public function setErrors(array $errors): void
     {
@@ -37,14 +41,14 @@ class UserErrors extends RuntimeException
     }
 
     /**
-     * @param string|\GraphQL\Error\UserError $error
+     * @param string|WebonyxUserError $error
      */
     public function addError($error): self
     {
         if (is_string($error)) {
             $error = new UserError($error);
-        } elseif (!is_object($error) || !$error instanceof \GraphQL\Error\UserError) {
-            throw new InvalidArgumentException(sprintf('Error must be string or instance of %s.', \GraphQL\Error\UserError::class));
+        } elseif (!is_object($error) || !$error instanceof WebonyxUserError) {
+            throw new InvalidArgumentException(sprintf('Error must be string or instance of %s.', WebonyxUserError::class));
         }
 
         $this->errors[] = $error;
@@ -53,7 +57,7 @@ class UserErrors extends RuntimeException
     }
 
     /**
-     * @return UserError[]
+     * @return WebonyxUserError[]
      */
     public function getErrors(): array
     {

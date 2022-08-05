@@ -285,9 +285,9 @@ class TypeDecoratorListenerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|ResolverMap
+     * @return \PHPUnit\Framework\MockObject\MockObject & ResolverMap
      */
-    private function createResolverMapMock(array $map = [])
+    private function createResolverMapMock(array $map = []): ResolverMap
     {
         $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(['map'])->getMock();
         $resolverMap->expects($this->any())->method('map')->willReturn($map);
