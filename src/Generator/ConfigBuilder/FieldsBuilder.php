@@ -23,7 +23,6 @@ use Overblog\GraphQLBundle\Generator\Model\TypeConfig;
 use Overblog\GraphQLBundle\Generator\ResolveInstructionBuilder;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Generator\ValidationRulesBuilder;
-use function array_key_exists;
 use function in_array;
 use function is_string;
 
@@ -132,7 +131,7 @@ class FieldsBuilder implements ConfigBuilderInterface
         }
 
         if ($typeConfig->isInputObject()) {
-            if (array_key_exists('defaultValue', $fieldConfig)) {
+            if ($fieldConfig->offsetExists('defaultValue')) {
                 $field->addItem('defaultValue', $fieldConfig->defaultValue);
             }
 
@@ -197,7 +196,7 @@ class FieldsBuilder implements ConfigBuilderInterface
             $arg->addIfNotEmpty('description', $argConfig->description);
         }
 
-        if (array_key_exists('defaultValue', $argConfig)) {
+        if ($argConfig->offsetExists('defaultValue')) {
             $arg->addItem('defaultValue', $argConfig->defaultValue);
         }
 
