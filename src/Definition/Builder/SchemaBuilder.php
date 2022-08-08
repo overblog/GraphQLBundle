@@ -92,7 +92,7 @@ class SchemaBuilder
         ];
     }
 
-    protected function createTypeLoaderClosure(string $schemaName): Closure
+    protected function createTypeLoaderClosure(string $schemaName): callable
     {
         return function ($name) use ($schemaName): ?Type {
             $this->typeResolver->setCurrentSchemaName($schemaName);
@@ -104,7 +104,7 @@ class SchemaBuilder
     /**
      * @param string[] $types
      */
-    protected function createTypesClosure(string $schemaName, array $types): Closure
+    protected function createTypesClosure(string $schemaName, array $types): callable
     {
         return function () use ($types, $schemaName): array {
             $this->typeResolver->setCurrentSchemaName($schemaName);
