@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
+/**
+ * @phpstan-template T
+ */
 interface EdgeInterface
 {
     /**
      * Get the edge node.
      *
      * @return mixed
+     *
+     * @phpstan-return T|null
      */
     public function getNode();
 
@@ -17,13 +22,13 @@ interface EdgeInterface
      * Set the edge node.
      *
      * @param mixed $node
+     *
+     * @phpstan-param T|null $node
      */
     public function setNode($node): void;
 
     /**
      * Get the edge cursor.
-     *
-     * @return string
      */
     public function getCursor(): ?string;
 
