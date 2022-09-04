@@ -1,0 +1,23 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            enum:
+                type: EnumPhp
+                resolve: ['Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhpTest', "resolveQueryEnum"]
+            enumParser:
+                type: String
+                args:
+                    enum: EnumPhp!
+                resolve:
+                    '@=call("Overblog\\GraphQLBundle\\Tests\\Functional\\EnumPhp\\EnumPhpTest::resolveQueryEnumAsInput",
+                    [args["enum"]])'
+
+EnumPhp:
+    type: enum
+    config:
+        enum_class: Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhp
+        values:
+            VALUE1: VALUE1
+            VALUE2: VALUE2
+            VALUE3: VALUE3

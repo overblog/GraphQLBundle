@@ -20,6 +20,7 @@ final class EnumTypeDefinition extends TypeDefinition
         $node
             ->children()
                 ->append($this->nameSection())
+                ->scalarNode('enum_class')->end()
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()

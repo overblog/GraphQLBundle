@@ -79,6 +79,10 @@ final class ArgumentsTransformer
         }
 
         if ($type instanceof EnumType) {
+            /** Enum based on PHP Enum are already processed by PhpEnumType */
+            if (isset($type->config['enumClass'])) {
+                return $data;
+            }
             $instance = $this->getTypeClassInstance($type->name);
             if ($instance) {
                 $this->accessor->setValue($instance, 'value', $data);

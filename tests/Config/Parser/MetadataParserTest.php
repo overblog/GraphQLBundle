@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping\Column;
 use Exception;
+use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Enum\Color;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -246,6 +247,16 @@ abstract class MetadataParserTest extends TestCase
                 'CHISS' => ['value' => '2', 'description' => 'The Chiss race'],
                 'ZABRAK' => ['value' => '3', 'deprecationReason' => 'The Zabraks have been wiped out'],
                 'TWILEK' => ['value' => '4'],
+            ],
+        ]);
+
+        $this->expect('Color', 'enum', [
+            'enum_class' => Color::class,
+            'values' => [
+                'RED' => ['value' => 'RED'],
+                'GREEN' => ['value' => 'GREEN'],
+                'BLUE' => ['value' => 'BLUE'],
+                'YELLOW' => ['value' => 'YELLOW'],
             ],
         ]);
     }
