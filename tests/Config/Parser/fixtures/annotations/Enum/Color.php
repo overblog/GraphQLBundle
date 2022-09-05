@@ -13,7 +13,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 #[GQL\Enum]
 enum Color
 {
-    #[GQL\Description("The color red")]
+    #[GQL\Description('The color red')]
     case RED;
 
     case GREEN;

@@ -41,7 +41,7 @@ final class EnumPhpTest extends TestCase
 
     public static function resolveQueryEnumAsInput(mixed $enumParam = null, mixed $enumParam2 = null): string
     {
-        return (EnumPhp::VALUE2 === $enumParam  && EnumPhpBacked::VALUE3 === $enumParam2) ? 'OK' : 'KO';
+        return (EnumPhp::VALUE2 === $enumParam && EnumPhpBacked::VALUE3 === $enumParam2) ? 'OK' : 'KO';
     }
 
     public function testEnumLiteralParsedAsPhpEnum(): void
@@ -63,18 +63,18 @@ final class EnumPhpTest extends TestCase
     public function testEnumIntrospection(): void
     {
         $query = <<<'EOF'
-        query {
-          __schema {
-            types {
-              name
-              enumValues {
-                name
-                description
+            query {
+              __schema {
+                types {
+                  name
+                  enumValues {
+                    name
+                    description
+                  }
+                }
               }
             }
-          }
-        }
-        EOF;
+            EOF;
         $result = $this->executeGraphQLRequest($query);
         $types = $result['data']['__schema']['types'];
         $this->assertEquals($types[1]['name'], 'EnumPhp');

@@ -7,19 +7,48 @@ namespace Overblog\GraphQLBundle\Definition\Type;
 use Exception;
 use GraphQL\Error\Error;
 use GraphQL\Error\SerializationError;
+use GraphQL\Language\AST\EnumTypeDefinitionNode;
+use GraphQL\Language\AST\EnumTypeExtensionNode;
+use GraphQL\Language\AST\EnumValueNode;
 use GraphQL\Language\AST\Node;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Utils\Utils;
 use ReflectionEnum;
+use UnitEnum;
 
+/**
+ * @phpstan-import-type EnumValues from EnumType
+ *
+ * @phpstan-type PhpEnumTypeConfig array{
+ *   name?: string|null,
+ *   description?: string|null,
+ *   enumClass?: class-string<\UnitEnum>|null,
+ *   values: EnumValues|callable(): EnumValues,
+ *   astNode?: EnumTypeDefinitionNode|null,
+ *   extensionASTNodes?: array<int, EnumTypeExtensionNode>|null
+ * }
+ */
 class PhpEnumType extends EnumType
 {
+    /** @var class-string<UnitEnum>|null */
+    protected ?string $enumClass = null;
+
+    /**
+     * @phpstan-param PhpEnumTypeConfig $config
+     */
     public function __construct(array $config)
     {
+        if (isset($config['enumClass'])) {
+            $this->enumClass = $config['enumClass'];
+            unset($config['enumClass']);
+        }
         parent::__construct($config);
-        if ($this->isPhpEnum()) {
+        if ($this->enumClass) {
             $configValues = $this->config['values'];
-            $reflection = new ReflectionEnum($config['enumClass']);
+            if (is_callable($configValues)) {
+                $configValues = $configValues();
+            }
+            $reflection = new ReflectionEnum($this->enumClass);
 
             $enumDefinitions = [];
             foreach ($reflection->getCases() as $case) {
@@ -28,7 +57,7 @@ class PhpEnumType extends EnumType
 
             foreach ($configValues as $name => $config) {
                 if (!isset($enumDefinitions[$name])) {
-                    throw new Error("Enum value {$name} is not defined in {$config['enumClass']}");
+                    throw new Error("Enum value {$name} is not defined in {$this->enumClass}");
                 }
                 $enumDefinitions[$name]['description'] = $config['description'] ?? null;
                 $enumDefinitions[$name]['deprecationReason'] = $config['deprecationReason'] ?? null;
@@ -38,13 +67,18 @@ class PhpEnumType extends EnumType
         }
     }
 
+    public function isPhpEnum(): bool
+    {
+        return null !== $this->enumClass;
+    }
+
     public function parseValue($value): mixed
     {
-        if ($this->isPhpEnum()) {
+        if ($this->enumClass) {
             try {
-                return (new ReflectionEnum($this->config['enumClass']))->getCase($value)->getValue();
+                return (new ReflectionEnum($this->enumClass))->getCase($value)->getValue();
             } catch (Exception $e) {
-                throw new Error("Cannot represent enum of class {$this->config['enumClass']} from value {$value}: ".$e->getMessage());
+                throw new Error("Cannot represent enum of class {$this->enumClass} from value {$value}: ".$e->getMessage());
             }
         }
 
@@ -53,11 +87,14 @@ class PhpEnumType extends EnumType
 
     public function parseLiteral(Node $valueNode, ?array $variables = null): mixed
     {
-        if ($this->isPhpEnum()) {
+        if ($this->enumClass) {
+            if (!$valueNode  instanceof EnumValueNode) {
+                throw new Error("Cannot represent enum of class {$this->enumClass} from node: {$valueNode->kind} is not an enum value");
+            }
             try {
-                return (new ReflectionEnum($this->config['enumClass']))->getCase($valueNode->value)->getValue();
+                return (new ReflectionEnum($this->enumClass))->getCase($valueNode->value)->getValue();
             } catch (Exception $e) {
-                throw new Error("Cannot represent enum of class {$this->config['enumClass']} from literal {$valueNode->value}: ".$e->getMessage());
+                throw new Error("Cannot represent enum of class {$this->enumClass} from literal {$valueNode->value}: ".$e->getMessage());
             }
         }
 
@@ -66,20 +103,15 @@ class PhpEnumType extends EnumType
 
     public function serialize($value): mixed
     {
-        if ($this->isPhpEnum()) {
-            if (!$value instanceof $this->config['enumClass']) {
+        if ($this->enumClass) {
+            if (!$value instanceof $this->enumClass) {
                 $valueStr = Utils::printSafe($value);
-                throw new SerializationError("Cannot serialize value {$valueStr} as it must be an instance of enum {$this->config['enumClass']}.");
+                throw new SerializationError("Cannot serialize value {$valueStr} as it must be an instance of enum {$this->enumClass}.");
             }
 
             return $value->name;
         }
 
         return parent::serialize($value);
-    }
-
-    protected function isPhpEnum(): bool
-    {
-        return isset($this->config['enumClass']);
     }
 }

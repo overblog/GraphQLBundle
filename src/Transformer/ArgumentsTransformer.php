@@ -10,6 +10,7 @@ use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -81,7 +82,7 @@ final class ArgumentsTransformer
 
         if ($type instanceof EnumType) {
             /** Enum based on PHP Enum are already processed by PhpEnumType */
-            if (isset($type->config['enumClass'])) {
+            if (isset($type->config['enumClass'])) { /** @phpstan-ignore-line */
                 return $data;
             }
             $instance = $this->getTypeClassInstance($type->name);

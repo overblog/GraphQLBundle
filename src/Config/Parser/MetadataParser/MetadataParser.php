@@ -42,6 +42,8 @@ use function strlen;
 use function substr;
 use function trim;
 
+use const PHP_VERSION_ID;
+
 abstract class MetadataParser implements PreParserInterface
 {
     public const ANNOTATION_NAMESPACE = 'Overblog\GraphQLBundle\Annotation\\';
@@ -434,7 +436,7 @@ abstract class MetadataParser implements PreParserInterface
     {
         $metadatas = static::getMetadatas($reflectionClass);
         $enumValues = self::getMetadataMatching($metadatas, Metadata\EnumValue::class);
-        $isPhpEnum = \PHP_VERSION_ID >= 80100 && $reflectionClass->isEnum();
+        $isPhpEnum = PHP_VERSION_ID >= 80100 && $reflectionClass->isEnum();
         $values = [];
 
         foreach ($reflectionClass->getConstants() as $name => $value) {
