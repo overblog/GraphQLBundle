@@ -24,9 +24,9 @@ final class DefinitionTest extends TestCase
         $enumTypeWithDeprecatedValue = $this->getType('EnumWithDeprecatedValue');
         $value = $enumTypeWithDeprecatedValue->getValues()[0];
         $this->assertSame([
-            'deprecationReason' => 'Just because',
-            'value' => 'foo',
             'name' => 'foo',
+            'value' => 'foo',
+            'deprecationReason' => 'Just because',
         ], $value->config);
         $this->assertTrue($value->isDeprecated());
     }

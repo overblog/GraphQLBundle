@@ -77,7 +77,7 @@ abstract class ResolverMap implements ResolverMapInterface
         if (null === $typeName) {
             $resolvers = $loadedMap;
         } elseif (isset($loadedMap[$typeName])) { // @phpstan-ignore-line
-            $resolvers = $loadedMap[$typeName];
+            $resolvers = $loadedMap[$typeName]; // @phpstan-ignore-line
         }
 
         foreach ($resolvers as $key => $value) {
