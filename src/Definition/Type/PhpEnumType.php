@@ -20,7 +20,6 @@ class PhpEnumType extends EnumType
         if ($this->isPhpEnum()) {
             $configValues = $this->config['values'];
             $reflection = new ReflectionEnum($config['enumClass']);
-            $values = [];
 
             $enumDefinitions = [];
             foreach ($reflection->getCases() as $case) {

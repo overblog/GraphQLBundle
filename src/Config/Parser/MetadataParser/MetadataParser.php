@@ -433,7 +433,7 @@ abstract class MetadataParser implements PreParserInterface
     {
         $metadatas = static::getMetadatas($reflectionClass);
         $enumValues = self::getMetadataMatching($metadatas, Metadata\EnumValue::class);
-        $isPhpEnum = $reflectionClass->isEnum();
+        $isPhpEnum = \PHP_VERSION_ID >= 80100 && $reflectionClass->isEnum();
         $values = [];
 
         foreach ($reflectionClass->getConstants() as $name => $value) {
