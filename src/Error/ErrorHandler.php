@@ -15,6 +15,7 @@ use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Event\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use function array_map;
 
 class ErrorHandler

@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverMaps;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
 use function sprintf;
 
 final class ResolverMapsTest extends TestCase

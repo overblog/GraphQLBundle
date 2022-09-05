@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 
 /**
  * @group legacy
+ *
  * @requires PHP 8.
  */
 final class AttributeParserTest extends MetadataParserTest

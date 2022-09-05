@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionDefinition;
 use Overblog\GraphQLBundle\Relay\Mutation\InputDefinition;
 use Overblog\GraphQLBundle\Relay\Mutation\PayloadDefinition;
 use Overblog\GraphQLBundle\Relay\Node\NodeDefinition;
+
 use function array_replace;
 use function is_array;
 use function is_string;

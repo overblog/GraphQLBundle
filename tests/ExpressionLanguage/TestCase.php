@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
+
 use function array_keys;
 use function call_user_func_array;
 use function extract;

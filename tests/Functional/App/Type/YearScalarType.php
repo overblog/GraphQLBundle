@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Type;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
+
 use function sprintf;
 use function str_replace;
 

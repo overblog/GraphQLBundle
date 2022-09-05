@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Relay\Builder;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+
 use function is_string;
 use function sprintf;
 

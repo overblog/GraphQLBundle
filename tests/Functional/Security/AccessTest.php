@@ -9,6 +9,7 @@ use Error;
 use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpKernel\Kernel;
+
 use function file_exists;
 use function preg_match;
 use function preg_quote;

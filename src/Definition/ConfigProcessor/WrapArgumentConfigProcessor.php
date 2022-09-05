@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 
 use Overblog\GraphQLBundle\Definition\ArgumentFactory;
+
 use function is_array;
 use function is_callable;
 

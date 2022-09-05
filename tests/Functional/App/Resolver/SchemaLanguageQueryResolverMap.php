@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
+
 use function array_filter;
 use function in_array;
 

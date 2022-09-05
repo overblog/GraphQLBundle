@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Validator;
 use Doctrine\Common\Annotations\Reader;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Validator\Validation;
+
 use function class_exists;
 use function json_decode;
 

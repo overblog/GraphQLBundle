@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Exception;
 use InvalidArgumentException;
+
 use function array_column;
 use function array_filter;
 use function array_flip;

@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use function sprintf;
 
 class TypeResolver extends AbstractResolver

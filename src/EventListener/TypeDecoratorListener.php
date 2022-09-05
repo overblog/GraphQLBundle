@@ -17,6 +17,7 @@ use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
 use Traversable;
+
 use function array_diff;
 use function count;
 use function current;
@@ -63,7 +64,7 @@ final class TypeDecoratorListener
                 throw new InvalidArgumentException(
                     sprintf(
                         '"%s".{"%s"} defined in resolverMap, but type is not managed by TypeDecorator.',
-                        $type instanceof NamedType ? $type->name : get_class($type),
+                        $type instanceof NamedType ? $type->name : $type::class,
                         implode('", "', $covered)
                     )
                 );
