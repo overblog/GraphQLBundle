@@ -23,7 +23,7 @@ use UnitEnum;
  *   name?: string|null,
  *   description?: string|null,
  *   enumClass?: class-string<\UnitEnum>|null,
- *   values: EnumValues|callable(): EnumValues,
+ *   values?: EnumValues|callable(): EnumValues,
  *   astNode?: EnumTypeDefinitionNode|null,
  *   extensionASTNodes?: array<int, EnumTypeExtensionNode>|null
  * }
@@ -40,11 +40,19 @@ class PhpEnumType extends EnumType
     {
         if (isset($config['enumClass'])) {
             $this->enumClass = $config['enumClass'];
+            if (!enum_exists($this->enumClass)) {
+                throw new Error(sprintf('Enum class "%s" does not exist.', $this->enumClass));
+            }
             unset($config['enumClass']);
         }
+
+        if (!isset($config['values'])) {
+            $config['values'] = [];
+        }
+
         parent::__construct($config);
         if ($this->enumClass) {
-            $configValues = $this->config['values'];
+            $configValues = $this->config['values'] ?? [];
             if (is_callable($configValues)) {
                 $configValues = $configValues();
             }
@@ -67,11 +75,6 @@ class PhpEnumType extends EnumType
         }
     }
 
-    public function isPhpEnum(): bool
-    {
-        return null !== $this->enumClass;
-    }
-
     public function parseValue($value): mixed
     {
         if ($this->enumClass) {
@@ -88,8 +91,8 @@ class PhpEnumType extends EnumType
     public function parseLiteral(Node $valueNode, ?array $variables = null): mixed
     {
         if ($this->enumClass) {
-            if (!$valueNode  instanceof EnumValueNode) {
-                throw new Error("Cannot represent enum of class {$this->enumClass} from node: {$valueNode->kind} is not an enum value");
+            if (!$valueNode instanceof EnumValueNode) {
+                throw new Error("Cannot represent enum of class {$this->enumClass} from node: {$valueNode->__toString()} is not an enum value");
             }
             try {
                 return (new ReflectionEnum($this->enumClass))->getCase($valueNode->value)->getValue();
