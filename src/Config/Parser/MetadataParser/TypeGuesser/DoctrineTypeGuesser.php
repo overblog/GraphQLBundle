@@ -106,11 +106,11 @@ final class DoctrineTypeGuesser extends TypeGuesser
         $annotations = [];
         switch (true) {
             case $reflector instanceof ReflectionClass: $annotations = $reader->getClassAnnotations($reflector);
-            break;
+                break;
             case $reflector instanceof ReflectionMethod: $annotations = $reader->getMethodAnnotations($reflector);
-            break;
+                break;
             case $reflector instanceof ReflectionProperty: $annotations = $reader->getPropertyAnnotations($reflector);
-            break;
+                break;
         }
         foreach ($annotations as $annotation) {
             if ($annotation instanceof $annotationClass) {

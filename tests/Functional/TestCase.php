@@ -161,9 +161,7 @@ abstract class TestCase extends WebTestCase
             return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
         }
 
-        return new ExpressionFunction($phpFunctionName, fn () =>
-            sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args()))
-        , function (): void {});
+        return new ExpressionFunction($phpFunctionName, fn () => sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args())), function (): void {});
     }
 
     /**
