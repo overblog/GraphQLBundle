@@ -25,6 +25,7 @@ use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function array_filter;
 use function array_keys;
 use function array_map;
@@ -458,7 +459,7 @@ abstract class MetadataParser implements PreParserInterface
         $enumConfiguration = ['values' => $values];
         $enumConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $enumConfiguration;
         if ($isPhpEnum) {
-            $enumConfiguration['enum_class'] = $reflectionClass->getName();
+            $enumConfiguration['enumClass'] = $reflectionClass->getName();
         }
 
         return ['type' => 'enum', 'config' => $enumConfiguration];

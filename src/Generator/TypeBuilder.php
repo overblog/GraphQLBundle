@@ -341,8 +341,8 @@ final class TypeBuilder
         if (isset($c->values)) {
             $configLoader->addItem('values', Collection::assoc($c->values));
         }
-        if (isset($c->enum_class)) {
-            $configLoader->addItem('enumClass', $c->enum_class);
+        if (isset($c->enumClass)) {
+            $configLoader->addItem('enumClass', $c->enumClass);
         }
 
         // only by custom-scalar types

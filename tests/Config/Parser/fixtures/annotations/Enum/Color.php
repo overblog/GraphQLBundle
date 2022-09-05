@@ -8,12 +8,17 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Enum
+ * @GQL\EnumValue(name="RED", description="The color red")
  */
 #[GQL\Enum]
 enum Color
 {
+    #[GQL\Description("The color red")]
     case RED;
+
     case GREEN;
+
     case BLUE;
+
     case YELLOW;
 }

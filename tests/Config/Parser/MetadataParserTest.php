@@ -12,6 +12,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function sprintf;
 use function substr;
 
@@ -251,9 +252,9 @@ abstract class MetadataParserTest extends TestCase
         ]);
 
         $this->expect('Color', 'enum', [
-            'enum_class' => Color::class,
+            'enumClass' => Color::class,
             'values' => [
-                'RED' => ['value' => 'RED'],
+                'RED' => ['value' => 'RED', 'description' => 'The color red'],
                 'GREEN' => ['value' => 'GREEN'],
                 'BLUE' => ['value' => 'BLUE'],
                 'YELLOW' => ['value' => 'YELLOW'],

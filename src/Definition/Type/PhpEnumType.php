@@ -14,6 +14,32 @@ use ReflectionEnum;
 
 class PhpEnumType extends EnumType
 {
+    public function __construct(array $config)
+    {
+        parent::__construct($config);
+        if ($this->isPhpEnum()) {
+            $configValues = $this->config['values'];
+            $reflection = new ReflectionEnum($config['enumClass']);
+            $values = [];
+
+            $enumDefinitions = [];
+            foreach ($reflection->getCases() as $case) {
+                $enumDefinitions[$case->getName()] = ['value' => $case->getName()];
+            }
+
+            foreach ($configValues as $name => $config) {
+                if (!isset($enumDefinitions[$name])) {
+                    throw new Error("Enum value {$name} is not defined in {$config['enumClass']}");
+                }
+                $enumDefinitions[$name]['description'] = $config['description'] ?? null;
+                $enumDefinitions[$name]['deprecationReason'] = $config['deprecationReason'] ?? null;
+            }
+
+            $this->config['values'] = $enumDefinitions;
+        }
+    }
+
+
     public function parseValue($value)
     {
         if ($this->isPhpEnum()) {
@@ -33,7 +59,7 @@ class PhpEnumType extends EnumType
             try {
                 return (new ReflectionEnum($this->config['enumClass']))->getCase($valueNode->value)->getValue();
             } catch (Exception $e) {
-                throw new Error("Cannot represent enum of class {$this->config['enumClass']} from value {$valueNode->value}: ".$e->getMessage());
+                throw new Error("Cannot represent enum of class {$this->config['enumClass']} from literal {$valueNode->value}: ".$e->getMessage());
             }
         }
 
