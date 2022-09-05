@@ -37,7 +37,7 @@ abstract class AbstractConnectionBuilderTest extends TestCase
             $expectedEdges,
             new PageInfo(
                 isset($expectedEdges[0]) ? $expectedEdges[0]->getCursor() : null,
-                $endEdge ? $endEdge->getCursor() : null,
+                $endEdge ? $endEdge->getCursor() : null, // @phpstan-ignore-line
                 $hasPreviousPage,
                 $hasNextPage
             )

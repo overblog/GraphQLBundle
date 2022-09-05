@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
@@ -47,7 +48,7 @@ final class ConfigParserPass implements CompilerPassInterface
     ];
 
     /**
-     * @var array<string, class-string<PreParserInterface>>
+     * @var array<string, class-string<ParserInterface>>
      */
     public const PARSERS = [
         'yaml' => YamlParser::class,
