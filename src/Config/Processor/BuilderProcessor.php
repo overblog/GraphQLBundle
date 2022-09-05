@@ -16,13 +16,13 @@ use Overblog\GraphQLBundle\Relay\Node\GlobalIdFieldDefinition;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
 use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+
 use function array_combine;
 use function array_fill;
 use function array_keys;
 use function array_merge;
 use function class_exists;
 use function count;
-use function get_class;
 use function is_array;
 use function is_string;
 use function is_subclass_of;
@@ -206,7 +206,7 @@ final class BuilderProcessor implements ProcessorInterface
         $typesMapping = [];
 
         if (isset($mapping[$fieldMappingKey], $mapping['types'])) {
-            $builderClass = get_class($builder);
+            $builderClass = $builder::class;
 
             foreach ($mapping['types'] as $typeName => $typeConfig) {
                 if (isset($reservedTypesMap[$typeName])) {

@@ -10,6 +10,7 @@ use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Upload\Type\GraphQLUploadType;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
 use function sprintf;
 
 final class GraphQLUploadTypeTest extends TestCase

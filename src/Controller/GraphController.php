@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Request\Parser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use function in_array;
 
 final class GraphController

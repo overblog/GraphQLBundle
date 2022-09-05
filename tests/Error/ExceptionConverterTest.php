@@ -10,7 +10,6 @@ use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserError;
 use PHPUnit\Framework\TestCase;
 use Throwable;
-use function get_class;
 
 final class ExceptionConverterTest extends TestCase
 {
@@ -83,7 +82,7 @@ final class ExceptionConverterTest extends TestCase
 
         yield [
             [
-                get_class($exception) => UserError::class,
+                $exception::class => UserError::class,
             ],
             false,
             $exception,

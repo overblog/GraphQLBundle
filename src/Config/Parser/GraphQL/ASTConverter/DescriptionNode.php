@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\StringValueNode;
+
 use function trim;
 
 final class DescriptionNode implements NodeInterface

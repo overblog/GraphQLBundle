@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
+
 use function call_user_func;
 use function func_get_args;
 use function implode;
@@ -160,9 +161,9 @@ abstract class TestCase extends WebTestCase
             return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
         }
 
-        return new ExpressionFunction($phpFunctionName, fn () => (
+        return new ExpressionFunction($phpFunctionName, fn () =>
             sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args()))
-        ), function (): void {});
+        , function (): void {});
     }
 
     /**

@@ -22,6 +22,7 @@ use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use PHPUnit\Framework\TestCase;
 use Traversable;
+
 use function substr;
 
 final class TypeDecoratorListenerTest extends TestCase

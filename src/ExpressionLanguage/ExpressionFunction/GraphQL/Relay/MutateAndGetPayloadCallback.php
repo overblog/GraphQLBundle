@@ -14,13 +14,12 @@ final class MutateAndGetPayloadCallback extends ExpressionFunction
     {
         parent::__construct(
             'mutateAndGetPayloadCallback',
-            static fn ($mutateAndGetPayload) => (
+            static fn ($mutateAndGetPayload) =>
                 Closure::new()
                     ->addArgument('value')
                     ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $mutateAndGetPayload")
                     ->generate()
-            )
         );
     }
 }

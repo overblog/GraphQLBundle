@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Relay\Connection;
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+
 use function call_user_func;
 use function call_user_func_array;
 use function count;

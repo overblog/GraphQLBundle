@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 use function array_filter;
 use function is_array;
 

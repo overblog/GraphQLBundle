@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Resolver;
 
 use InvalidArgumentException;
+
 use function array_merge;
 use function array_unique;
-use function get_class;
 use function gettype;
 use function is_object;
 use function sprintf;
@@ -70,7 +70,7 @@ final class ResolverMaps implements ResolverMapInterface
                 throw new InvalidArgumentException(sprintf(
                     'ResolverMap should be instance of "%s" but got "%s".',
                     ResolverMapInterface::class,
-                    is_object($resolverMap) ? get_class($resolverMap) : gettype($resolverMap)
+                    is_object($resolverMap) ? $resolverMap::class : gettype($resolverMap)
                 ));
             }
         }

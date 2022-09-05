@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+
 use function preg_replace;
 use function strrchr;
 use function substr;
@@ -47,6 +48,7 @@ final class TypeGeneratorPass implements CompilerPassInterface
 
         /**
          * @var array<class-string, string> $generatedClasses
+         *
          * @phpstan-ignore-next-line
          */
         $generatedClasses = $typeGenerator->compile(TypeGenerator::MODE_MAPPING_ONLY);

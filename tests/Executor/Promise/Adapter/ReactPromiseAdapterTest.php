@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use React\Promise\FulfilledPromise;
 use stdClass;
 use Symfony\Component\Process\PhpProcess;
+
 use function sprintf;
 
 final class ReactPromiseAdapterTest extends TestCase

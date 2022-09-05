@@ -14,13 +14,12 @@ final class IdFetcherCallback extends ExpressionFunction
     {
         parent::__construct(
             'idFetcherCallback',
-            static fn ($idFetcher) => (
+            static fn ($idFetcher) =>
                 Closure::new()
                     ->addArgument('value')
                     ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $idFetcher")
                     ->generate()
-            )
         );
     }
 }

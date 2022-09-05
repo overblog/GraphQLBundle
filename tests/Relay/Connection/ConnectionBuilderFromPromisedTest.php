@@ -13,6 +13,7 @@ use React\Promise\FulfilledPromise;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use stdClass;
+
 use function call_user_func;
 use function func_get_args;
 use function React\Promise\resolve;
@@ -35,6 +36,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
+     *
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromise($invalidPromise): void
@@ -72,6 +74,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
+     *
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void

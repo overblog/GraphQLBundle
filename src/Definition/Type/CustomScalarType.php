@@ -11,6 +11,7 @@ use GraphQL\Language\AST\ScalarTypeExtensionNode;
 use GraphQL\Type\Definition\CustomScalarType as BaseCustomScalarType;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Utils\Utils;
+
 use function call_user_func;
 use function is_callable;
 use function sprintf;

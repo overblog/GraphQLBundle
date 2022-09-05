@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Executor\Executor;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
 use function sprintf;
 
 final class ExecutorTest extends TestCase

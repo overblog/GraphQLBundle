@@ -25,6 +25,7 @@ use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function array_filter;
 use function array_keys;
 use function array_map;
@@ -250,6 +251,7 @@ abstract class MetadataParser implements PreParserInterface
 
     /**
      * @throws ReflectionException
+     *
      * @phpstan-param class-string $className
      */
     private static function getClassReflection(string $className): ReflectionClass
@@ -510,9 +512,9 @@ abstract class MetadataParser implements PreParserInterface
      * @phpstan-param ReflectionMethod|ReflectionProperty $reflector
      * @phpstan-param class-string<Metadata\Field> $fieldMetadataName
      *
-     * @throws AnnotationException
-     *
      * @return array<string,array>
+     *
+     * @throws AnnotationException
      */
     private static function getTypeFieldConfigurationFromReflector(ReflectionClass $reflectionClass, Reflector $reflector, string $fieldMetadataName, string $currentValue = 'value'): array
     {
@@ -623,9 +625,9 @@ abstract class MetadataParser implements PreParserInterface
      *
      * @param ReflectionProperty[] $reflectors
      *
-     * @throws AnnotationException
-     *
      * @return array<string,array>
+     *
+     * @throws AnnotationException
      */
     private static function getGraphQLInputFieldsFromMetadatas(ReflectionClass $reflectionClass, array $reflectors): array
     {
@@ -832,7 +834,9 @@ abstract class MetadataParser implements PreParserInterface
      * Get the first metadata matching given class.
      *
      * @phpstan-template T of object
+     *
      * @phpstan-param class-string<T>|class-string<T>[] $metadataClasses
+     *
      * @phpstan-return T|null
      *
      * @return object|null
@@ -848,6 +852,7 @@ abstract class MetadataParser implements PreParserInterface
      * Return the metadata matching given class
      *
      * @phpstan-template T of object
+     *
      * @phpstan-param class-string<T>|class-string<T>[] $metadataClasses
      *
      * @return array

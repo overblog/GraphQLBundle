@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\App\Validator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Validator\Validation;
+
 use function json_decode;
 
 final class TypeGeneratorTest extends TestCase

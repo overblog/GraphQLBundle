@@ -11,6 +11,7 @@ use GraphQL\Executor\Promise\Promise;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use React\Promise\PromiseInterface;
+
 use function sprintf;
 use function usleep;
 

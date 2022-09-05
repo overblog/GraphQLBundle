@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query;
+
 use function is_array;
 use function is_string;
 use function json_encode;

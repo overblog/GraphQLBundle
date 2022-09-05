@@ -36,7 +36,9 @@ final class GraphQLServices extends ServiceLocator
 
     /**
      * @phpstan-template T of Type
+     *
      * @phpstan-param class-string<T> $typeName
+     *
      * @phpstan-return ?T
      */
     public function getType(string $typeName): ?Type
