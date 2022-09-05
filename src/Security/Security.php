@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Security;
 use LogicException;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
 use Symfony\Component\Security\Core\User\UserInterface;
+
 use function array_reduce;
 
 final class Security

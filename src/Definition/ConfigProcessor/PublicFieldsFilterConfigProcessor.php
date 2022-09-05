@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use function array_filter;
 use function is_array;
 use function is_callable;
+
 use const ARRAY_FILTER_USE_BOTH;
 
 final class PublicFieldsFilterConfigProcessor implements ConfigProcessorInterface

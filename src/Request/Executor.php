@@ -21,6 +21,7 @@ use Overblog\GraphQLBundle\Executor\ExecutorInterface;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use function array_keys;
 use function is_callable;
 use function sprintf;

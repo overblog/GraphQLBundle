@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use Throwable;
-use function get_class;
+
 use function sprintf;
 
 final class ErrorLoggerListener
@@ -57,7 +57,7 @@ final class ErrorLoggerListener
     {
         $message = sprintf(
             '[GraphQL] %s: %s[%d] (caught throwable) at %s line %s.',
-            get_class($exception),
+            $exception::class,
             $exception->getMessage(),
             $exception->getCode(),
             $exception->getFile(),

@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+
 use function array_keys;
 use function array_map;
 use function implode;
@@ -127,7 +128,7 @@ final class TypesConfiguration implements ConfigurationInterface
                 ->ifTrue(fn ($types) => is_array($types))
                 ->then(fn ($types) => Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION))
             ->end()
-            ;
+        ;
     }
 
     private function normalizedConfigTypeKey(string $type): string

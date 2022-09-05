@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Event;
 use ArrayObject;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Symfony\Contracts\EventDispatcher\Event;
+
 use function microtime;
 
 final class ExecutorArgumentsEvent extends Event

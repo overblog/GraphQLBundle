@@ -79,7 +79,7 @@ final class DoctrineTypeGuesser extends TypeGuesser
                 $type = $this->map->resolveType($target, ['type']);
 
                 if ($type) {
-                    $isMultiple = $associationAnnotations[get_class($associationAnnotation)];
+                    $isMultiple = $associationAnnotations[$associationAnnotation::class];
                     if ($isMultiple) {
                         return sprintf('[%s]!', $type);
                     } else {
@@ -105,9 +105,12 @@ final class DoctrineTypeGuesser extends TypeGuesser
         $reader = AnnotationParser::getAnnotationReader();
         $annotations = [];
         switch (true) {
-            case $reflector instanceof ReflectionClass: $annotations = $reader->getClassAnnotations($reflector); break;
-            case $reflector instanceof ReflectionMethod: $annotations = $reader->getMethodAnnotations($reflector); break;
-            case $reflector instanceof ReflectionProperty: $annotations = $reader->getPropertyAnnotations($reflector); break;
+            case $reflector instanceof ReflectionClass: $annotations = $reader->getClassAnnotations($reflector);
+                break;
+            case $reflector instanceof ReflectionMethod: $annotations = $reader->getMethodAnnotations($reflector);
+                break;
+            case $reflector instanceof ReflectionProperty: $annotations = $reader->getPropertyAnnotations($reflector);
+                break;
         }
         foreach ($annotations as $annotation) {
             if ($annotation instanceof $annotationClass) {

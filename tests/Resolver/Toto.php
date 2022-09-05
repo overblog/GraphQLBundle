@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Closure;
+
 use function func_get_args;
 
 final class Toto

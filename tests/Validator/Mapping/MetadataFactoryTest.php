@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Validation;
+
 use function class_exists;
 
 final class MetadataFactoryTest extends TestCase

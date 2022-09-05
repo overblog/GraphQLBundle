@@ -10,6 +10,7 @@ use function in_array;
 use function sprintf;
 use function trigger_error;
 use function ucfirst;
+
 use const E_USER_DEPRECATED;
 
 /**

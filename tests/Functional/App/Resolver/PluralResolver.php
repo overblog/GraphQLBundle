@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
+
 use function sprintf;
 
 final class PluralResolver

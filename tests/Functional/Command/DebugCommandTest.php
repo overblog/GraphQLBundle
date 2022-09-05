@@ -8,10 +8,12 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function file_get_contents;
 use function sprintf;
 use function str_replace;
 use function trim;
+
 use const PHP_EOL;
 
 final class DebugCommandTest extends TestCase

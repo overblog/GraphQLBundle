@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+
 use function is_string;
 
 abstract class TypeWithOutputFieldsDefinition extends TypeDefinition

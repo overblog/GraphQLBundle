@@ -21,8 +21,10 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+
 use function preg_quote;
 use function sprintf;
+
 use const DIRECTORY_SEPARATOR;
 
 final class ConfigParserPassTest extends TestCase
@@ -76,6 +78,7 @@ final class ConfigParserPassTest extends TestCase
 
     /**
      * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
+     *
      * @runInSeparateProcess
      */
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void

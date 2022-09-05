@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\R
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId as GlobalIdHelper;
+
 use function sprintf;
 
 final class FromGlobalID extends ExpressionFunction

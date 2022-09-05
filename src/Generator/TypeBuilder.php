@@ -32,6 +32,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
+
 use function array_map;
 use function class_exists;
 use function count;
@@ -376,9 +377,9 @@ final class TypeBuilder
      *
      * @param callable $callback - a callable string or a callable array
      *
-     * @throws GeneratorException
-     *
      * @return ArrowFunction
+     *
+     * @throws GeneratorException
      */
     private function buildScalarCallback($callback, string $fieldName)
     {
@@ -606,9 +607,9 @@ final class TypeBuilder
      *          ...
      *      ]
      *
-     * @throws GeneratorException
-     *
      * @return ArrowFunction|Collection
+     *
+     * @throws GeneratorException
      */
     private function buildConstraints(array $constraints = [], bool $inClosure = true)
     {
@@ -698,9 +699,9 @@ final class TypeBuilder
      *
      * @internal
      *
-     * @throws GeneratorException
-     *
      * @return GeneratorInterface|Collection|string
+     *
+     * @throws GeneratorException
      */
     public function buildField(array $fieldConfig, string $fieldname)
     {

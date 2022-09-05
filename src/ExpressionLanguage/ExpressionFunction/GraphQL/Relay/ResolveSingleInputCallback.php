@@ -14,13 +14,11 @@ final class ResolveSingleInputCallback extends ExpressionFunction
     {
         parent::__construct(
             'resolveSingleInputCallback',
-            static fn ($resolveSingleInput) => (
-                Closure::new()
+            static fn ($resolveSingleInput) => Closure::new()
                     ->addArgument('value')
                     ->bindVars(TypeGenerator::GRAPHQL_SERVICES, 'args', 'context', 'info')
                     ->append("return $resolveSingleInput")
                     ->generate()
-            )
         );
     }
 }

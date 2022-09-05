@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessing
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+
 use function sprintf;
 
 final class DocBlockTypeGuesserTest extends TestCase

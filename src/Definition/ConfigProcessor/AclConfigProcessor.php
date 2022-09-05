@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Definition\ConfigProcessor;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Resolver\AccessResolver;
+
 use function is_array;
 use function is_callable;
 

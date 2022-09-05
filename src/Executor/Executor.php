@@ -10,6 +10,7 @@ use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Executor\Promise\PromiseAdapterInterface;
 use RuntimeException;
+
 use function func_get_args;
 use function method_exists;
 use function sprintf;

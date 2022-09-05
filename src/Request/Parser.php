@@ -6,11 +6,13 @@ namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use function array_filter;
 use function explode;
 use function is_string;
 use function json_decode;
 use function json_last_error;
+
 use const JSON_ERROR_NONE;
 
 final class Parser implements ParserInterface
@@ -40,7 +42,7 @@ final class Parser implements ParserInterface
                 $parsedBody = [static::PARAM_QUERY => $body];
                 break;
 
-            // JSON object
+                // JSON object
             case static::CONTENT_TYPE_JSON:
                 if (empty($body)) {
                     if (Request::METHOD_GET === $method) {
@@ -57,7 +59,7 @@ final class Parser implements ParserInterface
                 }
                 break;
 
-            // URL-encoded query-string
+                // URL-encoded query-string
             case static::CONTENT_TYPE_FORM:
                 $parsedBody = $request->request->all();
                 break;

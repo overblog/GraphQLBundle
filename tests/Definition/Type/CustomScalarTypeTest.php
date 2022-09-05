@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
 use function sprintf;
 use function uniqid;
 

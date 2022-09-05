@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
 use function array_merge;
 use function file_exists;
 use function file_put_contents;
