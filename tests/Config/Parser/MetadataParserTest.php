@@ -63,6 +63,9 @@ abstract class MetadataParserTest extends TestCase
                     if (!self::isDoctrineOrmInstalled() && 'Lightsaber.php' === $file->getFileName()) {
                         continue 2;
                     }
+                    if (PHP_VERSION_ID < 80100 && 'Color.php' === $file->getFileName()) {
+                        continue 2;
+                    }
                 }
 
                 $files[] = $file->getPathname();
@@ -251,15 +254,17 @@ abstract class MetadataParserTest extends TestCase
             ],
         ]);
 
-        $this->expect('Color', 'enum', [
-            'enumClass' => Color::class,
-            'values' => [
-                'RED' => ['value' => 'RED', 'description' => 'The color red'],
-                'GREEN' => ['value' => 'GREEN'],
-                'BLUE' => ['value' => 'BLUE'],
-                'YELLOW' => ['value' => 'YELLOW'],
-            ],
-        ]);
+        if (PHP_VERSION_ID >= 80100) {
+            $this->expect('Color', 'enum', [
+                'enumClass' => Color::class,
+                'values' => [
+                    'RED' => ['value' => 'RED', 'description' => 'The color red'],
+                    'GREEN' => ['value' => 'GREEN'],
+                    'BLUE' => ['value' => 'BLUE'],
+                    'YELLOW' => ['value' => 'YELLOW'],
+                ],
+            ]);
+        }
     }
 
     public function testUnion(): void

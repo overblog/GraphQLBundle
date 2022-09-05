@@ -6,6 +6,9 @@ namespace Overblog\GraphQLBundle\Tests\Functional\EnumPhp;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
+/**
+ * @requires PHP 8.1
+ */
 final class EnumPhpTest extends TestCase
 {
     protected function setUp(): void
@@ -36,7 +39,7 @@ final class EnumPhpTest extends TestCase
         $this->assertEquals($result['data']['enumBacked'], EnumPhpBacked::VALUE3->name);
     }
 
-    public static function resolveQueryEnumAsInput($enumParam = null, $enumParam2 = null)
+    public static function resolveQueryEnumAsInput(mixed $enumParam = null, mixed $enumParam2 = null): string
     {
         return (EnumPhp::VALUE2 === $enumParam  && EnumPhpBacked::VALUE3 === $enumParam2) ? 'OK' : 'KO';
     }

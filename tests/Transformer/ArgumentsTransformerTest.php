@@ -21,6 +21,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
+
 use function class_exists;
 use function count;
 use function is_array;
@@ -84,17 +85,22 @@ final class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $t5 = new EnumType([
-            'name' => 'EnumPhp',
-            'enumClass' => EnumPhp::class,
-            'values' => [
-                'VALUE1' => 'VALUE1',
-                'VALUE2' => 'VALUE2',
-                'VALUE3' => 'VALUE3',
-            ],
-        ]);
+        $types = [$t1, $t2, $t3, $t4];
 
-        return [$t1, $t2, $t3, $t4, $t5];
+        if (PHP_VERSION_ID >= 80100) {
+            $t5 = new EnumType([
+                'name' => 'EnumPhp',
+                'enumClass' => EnumPhp::class,
+                'values' => [
+                    'VALUE1' => 'VALUE1',
+                    'VALUE2' => 'VALUE2',
+                    'VALUE3' => 'VALUE3',
+                ],
+            ]);
+            $types[] = $t5;
+        }
+
+        return $types;
     }
 
     public function testPopulating(): void
@@ -174,9 +180,11 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertInstanceOf(Enum1::class, $res);
         $this->assertEquals(2, $res->value);
 
-        $res = $transformer->getInstanceAndValidate('EnumPhp', EnumPhp::VALUE2, $info, 'enumPhp');
-        $this->assertInstanceOf(EnumPhp::class, $res);
-        $this->assertEquals($res, EnumPhp::VALUE2);
+        if (PHP_VERSION_ID >= 80100) {
+            $res = $transformer->getInstanceAndValidate('EnumPhp', EnumPhp::VALUE2, $info, 'enumPhp');
+            $this->assertInstanceOf(EnumPhp::class, $res);
+            $this->assertEquals($res, EnumPhp::VALUE2);
+        }
 
         $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2', 'enum1' => 'Enum1', 'int1' => 'Int!', 'string1' => 'String!'];
         $data = [
