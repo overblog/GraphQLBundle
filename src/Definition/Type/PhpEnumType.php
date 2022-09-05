@@ -38,8 +38,7 @@ class PhpEnumType extends EnumType
         }
     }
 
-
-    public function parseValue($value)
+    public function parseValue($value): mixed
     {
         if ($this->isPhpEnum()) {
             try {
@@ -52,7 +51,7 @@ class PhpEnumType extends EnumType
         return parent::parseValue($value);
     }
 
-    public function parseLiteral(Node $valueNode, ?array $variables = null)
+    public function parseLiteral(Node $valueNode, ?array $variables = null): mixed
     {
         if ($this->isPhpEnum()) {
             try {
@@ -65,7 +64,7 @@ class PhpEnumType extends EnumType
         return parent::parseLiteral($valueNode, $variables);
     }
 
-    public function serialize($value)
+    public function serialize($value): mixed
     {
         if ($this->isPhpEnum()) {
             if (!$value instanceof $this->config['enumClass']) {
@@ -79,7 +78,7 @@ class PhpEnumType extends EnumType
         return parent::serialize($value);
     }
 
-    protected function isPhpEnum()
+    protected function isPhpEnum(): bool
     {
         return isset($this->config['enumClass']);
     }
