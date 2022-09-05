@@ -20,7 +20,7 @@ jobs:
           - '8.1'
         symfony-version:
           - '5.4.*'
-          - '6.0.*'
+          - '6.1.*'
         dependencies:
           - 'lowest'
           - 'highest'
@@ -31,7 +31,7 @@ jobs:
             symfony-version: '5.4.*'
             dependencies: 'lowest'
             remove-dependencies: '--dev symfony/validator doctrine/orm doctrine/annotations'
-          - php-version: '8.0'
+          - php-version: '8.1'
             symfony-version: '5.4.*'
             dependencies: 'lowest'
             coverage: "pcov"
@@ -86,7 +86,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           tools: flex
-          php-version: "8.0"
+          php-version: "8.1"
 
       - name: "Install dependencies"
         uses: ramsey/composer-install@v2
