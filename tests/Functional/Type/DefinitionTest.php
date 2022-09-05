@@ -23,10 +23,10 @@ final class DefinitionTest extends TestCase
         /** @var EnumType $enumTypeWithDeprecatedValue */
         $enumTypeWithDeprecatedValue = $this->getType('EnumWithDeprecatedValue');
         $value = $enumTypeWithDeprecatedValue->getValues()[0];
-        $this->assertSame([
-            'name' => 'foo',
-            'value' => 'foo',
+        $this->assertSame([ // @phpstan-ignore-line
             'deprecationReason' => 'Just because',
+            'value' => 'foo',
+            'name' => 'foo',
         ], $value->config);
         $this->assertTrue($value->isDeprecated());
     }
