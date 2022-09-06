@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
@@ -21,6 +22,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+
 use function array_count_values;
 use function array_filter;
 use function array_keys;
@@ -46,7 +48,7 @@ final class ConfigParserPass implements CompilerPassInterface
     ];
 
     /**
-     * @var array<string, class-string<PreParserInterface>>
+     * @var array<string, class-string<ParserInterface>>
      */
     public const PARSERS = [
         'yaml' => YamlParser::class,

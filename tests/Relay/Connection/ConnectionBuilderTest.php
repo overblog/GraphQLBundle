@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
+
 use function array_slice;
 use function call_user_func;
 use function func_get_args;

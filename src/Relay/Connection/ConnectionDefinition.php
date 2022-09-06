@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+
 use function array_merge;
 use function is_array;
 use function is_string;
@@ -18,7 +19,7 @@ final class ConnectionDefinition implements MappingInterface
         $namePrefix = preg_replace('/(.*)?Connection$/', '$1', $name);
         $aliasPrefix = preg_replace('/(.*)?ConnectionType$/', '$1', $config['class_name']);
 
-        //Edge
+        // Edge
         $edgeName = $namePrefix.'Edge';
         $edgeAlias = $aliasPrefix.'Edge';
         $edgeFields = empty($config['edgeFields']) || !is_array($config['edgeFields']) ? [] : $config['edgeFields'];
@@ -26,7 +27,7 @@ final class ConnectionDefinition implements MappingInterface
         $resolveNode = empty($config['resolveNode']) ? null : $config['resolveNode'];
         $resolveCursor = empty($config['resolveCursor']) ? null : $config['resolveCursor'];
 
-        //connection
+        // connection
         $connectionName = $namePrefix.'Connection';
         $connectionAlias = $aliasPrefix.'Connection';
         $connectionFields = empty($config['connectionFields']) || !is_array($config['connectionFields']) ? [] : $config['connectionFields'];

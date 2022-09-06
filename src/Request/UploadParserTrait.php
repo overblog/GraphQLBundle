@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use function array_keys;
 use function array_reduce;
 use function array_search;

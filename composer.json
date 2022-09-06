@@ -33,7 +33,7 @@
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "phpdocumentor/type-resolver": ">1.4.0,<1.6.0",
+        "phpdocumentor/type-resolver": "^1.6.1",
         "psr/log": "^1.0 || ^2.0 || ^3.0",
         "symfony/config": "^5.4 || ^6.0",
         "symfony/dependency-injection": "^5.4 || ^6.0",
@@ -57,7 +57,7 @@
         "doctrine/orm": "^2.5",
         "monolog/monolog": "^1.26.1",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "1.6.2",
+        "phpstan/phpstan": "1.8.4",
         "phpstan/phpstan-phpunit": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
         "phpunit/phpunit": "^9.5.10",
@@ -91,7 +91,7 @@
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.3.2/php-cs-fixer.phar -O php-cs-fixer.phar",
+        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.11.0/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"

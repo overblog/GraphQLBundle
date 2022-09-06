@@ -8,6 +8,7 @@ use Exception;
 use GraphQL\Error\UserError as GraphQLUserError;
 use InvalidArgumentException;
 use RuntimeException;
+
 use function is_object;
 use function is_string;
 use function sprintf;

@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
 use PHPUnit\Framework\TestCase;
+
 use function array_flip;
 use function array_intersect_key;
 use function array_values;
@@ -36,7 +37,7 @@ abstract class AbstractConnectionBuilderTest extends TestCase
             $expectedEdges,
             new PageInfo(
                 isset($expectedEdges[0]) ? $expectedEdges[0]->getCursor() : null,
-                $endEdge ? $endEdge->getCursor() : null,
+                $endEdge ? $endEdge->getCursor() : null, // @phpstan-ignore-line
                 $hasPreviousPage,
                 $hasNextPage
             )

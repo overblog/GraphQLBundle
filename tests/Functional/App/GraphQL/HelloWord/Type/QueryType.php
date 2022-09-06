@@ -9,6 +9,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Resolver\QueryResolver;
 use Overblog\GraphQLBundle\Tests\Functional\App\IsolatedResolver\EchoQuery;
+
 use function sprintf;
 
 final class QueryType extends ObjectType implements AliasedInterface

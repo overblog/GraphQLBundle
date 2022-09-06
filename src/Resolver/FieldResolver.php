@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Resolver;
 
 use Closure;
 use GraphQL\Type\Definition\ResolveInfo;
+
 use function is_array;
 use function is_callable;
 use function is_object;

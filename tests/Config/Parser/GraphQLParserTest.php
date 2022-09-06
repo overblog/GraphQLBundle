@@ -9,7 +9,9 @@ use Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter\CustomScalarNode;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function sprintf;
+
 use const DIRECTORY_SEPARATOR;
 
 final class GraphQLParserTest extends TestCase

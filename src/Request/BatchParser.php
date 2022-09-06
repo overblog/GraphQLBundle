@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use function array_filter;
 use function explode;
 use function is_string;
@@ -13,6 +14,7 @@ use function json_decode;
 use function json_encode;
 use function json_last_error;
 use function sprintf;
+
 use const JSON_ERROR_NONE;
 
 final class BatchParser implements ParserInterface

@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Request\UploadParserTrait;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use function json_encode;
 
 final class UploadParserTraitTest extends TestCase

@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function file_get_contents;
 use function json_decode;
 use function strcmp;

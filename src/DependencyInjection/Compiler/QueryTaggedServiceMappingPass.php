@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
+
 use function is_string;
 use function sprintf;
 

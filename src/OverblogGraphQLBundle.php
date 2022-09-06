@@ -36,7 +36,7 @@ final class OverblogGraphQLBundle extends Bundle
     {
         parent::build($container);
 
-        //TypeGeneratorPass must be before TypeTaggedServiceMappingPass
+        // TypeGeneratorPass must be before TypeTaggedServiceMappingPass
         $container->addCompilerPass(new ConfigParserPass());
         $container->addCompilerPass(new GraphQLServicesPass());
         $container->addCompilerPass(new ExpressionFunctionPass());

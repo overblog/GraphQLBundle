@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+
 use function sprintf;
 use function str_replace;
 

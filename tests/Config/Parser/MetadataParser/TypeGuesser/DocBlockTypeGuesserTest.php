@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessing
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+
 use function sprintf;
 
 final class DocBlockTypeGuesserTest extends TestCase
@@ -88,7 +89,7 @@ final class DocBlockTypeGuesserTest extends TestCase
             yield ['mixed[]', $reflectorClass, 'Tag @'.$tag.' found, but the array values cannot be mixed type'];
             yield ['array<mixed>', $reflectorClass, 'Tag @'.$tag.' found, but the array values cannot be mixed type'];
             yield ['', $reflectorClass, 'No @'.$tag.' tag found in doc block or tag has no type'];
-            yield ['[]', $reflectorClass, 'Doc Block parsing failed'];
+            yield ['[]', $reflectorClass, 'No @'.$tag.' tag found in doc block or tag has no type'];
         }
     }
 

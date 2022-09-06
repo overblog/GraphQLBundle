@@ -8,6 +8,7 @@ use Exception;
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 use function json_decode;
 use function json_encode;
 
