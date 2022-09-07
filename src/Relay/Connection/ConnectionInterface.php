@@ -6,19 +6,22 @@ namespace Overblog\GraphQLBundle\Relay\Connection;
 
 use GraphQL\Executor\Promise\Promise;
 
+/**
+ * @phpstan-template T
+ */
 interface ConnectionInterface
 {
     /**
      * Get the connection edges.
      *
-     * @return iterable|EdgeInterface[]
+     * @return iterable<EdgeInterface<T>>
      */
     public function getEdges();
 
     /**
      * Set the connection edges.
      *
-     * @param iterable|EdgeInterface[] $edges
+     * @param iterable<EdgeInterface<T>> $edges
      */
     public function setEdges(iterable $edges): void;
 

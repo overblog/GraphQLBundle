@@ -72,10 +72,13 @@ abstract class TestCase extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    protected static function executeGraphQLRequest(string $query, array $rootValue = [], string $schemaName = null): array
+    protected static function executeGraphQLRequest(string $query, array $rootValue = [], string $schemaName = null, array $variables = []): array
     {
         $request = new Request();
         $request->query->set('query', $query);
+        if (!empty($variables)) {
+            $request->query->set('variables', $variables);
+        }
 
         // @phpstan-ignore-next-line
         $req = static::getContainer()->get('overblog_graphql.request_parser')->parse($request);

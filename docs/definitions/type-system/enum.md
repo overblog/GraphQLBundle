@@ -57,3 +57,57 @@ class Episode
     public $value;
 }
 ```
+
+## Working with native PHP 8.1 enums
+
+Given a PHP enum as follow:
+
+```php
+namespace App;
+
+enum Color 
+{
+    case RED;
+    case GREEN;
+    case BLUE;
+}
+```
+
+You can declare it with annotations or attributes as follow:
+
+```php
+#[GQL\Enum]
+enum Color 
+{
+    #[GQL\Description("The color red")]
+    case RED;
+    case GREEN;
+    case BLUE;
+}
+```
+
+or with YAML:
+
+```yaml
+Color:
+    type: enum
+    config:
+        enumClass: App\Color
+```
+
+The possible values will be automatically extracted from the enum but if you need to add description and/or deprecated, you can proceed this way
+
+```yaml
+Color:
+    type: enum
+    config:
+        enumClass: App\Color
+        values:
+            GREEN:
+                description: "The color green"
+```
+When using PHP enum, the serialization will extract the `name` of the enum case, and the deserialization will return the enum case by its `name`.  
+Even if the used enum is a Backed enum, the serialization and deserialization will always use the `name` and not the value.  
+
+
+
