@@ -481,47 +481,37 @@ parameters:
 			path: tests/Functional/Validator/DummyEntity.php
 
 		-
-			message: "#^Cannot access offset mixed on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			message: "#^Cannot access offset mixed on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\>\\.$#"
 			count: 2
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\> given\\.$#"
 			count: 1
 			path: tests/Relay/Connection/AbstractConnectionBuilderTest.php
 
 		-
-			message: "#^Cannot access offset 0 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			message: "#^Cannot access offset 0 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\>\\.$#"
 			count: 4
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
-			message: "#^Cannot access offset 1 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			message: "#^Cannot access offset 1 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\>\\.$#"
 			count: 4
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
-			message: "#^Cannot access offset 2 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			message: "#^Cannot access offset 2 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\>\\.$#"
 			count: 1
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
-			message: "#^Cannot access offset 3 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\>\\.$#"
+			message: "#^Cannot access offset 3 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<mixed\\>\\>\\.$#"
 			count: 1
 			path: tests/Relay/Connection/ConnectionBuilderTest.php
 
 		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\:\\:\\$cursor\\.$#"
-			count: 1
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\:\\:\\$node\\.$#"
-			count: 1
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$extra\\.$#"
+			message: "#^Access to an undefined property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\<mixed\\>\\:\\:\\$extra\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
@@ -546,22 +536,32 @@ parameters:
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$edges\\.$#"
-			count: 2
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\:\\:\\$pageInfo\\.$#"
-			count: 2
-			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
-
-		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\:\\:\\$cursor\\.$#"
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\<mixed\\>\\:\\:\\$edges\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
 		-
-			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\:\\:\\$node\\.$#"
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\<mixed\\>\\:\\:\\$pageInfo\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\<string\\>\\:\\:\\$edges\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Connection\\<string\\>\\:\\:\\$pageInfo\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\<null\\>\\:\\:\\$cursor\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\<null\\>\\:\\:\\$node\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
@@ -582,6 +582,21 @@ parameters:
 
 		-
 			message: "#^Access to protected property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\PageInfo\\:\\:\\$startCursor\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with 'node' and null will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Cannot access offset 0 on iterable\\<Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\EdgeInterface\\<string\\>\\>\\.$#"
+			count: 4
+			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
+
+		-
+			message: "#^Property Overblog\\\\GraphQLBundle\\\\Relay\\\\Connection\\\\Output\\\\Edge\\<null\\>\\:\\:\\$node \\(null\\) does not accept string\\.$#"
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
