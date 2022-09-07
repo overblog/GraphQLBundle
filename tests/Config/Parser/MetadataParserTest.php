@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping\Column;
 use Exception;
+use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Enum\Color;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -60,6 +61,9 @@ abstract class MetadataParserTest extends TestCase
                         continue 2;
                     }
                     if (!self::isDoctrineOrmInstalled() && 'Lightsaber.php' === $file->getFileName()) {
+                        continue 2;
+                    }
+                    if (PHP_VERSION_ID < 80100 && 'Color.php' === $file->getFileName()) {
                         continue 2;
                     }
                 }
@@ -249,6 +253,18 @@ abstract class MetadataParserTest extends TestCase
                 'TWILEK' => ['value' => '4'],
             ],
         ]);
+
+        if (PHP_VERSION_ID >= 80100) {
+            $this->expect('Color', 'enum', [
+                'enumClass' => Color::class,
+                'values' => [
+                    'RED' => ['value' => 'RED', 'description' => 'The color red'],
+                    'GREEN' => ['value' => 'GREEN'],
+                    'BLUE' => ['value' => 'BLUE'],
+                    'YELLOW' => ['value' => 'YELLOW'],
+                ],
+            ]);
+        }
     }
 
     public function testUnion(): void

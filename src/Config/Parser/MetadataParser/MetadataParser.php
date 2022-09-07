@@ -42,6 +42,8 @@ use function strlen;
 use function substr;
 use function trim;
 
+use const PHP_VERSION_ID;
+
 abstract class MetadataParser implements PreParserInterface
 {
     public const ANNOTATION_NAMESPACE = 'Overblog\GraphQLBundle\Annotation\\';
@@ -434,7 +436,7 @@ abstract class MetadataParser implements PreParserInterface
     {
         $metadatas = static::getMetadatas($reflectionClass);
         $enumValues = self::getMetadataMatching($metadatas, Metadata\EnumValue::class);
-
+        $isPhpEnum = PHP_VERSION_ID >= 80100 && $reflectionClass->isEnum();
         $values = [];
 
         foreach ($reflectionClass->getConstants() as $name => $value) {
@@ -442,7 +444,7 @@ abstract class MetadataParser implements PreParserInterface
             $valueConfig = self::getDescriptionConfiguration(static::getMetadatas($reflectionConstant), true);
 
             $enumValueAnnotation = current(array_filter($enumValues, fn ($enumValueAnnotation) => $enumValueAnnotation->name === $name));
-            $valueConfig['value'] = $value;
+            $valueConfig['value'] = $isPhpEnum ? $value->name : $value;
 
             if (false !== $enumValueAnnotation) {
                 if (isset($enumValueAnnotation->description)) {
@@ -459,6 +461,9 @@ abstract class MetadataParser implements PreParserInterface
 
         $enumConfiguration = ['values' => $values];
         $enumConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $enumConfiguration;
+        if ($isPhpEnum) {
+            $enumConfiguration['enumClass'] = $reflectionClass->getName();
+        }
 
         return ['type' => 'enum', 'config' => $enumConfiguration];
     }

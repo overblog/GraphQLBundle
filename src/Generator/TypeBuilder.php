@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Generator;
 
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
@@ -27,6 +26,7 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
+use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\ResolveErrors;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
@@ -70,7 +70,7 @@ final class TypeBuilder
         'input-object' => InputObjectType::class,
         'interface' => InterfaceType::class,
         'union' => UnionType::class,
-        'enum' => EnumType::class,
+        'enum' => PhpEnumType::class,
         'custom-scalar' => CustomScalarType::class,
     ];
 
@@ -341,6 +341,9 @@ final class TypeBuilder
         // only by enum types
         if (isset($c->values)) {
             $configLoader->addItem('values', Collection::assoc($c->values));
+        }
+        if (isset($c->enumClass)) {
+            $configLoader->addItem('enumClass', $c->enumClass);
         }
 
         // only by custom-scalar types
