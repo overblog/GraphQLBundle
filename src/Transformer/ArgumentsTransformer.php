@@ -82,7 +82,7 @@ final class ArgumentsTransformer
 
         if ($type instanceof EnumType) {
             /** Enum based on PHP Enum are already processed by PhpEnumType */
-            if (isset($type->config['enumClass'])) { /** @phpstan-ignore-line */
+            if ($type instanceof PhpEnumType && $type->isEnumPhp()) { /** @phpstan-ignore-line */
                 return $data;
             }
             $instance = $this->getTypeClassInstance($type->name);
