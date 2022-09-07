@@ -75,6 +75,11 @@ class PhpEnumType extends EnumType
         }
     }
 
+    public function isEnumPhp(): bool
+    {
+        return null !== $this->enumClass;
+    }
+
     public function parseValue($value): mixed
     {
         if ($this->enumClass) {

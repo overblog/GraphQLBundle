@@ -6,13 +6,13 @@ namespace Overblog\GraphQLBundle\Tests\Transformer;
 
 use Exception;
 use Generator;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
@@ -64,7 +64,7 @@ final class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $t3 = new EnumType([
+        $t3 = new PhpEnumType([
             'name' => 'Enum1',
             'values' => ['op1' => 1, 'op2' => 2, 'op3' => 3],
         ]);
@@ -88,7 +88,7 @@ final class ArgumentsTransformerTest extends TestCase
         $types = [$t1, $t2, $t3, $t4];
 
         if (PHP_VERSION_ID >= 80100) {
-            $t5 = new EnumType([
+            $t5 = new PhpEnumType([
                 'name' => 'EnumPhp',
                 'enumClass' => EnumPhp::class,
                 'values' => [
