@@ -34,6 +34,13 @@ final class GraphQLServices extends ServiceLocator
         return $this->get('mutationResolver')->resolve([$alias, $args]);
     }
 
+    /**
+     * @phpstan-template T of Type
+     *
+     * @phpstan-param class-string<T> $typeName
+     *
+     * @phpstan-return ?T
+     */
     public function getType(string $typeName): ?Type
     {
         return $this->get('typeResolver')->resolve($typeName);

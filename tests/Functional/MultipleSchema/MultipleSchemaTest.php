@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\MultipleSchema;
 
-use GraphQL\Error\InvariantViolation;
+use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class MultipleSchemaTest extends TestCase
+final class MultipleSchemaTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -74,12 +74,12 @@ class MultipleSchemaTest extends TestCase
         $this->assertGraphQL($query, $expectedData, null, [], 'internal');
     }
 
-    public function testUnknownTypeShouldNotInfinityLoop(): void
+    public function testUnknownTypeShouldThrowAnUnresolvableException(): void
     {
         // @phpstan-ignore-next-line
         $schema = $this->getContainer()->get('overblog_graphql.request_executor')->getSchema('public');
-        $this->expectException(InvariantViolation::class);
-        $this->expectExceptionMessage('Type loader is expected to return a callable or valid type "unknown", but it returned null');
+        $this->expectException(UnresolvableException::class);
+        $this->expectExceptionMessage('Could not find type with alias "unknown". Did you forget to define it?');
         $schema->getType('unknown');
     }
 

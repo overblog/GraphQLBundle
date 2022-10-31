@@ -6,13 +6,13 @@ namespace Overblog\GraphQLBundle\Tests\Transformer;
 
 use Exception;
 use Generator;
-use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
@@ -21,11 +21,12 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
+
 use function class_exists;
 use function count;
 use function is_array;
 
-class ArgumentsTransformerTest extends TestCase
+final class ArgumentsTransformerTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -38,7 +39,7 @@ class ArgumentsTransformerTest extends TestCase
     private function getTransformer(array $classesMap = null, ConstraintViolationList $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
-        $validator->method('validate')->willReturn($validateReturn ?: []);
+        $validator->method('validate')->willReturn($validateReturn ?? new ConstraintViolationList());
 
         return new ArgumentsTransformer($validator, $classesMap);
     }
@@ -63,7 +64,7 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $t3 = new EnumType([
+        $t3 = new PhpEnumType([
             'name' => 'Enum1',
             'values' => ['op1' => 1, 'op2' => 2, 'op3' => 3],
         ]);
@@ -84,7 +85,22 @@ class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        return [$t1, $t2, $t3, $t4];
+        $types = [$t1, $t2, $t3, $t4];
+
+        if (PHP_VERSION_ID >= 80100) {
+            $t5 = new PhpEnumType([
+                'name' => 'EnumPhp',
+                'enumClass' => EnumPhp::class,
+                'values' => [
+                    'VALUE1' => 'VALUE1',
+                    'VALUE2' => 'VALUE2',
+                    'VALUE3' => 'VALUE3',
+                ],
+            ]);
+            $types[] = $t5;
+        }
+
+        return $types;
     }
 
     public function testPopulating(): void
@@ -163,6 +179,12 @@ class ArgumentsTransformerTest extends TestCase
         $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
         $this->assertInstanceOf(Enum1::class, $res);
         $this->assertEquals(2, $res->value);
+
+        if (PHP_VERSION_ID >= 80100) {
+            $res = $transformer->getInstanceAndValidate('EnumPhp', EnumPhp::VALUE2, $info, 'enumPhp');
+            $this->assertInstanceOf(EnumPhp::class, $res);
+            $this->assertEquals($res, EnumPhp::VALUE2);
+        }
 
         $mapping = ['input1' => 'InputType1', 'input2' => 'InputType2', 'enum1' => 'Enum1', 'int1' => 'Int!', 'string1' => 'String!'];
         $data = [
@@ -321,9 +343,11 @@ class ArgumentsTransformerTest extends TestCase
     /** @dataProvider getWrappedInputObject */
     public function testInputObjectWithWrappingType(Type $type): void
     {
-        $transformer = $this->getTransformer([
+        $transformer = $this->getTransformer(
+            [
                 'InputType1' => ['type' => 'input', 'class' => InputType1::class],
-            ], new ConstraintViolationList()
+            ],
+            new ConstraintViolationList()
         );
         $info = $this->getResolveInfo(self::getTypes());
 

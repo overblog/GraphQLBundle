@@ -9,9 +9,10 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\ValidatorExtension;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+
 use function array_map;
 
-class SchemaBuilder
+final class SchemaBuilder
 {
     private TypeResolver $typeResolver;
     private bool $enableValidation;

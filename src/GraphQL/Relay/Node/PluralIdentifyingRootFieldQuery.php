@@ -9,6 +9,7 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
 use Overblog\GraphQLBundle\Definition\Resolver\QueryInterface;
+
 use function call_user_func_array;
 
 final class PluralIdentifyingRootFieldQuery implements QueryInterface, AliasedInterface

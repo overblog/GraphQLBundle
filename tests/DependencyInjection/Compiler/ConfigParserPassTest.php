@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParserTest;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
@@ -20,11 +21,13 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+
 use function preg_quote;
 use function sprintf;
+
 use const DIRECTORY_SEPARATOR;
 
-class ConfigParserPassTest extends TestCase
+final class ConfigParserPassTest extends TestCase
 {
     private ContainerBuilder $container;
     private ConfigParserPass $compilerPass;
@@ -49,15 +52,11 @@ class ConfigParserPassTest extends TestCase
         $this->processCompilerPass($this->getMappingConfig('yaml'));
     }
 
-    public function testBrokenXmlOnPrepend(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('#Unable to parse file "(.*)'.preg_quote(DIRECTORY_SEPARATOR).'broken.types.xml"\.#');
-        $this->processCompilerPass($this->getMappingConfig('xml'));
-    }
-
     public function testPreparseOnPrepend(): void
     {
+        if (!MetadataParserTest::isDoctrineAnnotationInstalled()) {
+            $this->markTestSkipped('doctrine/annotations not installed. Skipping test.');
+        }
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('The path "overblog_graphql_types.Type._object_config.fields" should have at least 1 element(s) defined.');
         $this->processCompilerPass($this->getMappingConfig('annotation'));
@@ -79,6 +78,7 @@ class ConfigParserPassTest extends TestCase
 
     /**
      * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
+     *
      * @runInSeparateProcess
      */
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
@@ -566,8 +566,8 @@ class ConfigParserPassTest extends TestCase
 
     private function processCompilerPass(array $configs, ?ConfigParserPass $compilerPass = null, ?ContainerBuilder $container = null): void
     {
-        $container = $container ?? $this->container;
-        $compilerPass = $compilerPass ?? $this->compilerPass;
+        $container ??= $this->container;
+        $compilerPass ??= $this->compilerPass;
         $container->setParameter('overblog_graphql.config', $configs);
         $compilerPass->process($container);
     }

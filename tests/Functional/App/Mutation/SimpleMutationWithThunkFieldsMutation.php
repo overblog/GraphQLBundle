@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Mutation;
 
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 
-class SimpleMutationWithThunkFieldsMutation
+final class SimpleMutationWithThunkFieldsMutation
 {
     private static bool $hasMutate = false;
 

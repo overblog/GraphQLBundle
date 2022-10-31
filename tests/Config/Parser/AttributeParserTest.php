@@ -7,9 +7,11 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 
 /**
+ * @group legacy
+ *
  * @requires PHP 8.
  */
-class AttributeParserTest extends MetadataParserTest
+final class AttributeParserTest extends MetadataParserTest
 {
     public function parser(string $method, ...$args)
     {

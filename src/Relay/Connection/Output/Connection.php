@@ -9,18 +9,26 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
 use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
 
+/**
+ * @phpstan-template T
+ *
+ * @phpstan-implements ConnectionInterface<T>
+ */
 class Connection implements ConnectionInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
 
-    /** @var EdgeInterface[] */
-    protected array $edges;
+    /** @phpstan-var iterable<EdgeInterface<T>> */
+    protected iterable $edges;
 
     protected ?PageInfoInterface $pageInfo;
 
     /** @var int|Promise|null Total count or promise that returns the total count */
     protected $totalCount = null;
 
+    /**
+     * @param EdgeInterface<T>[] $edges
+     */
     public function __construct(array $edges = [], PageInfoInterface $pageInfo = null)
     {
         $this->edges = $edges;
@@ -30,7 +38,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function getEdges(): array
+    public function getEdges(): iterable
     {
         return $this->edges;
     }

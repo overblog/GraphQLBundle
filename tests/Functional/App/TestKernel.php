@@ -6,11 +6,13 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App;
 
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
+
 use function sprintf;
 use function sys_get_temp_dir;
 
@@ -21,10 +23,11 @@ final class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         yield new FrameworkBundle();
         yield new SecurityBundle();
+        yield new MonologBundle();
         yield new OverblogGraphQLBundle();
     }
 

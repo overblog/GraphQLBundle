@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+
 use function array_key_exists;
 use function is_array;
 use function is_null;
 
-class EnumTypeDefinition extends TypeDefinition
+final class EnumTypeDefinition extends TypeDefinition
 {
     public function getDefinition(): ArrayNodeDefinition
     {
@@ -20,6 +21,16 @@ class EnumTypeDefinition extends TypeDefinition
         $node
             ->children()
                 ->append($this->nameSection())
+                ->scalarNode('enumClass')
+                    ->validate()
+                        ->ifTrue(fn () => PHP_VERSION_ID < 80100)
+                        ->thenInvalid('The enumClass option requires PHP 8.1 or higher.')
+                    ->end()
+                    ->validate()
+                        ->ifTrue(fn ($v) => !class_exists($v))
+                        ->thenInvalid('The specified enum Class "%s" does not exist.')
+                    ->end()
+                ->end()
                 ->arrayNode('values')
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()
@@ -48,8 +59,6 @@ class EnumTypeDefinition extends TypeDefinition
                             ->append($this->deprecationReasonSection())
                         ->end()
                     ->end()
-                    ->isRequired()
-                    ->requiresAtLeastOneElement()
                 ->end()
                 ->append($this->descriptionSection())
             ->end();

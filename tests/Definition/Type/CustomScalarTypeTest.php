@@ -14,10 +14,11 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+
 use function sprintf;
 use function uniqid;
 
-class CustomScalarTypeTest extends TestCase
+final class CustomScalarTypeTest extends TestCase
 {
     public function testScalarTypeConfig(): void
     {
@@ -28,6 +29,7 @@ class CustomScalarTypeTest extends TestCase
     public function testWithoutScalarTypeConfig(): void
     {
         $genericFunc = fn ($value) => $value;
+        /** @phpstan-ignore-next-line */
         $type = new CustomScalarType([
             'serialize' => $genericFunc,
             'parseValue' => $genericFunc,
@@ -56,16 +58,7 @@ class CustomScalarTypeTest extends TestCase
             ScalarType::class,
             $got
         ));
-        $type = new CustomScalarType(['name' => $name, 'scalarType' => $scalarType]);
-        $type->assertValid();
-    }
-
-    public function testAssertValidSerializeFunctionIsRequired(): void
-    {
-        $this->expectException(InvariantViolation::class);
-        $name = uniqid('custom');
-        $this->expectExceptionMessage($name.' must provide "serialize" function. If this custom Scalar is also used as an input type, ensure "parseValue" and "parseLiteral" functions are also provided.');
-        $type = new CustomScalarType(['name' => $name]);
+        $type = new CustomScalarType(['name' => $name, 'scalarType' => $scalarType, 'serialize' => fn (mixed $input): mixed => '']);
         $type->assertValid();
     }
 

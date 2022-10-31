@@ -15,6 +15,7 @@ use GraphQL\Executor\ExecutionResult;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\Event\Events;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use function array_map;
 
 class ErrorHandler
@@ -95,10 +96,10 @@ class ErrorHandler
                 continue;
             }
 
-            // recreate a error with converted exception
+            // recreate an error with converted exception
             $errorWithConvertedException = new GraphQLError(
                 $error->getMessage(),
-                $error->nodes,
+                $error->nodes, // @phpstan-ignore-line
                 $error->getSource(),
                 $error->getPositions(),
                 $error->path,

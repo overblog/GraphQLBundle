@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar
 use DateTimeInterface;
 use GraphQL\Language\AST\Node;
 use Overblog\GraphQLBundle\Annotation as GQL;
+
 use function explode;
 use function implode;
 
@@ -16,7 +17,7 @@ use function implode;
  */
 #[GQL\Scalar]
 #[GQL\Description('The galaxy coordinates scalar')]
-class GalaxyCoordinates
+final class GalaxyCoordinates
 {
     /**
      * @return string

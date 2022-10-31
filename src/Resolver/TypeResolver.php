@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\TypeLoadedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use function sprintf;
 
 class TypeResolver extends AbstractResolver
@@ -51,6 +52,9 @@ class TypeResolver extends AbstractResolver
         if (!isset($this->cache[$alias])) {
             $type = $this->baseType($alias);
             $this->cache[$alias] = $type;
+            if (isset($type->name) && $type->name !== $alias) {
+                $this->cache[$type->name] = $type;
+            }
         }
 
         return $this->cache[$alias];

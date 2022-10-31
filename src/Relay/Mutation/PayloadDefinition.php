@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+
 use function array_merge;
 use function is_array;
 use function preg_replace;

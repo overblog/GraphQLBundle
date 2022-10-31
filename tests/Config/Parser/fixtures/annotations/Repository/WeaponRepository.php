@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Provider(targetQueryTypes={"RootQuery2"}, targetMutationTypes="RootMutation2")
  */
 #[GQL\Provider(targetQueryTypes: ['RootQuery2'], targetMutationTypes: 'RootMutation2')]
-class WeaponRepository
+final class WeaponRepository
 {
     /**
      * @GQL\Query

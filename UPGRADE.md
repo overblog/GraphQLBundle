@@ -1,3 +1,23 @@
+UPGRADE FROM 0.14 to 1.0
+=========================
+
+* Removed `use_experimental_executor` configuraton option.
+* Signature of TypeInterface changed from `string $name = null, string $resolveType` to `string $resolveType, ?string $name = null`
+* Removed deprecated `targetType` from `Query`
+* Removed deprecated `fieldBuilder` from `Field`
+* Removed deprecated `argsBuilder` from `Field`
+* Removed deprecated `args` from `Field`
+* Removed deprecated `builders` from `Type`
+* Removed deprecated `values` from `Enum`
+* Removed deprecated `resolver_maps` configuration option
+* Removed `request_files` from context, use `request` object instead
+* Removed deprecated `builder` from `FieldsBuilder`, use `name` attribute instead
+* Removed deprecated `builderConfig` from `FieldsBuilder`, use `config` attribute instead
+* Removed deprecated autowire for type, resolver or mutation
+  implementing `Symfony\Component\DependencyInjection::setContainer`, use  Symfony native autowire config instead
+* All classes are now final. If you need an extension point, try to use composition, 
+  implementing the interface or raise an issue.
+
 UPGRADE FROM 0.13 to 0.14
 =========================
 
@@ -14,6 +34,7 @@ UPGRADE FROM 0.13 to 0.14
 - [Rename `ResolverInterface` to `QueryInterface`](#rename-resolverinterface-to-queryinterface)
 - [Remove Argument deprecated method](#remove-argument-deprecated-method)
 - [Remove ConnectionBuilder deprecated class](#remove-connectionbuilder-deprecated-class)
+- [Remove XML type configuration](#remove-xml-type-configuration-support)
 
 ### Customize the cursor encoder of the edges of a connection
 
@@ -215,6 +236,10 @@ Method `Overblog\GraphQLBundle\Definition\Argument::getRawArguments` is replaced
 
 Class `Overblog\GraphQLBundle\Relay\Connection\Output\ConnectionBuilder` is replaced by
 `Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder`.
+
+### Remove XML type configuration support
+
+XML type configuration is no longer supported.
 
 UPGRADE FROM 0.12 to 0.13
 =======================

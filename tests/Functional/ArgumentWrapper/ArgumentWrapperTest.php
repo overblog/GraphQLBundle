@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\ArgumentWrapper;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class ArgumentWrapperTest extends TestCase
+final class ArgumentWrapperTest extends TestCase
 {
     protected function setUp(): void
     {

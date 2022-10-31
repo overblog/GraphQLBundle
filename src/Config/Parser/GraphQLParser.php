@@ -15,19 +15,19 @@ use SplFileInfo;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function array_keys;
 use function array_pop;
 use function call_user_func;
 use function explode;
 use function file_get_contents;
-use function get_class;
 use function in_array;
 use function preg_replace;
 use function sprintf;
 use function trim;
 use function ucfirst;
 
-class GraphQLParser implements ParserInterface
+final class GraphQLParser implements ParserInterface
 {
     private const DEFINITION_TYPE_MAPPING = [
         NodeKind::OBJECT_TYPE_DEFINITION => 'object',
@@ -41,7 +41,7 @@ class GraphQLParser implements ParserInterface
     public static function parse(SplFileInfo $file, ContainerBuilder $container, array $configs = []): array
     {
         $container->addResource(new FileResource($file->getRealPath()));
-        $content = trim(file_get_contents($file->getPathname()));
+        $content = trim((string) file_get_contents($file->getPathname()));
         $typesConfig = [];
 
         // allow empty files
@@ -59,8 +59,16 @@ class GraphQLParser implements ParserInterface
              * @var ObjectTypeDefinitionNode|InputObjectTypeDefinitionNode|EnumTypeDefinitionNode $typeDef
              */
             if (isset($typeDef->kind) && in_array($typeDef->kind, array_keys(self::DEFINITION_TYPE_MAPPING))) {
+                /**
+                 * @var class-string $class
+                 */
                 $class = sprintf('\\%s\\GraphQL\\ASTConverter\\%sNode', __NAMESPACE__, ucfirst(self::DEFINITION_TYPE_MAPPING[$typeDef->kind]));
-                $typesConfig[$typeDef->name->value] = call_user_func([$class, 'toConfig'], $typeDef);
+                $astConverterCallable = [$class, 'toConfig'];
+                if (is_callable($astConverterCallable)) {
+                    $typesConfig[$typeDef->name->value] = call_user_func($astConverterCallable, $typeDef);
+                } else {
+                    self::throwUnsupportedDefinitionNode($typeDef);
+                }
             } else {
                 self::throwUnsupportedDefinitionNode($typeDef);
             }
@@ -71,7 +79,7 @@ class GraphQLParser implements ParserInterface
 
     private static function throwUnsupportedDefinitionNode(DefinitionNode $typeDef): void
     {
-        $path = explode('\\', get_class($typeDef));
+        $path = explode('\\', $typeDef::class);
         throw new InvalidArgumentException(
             sprintf(
                 '%s definition is not supported right now.',

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser;
 
-class ClassesTypesMap
+final class ClassesTypesMap
 {
     /**
      * @var array<string, array{class: string, type: string}>
      */
-    protected array $classesMap = [];
+    private array $classesMap = [];
 
     public function hasType(string $gqlType): bool
     {

@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\GraphQL\ASTConverter;
 
 use GraphQL\Language\AST\Node;
 
-class EnumNode implements NodeInterface
+final class EnumNode implements NodeInterface
 {
     public static function toConfig(Node $node): array
     {

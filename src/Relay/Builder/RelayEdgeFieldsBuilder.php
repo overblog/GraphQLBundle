@@ -6,9 +6,10 @@ namespace Overblog\GraphQLBundle\Relay\Builder;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+
 use function is_string;
 
-class RelayEdgeFieldsBuilder implements MappingInterface
+final class RelayEdgeFieldsBuilder implements MappingInterface
 {
     public function toMappingDefinition(array $config): array
     {

@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 
 use function array_filter;
 
-class Characters
+final class Characters
 {
     public const TYPE_HUMAN = 'human';
     public const TYPE_DIREWOLF = 'direwolf';

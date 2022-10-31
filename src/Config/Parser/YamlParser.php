@@ -11,11 +11,12 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Yaml;
+
 use function file_get_contents;
 use function is_array;
 use function sprintf;
 
-class YamlParser implements ParserInterface
+final class YamlParser implements ParserInterface
 {
     private static Parser $yamlParser;
 

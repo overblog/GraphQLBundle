@@ -7,11 +7,11 @@ namespace Overblog\GraphQLBundle\Relay\Mutation;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query;
+
 use function is_array;
 use function is_string;
 use function json_encode;
 use function sprintf;
-use function strpos;
 use function substr;
 
 final class MutationFieldDefinition implements MappingInterface
@@ -51,7 +51,7 @@ final class MutationFieldDefinition implements MappingInterface
      */
     private function ensureValidMutateAndGetPayloadConfiguration($mutateAndGetPayload): void
     {
-        if (is_string($mutateAndGetPayload) && 0 === strpos($mutateAndGetPayload, '@=')) {
+        if (is_string($mutateAndGetPayload) && str_starts_with($mutateAndGetPayload, '@=')) {
             return;
         }
 

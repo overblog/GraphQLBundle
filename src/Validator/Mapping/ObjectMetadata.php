@@ -9,21 +9,17 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadataInterface;
 
-class ObjectMetadata extends ClassMetadata
+final class ObjectMetadata extends ClassMetadata
 {
     public function __construct(ValidationNode $object)
     {
         parent::__construct($object->getName());
     }
 
-    /**
-     * @param string $property
-     *
-     * @return $this|ObjectMetadata
-     */
-    public function addPropertyConstraint($property, Constraint $constraint)
+    public function addPropertyConstraint(string $property, Constraint $constraint): static
     {
         if (!isset($this->properties[$property])) {
+            /** @phpstan-ignore-next-line */
             $this->properties[$property] = new PropertyMetadata($property);
 
             $this->addPropertyMetadata($this->properties[$property]);
@@ -39,7 +35,7 @@ class ObjectMetadata extends ClassMetadata
     private function addPropertyMetadata(PropertyMetadataInterface $metadata): void
     {
         $property = $metadata->getPropertyName();
-
+        /** @phpstan-ignore-next-line */
         $this->members[$property][] = $metadata;
     }
 }

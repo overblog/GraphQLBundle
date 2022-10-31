@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsGran
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class IsGrantedTest extends TestCase
+final class IsGrantedTest extends TestCase
 {
     protected function getFunctions()
     {

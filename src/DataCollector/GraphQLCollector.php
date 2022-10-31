@@ -14,13 +14,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 use Throwable;
+
 use function count;
 use function microtime;
 
-class GraphQLCollector extends DataCollector
+final class GraphQLCollector extends DataCollector
 {
     /**
-     * GraphQL Batchs executed.
+     * GraphQL Batches executed.
      */
     protected array $batches = [];
 
@@ -90,7 +91,7 @@ class GraphQLCollector extends DataCollector
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'graphql';
     }

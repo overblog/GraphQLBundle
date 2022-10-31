@@ -9,12 +9,12 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage as BaseExpressionLan
 use Symfony\Component\ExpressionLanguage\Lexer;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\Token;
+
 use function array_merge;
 use function strlen;
-use function strpos;
 use function substr;
 
-class ExpressionLanguage extends BaseExpressionLanguage
+final class ExpressionLanguage extends BaseExpressionLanguage
 {
     // TODO (murtukov): make names conditional
     public const KNOWN_NAMES = ['value', 'args', 'context', 'info', 'object', 'validator', 'errors', 'childrenComplexity', 'typeName', 'fieldName'];
@@ -35,10 +35,8 @@ class ExpressionLanguage extends BaseExpressionLanguage
     /**
      * @param string|Expression $expression
      * @param array             $names
-     *
-     * @return string
      */
-    public function compile($expression, $names = [])
+    public function compile($expression, $names = []): string
     {
         return parent::compile($expression, array_merge($names, $this->globalNames));
     }
@@ -126,7 +124,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function stringHasTrigger(string $maybeExpression): bool
     {
-        return 0 === strpos($maybeExpression, self::EXPRESSION_TRIGGER);
+        return str_starts_with($maybeExpression, self::EXPRESSION_TRIGGER);
     }
 
     /**
@@ -139,7 +137,7 @@ class ExpressionLanguage extends BaseExpressionLanguage
      */
     public static function unprefixExpression(string $expression)
     {
-        $string = substr($expression, strlen(self::EXPRESSION_TRIGGER));
+        $string = substr($expression, strlen(self::EXPRESSION_TRIGGER)) ?: '';
 
         return '' !== $string ? $string : $expression;
     }

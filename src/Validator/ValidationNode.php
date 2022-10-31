@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Validator;
 
 use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\NamedType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Definition\ResolverArgs;
+
 use function in_array;
 
 /**
@@ -22,7 +24,7 @@ use function in_array;
  * It also contains variables of the resolver context, in which this class was
  * instantiated.
  */
-class ValidationNode
+final class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
 
@@ -30,9 +32,9 @@ class ValidationNode
     private ?string $__fieldName;
 
     /**
-     * @var ObjectType|InputObjectType|Type
+     * @var ObjectType|InputObjectType
      */
-    private Type $__type;
+    private NamedType $__type;
 
     /**
      * @var ValidationNode[]
@@ -45,7 +47,7 @@ class ValidationNode
     private ?ResolverArgs $__resolverArgs;
 
     public function __construct(
-        Type $type,
+        ObjectType|InputObjectType $type,
         string $field = null,
         ?ValidationNode $parent = null,
         ?ResolverArgs $resolverArgs = null

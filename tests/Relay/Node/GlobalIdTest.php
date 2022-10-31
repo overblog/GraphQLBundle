@@ -6,11 +6,12 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use PHPUnit\Framework\TestCase;
+
 use function base64_decode;
 use function base64_encode;
 use function sprintf;
 
-class GlobalIdTest extends TestCase
+final class GlobalIdTest extends TestCase
 {
     public function testToGlobalId(): void
     {

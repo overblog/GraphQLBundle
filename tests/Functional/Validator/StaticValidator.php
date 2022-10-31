@@ -8,7 +8,7 @@ use DateTime;
 use Exception;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class StaticValidator
+final class StaticValidator
 {
     /**
      * @param mixed $value

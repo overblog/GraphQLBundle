@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
+use Doctrine\Common\Annotations\Reader;
+use Doctrine\ORM\Mapping\Column;
 use Exception;
+use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Enum\Color;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+
 use function sprintf;
-use function strpos;
 use function substr;
 
 abstract class MetadataParserTest extends TestCase
@@ -45,12 +48,22 @@ abstract class MetadataParserTest extends TestCase
     {
         parent::setup();
 
+        if (!self::isDoctrineAnnotationInstalled()) {
+            $this->markTestSkipped('doctrine/annotations are not installed');
+        }
+
         $files = [];
         $rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__.'/fixtures/annotations/'));
         foreach ($rii as $file) {
             if (!$file->isDir() && '.php' === substr($file->getPathname(), -4)) {
                 foreach ($this->ignoredPaths as $ignoredPath) {
-                    if (false !== strpos($file->getPathName(), $ignoredPath)) {
+                    if (str_contains($file->getPathName(), $ignoredPath)) {
+                        continue 2;
+                    }
+                    if (!self::isDoctrineOrmInstalled() && 'Lightsaber.php' === $file->getFileName()) {
+                        continue 2;
+                    }
+                    if (PHP_VERSION_ID < 80100 && 'Color.php' === $file->getFileName()) {
                         continue 2;
                     }
                 }
@@ -68,6 +81,16 @@ abstract class MetadataParserTest extends TestCase
         foreach ($files as $file) {
             $this->config += self::cleanConfig($this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
         }
+    }
+
+    public static function isDoctrineAnnotationInstalled(): bool
+    {
+        return interface_exists(Reader::class);
+    }
+
+    public static function isDoctrineOrmInstalled(): bool
+    {
+        return class_exists(Column::class);
     }
 
     protected function expect(string $name, string $type, array $config = []): void
@@ -93,10 +116,10 @@ abstract class MetadataParserTest extends TestCase
         // Test an interface
         $this->expect('Character', 'interface', [
             'description' => 'The character interface',
-            'resolveType' => "@=resolver('character_type', [value])",
+            'resolveType' => "@=query('character_type', [value])",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
             ],
         ]);
 
@@ -106,7 +129,7 @@ abstract class MetadataParserTest extends TestCase
             'interfaces' => ['Character'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'race' => ['type' => 'Race'],
             ],
         ]);
@@ -117,7 +140,7 @@ abstract class MetadataParserTest extends TestCase
             'isTypeOf' => "@=isTypeOf('App\Entity\Droid')",
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'memory' => ['type' => 'Int!'],
                 'planet_allowedPlanets' => [
                     'type' => '[Planet]',
@@ -143,7 +166,7 @@ abstract class MetadataParserTest extends TestCase
             'fieldsDefaultAccess' => '@=isAuthenticated()',
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'realName' => ['type' => 'String!', 'access' => "@=hasRole('SITH_LORD')"],
                 'location' => ['type' => 'String!', 'public' => "@=hasRole('SITH_LORD')"],
                 'currentMaster' => ['type' => 'Sith', 'resolve' => "@=service('master_resolver').getMaster(value)"],
@@ -172,19 +195,7 @@ abstract class MetadataParserTest extends TestCase
                         'builder' => 'PlanetFilterArgBuilder',
                         'config' => ['option2' => 'value2'],
                     ],
-                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
-                ],
-                'notesDeprecated' => [
-                    'builder' => 'NoteFieldBuilder',
-                    'builderConfig' => ['option1' => 'value1'],
-                ],
-                'closestPlanetDeprecated' => [
-                    'type' => 'Planet',
-                    'argsBuilder' => [
-                        'builder' => 'PlanetFilterArgBuilder',
-                        'config' => ['option2' => 'value2'],
-                    ],
-                    'resolve' => "@=resolver('closest_planet', [args['filter']])",
+                    'resolve' => "@=query('closest_planet', [args['filter']])",
                 ],
             ],
         ]);
@@ -227,7 +238,7 @@ abstract class MetadataParserTest extends TestCase
     {
         $this->expect('WithArmor', 'interface', [
             'description' => 'The armored interface',
-            'resolveType' => '@=resolver(\'character_type\', [value])',
+            'resolveType' => '@=query(\'character_type\', [value])',
         ]);
     }
 
@@ -242,6 +253,18 @@ abstract class MetadataParserTest extends TestCase
                 'TWILEK' => ['value' => '4'],
             ],
         ]);
+
+        if (PHP_VERSION_ID >= 80100) {
+            $this->expect('Color', 'enum', [
+                'enumClass' => Color::class,
+                'values' => [
+                    'RED' => ['value' => 'RED', 'description' => 'The color red'],
+                    'GREEN' => ['value' => 'GREEN'],
+                    'BLUE' => ['value' => 'BLUE'],
+                    'YELLOW' => ['value' => 'YELLOW'],
+                ],
+            ]);
+        }
     }
 
     public function testUnion(): void
@@ -272,7 +295,7 @@ abstract class MetadataParserTest extends TestCase
             'interfaces' => ['Character', 'WithArmor'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
-                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=resolver('App\\MyResolver::getFriends')"],
+                'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
                 'planet_armorResistance' => [
                     'type' => 'Int!',
                     'resolve' => '@=call(service(\'Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository\').getArmorResistance, arguments({}, args))',
@@ -395,6 +418,10 @@ abstract class MetadataParserTest extends TestCase
 
     public function testDoctrineGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
+
         $this->expect('Lightsaber', 'object', [
             'fields' => [
                 'color' => ['type' => 'String!'],
@@ -495,6 +522,9 @@ abstract class MetadataParserTest extends TestCase
 
     public function testInvalidDoctrineRelationGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineRelationGuessing.php';
             $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
@@ -507,6 +537,9 @@ abstract class MetadataParserTest extends TestCase
 
     public function testInvalidDoctrineTypeGuessing(): void
     {
+        if (!self::isDoctrineOrmInstalled()) {
+            $this->markTestSkipped('doctrine/orm is not installed');
+        }
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidDoctrineTypeGuessing.php';
             $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);

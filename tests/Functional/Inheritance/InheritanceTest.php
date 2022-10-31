@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Inheritance;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class InheritanceTest extends TestCase
+final class InheritanceTest extends TestCase
 {
     /** @var array */
     private $config;

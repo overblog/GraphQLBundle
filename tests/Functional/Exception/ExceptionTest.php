@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Exception;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class ExceptionTest extends TestCase
+final class ExceptionTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -30,7 +30,6 @@ class ExceptionTest extends TestCase
         $expectedErrors = [
             [
                 'message' => 'Invalid argument exception',
-                'extensions' => ['category' => 'user'],
                 'locations' => [
                     [
                         'line' => 2,

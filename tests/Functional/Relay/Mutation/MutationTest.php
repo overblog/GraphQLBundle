@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/mutation/__tests__/mutation.js
  */
-class MutationTest extends TestCase
+final class MutationTest extends TestCase
 {
     protected function setUp(): void
     {

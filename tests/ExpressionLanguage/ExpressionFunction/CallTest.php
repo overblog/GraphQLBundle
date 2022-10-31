@@ -6,10 +6,11 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Call;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+
 use function sprintf;
 use function str_replace;
 
-class CallTest extends TestCase
+final class CallTest extends TestCase
 {
     protected function getFunctions(): array
     {
@@ -30,7 +31,7 @@ class CallTest extends TestCase
     {
         // Compile
         $this->assertEquals('AA', eval('
-            $class = new '.self::class.'(); 
+            $class = new '.self::class.'();
             return '.$this->expressionLanguage->compile('call(class.method, ["A"])', ['class']).';
          '));
 

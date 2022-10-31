@@ -9,6 +9,7 @@ use Error;
 use Overblog\GraphQLBundle\Tests\Functional\App\Mutation\SimpleMutationWithThunkFieldsMutation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpKernel\Kernel;
+
 use function file_exists;
 use function preg_match;
 use function preg_quote;
@@ -17,7 +18,7 @@ use function spl_autoload_unregister;
 use function sprintf;
 use function sys_get_temp_dir;
 
-class AccessTest extends TestCase
+final class AccessTest extends TestCase
 {
     private Closure $loader;
 
@@ -99,7 +100,6 @@ class AccessTest extends TestCase
                     'warnings' => [
                         [
                             'message' => 'Access denied to this field.',
-                            'extensions' => ['category' => 'user'],
                             'locations' => [['line' => 1, 'column' => 45]],
                             'path' => ['user', 'isEnabled'],
                         ],
@@ -125,7 +125,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [['line' => 1, 'column' => 16]],
                         'path' => ['user', 'name'],
                     ],
@@ -146,7 +145,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 2,
@@ -217,7 +215,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -302,7 +299,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 3,
@@ -325,7 +321,6 @@ class AccessTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Access denied to this field.',
-                    'extensions' => ['category' => 'user'],
                     'locations' => [
                         [
                             'line' => 2,
@@ -356,7 +351,6 @@ class AccessTest extends TestCase
                 'warnings' => [
                     [
                         'message' => 'Access denied to this field.',
-                        'extensions' => ['category' => 'user'],
                         'locations' => [
                             [
                                 'line' => 1,

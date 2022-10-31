@@ -6,12 +6,11 @@ namespace Overblog\GraphQLBundle\Tests\Functional\MultipleQueries;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class MultipleQueriesTest extends TestCase
+final class MultipleQueriesTest extends TestCase
 {
     private const REQUIRED_FAILS_ERRORS = [
         [
             'message' => 'Internal server Error',
-            'extensions' => ['category' => 'internal'],
             'locations' => [
                 [
                     'line' => 2,
@@ -28,7 +27,6 @@ class MultipleQueriesTest extends TestCase
         'errors' => [
             [
                 'message' => 'Internal server Error',
-                'extensions' => ['category' => 'internal'],
                 'locations' => [
                     [
                         'line' => 2,

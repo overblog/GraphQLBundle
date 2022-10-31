@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
-class TypeResolverTest extends AbstractResolverTest
+final class TypeResolverTest extends AbstractResolverTest
 {
     protected function createResolver(): TypeResolver
     {
@@ -18,14 +18,9 @@ class TypeResolverTest extends AbstractResolverTest
     protected function getResolverSolutionsMapping(): array
     {
         return [
-            'Toto' => ['factory' => fn () => $this->createObjectType(['name' => 'Toto']), 'aliases' => ['foo']],
-            'Tata' => ['factory' => fn () => $this->createObjectType(['name' => 'Tata']), 'aliases' => ['bar']],
+            'Toto' => ['factory' => fn () => new ObjectType(['name' => 'Toto', 'fields' => []]), 'aliases' => ['foo']],
+            'Tata' => ['factory' => fn () => new ObjectType(['name' => 'Tata', 'fields' => []]), 'aliases' => ['bar']],
         ];
-    }
-
-    public function createObjectType(array $config): ObjectType
-    {
-        return new ObjectType($config);
     }
 
     public function testResolveKnownType(): void

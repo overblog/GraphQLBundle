@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\Exception\EvaluatorIsNotAllowedExc
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Mutation;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class MutationTest extends TestCase
+final class MutationTest extends TestCase
 {
     protected function getFunctions()
     {

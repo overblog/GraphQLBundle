@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\HasAny
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class HasAnyRoleTest extends TestCase
+final class HasAnyRoleTest extends TestCase
 {
     protected function getFunctions()
     {

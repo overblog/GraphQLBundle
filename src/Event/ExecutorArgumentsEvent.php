@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Event;
 use ArrayObject;
 use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Symfony\Contracts\EventDispatcher\Event;
+
 use function microtime;
 
 final class ExecutorArgumentsEvent extends Event
@@ -18,13 +19,9 @@ final class ExecutorArgumentsEvent extends Event
     private ?array $variableValue = null;
     private ?string $operationName = null;
     private ?float $startTime = null;
-
-    /** @var mixed */
-    private $rootValue;
+    private mixed $rootValue;
 
     /**
-     * @param mixed|null $rootValue
-     *
      * @return static
      */
     public static function create(
@@ -32,11 +29,11 @@ final class ExecutorArgumentsEvent extends Event
         ExtensibleSchema $schema,
         string $requestString,
         ArrayObject $contextValue,
-        $rootValue = null,
+        mixed $rootValue = null,
         array $variableValue = null,
         string $operationName = null
     ): self {
-        $instance = new static();
+        $instance = new self();
         $instance->setSchemaName($schemaName);
         $instance->setSchema($schema);
         $instance->setRequestString($requestString);
@@ -64,10 +61,7 @@ final class ExecutorArgumentsEvent extends Event
         $this->contextValue = $contextValue;
     }
 
-    /**
-     * @param mixed $rootValue
-     */
-    public function setRootValue($rootValue = null): void
+    public function setRootValue(mixed $rootValue = null): void
     {
         $this->rootValue = $rootValue;
     }
@@ -107,7 +101,7 @@ final class ExecutorArgumentsEvent extends Event
         return $this->requestString;
     }
 
-    public function getRootValue(): ?array
+    public function getRootValue(): mixed
     {
         return $this->rootValue;
     }

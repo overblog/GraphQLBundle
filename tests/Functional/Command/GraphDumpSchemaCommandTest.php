@@ -8,13 +8,14 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function file_get_contents;
 use function json_decode;
 use function strcmp;
 use function trim;
 use function usort;
 
-class GraphDumpSchemaCommandTest extends TestCase
+final class GraphDumpSchemaCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private string $cacheDir;
@@ -129,8 +130,8 @@ class GraphDumpSchemaCommandTest extends TestCase
         $this->commandTester->execute($input);
 
         $this->assertSame($expectedStatusCode, $this->commandTester->getStatusCode());
-        $expected = trim(file_get_contents($expectedFile));
-        $actual = trim(file_get_contents($actualFile));
+        $expected = trim((string) file_get_contents($expectedFile));
+        $actual = trim((string) file_get_contents($actualFile));
         if ('json' === $format) {
             $expected = json_decode($expected, true);
             $actual = json_decode($actual, true);

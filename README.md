@@ -3,14 +3,13 @@ OverblogGraphQLBundle
 
 ![CI](https://github.com/overblog/GraphQLBundle/workflows/CI/badge.svg?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/7ksxlcgwt40q74hv/branch/master?svg=true)](https://ci.appveyor.com/project/overblog/graphqlbundle/branch/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/overblog/GraphQLBundle/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/overblog/GraphQLBundle/badge.svg?branch=master)](https://coveralls.io/github/overblog/GraphQLBundle?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/overblog/graphql-bundle/version)](https://packagist.org/packages/overblog/graphql-bundle)
 [![Latest Unstable Version](https://poser.pugx.org/overblog/graphql-bundle/v/unstable)](https://packagist.org/packages/overblog/graphql-bundle)
 [![Total Downloads](https://poser.pugx.org/overblog/graphql-bundle/downloads)](https://packagist.org/packages/overblog/graphql-bundle)
 
 This Symfony bundle provides integration of [GraphQL](https://facebook.github.io/graphql/) using [webonyx/graphql-php](https://github.com/webonyx/graphql-php)
-and [GraphQL Relay](https://facebook.github.io/relay/docs/en/graphql-server-specification.html).
+and [GraphQL Relay](https://relay.dev/docs/guides/graphql-server-specification/).
 It also supports:
 * batching with [ReactRelayNetworkLayer](https://github.com/nodkz/react-relay-network-layer)
 * batching with [Apollo GraphQL](https://www.apollographql.com/docs/react/api/link/apollo-link-batch-http/)
@@ -19,10 +18,10 @@ It also supports:
 Browse your version documentation:
 
 * [1.0 (DEV)](https://github.com/overblog/GraphQLBundle/blob/master/README.md)
-* [0.14 (DEV)](https://github.com/overblog/GraphQLBundle/blob/0.14/README.md)
+* [0.14 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.14/README.md)
 * [0.13 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.13/README.md)
-* [0.12 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
-* [0.11 (STABLE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
+* [0.12 (DEPRECATE)](https://github.com/overblog/GraphQLBundle/blob/0.12/README.md)
+* [0.11 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.11/README.md)
 * [0.10 (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.10/README.md)
 * [0.9  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.9/README.md)
 * [0.8  (OBSOLETE)](https://github.com/overblog/GraphQLBundle/blob/0.8/README.md)

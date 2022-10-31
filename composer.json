@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "license": "MIT",
     "description": "This bundle provides tools to build a GraphQL server in your Symfony App.",
-    "keywords": ["GraphQL", "Relay"],
+    "keywords": ["GraphQL","Relay"],
     "authors": [
         {
             "name": "Overblog",
@@ -17,28 +17,34 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Overblog\\GraphQLBundle\\Benchmarks\\": "benchmarks/",
             "Overblog\\GraphQLBundle\\Tests\\": "tests/"
         }
     },
     "config": {
         "bin-dir": "bin",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "composer/package-versions-deprecated": true
+        }
     },
     "require": {
-        "php": ">=7.4",
+        "php": "^8.0",
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "psr/log": "^1.0",
-        "symfony/config": "^4.4 || ^5.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0",
-        "symfony/event-dispatcher": "^4.4 || ^5.0",
-        "symfony/expression-language": "^4.4 || ^5.0",
-        "symfony/framework-bundle": "^4.4 || ^5.0",
-        "symfony/options-resolver": "^4.4 || ^5.0",
-        "symfony/property-access": "^4.4 || ^5.0",
-        "webonyx/graphql-php": ">=14.5"
+        "phpdocumentor/type-resolver": "^1.6.1",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "symfony/config": "^5.4 || ^6.0",
+        "symfony/dependency-injection": "^5.4 || ^6.0",
+        "symfony/event-dispatcher": "^5.4 || ^6.0",
+        "symfony/expression-language": "^5.4 || ^6.0",
+        "symfony/framework-bundle": "^5.4 || ^6.0",
+        "symfony/http-foundation": "^5.4 || ^6.0",
+        "symfony/http-kernel": "^5.4 || ^6.0",
+        "symfony/options-resolver": "^5.4 || ^6.0",
+        "symfony/property-access": "^5.4 || ^6.0",
+        "webonyx/graphql-php": "dev-master"
     },
     "suggest": {
         "nelmio/cors-bundle": "For more flexibility when using CORS prefight",
@@ -47,24 +53,33 @@
         "symfony/translation": "If you want validation error messages to be translated."
     },
     "require-dev": {
+        "doctrine/annotations": "^1.13",
         "doctrine/orm": "^2.5",
+        "monolog/monolog": "^2.8.0",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "^0.12.58",
-        "phpstan/phpstan-phpunit": "^0.12.11",
-        "phpstan/phpstan-symfony": "^0.12.6",
-        "phpunit/phpunit": "^9.2",
+        "phpstan/phpstan": "1.8.4",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
+        "phpunit/phpunit": "^9.5.10",
         "react/promise": "^2.5",
-        "symfony/asset": "^4.4 || ^5.0",
-        "symfony/browser-kit": "^4.4 || ^5.0",
-        "symfony/console": "^4.4 || ^5.0",
-        "symfony/css-selector": "^4.4 || ^5.0",
-        "symfony/phpunit-bridge": "^4.4 || ^5.0",
-        "symfony/process": "^4.4 || ^5.0",
-        "symfony/security-bundle": "^4.4 || ^5.0",
-        "symfony/validator": "^4.4 || ^5.0",
-        "symfony/var-dumper": "^4.4 || ^5.0",
-        "symfony/yaml": "^4.4 || ^5.0",
+        "symfony/asset": "^5.4 || ^6.0",
+        "symfony/browser-kit": "^5.4 || ^6.0",
+        "symfony/css-selector": "^5.4 || ^6.0",
+        "symfony/console": "^5.4 || ^6.0",
+        "symfony/dom-crawler": "^5.4 || ^6.0",
+        "symfony/finder": "^5.4 || ^6.0",
+        "symfony/monolog-bundle": "^3.7",
+        "symfony/phpunit-bridge": "^6.0",
+        "symfony/process": "^5.4 || ^6.0",
+        "symfony/routing": "^5.4 || ^6.0",
+        "symfony/security-bundle": "^5.4 || ^6.0",
+        "symfony/validator": "^5.4 || ^6.0",
+        "symfony/var-dumper": "^5.4 || ^6.0",
+        "symfony/yaml": "^5.4 || ^6.0",
         "twig/twig": "^2.10|^3.0"
+    },
+    "conflict": {
+        "react/promise": "<2.8"
     },
     "extra": {
         "branch-alias": {
@@ -72,15 +87,11 @@
         }
     },
     "scripts": {
-        "test": "bin/phpunit --color=always -v --debug",
+        "test": "bin/phpunit --color=always --coverage-clover=build/logs/clover.xml",
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "bench":  [
-            "test -f phpbench.phar || wget https://github.com/phpbench/phpbench/releases/download/1.0.0-alpha7/phpbench.phar -O phpbench.phar",
-            "@php phpbench.phar run -l dots --ansi -vvv --report='generator: \"table\", cols: [\"benchmark\", \"subject\", \"params\", \"best\", \"mean\", \"mode\", \"worst\", \"diff\"], break: [\"benchmark\"], sort: {mean: \"asc\"}'"
-        ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.18.7/php-cs-fixer.phar -O php-cs-fixer.phar",
+        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.11.0/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
             "@install-cs",
             "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
@@ -93,7 +104,6 @@
             "rm composer.lock",
             "@composer install --ansi",
             "@static-analysis",
-            "@bench",
             "@check-cs"
         ],
         "docker-clean": "docker image rm $(docker image ls -qf reference=graphql-test)",

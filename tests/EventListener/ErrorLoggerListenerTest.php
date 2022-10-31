@@ -16,6 +16,7 @@ use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+
 use function sprintf;
 
 final class ErrorLoggerListenerTest extends TestCase

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Closure;
+
 use function func_get_args;
 
-class Toto
+final class Toto
 {
     public const PRIVATE_PROPERTY_WITH_GETTER_VALUE = 'IfYouWantMeUseMyGetter';
     public const PRIVATE_PROPERTY_WITH_GETTER2_VALUE = 'IfYouWantMeUseMyGetter2';

@@ -8,13 +8,15 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function file_get_contents;
 use function sprintf;
 use function str_replace;
 use function trim;
+
 use const PHP_EOL;
 
-class DebugCommandTest extends TestCase
+final class DebugCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private array $logs = [];
@@ -28,7 +30,7 @@ class DebugCommandTest extends TestCase
         $this->commandTester = new CommandTester($command);
 
         foreach (DebugCommand::getCategories() as $category) {
-            $content = file_get_contents(
+            $content = (string) file_get_contents(
                 sprintf(
                     __DIR__.'/fixtures/debug/debug-%s.txt',
                     $category

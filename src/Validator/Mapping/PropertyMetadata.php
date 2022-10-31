@@ -6,9 +6,10 @@ namespace Overblog\GraphQLBundle\Validator\Mapping;
 
 use ReflectionException;
 use ReflectionProperty;
+use ReturnTypeWillChange;
 use Symfony\Component\Validator\Mapping\MemberMetadata;
 
-class PropertyMetadata extends MemberMetadata
+final class PropertyMetadata extends MemberMetadata
 {
     public function __construct(string $name)
     {
@@ -16,20 +17,21 @@ class PropertyMetadata extends MemberMetadata
     }
 
     /**
-     * @param mixed $object
+     * @param object|string $objectOrClassName
      *
      * @throws ReflectionException
      */
-    protected function newReflectionMember($object): ReflectionProperty
+    protected function newReflectionMember($objectOrClassName): ReflectionProperty
     {
-        $member = new ReflectionProperty($object, $this->getName());
+        $member = new ReflectionProperty($objectOrClassName, $this->getName());
         $member->setAccessible(true);
 
         return $member;
     }
 
-    public function getPropertyValue($object)
+    #[ReturnTypeWillChange]
+    public function getPropertyValue(mixed $containingValue): mixed
     {
-        return $this->getReflectionMember($object)->getValue($object);
+        return $this->getReflectionMember($containingValue)->getValue($containingValue);
     }
 }

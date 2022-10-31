@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\DependencyInjection\Compiler;
 
-class TypeTaggedServiceMappingPass extends TaggedServiceMappingPass
+final class TypeTaggedServiceMappingPass extends TaggedServiceMappingPass
 {
     public const TAG_NAME = 'overblog_graphql.type';
 

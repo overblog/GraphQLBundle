@@ -2,7 +2,9 @@
 
 In order to use annotations or attributes, you need to configure the mapping:
 
-To use annotations, use the `annotation` mapping type.
+To use annotations, You must install `symfony/cache` and `doctrine/annotation` and use the `annotation` mapping type.
+
+
 ```yaml
 # config/packages/graphql.yaml
 overblog_graphql:
@@ -13,7 +15,6 @@ overblog_graphql:
           dir: "%kernel.project_dir%/src/GraphQL"
           suffix: ~
 ```
-
 To use attributes, use the `attribute` mapping type.
 
 ```yaml
@@ -215,6 +216,7 @@ In this example, the type `String!` will be auto-guessed from the type hint of t
 ### @Field type auto-guessing from Doctrine ORM Annotations
 
 Based on other Doctrine annotations on your fields, the corresponding GraphQL type can sometimes be guessed automatically.  
+In order to activate this guesser, you must install `doctrine/orm` package.  
 
 The type can be auto-guessed from the following annotations:
 

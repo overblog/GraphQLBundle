@@ -12,9 +12,10 @@ use Overblog\GraphQLBundle\Validator\InputValidatorFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\Validator\Validation;
+
 use function class_exists;
 
-class InputValidatorTest extends TestCase
+final class InputValidatorTest extends TestCase
 {
     public function setUp(): void
     {

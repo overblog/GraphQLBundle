@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Error;
 use Exception;
 use GraphQL\Error\UserError as GraphQLUserError;
 
-class InvalidArgumentsError extends GraphQLUserError
+final class InvalidArgumentsError extends GraphQLUserError
 {
     /** @var InvalidArgumentError[] */
     private array $errors;

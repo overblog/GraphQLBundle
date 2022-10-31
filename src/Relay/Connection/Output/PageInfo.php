@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
 use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
 
-class PageInfo implements PageInfoInterface
+final class PageInfo implements PageInfoInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
 

@@ -6,7 +6,6 @@ namespace Overblog\GraphQLBundle\Error;
 
 use GraphQL\Error\ClientAware as ClientAwareInterface;
 use Throwable;
-use function get_class;
 
 final class ExceptionConverter implements ExceptionConverterInterface
 {
@@ -46,7 +45,7 @@ final class ExceptionConverter implements ExceptionConverterInterface
 
     private function findErrorClass(Throwable $exception): ?string
     {
-        $exceptionClass = get_class($exception);
+        $exceptionClass = $exception::class;
 
         if (isset($this->exceptionMap[$exceptionClass])) {
             return $this->exceptionMap[$exceptionClass];

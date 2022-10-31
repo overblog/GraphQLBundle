@@ -8,7 +8,6 @@ use ArrayObject;
 use Closure;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -22,6 +21,7 @@ use Overblog\GraphQLBundle\Executor\ExecutorInterface;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use function array_keys;
 use function is_callable;
 use function sprintf;
@@ -34,7 +34,6 @@ class Executor
     private EventDispatcherInterface $dispatcher;
     private PromiseAdapter $promiseAdapter;
     private ExecutorInterface $executor;
-    private bool $useExperimentalExecutor;
 
     /**
      * @var callable|null
@@ -45,14 +44,12 @@ class Executor
         ExecutorInterface $executor,
         PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
-        ?callable $defaultFieldResolver = null,
-        bool $useExperimental = false
+        ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->promiseAdapter = $promiseAdapter;
         $this->dispatcher = $dispatcher;
         $this->defaultFieldResolver = $defaultFieldResolver;
-        $this->useExperimentalExecutor = $useExperimental;
     }
 
     public function setExecutor(ExecutorInterface $executor): self
@@ -107,14 +104,14 @@ class Executor
     public function setMaxQueryDepth(int $maxQueryDepth): void
     {
         /** @var QueryDepth $queryDepth */
-        $queryDepth = DocumentValidator::getRule('QueryDepth');
+        $queryDepth = DocumentValidator::getRule(QueryDepth::class);
         $queryDepth->setMaxQueryDepth($maxQueryDepth);
     }
 
     public function setMaxQueryComplexity(int $maxQueryComplexity): void
     {
         /** @var QueryComplexity $queryComplexity */
-        $queryComplexity = DocumentValidator::getRule('QueryComplexity');
+        $queryComplexity = DocumentValidator::getRule(QueryComplexity::class);
         $queryComplexity->setMaxQueryComplexity($maxQueryComplexity);
     }
 
@@ -125,7 +122,7 @@ class Executor
 
     public function disableIntrospectionQuery(): void
     {
-        DocumentValidator::addRule(new DisableIntrospection());
+        DocumentValidator::addRule(new DisableIntrospection(DisableIntrospection::ENABLED));
     }
 
     /**
@@ -133,8 +130,6 @@ class Executor
      */
     public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
     {
-        $this->useExperimentalExecutor ? GraphQL::useExperimentalExecutor() : GraphQL::useReferenceExecutor();
-
         $schema = $this->getSchema($schemaName);
         /** @var string $schemaName */
         $schemaName = array_search($schema, $this->schemas);

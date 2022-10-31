@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+
 use function array_keys;
 use function array_map;
 use function implode;
@@ -19,7 +20,7 @@ use function preg_match;
 use function sprintf;
 use function str_replace;
 
-class TypesConfiguration implements ConfigurationInterface
+final class TypesConfiguration implements ConfigurationInterface
 {
     private static array $types = [
         'object',
@@ -30,7 +31,7 @@ class TypesConfiguration implements ConfigurationInterface
         'custom-scalar',
     ];
 
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('overblog_graphql_types');
 
@@ -127,7 +128,7 @@ class TypesConfiguration implements ConfigurationInterface
                 ->ifTrue(fn ($types) => is_array($types))
                 ->then(fn ($types) => Config\Processor::process($types, Config\Processor::BEFORE_NORMALIZATION))
             ->end()
-            ;
+        ;
     }
 
     private function normalizedConfigTypeKey(string $type): string

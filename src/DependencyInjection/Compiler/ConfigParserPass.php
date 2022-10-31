@@ -8,8 +8,8 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
-use Overblog\GraphQLBundle\Config\Parser\XmlParser;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
 use Overblog\GraphQLBundle\OverblogGraphQLBundle;
@@ -22,32 +22,36 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+
 use function array_count_values;
 use function array_filter;
 use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace_recursive;
-use function call_user_func;
 use function dirname;
 use function implode;
 use function is_a;
 use function is_dir;
 use function sprintf;
 
-class ConfigParserPass implements CompilerPassInterface
+final class ConfigParserPass implements CompilerPassInterface
 {
+    /**
+     * @var array<string, string>
+     */
     public const SUPPORTED_TYPES_EXTENSIONS = [
         'yaml' => '{yaml,yml}',
-        'xml' => 'xml',
         'graphql' => '{graphql,graphqls}',
         'annotation' => 'php',
         'attribute' => 'php',
     ];
 
+    /**
+     * @var array<string, class-string<ParserInterface>>
+     */
     public const PARSERS = [
         'yaml' => YamlParser::class,
-        'xml' => XmlParser::class,
         'graphql' => GraphQLParser::class,
         'annotation' => AnnotationParser::class,
         'attribute' => AttributeParser::class,
@@ -146,7 +150,7 @@ class ConfigParserPass implements CompilerPassInterface
                 continue;
             }
 
-            $config[] = call_user_func([self::PARSERS[$type], $method], $file, $container, $configs);
+            $config[] = [self::PARSERS[$type], $method]($file, $container, $configs);
             $treatedFiles[$file->getRealPath()] = true;
         }
 
@@ -224,7 +228,7 @@ class ConfigParserPass implements CompilerPassInterface
 
             $bundleDir = $this->bundleDir($class);
 
-            // only config files (yml or xml)
+            // only config files (yml)
             $typesMappings[] = ['dir' => $bundleDir.'/Resources/config/graphql', 'types' => null];
         }
 

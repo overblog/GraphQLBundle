@@ -15,7 +15,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type\Planet;
 #[GQL\Provider(prefix: 'planet_')]
 #[GQL\Access('default_access')]
 #[GQL\IsPublic('default_public')]
-class PlanetRepository
+final class PlanetRepository
 {
     /**
      * @GQL\Query(type="[Planet]")
@@ -53,10 +53,10 @@ class PlanetRepository
     }
 
     /**
-     * @GQL\Query(type="[Planet]", targetType="Droid", name="allowedPlanets")
+     * @GQL\Query(type="[Planet]", targetTypes="Droid", name="allowedPlanets")
      * @GQL\Access("override_access")
      */
-    #[GQL\Query(type: '[Planet]', targetType: 'Droid', name: 'allowedPlanets')]
+    #[GQL\Query(type: '[Planet]', targetTypes: 'Droid', name: 'allowedPlanets')]
     #[GQL\Access('override_access')]
     public function getAllowedPlanetsForDroids(): array
     {
@@ -66,7 +66,7 @@ class PlanetRepository
     /**
      * @GQL\Query(type="Planet", targetTypes="RootQuery2")
      */
-    #[GQL\Query(type: 'Planet', targetType: 'RootQuery2')]
+    #[GQL\Query(type: 'Planet', targetTypes: 'RootQuery2')]
     public function getPlanetSchema2(): ?Planet
     {
         return null;

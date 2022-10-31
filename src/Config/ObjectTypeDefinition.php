@@ -6,9 +6,10 @@ namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+
 use function array_key_exists;
 
-class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
+final class ObjectTypeDefinition extends TypeWithOutputFieldsDefinition
 {
     public function getDefinition(): ArrayNodeDefinition
     {

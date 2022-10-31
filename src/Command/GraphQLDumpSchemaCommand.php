@@ -13,11 +13,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+
 use function file_put_contents;
 use function json_encode;
 use function realpath;
 use function sprintf;
 use function strtolower;
+
 use const JSON_PRETTY_PRINT;
 
 final class GraphQLDumpSchemaCommand extends Command
@@ -118,7 +120,7 @@ final class GraphQLDumpSchemaCommand extends Command
                     ->execute($schemaName, $request)
                     ->toArray();
 
-                $content = json_encode($modern ? $result : $result['data'], JSON_PRETTY_PRINT);
+                $content = json_encode($modern ? $result : ($result['data'] ?? null), JSON_PRETTY_PRINT);
                 break;
 
             case 'graphql':

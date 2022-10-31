@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class InputValidatorFactory
+final class InputValidatorFactory
 {
     private ?ValidatorInterface $defaultValidator;
     private ?ConstraintValidatorFactoryInterface $constraintValidatorFactory;

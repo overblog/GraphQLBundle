@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Definition;
 
 use Closure;
+
 use function func_get_args;
 
-class ArgumentFactory
+final class ArgumentFactory
 {
     private string $className;
 

@@ -8,6 +8,9 @@ overblog_graphql:
         schema:
             query: Query
             mutation: ~
+            types:
+                - ID
+                - Float
         mappings:
             types:
                 -

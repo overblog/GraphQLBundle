@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\IsAnon
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class IsAnonymousTest extends TestCase
+final class IsAnonymousTest extends TestCase
 {
     protected function getFunctions()
     {

@@ -13,11 +13,12 @@ use React\Promise\FulfilledPromise;
 use React\Promise\Promise;
 use React\Promise\PromiseInterface;
 use stdClass;
+
 use function call_user_func;
 use function func_get_args;
 use function React\Promise\resolve;
 
-class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
+final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {
@@ -35,6 +36,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     /**
      * @param mixed $invalidPromise
+     *
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromise($invalidPromise): void
@@ -57,7 +59,8 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     public function testRespectsASmallerFirstWhenSlicing(): void
     {
-        $promise = call_user_func([static::getBuilder(), 'connectionFromPromisedArraySlice'],
+        $promise = call_user_func(
+            [static::getBuilder(), 'connectionFromPromisedArraySlice'],
             $this->promisedLetters(['A', 'B', 'C']),
             ['first' => 2],
             [
@@ -71,6 +74,7 @@ class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
 
     /**
      * @param mixed $invalidPromise
+     *
      * @dataProvider invalidPromiseDataProvider
      */
     public function testInvalidPromiseWhenSlicing($invalidPromise): void

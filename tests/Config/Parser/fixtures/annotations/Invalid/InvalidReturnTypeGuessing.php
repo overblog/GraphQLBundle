@@ -10,14 +10,14 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @GQL\Type
  */
 #[GQL\Type]
-class InvalidReturnTypeGuessing
+final class InvalidReturnTypeGuessing
 {
     /**
      * @GQL\Field(name="guessFailed")
+     *
      * @phpstan-ignore-next-line
      */
     #[GQL\Field(name: 'guessFailed')]
-
     // @phpstan-ignore-next-line
     public function guessFail(int $test)
     {

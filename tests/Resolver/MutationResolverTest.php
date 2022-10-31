@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Overblog\GraphQLBundle\Resolver\MutationResolver;
 
-class MutationResolverTest extends AbstractProxyResolverTest
+final class MutationResolverTest extends AbstractProxyResolverTest
 {
     protected function createResolver(): MutationResolver
     {

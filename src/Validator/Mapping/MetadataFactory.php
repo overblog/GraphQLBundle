@@ -8,8 +8,9 @@ use Overblog\GraphQLBundle\Validator\ValidationNode;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 
-class MetadataFactory implements MetadataFactoryInterface
+final class MetadataFactory implements MetadataFactoryInterface
 {
+    /** @var ObjectMetadata[] */
     private array $metadataPool;
 
     public function __construct()
@@ -17,6 +18,9 @@ class MetadataFactory implements MetadataFactoryInterface
         $this->metadataPool = [];
     }
 
+    /**
+     * @param mixed $object
+     */
     public function getMetadataFor($object): ObjectMetadata
     {
         if ($object instanceof ValidationNode) {
@@ -26,6 +30,9 @@ class MetadataFactory implements MetadataFactoryInterface
         throw new NoSuchMetadataException();
     }
 
+    /**
+     * @param mixed $object
+     */
     public function hasMetadataFor($object): bool
     {
         if ($object instanceof ValidationNode) {

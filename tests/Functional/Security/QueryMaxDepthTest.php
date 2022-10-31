@@ -6,7 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Security;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-class QueryMaxDepthTest extends TestCase
+final class QueryMaxDepthTest extends TestCase
 {
     private string $userFriendsWithoutViolationQuery = <<<'EOF'
         query {
@@ -49,7 +49,6 @@ class QueryMaxDepthTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];
@@ -63,7 +62,6 @@ class QueryMaxDepthTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Max query depth should be 3 but got 6.',
-                    'extensions' => ['category' => 'graphql'],
                 ],
             ],
         ];

@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Processor\InheritanceProcessor;
 use PHPUnit\Framework\TestCase;
 
-class InheritanceProcessorTest extends TestCase
+final class InheritanceProcessorTest extends TestCase
 {
     private array $fixtures = [
         'foo' => [InheritanceProcessor::INHERITS_KEY => ['bar', 'baz'], 'type' => 'object', 'config' => []],

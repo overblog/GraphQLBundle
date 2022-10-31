@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Relay\Connection\Cursor\CursorEncoderInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
+
 use function array_slice;
 use function count;
 use function end;
@@ -18,39 +19,51 @@ use function is_callable;
 use function is_numeric;
 use function max;
 use function min;
-use function sprintf;
 use function str_replace;
 
 /**
  * Class ConnectionBuilder.
  *
  * https://github.com/graphql/graphql-relay-js/blob/master/src/connection/arrayconnection.js
+ *
+ * @phpstan-type ConnectionFactoryFunc callable(EdgeInterface<T>[], PageInfoInterface): ConnectionInterface
+ * @phpstan-type EdgeFactoryFunc callable(string, T, int): EdgeInterface<T>
+ *
+ * @phpstan-template T
  */
-class ConnectionBuilder
+final class ConnectionBuilder
 {
     public const PREFIX = 'arrayconnection:';
 
-    protected CursorEncoderInterface $cursorEncoder;
+    private CursorEncoderInterface $cursorEncoder;
 
     /**
-     * If set, used to generate the connection object.
+     * Factorty callback used to generate the connection object.
      *
-     * @var callable|null
+     * @var callable
+     *
+     * @phpstan-var ConnectionFactoryFunc
      */
-    protected $connectionCallback;
+    private $connectionCallback;
 
     /**
-     * If set, used to generate the edge object.
+     * Factorty callback used to generate the edge object.
      *
-     * @var ?callable
+     * @var callable
+     *
+     * @phpstan-var EdgeFactoryFunc
      */
-    protected $edgeCallback;
+    private $edgeCallback;
 
-    public function __construct(?CursorEncoderInterface $cursorEncoder = null, callable $connectionCallback = null, callable $edgeCallback = null)
+    /**
+     * @phpstan-param ConnectionFactoryFunc|null $connectionCallback
+     * @phpstan-param EdgeFactoryFunc|null $edgeCallback
+     */
+    public function __construct(?CursorEncoderInterface $cursorEncoder = null, ?callable $connectionCallback = null, ?callable $edgeCallback = null)
     {
         $this->cursorEncoder = $cursorEncoder ?? new Base64CursorEncoder();
-        $this->connectionCallback = $connectionCallback;
-        $this->edgeCallback = $edgeCallback;
+        $this->connectionCallback = $connectionCallback ?? static fn (array $edges, PageInfoInterface $pageInfo): Connection => new Connection($edges, $pageInfo);
+        $this->edgeCallback = $edgeCallback ?? static fn (string $cursor, mixed $value): Edge => new Edge($cursor, $value);
     }
 
     /**
@@ -59,6 +72,10 @@ class ConnectionBuilder
      * so pagination will only work if the array is static.
      *
      * @param array|ArgumentInterface $args
+     *
+     * @phpstan-param T[] $data
+     *
+     * @return ConnectionInterface<T>
      */
     public function connectionFromArray(array $data, $args = []): ConnectionInterface
     {
@@ -98,6 +115,10 @@ class ConnectionBuilder
      * total result large enough to cover the range specified in `args`.
      *
      * @param array|ArgumentInterface $args
+     *
+     * @phpstan-param T[] $arraySlice
+     *
+     * @phpstan-return ConnectionInterface<T>
      */
     public function connectionFromArraySlice(array $arraySlice, $args, array $meta): ConnectionInterface
     {
@@ -258,20 +279,23 @@ class ConnectionBuilder
         return str_replace(static::PREFIX, '', $this->cursorEncoder->decode($cursor));
     }
 
+    /**
+     * @phpstan-param iterable<T> $slice
+     *
+     * @phpstan-return EdgeInterface<T>[]
+     */
     private function createEdges(iterable $slice, int $startOffset): array
     {
         $edges = [];
 
         foreach ($slice as $index => $value) {
             $cursor = $this->offsetToCursor($startOffset + $index);
-            if ($this->edgeCallback) {
-                $edge = ($this->edgeCallback)($cursor, $value, $index);
-                if (!($edge instanceof EdgeInterface)) {
-                    throw new InvalidArgumentException(sprintf('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface'));
-                }
-            } else {
-                $edge = new Edge($cursor, $value);
+            $edge = ($this->edgeCallback)($cursor, $value, $index);
+
+            if (!($edge instanceof EdgeInterface)) {
+                throw new InvalidArgumentException('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface');
             }
+
             $edges[] = $edge;
         }
 
@@ -279,20 +303,19 @@ class ConnectionBuilder
     }
 
     /**
-     * @param mixed $edges
+     * @phpstan-param EdgeInterface<T>[] $edges
+     *
+     * @phpstan-return ConnectionInterface<T>
      */
-    private function createConnection($edges, PageInfoInterface $pageInfo): ConnectionInterface
+    private function createConnection(array $edges, PageInfoInterface $pageInfo): ConnectionInterface
     {
-        if ($this->connectionCallback) {
-            $connection = ($this->connectionCallback)($edges, $pageInfo);
-            if (!($connection instanceof ConnectionInterface)) {
-                throw new InvalidArgumentException(sprintf('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface'));
-            }
+        $connection = ($this->connectionCallback)($edges, $pageInfo);
 
-            return $connection;
+        if (!($connection instanceof ConnectionInterface)) {
+            throw new InvalidArgumentException('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface');
         }
 
-        return new Connection($edges, $pageInfo);
+        return $connection;
     }
 
     private function getOptionsWithDefaults(array $options, array $defaults): array

@@ -8,7 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\IsTypeO
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 use stdClass;
 
-class IsTypeOfTest extends TestCase
+final class IsTypeOfTest extends TestCase
 {
     protected function getFunctions()
     {

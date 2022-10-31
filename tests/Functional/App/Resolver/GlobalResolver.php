@@ -7,9 +7,10 @@ namespace Overblog\GraphQLBundle\Tests\Functional\App\Resolver;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Relay\Node\GlobalId;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
+
 use function array_values;
 
-class GlobalResolver
+final class GlobalResolver
 {
     private TypeResolver $typeResolver;
 

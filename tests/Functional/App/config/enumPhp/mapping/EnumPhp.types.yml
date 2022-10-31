@@ -1,0 +1,30 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            enum:
+                type: EnumPhp
+                resolve: ['Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhpTest', "resolveQueryEnum"]
+            enumBacked:
+                type: EnumPhpBacked
+                resolve: ['Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhpTest', "resolveQueryEnumBacked"]
+            enumParser:
+                type: String
+                args:
+                    enum: EnumPhp!
+                    enumBacked: EnumPhpBacked!
+                resolve:
+                    '@=call("Overblog\\GraphQLBundle\\Tests\\Functional\\EnumPhp\\EnumPhpTest::resolveQueryEnumAsInput",
+                    [args["enum"], args["enumBacked"]])'
+
+EnumPhp:
+    type: enum
+    config:
+        enumClass: Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhp
+        values:
+            VALUE3: { description: "The value 3" }
+
+EnumPhpBacked:
+    type: enum
+    config:
+        enumClass: Overblog\GraphQLBundle\Tests\Functional\EnumPhp\EnumPhpBacked

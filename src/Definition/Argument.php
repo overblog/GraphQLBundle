@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Definition;
 use function array_key_exists;
 use function count;
 
-class Argument implements ArgumentInterface
+final class Argument implements ArgumentInterface
 {
     private array $rawArguments = [];
 
@@ -42,7 +42,7 @@ class Argument implements ArgumentInterface
      *
      * @return mixed|null
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->offsetExists($offset) ? $this->rawArguments[$offset] : null;
     }

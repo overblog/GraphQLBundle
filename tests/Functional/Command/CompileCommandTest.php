@@ -9,12 +9,14 @@ use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function preg_quote;
 use function preg_replace;
 use function str_replace;
+
 use const PHP_EOL;
 
-class CompileCommandTest extends TestCase
+final class CompileCommandTest extends TestCase
 {
     private CommandTester $commandTester;
     private array $typesMapping;

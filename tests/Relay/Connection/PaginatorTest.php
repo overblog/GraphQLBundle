@@ -10,11 +10,12 @@ use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
 use PHPUnit\Framework\TestCase;
+
 use function array_slice;
 use function base64_encode;
 use function count;
 
-class PaginatorTest extends TestCase
+final class PaginatorTest extends TestCase
 {
     protected array $data = ['A', 'B', 'C', 'D', 'E'];
 

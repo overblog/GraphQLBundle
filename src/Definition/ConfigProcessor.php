@@ -11,7 +11,7 @@ final class ConfigProcessor
     /**
      * @var ConfigProcessorInterface[]
      */
-    private array $processors;
+    private array $processors = [];
 
     public function __construct(iterable $processors)
     {
@@ -30,6 +30,13 @@ final class ConfigProcessor
         $this->processors[] = $configProcessor;
     }
 
+    /**
+     * @phpstan-template T of array
+     *
+     * @phpstan-param T $config
+     *
+     * @phpstan-return T
+     */
     public function process(array $config): array
     {
         foreach ($this->processors as $processor) {

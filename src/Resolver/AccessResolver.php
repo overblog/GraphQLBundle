@@ -12,12 +12,11 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
-use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
-use function array_map;
+
 use function call_user_func_array;
 use function is_iterable;
 
-class AccessResolver
+final class AccessResolver
 {
     private PromiseAdapter $promiseAdapter;
 
@@ -89,14 +88,9 @@ class AccessResolver
                 $result[$i] = $this->hasAccess($accessChecker, $resolveArgs, $object) ? $object : null; // @phpstan-ignore-line
             }
         } elseif ($result instanceof Connection) {
-            $result->setEdges(array_map(
-                function (Edge $edge) use ($accessChecker, $resolveArgs) {
-                    $edge->setNode($this->hasAccess($accessChecker, $resolveArgs, $edge->getNode()) ? $edge->getNode() : null);
-
-                    return $edge;
-                },
-                $result->getEdges()
-            ));
+            foreach ($result->getEdges() as $edge) {
+                $edge->setNode($this->hasAccess($accessChecker, $resolveArgs, $edge->getNode()) ? $edge->getNode() : null);
+            }
         } elseif (!$this->hasAccess($accessChecker, $resolveArgs, $result)) {
             throw new UserWarning('Access denied to this field.');
         }

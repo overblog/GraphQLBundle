@@ -8,12 +8,11 @@ use Overblog\GraphQLBundle\Definition\GraphQLServices;
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
+final class ExpressionValidator extends \Symfony\Component\Validator\Constraints\ExpressionValidator
 {
     private ExpressionLanguage $expressionLanguage;
 
@@ -23,17 +22,14 @@ class ExpressionValidator extends \Symfony\Component\Validator\Constraints\Expre
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->graphQLServices = $graphQLServices;
-        if (Kernel::VERSION_ID >= 40400) {
-            parent::__construct($expressionLanguage); // @phpstan-ignore-line
-        } else {
-            parent::__construct(null, $expressionLanguage); // @phpstan-ignore-line
-        }
+
+        parent::__construct($expressionLanguage); // @phpstan-ignore-line
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof Expression) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Expression');

@@ -27,8 +27,3 @@ services:
     expression_function.query_alias:
         class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query
         arguments: { $name : 'q' }
-
-    # Deprecated. To be removed in 1.0
-    expression_function.resolver_alias:
-        class: Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Query
-        arguments: { $name : 'res' }

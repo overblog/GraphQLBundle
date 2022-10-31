@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Relay\Connection;
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Definition\ArgumentInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
+
 use function call_user_func;
 use function call_user_func_array;
 use function count;
@@ -14,7 +15,7 @@ use function is_callable;
 use function is_numeric;
 use function max;
 
-class Paginator
+final class Paginator
 {
     public const MODE_REGULAR = false;
     public const MODE_PROMISE = true;

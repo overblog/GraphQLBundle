@@ -8,10 +8,11 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use function json_decode;
 use function json_encode;
 
-class GraphControllerTest extends TestCase
+final class GraphControllerTest extends TestCase
 {
     private string $friendsQuery = <<<'EOF'
         query FriendsQuery {

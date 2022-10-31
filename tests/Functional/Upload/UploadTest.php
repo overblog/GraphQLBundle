@@ -8,10 +8,11 @@ use Exception;
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 use function json_decode;
 use function json_encode;
 
-class UploadTest extends TestCase
+final class UploadTest extends TestCase
 {
     public function testSingleUpload(): void
     {
@@ -139,9 +140,6 @@ class UploadTest extends TestCase
                 'errors' => [
                     [
                         'message' => 'Field "singleUpload" argument "file" requires type Upload, found {}; GraphQLUpload scalar literal unsupported.',
-                        'extensions' => [
-                            'category' => 'graphql',
-                        ],
                         'locations' => [
                             [
                                 'line' => 1,

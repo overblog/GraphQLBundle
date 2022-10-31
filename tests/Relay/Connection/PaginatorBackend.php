@@ -9,7 +9,7 @@ use function count;
 /**
  * Class PaginatorBackend.
  */
-class PaginatorBackend
+final class PaginatorBackend
 {
     public function count(array $array): int
     {

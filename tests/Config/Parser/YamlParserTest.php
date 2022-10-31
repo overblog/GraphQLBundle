@@ -6,9 +6,10 @@ namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use SplFileInfo;
+
 use const DIRECTORY_SEPARATOR;
 
-class YamlParserTest extends TestCase
+final class YamlParserTest extends TestCase
 {
     public function testParseConstants(): void
     {

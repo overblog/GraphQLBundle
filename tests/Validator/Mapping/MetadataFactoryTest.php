@@ -12,9 +12,10 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Validation;
+
 use function class_exists;
 
-class MetadataFactoryTest extends TestCase
+final class MetadataFactoryTest extends TestCase
 {
     public function setUp(): void
     {
@@ -28,7 +29,7 @@ class MetadataFactoryTest extends TestCase
     {
         $metadataFactory = new MetadataFactory();
 
-        $type = new ObjectType(['name' => 'testType']);
+        $type = new ObjectType(['name' => 'testType', 'fields' => []]);
         $validationNode = new ValidationNode($type);
         $objectMetadata = new ObjectMetadata($validationNode);
 

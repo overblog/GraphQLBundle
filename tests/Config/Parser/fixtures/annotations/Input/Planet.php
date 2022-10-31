@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Input;
 
-use Doctrine\ORM\Mapping as ORM;
 use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
@@ -13,54 +12,51 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  */
 #[GQL\Input]
 #[GQL\Description('Planet Input type description')]
-class Planet
+final class Planet
 {
     /**
      * @GQL\Field(resolve="...")
      */
     #[GQL\Field(resolve: '...')]
-    protected string $skipField;
+    public string $skipField;
 
     /**
      * @GQL\Field(type="String!")
      */
     #[GQL\Field(type: 'String!')]
-    protected string $name;
+    public string $name;
 
     /**
      * @GQL\Field(type="Int!")
      */
     #[GQL\Field(type: 'Int!')]
-    protected string $population;
+    public string $population;
 
     /**
      * @GQL\Field
      */
     #[GQL\Field]
-    protected string $description;
+    public string $description;
 
     /**
      * @GQL\Field
-     * @ORM\Column(type="integer", nullable=true)
      */
     #[GQL\Field]
     // @phpstan-ignore-next-line
-    protected $diameter;
+    public ?int $diameter;
 
     /**
      * @GQL\Field
-     * @ORM\Column(type="boolean")
      */
     #[GQL\Field]
-    protected int $variable;
+    public int $variable;
 
     // @phpstan-ignore-next-line
-    protected $dummy;
+    public $dummy;
 
     /**
-     * @GQL\Field
-     * @ORM\Column(type="text[]")
+     * @GQL\Field(type="[String]!")
      */
-    #[GQL\Field]
-    protected array $tags;
+    #[GQL\Field(type: '[String]!')]
+    public array $tags;
 }

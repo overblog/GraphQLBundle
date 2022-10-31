@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Resolver\MutationResolver;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\DIContainerMockTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\MockObject\Stub;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
+
 use function array_keys;
 use function call_user_func_array;
 use function extract;
@@ -83,19 +85,22 @@ abstract class TestCase extends BaseTestCase
             $returnValue = $this->returnValue($return);
         }
 
-        // @phpstan-ignore-next-line
         $methodExpectation = $security
             ->expects($expects)
             ->method('isGranted');
 
         call_user_func_array([$methodExpectation, 'with'], is_array($with) ? $with : [$with]);
 
+        // @phpstan-ignore-next-line
         $methodExpectation->will($returnValue);
 
         return new Security($security);
     }
 
-    private function getCoreSecurityMock(): CoreSecurity
+    /**
+     * @return CoreSecurity|MockObject
+     */
+    private function getCoreSecurityMock()
     {
         return $this->getMockBuilder(CoreSecurity::class)
             ->disableOriginalConstructor()

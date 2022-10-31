@@ -12,17 +12,17 @@ use Overblog\GraphQLBundle\Definition\ResolverArgs;
 use Overblog\GraphQLBundle\Validator\ValidationNode;
 use PHPUnit\Framework\TestCase;
 
-class ValidationNodeTest extends TestCase
+final class ValidationNodeTest extends TestCase
 {
     public function testValidationNode(): void
     {
-        $parentType = new ObjectType(['name' => 'Mutation']);
+        $parentType = new ObjectType(['name' => 'Mutation', 'fields' => []]);
         $parentNode = new ValidationNode($parentType, null, null, $this->createResolveArgs());
 
-        $childType = new ObjectType(['name' => 'createUser']);
+        $childType = new ObjectType(['name' => 'createUser', 'fields' => []]);
         $childNode = new ValidationNode($childType, 'createUser', $parentNode, $this->createResolveArgs());
 
-        $deepestChild = new ObjectType(['name' => 'someField']);
+        $deepestChild = new ObjectType(['name' => 'someField', 'fields' => []]);
         $deepestNode = new ValidationNode($deepestChild, null, $childNode, $this->createResolveArgs());
 
         $this->assertSame($parentNode, $childNode->findParent('Mutation'));

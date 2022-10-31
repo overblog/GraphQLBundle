@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\CacheWarmer;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
-class CompileCacheWarmer implements CacheWarmerInterface
+final class CompileCacheWarmer implements CacheWarmerInterface
 {
     private TypeGenerator $typeGenerator;
     private bool $compiled;
@@ -21,7 +21,7 @@ class CompileCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return !$this->compiled;
     }

@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Gra
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\GraphQL\Relay\FromGlobalID;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
 
-class FromGlobalIDTest extends TestCase
+final class FromGlobalIDTest extends TestCase
 {
     protected function getFunctions()
     {

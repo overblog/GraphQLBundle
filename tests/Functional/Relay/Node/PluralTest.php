@@ -11,7 +11,7 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
  *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/plural.js
  */
-class PluralTest extends TestCase
+final class PluralTest extends TestCase
 {
     protected function setUp(): void
     {

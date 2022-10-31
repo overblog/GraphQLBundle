@@ -10,9 +10,10 @@ use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+
 use function trim;
 
-class ValidateCommandTest extends TestCase
+final class ValidateCommandTest extends TestCase
 {
     /** @var ValidateCommand */
     private $command;
