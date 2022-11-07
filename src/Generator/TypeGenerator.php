@@ -90,7 +90,7 @@ final class TypeGenerator
 
             if ($mode & self::MODE_WRITE) {
                 if (($mode & self::MODE_OVERRIDE) || !file_exists($path)) {
-                    $phpFile->save($path);
+                    $phpFile->save($path, $this->getCacheDirMask());
                 }
             }
         }
