@@ -102,7 +102,7 @@ final class ArgumentsTransformer
             $fields = $type->getFields();
 
             foreach ($fields as $name => $field) {
-                $fieldData = $this->accessor->getValue($data, sprintf('[%s]', $name));
+                $fieldData = \array_key_exists($name, $data) ? $this->accessor->getValue($data, sprintf('[%s]', $name)) : $this->accessor->getValue($instance, $name);
                 $fieldType = $field->getType();
 
                 if ($fieldType instanceof NonNull) {

@@ -125,6 +125,9 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($res->field1, $data['field1']);
         $this->assertEquals($res->field2, $data['field2']);
         $this->assertEquals($res->field3, $data['field3']);
+        $this->assertEquals($res->field4, "default_value_when_not_set_in_data");
+        $this->assertEquals($res->field5, []);
+        $this->assertEquals($res->field6, null);
 
         $data = [
             'field1' => [
