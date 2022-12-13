@@ -74,9 +74,7 @@ final class PhpEnumTypeTest extends TestCase
     public function testInvalidSerialize(): void
     {
         $this->expectException(SerializationError::class);
-        $this->expectExceptionMessage(sprintf(
-            'Cannot serialize value Overblog\GraphQLBundle\Tests\Definition\Type\PhpEnumTypeTest as it must be an instance of enum',
-        ));
+        $this->expectExceptionMessageMatches('/Cannot serialize value (.*) as it must be an instance of enum/');
 
         $this->getEnum()->serialize(self::class);
     }
