@@ -24,7 +24,7 @@ final class InputType1
     /**
      * @var mixed
      */
-    public $field4 = "default_value_when_not_set_in_data";
+    public $field4 = 'default_value_when_not_set_in_data';
 
     /**
      * @var array
