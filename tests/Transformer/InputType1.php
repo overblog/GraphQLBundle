@@ -31,5 +31,8 @@ final class InputType1
      */
     public $field5 = [];
 
+    /**
+     * @var mixed
+     */
     public $field6;
 }
