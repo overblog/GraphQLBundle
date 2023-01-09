@@ -57,7 +57,7 @@
         "doctrine/orm": "^2.5",
         "monolog/monolog": "^2.8.0",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "1.8.4",
+        "phpstan/phpstan": "1.9.8",
         "phpstan/phpstan-phpunit": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
         "phpunit/phpunit": "^9.5.10",
