@@ -46,9 +46,6 @@ final class AnnotationParser extends MetadataParser
                 throw new ServiceNotFoundException("In order to use annotations, you need to install 'symfony/cache' first. See: 'https://symfony.com/doc/current/components/cache.html'");
             }
 
-            if (class_exists(AnnotationRegistry::class)) {
-                AnnotationRegistry::registerLoader('class_exists');
-            }
             $cacheKey = md5(__DIR__);
             // @codeCoverageIgnoreStart
             if (extension_loaded('apcu') && apcu_enabled()) {
