@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Annotation;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 
 /**
@@ -13,6 +14,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"ANNOTATION", "CLASS"})
  */
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_CLASS)]
 final class EnumValue extends Annotation
 {
     /**
