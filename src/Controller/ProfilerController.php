@@ -62,7 +62,7 @@ final class ProfilerController
             $tokenData['graphql'] = $profile->getCollector('graphql');
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null)); // @phpstan-ignore-line
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, 100, 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
