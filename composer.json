@@ -31,6 +31,7 @@
     "require": {
         "php": "^8.0",
         "ext-json": "*",
+        "composer/semver": "^3.3",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
         "phpdocumentor/type-resolver": "^1.6.1",

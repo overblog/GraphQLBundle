@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Controller;
 
+use Composer\InstalledVersions;
+use Composer\Semver\VersionParser;
 use GraphQL\Utils\SchemaPrinter;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -54,6 +56,10 @@ final class ProfilerController
 
         $profile = $this->profiler->loadProfile($token);
 
+        $limit = InstalledVersions::satisfies(new VersionParser, 'symfony/symfony', '<5.4')
+            ? '100'
+            : 100;
+
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
             if (!$profile->hasCollector('graphql')) {
@@ -62,7 +68,7 @@ final class ProfilerController
             $tokenData['graphql'] = $profile->getCollector('graphql');
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, 100, 'POST', null, null, null)); // @phpstan-ignore-line
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, $limit, 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
