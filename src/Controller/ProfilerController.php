@@ -56,7 +56,7 @@ final class ProfilerController
         $profile = $this->profiler->loadProfile($token);
 
         // Type hint as int for the $limit argument of the find method was updated in Symfony 5.4.22 and 6.2.8
-        $limit = (Kernel::VERSION_ID >= 60208 || (Kernel::MAJOR_VERSION === 5 && Kernel::VERSION_ID >= 50422)) ? 100 : '100';
+        $limit = (Kernel::VERSION_ID >= 60208 || (Kernel::MAJOR_VERSION === 5 && Kernel::VERSION_ID >= 50422)) ? 100 : '100'; // @phpstan-ignore-line
 
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
