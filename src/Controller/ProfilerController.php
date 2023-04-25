@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
@@ -54,6 +55,11 @@ final class ProfilerController
 
         $profile = $this->profiler->loadProfile($token);
 
+        $limit = 100;
+        if (!version_compare(Kernel::VERSION, '6.2', '>')) {
+            $limit = (string) $limit;
+        }
+
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
             if (!$profile->hasCollector('graphql')) {
@@ -62,7 +68,7 @@ final class ProfilerController
             $tokenData['graphql'] = $profile->getCollector('graphql');
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null)); // @phpstan-ignore-line
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, $limit, 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
