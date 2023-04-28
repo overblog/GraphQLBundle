@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
@@ -54,6 +55,9 @@ final class ProfilerController
 
         $profile = $this->profiler->loadProfile($token);
 
+        // Type hint as int for the $limit argument of the find method was updated in Symfony 5.4.22 and 6.2.8
+        $limit = (Kernel::VERSION_ID >= 60208 || (Kernel::MAJOR_VERSION === 5 && Kernel::VERSION_ID >= 50422)) ? 100 : '100'; // @phpstan-ignore-line
+
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
             if (!$profile->hasCollector('graphql')) {
@@ -62,7 +66,7 @@ final class ProfilerController
             $tokenData['graphql'] = $profile->getCollector('graphql');
 
             return $tokenData;
-        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, '100', 'POST', null, null, null)); // @phpstan-ignore-line
+        }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, $limit, 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
