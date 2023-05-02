@@ -12,7 +12,9 @@ class ExpressionFunction extends BaseExpressionFunction
     public function __construct(string $name, callable $compiler, ?callable $evaluator = null)
     {
         if (null === $evaluator) {
-            $evaluator = new EvaluatorIsNotAllowedException($name);
+            $evaluator = static function (string $name) {
+                throw new EvaluatorIsNotAllowedException($name);
+            };
         }
 
         parent::__construct($name, $compiler, $evaluator);
