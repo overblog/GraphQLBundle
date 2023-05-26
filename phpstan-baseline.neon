@@ -387,7 +387,7 @@ parameters:
 
 		-
 			message: "#^Call to method disableOriginalConstructor\\(\\) on an unknown class PHPUnit_Framework_MockObject_MockBuilder\\.$#"
-			count: 1
+			count: 2
 			path: tests/ExpressionLanguage/TestCase.php
 
 		-

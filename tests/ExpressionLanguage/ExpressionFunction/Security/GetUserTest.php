@@ -24,9 +24,7 @@ final class GetUserTest extends TestCase
         return [new GetUser()];
     }
 
-    /**
-     * @return CoreSecurity|BundleSecurity|MockObject
-     */
+    // @phpstan-ignore-next-line
     protected function getMockedSecurity()
     {
         if (Kernel::VERSION_ID >= 60200) {
