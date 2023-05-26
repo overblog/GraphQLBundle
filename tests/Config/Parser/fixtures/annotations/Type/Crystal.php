@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Type
+ *
  * @GQL\FieldsBuilder(name="MyFieldsBuilder", config={"param1": "val1"})
  */
 #[GQL\Type]

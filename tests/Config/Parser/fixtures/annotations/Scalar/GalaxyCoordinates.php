@@ -13,6 +13,7 @@ use function implode;
 
 /**
  * @GQL\Scalar
+ *
  * @GQL\Description("The galaxy coordinates scalar")
  */
 #[GQL\Scalar]

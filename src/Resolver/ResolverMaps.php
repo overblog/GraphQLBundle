@@ -52,7 +52,7 @@ final class ResolverMaps implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function covered(?string $typeName = null)
+    public function covered(string $typeName = null)
     {
         $covered = [];
         foreach ($this->resolverMaps as $resolverMap) {

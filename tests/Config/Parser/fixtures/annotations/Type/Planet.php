@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Scalar\Galax
 
 /**
  * @GQL\Type
+ *
  * @GQL\Description("The Planet type")
  */
 #[GQL\Type]
@@ -35,6 +36,7 @@ final class Planet
 
     /**
      * @GQL\Field
+     *
      * @GQL\FieldBuilder(name="NoteFieldBuilder", config={"option1"="value1"})
      */
     #[GQL\Field]
@@ -46,6 +48,7 @@ final class Planet
      *   type="Planet",
      *   resolve="@=query('closest_planet', [args['filter']])"
      * )
+     *
      * @GQL\ArgsBuilder(name="PlanetFilterArgBuilder", config={"option2"="value2"})
      */
     #[GQL\Field(type: 'Planet', resolve: "@=query('closest_planet', [args['filter']])")]

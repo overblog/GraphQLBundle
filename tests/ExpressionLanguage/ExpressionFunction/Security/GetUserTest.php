@@ -8,6 +8,8 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUse
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
@@ -22,6 +24,28 @@ final class GetUserTest extends TestCase
         return [new GetUser()];
     }
 
+    // @phpstan-ignore-next-line
+    protected function getMockedSecurity()
+    {
+        if (Kernel::VERSION_ID >= 60200) {
+            return $this->createMock(BundleSecurity::class);
+        } else {
+            return $this->createMock(CoreSecurity::class);
+        }
+    }
+
+    /**
+     * @return BundleSecurity|CoreSecurity
+     */
+    protected function getSecurityWithStorage(TokenStorageInterface $storage)
+    {
+        if (Kernel::VERSION_ID >= 60200) {
+            return new BundleSecurity($this->getDIContainerMock(['security.token_storage' => $storage]));
+        } else {
+            return new CoreSecurity($this->getDIContainerMock(['security.token_storage' => $storage]));
+        }
+    }
+
     public function testEvaluator(): void
     {
         if (class_exists(InMemoryUser::class)) {
@@ -29,7 +53,7 @@ final class GetUserTest extends TestCase
         } else {
             $testUser = new User('testUser', 'testPassword');
         }
-        $coreSecurity = $this->createMock(CoreSecurity::class);
+        $coreSecurity = $this->getMockedSecurity();
         $coreSecurity->method('getUser')->willReturn($testUser);
         $services = $this->createGraphQLServices(['security' => new Security($coreSecurity)]);
 
@@ -40,7 +64,7 @@ final class GetUserTest extends TestCase
     public function testGetUserNoTokenStorage(): void
     {
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
-            ['security' => new Security($this->createMock(CoreSecurity::class))]
+            ['security' => new Security($this->getMockedSecurity())]
         );
         ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
         $this->assertNull(eval($this->getCompileCode()));
@@ -51,11 +75,7 @@ final class GetUserTest extends TestCase
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
-                'security' => new Security(
-                    new CoreSecurity(
-                        $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
-                    )
-                ),
+                'security' => new Security($this->getSecurityWithStorage($tokenStorage)),
             ]
         );
         ${TypeGenerator::GRAPHQL_SERVICES}->get('security');
@@ -77,11 +97,7 @@ final class GetUserTest extends TestCase
 
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
             [
-                'security' => new Security(
-                    new CoreSecurity(
-                        $this->getDIContainerMock(['security.token_storage' => $tokenStorage])
-                    )
-                ),
+                'security' => new Security($this->getSecurityWithStorage($tokenStorage)),
             ]
         );
         ${TypeGenerator::GRAPHQL_SERVICES}->get('security');

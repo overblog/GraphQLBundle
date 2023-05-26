@@ -70,7 +70,7 @@ abstract class ResolverMap implements ResolverMapInterface
     /**
      * {@inheritdoc}
      */
-    public function covered(?string $typeName = null)
+    public function covered(string $typeName = null)
     {
         $loadedMap = $this->getLoadedMap();
         $covered = [];

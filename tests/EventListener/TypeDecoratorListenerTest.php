@@ -297,7 +297,7 @@ final class TypeDecoratorListenerTest extends TestCase
         ];
     }
 
-    private function assertDecorateException(array $types, array $map, ?string $exception = null, ?string $exceptionMessage = null): void
+    private function assertDecorateException(array $types, array $map, string $exception = null, string $exceptionMessage = null): void
     {
         if ($exception) {
             $this->expectException($exception); // @phpstan-ignore-line

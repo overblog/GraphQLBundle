@@ -12,7 +12,7 @@ class ExpressionFunction extends BaseExpressionFunction
 {
     protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
 
-    public function __construct(string $name, callable $compiler, ?callable $evaluator = null)
+    public function __construct(string $name, callable $compiler, callable $evaluator = null)
     {
         if (null === $evaluator) {
             $evaluator = new EvaluatorIsNotAllowedException($name);

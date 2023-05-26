@@ -5,19 +5,42 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Security;
 
 use LogicException;
+use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use function array_reduce;
 
-final class Security
+if (Kernel::VERSION_ID >= 60200) {
+    final class Security extends BaseSecurity
+    {
+        public function __construct(?BundleSecurity $security)
+        {
+            parent::__construct($security);
+        }
+    }
+} else {
+    final class Security extends BaseSecurity
+    {
+        public function __construct(?CoreSecurity $security)
+        {
+            parent::__construct($security);
+        }
+    }
+}
+
+abstract class BaseSecurity
 {
     /**
-     * @var CoreSecurity
+     * @var CoreSecurity|BundleSecurity
      */
     private $coreSecurity;
 
-    public function __construct(?CoreSecurity $security)
+    /**
+     * @param CoreSecurity|BundleSecurity $security
+     */
+    public function __construct($security)
     {
         // @phpstan-ignore-next-line
         $this->coreSecurity = $security ?? new class() {

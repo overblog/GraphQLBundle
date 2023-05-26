@@ -25,7 +25,7 @@ interface ExecutorInterface
         $contextValue = null,
         $variableValues = null,
         $operationName = null,
-        ?callable $fieldResolver = null,
-        ?array $validationRules = null
+        callable $fieldResolver = null,
+        array $validationRules = null
     ): ExecutionResult;
 }

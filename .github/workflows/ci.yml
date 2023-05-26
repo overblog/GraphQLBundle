@@ -18,14 +18,19 @@ jobs:
         php-version:
           - '8.0'
           - '8.1'
+          - '8.2'
         symfony-version:
           - '5.4.*'
           - '6.0.*'
+          - '6.2.*'
         dependencies:
           - 'lowest'
           - 'highest'
         remove-dependencies: [ '' ]
         coverage: [ 'none' ]
+        exclude:
+          - php-version: '8.0'
+            symfony-version: '6.2.*'
         include:
           - php-version: '8.0'
             symfony-version: '5.4.*'

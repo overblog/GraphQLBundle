@@ -449,7 +449,7 @@ final class TypeBuilder
      *
      * @throws GeneratorException
      */
-    private function buildResolve($resolve, ?array $groups = null): GeneratorInterface
+    private function buildResolve($resolve, array $groups = null): GeneratorInterface
     {
         if (is_callable($resolve) && is_array($resolve)) {
             return Collection::numeric($resolve);

@@ -16,8 +16,10 @@ use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
 
 use function array_keys;
@@ -98,14 +100,21 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @return CoreSecurity|MockObject
+     * @return CoreSecurity|BundleSecurity|MockObject
      */
     private function getCoreSecurityMock()
     {
-        return $this->getMockBuilder(CoreSecurity::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['isGranted'])
-            ->getMock();
+        if (Kernel::VERSION_ID >= 60200) {
+            return $this->getMockBuilder(BundleSecurity::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['isGranted'])
+                ->getMock();
+        } else {
+            return $this->getMockBuilder(CoreSecurity::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['isGranted'])
+                ->getMock();
+        }
     }
 
     protected function createGraphQLServices(array $services = []): GraphQLServices

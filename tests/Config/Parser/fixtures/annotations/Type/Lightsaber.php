@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Type
+ *
  * @ORM\Entity
  */
 #[GQL\Type]
@@ -16,6 +17,7 @@ final class Lightsaber
 {
     /**
      * @ORM\Column
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -24,6 +26,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="text")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -32,6 +35,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="string")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -40,6 +44,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -48,6 +53,7 @@ final class Lightsaber
 
     /**
      * @ORM\OneToMany(targetEntity="Hero")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -56,6 +62,7 @@ final class Lightsaber
 
     /**
      * @ORM\ManyToOne(targetEntity="Hero")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -64,6 +71,7 @@ final class Lightsaber
 
     /**
      * @ORM\OneToOne(targetEntity="Crystal")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -72,6 +80,7 @@ final class Lightsaber
 
     /**
      * @ORM\ManyToMany(targetEntity="Battle")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -80,7 +89,9 @@ final class Lightsaber
 
     /**
      * @GQL\Field
+     *
      * @ORM\OneToOne(targetEntity="Hero")
+     *
      * @ORM\JoinColumn(nullable=true)
      */
     #[GQL\Field]
@@ -89,7 +100,9 @@ final class Lightsaber
 
     /**
      * @GQL\Field
+     *
      * @ORM\Column(type="text[]")
+     *
      * @GQL\Deprecated("No more tags on lightsabers")
      */
     #[GQL\Field]
@@ -98,6 +111,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="float")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -106,6 +120,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="decimal")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -114,6 +129,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="bool")
+     *
      * @GQL\Field
      */
     #[GQL\Field]
@@ -122,6 +138,7 @@ final class Lightsaber
 
     /**
      * @ORM\Column(type="boolean")
+     *
      * @GQL\Field
      */
     #[GQL\Field]

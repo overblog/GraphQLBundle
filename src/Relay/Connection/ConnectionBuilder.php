@@ -59,7 +59,7 @@ final class ConnectionBuilder
      * @phpstan-param ConnectionFactoryFunc|null $connectionCallback
      * @phpstan-param EdgeFactoryFunc|null $edgeCallback
      */
-    public function __construct(?CursorEncoderInterface $cursorEncoder = null, ?callable $connectionCallback = null, ?callable $edgeCallback = null)
+    public function __construct(CursorEncoderInterface $cursorEncoder = null, callable $connectionCallback = null, callable $edgeCallback = null)
     {
         $this->cursorEncoder = $cursorEncoder ?? new Base64CursorEncoder();
         $this->connectionCallback = $connectionCallback ?? static fn (array $edges, PageInfoInterface $pageInfo): Connection => new Connection($edges, $pageInfo);

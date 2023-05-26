@@ -28,8 +28,8 @@ final class Executor implements ExecutorInterface
         $contextValue = null,
         $variableValues = null,
         $operationName = null,
-        ?callable $fieldResolver = null,
-        ?array $validationRules = null
+        callable $fieldResolver = null,
+        array $validationRules = null
     ): ExecutionResult {
         if (!method_exists($promiseAdapter, 'wait')) {
             throw new RuntimeException(

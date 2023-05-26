@@ -6,6 +6,7 @@ framework:
         utf8: true
     profiler:
         enabled: false
+    http_method_override: false
 
 security:
     enable_authenticator_manager: true
@@ -15,10 +16,10 @@ security:
                 users:
                     ryan:
                         password: 123
-                        roles: 'ROLE_USER'
+                        roles: "ROLE_USER"
                     admin:
                         password: 123
-                        roles: 'ROLE_ADMIN'
+                        roles: "ROLE_ADMIN"
     password_hashers:
         Symfony\Component\Security\Core\User\InMemoryUser: plaintext
     firewalls:
