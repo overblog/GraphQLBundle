@@ -93,7 +93,7 @@ class PhpEnumType extends EnumType
         return parent::parseValue($value);
     }
 
-    public function parseLiteral(Node $valueNode, ?array $variables = null): mixed
+    public function parseLiteral(Node $valueNode, array $variables = null): mixed
     {
         if ($this->enumClass) {
             if (!$valueNode instanceof EnumValueNode) {

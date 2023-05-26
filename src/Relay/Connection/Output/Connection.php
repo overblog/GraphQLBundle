@@ -26,7 +26,7 @@ class Connection implements ConnectionInterface
     protected ?PageInfoInterface $pageInfo;
 
     /** @var int|Promise|null Total count or promise that returns the total count */
-    protected $totalCount = null;
+    protected $totalCount;
 
     /**
      * @param EdgeInterface<T>[] $edges

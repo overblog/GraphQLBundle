@@ -15,6 +15,7 @@ final class InvalidDoctrineRelationGuessing
 {
     /**
      * @ORM\OneToOne(targetEntity="MissingType")
+     *
      * @GQL\Field
      */
     #[GQL\Field]

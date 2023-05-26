@@ -564,7 +564,7 @@ final class ConfigParserPassTest extends TestCase
         ];
     }
 
-    private function processCompilerPass(array $configs, ?ConfigParserPass $compilerPass = null, ?ContainerBuilder $container = null): void
+    private function processCompilerPass(array $configs, ConfigParserPass $compilerPass = null, ContainerBuilder $container = null): void
     {
         $container ??= $this->container;
         $compilerPass ??= $this->compilerPass;

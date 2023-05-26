@@ -42,5 +42,5 @@ interface ResolverMapInterface
      *
      * @return array
      */
-    public function covered(?string $typeName = null);
+    public function covered(string $typeName = null);
 }

@@ -15,6 +15,7 @@ final class InvalidDoctrineTypeGuessing
 {
     /**
      * @ORM\Column(type="invalidType")
+     *
      * @GQL\Field
      *
      * @var mixed

@@ -16,7 +16,7 @@ final class InputValidatorMutation implements MutationInterface
     /**
      * @throws ArgumentsValidationException
      */
-    public function mutationMock(Argument $args, ?InputValidator $validator = null): bool
+    public function mutationMock(Argument $args, InputValidator $validator = null): bool
     {
         if (null !== $validator) {
             $validator($args['groups']);

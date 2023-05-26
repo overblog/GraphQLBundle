@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Type
+ *
  * @GQL\Description("The character interface")
  */
 #[GQL\Type]
@@ -16,6 +17,7 @@ abstract class Animal
 {
     /**
      * @GQL\Field(type="String!")
+     *
      * @GQL\Description("The name of the animal")
      */
     #[GQL\Field(type: 'String!')]

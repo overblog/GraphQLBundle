@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Input
+ *
  * @GQL\Description("Planet Input type description")
  */
 #[GQL\Input]

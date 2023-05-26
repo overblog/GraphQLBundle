@@ -51,8 +51,8 @@ final class ValidationNode
     public function __construct(
         ObjectType|InputObjectType $type,
         string $field = null,
-        ?ValidationNode $parent = null,
-        ?ResolverArgs $resolverArgs = null
+        ValidationNode $parent = null,
+        ResolverArgs $resolverArgs = null
     ) {
         $this->__type = $type;
         $this->__fieldName = $field;

@@ -36,8 +36,8 @@ final class TypeGeneratorOptions
         string $namespace,
         ?string $cacheDir,
         bool $useClassMap = true,
-        ?string $cacheBaseDir = null,
-        ?int $cacheDirMask = null
+        string $cacheBaseDir = null,
+        int $cacheDirMask = null
     ) {
         $this->namespace = $namespace;
         $this->cacheDir = $cacheDir;

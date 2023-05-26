@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Type
+ *
  * @GQL\Description("The Cat type")
  */
 #[GQL\Type]

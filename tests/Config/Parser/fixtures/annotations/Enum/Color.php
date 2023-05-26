@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Enum
+ *
  * @GQL\EnumValue(name="RED", description="The color red")
  */
 #[GQL\Enum]

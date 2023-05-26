@@ -23,7 +23,7 @@ final class SchemaBuilder
         $this->enableValidation = $enableValidation;
     }
 
-    public function getBuilder(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): Closure
+    public function getBuilder(string $name, ?string $queryAlias, string $mutationAlias = null, string $subscriptionAlias = null, array $types = []): Closure
     {
         return function () use ($name, $queryAlias, $mutationAlias, $subscriptionAlias, $types): ExtensibleSchema {
             static $schema = null;
@@ -38,7 +38,7 @@ final class SchemaBuilder
     /**
      * @param string[] $types
      */
-    public function create(string $name, ?string $queryAlias, ?string $mutationAlias = null, ?string $subscriptionAlias = null, array $types = []): ExtensibleSchema
+    public function create(string $name, ?string $queryAlias, string $mutationAlias = null, string $subscriptionAlias = null, array $types = []): ExtensibleSchema
     {
         $this->typeResolver->setCurrentSchemaName($name);
         $query = $this->typeResolver->resolve($queryAlias);

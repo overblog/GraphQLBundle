@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
 
 /**
  * @GQL\Union(name="ResultSearch", types={"Hero", "Droid", "Sith"}, resolveType="value.getType()")
+ *
  * @GQL\Description("A search result")
  */
 #[GQL\Union('ResultSearch', types: ['Hero', 'Droid', 'Sith'], resolveType: 'value.getType()')]
