@@ -8,9 +8,9 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUse
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
-use Symfony\Bundle\SecurityBundle\Security as CoreSecurity;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security as CoreSecurity;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
