@@ -19,6 +19,8 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
+use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
+use Symfony\Component\HttpKernel\Kernel;
 
 use function array_keys;
 use function call_user_func_array;
@@ -102,10 +104,17 @@ abstract class TestCase extends BaseTestCase
      */
     private function getCoreSecurityMock()
     {
-        return $this->getMockBuilder(CoreSecurity::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['isGranted'])
-            ->getMock();
+        if (Kernel::VERSION_ID >= 60200) {
+            return $this->getMockBuilder(BundleSecurity::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['isGranted'])
+                ->getMock();
+        } else {
+            return $this->getMockBuilder(CoreSecurity::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['isGranted'])
+                ->getMock();
+        }
     }
 
     protected function createGraphQLServices(array $services = []): GraphQLServices
