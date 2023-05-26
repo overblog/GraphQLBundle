@@ -100,7 +100,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @return CoreSecurity|MockObject
+     * @return CoreSecurity|BundleSecurity|MockObject
      */
     private function getCoreSecurityMock()
     {

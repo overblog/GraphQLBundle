@@ -37,6 +37,9 @@ abstract class BaseSecurity
      */
     private $coreSecurity;
 
+    /**
+     * @param CoreSecurity|BundleSecurity $security
+     */
     public function __construct($security)
     {
         // @phpstan-ignore-next-line

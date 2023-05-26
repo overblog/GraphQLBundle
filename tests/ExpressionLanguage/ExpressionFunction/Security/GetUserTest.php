@@ -24,6 +24,9 @@ final class GetUserTest extends TestCase
         return [new GetUser()];
     }
 
+    /**
+     * @return CoreSecurity|BundleSecurity|MockObject
+     */
     protected function getMockedSecurity()
     {
         if (Kernel::VERSION_ID >= 60200) {
@@ -33,6 +36,9 @@ final class GetUserTest extends TestCase
         }
     }
 
+    /**
+     * @return BundleSecurity|CoreSecurity
+     */
     protected function getSecurityWithStorage(TokenStorageInterface $storage)
     {
         if (Kernel::VERSION_ID >= 60200) {
