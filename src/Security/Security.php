@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Security;
 
 use LogicException;
+use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Security as CoreSecurity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
 
 use function array_reduce;
 
@@ -40,7 +40,7 @@ abstract class BaseSecurity
     public function __construct($security)
     {
         // @phpstan-ignore-next-line
-        $this->coreSecurity = $security ?? new class () {
+        $this->coreSecurity = $security ?? new class() {
             public function isGranted(): bool
             {
                 throw new LogicException('The "symfony/security-core" component is required.');

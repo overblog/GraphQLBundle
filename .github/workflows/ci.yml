@@ -28,6 +28,9 @@ jobs:
           - 'highest'
         remove-dependencies: [ '' ]
         coverage: [ 'none' ]
+        exclude:
+          - php-version: '8.0'
+            symfony-version: '6.2.*'
         include:
           - php-version: '8.0'
             symfony-version: '5.4.*'
