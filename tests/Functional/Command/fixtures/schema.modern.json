@@ -196,7 +196,9 @@
                                         "name": "Boolean",
                                         "ofType": null
                                     },
-                                    "defaultValue": "false"
+                                    "defaultValue": "false",
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 }
                             ],
                             "type": {
@@ -263,7 +265,9 @@
                                         "name": "Boolean",
                                         "ofType": null
                                     },
-                                    "defaultValue": "false"
+                                    "defaultValue": "false",
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 }
                             ],
                             "type": {
@@ -284,7 +288,19 @@
                         },
                         {
                             "name": "inputFields",
-                            "args": [],
+                            "args": [
+                                {
+                                    "name": "includeDeprecated",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Boolean",
+                                        "ofType": null
+                                    },
+                                    "defaultValue": "false",
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
+                                }
+                            ],
                             "type": {
                                 "kind": "LIST",
                                 "name": null,
@@ -400,7 +416,19 @@
                         },
                         {
                             "name": "args",
-                            "args": [],
+                            "args": [
+                                {
+                                    "name": "includeDeprecated",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Boolean",
+                                        "ofType": null
+                                    },
+                                    "defaultValue": "false",
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
+                                }
+                            ],
                             "type": {
                                 "kind": "NON_NULL",
                                 "name": null,
@@ -515,6 +543,32 @@
                         },
                         {
                             "name": "defaultValue",
+                            "args": [],
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            },
+                            "isDeprecated": false,
+                            "deprecationReason": null
+                        },
+                        {
+                            "name": "isDeprecated",
+                            "args": [],
+                            "type": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "SCALAR",
+                                    "name": "Boolean",
+                                    "ofType": null
+                                }
+                            },
+                            "isDeprecated": false,
+                            "deprecationReason": null
+                        },
+                        {
+                            "name": "deprecationReason",
                             "args": [],
                             "type": {
                                 "kind": "SCALAR",
@@ -840,7 +894,9 @@
                                         "name": "String",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 },
                                 {
                                     "name": "first",
@@ -849,7 +905,9 @@
                                         "name": "Int",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 },
                                 {
                                     "name": "before",
@@ -858,7 +916,9 @@
                                         "name": "String",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 },
                                 {
                                     "name": "last",
@@ -867,7 +927,9 @@
                                         "name": "Int",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 }
                             ],
                             "type": {
@@ -888,7 +950,9 @@
                                         "name": "String",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 },
                                 {
                                     "name": "first",
@@ -897,7 +961,9 @@
                                         "name": "Int",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 }
                             ],
                             "type": {
@@ -918,7 +984,9 @@
                                         "name": "String",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 },
                                 {
                                     "name": "last",
@@ -927,7 +995,9 @@
                                         "name": "Int",
                                         "ofType": null
                                     },
-                                    "defaultValue": null
+                                    "defaultValue": null,
+                                    "isDeprecated": false,
+                                    "deprecationReason": null
                                 }
                             ],
                             "type": {
@@ -1196,7 +1266,9 @@
                                     "ofType": null
                                 }
                             },
-                            "defaultValue": null
+                            "defaultValue": null,
+                            "isDeprecated": false,
+                            "deprecationReason": null
                         }
                     ],
                     "locations": [
@@ -1219,7 +1291,9 @@
                                     "ofType": null
                                 }
                             },
-                            "defaultValue": null
+                            "defaultValue": null,
+                            "isDeprecated": false,
+                            "deprecationReason": null
                         }
                     ],
                     "locations": [
@@ -1238,12 +1312,16 @@
                                 "name": "String",
                                 "ofType": null
                             },
-                            "defaultValue": "\"No longer supported\""
+                            "defaultValue": "\"No longer supported\"",
+                            "isDeprecated": false,
+                            "deprecationReason": null
                         }
                     ],
                     "locations": [
                         "FIELD_DEFINITION",
-                        "ENUM_VALUE"
+                        "ENUM_VALUE",
+                        "ARGUMENT_DEFINITION",
+                        "INPUT_FIELD_DEFINITION"
                     ]
                 }
             ]

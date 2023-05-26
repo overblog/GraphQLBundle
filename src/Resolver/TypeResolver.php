@@ -16,6 +16,7 @@ class TypeResolver extends AbstractResolver
     private array $cache = [];
     private ?string $currentSchemaName = null;
     private EventDispatcherInterface $dispatcher;
+    private bool $ignoreUnresolvableException = false;
 
     public function setDispatcher(EventDispatcherInterface $dispatcher): void
     {
@@ -25,6 +26,11 @@ class TypeResolver extends AbstractResolver
     public function setCurrentSchemaName(?string $currentSchemaName): void
     {
         $this->currentSchemaName = $currentSchemaName;
+    }
+
+    public function setIgnoreUnresolvableException(bool $ignoreUnresolvableException): void
+    {
+        $this->ignoreUnresolvableException = $ignoreUnresolvableException;
     }
 
     /**
@@ -60,10 +66,10 @@ class TypeResolver extends AbstractResolver
         return $this->cache[$alias];
     }
 
-    private function baseType(string $alias): Type
+    private function baseType(string $alias): ?Type
     {
         $type = $this->getSolution($alias);
-        if (null === $type) {
+        if (null === $type && !$this->ignoreUnresolvableException) {
             throw new UnresolvableException(
                 sprintf('Could not find type with alias "%s". Did you forget to define it?', $alias)
             );

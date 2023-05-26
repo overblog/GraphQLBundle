@@ -8,6 +8,7 @@ use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,11 +28,14 @@ final class GraphQLDumpSchemaCommand extends Command
     private RequestExecutor $requestExecutor;
     private string $baseExportPath;
 
-    public function __construct(string $baseExportPath, RequestExecutor $requestExecutor)
+    public function __construct(string $baseExportPath, RequestExecutor $requestExecutor, TypeResolver $typeResolver)
     {
         parent::__construct();
         $this->baseExportPath = $baseExportPath;
         $this->requestExecutor = $requestExecutor;
+
+        // Disable exception when an unresolvable types is encoutered. Schema dump will try to access the Query, Mutation and Subscription types and will fail if they are not defined.
+        $typeResolver->setIgnoreUnresolvableException(true);
     }
 
     public function getRequestExecutor(): RequestExecutor
