@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Relay\Connection\Output;
 
+use AllowDynamicProperties;
 use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
@@ -14,6 +15,7 @@ use Overblog\GraphQLBundle\Relay\Connection\PageInfoInterface;
  *
  * @phpstan-implements ConnectionInterface<T>
  */
+#[AllowDynamicProperties]
 class Connection implements ConnectionInterface
 {
     use DeprecatedPropertyPublicAccessTrait;
