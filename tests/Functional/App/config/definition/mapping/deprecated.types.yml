@@ -19,3 +19,11 @@ ObjectWithDeprecatedField:
             bar:
                 type: String
                 deprecationReason: "A terrible reason"
+
+InputObjectWithDeprecatedField:
+    type: input-object
+    config:
+        fields:
+            baz:
+                type: String
+                deprecationReason: "A terrible reason for input"

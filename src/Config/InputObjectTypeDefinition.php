@@ -32,6 +32,7 @@ final class InputObjectTypeDefinition extends TypeDefinition
                         ->append($this->descriptionSection())
                         ->append($this->defaultValueSection())
                         ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
+                        ->append($this->deprecationReasonSection())
                     ->end()
                     ->isRequired()
                     ->requiresAtLeastOneElement()

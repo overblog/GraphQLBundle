@@ -398,7 +398,7 @@ abstract class MetadataParser implements PreParserInterface
     {
         $inputConfiguration = array_merge([
             'fields' => self::getGraphQLInputFieldsFromMetadatas($reflectionClass, self::getClassProperties($reflectionClass)),
-        ], self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)));
+        ], self::getDescriptionConfiguration(static::getMetadatas($reflectionClass), true));
 
         return ['type' => $inputAnnotation->isRelay ? 'relay-mutation-input' : 'input-object', 'config' => $inputConfiguration];
     }
