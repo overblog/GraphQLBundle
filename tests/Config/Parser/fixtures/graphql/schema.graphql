@@ -27,6 +27,7 @@ interface Character {
   friends: [Character]
   appearsIn: [Episode]!
   deprecatedField: String! @deprecated(reason: "This field was deprecated!")
+  fieldWithDeprecatedArg(deprecatedArg: Boolean! = false @deprecated(reason: "This arg was deprecated!")): String!
 }
 
 type Human implements Character {
@@ -52,6 +53,7 @@ input ReviewInput {
   stars: Int! = 5
   rate: Float! = 1.58
   commentary: String = null
+  deprecatedInputField: String! @deprecated(reason: "This input field was deprecated!")
 }
 
 scalar Year
