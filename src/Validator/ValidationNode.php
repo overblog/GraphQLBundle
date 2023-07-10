@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator;
 
+use AllowDynamicProperties;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -22,7 +23,8 @@ use function in_array;
  * It also contains variables of the resolver context, in which this class was
  * instantiated.
  */
-#[\AllowDynamicProperties]
+/* @phpstan-ignore-next-line */
+#[AllowDynamicProperties]
 class ValidationNode
 {
     private const KNOWN_VAR_NAMES = ['value', 'args', 'context', 'info'];
