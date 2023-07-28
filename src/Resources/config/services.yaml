@@ -90,6 +90,7 @@ services:
             - '@Overblog\GraphQLBundle\Request\Parser'
             - "%overblog_graphql.handle_cors%"
             - "%overblog_graphql.batching_method%"
+            - "%kernel.debug%"
 
     Overblog\GraphQLBundle\Definition\ConfigProcessor: ~
 

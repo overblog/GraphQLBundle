@@ -36,18 +36,25 @@ class GraphController
      */
     private $useApolloBatchingMethod;
 
+    /**
+     * @var bool
+     */
+    private $debugMode;
+
     public function __construct(
         GraphQLRequest\ParserInterface $batchParser,
         GraphQLRequest\Executor $requestExecutor,
         GraphQLRequest\ParserInterface $requestParser,
         $shouldHandleCORS,
-        $graphQLBatchingMethod
+        $graphQLBatchingMethod,
+        $debugMode = true
     ) {
         $this->batchParser = $batchParser;
         $this->requestExecutor = $requestExecutor;
         $this->requestParser = $requestParser;
         $this->shouldHandleCORS = $shouldHandleCORS;
         $this->useApolloBatchingMethod = 'apollo' === $graphQLBatchingMethod;
+        $this->debugMode = $debugMode;
     }
 
     /**
@@ -87,7 +94,17 @@ class GraphController
             if (!\in_array($request->getMethod(), ['POST', 'GET'])) {
                 return new Response('', 405);
             }
-            $payload = $this->processQuery($request, $schemaName, $batched);
+
+            try {
+                $payload = $this->processQuery($request, $schemaName, $batched);
+            } catch(BadRequestHttpException $e) {
+                if ($this->debugMode) {
+                    throw $e;
+                } else {
+                    return new JsonResponse('', 400);
+                }
+            }
+
             $response = new JsonResponse($payload, 200);
         }
         $this->addCORSHeadersIfNeeded($response, $request);
