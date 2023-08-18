@@ -72,7 +72,7 @@ class GraphController
                 if ($this->debugMode) {
                     throw $e;
                 } else {
-                    return new JsonResponse('', 400);
+                    return new JsonResponse($e->getMessage(), 400);
                 }
             }
 
