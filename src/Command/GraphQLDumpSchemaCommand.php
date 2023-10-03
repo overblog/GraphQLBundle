@@ -34,7 +34,7 @@ final class GraphQLDumpSchemaCommand extends Command
         $this->baseExportPath = $baseExportPath;
         $this->requestExecutor = $requestExecutor;
 
-        // Disable exception when an unresolvable types is encoutered. Schema dump will try to access the Query, Mutation and Subscription types and will fail if they are not defined.
+        // Disable exception when an unresolvable types is encountered. Schema dump will try to access the Query, Mutation and Subscription types and will fail if they are not defined.
         $typeResolver->setIgnoreUnresolvableException(true);
     }
 

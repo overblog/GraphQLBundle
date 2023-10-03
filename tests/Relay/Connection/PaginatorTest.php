@@ -117,7 +117,7 @@ final class PaginatorTest extends TestCase
         $this->assertTrue($result->getPageInfo()->getHasPreviousPage()); // on previous page there is still ['A', 'B', 'C', 'D', 'E']
     }
 
-    public function testForwardAfterWithUnvalidCursorAndSlice(): void
+    public function testForwardAfterWithInvalidCursorAndSlice(): void
     {
         $paginator = new Paginator(function ($offset, $limit) {
             $this->assertSame(0, $offset);

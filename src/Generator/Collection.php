@@ -13,7 +13,7 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 final class Collection extends BaseCollection
 {
     /**
-     * Mark converters to be used by convertion of array values.
+     * Mark converters to be used by conversion of array values.
      */
     protected array $converters = [ExpressionConverter::class];
 }

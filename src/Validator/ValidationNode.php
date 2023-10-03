@@ -19,7 +19,7 @@ use function in_array;
  * ValidationNode.
  *
  * Holds the input data of the associated to it GraphQL type. Properties will be
- * created dinamically in runtime. In order to avoid name conflicts all built in
+ * created dynamically in runtime. In order to avoid name conflicts all built in
  * property names are prefixed with double underscores.
  *
  * It also contains variables of the resolver context, in which this class was

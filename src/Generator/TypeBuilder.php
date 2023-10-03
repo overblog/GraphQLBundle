@@ -145,7 +145,7 @@ final class TypeBuilder
     /**
      * Converts a native GraphQL type string into the `webonyx/graphql-php`
      * type literal. References to user-defined types are converted into
-     * TypeResovler method call and wrapped into a closure.
+     * TypeResolver method call and wrapped into a closure.
      *
      * Render examples:
      *

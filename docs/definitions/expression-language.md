@@ -43,7 +43,7 @@ Examples:
 ```yaml
 @=service('my_service').customMethod()
 
-# Using the 'ser' alias
+# Using the 'serv' alias
 @=serv('my_service').customMethod()
 
 # Using the FQCN for the service name (only works for public services).

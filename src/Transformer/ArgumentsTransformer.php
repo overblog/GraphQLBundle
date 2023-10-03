@@ -129,7 +129,7 @@ final class ArgumentsTransformer
 
     /**
      * Given a GraphQL type and an array of data, populate corresponding object recursively
-     * using annoted classes.
+     * using annotated classes.
      *
      * @param mixed $data
      *
