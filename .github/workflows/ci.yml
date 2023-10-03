@@ -51,12 +51,6 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           coverage: "${{ matrix.coverage }}"
 
-      - name: "Change stability"
-        if: "matrix.stability != ''"
-        run: |
-          perl -pi -e 's/^}$/,"minimum-stability": "${{ matrix.minimum-stability }}"}/' composer.json
-          cat composer.json
-
       - name: "Webonyx GraphQL version"
         if: "matrix.graphql-version != ''"
         run: composer require "webonyx/graphql-php:${{ matrix.graphql-version }}" --dev --no-update
