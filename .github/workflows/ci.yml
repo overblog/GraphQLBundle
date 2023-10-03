@@ -117,13 +117,6 @@ jobs:
           php-version: ${{ matrix.php-version }}
           coverage: "none"
 
-      - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v2"
-        with:
-          path: "~/.composer/cache"
-          key: "php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php-version }}-composer-locked-"
-
       - name: "Install dependencies"
         uses: ramsey/composer-install@v2
 
