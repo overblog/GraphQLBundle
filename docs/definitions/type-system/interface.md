@@ -132,7 +132,7 @@ RootQuery:
     type: object
     config:
         fields:
-            allCaracters:
+            allCharacters:
                 type: "[Character]" # interface as the return type
                 resolve: "@=res('all_characters')"
 ```

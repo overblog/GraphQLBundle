@@ -155,7 +155,7 @@ class RootQuery {
 }
 ```
 
-In order for this to work, the `RootQuery` class must be instanciated at some point if you want to be able to call methods on it. 
+In order for this to work, the `RootQuery` class must be instantiated at some point if you want to be able to call methods on it. 
 To do so, the `RootQuery` class must be defined as a service with its FQCN as id.  
 In the previous example, we need a service name `App\GraphQL\Query\RootQuery`. It works the same way for mutations.
 In the previous example, the generated `resolve` config of the `something` field will be `@=service('App\GraphQL\Query\RootQuery').getSomething()`.
@@ -195,7 +195,7 @@ class MyType {
 ### @Field type auto-guessing when defined on a property with a type hint
 
 The type of the `@Field` annotation can be auto-guessed if it's defined on a property with a type hint.
-If the property has a usable type hint this is used and no futher guessing is done.
+If the property has a usable type hint this is used and no further guessing is done.
 
 For example:
 

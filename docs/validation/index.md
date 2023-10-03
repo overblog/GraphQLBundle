@@ -777,7 +777,7 @@ class UserResolver implements MutationInterface, AliasedInterface
         /* 
          * Validates:
          *   - username against 'Length'
-         *   - password againt 'IdenticalTo'
+         *   - password against 'IdenticalTo'
          */
         $validator->validate('registration');
     

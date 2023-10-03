@@ -1,8 +1,8 @@
 # The Arguments Transformer service
 
 When using annotation, as we use classes to describe our GraphQL objects, it is also possible to create and populate classes instances using GraphQL data.  
-If a class is used to describe a GraphQL Input, this same class can be instanciated to hold the corresponding GraphQL Input data.  
-This is where the `Arguments Transformer` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instanciate a PHP classes and populate it with data based on the corresponding GraphQL type.
+If a class is used to describe a GraphQL Input, this same class can be instantiated to hold the corresponding GraphQL Input data.  
+This is where the `Arguments Transformer` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instantiate a PHP classes and populate it with data based on the corresponding GraphQL type.
 To invoke the Arguments Transformer, we use the `input` expression function in our resolvers. 
 
 ## the `arguments` function in expression language

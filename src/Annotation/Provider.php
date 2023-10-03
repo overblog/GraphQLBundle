@@ -18,7 +18,7 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
 final class Provider extends Annotation
 {
     /**
-     * Optionnal prefix for provider fields.
+     * Optional prefix for provider fields.
      */
     public ?string $prefix;
 

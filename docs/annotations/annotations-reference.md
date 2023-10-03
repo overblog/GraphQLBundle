@@ -241,7 +241,7 @@ Optional attributes:
 Deprecated attributes:
 -   **values** : An array of `@EnumValue`to define description or deprecated reason of enum values
 
-The class will also be used by the `Arguments Transformer` service when an `Enum` is encoutered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
+The class will also be used by the `Arguments Transformer` service when an `Enum` is encountered in a Mutation or Query Input. A property accessor will try to populate a property name `value`.
 
 Example:
 
@@ -266,7 +266,7 @@ class Planet
 ```
 
 In the example above, if a query or mutation has this Enum as an argument, the value will be an instance of the class with the enum value as the `value` property. (see [The Arguments Transformer documentation](arguments-transformer.md)).  
-As the class can be instanciated from the `Arguments Transformer` service, it cannot have a constructor with required arguments.
+As the class can be instantiated from the `Arguments Transformer` service, it cannot have a constructor with required arguments.
 
 ## @EnumValue
 
@@ -427,7 +427,7 @@ The corresponding class will also be used by the `Arguments Transformer` service
 
 ## @IsPublic
 
-Added on a _class_ in conjunction with `@Type` or `@TypeInterface`, this annotation will define the defaut to set if fields are public or not.
+Added on a _class_ in conjunction with `@Type` or `@TypeInterface`, this annotation will define the default to set if fields are public or not.
 Added on a _property_ or _method_ in conjunction with `@Field`, it'll define an expression to set if the field is public or not.
 
 Example:
@@ -646,7 +646,7 @@ This annotation is used on a _class_ to define an union.
 
 Required attributes:
 
--   **types** : An array of GraphQL Type as string (can be auto-guessed. See union documenation).
+-   **types** : An array of GraphQL Type as string (can be auto-guessed. See union documentation).
 
 Optional attributes:
 

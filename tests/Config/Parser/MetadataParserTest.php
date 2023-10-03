@@ -556,7 +556,7 @@ abstract class MetadataParserTest extends TestCase
         try {
             $file = __DIR__.'/fixtures/annotations/Invalid/InvalidUnion.php';
             $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
-            $this->fail('Union with missing resolve type shoud have raise an exception');
+            $this->fail('Union with missing resolve type should have raise an exception');
         } catch (Exception $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
             $this->assertMatchesRegularExpression('/The metadata '.$this->formatMetadata('Union').' has no "resolveType"/', $e->getPrevious()->getMessage());

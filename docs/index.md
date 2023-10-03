@@ -104,7 +104,7 @@ overblog_graphql_multiple_endpoint:
 ```
 
 
-Optionnal features depencies
+Optional features dependencies
 ------------
 
 - To use the Validator features, you must also install `symfony/validator` and `doctrine/annotations`

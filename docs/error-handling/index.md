@@ -140,7 +140,7 @@ You can custom the default errors handler using configuration:
 overblog_graphql:
     errors_handler:
         enabled: true # false will totally disabled errors handling
-        internal_error_message: 'Internal error occured' # custom generic error message
+        internal_error_message: 'Internal error occurred' # custom generic error message
         rethrow_internal_exceptions: false # re-throw internal exception
         debug: false # will add trace stack and debugMessage to error
         log: true # false will disabled the default logging behavior

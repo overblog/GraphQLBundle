@@ -19,7 +19,7 @@ FriendsConnection:
                   edgeType: FriendsConnectionEdge
 ```
 
-See the class definition for additionnal configuration
+See the class definition for additional configuration
 
 
 ## The Relay Edge Fields Builder
@@ -36,4 +36,4 @@ FriendsConnectionEdge:
                   nodeType: Character
 ```
 
-See the class definition for additionnal configuration
+See the class definition for additional configuration

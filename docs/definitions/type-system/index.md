@@ -41,7 +41,7 @@ Types can be define 3 different ways:
     You can also declare PHP types (any subclass of `GraphQL\Type\Definition\Type`) 
     in `src/*Bundle/GraphQL` or `app/GraphQL`
     they will be auto discover (thanks to auto mapping). Auto map classes are accessible by service id
-    (example: `AppBunble\GraphQL\Type\DateTimeType`), you can also alias a type by
+    (example: `AppBundle\GraphQL\Type\DateTimeType`), you can also alias a type by
     implementing `Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface`
     that returns an array of aliases.
 
