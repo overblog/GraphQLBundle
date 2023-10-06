@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
 use Overblog\GraphQLBundle\Config\Parser\GraphQLParser;
+use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Config\Parser\YamlParser;
 use Overblog\GraphQLBundle\DependencyInjection\TypesConfiguration;
@@ -35,24 +36,37 @@ use function sprintf;
 
 class ConfigParserPass implements CompilerPassInterface
 {
+    public const TYPE_YAML = 'yaml';
+    public const TYPE_GRAPHQL = 'graphql';
+    public const TYPE_ANNOTATION = 'annotation';
+    public const TYPE_ATTRIBUTE = 'attribute';
+
+    public const SUPPORTED_TYPES = [
+        self::TYPE_YAML,
+        self::TYPE_GRAPHQL,
+        self::TYPE_ANNOTATION,
+        self::TYPE_ATTRIBUTE,
+    ];
+
     public const SUPPORTED_TYPES_EXTENSIONS = [
-        'yaml' => '{yaml,yml}',
-        'graphql' => '{graphql,graphqls}',
-        'annotation' => 'php',
-        'attribute' => 'php',
+        self::TYPE_YAML => '{yaml,yml}',
+        self::TYPE_GRAPHQL => '{graphql,graphqls}',
+        self::TYPE_ANNOTATION => 'php',
+        self::TYPE_ATTRIBUTE => 'php',
     ];
 
     /**
-     * @var array<string, class-string<PreParserInterface>>
+     * @deprecated They are going to be configurable.
+     * @var array<string, class-string<ParserInterface|PreParserInterface>>
      */
     public const PARSERS = [
-        'yaml' => YamlParser::class,
-        'graphql' => GraphQLParser::class,
-        'annotation' => AnnotationParser::class,
-        'attribute' => AttributeParser::class,
+        self::TYPE_YAML => YamlParser::class,
+        self::TYPE_GRAPHQL => GraphQLParser::class,
+        self::TYPE_ANNOTATION => AnnotationParser::class,
+        self::TYPE_ATTRIBUTE => AttributeParser::class,
     ];
 
-    private static array $defaultDefaultConfig = [
+    private const DEFAULT_CONFIG = [
         'definitions' => [
             'mappings' => [
                 'auto_discover' => [
@@ -63,7 +77,14 @@ class ConfigParserPass implements CompilerPassInterface
                 'types' => [],
             ],
         ],
+        'parsers' => self::PARSERS,
     ];
+
+    /**
+     * @deprecated Use {@see ConfigParserPass::PARSERS }. Added for the backward compatibility.
+     * @var array<string,array<string,mixed>>
+     */
+    private static array $defaultDefaultConfig = self::DEFAULT_CONFIG;
 
     private array $treatedFiles = [];
     private array $preTreatedFiles = [];
@@ -86,6 +107,10 @@ class ConfigParserPass implements CompilerPassInterface
         $config = $container->getParameterBag()->resolveValue($container->getParameter('overblog_graphql.config'));
         $container->getParameterBag()->remove('overblog_graphql.config');
         $container->setParameter($this->getAlias().'.classes_map', []);
+
+        // use default value if needed
+        $config = array_replace_recursive(self::DEFAULT_CONFIG, $config);
+
         $typesMappings = $this->mappingConfig($config, $container);
         // reset treated files
         $this->treatedFiles = [];
@@ -96,7 +121,7 @@ class ConfigParserPass implements CompilerPassInterface
         // Pre-parse all files
         AnnotationParser::reset($config);
         AttributeParser::reset($config);
-        $typesNeedPreParsing = $this->typesNeedPreParsing();
+        $typesNeedPreParsing = $this->typesNeedPreParsing($config['parsers']);
         foreach ($typesMappings as $params) {
             if ($typesNeedPreParsing[$params['type']]) {
                 $this->parseTypeConfigFiles($params['type'], $params['files'], $container, $config, true);
@@ -115,10 +140,15 @@ class ConfigParserPass implements CompilerPassInterface
         return $flattenTypeConfig;
     }
 
-    private function typesNeedPreParsing(): array
+    /**
+     * @param array<string,string> $parsers
+     *
+     * @return array<string,bool>
+     */
+    private function typesNeedPreParsing(array $parsers): array
     {
         $needPreParsing = [];
-        foreach (self::PARSERS as $type => $className) {
+        foreach ($parsers as $type => $className) {
             $needPreParsing[$type] = is_a($className, PreParserInterface::class, true);
         }
 
@@ -145,7 +175,7 @@ class ConfigParserPass implements CompilerPassInterface
                 continue;
             }
 
-            $parser = [self::PARSERS[$type], $method];
+            $parser = [$configs['parsers'][$type], $method];
             if (is_callable($parser)) {
                 $config[] = ($parser)($file, $container, $configs);
             }
@@ -169,9 +199,6 @@ class ConfigParserPass implements CompilerPassInterface
 
     private function mappingConfig(array $config, ContainerBuilder $container): array
     {
-        // use default value if needed
-        $config = array_replace_recursive(self::$defaultDefaultConfig, $config);
-
         $mappingConfig = $config['definitions']['mappings'];
         $typesMappings = $mappingConfig['types'];
 

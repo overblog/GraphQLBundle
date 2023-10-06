@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\DependencyInjection;
 use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Config\Parser\ParserInterface;
 use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\Error\ErrorHandler;
@@ -57,6 +58,7 @@ class Configuration implements ConfigurationInterface
                 ->append($this->securitySection())
                 ->append($this->doctrineSection())
                 ->append($this->profilerSection())
+                ->append($this->parsersSection())
             ->end();
 
         return $treeBuilder;
@@ -314,6 +316,32 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function parsersSection(): ArrayNodeDefinition
+    {
+        /** @var ArrayNodeDefinition $node */
+        $node = (new TreeBuilder('parsers'))->getRootNode();
+        $node->useAttributeAsKey('name');
+
+        $parserPrototype = $node->scalarPrototype();
+        $parserPrototype->cannotBeEmpty();
+        $parserPrototype->validate()
+            ->ifTrue(static function (string $x): bool {
+                return !is_subclass_of($x, ParserInterface::class, true);
+            })
+            ->thenInvalid(sprintf('Parser MUST implement "%s', ParserInterface::class));
+
+        $node->validate()
+            ->ifTrue(static function (array $x): bool {
+                return (bool) array_diff(array_keys($x), ConfigParserPass::SUPPORTED_TYPES);
+            })
+            ->then(static function (array $x) {
+                $types = implode(', ', array_diff(array_keys($x), ConfigParserPass::SUPPORTED_TYPES));
+                throw new \InvalidArgumentException(sprintf('Configured parsers for not supported types: %s', $types));
+            });
 
         return $node;
     }

@@ -12,7 +12,7 @@ use function is_array;
 
 abstract class TestCase extends WebTestCase
 {
-    /** @var ContainerBuilder|MockObject */
+    /** @var ContainerBuilder & MockObject */
     protected $containerBuilder;
 
     public function setUp(): void

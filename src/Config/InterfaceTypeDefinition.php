@@ -8,10 +8,17 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class InterfaceTypeDefinition extends TypeWithOutputFieldsDefinition
 {
+    public const CONFIG_NAME = '_interface_config';
+
+    public static function getName(): string
+    {
+        return static::CONFIG_NAME;
+    }
+
     public function getDefinition(): ArrayNodeDefinition
     {
         /** @var ArrayNodeDefinition $node */
-        $node = self::createNode('_interface_config');
+        $node = self::createNode(static::CONFIG_NAME);
 
         /** @phpstan-ignore-next-line */
         $node

@@ -6,6 +6,8 @@ namespace Overblog\GraphQLBundle\Config\Processor;
 
 use Exception;
 use InvalidArgumentException;
+use Overblog\GraphQLBundle\Config\PermittedInheritTypeProvider;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use function array_column;
 use function array_filter;
 use function array_flip;
@@ -27,6 +29,24 @@ final class InheritanceProcessor implements ProcessorInterface
 {
     public const HEIRS_KEY = 'heirs';
     public const INHERITS_KEY = 'inherits';
+
+    /**
+     * TODO: refactor. This is dirty solution but quick and with minimal impact on existing structure.
+     *
+     * @var class-string<PermittedInheritTypeProvider>
+     */
+    private static $permittedInheritTypeProviderClass = PermittedInheritTypeProvider::class;
+
+    /**
+     * @param class-string<PermittedInheritTypeProvider> $fqcn
+     */
+    public static function setPermittedInheritTypeProviderClass(string $fqcn): void
+    {
+        if (!is_subclass_of($fqcn, PermittedInheritTypeProvider::class, true)) {
+            throw new \InvalidArgumentException(sprintf('Options must be a FQCN implementing %s', PermittedInheritTypeProvider::class));
+        }
+        self::$permittedInheritTypeProviderClass = $fqcn;
+    }
 
     public static function process(array $configs): array
     {
@@ -79,10 +99,7 @@ final class InheritanceProcessor implements ProcessorInterface
                 continue;
             }
 
-            $allowedTypes = [$config['type']];
-            if ('object' === $config['type']) {
-                $allowedTypes[] = 'interface';
-            }
+            $allowedTypes = self::getAllowedTypes($config['type']);
             $flattenInherits = self::flattenInherits($name, $configs, $allowedTypes);
             if (empty($flattenInherits)) {
                 continue;
@@ -106,7 +123,7 @@ final class InheritanceProcessor implements ProcessorInterface
         $mergedParentsConfig = self::mergeConfigs(...array_column($parentTypes, 'config'));
         $childType = $configs[$child];
         // unset resolveType field resulting from the merge of a "interface" type
-        if ('object' === $childType['type']) {
+        if (TypeEnum::OBJECT === $childType['type']) {
             unset($mergedParentsConfig['resolveType']);
         }
 
@@ -196,5 +213,16 @@ final class InheritanceProcessor implements ProcessorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return string[]
+     */
+    private static function getAllowedTypes(string $type): array
+    {
+        /** @var class-string<PermittedInheritTypeProvider> $class */
+        $class = self::$permittedInheritTypeProviderClass;
+
+        return (new $class)->getAllowedTypes($type);
     }
 }

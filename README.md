@@ -90,6 +90,7 @@ Documentation
 - [Errors handling](docs/error-handling/index.md)
 - [Events](docs/events/index.md)
 - [Profiler](docs/profiler/index.md)
+- [Tune configuration](docs/tune_configuration.md)
 
 Talks and slides to help you start
 ----------------------------------

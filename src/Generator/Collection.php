@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use Murtukov\PHPCodeGenerator\Collection as BaseCollection;
-use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
+use Overblog\GraphQLBundle\Generator\Model\Collection as BaseCollection;
+
+@trigger_error(sprintf('Since overblog/graphql-bundle 0.14.4: Class \Overblog\GraphQLBundle\Generator\TypeGeneratorOptions is deprecated. Use %s instead of it.', BaseCollection::class), \E_USER_DEPRECATED);
 
 /**
- * Extends the default Collection to properly convert expressions.
+ * @deprecated Use {@see \Overblog\GraphQLBundle\Generator\Model\Collection }
  */
 class Collection extends BaseCollection
 {
-    /**
-     * Mark converters to be used by convertion of array values.
-     */
-    protected array $converters = [ExpressionConverter::class];
+
 }

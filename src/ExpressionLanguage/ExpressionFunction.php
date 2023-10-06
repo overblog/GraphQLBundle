@@ -10,7 +10,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunction as BaseExpressionFun
 
 class ExpressionFunction extends BaseExpressionFunction
 {
-    protected string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
+    protected string $gqlServices = TypeGenerator::GRAPHQL_SERVICES_EXPR;
 
     public function __construct(string $name, callable $compiler, ?callable $evaluator = null)
     {

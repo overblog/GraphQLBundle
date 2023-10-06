@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Generator;
 use Composer\Autoload\ClassLoader;
 use Overblog\GraphQLBundle\Config\Processor;
 use Overblog\GraphQLBundle\Event\SchemaCompiledEvent;
+use Overblog\GraphQLBundle\Generator\Model\TypeGeneratorOptions;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use function array_merge;
@@ -25,6 +26,7 @@ class TypeGenerator
     public const MODE_WRITE = 4;
     public const MODE_OVERRIDE = 8;
     public const GRAPHQL_SERVICES = 'services';
+    public const GRAPHQL_SERVICES_EXPR = '$' . self::GRAPHQL_SERVICES;
 
     private static bool $classMapLoaded = false;
     private array $typeConfigs;

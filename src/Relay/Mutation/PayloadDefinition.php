@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Relay\Mutation;
 
 use Overblog\GraphQLBundle\Definition\Builder\MappingInterface;
+use Overblog\GraphQLBundle\Enum\TypeEnum;
 use function array_merge;
 use function is_array;
 use function preg_replace;
@@ -20,7 +21,7 @@ final class PayloadDefinition implements MappingInterface
 
         return [
             $alias => [
-                'type' => 'object',
+                'type' => TypeEnum::OBJECT,
                 'config' => [
                     'name' => $name,
                     'fields' => array_merge(
