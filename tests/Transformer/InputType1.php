@@ -35,4 +35,10 @@ final class InputType1
      * @var mixed
      */
     public $field6;
+
+    public ?string $field7;
+
+    public ?string $field8 = 'default_value_when_not_set_in_data';
+
+    public string $field9 = 'default_value_when_not_set_in_data';
 }
