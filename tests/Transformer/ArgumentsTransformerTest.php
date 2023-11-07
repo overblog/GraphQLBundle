@@ -65,7 +65,7 @@ final class ArgumentsTransformerTest extends TestCase
                 'field8' => ['type' => Type::string(), 'defaultValue' => 'default_value_when_not_set_in_data'],
                 'field9' => [
                     'type' => Type::nonNull(Type::string()),
-                    'defaultValue' => 'default_value_when_not_set_in_data'
+                    'defaultValue' => 'default_value_when_not_set_in_data',
                 ],
             ],
         ]);
