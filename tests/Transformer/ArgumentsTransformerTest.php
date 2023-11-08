@@ -61,6 +61,12 @@ final class ArgumentsTransformerTest extends TestCase
                 'field1' => Type::string(),
                 'field2' => Type::int(),
                 'field3' => Type::boolean(),
+                'field7' => Type::string(),
+                'field8' => ['type' => Type::string(), 'defaultValue' => 'default_value_when_not_set_in_data'],
+                'field9' => [
+                    'type' => Type::nonNull(Type::string()),
+                    'defaultValue' => 'default_value_when_not_set_in_data',
+                ],
             ],
         ]);
 
@@ -128,6 +134,9 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($res->field4, 'default_value_when_not_set_in_data');
         $this->assertEquals($res->field5, []);
         $this->assertEquals($res->field6, null);
+        $this->assertEquals($res->field7, null);
+        $this->assertEquals($res->field8, 'default_value_when_not_set_in_data');
+        $this->assertEquals($res->field9, 'default_value_when_not_set_in_data');
 
         $data = [
             'field1' => [
