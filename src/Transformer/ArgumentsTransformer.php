@@ -102,7 +102,7 @@ final class ArgumentsTransformer
             $fields = $type->getFields();
 
             foreach ($fields as $name => $field) {
-                if (!array_key_exists($name, $data)) {
+                if ($field->defaultValueExists() && !array_key_exists($name, $data)) {
                     continue;
                 }
                 $fieldData = $this->accessor->getValue($data, sprintf('[%s]', $name));
