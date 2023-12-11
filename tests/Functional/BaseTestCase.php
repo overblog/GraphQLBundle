@@ -51,7 +51,7 @@ abstract class BaseTestCase extends WebTestCase
 
         $options['test_case'] ??= '';
 
-        $env = $options['environment'] ?? 'test' . strtolower($options['test_case']);
+        $env = $options['environment'] ?? 'test'.strtolower($options['test_case']);
         $debug = $options['debug'] ?? true;
 
         return new static::$class($env, $debug, $options['test_case']);
@@ -63,7 +63,7 @@ abstract class BaseTestCase extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir() . '/OverblogGraphQLBundle/');
+        $fs->remove(sys_get_temp_dir().'/OverblogGraphQLBundle/');
     }
 
     protected function tearDown(): void
@@ -157,7 +157,7 @@ abstract class BaseTestCase extends WebTestCase
             return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
         }
 
-        return new ExpressionFunction($phpFunctionName, fn() => sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args())), function (): void {});
+        return new ExpressionFunction($phpFunctionName, fn () => sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args())), function (): void {});
     }
 
     /**

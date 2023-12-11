@@ -73,6 +73,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             $loader->load(__DIR__.'/config/config.yml');
         }
 
+        // @phpstan-ignore-next-line
         if (Kernel::VERSION < 60200) {
             $loader->load(__DIR__.'/config/config_pre_62.yml');
         }
