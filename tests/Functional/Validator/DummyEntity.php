@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class DummyEntity.
- *
  */
 #[Assert\Callback([StaticValidator::class, 'validateClass'])]
 final class DummyEntity

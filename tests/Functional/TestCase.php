@@ -8,9 +8,11 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction;
 use Overblog\GraphQLBundle\Tests\Functional\App\TestKernel;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 use function call_user_func;
@@ -23,10 +25,31 @@ use function sprintf;
 use function strtolower;
 use function sys_get_temp_dir;
 
+if (Kernel::VERSION_ID < 70000) {
+    abstract class TestCase extends BaseTestCase
+    {
+        protected static function getContainer(): ContainerInterface
+        {
+            /** @phpstan-ignore-next-line */
+            return static::$kernel->getContainer();
+        }
+    }
+} else {
+    abstract class TestCase extends BaseTestCase
+    {
+        protected static function getContainer(): Container
+        {
+            /** @phpstan-ignore-next-line */
+            return static::$kernel->getContainer();
+        }
+    }
+}
+
+
 /**
  * TestCase.
  */
-abstract class TestCase extends WebTestCase
+abstract class BaseTestCase extends WebTestCase
 {
     public const USER_RYAN = 'ryan';
     public const USER_ADMIN = 'admin';
@@ -52,7 +75,7 @@ abstract class TestCase extends WebTestCase
 
         $options['test_case'] ??= '';
 
-        $env = $options['environment'] ?? 'test'.strtolower($options['test_case']);
+        $env = $options['environment'] ?? 'test' . strtolower($options['test_case']);
         $debug = $options['debug'] ?? true;
 
         return new static::$class($env, $debug, $options['test_case']);
@@ -64,7 +87,7 @@ abstract class TestCase extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir().'/OverblogGraphQLBundle/');
+        $fs->remove(sys_get_temp_dir() . '/OverblogGraphQLBundle/');
     }
 
     protected function tearDown(): void
@@ -103,12 +126,6 @@ abstract class TestCase extends WebTestCase
         }
 
         static::assertSame($expected, $result, json_encode($result));
-    }
-
-    protected static function getContainer(): ContainerInterface
-    {
-        /** @phpstan-ignore-next-line */
-        return static::$kernel->getContainer();
     }
 
     protected static function query(string $query, string $username, string $testCase, string $password = self::DEFAULT_PASSWORD): KernelBrowser
@@ -164,7 +181,7 @@ abstract class TestCase extends WebTestCase
             return call_user_func([ExpressionFunction::class, 'fromPhp'], $phpFunctionName);
         }
 
-        return new ExpressionFunction($phpFunctionName, fn () => sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args())), function (): void {});
+        return new ExpressionFunction($phpFunctionName, fn() => sprintf('\%s(%s)', $phpFunctionName, implode(', ', func_get_args())), function (): void {});
     }
 
     /**
