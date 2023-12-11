@@ -1,10 +1,8 @@
 imports:
     - { resource: ../config.yml }
 framework:
-    annotations: true
     validation:
         enabled: true
-        enable_annotations: true
 
 overblog_graphql:
     errors_handler:
@@ -15,6 +13,5 @@ overblog_graphql:
             query: RootQuery
         mappings:
             types:
-                -
-                    type: yaml
-                    dir: "%kernel.project_dir%/config/typeShorthand/mapping"
+                - type: yaml
+                  dir: "%kernel.project_dir%/config/typeShorthand/mapping"

@@ -19,10 +19,13 @@ jobs:
           - '8.0'
           - '8.1'
           - '8.2'
+          - '8.3'
         symfony-version:
           - '5.4.*'
           - '6.0.*'
           - '6.2.*'
+          - '6.4.*'
+          - '7.0.*'
         dependencies:
           - 'lowest'
           - 'highest'
@@ -31,6 +34,12 @@ jobs:
         exclude:
           - php-version: '8.0'
             symfony-version: '6.2.*'
+          - php-version: '8.0'
+            symfony-version: '6.4.*'
+          - php-version: '8.0'
+            symfony-version: '7.0.*'
+          - php-version: '8.1'
+            symfony-version: '7.0.*'
         include:
           - php-version: '8.0'
             symfony-version: '5.4.*'
