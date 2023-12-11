@@ -31,7 +31,7 @@ final class CompileCacheWarmer implements CacheWarmerInterface
      *
      * @return string[]
      */
-    public function warmUp($cacheDir)
+    public function warmUp($cacheDir, string $buildDir = null)
     {
         if ($this->compiled) {
             // use warm up cache dir if type generator cache dir not already explicitly declared
