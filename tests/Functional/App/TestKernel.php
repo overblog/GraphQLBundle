@@ -73,6 +73,10 @@ final class TestKernel extends Kernel implements CompilerPassInterface
             $loader->load(__DIR__.'/config/config.yml');
         }
 
+        if (Kernel::VERSION < 60200) {
+            $loader->load(__DIR__.'/config/config_pre_62.yml');
+        }
+
         $loader->load(function (ContainerBuilder $container): void {
             $container->addCompilerPass($this);
         });
