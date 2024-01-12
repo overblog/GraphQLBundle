@@ -556,20 +556,20 @@ abstract class MetadataParser implements PreParserInterface
         /** @var Metadata\Arg[] $argAnnotations */
         $argAnnotations = self::getMetadataMatching($metadatas, Metadata\Arg::class);
 
+        if ($reflector instanceof ReflectionMethod) {
+            $args = self::guessArgs($reflectionClass, $reflector);
+        }
+
         foreach ($argAnnotations as $arg) {
-            $args[$arg->name] = ['type' => $arg->type];
+            $args[$arg->name] ??= ['type' => $arg->type];
 
             if (isset($arg->description)) {
                 $args[$arg->name]['description'] = $arg->description;
             }
 
             if (isset($arg->default)) {
-                $args[$arg->name]['defaultValue'] = $arg->default;
+                $args[$arg->name]['defaultValue'] ??= $arg->default;
             }
-        }
-
-        if (empty($argAnnotations) && $reflector instanceof ReflectionMethod) {
-            $args = self::guessArgs($reflectionClass, $reflector);
         }
 
         if (!empty($args)) {
