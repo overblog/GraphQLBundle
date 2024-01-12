@@ -27,7 +27,7 @@ final class AttributeParser extends MetadataParser
             case $reflector instanceof ReflectionProperty:
             case $reflector instanceof ReflectionClassConstant:
                 if (is_callable([$reflector, 'getAttributes'])) {
-                    $attributes = $reflector->getAttributes(Annotation::class, \ReflectionAttribute::IS_INSTANCEOF);
+                    $attributes = $reflector->getAttributes(Annotation::class, ReflectionAttribute::IS_INSTANCEOF);
                 }
         }
 
