@@ -568,7 +568,7 @@ abstract class MetadataParser implements PreParserInterface
             }
 
             if (isset($arg->default)) {
-                $args[$arg->name]['defaultValue'] ??= $arg->default;
+                $args[$arg->name]['defaultValue'] = $arg->default;
             }
         }
 
