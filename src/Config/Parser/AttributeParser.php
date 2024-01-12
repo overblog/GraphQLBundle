@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
-use Overblog\GraphQLBundle\Config\Parser\MetadataParser\MetadataParser;
 use Overblog\GraphQLBundle\Annotation\Annotation;
+use Overblog\GraphQLBundle\Config\Parser\MetadataParser\MetadataParser;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionClassConstant;
