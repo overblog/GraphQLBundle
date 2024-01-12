@@ -561,7 +561,7 @@ abstract class MetadataParser implements PreParserInterface
         }
 
         foreach ($argAnnotations as $arg) {
-            $args[$arg->name] ??= ['type' => $arg->type];
+            $args[$arg->name] = ['type' => $arg->type];
 
             if (isset($arg->description)) {
                 $args[$arg->name]['description'] = $arg->description;
