@@ -451,8 +451,8 @@ abstract class MetadataParserTest extends TestCase
                 'casualties' => [
                     'type' => 'Int',
                     'args' => [
-                        'raceId' => ['type' => 'String!', 'description' => 'A race ID'],
                         'areaId' => ['type' => 'Int!'],
+                        'raceId' => ['type' => 'String!', 'description' => 'A race ID'],
                         'dayStart' => ['type' => 'Int', 'defaultValue' => null],
                         'dayEnd' => ['type' => 'Int', 'defaultValue' => null],
                         'nameStartingWith' => ['type' => 'String', 'defaultValue' => ''],
@@ -460,7 +460,7 @@ abstract class MetadataParserTest extends TestCase
                         'away' => ['type' => 'Boolean', 'defaultValue' => false],
                         'maxDistance' => ['type' => 'Float', 'defaultValue' => null],
                     ],
-                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
+                    'resolve' => '@=call(value.getCasualties, arguments({raceId: "String!", areaId: "Int!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
                     'complexity' => '@=childrenComplexity * 5',
                 ],
             ],
