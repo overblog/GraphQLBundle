@@ -451,8 +451,8 @@ abstract class MetadataParserTest extends TestCase
                 'casualties' => [
                     'type' => 'Int',
                     'args' => [
-                        'areaId' => ['type' => 'Int!'],
                         'raceId' => ['type' => 'String!', 'description' => 'A race ID'],
+                        'areaId' => ['type' => 'Int!'],
                         'dayStart' => ['type' => 'Int', 'defaultValue' => null],
                         'dayEnd' => ['type' => 'Int', 'defaultValue' => null],
                         'nameStartingWith' => ['type' => 'String', 'defaultValue' => ''],
