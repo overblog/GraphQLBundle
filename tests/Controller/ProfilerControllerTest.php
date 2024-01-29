@@ -7,7 +7,6 @@ namespace Overblog\GraphQLBundle\Tests\Controller;
 use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Controller\ProfilerController;
 use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
-use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -48,7 +47,7 @@ final class ProfilerControllerTest extends TestCase
     }
 
     /**
-     * @return TypeGenerator&MockObject
+     * @return TypeResolver&MockObject
      */
     protected function getMockTypeResolver(int $expected = 2): TypeResolver
     {
