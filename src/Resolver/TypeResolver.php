@@ -46,8 +46,6 @@ class TypeResolver extends AbstractResolver
 
     /**
      * @param string $alias
-     *
-     * @return Type
      */
     public function resolve($alias): ?Type
     {

@@ -81,6 +81,7 @@ abstract class TypeDefinition
                                 return $value;
                             }
                         }
+
                         // validation: [list of constraints]
                         return ['constraints' => $value];
                     }
