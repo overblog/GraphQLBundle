@@ -1,3 +1,5 @@
 <?php
 
-return function() {};
+declare(strict_types=1);
+
+return function (): void {};
