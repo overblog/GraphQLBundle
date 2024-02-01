@@ -9,7 +9,6 @@ framework:
     http_method_override: false
 
 security:
-    enable_authenticator_manager: true
     providers:
         in_memory:
             memory:

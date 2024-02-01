@@ -87,6 +87,7 @@ abstract class TestCase extends BaseTestCase
             $returnValue = $this->returnValue($return);
         }
 
+        // @phpstan-ignore-next-line
         $methodExpectation = $security
             ->expects($expects)
             ->method('isGranted');
@@ -96,6 +97,7 @@ abstract class TestCase extends BaseTestCase
         // @phpstan-ignore-next-line
         $methodExpectation->will($returnValue);
 
+        // @phpstan-ignore-next-line
         return new Security($security);
     }
 
