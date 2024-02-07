@@ -87,7 +87,7 @@ class CharacterResolver
 }
 ```
 
-Warnings can be found in the response under `extensions.warnings` map.
+Warnings can be found in the response under `exceptions.warnings` map.
 
 If you want to map your own exceptions to warnings and errors you can
 define a custom exception mapping:
