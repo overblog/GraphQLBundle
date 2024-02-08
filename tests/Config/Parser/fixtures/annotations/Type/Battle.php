@@ -21,6 +21,7 @@ final class Battle
 
     /**
      * @GQL\Field(name="casualties", complexity="childrenComplexity * 5")
+     *
      * @GQL\Arg(name="raceId", type="String!", description="A race ID")
      */
     #[GQL\Field(name: 'casualties', complexity: 'childrenComplexity * 5')]
