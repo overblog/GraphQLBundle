@@ -615,4 +615,30 @@ abstract class MetadataParserTest extends TestCase
             $this->assertMatchesRegularExpression('/try to add a mutation on type "RootQuery2"/', $e->getPrevious()->getMessage());
         }
     }
+
+    public function testInvalidPhpFiles(): void
+    {
+        $files = [
+            __DIR__.'/fixtures/annotations/Invalid/HasNoClass.php',
+            __DIR__.'/fixtures/annotations/Invalid/EmptyPhpFile.php',
+            __DIR__.'/fixtures/annotations/Invalid/NotAPhpFile',
+            __DIR__.'/fixtures/annotations/Type/RootQuery.php',
+        ];
+        $this->parser('reset', $this->parserConfig);
+
+        foreach ($files as $file) {
+            $this->parser('preParse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+        }
+
+        $config = [];
+        foreach ($files as $file) {
+            $config += self::cleanConfig($this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
+        }
+
+        $this->assertSame([
+            'RootQuery' => [
+                'type' => 'object',
+            ],
+        ], $config);
+    }
 }
