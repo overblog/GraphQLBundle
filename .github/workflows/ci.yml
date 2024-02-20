@@ -97,7 +97,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           tools: flex
-          php-version: "8.1"
+          php-version: "8.2"
           coverage: "none"
 
       - name: "Install dependencies"
