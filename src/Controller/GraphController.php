@@ -28,7 +28,7 @@ class GraphController
         Parser $requestParser,
         bool $shouldHandleCORS,
         string $graphQLBatchingMethod,
-        bool $debugMode
+        bool $debugMode = false
     ) {
         $this->batchParser = $batchParser;
         $this->requestExecutor = $requestExecutor;
