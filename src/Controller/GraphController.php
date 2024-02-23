@@ -10,6 +10,7 @@ use Overblog\GraphQLBundle\Request\Parser;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use function in_array;
 
 class GraphController
@@ -19,19 +20,22 @@ class GraphController
     private Parser $requestParser;
     private bool $shouldHandleCORS;
     private bool $useApolloBatchingMethod;
+    private bool $debugMode;
 
     public function __construct(
         BatchParser $batchParser,
         Executor $requestExecutor,
         Parser $requestParser,
         bool $shouldHandleCORS,
-        string $graphQLBatchingMethod
+        string $graphQLBatchingMethod,
+        bool $debugMode = false
     ) {
         $this->batchParser = $batchParser;
         $this->requestExecutor = $requestExecutor;
         $this->requestParser = $requestParser;
         $this->shouldHandleCORS = $shouldHandleCORS;
         $this->useApolloBatchingMethod = 'apollo' === $graphQLBatchingMethod;
+        $this->debugMode = $debugMode;
     }
 
     /**
@@ -61,7 +65,17 @@ class GraphController
             if (!in_array($request->getMethod(), ['POST', 'GET'])) {
                 return new JsonResponse('', 405);
             }
-            $payload = $this->processQuery($request, $schemaName, $batched);
+
+            try {
+                $payload = $this->processQuery($request, $schemaName, $batched);
+            } catch(BadRequestHttpException $e) {
+                if ($this->debugMode) {
+                    throw $e;
+                } else {
+                    return new JsonResponse($e->getMessage(), 400);
+                }
+            }
+
             $response = new JsonResponse($payload, 200);
         }
         $this->addCORSHeadersIfNeeded($response, $request);
