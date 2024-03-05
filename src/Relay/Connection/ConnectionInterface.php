@@ -27,8 +27,6 @@ interface ConnectionInterface
 
     /**
      * Get the page info.
-     *
-     * @return PageInfoInterface
      */
     public function getPageInfo(): ?PageInfoInterface;
 
