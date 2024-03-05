@@ -134,6 +134,8 @@ abstract class MetadataParser implements PreParserInterface
             }
 
             return $preProcess ? self::$map->toArray() : $gqlTypes;
+        } catch (ReflectionException $e) {
+            return $gqlTypes;
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException(sprintf('Failed to parse GraphQL metadata from file "%s".', $file), $e->getCode(), $e);
         }
