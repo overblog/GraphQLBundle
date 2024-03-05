@@ -277,6 +277,7 @@ abstract class MetadataParser implements PreParserInterface
             foreach ($configs['definitions']['schema'] as $schemaName => $schema) {
                 $schemaQuery = $schema['query'] ?? null;
                 $schemaMutation = $schema['mutation'] ?? null;
+                $schemaSubscription = $schema['subscription'] ?? null;
 
                 if ($gqlName === $schemaQuery) {
                     $isRoot = true;
@@ -289,6 +290,8 @@ abstract class MetadataParser implements PreParserInterface
                     if ($defaultSchemaName === $schemaName) {
                         $isDefault = true;
                     }
+                } elseif ($gqlName === $schemaSubscription) {
+                    $isRoot = true;
                 }
             }
         }
