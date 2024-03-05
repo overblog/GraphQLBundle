@@ -5,6 +5,7 @@ services:
             - "@?profiler"
             - "@?twig"
             - "@router"
+            - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
             - '@Overblog\GraphQLBundle\Request\Executor'
             - "%overblog_graphql.profiler.query_match%"
 
