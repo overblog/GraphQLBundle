@@ -570,8 +570,8 @@ abstract class MetadataParser implements PreParserInterface
             }
         }
 
-        if (empty($argAnnotations) && $reflector instanceof ReflectionMethod) {
-            $args = self::guessArgs($reflectionClass, $reflector);
+        if ($reflector instanceof ReflectionMethod) {
+            $args = self::guessArgs($reflectionClass, $reflector, $args);
         }
 
         if (!empty($args)) {
@@ -924,10 +924,16 @@ abstract class MetadataParser implements PreParserInterface
     /**
      * Transform a method arguments from reflection to a list of GraphQL argument.
      */
-    private static function guessArgs(ReflectionClass $reflectionClass, ReflectionMethod $method): array
-    {
-        $arguments = [];
+    private static function guessArgs(
+        ReflectionClass $reflectionClass,
+        ReflectionMethod $method,
+        array $arguments,
+    ): array {
         foreach ($method->getParameters() as $index => $parameter) {
+            if (array_key_exists($parameter->getName(), $arguments)) {
+                continue;
+            }
+
             try {
                 $gqlType = self::guessType($reflectionClass, $parameter, self::VALID_INPUT_TYPES);
             } catch (TypeGuessingException $exception) {
