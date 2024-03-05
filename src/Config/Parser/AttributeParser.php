@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Config\Parser;
 
+use Overblog\GraphQLBundle\Annotation\Annotation;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\MetadataParser;
 use ReflectionAttribute;
 use ReflectionClass;
@@ -26,7 +27,7 @@ final class AttributeParser extends MetadataParser
             case $reflector instanceof ReflectionProperty:
             case $reflector instanceof ReflectionClassConstant:
                 if (is_callable([$reflector, 'getAttributes'])) {
-                    $attributes = $reflector->getAttributes();
+                    $attributes = $reflector->getAttributes(Annotation::class, ReflectionAttribute::IS_INSTANCEOF);
                 }
         }
 
