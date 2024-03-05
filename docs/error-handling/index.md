@@ -49,7 +49,7 @@ class CharacterResolver
         $droids = StarWarsData::droids();
 
         if (!isset($droids[$args['droid_id']])) {
-            $errors[] = sprintf('Could not find Droid#%d', $args['droid_id']);
+            $errors[] = new UserError(sprintf('Could not find Droid#%d', $args['droid_id']));
         }
 
         if (!empty($errors)) {
