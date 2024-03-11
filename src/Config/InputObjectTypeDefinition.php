@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 
 use function is_string;
 
@@ -31,6 +32,7 @@ final class InputObjectTypeDefinition extends TypeDefinition
                         ->append($this->typeSection(true))
                         ->append($this->descriptionSection())
                         ->append($this->defaultValueSection())
+                        ->append($this->publicSection())
                         ->append($this->validationSection(self::VALIDATION_LEVEL_PROPERTY))
                         ->append($this->deprecationReasonSection())
                     ->end()
@@ -41,5 +43,11 @@ final class InputObjectTypeDefinition extends TypeDefinition
             ->end();
 
         return $node;
+    }
+
+    protected function publicSection(): VariableNodeDefinition
+    {
+        return self::createNode('public', 'variable')
+            ->info('Visibility control to field (expression language can be used here)');
     }
 }

@@ -13,6 +13,7 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\QueryDepth;
+use Overblog\GraphQLBundle\Definition\Type\ExtensibleSchema;
 use Overblog\GraphQLBundle\Event\Events;
 use Overblog\GraphQLBundle\Event\ExecutorArgumentsEvent;
 use Overblog\GraphQLBundle\Event\ExecutorContextEvent;
@@ -21,15 +22,21 @@ use Overblog\GraphQLBundle\Executor\ExecutorInterface;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+use Symfony\Contracts\Service\ResetInterface;
 use function array_keys;
-use function is_callable;
 use function sprintf;
 
-class Executor
+class Executor implements ResetInterface
 {
     public const PROMISE_ADAPTER_SERVICE_ID = 'overblog_graphql.promise_adapter';
 
+    /**
+     * @var array<Closure>
+     */
+    private array $schemaBuilders = [];
+    /**
+     * @var array<Schema>
+     */
     private array $schemas = [];
     private EventDispatcherInterface $dispatcher;
     private PromiseAdapter $promiseAdapter;
@@ -61,7 +68,7 @@ class Executor
 
     public function addSchemaBuilder(string $name, Closure $builder): self
     {
-        $this->schemas[$name] = $builder;
+        $this->schemaBuilders[$name] = $builder;
 
         return $this;
     }
@@ -75,7 +82,7 @@ class Executor
 
     public function getSchema(string $name = null): Schema
     {
-        if (empty($this->schemas)) {
+        if (empty($this->schemaBuilders) && empty($this->schemas)) {
             throw new RuntimeException('At least one schema should be declare.');
         }
 
@@ -83,22 +90,35 @@ class Executor
             $name = isset($this->schemas['default']) ? 'default' : array_key_first($this->schemas);
         }
 
-        if (!isset($this->schemas[$name])) {
-            throw new NotFoundHttpException(sprintf('Could not find "%s" schema.', $name));
+        if (null === $name) {
+            $name = isset($this->schemaBuilders['default']) ? 'default' : array_key_first($this->schemaBuilders);
         }
 
-        $schema = $this->schemas[$name];
-        if (is_callable($schema)) {
-            $schema = $schema();
+        if (isset($this->schemas[$name])) {
+            $schema = $this->schemas[$name];
+        } elseif (isset($this->schemaBuilders[$name])) {
+            $schema = call_user_func($this->schemaBuilders[$name]);
+
             $this->addSchema((string) $name, $schema);
+        } else {
+            throw new NotFoundHttpException(sprintf('Could not find "%s" schema.', $name));
         }
 
         return $schema;
     }
 
+    public function reset(): void
+    {
+        // Remove only ExtensibleSchema and isResettable
+        $this->schemas = array_filter(
+            $this->schemas,
+            fn (Schema $schema) => $schema instanceof ExtensibleSchema && !$schema->isResettable()
+        );
+    }
+
     public function getSchemasNames(): array
     {
-        return array_keys($this->schemas);
+        return array_merge(array_keys($this->schemaBuilders), array_keys($this->schemas));
     }
 
     public function setMaxQueryDepth(int $maxQueryDepth): void

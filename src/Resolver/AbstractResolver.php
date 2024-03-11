@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use Symfony\Contracts\Service\ResetInterface;
 use function array_keys;
 
-abstract class AbstractResolver implements FluentResolverInterface
+abstract class AbstractResolver implements FluentResolverInterface, ResetInterface
 {
+    private array $solutionsFactory = [];
     private array $solutions = [];
     private array $aliases = [];
     private array $solutionOptions = [];
-    private array $fullyLoadedSolutions = [];
 
     public function addSolution(string $id, callable $factory, array $aliases = [], array $options = []): self
     {
-        $this->fullyLoadedSolutions[$id] = false;
         $this->addAliases($id, $aliases);
 
-        $this->solutions[$id] = $factory;
+        $this->solutionsFactory[$id] = $factory;
         $this->solutionOptions[$id] = $options;
 
         return $this;
@@ -28,7 +28,7 @@ abstract class AbstractResolver implements FluentResolverInterface
     {
         $id = $this->resolveAlias($id);
 
-        return isset($this->solutions[$id]);
+        return isset($this->solutionsFactory[$id]);
     }
 
     /**
@@ -81,13 +81,12 @@ abstract class AbstractResolver implements FluentResolverInterface
             return null;
         }
 
-        if ($this->fullyLoadedSolutions[$id]) {
+        if (isset($this->solutions[$id])) {
             return $this->solutions[$id];
         } else {
-            $loader = $this->solutions[$id];
+            $loader = $this->solutionsFactory[$id];
             $this->solutions[$id] = $solution = $loader();
             $this->onLoadSolution($solution);
-            $this->fullyLoadedSolutions[$id] = true;
 
             return $solution;
         }
@@ -110,10 +109,15 @@ abstract class AbstractResolver implements FluentResolverInterface
      */
     private function loadSolutions(): array
     {
-        foreach ($this->solutions as $name => &$solution) {
-            $solution = $this->loadSolution($name);
+        foreach (array_keys($this->solutionsFactory) as $name) {
+            $this->loadSolution($name);
         }
 
         return $this->solutions;
+    }
+
+    public function reset(): void
+    {
+        $this->solutions = [];
     }
 }

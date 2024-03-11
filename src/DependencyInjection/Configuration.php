@@ -218,6 +218,7 @@ final class Configuration implements ConfigurationInterface
                     ->scalarNode('query')->defaultNull()->end()
                     ->scalarNode('mutation')->defaultNull()->end()
                     ->scalarNode('subscription')->defaultNull()->end()
+                    ->scalarNode('resettable')->defaultFalse()->end()
                     ->arrayNode('types')
                         ->defaultValue([])
                         ->prototype('scalar')->end()
