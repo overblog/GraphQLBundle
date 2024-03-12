@@ -21,6 +21,10 @@ final class DirectiveNode implements NodeInterface
                 $config['deprecationReason'] = $reason;
                 break;
             }
+
+            if ('resolve' === $directiveDef->name->value) {
+                $config['resolve'] = $directiveDef->arguments[0]->value->value;
+            }
         }
 
         return $config;
