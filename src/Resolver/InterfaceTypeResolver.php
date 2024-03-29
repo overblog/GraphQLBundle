@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Resolver;
 
+use GraphQL\Type\Definition\Type;
+
 class InterfaceTypeResolver
 {
     private TypeResolver $typeResolver;
@@ -15,7 +17,7 @@ class InterfaceTypeResolver
         $this->interfacesMap = $interfacesMap;
     }
 
-    public function resolveType(string $interfaceType, mixed $value)
+    public function resolveType(string $interfaceType, mixed $value): ?Type
     {
         if (!isset($this->interfacesMap[$interfaceType])) {
             throw new UnresolvableException(sprintf('Default interface type resolver was unable to find interface with name "%s"', $interfaceType));

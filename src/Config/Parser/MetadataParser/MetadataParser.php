@@ -245,9 +245,7 @@ abstract class MetadataParser implements PreParserInterface
             case $classMetadata instanceof Metadata\TypeInterface:
                 $gqlType = self::GQL_INTERFACE;
                 if (!$preProcess) {
-                    if (!$gqlName) {
-                        $gqlName = !empty($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
-                    }
+                    $gqlName = !empty($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
                     $gqlConfiguration = self::typeInterfaceMetadataToGQLConfiguration($reflectionClass, $classMetadata, $gqlName);
                 }
                 break;

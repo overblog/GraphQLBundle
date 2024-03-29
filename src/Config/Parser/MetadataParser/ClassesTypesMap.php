@@ -12,7 +12,7 @@ final class ClassesTypesMap
     private array $classesMap = [];
 
     /**
-     * @var array<string, array{class: string, type: string}>
+     * @var array<string, array<string,string>>
      */
     private array $interfacesMap = [];
 
