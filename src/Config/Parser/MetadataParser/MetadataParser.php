@@ -93,7 +93,9 @@ abstract class MetadataParser implements PreParserInterface
         $parameter = 'overblog_graphql_types.interfaces_map';
         $value = $container->hasParameter($parameter) ? $container->getParameter($parameter) : [];
         foreach (self::$map->interfacesToArray() as $interface => $types) {
+            /** @phpstan-ignore-next-line */
             if (!isset($value[$interface])) {
+                /** @phpstan-ignore-next-line */
                 $value[$interface] = [];
             }
             foreach ($types as $className => $typeName) {
