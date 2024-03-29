@@ -37,19 +37,33 @@ final class Arg extends Annotation
      *
      * @var mixed
      */
+    public $defaultValue;
+
+    /**
+     * Default argument value.
+     * @deprecated use $defaultValue instead
+     * @var mixed
+     */
     public $default;
 
     /**
-     * @param string      $name        The name of the argument
-     * @param string      $type        The type of the argument
-     * @param string|null $description The description of the argument
-     * @param mixed|null  $default     Default value of the argument
+     * @param string      $name          The name of the argument
+     * @param string      $type          The type of the argument
+     * @param string|null $description   The description of the argument
+     * @param mixed|null  $defaultValue  Default value of the argument
+     * @param mixed|null  $default       Default value of the argument (deprecated, use $defaultValue instead)
      */
-    public function __construct(string $name, string $type, ?string $description = null, $default = null)
+    public function __construct(string $name, string $type, ?string $description = null, $defaultValue = null, $default = null)
     {
         $this->name = $name;
         $this->description = $description;
         $this->type = $type;
+        $this->defaultValue = $defaultValue;
         $this->default = $default;
+
+        if ($this->defaultValue === null && $this->default !== null) {
+            trigger_deprecation('overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.');
+            $this->defaultValue = $default;
+        }
     }
 }

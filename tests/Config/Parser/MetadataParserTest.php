@@ -233,6 +233,17 @@ abstract class MetadataParserTest extends TestCase
                 'alienInvasion' => ['type' => 'Boolean!', 'deprecationReason' => 'No more alien invasions on planets'],
             ],
         ]);
+
+        $this->expect('MateriaInput', 'input-object', [
+            'fields' => [
+                'name' => ['type' => 'String!', 'defaultValue' => 'default name'],
+                'ap' => ['type' => 'Int!', 'defaultValue' => 100],
+                'description' => ['type' => 'String!', 'defaultValue' => 'A description by default'],
+                'diameter' => ['type' => 'Int'],
+                'colors' => ['type' => '[String]!', 'defaultValue' => ['red', 'green', 'blue']],
+                'effects' => ['type' => '[String]', 'defaultValue' => ['slow', 'enrage', 'boost']],
+            ],
+        ]);
     }
 
     public function testInterfaces(): void

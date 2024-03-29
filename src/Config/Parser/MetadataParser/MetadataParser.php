@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser;
 use Doctrine\Common\Annotations\AnnotationException;
 use Overblog\GraphQLBundle\Annotation\Annotation as Meta;
 use Overblog\GraphQLBundle\Annotation as Metadata;
+use Overblog\GraphQLBundle\Annotation\InputField;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DocBlockTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
@@ -568,7 +569,10 @@ abstract class MetadataParser implements PreParserInterface
                 $args[$arg->name]['description'] = $arg->description;
             }
 
-            if (isset($arg->default)) {
+            if (isset($arg->defaultValue)) {
+                $args[$arg->name]['defaultValue'] = $arg->defaultValue;
+            } elseif (isset($arg->default)) {
+                trigger_deprecation('overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.');
                 $args[$arg->name]['defaultValue'] = $arg->default;
             }
         }
@@ -679,6 +683,12 @@ abstract class MetadataParser implements PreParserInterface
                 }
 
                 $fieldConfiguration['type'] = $fieldType;
+            }
+
+            if($fieldMetadata instanceof InputField && $fieldMetadata->defaultValue !== null) {
+                $fieldConfiguration['defaultValue'] = $fieldMetadata->defaultValue;
+            } elseif ($reflector->hasDefaultValue()) {
+                $fieldConfiguration['defaultValue'] = $reflector->getDefaultValue();
             }
 
             $fieldConfiguration = array_merge(self::getDescriptionConfiguration($metadatas, true), $fieldConfiguration);
