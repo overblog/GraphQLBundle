@@ -685,7 +685,7 @@ abstract class MetadataParser implements PreParserInterface
                 $fieldConfiguration['type'] = $fieldType;
             }
 
-            if($fieldMetadata instanceof InputField && $fieldMetadata->defaultValue !== null) {
+            if ($fieldMetadata instanceof InputField && null !== $fieldMetadata->defaultValue) {
                 $fieldConfiguration['defaultValue'] = $fieldMetadata->defaultValue;
             } elseif ($reflector->hasDefaultValue()) {
                 $fieldConfiguration['defaultValue'] = $reflector->getDefaultValue();

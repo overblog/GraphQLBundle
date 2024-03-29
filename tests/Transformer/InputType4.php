@@ -9,12 +9,12 @@ final class InputType4
     /**
      * @var mixed
      */
-    public $field1 = "default_value_field1";
+    public $field1 = 'default_value_field1';
 
     /**
      * @var mixed
      */
-    public $field2 = ["v1", "v2"];
+    public $field2 = ['v1', 'v2'];
 
     /**
      * @var mixed

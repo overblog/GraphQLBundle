@@ -16,7 +16,7 @@ final class MateriaInput
      * @GQL\InputField(type="String!")
      */
     #[GQL\InputField(type: 'String!')]
-    public string $name = "default name";
+    public string $name = 'default name';
 
     /**
      * @GQL\InputField(type="Int!", defaultValue=100)
@@ -28,7 +28,7 @@ final class MateriaInput
      * @GQL\Field
      */
     #[GQL\Field]
-    public string $description = "A description by default";
+    public string $description = 'A description by default';
 
     /**
      * @GQL\Field
