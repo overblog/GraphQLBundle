@@ -88,6 +88,22 @@ abstract class MetadataParser implements PreParserInterface
         return self::processFile($file, $container, $configs, false);
     }
 
+    public static function finalize(ContainerBuilder $container): void
+    {
+        $parameter = 'overblog_graphql_types.interfaces_map';
+        $value = $container->hasParameter($parameter) ? $container->getParameter($parameter) : [];
+        foreach (self::$map->interfacesToArray() as $interface => $types) {
+            if (!isset($value[$interface])) {
+                $value[$interface] = [];
+            }
+            foreach ($types as $className => $typeName) {
+                $value[$interface][$className] = $typeName;
+            }
+        }
+
+        $container->setParameter('overblog_graphql_types.interfaces_map', $value);
+    }
+
     /**
      * @internal
      */
@@ -134,7 +150,7 @@ abstract class MetadataParser implements PreParserInterface
                 }
             }
 
-            return $preProcess ? self::$map->toArray() : $gqlTypes;
+            return $preProcess ? self::$map->classesToArray() : $gqlTypes;
         } catch (ReflectionException $e) {
             return $gqlTypes;
         } catch (\InvalidArgumentException $e) {
@@ -189,6 +205,11 @@ abstract class MetadataParser implements PreParserInterface
 
                         array_unshift($gqlConfiguration['config']['builders'], ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => $edgeType]]);
                     }
+
+                    $interfaces = $gqlConfiguration['config']['interfaces'] ?? [];
+                    foreach ($interfaces as $interface) {
+                        self::$map->addInterfaceType($interface, $gqlName, $reflectionClass->getName());
+                    }
                 }
                 break;
 
@@ -224,7 +245,10 @@ abstract class MetadataParser implements PreParserInterface
             case $classMetadata instanceof Metadata\TypeInterface:
                 $gqlType = self::GQL_INTERFACE;
                 if (!$preProcess) {
-                    $gqlConfiguration = self::typeInterfaceMetadataToGQLConfiguration($reflectionClass, $classMetadata);
+                    if (!$gqlName) {
+                        $gqlName = !empty($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
+                    }
+                    $gqlConfiguration = self::typeInterfaceMetadataToGQLConfiguration($reflectionClass, $classMetadata, $gqlName);
                 }
                 break;
 
@@ -380,7 +404,7 @@ abstract class MetadataParser implements PreParserInterface
      *
      * @return array{type: 'interface', config: array}
      */
-    private static function typeInterfaceMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\TypeInterface $interfaceAnnotation): array
+    private static function typeInterfaceMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\TypeInterface $interfaceAnnotation, string $gqlName): array
     {
         $interfaceConfiguration = [];
 
@@ -390,7 +414,12 @@ abstract class MetadataParser implements PreParserInterface
         $interfaceConfiguration['fields'] = array_merge($fieldsFromProperties, $fieldsFromMethods);
         $interfaceConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $interfaceConfiguration;
 
-        $interfaceConfiguration['resolveType'] = self::formatExpression($interfaceAnnotation->resolveType);
+        if (isset($interfaceAnnotation->resolveType)) {
+            $interfaceConfiguration['resolveType'] = self::formatExpression($interfaceAnnotation->resolveType);
+        } else {
+            // Try to use default interface resolver type
+            $interfaceConfiguration['resolveType'] = self::formatExpression(sprintf("service('overblog_graphql.interface_type_resolver').resolveType('%s', value)", $gqlName));
+        }
 
         return ['type' => 'interface', 'config' => $interfaceConfiguration];
     }
@@ -687,7 +716,7 @@ abstract class MetadataParser implements PreParserInterface
 
             if ($fieldMetadata instanceof InputField && null !== $fieldMetadata->defaultValue) {
                 $fieldConfiguration['defaultValue'] = $fieldMetadata->defaultValue;
-            } elseif ($reflector->hasDefaultValue()) {
+            } elseif ($reflector->hasDefaultValue() && null !== $reflector->getDefaultValue()) {
                 $fieldConfiguration['defaultValue'] = $reflector->getDefaultValue();
             }
 

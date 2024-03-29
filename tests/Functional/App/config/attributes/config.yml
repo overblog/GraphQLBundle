@@ -1,0 +1,19 @@
+imports:
+  - { resource: ../config.yml }
+
+overblog_graphql:
+  definitions:
+    use_classloader_listener: false
+    class_namespace: "Overblog\\GraphQLBundle\\Attributes\\__DEFINITIONS__"
+    schema:
+      query: RootQuery
+      mutation: RootMutation
+    mappings:
+      types:
+        - type: attribute
+          dir: "%kernel.project_dir%/GraphQL/Attributes/"
+          suffix: ~
+
+services:
+  Overblog\GraphQLBundle\Tests\Functional\App\GraphQL\Attributes\QueryProvider:
+    public: true

@@ -591,13 +591,15 @@ class Hero {
 
 This annotation is used on _class_ to define a GraphQL interface.
 
-Required attributes:
-
--   **resolveType** : An expression to resolve the types
-
 Optional attributes:
 
+-   **resolveType** : An expression to resolve the types
 -   **name**  : The GraphQL name of the interface (default to the class name without namespace)
+
+If the `resolveType` attribute is not set, the service `overblog_graphql.interface_type_resolver` will be used to try to resolve the type automatically based on types implementing the interface and their associated class.  
+The system will register a map of interfaces with the list of types and their associated class name implementing the interface (the parameter is named `overblog_graphql_types.interfaces_map` in the container) and use it to resolve the type from the value (the first type where the class `instanceof` operator returns true will be used).  
+
+```php
 
 ## @Scalar
 

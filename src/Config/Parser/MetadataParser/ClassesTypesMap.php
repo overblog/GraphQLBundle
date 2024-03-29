@@ -11,6 +11,11 @@ final class ClassesTypesMap
      */
     private array $classesMap = [];
 
+    /**
+     * @var array<string, array{class: string, type: string}>
+     */
+    private array $interfacesMap = [];
+
     public function hasType(string $gqlType): bool
     {
         return isset($this->classesMap[$gqlType]);
@@ -72,8 +77,25 @@ final class ClassesTypesMap
         return $classNames;
     }
 
-    public function toArray(): array
+    public function classesToArray(): array
     {
         return $this->classesMap;
+    }
+
+    /**
+     * Add a type and its associated class to the interfaces map
+     */
+    public function addInterfaceType(string $interfaceType, string $graphqlType, string $className): void
+    {
+        if (!isset($this->interfacesMap[$interfaceType])) {
+            $this->interfacesMap[$interfaceType] = [];
+        }
+
+        $this->interfacesMap[$interfaceType][$className] = $graphqlType;
+    }
+
+    public function interfacesToArray(): array
+    {
+        return $this->interfacesMap;
     }
 }
