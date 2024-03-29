@@ -601,7 +601,7 @@ abstract class MetadataParser implements PreParserInterface
             if (isset($arg->defaultValue)) {
                 $args[$arg->name]['defaultValue'] = $arg->defaultValue;
             } elseif (isset($arg->default)) {
-                trigger_deprecation('overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.');
+                @trigger_error(sprintf('%s %s %s', 'overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.'), E_USER_DEPRECATED);
                 $args[$arg->name]['defaultValue'] = $arg->default;
             }
         }

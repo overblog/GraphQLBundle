@@ -62,7 +62,7 @@ final class Arg extends Annotation
         $this->default = $default;
 
         if ($this->defaultValue === null && $this->default !== null) {
-            trigger_deprecation('overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.');
+            @trigger_error(sprintf("%s %s %s", 'overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.'), E_USER_DEPRECATED);
             $this->defaultValue = $default;
         }
     }
