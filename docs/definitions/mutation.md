@@ -9,7 +9,7 @@ Mutation:
         fields:
             IntroduceShip:
                 type: IntroduceShipPayload!
-                resolve: "@=mutation('create_ship', [args['input']['shipName'], args['input']['factionId']])"
+                resolve: "@=mutation('create_ship', args['input']['shipName'], args['input']['factionId'])"
                 args:
                     #using input object type is optional, we use it here to be iso with relay mutation example.
                     input:
