@@ -17,7 +17,7 @@ AnObject:
                 type: "String!"
             privateData:
                 type: "String"
-                public: "@=service('security.authorization_checker').isGranted('ROLE_ADMIN')"
+                public: "@=isGranted('ROLE_ADMIN')"
 ```
 
 ## With Annotations

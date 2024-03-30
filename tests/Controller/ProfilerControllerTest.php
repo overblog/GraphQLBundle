@@ -8,6 +8,7 @@ use GraphQL\Type\Schema;
 use Overblog\GraphQLBundle\Controller\ProfilerController;
 use Overblog\GraphQLBundle\DataCollector\GraphQLCollector;
 use Overblog\GraphQLBundle\Request\Executor;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
@@ -46,6 +47,17 @@ final class ProfilerControllerTest extends TestCase
     }
 
     /**
+     * @return TypeResolver&MockObject
+     */
+    protected function getMockTypeResolver(int $expected = 2): TypeResolver
+    {
+        $typeGenerator = $this->getMockBuilder(TypeResolver::class)->disableOriginalConstructor()->onlyMethods(['setIgnoreUnresolvableException'])->getMock();
+        $typeGenerator->expects($this->exactly($expected))->method('setIgnoreUnresolvableException');
+
+        return $typeGenerator;
+    }
+
+    /**
      * @return Profiler&MockObject
      */
     protected function getMockProfiler(): Profiler
@@ -58,7 +70,7 @@ final class ProfilerControllerTest extends TestCase
 
     public function testInvokeWithoutProfiler(): void
     {
-        $controller = new ProfilerController(null, null, $this->getMockRouter(), $this->getMockExecutor(false), null);
+        $controller = new ProfilerController(null, null, $this->getMockRouter(), $this->getMockTypeResolver(0), $this->getMockExecutor(false), null);
 
         $this->expectException(ServiceNotFoundException::class);
         $this->expectExceptionMessage('The profiler must be enabled.');
@@ -67,7 +79,7 @@ final class ProfilerControllerTest extends TestCase
 
     public function testInvokeWithoutTwig(): void
     {
-        $controller = new ProfilerController($this->getMockProfiler(), null, $this->getMockRouter(), $this->getMockExecutor(false), null);
+        $controller = new ProfilerController($this->getMockProfiler(), null, $this->getMockRouter(), $this->getMockTypeResolver(0), $this->getMockExecutor(false), null);
 
         $this->expectException(ServiceNotFoundException::class);
         $this->expectExceptionMessage('The GraphQL Profiler require twig');
@@ -79,10 +91,11 @@ final class ProfilerControllerTest extends TestCase
         $profilerMock = $this->getMockProfiler();
         $executorMock = $this->getMockExecutor();
         $routerMock = $this->getMockRouter();
+        $typeGeneratorMock = $this->getMockTypeResolver();
 
         /** @var Environment&MockObject $twigMock */
         $twigMock = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->onlyMethods(['render'])->getMock();
-        $controller = new ProfilerController($profilerMock, $twigMock, $routerMock, $executorMock, null);
+        $controller = new ProfilerController($profilerMock, $twigMock, $routerMock, $typeGeneratorMock, $executorMock, null);
 
         /** @var Profiler&MockObject $profilerMock */
         $profilerMock->expects($this->once())->method('disable');

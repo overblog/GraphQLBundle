@@ -233,6 +233,17 @@ abstract class MetadataParserTest extends TestCase
                 'alienInvasion' => ['type' => 'Boolean!', 'deprecationReason' => 'No more alien invasions on planets'],
             ],
         ]);
+
+        $this->expect('MateriaInput', 'input-object', [
+            'fields' => [
+                'name' => ['type' => 'String!', 'defaultValue' => 'default name'],
+                'ap' => ['type' => 'Int!', 'defaultValue' => 100],
+                'description' => ['type' => 'String!', 'defaultValue' => 'A description by default'],
+                'diameter' => ['type' => 'Int'],
+                'colors' => ['type' => '[String]!', 'defaultValue' => ['red', 'green', 'blue']],
+                'effects' => ['type' => '[String]', 'defaultValue' => ['slow', 'enrage', 'boost']],
+            ],
+        ]);
     }
 
     public function testInterfaces(): void
@@ -240,6 +251,10 @@ abstract class MetadataParserTest extends TestCase
         $this->expect('WithArmor', 'interface', [
             'description' => 'The armored interface',
             'resolveType' => '@=query(\'character_type\', [value])',
+        ]);
+
+        $this->expect('Biped', 'interface', [
+            'resolveType' => "@=service('overblog_graphql.interface_type_resolver').resolveType('Biped', value)",
         ]);
     }
 
@@ -293,7 +308,7 @@ abstract class MetadataParserTest extends TestCase
     public function testInterfaceAutoguessed(): void
     {
         $this->expect('Mandalorian', 'object', [
-            'interfaces' => ['Character', 'WithArmor'],
+            'interfaces' => ['Biped', 'Character', 'WithArmor'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],
@@ -452,7 +467,7 @@ abstract class MetadataParserTest extends TestCase
                     'type' => 'Int',
                     'args' => [
                         'areaId' => ['type' => 'Int!'],
-                        'raceId' => ['type' => 'String!'],
+                        'raceId' => ['type' => 'String!', 'description' => 'A race ID'],
                         'dayStart' => ['type' => 'Int', 'defaultValue' => null],
                         'dayEnd' => ['type' => 'Int', 'defaultValue' => null],
                         'nameStartingWith' => ['type' => 'String', 'defaultValue' => ''],
@@ -460,7 +475,7 @@ abstract class MetadataParserTest extends TestCase
                         'away' => ['type' => 'Boolean', 'defaultValue' => false],
                         'maxDistance' => ['type' => 'Float', 'defaultValue' => null],
                     ],
-                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
+                    'resolve' => '@=call(value.getCasualties, arguments({raceId: "String!", areaId: "Int!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
                     'complexity' => '@=childrenComplexity * 5',
                 ],
             ],
@@ -614,5 +629,31 @@ abstract class MetadataParserTest extends TestCase
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
             $this->assertMatchesRegularExpression('/try to add a mutation on type "RootQuery2"/', $e->getPrevious()->getMessage());
         }
+    }
+
+    public function testInvalidPhpFiles(): void
+    {
+        $files = [
+            __DIR__.'/fixtures/annotations/Invalid/HasNoClass.php',
+            __DIR__.'/fixtures/annotations/Invalid/EmptyPhpFile.php',
+            __DIR__.'/fixtures/annotations/Invalid/NotAPhpFile',
+            __DIR__.'/fixtures/annotations/Type/RootQuery.php',
+        ];
+        $this->parser('reset', $this->parserConfig);
+
+        foreach ($files as $file) {
+            $this->parser('preParse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+        }
+
+        $config = [];
+        foreach ($files as $file) {
+            $config += self::cleanConfig($this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig));
+        }
+
+        $this->assertSame([
+            'RootQuery' => [
+                'type' => 'object',
+            ],
+        ], $config);
     }
 }

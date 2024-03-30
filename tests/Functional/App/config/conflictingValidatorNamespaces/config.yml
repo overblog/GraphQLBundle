@@ -2,10 +2,8 @@ imports:
     - { resource: ../config.yml }
 
 framework:
-    annotations: true
     validation:
         enabled: true
-        enable_annotations: true
 
 overblog_graphql:
     definitions:

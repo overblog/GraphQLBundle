@@ -91,6 +91,8 @@ final class ConfigParserPass implements CompilerPassInterface
         $config = $container->getParameterBag()->resolveValue($container->getParameter('overblog_graphql.config'));
         $container->getParameterBag()->remove('overblog_graphql.config');
         $container->setParameter($this->getAlias().'.classes_map', []);
+        $container->setParameter($this->getAlias().'.interfaces_map', []);
+
         $typesMappings = $this->mappingConfig($config, $container);
         // reset treated files
         $this->treatedFiles = [];
@@ -116,6 +118,9 @@ final class ConfigParserPass implements CompilerPassInterface
         $this->checkTypesDuplication($typeConfigs);
         // flatten config is a requirement to support inheritance
         $flattenTypeConfig = array_merge(...$typeConfigs);
+
+        AnnotationParser::finalize($container);
+        AttributeParser::finalize($container);
 
         return $flattenTypeConfig;
     }

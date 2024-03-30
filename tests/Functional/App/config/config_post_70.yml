@@ -1,0 +1,2 @@
+framework:
+  handle_all_throwables: false

@@ -1,4 +1,4 @@
-# Annotations reference
+# Annotations / Attributes reference
 
 In the following reference examples the line `use Overblog\GraphQLBundle\Annotation as GQL;` will be omitted.
 
@@ -8,7 +8,7 @@ In the following reference examples the line `use Overblog\GraphQLBundle\Annotat
 
     -   For example, `@GQL\Access("isAuthenticated()")` will be converted to `['access' => '@=isAuthenticated()']` during the compilation.
 
--   You can use multiple type annotations on the same class. For example, if you need your class to be a GraphQL Type AND a Graphql Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
+-   You can use multiple type annotations on the same class. For example, if you need your class to be a GraphQL Type AND a GraphQL Input, you just need to add the two annotations. Incompatible annotations or properties for a specified Type will simply be ignored.
 
 In the following example, both the type `Coordinates` and the input type `CoordinatesInput` will be generated during the compilation process.  
 As fields on input types don't support resolvers, the field `elevation` will simply be ignored to generate the input type (it will only have two fields: `latitude` and `longitude`).
@@ -61,6 +61,8 @@ class Coordinates {
 [@FieldsBuilder](#fieldsbuilder)
 
 [@Input](#input)
+
+[@InputField](#inputfield)
 
 [@IsPublic](#ispublic)
 
@@ -425,6 +427,17 @@ Optional attributes:
 
 The corresponding class will also be used by the `Arguments Transformer` service. An instance of the corresponding class will be use as the `input` value if it is an argument of a query or mutation. (see [The Arguments Transformer documentation](arguments-transformer.md)).
 
+## @InputField
+
+This annotation is used in conjunction with the `@Input` annotation to define an input field.  
+It is the same as a regular `@Field` annotation, but it can hold a `defaultValue` and can't have a `resolver`.  
+
+Optional attributes:
+
+-   **name**  : The GraphQL name of the field (default to the property name)
+-   **type** : The GraphqL type of the field. This attribute can sometimes be guessed automatically from Doctrine ORM annotations
+-   **defaultValue** : The default value of the field
+
 ## @IsPublic
 
 Added on a _class_ in conjunction with `@Type` or `@TypeInterface`, this annotation will define the default to set if fields are public or not.
@@ -578,13 +591,13 @@ class Hero {
 
 This annotation is used on _class_ to define a GraphQL interface.
 
-Required attributes:
-
--   **resolveType** : An expression to resolve the types
-
 Optional attributes:
 
+-   **resolveType** : An expression to resolve the types
 -   **name**  : The GraphQL name of the interface (default to the class name without namespace)
+
+If the `resolveType` attribute is not set, the service `overblog_graphql.interface_type_resolver` will be used to try to resolve the type automatically based on types implementing the interface and their associated class.  
+The system will register a map of interfaces with the list of types and their associated class name implementing the interface (the parameter is named `overblog_graphql_types.interfaces_map` in the container) and use it to resolve the type from the value (the first type where the class `instanceof` operator returns true will be used).  
 
 ## @Scalar
 

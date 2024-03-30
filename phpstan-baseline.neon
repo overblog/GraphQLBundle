@@ -441,24 +441,24 @@ parameters:
 			path: tests/Functional/Controller/GraphControllerTest.php
 
 		-
-			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\TestCase\\:\\:createKernel\\(\\) should return Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface but returns object\\.$#"
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Tests\\\\Functional\\\\BaseTestCase\\:\\:createKernel\\(\\) should return Symfony\\\\Component\\\\HttpKernel\\\\KernelInterface but returns object\\.$#"
 			count: 1
-			path: tests/Functional/TestCase.php
+			path: tests/Functional/BaseTestCase.php
 
 		-
 			message: "#^Missing call to parent\\:\\:tearDown\\(\\) method\\.$#"
 			count: 1
-			path: tests/Functional/TestCase.php
+			path: tests/Functional/BaseTestCase.php
 
 		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
-			path: tests/Functional/TestCase.php
+			path: tests/Functional/BaseTestCase.php
 
 		-
 			message: "#^Parameter \\#3 \\$message of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
-			path: tests/Functional/TestCase.php
+			path: tests/Functional/BaseTestCase.php
 
 		-
 			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"

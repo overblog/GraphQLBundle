@@ -14,9 +14,6 @@ use function sprintf;
 
 final class GraphQLUploadType extends ScalarType
 {
-    /**
-     * @param string $name
-     */
     public function __construct(string $name = null)
     {
         parent::__construct([

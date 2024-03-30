@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser;
 use Doctrine\Common\Annotations\AnnotationException;
 use Overblog\GraphQLBundle\Annotation\Annotation as Meta;
 use Overblog\GraphQLBundle\Annotation as Metadata;
+use Overblog\GraphQLBundle\Annotation\InputField;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DocBlockTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DoctrineTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
@@ -87,6 +88,24 @@ abstract class MetadataParser implements PreParserInterface
         return self::processFile($file, $container, $configs, false);
     }
 
+    public static function finalize(ContainerBuilder $container): void
+    {
+        $parameter = 'overblog_graphql_types.interfaces_map';
+        $value = $container->hasParameter($parameter) ? $container->getParameter($parameter) : [];
+        foreach (self::$map->interfacesToArray() as $interface => $types) {
+            /** @phpstan-ignore-next-line */
+            if (!isset($value[$interface])) {
+                /** @phpstan-ignore-next-line */
+                $value[$interface] = [];
+            }
+            foreach ($types as $className => $typeName) {
+                $value[$interface][$className] = $typeName;
+            }
+        }
+
+        $container->setParameter('overblog_graphql_types.interfaces_map', $value);
+    }
+
     /**
      * @internal
      */
@@ -133,7 +152,9 @@ abstract class MetadataParser implements PreParserInterface
                 }
             }
 
-            return $preProcess ? self::$map->toArray() : $gqlTypes;
+            return $preProcess ? self::$map->classesToArray() : $gqlTypes;
+        } catch (ReflectionException $e) {
+            return $gqlTypes;
         } catch (\InvalidArgumentException $e) {
             throw new InvalidArgumentException(sprintf('Failed to parse GraphQL metadata from file "%s".', $file), $e->getCode(), $e);
         }
@@ -186,6 +207,11 @@ abstract class MetadataParser implements PreParserInterface
 
                         array_unshift($gqlConfiguration['config']['builders'], ['builder' => 'relay-connection', 'builderConfig' => ['edgeType' => $edgeType]]);
                     }
+
+                    $interfaces = $gqlConfiguration['config']['interfaces'] ?? [];
+                    foreach ($interfaces as $interface) {
+                        self::$map->addInterfaceType($interface, $gqlName, $reflectionClass->getName());
+                    }
                 }
                 break;
 
@@ -221,7 +247,8 @@ abstract class MetadataParser implements PreParserInterface
             case $classMetadata instanceof Metadata\TypeInterface:
                 $gqlType = self::GQL_INTERFACE;
                 if (!$preProcess) {
-                    $gqlConfiguration = self::typeInterfaceMetadataToGQLConfiguration($reflectionClass, $classMetadata);
+                    $gqlName = !empty($classMetadata->name) ? $classMetadata->name : $reflectionClass->getShortName();
+                    $gqlConfiguration = self::typeInterfaceMetadataToGQLConfiguration($reflectionClass, $classMetadata, $gqlName);
                 }
                 break;
 
@@ -275,6 +302,7 @@ abstract class MetadataParser implements PreParserInterface
             foreach ($configs['definitions']['schema'] as $schemaName => $schema) {
                 $schemaQuery = $schema['query'] ?? null;
                 $schemaMutation = $schema['mutation'] ?? null;
+                $schemaSubscription = $schema['subscription'] ?? null;
 
                 if ($gqlName === $schemaQuery) {
                     $isRoot = true;
@@ -287,6 +315,8 @@ abstract class MetadataParser implements PreParserInterface
                     if ($defaultSchemaName === $schemaName) {
                         $isDefault = true;
                     }
+                } elseif ($gqlName === $schemaSubscription) {
+                    $isRoot = true;
                 }
             }
         }
@@ -374,7 +404,7 @@ abstract class MetadataParser implements PreParserInterface
      *
      * @return array{type: 'interface', config: array}
      */
-    private static function typeInterfaceMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\TypeInterface $interfaceAnnotation): array
+    private static function typeInterfaceMetadataToGQLConfiguration(ReflectionClass $reflectionClass, Metadata\TypeInterface $interfaceAnnotation, string $gqlName): array
     {
         $interfaceConfiguration = [];
 
@@ -384,7 +414,12 @@ abstract class MetadataParser implements PreParserInterface
         $interfaceConfiguration['fields'] = array_merge($fieldsFromProperties, $fieldsFromMethods);
         $interfaceConfiguration = self::getDescriptionConfiguration(static::getMetadatas($reflectionClass)) + $interfaceConfiguration;
 
-        $interfaceConfiguration['resolveType'] = self::formatExpression($interfaceAnnotation->resolveType);
+        if (isset($interfaceAnnotation->resolveType)) {
+            $interfaceConfiguration['resolveType'] = self::formatExpression($interfaceAnnotation->resolveType);
+        } else {
+            // Try to use default interface resolver type
+            $interfaceConfiguration['resolveType'] = self::formatExpression(sprintf("service('overblog_graphql.interface_type_resolver').resolveType('%s', value)", $gqlName));
+        }
 
         return ['type' => 'interface', 'config' => $interfaceConfiguration];
     }
@@ -563,13 +598,16 @@ abstract class MetadataParser implements PreParserInterface
                 $args[$arg->name]['description'] = $arg->description;
             }
 
-            if (isset($arg->default)) {
+            if (isset($arg->defaultValue)) {
+                $args[$arg->name]['defaultValue'] = $arg->defaultValue;
+            } elseif (isset($arg->default)) {
+                @trigger_error(sprintf('%s %s %s', 'overblog/graphql-bundle', '1.3', 'The "default" attribute on @GQL\Arg or #GQL\Arg is deprecated, use "defaultValue" instead.'), E_USER_DEPRECATED);
                 $args[$arg->name]['defaultValue'] = $arg->default;
             }
         }
 
-        if (empty($argAnnotations) && $reflector instanceof ReflectionMethod) {
-            $args = self::guessArgs($reflectionClass, $reflector);
+        if ($reflector instanceof ReflectionMethod) {
+            $args = self::guessArgs($reflectionClass, $reflector, $args);
         }
 
         if (!empty($args)) {
@@ -674,6 +712,12 @@ abstract class MetadataParser implements PreParserInterface
                 }
 
                 $fieldConfiguration['type'] = $fieldType;
+            }
+
+            if ($fieldMetadata instanceof InputField && null !== $fieldMetadata->defaultValue) {
+                $fieldConfiguration['defaultValue'] = $fieldMetadata->defaultValue;
+            } elseif ($reflector->hasDefaultValue() && null !== $reflector->getDefaultValue()) {
+                $fieldConfiguration['defaultValue'] = $reflector->getDefaultValue();
             }
 
             $fieldConfiguration = array_merge(self::getDescriptionConfiguration($metadatas, true), $fieldConfiguration);
@@ -922,10 +966,16 @@ abstract class MetadataParser implements PreParserInterface
     /**
      * Transform a method arguments from reflection to a list of GraphQL argument.
      */
-    private static function guessArgs(ReflectionClass $reflectionClass, ReflectionMethod $method): array
-    {
-        $arguments = [];
+    private static function guessArgs(
+        ReflectionClass $reflectionClass,
+        ReflectionMethod $method,
+        array $arguments,
+    ): array {
         foreach ($method->getParameters() as $index => $parameter) {
+            if (array_key_exists($parameter->getName(), $arguments)) {
+                continue;
+            }
+
             try {
                 $gqlType = self::guessType($reflectionClass, $parameter, self::VALID_INPUT_TYPES);
             } catch (TypeGuessingException $exception) {

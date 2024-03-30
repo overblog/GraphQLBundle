@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Controller;
 
 use GraphQL\Utils\SchemaPrinter;
 use Overblog\GraphQLBundle\Request\Executor as RequestExecutor;
+use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,14 +25,16 @@ final class ProfilerController
     private ?Profiler $profiler;
     private ?Environment $twig;
     private string $endpointUrl;
+    private TypeResolver $typeResolver;
     private RequestExecutor $requestExecutor;
     private ?string $queryMatch;
 
-    public function __construct(?Profiler $profiler, ?Environment $twig, RouterInterface $router, RequestExecutor $requestExecutor, ?string $queryMatch)
+    public function __construct(?Profiler $profiler, ?Environment $twig, RouterInterface $router, TypeResolver $typeResolver, RequestExecutor $requestExecutor, ?string $queryMatch)
     {
         $this->profiler = $profiler;
         $this->twig = $twig;
         $this->endpointUrl = $router->generate('overblog_graphql_endpoint');
+        $this->typeResolver = $typeResolver;
         $this->requestExecutor = $requestExecutor;
         $this->queryMatch = $queryMatch;
     }
@@ -60,7 +63,7 @@ final class ProfilerController
 
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
-            if (!$profile->hasCollector('graphql')) {
+            if (!$profile || !$profile->hasCollector('graphql')) {
                 return false;
             }
             $tokenData['graphql'] = $profile->getCollector('graphql');
@@ -69,9 +72,11 @@ final class ProfilerController
         }, $this->profiler->find(null, $this->queryMatch ?: $this->endpointUrl, $limit, 'POST', null, null, null)); // @phpstan-ignore-line
 
         $schemas = [];
+        $this->typeResolver->setIgnoreUnresolvableException(true);
         foreach ($this->requestExecutor->getSchemasNames() as $schemaName) {
             $schemas[$schemaName] = SchemaPrinter::doPrint($this->requestExecutor->getSchema($schemaName));
         }
+        $this->typeResolver->setIgnoreUnresolvableException(false);
 
         return new Response($this->twig->render('@OverblogGraphQL/profiler/graphql.html.twig', [
             'request' => $request,

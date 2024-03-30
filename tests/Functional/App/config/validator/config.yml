@@ -2,10 +2,8 @@ imports:
     - { resource: ../config.yml }
 
 framework:
-    annotations: true
     validation:
         enabled: true
-        enable_annotations: true
 
 overblog_graphql:
     definitions:
@@ -38,4 +36,3 @@ services:
             - { name: "overblog_graphql.mutation", alias: "mutation_mock", method: "mutationMock" }
             - { name: "overblog_graphql.mutation", alias: "mutation_errors", method: "mutationErrors" }
             - { name: "overblog_graphql.mutation", alias: "no_validation", method: "noValidation" }
-

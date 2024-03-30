@@ -1,20 +1,7 @@
-# Annotations & PHP 8 attributes
+# Attributes (PHP >= 8) & Annotations
 
-In order to use annotations or attributes, you need to configure the mapping:
+In order to use attributes or annotations, you need to configure the mapping:
 
-To use annotations, You must install `symfony/cache` and `doctrine/annotation` and use the `annotation` mapping type.
-
-
-```yaml
-# config/packages/graphql.yaml
-overblog_graphql:
-  definitions:
-    mappings:
-      types:
-        - type: annotation
-          dir: "%kernel.project_dir%/src/GraphQL"
-          suffix: ~
-```
 To use attributes, use the `attribute` mapping type.
 
 ```yaml
@@ -28,21 +15,30 @@ overblog_graphql:
           suffix: ~
 ```
 
+To use annotations, You must install `symfony/cache` and `doctrine/annotation` and use the `annotation` mapping type.
+
+```yaml
+# config/packages/graphql.yaml
+overblog_graphql:
+  definitions:
+    mappings:
+      types:
+        - type: annotation
+          dir: "%kernel.project_dir%/src/GraphQL"
+          suffix: ~
+```
+
 This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
 
-The annotations & attributes are equivalent and are used in the same way. They share the same annotation namespaces, classes and API.
+The annotations & attributes are equivalent and are used in the same way. They share the same annotation namespaces, classes and API.  
 
 Example with annotations:
 ```php
 use Overblog\GraphQLBundle\Annotation as GQL;
 
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class MyType {
-    /**
-     * @GQL\Field(type="Int")
-     */
+    #[GQL\Field(type: "Int")]
     protected $myField;
 }
 ```
@@ -61,8 +57,9 @@ class MyType {
 
 ## Using Annotations or Attributes as your only Mapping
 
-If you only use annotations as mappings you need to add an empty `RootQuery` type.
-Your config should look like this:
+If you only use annotations as mappings you need to add an empty `RootQuery` type.  
+Your config should look like this:  
+
 ```yaml
 # config/packages/graphql.yaml
 overblog_graphql:
@@ -75,13 +72,12 @@ overblog_graphql:
           dir: "%kernel.project_dir%/src/GraphQL"
           suffix: ~
 ```
-Your `RootQuery` class should look like this:
+Your `RootQuery` class should look like this:  
+
 ```php
 namespace App\GraphQL\Query;
 
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class RootQuery
 {
 }
@@ -89,8 +85,8 @@ class RootQuery
 If you use mutations, you need a `RootMutation` type as well.
 
 
-## Annotations reference
-- [Annotations reference](annotations-reference.md)
+## Attributes/Annotations reference
+- [Attributes/Annotations reference](annotations-reference.md)
 
 ## Arguments transformation, populating & validation
 - [Arguments Transformer](arguments-transformer.md)
@@ -100,7 +96,7 @@ If you use mutations, you need a `RootMutation` type as well.
 As PHP classes naturally support inheritance (and so is the annotation reader), it doesn't make sense to allow classes to use the "inherits" option (as on types declared using YAML).  
 The type will inherit annotations declared on parent class properties and methods. The annotation on the class itself will not be inherited.
 
-## Annotations, value & default resolver
+## Attributes/Annotations, value & default resolver
 
 In GraphQL, when a type's field is resolved, GraphQL expects by default a property (for object) or a key (for array) on the corresponding value returned for the type.  
 
@@ -118,23 +114,23 @@ So, the `value` could be an object instance with a `name` property or an array w
 Except for the root Query and root Mutation types, the `value` variable is always returned by another resolver.  
 For the root Query and the Root Mutation types, the `value` variable is the service with an id that equals to the fully qualified name of the query/mutation class.  
 
-The following rules apply for `@Field`, `@Query` and `@Mutation` annotations to guess a resolver when no `resolver` attribute is defined:  
+The following rules apply for `#[GQL\Field]`, `#[GQL\Query]` and `#[GQL\Mutation]` annotations to guess a resolver when no `resolver` attribute is defined:  
 
-- If `@Field` is defined on a property :
-    - If `@Field`'s attribute `name` is defined and is not equal to the property name 
+- If `#[GQL\Field]` is defined on a property :
+    - If `#[GQL\Field]`'s attribute `name` is defined and is not equal to the property name 
         - `@=value.<property name>` for a regular type
         - `@=service(<FQCN>).<property name>` for root query or root mutation
 
-    - If `@Field`'s attribute `name` is not defined or is not equal to the property name
+    - If `#[GQL\Field]`'s attribute `name` is not defined or is not equal to the property name
         - The default GraphQL resolver will be use for a regular type (no `resolve` configuration will be define).
         - `@=service(<FQCN>).<name>` for root query or root mutation
 
-- If `@Field` is defined on a method :  
+- If `#[GQL\Field]` is defined on a method :  
     - `@=call(value.<method name>, args)` for a regular type 
     - `@=call(service(<FQCN>).<method name>, args)` for root query or mutation
 
 
-## Annotations, Root Query & Root Mutation
+## Attributes/Annotations, Root Query & Root Mutation
 
 If you define your root Query or root Mutation type as a class with annotations, it will allow you to define methods directly on the class itself to be exposed as GraphQL fields.  
 For example: 
@@ -142,13 +138,9 @@ For example:
 ```php
 namespace App\GraphQL\Query;
 
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class RootQuery {
-    /**
-     * @GQL\Field(name="something", type="String!")
-     */
+    #[GQL\Field(name: "something", type: "String!")]
     public function getSomething() {
         return "Hello world!";
     }
@@ -171,49 +163,42 @@ If the `type` option is not defined explicitly on the `@Field`, `@Query` or `@Mu
 
 It will stop on the first successful guess.
 
-### @Field type auto-guessing from DockBlock
+### `#[GQL\Field]` type auto-guessing from DockBlock
 
-The `type` option of the `@Field` annotation can be guessed if its DocBlock describes a known type. It is a more precise guessing as it supports collections of objects, e.g. `User[]` or `array<User>`.
+The `type` option of the `#[GQL\Field]` attribute/annotation can be guessed if its DocBlock describes a known type. It is a more precise guessing as it supports collections of objects, e.g. `User[]` or `array<User>`.
 
 For example:
 
 ```php
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class MyType {
     /**
-     * @GQL\Field
-     * 
      * @var Friend[]
      */
+    #[GQL\Field]
     public array $friends = [];
 }
 ```
 
 
-### @Field type auto-guessing when defined on a property with a type hint
+### `#[GQL\Field]` type auto-guessing when defined on a property with a type hint
 
-The type of the `@Field` annotation can be auto-guessed if it's defined on a property with a type hint.
+The type of the `#[GQL\Field]` attribute/annotation can be auto-guessed if it's defined on a property with a type hint.
 If the property has a usable type hint this is used and no further guessing is done.
 
 For example:
 
 ```php
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class MyType {
-    /**
-     * @GQL\Field
-     */
+    #[GQL\Field]
     protected string $property;
 }
 ```
 
 In this example, the type `String!` will be auto-guessed from the type hint of the property.  
 
-### @Field type auto-guessing from Doctrine ORM Annotations
+### `#[GQL\Field]` type auto-guessing from Doctrine ORM Annotations
 
 Based on other Doctrine annotations on your fields, the corresponding GraphQL type can sometimes be guessed automatically.  
 In order to activate this guesser, you must install `doctrine/orm` package.  
@@ -228,7 +213,6 @@ The type can be auto-guessed from the following annotations:
 You can also provide your own doctrine / GraphQL types mappings in the bundle configuration.  
 For example:
 
-
 ```yaml (graphql.yaml)
 overblog_graphql:
     ...
@@ -240,20 +224,16 @@ overblog_graphql:
 ```
 
 
-### @Field type auto-guessing when defined on a method with a return type hint
+### #[GQL\Field] type auto-guessing when defined on a method with a return type hint
 
-The type of the `@Field` annotation can be auto-guessed if it's defined on a method with a return type hint.
+The type of the `#[GQL\Field]` annotation can be auto-guessed if it's defined on a method with a return type hint.
 
 For example:
 
 ```php
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class MyType {
-    /**
-     * @GQL\Field
-     */
+    #[GQL\Field]
     public function getSomething(): string {
         return "Hello world!";
     }
@@ -262,20 +242,16 @@ class MyType {
 
 In this example, the type `String!` will be auto-guessed from the return type hint of the method.  
 
-### @Field arguments auto-guessing when defined on a method with type hinted parameters
+### `#[GQL\Field]` arguments auto-guessing when defined on a method with type hinted parameters
 
-The arguments of the `@Field` annotation can be auto-guessed if it's defined on a method with type hinted arguments. Arguments without default value will be consided required.
+The arguments of the `#[GQL\Field]` attribute/annotation can be auto-guessed if it's defined on a method with type hinted arguments. Arguments without default value will be consided required.
 
 For example:
 
 ```php
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class MyType {
-    /**
-     * @GQL\Field(type="[String]!")
-     */
+    #[GQL\Field(type: "[String]!")]
     public function getSomething(int $amount, string $name, MyInputClass $input, int $limit = 10) {
         ...
     }
@@ -284,10 +260,26 @@ class MyType {
 
 The GraphQL arguments will be auto-guessed as:  
 
-- `@Arg(name="amount", type="Int!")`
-- `@Arg(name="name", type="String!")`
-- `@Arg(name="input", type="MyInput!")`  (The input type corresponding to the `MyInputClass` will be used).
-- `@Arg(name="limit", type="Int", default = 10)`
+- `#[GQL\Arg(name: "amount", type: "Int!")`
+- `#[GQL\Arg(name: "name", type: "String!")`
+- `#[GQL\Arg(name: "input", type: "MyInput!")`  (The input type corresponding to the `MyInputClass` will be used).
+- `#[GQL\Arg(name: "limit", type: "Int", default: 10)`
+
+It is possible to mix auto-guessing and manual declaration of arguments. Explicit declaration with `#[GQL\Arg]` will always take precedence over auto-guessing.  
+If both are used, __it is important to name the arguments and the parameters the same way__, otherwise, they'll be considered as two different arguments.  
+For example:  
+```php
+#[GQL\Type]
+class MyType {
+    #[GQL\Field]
+    #[GQL\Arg(name: "totalAmount", type: "Int!")]
+    public function doSomething(int $amount) {
+        ...
+    }
+}
+```
+In this example, the `doSomething` field will have two arguments: `totalAmount` and `amount` and the system won't be able to pass the `totalAmount` argument to the `doSomething` method.  
+
 
 ### Limitation of auto-guessing:
 

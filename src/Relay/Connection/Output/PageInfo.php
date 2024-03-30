@@ -23,9 +23,6 @@ final class PageInfo implements PageInfoInterface
         $this->hasNextPage = $hasNextPage;
     }
 
-    /**
-     * @return string
-     */
     public function getStartCursor(): ?string
     {
         return $this->startCursor;
@@ -36,9 +33,6 @@ final class PageInfo implements PageInfoInterface
         $this->startCursor = $startCursor;
     }
 
-    /**
-     * @return string
-     */
     public function getEndCursor(): ?string
     {
         return $this->endCursor;
@@ -49,9 +43,6 @@ final class PageInfo implements PageInfoInterface
         $this->endCursor = $endCursor;
     }
 
-    /**
-     * @return bool
-     */
     public function getHasPreviousPage(): ?bool
     {
         return $this->hasPreviousPage;
@@ -62,9 +53,6 @@ final class PageInfo implements PageInfoInterface
         $this->hasPreviousPage = $hasPreviousPage;
     }
 
-    /**
-     * @return bool
-     */
     public function getHasNextPage(): ?bool
     {
         return $this->hasNextPage;
