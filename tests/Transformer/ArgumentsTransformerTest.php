@@ -9,6 +9,7 @@ use Generator;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
@@ -101,10 +102,17 @@ final class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $types = [$t1, $t2, $t3, $t4, $t5];
+        $t6 = new ObjectType([
+            'name' => 'Type1',
+            'fields' => [
+                'field1' => Type::string(),
+            ],
+        ]);
+
+        $types = [$t1, $t2, $t3, $t4, $t5, $t6];
 
         if (PHP_VERSION_ID >= 80100) {
-            $t5 = new PhpEnumType([
+            $types[] = new PhpEnumType([
                 'name' => 'EnumPhp',
                 'enumClass' => EnumPhp::class,
                 'values' => [
@@ -113,7 +121,6 @@ final class ArgumentsTransformerTest extends TestCase
                     'VALUE3' => 'VALUE3',
                 ],
             ]);
-            $types[] = $t5;
         }
 
         return $types;
@@ -430,5 +437,22 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($inputValue->field1, $data['field1']);
         $this->assertEquals($inputValue->field2, $data['field2']);
         $this->assertEquals($inputValue->field3, $data['field3']);
+    }
+
+    public function testIgnoreNonInputObjectValidation(): void
+    {
+        $validator = $this->createMock(RecursiveValidator::class);
+        $validator->expects($this->never())->method('validate');
+
+        $transformer = new ArgumentsTransformer($validator, [
+            'Type1' => ['type' => 'object', 'class' => Type1::class],
+        ]);
+
+        $info = $this->getResolveInfo(self::getTypes());
+        $data = new Type1();
+
+        $typeValue = $transformer->getInstanceAndValidate('Type1', $data, $info, 'type1');
+
+        $this->assertEquals($data, $typeValue);
     }
 }

@@ -147,9 +147,13 @@ final class ArgumentsTransformer
         $endIndex = ($isRequired ? 1 : 0) + ($isMultiple ? 1 : 0) + ($isStrictMultiple ? 1 : 0);
         $type = substr($argType, $isMultiple ? 1 : 0, $endIndex > 0 ? -$endIndex : strlen($argType));
 
-        $result = $this->populateObject($this->getType($type, $info), $data, $isMultiple, $info);
+        $gqlType = $this->getType($type, $info);
+        $result = $this->populateObject($gqlType, $data, $isMultiple, $info);
 
-        if (null !== $this->validator) {
+        // We only want to validate input object types and not the scalar or object types that are already validated by the GraphQL library.
+        $shouldValidate = $gqlType instanceof InputObjectType;
+
+        if (null !== $this->validator && $shouldValidate) {
             $errors = new ConstraintViolationList();
             if (is_object($result)) {
                 $errors = $this->validator->validate($result);
