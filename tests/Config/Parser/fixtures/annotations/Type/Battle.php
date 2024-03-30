@@ -23,9 +23,11 @@ final class Battle
      * @GQL\Field(name="casualties", complexity="childrenComplexity * 5")
      *
      * @GQL\Arg(name="raceId", type="String!", description="A race ID")
+     * @GQL\Arg(name="cases", type="[String!]!")
      */
     #[GQL\Field(name: 'casualties', complexity: 'childrenComplexity * 5')]
     #[GQL\Arg(name: 'raceId', type: 'String!', description: 'A race ID')]
+    #[GQL\Arg(name: 'cases', type: '[String!]!')]
     public function getCasualties(
         int $areaId,
         ?string $raceId,
@@ -34,7 +36,8 @@ final class Battle
         string $nameStartingWith = '',
         Planet $planet = null,
         bool $away = false,
-        float $maxDistance = null
+        float $maxDistance = null,
+        array $cases = []
     ): ?int {
         return 12;
     }
