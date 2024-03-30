@@ -77,7 +77,7 @@ Documentation
 - [Data fetching](docs/data-fetching/index.md)
   - [Query batching](docs/data-fetching/batching.md)
   - [Promise](docs/data-fetching/promise.md)
-- [Annotations & PHP 8 Attributes](docs/annotations/index.md)
+- [Attributes](docs/attributes/index.md)
 - [Validation](docs/validation/index.md)
 - [Security](docs/security/index.md)
   - [Handle CORS](docs/security/handle-cors.md)
