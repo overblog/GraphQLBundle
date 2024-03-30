@@ -28,20 +28,11 @@ overblog_graphql:
           suffix: ~
 ```
 
+Note: The annotation are deprecated as of version `1.3` and will be removed in the next major version.  
+
 This will load all annotated classes in `%kernel.project_dir%/src/GraphQL` into the schema.
 
 The annotations & attributes are equivalent and are used in the same way. They share the same annotation namespaces, classes and API.  
-
-Example with annotations:
-```php
-use Overblog\GraphQLBundle\Annotation as GQL;
-
-#[GQL\Type]
-class MyType {
-    #[GQL\Field(type: "Int")]
-    protected $myField;
-}
-```
 
 Example with attributes:
 ```php
@@ -54,10 +45,25 @@ class MyType {
 }
 ```
 
+Example with annotations:
+```php
+use Overblog\GraphQLBundle\Annotation as GQL;
 
-## Using Annotations or Attributes as your only Mapping
+/**
+ * @GQL\Type
+ */
+class MyType {
+    /**
+     * @GQL\Field(type="Int")
+     */
+    protected $myField;
+}
+```
 
-If you only use annotations as mappings you need to add an empty `RootQuery` type.  
+
+## Using Attributes as your only Mapping
+
+If you only use attributes as mappings you need to add an empty `RootQuery` type.  
 Your config should look like this:  
 
 ```yaml
@@ -68,7 +74,7 @@ overblog_graphql:
       query: RootQuery
     mappings:
       types:
-        - type: annotation
+        - type: attribute
           dir: "%kernel.project_dir%/src/GraphQL"
           suffix: ~
 ```
@@ -85,18 +91,18 @@ class RootQuery
 If you use mutations, you need a `RootMutation` type as well.
 
 
-## Attributes/Annotations reference
-- [Attributes/Annotations reference](annotations-reference.md)
+## Attributes reference
+- [Attributes reference](attributes-reference.md)
 
 ## Arguments transformation, populating & validation
 - [Arguments Transformer](arguments-transformer.md)
 
-## Annotations & type inheritance
+## Attributes & type inheritance
 
-As PHP classes naturally support inheritance (and so is the annotation reader), it doesn't make sense to allow classes to use the "inherits" option (as on types declared using YAML).  
-The type will inherit annotations declared on parent class properties and methods. The annotation on the class itself will not be inherited.
+As PHP classes naturally support inheritance (and so is the attribute reader), it doesn't make sense to allow classes to use the "inherits" option (as on types declared using YAML).  
+The type will inherit attributes declared on parent class properties and methods. The attribute on the class itself will not be inherited.
 
-## Attributes/Annotations, value & default resolver
+## Attributes, value & default resolver
 
 In GraphQL, when a type's field is resolved, GraphQL expects by default a property (for object) or a key (for array) on the corresponding value returned for the type.  
 
@@ -114,7 +120,7 @@ So, the `value` could be an object instance with a `name` property or an array w
 Except for the root Query and root Mutation types, the `value` variable is always returned by another resolver.  
 For the root Query and the Root Mutation types, the `value` variable is the service with an id that equals to the fully qualified name of the query/mutation class.  
 
-The following rules apply for `#[GQL\Field]`, `#[GQL\Query]` and `#[GQL\Mutation]` annotations to guess a resolver when no `resolver` attribute is defined:  
+The following rules apply for `#[GQL\Field]`, `#[GQL\Query]` and `#[GQL\Mutation]` attributes to guess a resolver when no `resolver` attribute is defined:  
 
 - If `#[GQL\Field]` is defined on a property :
     - If `#[GQL\Field]`'s attribute `name` is defined and is not equal to the property name 
@@ -130,9 +136,9 @@ The following rules apply for `#[GQL\Field]`, `#[GQL\Query]` and `#[GQL\Mutation
     - `@=call(service(<FQCN>).<method name>, args)` for root query or mutation
 
 
-## Attributes/Annotations, Root Query & Root Mutation
+## Attributes, Root Query & Root Mutation
 
-If you define your root Query or root Mutation type as a class with annotations, it will allow you to define methods directly on the class itself to be exposed as GraphQL fields.  
+If you define your root Query or root Mutation type as a class with attributes, it will allow you to define methods directly on the class itself to be exposed as GraphQL fields.  
 For example: 
 
 ```php
@@ -244,7 +250,7 @@ In this example, the type `String!` will be auto-guessed from the return type hi
 
 ### `#[GQL\Field]` arguments auto-guessing when defined on a method with type hinted parameters
 
-The arguments of the `#[GQL\Field]` attribute/annotation can be auto-guessed if it's defined on a method with type hinted arguments. Arguments without default value will be consided required.
+The arguments of the `#[GQL\Field]` attribute can be auto-guessed if it's defined on a method with type hinted arguments. Arguments without default value will be consided required.
 
 For example:
 
