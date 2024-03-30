@@ -233,6 +233,17 @@ abstract class MetadataParserTest extends TestCase
                 'alienInvasion' => ['type' => 'Boolean!', 'deprecationReason' => 'No more alien invasions on planets'],
             ],
         ]);
+
+        $this->expect('MateriaInput', 'input-object', [
+            'fields' => [
+                'name' => ['type' => 'String!', 'defaultValue' => 'default name'],
+                'ap' => ['type' => 'Int!', 'defaultValue' => 100],
+                'description' => ['type' => 'String!', 'defaultValue' => 'A description by default'],
+                'diameter' => ['type' => 'Int'],
+                'colors' => ['type' => '[String]!', 'defaultValue' => ['red', 'green', 'blue']],
+                'effects' => ['type' => '[String]', 'defaultValue' => ['slow', 'enrage', 'boost']],
+            ],
+        ]);
     }
 
     public function testInterfaces(): void
@@ -240,6 +251,10 @@ abstract class MetadataParserTest extends TestCase
         $this->expect('WithArmor', 'interface', [
             'description' => 'The armored interface',
             'resolveType' => '@=query(\'character_type\', [value])',
+        ]);
+
+        $this->expect('Biped', 'interface', [
+            'resolveType' => "@=service('overblog_graphql.interface_type_resolver').resolveType('Biped', value)",
         ]);
     }
 
@@ -293,7 +308,7 @@ abstract class MetadataParserTest extends TestCase
     public function testInterfaceAutoguessed(): void
     {
         $this->expect('Mandalorian', 'object', [
-            'interfaces' => ['Character', 'WithArmor'],
+            'interfaces' => ['Biped', 'Character', 'WithArmor'],
             'fields' => [
                 'name' => ['type' => 'String!', 'description' => 'The name of the character'],
                 'friends' => ['type' => '[Character]', 'description' => 'The friends of the character', 'resolve' => "@=query('App\\MyResolver::getFriends')"],

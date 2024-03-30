@@ -91,7 +91,17 @@ final class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $types = [$t1, $t2, $t3, $t4];
+        $t5 = new InputObjectType([
+            'name' => 'InputType4',
+            'fields' => [
+                'field1' => ['type' => Type::string(), 'defaultValue' => 'value_from_config_field1'],
+                'field2' => Type::listOf(Type::string()),
+                'field3' => ['type' => Type::int(), 'defaultValue' => 10],
+                'field4' => Type::string(),
+            ],
+        ]);
+
+        $types = [$t1, $t2, $t3, $t4, $t5];
 
         if (PHP_VERSION_ID >= 80100) {
             $t5 = new PhpEnumType([
@@ -115,6 +125,7 @@ final class ArgumentsTransformerTest extends TestCase
             'InputType1' => ['type' => 'input', 'class' => InputType1::class],
             'InputType2' => ['type' => 'input', 'class' => InputType2::class],
             'InputType3' => ['type' => 'input', 'class' => InputType3::class],
+            'InputType4' => ['type' => 'input', 'class' => InputType4::class],
         ]);
 
         $info = $this->getResolveInfo(self::getTypes());
@@ -177,6 +188,16 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($data['field1'][1]['field1'], $res->field1[1]->field1);
         $this->assertEquals($data['field1'][1]['field2'], $res->field1[1]->field2);
         $this->assertEquals($data['field1'][1]['field3'], $res->field1[1]->field3);
+
+        // InputType4
+        $data = ['field4' => 'value_field4'];
+        $res = $transformer->getInstanceAndValidate('InputType4', $data, $info, 'input');
+
+        $this->assertInstanceOf(InputType4::class, $res);
+        $this->assertEquals($res->field1, 'default_value_field1');
+        $this->assertEquals($res->field2, null);
+        $this->assertEquals($res->field3, 5);
+        $this->assertEquals($res->field4, 'value_field4');
 
         $res = $transformer->getInstanceAndValidate('Enum1', 2, $info, 'enum1');
 
@@ -241,7 +262,7 @@ final class ArgumentsTransformerTest extends TestCase
         try {
             $res = $builder->getArguments($mapping, $data, $this->getResolveInfo(self::getTypes()));
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
-        } catch (Exception $e) {
+        } catch (InvalidArgumentsError $e) {
             $this->assertInstanceOf(InvalidArgumentsError::class, $e);
             $first = $e->getErrors()[0];
             $this->assertInstanceOf(InvalidArgumentError::class, $first);

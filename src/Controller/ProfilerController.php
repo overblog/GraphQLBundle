@@ -63,7 +63,7 @@ final class ProfilerController
 
         $tokens = array_map(function ($tokenData) {
             $profile = $this->profiler->loadProfile($tokenData['token']);
-            if (!$profile->hasCollector('graphql')) {
+            if (!$profile || !$profile->hasCollector('graphql')) {
                 return false;
             }
             $tokenData['graphql'] = $profile->getCollector('graphql');

@@ -20,7 +20,7 @@ final class TypeInterface extends Annotation
     /**
      * Resolver type for interface.
      */
-    public string $resolveType;
+    public ?string $resolveType;
 
     /**
      * Interface name.
@@ -31,7 +31,7 @@ final class TypeInterface extends Annotation
      * @param string        $resolveType The express resolve type
      * @param string|null   $name        The GraphQL name of the interface
      */
-    public function __construct(string $resolveType, ?string $name = null)
+    public function __construct(?string $resolveType = null, ?string $name = null)
     {
         $this->resolveType = $resolveType;
         $this->name = $name;

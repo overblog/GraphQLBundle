@@ -1,15 +1,15 @@
 # The Arguments Transformer service
 
-When using annotation, as we use classes to describe our GraphQL objects, it is also possible to create and populate classes instances using GraphQL data.  
+When using attributes or annotations, as we use classes to describe our GraphQL objects, it is also possible to create and populate classes instances using GraphQL data.  
 If a class is used to describe a GraphQL Input, this same class can be instantiated to hold the corresponding GraphQL Input data.  
-This is where the `Arguments Transformer` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instantiate a PHP classes and populate it with data based on the corresponding GraphQL type.
+This is where the `Arguments Transformer` comes into play. Knowing the matching between GraphQL types and PHP classes, the service is able to instantiate a PHP classes and populate it with data based on the corresponding GraphQL type.  
 To invoke the Arguments Transformer, we use the `input` expression function in our resolvers. 
 
 ## the `arguments` function in expression language
 
 The `arguments` function take two parameters, a mapping of arguments name and their type, like `name => type`. The type is in GraphQL notation, eventually with the "[]" and "!". The data are indexed by argument name.
 This function will use the `Arguments Transformer` service to transform the list of arguments into their corresponding PHP class if it has one and using a property accessor, it will populate the instance, and will use the `validator` service to validate it.  
-The transformation is done recursively. If an Input include another Input as field, it will also be populated the same way.
+The transformation is done recursively. If an Input include another Input as field, it will also be populated the same way.  
 
 For example:
 
@@ -19,51 +19,34 @@ namespace App\GraphQL\Input;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @GQL\Input
- */ 
+#[GQL\Input]
 class UserRegisterInput {
-    /**
-     * @GQL\Field(type="String!")
-     * @Assert\NotBlank
-     * @Assert\Length(min = 2, max = 50)
-     */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 50)]
+    #[GQL\Field(type: "String!")]
     public $username;
 
-    /**
-     * @GQL\Field(type="String!")
-     * @Assert\NotBlank
-     * @Assert\Email
-     */
+    #[Assert\NotBlank]
+    #[Assert\Email]
+    #[GQL\Field(type: "String!")]
     public $email;
 
-    /**
-     * @GQL\Field(type="String!")
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *      min = 5, 
-     *      minMessage="The password must be at least 5 characters long."
-     * )
-     */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, minMessage: "The password must be at least 5 characters long.")]
+    #[GQL\Field(type: "String!")]
     public $password;
 
-    /**
-     * @GQL\Field(type="Int!")
-     * @Assert\NotBlank
-     * @Assert\GreaterThan(18)
-     */
+    #[Assert\NotBlank]
+    #[Assert\GreaterThan(18)]
+    #[GQL\Field(type: "Int!")]
     public $age;
 }
 
 ....
 
-/**
- * @GQL\Provider
- */
+#[GQL\Provider]
 class UserRepository {
-    /**
-     * @GQL\Mutation
-     */
+    #[GQL\Mutation]
     public function createUser(UserRegisterInput $input) : User {
         // Use the validated $input here
         $user = new User();
@@ -81,19 +64,10 @@ The mutation received the valid instance.
 In the above example, everything is auto-guessed and a Provider is used. But this would be the same as : 
 
 ```php
-/**
- * @GQL\Type
- */
+#[GQL\Type]
 class RootMutation {
-    /**
-     * @GQL\Field(
-     *   type="User",
-     *   args={
-     *     @GQL\Arg(name="input", type="UserRegisterInput")
-     *   },
-     *   resolve="@=call(service('UserRepository').createUser, arguments({input: 'UserRegisterInput'}, arg))"
-     * )
-     */
+    #[GQL\Field(type: "User", resolve: "@=call(service('UserRepository').createUser, arguments({input: 'UserRegisterInput'}, arg))")]
+    #[GQL\Arg(name: "input", type: "UserRegisterInput")]
     public $createUser;
 }
 ```
