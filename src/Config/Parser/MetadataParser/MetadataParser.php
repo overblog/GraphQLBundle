@@ -19,6 +19,7 @@ use ReflectionClass;
 use ReflectionClassConstant;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
 use RuntimeException;
@@ -591,7 +592,13 @@ abstract class MetadataParser implements PreParserInterface
         /** @var Metadata\Arg[] $argAnnotations */
         $argAnnotations = self::getMetadataMatching($metadatas, Metadata\Arg::class);
 
+        $validArgNames = array_map(fn (ReflectionParameter $parameter) => $parameter->getName(), $reflector instanceof ReflectionMethod ? $reflector->getParameters() : []);
+
         foreach ($argAnnotations as $arg) {
+            if ($reflector instanceof ReflectionMethod && !in_array($arg->name, $validArgNames, true)) {
+                throw new InvalidArgumentException(sprintf('The argument "%s" defined with #[GQL\Arg] attribute/annotation on method "%s" does not match any parameter name in the method.', $arg->name, $reflector->getName()));
+            }
+
             $args[$arg->name] = ['type' => $arg->type];
 
             if (isset($arg->description)) {

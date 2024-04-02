@@ -524,6 +524,18 @@ abstract class MetadataParserTest extends TestCase
         }
     }
 
+    public function testInvalidArgumentMatching(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidArgumentNaming.php';
+            $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Missing matching argument should have raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The argument "missingParameter" defined/', $e->getPrevious()->getMessage());
+        }
+    }
+
     public function testInvalidReturnGuessing(): void
     {
         try {
