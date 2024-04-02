@@ -16,8 +16,6 @@ final class InvalidArgumentNaming
      * @GQL\Field(name="guessFailed")
      *
      * @GQL\Arg(name="missingParameter", type="String")
-     *
-     * @param mixed $test
      */
     #[GQL\Field(name: 'guessFailed')]
     #[GQL\Arg(name: 'missingParameter', type: 'String')]

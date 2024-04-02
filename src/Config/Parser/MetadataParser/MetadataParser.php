@@ -566,8 +566,6 @@ abstract class MetadataParser implements PreParserInterface
         $accessMetadata = self::getFirstMetadataMatching($metadatas, Metadata\Access::class);
         $publicMetadata = self::getFirstMetadataMatching($metadatas, Metadata\IsPublic::class);
 
-        $isMethod = $reflector instanceof ReflectionMethod;
-
         if (null === $fieldMetadata) {
             if (null !== $accessMetadata || null !== $publicMetadata) {
                 throw new InvalidArgumentException(sprintf('The metadatas %s and/or %s defined on "%s" are only usable in addition of metadata %s', self::formatMetadata('Access'), self::formatMetadata('Visible'), $reflector->getName(), self::formatMetadata('Field')));
@@ -576,7 +574,7 @@ abstract class MetadataParser implements PreParserInterface
             return [];
         }
 
-        if ($isMethod && !$reflector->isPublic()) {
+        if ($reflector instanceof ReflectionMethod && !$reflector->isPublic()) {
             throw new InvalidArgumentException(sprintf('The metadata %s can only be applied to public method. The method "%s" is not public.', self::formatMetadata('Field'), $reflector->getName()));
         }
 
@@ -594,10 +592,10 @@ abstract class MetadataParser implements PreParserInterface
         /** @var Metadata\Arg[] $argAnnotations */
         $argAnnotations = self::getMetadataMatching($metadatas, Metadata\Arg::class);
 
-        $validArgNames = array_map(fn (ReflectionParameter $parameter) => $parameter->getName(), $isMethod ? $reflector->getParameters() : []);
+        $validArgNames = array_map(fn (ReflectionParameter $parameter) => $parameter->getName(), $reflector instanceof ReflectionMethod ? $reflector->getParameters() : []);
 
         foreach ($argAnnotations as $arg) {
-            if ($isMethod && !in_array($arg->name, $validArgNames, true)) {
+            if ($reflector instanceof ReflectionMethod && !in_array($arg->name, $validArgNames, true)) {
                 throw new InvalidArgumentException(sprintf('The argument "%s" defined with #[GQL\Arg] attribute/annotation on method "%s" does not match any parameter name in the method.', $arg->name, $reflector->getName()));
             }
 
@@ -615,7 +613,7 @@ abstract class MetadataParser implements PreParserInterface
             }
         }
 
-        if ($isMethod) {
+        if ($reflector instanceof ReflectionMethod) {
             $args = self::guessArgs($reflectionClass, $reflector, $args);
         }
 
