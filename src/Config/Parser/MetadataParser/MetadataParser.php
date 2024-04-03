@@ -976,10 +976,12 @@ abstract class MetadataParser implements PreParserInterface
     private static function guessArgs(
         ReflectionClass $reflectionClass,
         ReflectionMethod $method,
-        array $arguments,
+        array $currentArguments,
     ): array {
+        $arguments = [];
         foreach ($method->getParameters() as $index => $parameter) {
-            if (array_key_exists($parameter->getName(), $arguments)) {
+            if (array_key_exists($parameter->getName(), $currentArguments)) {
+                $arguments[$parameter->getName()] = $currentArguments[$parameter->getName()];
                 continue;
             }
 
