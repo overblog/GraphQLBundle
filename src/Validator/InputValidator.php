@@ -169,7 +169,7 @@ final class InputValidator
             foreach ($config as $key => $value) {
                 switch ($key) {
                     case 'link':
-                        [$fqcn, $property, $type] = $value;
+                        [$fqcn, $classProperty, $type] = $value;
 
                         if (!in_array($fqcn, $this->cachedMetadata)) {
                             /** @phpstan-ignore-next-line */
@@ -177,7 +177,7 @@ final class InputValidator
                         }
 
                         // Get metadata from the property and it's getters
-                        $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($property);
+                        $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($classProperty);
 
                         foreach ($propertyMetadata as $memberMetadata) {
                             // Allow only constraints specified by the "link" matcher
