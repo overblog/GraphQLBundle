@@ -144,6 +144,7 @@ final class InputValidator
                 continue;
             }
             
+            
             $config = static::normalizeConfig($arg['validation'] ?? []);
 
             if (isset($config['cascade']) && isset($inputData[$property])) {
@@ -181,7 +182,6 @@ final class InputValidator
                             /** @phpstan-ignore-next-line */
                             $this->cachedMetadata[$fqcn] = $this->defaultValidator->getMetadataFor($fqcn);
                         }
-
 
                         // Get metadata from the property and it's getters
                         $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($classProperty);
