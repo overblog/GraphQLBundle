@@ -182,6 +182,7 @@ final class InputValidator
                             $this->cachedMetadata[$fqcn] = $this->defaultValidator->getMetadataFor($fqcn);
                         }
 
+
                         // Get metadata from the property and it's getters
                         $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($classProperty);
 
