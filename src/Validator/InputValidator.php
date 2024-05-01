@@ -138,14 +138,12 @@ final class InputValidator
 
         foreach ($fields as $name => $arg) {
             $property = $arg['name'] ?? $name;
+            $config = static::normalizeConfig($arg['validation'] ?? []);
 
             if (!array_key_exists($property, $inputData)) {
                 // This field was not provided in the inputData. Do not attempt to validate it.
                 continue;
             }
-            
-            
-            $config = static::normalizeConfig($arg['validation'] ?? []);
 
             if (isset($config['cascade']) && isset($inputData[$property])) {
                 $groups = $config['cascade'];
