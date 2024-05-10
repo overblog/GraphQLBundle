@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser;
 use Exception;
 use phpDocumentor\Reflection\DocBlock\Tags\TagWithType;
 use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use phpDocumentor\Reflection\Type;
 use phpDocumentor\Reflection\Types\AbstractList;
 use phpDocumentor\Reflection\Types\Compound;
@@ -24,7 +25,7 @@ use function sprintf;
 
 final class DocBlockTypeGuesser extends PhpTypeGuesser
 {
-    protected ?DocBlockFactory $factory;
+    protected ?DocBlockFactoryInterface $factory;
 
     public function getName(): string
     {
@@ -128,7 +129,7 @@ final class DocBlockTypeGuesser extends PhpTypeGuesser
         return null;
     }
 
-    private function getParser(): DocBlockFactory
+    private function getParser(): DocBlockFactoryInterface
     {
         if (!isset($this->factory)) {
             $this->factory = DocBlockFactory::createInstance();

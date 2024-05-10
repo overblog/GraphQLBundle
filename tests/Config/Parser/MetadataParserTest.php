@@ -361,6 +361,17 @@ abstract class MetadataParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'planet_getNextPlanet' => [
+                    'type' => 'Json',
+                    'args' => [
+                        'planetId' => ['type' => 'Int!'],
+                        'minDistance' => ['type' => 'Int!'],
+                        'maxDistance' => ['type' => 'Int!'],
+                    ],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').getNextPlanet, arguments({planetId: \"Int!\", minDistance: \"Int!\", maxDistance: \"Int!\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
 
@@ -475,7 +486,7 @@ abstract class MetadataParserTest extends TestCase
                         'away' => ['type' => 'Boolean', 'defaultValue' => false],
                         'maxDistance' => ['type' => 'Float', 'defaultValue' => null],
                     ],
-                    'resolve' => '@=call(value.getCasualties, arguments({raceId: "String!", areaId: "Int!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
+                    'resolve' => '@=call(value.getCasualties, arguments({areaId: "Int!", raceId: "String!", dayStart: "Int", dayEnd: "Int", nameStartingWith: "String", planet: "PlanetInput", away: "Boolean", maxDistance: "Float"}, args))',
                     'complexity' => '@=childrenComplexity * 5',
                 ],
             ],
@@ -521,6 +532,18 @@ abstract class MetadataParserTest extends TestCase
         } catch (Exception $e) {
             $this->assertInstanceOf(InvalidArgumentException::class, $e);
             $this->assertMatchesRegularExpression('/Argument n°1 "\$test"/', $e->getPrevious()->getMessage());
+        }
+    }
+
+    public function testInvalidArgumentMatching(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidArgumentNaming.php';
+            $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('Missing matching argument should have raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The argument "missingParameter" defined/', $e->getPrevious()->getMessage());
         }
     }
 

@@ -120,4 +120,22 @@ final class PlanetRepository
     {
         return 10;
     }
+
+    /**
+     * @GQL\Query(type="Json")
+     *
+     * @GQL\Arg(name="maxDistance", type="Int!")
+     * @GQL\Arg(name="planetId", type="Int!")
+     */
+    #[GQL\Query(type: 'Json')]
+    #[GQL\Arg(name: 'maxDistance', type: 'Int!')]
+    #[GQL\Arg(name: 'planetId', type: 'Int!')]
+    public function getNextPlanet(int $planetId, int $minDistance, int $maxDistance): array
+    {
+        return [
+            'planetId' => $planetId,
+            'minDistance' => $minDistance,
+            'maxDistance' => $maxDistance,
+        ];
+    }
 }
