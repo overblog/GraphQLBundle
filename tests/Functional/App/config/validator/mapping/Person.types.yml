@@ -1,0 +1,14 @@
+Person:
+    type: input-object
+    config:
+        fields:
+            firstName:
+                type: String
+                validation:
+                    - NotBlank: ~
+                    - NotNull: ~
+            surname:
+                type: String
+                validation:
+                    - NotBlank: ~
+                    - NotNull: ~

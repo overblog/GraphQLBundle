@@ -138,3 +138,11 @@ Mutation:
                         validation:
                             cascade:
                                 groups: ['group2']
+
+            onlyPassedFieldsValidation:
+                type: Boolean
+                resolve: '@=m("mutation_mock", args)'
+                args:
+                    person:
+                        validation: cascade
+                        type: Person!
