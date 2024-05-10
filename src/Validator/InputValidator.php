@@ -140,6 +140,11 @@ final class InputValidator
             $property = $arg['name'] ?? $name;
             $config = static::normalizeConfig($arg['validation'] ?? []);
 
+            if (!array_key_exists($property, $inputData)) {
+                // This field was not provided in the inputData. Do not attempt to validate it.
+                continue;
+            }
+
             if (isset($config['cascade']) && isset($inputData[$property])) {
                 $groups = $config['cascade'];
                 $argType = $this->unclosure($arg['type']);
