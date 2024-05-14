@@ -51,6 +51,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->append($this->batchingMethodSection())
+                ->append($this->validationModeSection())
                 ->append($this->definitionsSection())
                 ->append($this->errorsHandlerSection())
                 ->append($this->servicesSection())
@@ -73,6 +74,21 @@ final class Configuration implements ConfigurationInterface
             ->values(['relay', 'apollo'])
             ->defaultValue('relay')
         ->end();
+
+        return $node;
+    }
+
+    private function validationModeSection(): EnumNodeDefinition
+    {
+        $builder = new TreeBuilder('validation_mode', "enum");
+
+        /** @var EnumNodeDefinition $node */
+        $node = $builder->getRootNode();
+
+        $node
+            ->values(['full', 'partial'])
+            ->defaultValue('full')
+            ->end();
 
         return $node;
     }

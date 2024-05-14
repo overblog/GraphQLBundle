@@ -7,6 +7,7 @@ to validate user input data. It currently supports only GraphQL schemas defined 
 
 ###  Contents:
 - [Overview](#overview)
+- [Mode](#mode)
 - [How does it work?](#how-does-it-work)
 - [Applying of validation constraints](#applying-of-validation-constraints)
     - [Listing constraints directly](#listing-constraints-directly)
@@ -109,6 +110,20 @@ The `birthdate` field is of type `input-object` and is marked as `cascade` so it
 - **month** is between 1 and 12
 - **year** is between 1900 and 2019
 
+# Mode
+
+There are two modes for validation, `full` (default) and `partial`. 
+
+`full` mode will always validate _all_ arguments/parameters of the type, even if they are not passed (where the types are optional).
+
+`partial` mode will only validate the arguments/parameters that are passed. This can be useful if you want to validate only the data that is actually sent by the client.
+
+To change the mode, you can set the `validation_mode` option in the main configuration:
+
+```yaml
+overblog_graphql:
+    validation_mode: full | partial
+```
 
 ## How does it work?
 

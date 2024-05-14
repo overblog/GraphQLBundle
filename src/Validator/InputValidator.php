@@ -42,6 +42,7 @@ final class InputValidator
     private ResolveInfo $info;
     private ConstraintValidatorFactoryInterface $constraintValidatorFactory;
     private ?TranslatorInterface $defaultTranslator;
+    private string $validationMode;
 
     /** @var ClassMetadataInterface[] */
     private array $cachedMetadata = [];
@@ -50,7 +51,8 @@ final class InputValidator
         ResolverArgs $resolverArgs,
         ValidatorInterface $validator,
         ConstraintValidatorFactoryInterface $constraintValidatorFactory,
-        ?TranslatorInterface $translator
+        ?TranslatorInterface $translator,
+        string $validationMode
     ) {
         $this->resolverArgs = $resolverArgs;
         $this->info = $this->resolverArgs->info;
@@ -58,6 +60,7 @@ final class InputValidator
         $this->constraintValidatorFactory = $constraintValidatorFactory;
         $this->defaultTranslator = $translator;
         $this->metadataFactory = new MetadataFactory();
+        $this->validationMode = $validationMode;
     }
 
     /**
@@ -140,7 +143,7 @@ final class InputValidator
             $property = $arg['name'] ?? $name;
             $config = static::normalizeConfig($arg['validation'] ?? []);
 
-            if (!array_key_exists($property, $inputData)) {
+            if ($this->validationMode === "partial" && !array_key_exists($property, $inputData)) {
                 // This field was not provided in the inputData. Do not attempt to validate it.
                 continue;
             }
