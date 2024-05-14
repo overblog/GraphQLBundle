@@ -80,7 +80,7 @@ final class Configuration implements ConfigurationInterface
 
     private function validationModeSection(): EnumNodeDefinition
     {
-        $builder = new TreeBuilder('validation_mode', "enum");
+        $builder = new TreeBuilder('validation_mode', 'enum');
 
         /** @var EnumNodeDefinition $node */
         $node = $builder->getRootNode();
