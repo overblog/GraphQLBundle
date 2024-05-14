@@ -43,6 +43,7 @@ final class OverblogGraphQLExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->setBatchingMethod($config, $container);
+        $this->setValidationMode($config, $container);
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
         $this->setSchemaArguments($config, $container);
@@ -149,6 +150,11 @@ final class OverblogGraphQLExtension extends Extension
     private function setBatchingMethod(array $config, ContainerBuilder $container): void
     {
         $container->setParameter($this->getAlias().'.batching_method', $config['batching_method']);
+    }
+
+    private function setValidationMode(array $config, ContainerBuilder $container): void
+    {
+        $container->setParameter($this->getAlias().'.validation_mode', $config['validation_mode']);
     }
 
     private function setDebugListener(array $config, ContainerBuilder $container): void
