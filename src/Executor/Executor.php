@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Executor;
 
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
@@ -42,5 +43,19 @@ final class Executor implements ExecutorInterface
         }
 
         return $promiseAdapter->wait(GraphQL::promiseToExecute(...func_get_args()));
+    }
+
+    public function executeAsync(
+        PromiseAdapter $promiseAdapter,
+        Schema $schema,
+        string $requestString,
+        $rootValue = null,
+        $contextValue = null,
+        $variableValues = null,
+        $operationName = null,
+        ?callable $fieldResolver = null,
+        ?array $validationRules = null
+    ): Promise {
+        return GraphQL::promiseToExecute(...func_get_args());
     }
 }
