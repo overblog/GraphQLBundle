@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Executor;
 
 use ArrayObject;
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 
@@ -28,4 +29,24 @@ interface ExecutorInterface
         callable $fieldResolver = null,
         array $validationRules = null
     ): ExecutionResult;
+
+    /**
+     * @param mixed $rootValue
+     * @param null $contextValue
+     * @param null $variableValues
+     * @param string|null $operationName
+     * @param array|null $validationRules
+     * @return Promise<ExecutionResult>
+     */
+    public function executeAsync(
+        PromiseAdapter $promiseAdapter,
+        Schema $schema,
+        string $requestString,
+        $rootValue = null,
+        $contextValue = null,
+        $variableValues = null,
+        $operationName = null,
+        ?callable $fieldResolver = null,
+        ?array $validationRules = null
+    ): Promise;
 }
