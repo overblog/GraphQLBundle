@@ -29,7 +29,7 @@ final class InputValidatorTest extends TestCase
     {
         $this->expectException(ServiceNotFoundException::class);
 
-        $factory = new InputValidatorFactory(null, null, null);
+        $factory = new InputValidatorFactory(null, null, null, 'full');
 
         $factory->create(new ResolverArgs(
             true,

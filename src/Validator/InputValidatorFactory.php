@@ -15,6 +15,7 @@ final class InputValidatorFactory
     private ?ValidatorInterface $defaultValidator;
     private ?ConstraintValidatorFactoryInterface $constraintValidatorFactory;
     private ?TranslatorInterface $defaultTranslator;
+    private string $validationMode;
 
     /**
      * InputValidatorFactory constructor.
@@ -22,11 +23,13 @@ final class InputValidatorFactory
     public function __construct(
         ?ConstraintValidatorFactoryInterface $constraintValidatorFactory,
         ?ValidatorInterface $validator,
-        ?TranslatorInterface $translator
+        ?TranslatorInterface $translator,
+        string $validationMode
     ) {
         $this->defaultValidator = $validator;
         $this->defaultTranslator = $translator;
         $this->constraintValidatorFactory = $constraintValidatorFactory;
+        $this->validationMode = $validationMode;
     }
 
     public function create(ResolverArgs $args): InputValidator
@@ -39,7 +42,8 @@ final class InputValidatorFactory
             $args,
             $this->defaultValidator,
             $this->constraintValidatorFactory,
-            $this->defaultTranslator
+            $this->defaultTranslator,
+            $this->validationMode
         );
     }
 }
