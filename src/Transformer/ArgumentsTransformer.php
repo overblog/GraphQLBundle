@@ -28,6 +28,8 @@ use function substr;
 
 final class ArgumentsTransformer
 {
+    public const RESOLVE_INFO_TOKEN = '#ResolveInfo';
+
     private PropertyAccessor $accessor;
     private ?ValidatorInterface $validator;
     private array $classesMap;
@@ -190,6 +192,10 @@ final class ArgumentsTransformer
 
         foreach ($mapping as $name => $type) {
             try {
+                if (self::RESOLVE_INFO_TOKEN === $type) {
+                    $args[] = $info;
+                    continue;
+                }
                 $value = $this->getInstanceAndValidate($type, $data[$name], $info, $name);
                 $args[] = $value;
             } catch (InvalidArgumentError $exception) {
