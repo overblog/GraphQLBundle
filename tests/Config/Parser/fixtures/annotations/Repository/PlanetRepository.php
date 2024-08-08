@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Repository;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use Overblog\GraphQLBundle\Tests\Config\Parser\fixtures\annotations\Type\Planet;
 
@@ -137,5 +138,14 @@ final class PlanetRepository
             'minDistance' => $minDistance,
             'maxDistance' => $maxDistance,
         ];
+    }
+
+    /**
+     * @GQL\Query
+     */
+    #[GQL\Query]
+    public function isHabitablePlanet(int $planetId, ResolveInfo $info): bool
+    {
+        return true;
     }
 }
