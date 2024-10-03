@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Request;
 use ArrayObject;
 use Closure;
 use GraphQL\Executor\ExecutionResult;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Schema;
 use GraphQL\Validator\DocumentValidator;
@@ -128,7 +129,7 @@ class Executor
     /**
      * @param array|ArrayObject|object|null $rootValue
      */
-    public function execute(?string $schemaName, array $request, $rootValue = null): ExecutionResult
+    public function execute(?string $schemaName, array $request, $rootValue = null, bool $async = false): ExecutionResult|Promise
     {
         $schema = $this->getSchema($schemaName);
         /** @var string $schemaName */
@@ -145,6 +146,21 @@ class Executor
         );
 
         $executorArgumentsEvent->getSchema()->processExtensions();
+
+        if ($async) {
+            return $this->executor->executeAsync(
+                $this->promiseAdapter,
+                $executorArgumentsEvent->getSchema(),
+                $executorArgumentsEvent->getRequestString(),
+                $executorArgumentsEvent->getRootValue(),
+                $executorArgumentsEvent->getContextValue(),
+                $executorArgumentsEvent->getVariableValue(),
+                $executorArgumentsEvent->getOperationName(),
+                $this->defaultFieldResolver
+            )->then(
+                fn ($result) => $this->postExecute($result, $executorArgumentsEvent)
+            );
+        }
 
         $result = $this->executor->execute(
             $this->promiseAdapter,

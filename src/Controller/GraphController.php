@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Controller;
 
+use GraphQL\Executor\Promise\Promise;
 use Overblog\GraphQLBundle\Request\BatchParser;
 use Overblog\GraphQLBundle\Request\Executor;
 use Overblog\GraphQLBundle\Request\Parser;
@@ -54,7 +55,7 @@ final class GraphController
     /**
      * @return JsonResponse|Response
      */
-    private function createResponse(Request $request, ?string $schemaName, bool $batched)
+    private function createResponse(Request $request, ?string $schemaName, bool $batched, bool $async = false)
     {
         if ('OPTIONS' === $request->getMethod()) {
             $response = new JsonResponse([], 200);
@@ -62,7 +63,7 @@ final class GraphController
             if (!in_array($request->getMethod(), ['POST', 'GET'])) {
                 return new JsonResponse('', 405);
             }
-            $payload = $this->processQuery($request, $schemaName, $batched);
+            $payload = $this->processQuery($request, $schemaName, $batched, $async);
             $response = new JsonResponse($payload, 200);
         }
         $this->addCORSHeadersIfNeeded($response, $request);
@@ -81,12 +82,12 @@ final class GraphController
         }
     }
 
-    private function processQuery(Request $request, ?string $schemaName, bool $batched): array
+    private function processQuery(Request $request, ?string $schemaName, bool $batched, bool $async = false): array|Promise
     {
         if ($batched) {
             $payload = $this->processBatchQuery($request, $schemaName);
         } else {
-            $payload = $this->processNormalQuery($request, $schemaName);
+            $payload = $this->processNormalQuery($request, $schemaName, $async);
         }
 
         return $payload;
@@ -110,9 +111,13 @@ final class GraphController
         return $payloads;
     }
 
-    private function processNormalQuery(Request $request, string $schemaName = null): array
+    private function processNormalQuery(Request $request, string $schemaName = null, bool $async = false): array|Promise
     {
         $params = $this->requestParser->parse($request);
+
+        if ($async) {
+            return $this->requestExecutor->execute($schemaName, $params);
+        }
 
         return $this->requestExecutor->execute($schemaName, $params)->toArray();
     }
