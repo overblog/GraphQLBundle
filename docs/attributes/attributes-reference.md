@@ -78,7 +78,7 @@ class Coordinates {
 
 ---
 
-## `#[[Access]]`
+## `#[Access]`
 
 Added on a _class_ in conjunction with `#Type` or `#TypeInterface`, this annotation will define the default access type on this fields.  
 Added on a _property_ or _method_ in conjunction with `#Field`, it'll define the access type on this particular field.
