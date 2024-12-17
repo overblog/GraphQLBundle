@@ -27,7 +27,7 @@ final class Input extends Annotation
      */
     public bool $isRelay = false;
 
-    public function __construct(string $name = null, bool $isRelay = false)
+    public function __construct(?string $name = null, bool $isRelay = false)
     {
         $this->name = $name;
         $this->isRelay = $isRelay;

@@ -63,7 +63,7 @@ class CustomScalarType extends BaseCustomScalarType
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral(/* GraphQL\Language\AST\ValueNode */ $valueNode, array $variables = null): mixed
+    public function parseLiteral(/* GraphQL\Language\AST\ValueNode */ $valueNode, ?array $variables = null): mixed
     {
         return $this->call('parseLiteral', $valueNode);
     }

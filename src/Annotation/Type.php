@@ -52,11 +52,11 @@ class Type extends Annotation
      * @param string|null          $isTypeOf     An expression to resolve if the field is of given type
      */
     public function __construct(
-        string $name = null,
+        ?string $name = null,
         array $interfaces = [],
         bool $isRelay = false,
-        string $resolveField = null,
-        string $isTypeOf = null
+        ?string $resolveField = null,
+        ?string $isTypeOf = null
     ) {
         $this->name = $name;
         $this->interfaces = $interfaces;

@@ -37,7 +37,7 @@ final class Union extends Annotation
      * @param string[]    $types       List of types included in the union
      * @param string|null $resolveType The resolve type expression
      */
-    public function __construct(string $name = null, array $types = [], ?string $resolveType = null)
+    public function __construct(?string $name = null, array $types = [], ?string $resolveType = null)
     {
         $this->name = $name;
         $this->types = $types;

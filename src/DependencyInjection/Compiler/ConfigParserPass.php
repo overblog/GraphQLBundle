@@ -240,7 +240,7 @@ final class ConfigParserPass implements CompilerPassInterface
         return $typesMappings;
     }
 
-    private function detectFilesByTypes(ContainerBuilder $container, string $path, string $suffix, array $types = null): array
+    private function detectFilesByTypes(ContainerBuilder $container, string $path, string $suffix, ?array $types = null): array
     {
         // add the closest existing directory as a resource
         $resource = $path;

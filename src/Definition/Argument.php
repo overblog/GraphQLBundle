@@ -11,12 +11,12 @@ final class Argument implements ArgumentInterface
 {
     private array $rawArguments = [];
 
-    public function __construct(array $rawArguments = null)
+    public function __construct(?array $rawArguments = null)
     {
         $this->exchangeArray($rawArguments);
     }
 
-    public function exchangeArray(array $array = null): array
+    public function exchangeArray(?array $array = null): array
     {
         $old = $this->rawArguments;
         $this->rawArguments = $array ?? [];

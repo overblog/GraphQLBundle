@@ -44,7 +44,7 @@ class Executor
         ExecutorInterface $executor,
         PromiseAdapter $promiseAdapter,
         EventDispatcherInterface $dispatcher,
-        callable $defaultFieldResolver = null
+        ?callable $defaultFieldResolver = null
     ) {
         $this->executor = $executor;
         $this->promiseAdapter = $promiseAdapter;
@@ -73,7 +73,7 @@ class Executor
         return $this;
     }
 
-    public function getSchema(string $name = null): Schema
+    public function getSchema(?string $name = null): Schema
     {
         if (empty($this->schemas)) {
             throw new RuntimeException('At least one schema should be declare.');
@@ -171,8 +171,8 @@ class Executor
         string $requestString,
         ArrayObject $contextValue,
         $rootValue = null,
-        array $variableValue = null,
-        string $operationName = null
+        ?array $variableValue = null,
+        ?string $operationName = null
     ): ExecutorArgumentsEvent {
         // @phpstan-ignore-next-line (only for Symfony 4.4)
         $this->dispatcher->dispatch(new ExecutorContextEvent($contextValue), Events::EXECUTOR_CONTEXT);

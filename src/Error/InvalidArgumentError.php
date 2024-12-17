@@ -18,7 +18,7 @@ final class InvalidArgumentError extends GraphQLUserError
         ConstraintViolationListInterface $errors,
         string $message = '',
         int $code = 0,
-        Exception $previous = null
+        ?Exception $previous = null
     ) {
         $this->name = $name;
         $this->errors = $errors;

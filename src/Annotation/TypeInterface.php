@@ -28,7 +28,7 @@ final class TypeInterface extends Annotation
     public ?string $name;
 
     /**
-     * @param string        $resolveType The express resolve type
+     * @param string|null   $resolveType The express resolve type
      * @param string|null   $name        The GraphQL name of the interface
      */
     public function __construct(?string $resolveType = null, ?string $name = null)

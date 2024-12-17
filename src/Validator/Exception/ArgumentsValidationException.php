@@ -13,7 +13,7 @@ final class ArgumentsValidationException extends Exception implements ClientAwar
 {
     private ConstraintViolationListInterface $violations;
 
-    public function __construct(ConstraintViolationListInterface $violations, Throwable $previous = null)
+    public function __construct(ConstraintViolationListInterface $violations, ?Throwable $previous = null)
     {
         $this->violations = $violations;
         parent::__construct('validation', 0, $previous);

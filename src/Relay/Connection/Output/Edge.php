@@ -25,7 +25,7 @@ class Edge implements EdgeInterface
      *
      * @phpstan-param T|null $node
      */
-    public function __construct(string $cursor = null, $node = null)
+    public function __construct(?string $cursor = null, $node = null)
     {
         $this->cursor = $cursor;
         $this->node = $node;

@@ -16,7 +16,7 @@ final class InvalidArgumentsError extends GraphQLUserError
         array $errors,
         string $message = '',
         int $code = 0,
-        Exception $previous = null
+        ?Exception $previous = null
     ) {
         $this->errors = $errors;
         parent::__construct($message, $code, $previous);

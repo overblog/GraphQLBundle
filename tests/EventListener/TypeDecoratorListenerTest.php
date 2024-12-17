@@ -33,7 +33,7 @@ final class TypeDecoratorListenerTest extends TestCase
      *
      * @dataProvider specialTypeFieldProvider
      */
-    public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, callable $fieldValueRetriever = null, $strict = true): void
+    public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, ?callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
             $fieldValueRetriever = fn (ObjectType|UnionType|InterfaceType|CustomScalarType $type, $fieldName) => $type->config[$fieldName];
@@ -292,12 +292,12 @@ final class TypeDecoratorListenerTest extends TestCase
             // custom scalar
             [ResolverMapInterface::SERIALIZE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => ''])],
             [ResolverMapInterface::PARSE_VALUE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '', 'parseValue' => fn (mixed $input): mixed => ''])],
-            [ResolverMapInterface::PARSE_LITERAL, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '', 'parseLiteral' => fn (Node $a, array|null $b): mixed => ''])],
+            [ResolverMapInterface::PARSE_LITERAL, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => '', 'parseLiteral' => fn (Node $a, ?array $b): mixed => ''])],
             [ResolverMapInterface::SCALAR_TYPE, new CustomScalarType(['name' => 'Custom', 'scalarType' => Type::string(), 'serialize' => fn (mixed $input): mixed => ''])],
         ];
     }
 
-    private function assertDecorateException(array $types, array $map, string $exception = null, string $exceptionMessage = null): void
+    private function assertDecorateException(array $types, array $map, ?string $exception = null, ?string $exceptionMessage = null): void
     {
         if ($exception) {
             $this->expectException($exception); // @phpstan-ignore-line

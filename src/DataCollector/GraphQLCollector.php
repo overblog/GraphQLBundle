@@ -25,7 +25,7 @@ final class GraphQLCollector extends DataCollector
      */
     protected array $batches = [];
 
-    public function collect(Request $request, Response $response, Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
     {
         $error = false;
         $count = 0;
