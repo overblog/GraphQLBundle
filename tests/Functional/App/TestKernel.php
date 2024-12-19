@@ -31,7 +31,7 @@ final class TestKernel extends Kernel implements CompilerPassInterface
         yield new OverblogGraphQLBundle();
     }
 
-    public function __construct(string $environment, bool $debug, string $testCase = null)
+    public function __construct(string $environment, bool $debug, ?string $testCase = null)
     {
         $this->testCase = $testCase;
         parent::__construct($environment, $debug);

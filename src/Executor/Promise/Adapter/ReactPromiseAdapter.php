@@ -42,7 +42,7 @@ final class ReactPromiseAdapter extends BaseReactPromiseAdapter implements Promi
      *
      * @throws Exception
      */
-    public function wait(Promise $promise, callable $onProgress = null): ?ExecutionResult
+    public function wait(Promise $promise, ?callable $onProgress = null): ?ExecutionResult
     {
         if (!$this->isThenable($promise)) {
             throw new InvalidArgumentException(sprintf('The "%s" method must be call with compatible a Promise.', __METHOD__));

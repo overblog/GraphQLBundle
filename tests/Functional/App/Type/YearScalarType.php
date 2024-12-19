@@ -32,7 +32,7 @@ final class YearScalarType extends ScalarType
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral($valueNode, array $variables = null): mixed
+    public function parseLiteral($valueNode, ?array $variables = null): mixed
     {
         if (!$valueNode instanceof StringValueNode) {
             throw new Error('Query error: Can only parse strings got: '.$valueNode->kind, $valueNode);

@@ -124,7 +124,7 @@ final class InheritanceProcessor implements ProcessorInterface
         string $name,
         array $configs,
         array $allowedTypes,
-        string $child = null,
+        ?string $child = null,
         array $typesTreated = []
     ): array {
         self::checkTypeExists($name, $configs, $child);

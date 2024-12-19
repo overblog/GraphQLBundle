@@ -35,6 +35,7 @@ return (new PhpCsFixer\Config())
             'single_line_comment_style' => false,
             'phpdoc_no_alias_tag' => ['replacements' => ['type' => 'var']],
             'no_mixed_echo_print' => ['use' => 'echo'],
+            'nullable_type_declaration_for_default_null_value' => true,
         ]
     )
     ->setFinder($finder)

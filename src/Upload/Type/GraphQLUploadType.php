@@ -14,7 +14,7 @@ use function sprintf;
 
 final class GraphQLUploadType extends ScalarType
 {
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
         parent::__construct([
             'name' => $name,
@@ -52,7 +52,7 @@ final class GraphQLUploadType extends ScalarType
     /**
      * {@inheritdoc}
      */
-    public function parseLiteral($valueNode, array $variables = null): void
+    public function parseLiteral($valueNode, ?array $variables = null): void
     {
         throw new InvariantViolation(sprintf('%s scalar literal unsupported.', $this->name));
     }

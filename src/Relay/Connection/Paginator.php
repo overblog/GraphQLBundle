@@ -27,7 +27,7 @@ final class Paginator
     /** @var callable */
     private $fetcher;
 
-    public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR, ConnectionBuilder $connectionBuilder = null)
+    public function __construct(callable $fetcher, bool $promise = self::MODE_REGULAR, ?ConnectionBuilder $connectionBuilder = null)
     {
         $this->fetcher = $fetcher;
         $this->promise = $promise;

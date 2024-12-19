@@ -25,7 +25,7 @@ final class Scalar extends Annotation
      * @param string|null $name       The GraphQL name of the Scalar
      * @param string|null $scalarType Expression to reuse an other scalar type
      */
-    public function __construct(string $name = null, string $scalarType = null)
+    public function __construct(?string $name = null, ?string $scalarType = null)
     {
         $this->name = $name;
         $this->scalarType = $scalarType;

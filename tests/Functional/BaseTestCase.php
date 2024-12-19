@@ -71,7 +71,7 @@ abstract class BaseTestCase extends WebTestCase
         static::ensureKernelShutdown();
     }
 
-    protected static function executeGraphQLRequest(string $query, array $rootValue = [], string $schemaName = null, array $variables = []): array
+    protected static function executeGraphQLRequest(string $query, array $rootValue = [], ?string $schemaName = null, array $variables = []): array
     {
         $request = new Request();
         $request->query->set('query', $query);
@@ -87,7 +87,7 @@ abstract class BaseTestCase extends WebTestCase
         return $res->toArray();
     }
 
-    protected static function assertGraphQL(string $query, array $expectedData = null, array $expectedErrors = null, array $rootValue = [], string $schemaName = null): void
+    protected static function assertGraphQL(string $query, ?array $expectedData = null, ?array $expectedErrors = null, array $rootValue = [], ?string $schemaName = null): void
     {
         $result = static::executeGraphQLRequest($query, $rootValue, $schemaName);
 
@@ -127,7 +127,7 @@ abstract class BaseTestCase extends WebTestCase
         return $client;
     }
 
-    protected static function assertResponse(string $query, array $expected, ?string $username, string $testCase, ?string $password = self::DEFAULT_PASSWORD, array $variables = null): KernelBrowser
+    protected static function assertResponse(string $query, array $expected, ?string $username, string $testCase, ?string $password = self::DEFAULT_PASSWORD, ?array $variables = null): KernelBrowser
     {
         $client = self::createClientAuthenticated($username, $testCase, $password);
         $result = self::sendRequest($client, $query, false, $variables);
@@ -140,7 +140,7 @@ abstract class BaseTestCase extends WebTestCase
     /**
      * @return mixed
      */
-    protected static function sendRequest(KernelBrowser $client, string $query, bool $isDecoded = false, array $variables = null)
+    protected static function sendRequest(KernelBrowser $client, string $query, bool $isDecoded = false, ?array $variables = null)
     {
         $client->request('GET', '/', ['query' => $query, 'variables' => json_encode($variables)]);
         $result = $client->getResponse()->getContent();

@@ -87,7 +87,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
     /**
      * @return ExtendedPromiseInterface|FulfilledPromise|Promise|PromiseInterface
      */
-    private function promisedLetters(array $letters = null)
+    private function promisedLetters(?array $letters = null)
     {
         return resolve($letters ?: $this->letters);
     }

@@ -34,7 +34,7 @@ final class ArgumentsTransformer
     private ?ValidatorInterface $validator;
     private array $classesMap;
 
-    public function __construct(ValidatorInterface $validator = null, array $classesMap = [])
+    public function __construct(?ValidatorInterface $validator = null, array $classesMap = [])
     {
         $this->validator = $validator;
         $this->accessor = PropertyAccess::createPropertyAccessor();

@@ -20,7 +20,7 @@ abstract class Builder extends Annotation
     /**
      * Builder name.
      */
-    public string $name;
+    public ?string $name;
 
     /**
      * The builder config.
@@ -31,7 +31,7 @@ abstract class Builder extends Annotation
      * @param string|null $name   The name of the builder
      * @param array       $config The builder configuration array
      */
-    public function __construct(string $name = null, array $config = [])
+    public function __construct(?string $name = null, array $config = [])
     {
         $this->name = $name;
         $this->config = $config;
