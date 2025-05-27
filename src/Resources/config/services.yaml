@@ -21,6 +21,8 @@ services:
         calls:
             - ["setMaxQueryComplexity", ["%overblog_graphql.query_max_complexity%"]]
             - ["setMaxQueryDepth", ["%overblog_graphql.query_max_depth%"]]
+        tags:
+            - { name: kernel.reset, method: reset }
 
     Overblog\GraphQLBundle\Definition\Builder\SchemaBuilder:
         arguments:
@@ -37,6 +39,7 @@ services:
             - ["setDispatcher", ["@event_dispatcher"]]
         tags:
             - { name: overblog_graphql.service, alias: typeResolver }
+            - { name: kernel.reset, method: reset }
 
     Overblog\GraphQLBundle\Transformer\ArgumentsTransformer:
         arguments:
