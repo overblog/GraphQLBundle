@@ -59,7 +59,7 @@ final class TypeGenerator
             $config['config']['name'] ??= $name;
             $config['config']['class_name'] = $config['class_name'];
             $classMap = $this->generateClass($config, $cacheDir, $mode);
-            $classes = array_merge($classes, $classMap);
+            $classes[$classMap[0]] = $classMap[1];
         }
 
         // Create class map file
@@ -97,7 +97,7 @@ final class TypeGenerator
 
         $namespace = $this->options->namespace;
 
-        return ["$namespace\\$className" => $path];
+        return ["$namespace\\$className", $path];
     }
 
     public function loadClasses(bool $forceReload = false): void
