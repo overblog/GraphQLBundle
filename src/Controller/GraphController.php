@@ -38,7 +38,7 @@ final class GraphController
     /**
      * @return JsonResponse|Response
      */
-    public function endpointAction(Request $request, string $schemaName = null)
+    public function endpointAction(Request $request, ?string $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, false);
     }
@@ -46,7 +46,7 @@ final class GraphController
     /**
      * @return JsonResponse|Response
      */
-    public function batchEndpointAction(Request $request, string $schemaName = null)
+    public function batchEndpointAction(Request $request, ?string $schemaName = null)
     {
         return $this->createResponse($request, $schemaName, true);
     }
@@ -92,7 +92,7 @@ final class GraphController
         return $payload;
     }
 
-    private function processBatchQuery(Request $request, string $schemaName = null): array
+    private function processBatchQuery(Request $request, ?string $schemaName = null): array
     {
         $queries = $this->batchParser->parse($request);
         $payloads = [];
@@ -110,7 +110,7 @@ final class GraphController
         return $payloads;
     }
 
-    private function processNormalQuery(Request $request, string $schemaName = null): array
+    private function processNormalQuery(Request $request, ?string $schemaName = null): array
     {
         $params = $this->requestParser->parse($request);
 

@@ -31,7 +31,7 @@ class Connection implements ConnectionInterface
     /**
      * @param EdgeInterface<T>[] $edges
      */
-    public function __construct(array $edges = [], PageInfoInterface $pageInfo = null)
+    public function __construct(array $edges = [], ?PageInfoInterface $pageInfo = null)
     {
         $this->edges = $edges;
         $this->pageInfo = $pageInfo;

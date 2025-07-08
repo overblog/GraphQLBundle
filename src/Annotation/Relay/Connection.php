@@ -29,7 +29,7 @@ final class Connection extends Type
      */
     public ?string $node;
 
-    public function __construct(string $edge = null, string $node = null)
+    public function __construct(?string $edge = null, ?string $node = null)
     {
         $this->edge = $edge;
         $this->node = $node;

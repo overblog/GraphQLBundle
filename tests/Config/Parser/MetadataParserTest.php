@@ -372,6 +372,15 @@ abstract class MetadataParserTest extends TestCase
                     'access' => '@=default_access',
                     'public' => '@=default_public',
                 ],
+                'planet_isHabitablePlanet' => [
+                    'type' => 'Boolean!',
+                    'args' => [
+                        'planetId' => ['type' => 'Int!'],
+                    ],
+                    'resolve' => "@=call(service('Overblog\\\\GraphQLBundle\\\\Tests\\\\Config\\\\Parser\\\\fixtures\\\\annotations\\\\Repository\\\\PlanetRepository').isHabitablePlanet, arguments({planetId: \"Int!\", info: \"#ResolveInfo\"}, args))",
+                    'access' => '@=default_access',
+                    'public' => '@=default_public',
+                ],
             ],
         ]);
 

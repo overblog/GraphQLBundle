@@ -29,12 +29,12 @@ final class Battle
     public function getCasualties(
         int $areaId,
         ?string $raceId,
-        int $dayStart = null,
-        int $dayEnd = null,
+        ?int $dayStart = null,
+        ?int $dayEnd = null,
         string $nameStartingWith = '',
-        Planet $planet = null,
+        ?Planet $planet = null,
         bool $away = false,
-        float $maxDistance = null
+        ?float $maxDistance = null
     ): ?int {
         return 12;
     }

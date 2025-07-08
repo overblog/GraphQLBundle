@@ -15,7 +15,7 @@ final class PageInfo implements PageInfoInterface
     protected ?bool $hasPreviousPage;
     protected ?bool $hasNextPage;
 
-    public function __construct(string $startCursor = null, string $endCursor = null, bool $hasPreviousPage = null, bool $hasNextPage = null)
+    public function __construct(?string $startCursor = null, ?string $endCursor = null, ?bool $hasPreviousPage = null, ?bool $hasNextPage = null)
     {
         $this->startCursor = $startCursor;
         $this->endCursor = $endCursor;

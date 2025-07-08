@@ -55,7 +55,7 @@ abstract class TestCase extends BaseTestCase
         $expression,
         $with,
         array $vars = [],
-        InvokedCount $expects = null,
+        ?InvokedCount $expects = null,
         bool $return = true,
         string $assertMethod = 'assertTrue'
     ): void {

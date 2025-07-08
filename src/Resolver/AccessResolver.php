@@ -138,7 +138,7 @@ final class AccessResolver
     /**
      * @param mixed $promise
      */
-    private function createPromise($promise, callable $onFulfilled = null): Promise
+    private function createPromise($promise, ?callable $onFulfilled = null): Promise
     {
         return $this->promiseAdapter->then(
             new Promise($this->extractAdoptedPromise($promise), $this->promiseAdapter),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Config\Parser\MetadataParser;
 
 use Doctrine\Common\Annotations\AnnotationException;
+use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Annotation\Annotation as Meta;
 use Overblog\GraphQLBundle\Annotation as Metadata;
 use Overblog\GraphQLBundle\Annotation\InputField;
@@ -15,10 +16,12 @@ use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeHintType
 use Overblog\GraphQLBundle\Config\Parser\PreParserInterface;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\EdgeInterface;
+use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
 use ReflectionClass;
 use ReflectionClassConstant;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
@@ -617,8 +620,9 @@ abstract class MetadataParser implements PreParserInterface
             $args = self::guessArgs($reflectionClass, $reflector, $args);
         }
 
-        if (!empty($args)) {
-            $fieldConfiguration['args'] = $args;
+        $gqlArgs = array_filter($args, fn ($arg) => !isset($arg['internal']));
+        if (!empty($gqlArgs)) {
+            $fieldConfiguration['args'] = $gqlArgs;
         }
 
         $fieldName = $fieldMetadata->name ?? $fieldName;
@@ -983,6 +987,14 @@ abstract class MetadataParser implements PreParserInterface
             if (array_key_exists($parameter->getName(), $currentArguments)) {
                 $arguments[$parameter->getName()] = $currentArguments[$parameter->getName()];
                 continue;
+            }
+
+            if ($parameter->getType() instanceof ReflectionNamedType) {
+                $className = $parameter->getType()->getName();
+                if (ResolveInfo::class === $className || is_subclass_of($className, ResolveInfo::class)) {
+                    $arguments[$parameter->getName()] = ['type' => ArgumentsTransformer::RESOLVE_INFO_TOKEN, 'internal' => true];
+                    continue;
+                }
             }
 
             try {

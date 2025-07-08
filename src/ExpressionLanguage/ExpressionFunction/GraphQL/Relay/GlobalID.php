@@ -15,7 +15,7 @@ final class GlobalID extends ExpressionFunction
     {
         parent::__construct(
             'globalId',
-            function (string $id, string $typeName = null): string {
+            function (string $id, ?string $typeName = null): string {
                 $typeName = $this->isTypeNameEmpty($typeName) ? '$info->parentType->name' : $typeName;
 
                 return sprintf('\%s::toGlobalId(%s, %s)', GlobalIdHelper::class, $typeName, $id);

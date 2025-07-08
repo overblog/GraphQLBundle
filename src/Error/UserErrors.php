@@ -22,7 +22,7 @@ final class UserErrors extends RuntimeException
         array $errors,
         string $message = '',
         int $code = 0,
-        Exception $previous = null
+        ?Exception $previous = null
     ) {
         $this->setErrors($errors);
         parent::__construct($message, $code, $previous);

@@ -30,8 +30,8 @@ final class ExecutorArgumentsEvent extends Event
         string $requestString,
         ArrayObject $contextValue,
         mixed $rootValue = null,
-        array $variableValue = null,
-        string $operationName = null
+        ?array $variableValue = null,
+        ?string $operationName = null
     ): self {
         $instance = new self();
         $instance->setSchemaName($schemaName);

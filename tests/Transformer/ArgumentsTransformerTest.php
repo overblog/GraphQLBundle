@@ -37,7 +37,7 @@ final class ArgumentsTransformerTest extends TestCase
         }
     }
 
-    private function getTransformer(array $classesMap = null, ConstraintViolationList $validateReturn = null): ArgumentsTransformer
+    private function getTransformer(array $classesMap = [], ?ConstraintViolationList $validateReturn = null): ArgumentsTransformer
     {
         $validator = $this->createMock(RecursiveValidator::class);
         $validator->method('validate')->willReturn($validateReturn ?? new ConstraintViolationList());
@@ -454,5 +454,15 @@ final class ArgumentsTransformerTest extends TestCase
         $typeValue = $transformer->getInstanceAndValidate('Type1', $data, $info, 'type1');
 
         $this->assertEquals($data, $typeValue);
+    }
+
+    public function testResolveInfoInjection(): void
+    {
+        $transformer = $this->getTransformer();
+        $resolveInfo = $this->getResolveInfo([]);
+
+        $result = $transformer->getArguments(['resolveInfo' => ArgumentsTransformer::RESOLVE_INFO_TOKEN], [], $resolveInfo);
+
+        $this->assertTrue($result[0] === $resolveInfo);
     }
 }
