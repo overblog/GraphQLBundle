@@ -6,6 +6,7 @@ framework:
         enabled: true
 
 overblog_graphql:
+    validation_mode: partial
     definitions:
         config_validation: false
         class_namespace: "Overblog\\GraphQLBundle\\Validator\\__DEFINITIONS__"
