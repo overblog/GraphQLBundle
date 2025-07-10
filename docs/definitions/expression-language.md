@@ -242,7 +242,7 @@ Checks whether the logged in user has at least one of the given roles.
 
 Example:
 ```yaml
-@=hasAnyRole('ROLE_API', 'ROLE_ADMIN')
+@=hasAnyRole(['ROLE_API', 'ROLE_ADMIN'])
 ```
 
 ---
