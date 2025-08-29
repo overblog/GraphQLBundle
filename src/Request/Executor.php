@@ -196,4 +196,9 @@ class Executor
             Events::POST_EXECUTOR
         )->getResult();
     }
+
+    public function reset(): void
+    {
+        $this->schemas = [];
+    }
 }

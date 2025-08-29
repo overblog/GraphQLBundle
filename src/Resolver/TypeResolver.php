@@ -76,6 +76,11 @@ class TypeResolver extends AbstractResolver
         return $type;
     }
 
+    public function reset(): void
+    {
+        $this->cache = [];
+    }
+
     protected function supportedSolutionClass(): ?string
     {
         return Type::class;
