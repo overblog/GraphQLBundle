@@ -377,4 +377,52 @@ final class InputValidatorTest extends TestCase
         $this->assertSame(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrowWithGroups']);
     }
+
+    public function testPartialInputObjectsCollectionValidation(): void
+    {
+        $query = '
+            mutation {
+                partialInputObjectsCollectionValidation(
+                    addresses: [
+                        {
+                            street: "Washington Street"
+                            city: "Berlin"
+                            zipCode: 10000
+                            # Country is present, but the language is invalid
+                            country: {
+                                name: "Germany"
+                                officialLanguage: "ru"
+                            }
+                            # Period is completely missing, skip validation
+                        },
+                        {
+                            street: "Washington Street"
+                            city: "New York"
+                            zipCode: 10000
+                            # Country is partially present
+                            country: {
+                                name: "" # Name should not be blank
+                                         # language is missing
+                            }
+                            period: {
+                                startDate: "2000-01-01"
+                                endDate: "1990-01-01"
+                            }
+                        },
+                        {
+                            street: "Washington Street"
+                            city: "New York"
+                            zipCode: 10000
+                            country: {} # Empty input object, skip validation
+                            period:  {} # Empty input object, skip validation
+                        }
+                    ]
+                )
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertSame(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
+        $this->assertNull($result['data']['partialInputObjectsCollectionValidation']);
+    }
 }
