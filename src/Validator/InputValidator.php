@@ -124,13 +124,27 @@ final class InputValidator
         return $builder->getValidator();
     }
 
+    private function getMetadata(ValidationNode $rootObject): ObjectMetadata
+    {
+        // Return existing metadata if present
+        if ($this->metadataFactory->hasMetadataFor($rootObject)) {
+            return $this->metadataFactory->getMetadataFor($rootObject);
+        }
+
+        // Create new metadata and add it to the factory
+        $metadata = new ObjectMetadata($rootObject);
+        $this->metadataFactory->addMetadata($metadata);
+
+        return $metadata;
+    }
+
     /**
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
      */
     private function buildValidationTree(ValidationNode $rootObject, iterable $fields, array $classValidation, array $inputData): ValidationNode
     {
-        $metadata = new ObjectMetadata($rootObject);
+        $metadata = $this->getMetadata($rootObject);
 
         if (!empty($classValidation)) {
             $this->applyClassValidation($metadata, $classValidation);
@@ -140,13 +154,7 @@ final class InputValidator
             $property = $arg['name'] ?? $name;
             $config = static::normalizeConfig($arg['validation'] ?? []);
 
-            if (!array_key_exists($property, $inputData)) {
-                // This field was not provided in the inputData. Do not attempt to validate it.
-                continue;
-            }
-
             if (isset($config['cascade']) && isset($inputData[$property])) {
-                $groups = $config['cascade'];
                 $argType = $this->unclosure($arg['type']);
 
                 /** @var ObjectType|InputObjectType $type */
@@ -159,18 +167,29 @@ final class InputValidator
                 }
 
                 $valid = new Valid();
+                $groups = $config['cascade'];
 
                 if (!empty($groups)) {
                     $valid->groups = $groups;
                 }
 
+                // Apply the Assert/Valid constraint for a recursive validation.
+                // For more details see https://symfony.com/doc/current/reference/constraints/Valid.html
                 $metadata->addPropertyConstraint($property, $valid);
+
+                // Skip the rest as the validation was delegated to the nested object.
+                continue;
             } else {
                 $rootObject->$property = $inputData[$property] ?? null;
             }
 
+            if ($metadata->hasPropertyMetadata($property)) {
+                continue;
+            }
+
             $config = static::normalizeConfig($config);
 
+            // Apply validation constraints for the property
             foreach ($config as $key => $value) {
                 switch ($key) {
                     case 'link':
@@ -200,16 +219,15 @@ final class InputValidator
                         }
 
                         break;
-                    case 'constraints':
+                    case 'constraints': // Add constraint from the yml config
                         $metadata->addPropertyConstraints($property, $value);
                         break;
                     case 'cascade':
+                        // Cascade validation was already handled recursively.
                         break;
                 }
             }
         }
-
-        $this->metadataFactory->addMetadata($metadata);
 
         return $rootObject;
     }

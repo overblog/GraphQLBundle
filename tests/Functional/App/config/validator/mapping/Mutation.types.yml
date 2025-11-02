@@ -139,10 +139,10 @@ Mutation:
                             cascade:
                                 groups: ['group2']
 
-            onlyPassedFieldsValidation:
+            partialInputObjectsCollectionValidation:
                 type: Boolean
-                resolve: '@=m("mutation_mock", args)'
+                resolve: "@=m('mutation_mock', args)"
                 args:
-                    person:
+                    addresses:
+                        type: '[Address]'
                         validation: cascade
-                        type: Person!
