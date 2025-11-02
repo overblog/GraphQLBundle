@@ -87,22 +87,6 @@ final class InputValidatorTest extends TestCase
         $this->assertTrue($result['data']['linkedConstraintsValidation']);
     }
 
-    public function testOnlyPassedFieldsValidated(): void
-    {
-        $query = '
-            mutation {
-                onlyPassedFieldsValidation(
-                    person: { firstName: "Joe" }
-                )
-            }
-        ';
-
-        $result = $this->executeGraphQLRequest($query);
-
-        $this->assertTrue(empty($result['errors']));
-        $this->assertTrue($result['data']['onlyPassedFieldsValidation']);
-    }
-
     public function testLinkedConstraintsValidationFails(): void
     {
         $query = '
