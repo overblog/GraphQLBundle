@@ -151,85 +151,108 @@ final class InputValidator
         }
 
         foreach ($fields as $name => $arg) {
-            $property = $arg['name'] ?? $name;
+            $property = $this->resolvePropertyName($name, $arg);
             $config = static::normalizeConfig($arg['validation'] ?? []);
 
-            if (isset($config['cascade']) && isset($inputData[$property])) {
-                $argType = $this->unclosure($arg['type']);
-
-                /** @var ObjectType|InputObjectType $type */
-                $type = Type::getNamedType($argType);
-
-                if (static::isListOfType($argType)) {
-                    $rootObject->$property = $this->createCollectionNode($inputData[$property], $type, $rootObject);
-                } else {
-                    $rootObject->$property = $this->createObjectNode($inputData[$property], $type, $rootObject);
-                }
-
-                $valid = new Valid();
-                $groups = $config['cascade'];
-
-                if (!empty($groups)) {
-                    $valid->groups = $groups;
-                }
-
-                // Apply the Assert/Valid constraint for a recursive validation.
-                // For more details see https://symfony.com/doc/current/reference/constraints/Valid.html
-                $metadata->addPropertyConstraint($property, $valid);
-
-                // Skip the rest as the validation was delegated to the nested object.
-                continue;
-            } else {
-                $rootObject->$property = $inputData[$property] ?? null;
+            if ($this->shouldCascade($config, $inputData, $property)) {
+                $this->handleCascade($rootObject, $property, $arg, $config, $inputData[$property]);
+                continue; // delegated to nested object
             }
+
+            // assign scalar/null value when not cascading
+            $rootObject->$property = $inputData[$property] ?? null;
 
             if ($metadata->hasPropertyMetadata($property)) {
                 continue;
             }
 
             $config = static::normalizeConfig($config);
-
-            // Apply validation constraints for the property
-            foreach ($config as $key => $value) {
-                switch ($key) {
-                    case 'link':
-                        [$fqcn, $classProperty, $type] = $value;
-
-                        if (!in_array($fqcn, $this->cachedMetadata)) {
-                            /** @phpstan-ignore-next-line */
-                            $this->cachedMetadata[$fqcn] = $this->defaultValidator->getMetadataFor($fqcn);
-                        }
-
-                        // Get metadata from the property and it's getters
-                        $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($classProperty);
-
-                        foreach ($propertyMetadata as $memberMetadata) {
-                            // Allow only constraints specified by the "link" matcher
-                            if (self::TYPE_GETTER === $type) {
-                                if (!$memberMetadata instanceof GetterMetadata) {
-                                    continue;
-                                }
-                            } elseif (self::TYPE_PROPERTY === $type) {
-                                if (!$memberMetadata instanceof PropertyMetadata) {
-                                    continue;
-                                }
-                            }
-
-                            $metadata->addPropertyConstraints($property, $memberMetadata->getConstraints());
-                        }
-
-                        break;
-                    case 'constraints': // Add constraint from the yml config
-                        $metadata->addPropertyConstraints($property, $value);
-                        break;
-                    case 'cascade':
-                        // Cascade validation was already handled recursively.
-                        break;
-                }
-            }
+            $this->applyConfigToMetadata($metadata, $property, $config);
         }
 
         return $rootObject;
+    }
+
+    private function resolvePropertyName(string|int $name, array $arg): string|int
+    {
+        return $arg['name'] ?? $name;
+    }
+
+    private function shouldCascade(array $config, array $inputData, string|int $property): bool
+    {
+        return isset($config['cascade']) && isset($inputData[$property]);
+    }
+
+    private function handleCascade(ValidationNode $rootObject, string|int $property, array $arg, array $config, mixed $value): void
+    {
+        $argType = $this->unclosure($arg['type']);
+        /** @var ObjectType|InputObjectType $type */
+        $type = Type::getNamedType($argType);
+
+        if (static::isListOfType($argType)) {
+            $rootObject->$property = $this->createCollectionNode($value, $type, $rootObject);
+        } else {
+            $rootObject->$property = $this->createObjectNode($value, $type, $rootObject);
+        }
+
+        $this->addValidConstraint($this->getMetadata($rootObject), (string) $property, $config['cascade']);
+    }
+
+    private function addValidConstraint(ObjectMetadata $metadata, string $property, array $groups): void
+    {
+        $valid = new Valid();
+        if (!empty($groups)) {
+            $valid->groups = $groups;
+        }
+        // Apply the Assert/Valid constraint for a recursive validation.
+        // For more details see https://symfony.com/doc/current/reference/constraints/Valid.html
+        $metadata->addPropertyConstraint($property, $valid);
+    }
+
+    private function applyConfigToMetadata(ObjectMetadata $metadata, string|int $property, array $config): void
+    {
+        foreach ($config as $key => $value) {
+            switch ($key) {
+                case 'link':
+                    $this->applyLinkConstraints($metadata, (string) $property, $value);
+                    break;
+                case 'constraints':
+                    // Add constraints from the yml config
+                    $metadata->addPropertyConstraints((string) $property, $value);
+                    break;
+                case 'cascade':
+                    // Cascade validation was already handled recursively.
+                    break;
+            }
+        }
+    }
+
+    private function applyLinkConstraints(ObjectMetadata $metadata, string $property, array $link): void
+    {
+        [$fqcn, $classProperty, $type] = $link;
+
+        if (!in_array($fqcn, $this->cachedMetadata)) {
+            /** @phpstan-ignore-next-line */
+            $this->cachedMetadata[$fqcn] = $this->defaultValidator->getMetadataFor($fqcn);
+        }
+
+        // Get metadata from the property and its getters
+        $propertyMetadata = $this->cachedMetadata[$fqcn]->getPropertyMetadata($classProperty);
+
+        foreach ($propertyMetadata as $memberMetadata) {
+            // Allow only constraints specified by the "link" matcher
+            if (self::TYPE_GETTER === $type) {
+                if (!$memberMetadata instanceof GetterMetadata) {
+                    continue;
+                }
+            } elseif (self::TYPE_PROPERTY === $type) {
+                if (!$memberMetadata instanceof PropertyMetadata) {
+                    continue;
+                }
+            }
+
+            $metadata->addPropertyConstraints($property, $memberMetadata->getConstraints());
+        }
     }
 
     private static function isListOfType(GeneratedTypeInterface|ListOfType|NonNull $type): bool
