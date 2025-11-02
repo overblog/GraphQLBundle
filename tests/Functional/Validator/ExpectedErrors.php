@@ -88,23 +88,23 @@ final class ExpectedErrors
                 'addresses[0].country.officialLanguage' => [
                     0 => [
                         'message' => 'The value you selected is not a valid choice.',
-                        'code' => '8e179f1b-97aa-4560-a02f-2a8b42e49df7'
+                        'code' => '8e179f1b-97aa-4560-a02f-2a8b42e49df7',
                     ],
                 ],
                 'addresses[1].country.name' => [
                     0 => [
                         'message' => 'This value should not be blank.',
-                        'code' => 'c1051bb4-d103-4f74-8988-acbcafc7fdc3'
+                        'code' => 'c1051bb4-d103-4f74-8988-acbcafc7fdc3',
                     ],
                 ],
                 'addresses[1].period.endDate' => [
                     0 => [
                         'message' => 'This value should be greater than "2000-01-01".',
-                        'code' => '778b7ae0-84d3-481a-9dec-35fdb64b1d78'
-                    ]
-                ]
-            ]
-        ]
+                        'code' => '778b7ae0-84d3-481a-9dec-35fdb64b1d78',
+                    ],
+                ],
+            ],
+        ],
     ];
 
     public static function simpleValidation(string $fieldName): array
