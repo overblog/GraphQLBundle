@@ -1,4 +1,4 @@
-﻿> _The validation feature was introduced in the version **0.13**_
+﻿> _The validation feature was introduced in version **0.13**_
 
 # Validation
 
@@ -8,7 +8,7 @@ to validate user input data. It currently supports only GraphQL schemas defined 
 ###  Contents:
 - [Overview](#overview)
 - [How does it work?](#how-does-it-work)
-- [Applying of validation constraints](#applying-of-validation-constraints)
+- [Applying validation constraints](#applying-validation-constraints)
     - [Listing constraints directly](#listing-constraints-directly)
         - [object](#object)
         - [input-object](#input-object)
@@ -104,7 +104,7 @@ The configuration above checks, that:
     - the number of items in the collection is between 1 and 3
     - every item in the collection is a valid email address
 
-The `birthdate` field is of type `input-object` and is marked as `cascade` so it's validation will happen according to the  constraints declared in the `Birthdate` type:
+The `birthdate` field is of type `input-object` and is marked as `cascade`, so its validation will happen according to the constraints declared in the `Birthdate` type:
 - **day** is between 1 and 31
 - **month** is between 1 and 12
 - **year** is between 1900 and 2019
@@ -142,7 +142,7 @@ If you don't mark embedded types as `cascade`, they will stay arrays, which can 
 following examples.
 
 All object properties are created dynamically and then the validation constraints are applied to them. The resulting 
-object composition will be then recursively validated, starting from the root object down to it's children.
+object composition will then be recursively validated, starting from the root object down to its children.
 
 > **Note**: 
 > Although it would have been possible to validate raw arguments, objects provide a better flexibility and more features.
@@ -274,9 +274,9 @@ The configuration above would produce an object composition as shown in the UML 
 > Note: The argument `address` in the object `Mutation` wasn't converted into an object, as it doesn't have the key `cascade`, but it will still be validated against the `Collection` constraint as an array.
 
 
-## Applying of validation constraints
+## Applying validation constraints
 
-If you are familiar with Symfony Validator Сomponent, then you might know that constraints can have different 
+If you are familiar with the Symfony Validator Component, you might know that constraints can have different 
 [targets](https://symfony.com/doc/current/validation.html#constraint-targets) (class members or entire classes). Since 
 all input data is represented by objects during the validation, you can also declare member constraints as well as class 
 constraints.
@@ -342,7 +342,7 @@ Mutation:
                     email: String
                     info: String	
 ```
-It's also possible to declare validation constraints to the entire _type_. This is useful if you don't want to repeat the configuration for each field or if you want to move the entire validation logic into a function:
+It's also possible to declare validation constraints for the entire _type_. This is useful if you don't want to repeat the configuration for each field or if you want to move the entire validation logic into a function:
 ```yaml
 Mutation:
     type: object
@@ -439,13 +439,13 @@ If you already have classes (e.g. Doctrine entities) with validation constraints
 A `link` can have 4 different forms, each of which targets different parts of a class:
  - **property**: `<ClassName>::$<propertyName>` - the `$` symbol indicates a *single* class property.
  - **getters**:  `<ClassName>::<propertyName>()` - the parentheses indicate *all* getters of the given property name.
- - **property and getters**: `<ClassName>::<propertyName>` - the absence of the `$` and parentheses indicates a single property and all it's getters.
+ - **property and getters**: `<ClassName>::<propertyName>` - the absence of the `$` and parentheses indicates a single property and all its getters.
  - **class**: `<ClassName>` - the absence of a class member indicates an entire class.
 
 for example:
  - **property**: `App\Entity\User::$username` - copies constraints of the property `$username` of the class `User`. 
  - **getters**:  `App\Entity\User::username()` - copies constraints of the getters `getUsername()`, `isUsername()` and `hasUsername()`.
- - **property and getters**: `App\Entity\User::username` - copies constraints of the property `$username` and it's getters `getUsername()`, `isUsername()`  and `hasUsername()`.
+ - **property and getters**: `App\Entity\User::username` - copies constraints of the property `$username` and its getters `getUsername()`, `isUsername()` and `hasUsername()`.
  - **class**: `App\Entity\User` - copies constraints applied to the entire class `User`.
 
 > **Note**:
@@ -455,7 +455,7 @@ for example:
 
 > **Note**:
 > Linked constraints which work in a context (e.g. Expression or Callback) will NOT copy the context of the linked 
->class, but instead will work in it's own. That means that the `this` variable won't point to the linked class 
+>class, but instead will work in its own context. That means that the `this` variable won't point to the linked class 
 >instance, but will point to an object of the class `ValidationNode` representing your input data. See the [How does it work?](#how-does-it-work) section for more details about internal work of the validation process.
 
 #### Example:
@@ -509,9 +509,9 @@ Then you could link class members this way:
 ```yaml
 Mutation:
     type: object
-        config:
-            fields:
-                editPost:
+    config:
+        fields:
+            editPost:
                     type: Post
                     resolve: "@=mutation('edit_post', [args])"
                     validation:
@@ -594,9 +594,9 @@ type. The nesting can be any depth.
 ```yaml
 Mutation:
     type: object
-        config:
-            fields:
-                updateUser:
+    config:
+        fields:
+            updateUser:
                     type: Post
                     resolve: "@=mutation('update_user', [args])"
                     args:
@@ -1068,7 +1068,7 @@ To translate into other languages just create additional  translation resource w
 
 ## Using built-in expression functions
 
-This bundle comes with built-in [ExpressionLanguage](#https://symfony.com/doc/current/components/expression_language.html) 
+This bundle comes with a built-in [ExpressionLanguage](https://symfony.com/doc/current/components/expression_language.html) 
 instance and pre-registered [expression functions and variables](https://github.com/overblog/GraphQLBundle/blob/master/docs/definitions/expression-language.md). 
 By default the  [`Expression`](https://symfony.com/doc/current/reference/constraints/Expression.html) 
 constraint in your project has no access to these functions and variables, because it uses the default instance of the 
