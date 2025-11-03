@@ -3,7 +3,7 @@ Period:
     config:
         fields:
             startDate:
-                type: String!
+                type: String
                 validation:
                     - Date: ~
                     - Overblog\GraphQLBundle\Tests\Functional\App\Validator\AtLeastOneOf:
@@ -12,7 +12,7 @@ Period:
                         message: "Year should be GreaterThanOrEqual -100."
                         includeInternalMessages: false
             endDate:
-                type: String!
+                type: String
                 validation:
                     - Expression: "this.getParent().getName() === 'Address'"
                     - Date: ~
