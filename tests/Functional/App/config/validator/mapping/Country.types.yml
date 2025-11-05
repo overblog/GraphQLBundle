@@ -1,0 +1,13 @@
+Country:
+    type: input-object
+    config:
+        fields:
+            name:
+                type: String
+                validation:
+                    - NotBlank:
+                          allowNull: true
+            officialLanguage:
+                type: String
+                validation:
+                    - Choice: ['en', 'de', 'fr']

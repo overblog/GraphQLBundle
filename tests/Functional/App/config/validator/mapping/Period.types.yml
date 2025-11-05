@@ -3,11 +3,11 @@ Period:
     config:
         fields:
             startDate:
-                type: String!
+                type: String
                 validation:
                     - Date: ~
             endDate:
-                type: String!
+                type: String
                 validation:
                     - Expression: "this.getParent().getName() === 'Address'"
                     - Date: ~
