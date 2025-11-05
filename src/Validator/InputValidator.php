@@ -73,7 +73,7 @@ class InputValidator
     {
         if (null === $validator) {
             throw new ServiceNotFoundException(
-                "The 'validator' service is not found. To use the 'InputValidator' you need to install the 
+                "The 'validator' service is not found. To use the 'InputValidator' you need to install the
                 Symfony Validator Component first. See: 'https://symfony.com/doc/current/validation.html'"
             );
         }
@@ -128,6 +128,20 @@ class InputValidator
         }
     }
 
+    private function getMetadata(ValidationNode $rootObject): ObjectMetadata
+    {
+        // Return existing metadata if present
+        if ($this->metadataFactory->hasMetadataFor($rootObject)) {
+            return $this->metadataFactory->getMetadataFor($rootObject);
+        }
+
+        // Create new metadata and add it to the factory
+        $metadata = new ObjectMetadata($rootObject);
+        $this->metadataFactory->addMetadata($metadata);
+
+        return $metadata;
+    }
+
     /**
      * Creates a composition of ValidationNode objects from args
      * and simultaneously applies to them validation constraints.
@@ -140,7 +154,7 @@ class InputValidator
      */
     protected function buildValidationTree(ValidationNode $rootObject, array $constraintMapping, array $args): ValidationNode
     {
-        $metadata = new ObjectMetadata($rootObject);
+        $metadata = $this->getMetadata($rootObject);
 
         $this->applyClassConstraints($metadata, $constraintMapping['class']);
 
@@ -162,8 +176,14 @@ class InputValidator
                 }
 
                 $metadata->addPropertyConstraint($property, $valid);
+
+                continue;
             } else {
                 $rootObject->$property = $args[$property] ?? null;
+            }
+
+            if ($metadata->hasPropertyMetadata($property)) {
+                continue;
             }
 
             foreach ($params ?? [] as $key => $value) {

@@ -126,3 +126,11 @@ Mutation:
                         validation:
                             cascade:
                                 groups: ['group2']
+
+            partialInputObjectsCollectionValidation:
+                type: Boolean
+                resolve: "@=mut('mutation_mock', [args])"
+                args:
+                    addresses:
+                        type: '[Address]'
+                        validation: cascade

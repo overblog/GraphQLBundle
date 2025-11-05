@@ -14,10 +14,13 @@ Address:
                     - Choice:
                         groups: ['group1']
                         choices: ['New York', 'Berlin', 'Tokyo']
+            country:
+                type: Country
+                validation: cascade
             zipCode:
                 type: Int!
                 validation:
                     - Expression: "service('service_validator').isZipCodeValid(value)"
             period:
-                type: Period!
+                type: Period
                 validation: cascade

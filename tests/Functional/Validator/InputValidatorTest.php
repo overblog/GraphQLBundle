@@ -106,11 +106,11 @@ class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
-                        city: "Berlin", 
-                        street: "Brettnacher-Str. 14a", 
-                        zipCode: 10546, 
+                        city: "Berlin",
+                        street: "Brettnacher-Str. 14a",
+                        zipCode: 10546,
                         period: {
-                            startDate: "2016-01-01", 
+                            startDate: "2016-01-01",
                             endDate: "2019-07-14"
                         }
                     }]
@@ -134,11 +134,11 @@ class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
-                        city: "Moscow", 
-                        street: "ul. Lazo", 
-                        zipCode: -15, 
+                        city: "Moscow",
+                        street: "ul. Lazo",
+                        zipCode: -15,
                         period: {
-                            startDate: "2020-01-01", 
+                            startDate: "2020-01-01",
                             endDate: "2019-07-14"
                         }
                     }]
@@ -367,5 +367,53 @@ class InputValidatorTest extends TestCase
 
         $this->assertSame(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrowWithGroups']);
+    }
+
+    public function testPartialInputObjectsCollectionValidation(): void
+    {
+        $query = '
+            mutation {
+                partialInputObjectsCollectionValidation(
+                    addresses: [
+                        {
+                            street: "Washington Street"
+                            city: "Berlin"
+                            zipCode: 10000
+                            # Country is present, but the language is invalid
+                            country: {
+                                name: "Germany"
+                                officialLanguage: "ru"
+                            }
+                            # Period is completely missing, skip validation
+                        },
+                        {
+                            street: "Washington Street"
+                            city: "New York"
+                            zipCode: 10000
+                            # Country is partially present
+                            country: {
+                                name: "" # Name should not be blank
+                                         # language is missing
+                            }
+                            period: {
+                                startDate: "2000-01-01"
+                                endDate: "1990-01-01"
+                            }
+                        },
+                        {
+                            street: "Washington Street"
+                            city: "New York"
+                            zipCode: 10000
+                            country: {} # Empty input object, skip validation
+                            period:  {} # Empty input object, skip validation
+                        }
+                    ]
+                )
+            }
+        ';
+
+        $result = $this->executeGraphQLRequest($query);
+        $this->assertSame(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
+        $this->assertNull($result['data']['partialInputObjectsCollectionValidation']);
     }
 }
