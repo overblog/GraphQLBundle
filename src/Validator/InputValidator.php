@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Validator;
 
+use Closure;
 use GraphQL\Type\Definition\InputObjectType;
+use GraphQL\Type\Definition\ListOfType;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Overblog\GraphQLBundle\Definition\ResolverArgs;
+use Overblog\GraphQLBundle\Definition\Type\GeneratedTypeInterface;
 use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Overblog\GraphQLBundle\Validator\Mapping\MetadataFactory;
 use Overblog\GraphQLBundle\Validator\Mapping\ObjectMetadata;
@@ -30,7 +34,7 @@ final class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
-    public const CASCADE = 'cascade';
+    private const CASCADE = 'cascade';
 
     private ResolverArgs $resolverArgs;
     private ValidatorInterface $defaultValidator;
@@ -73,7 +77,7 @@ final class InputValidator
         $this->buildValidationTree(
             $rootNode,
             $this->info->fieldDefinition->config['args'] ?? [],
-            Utils::getClassLevelConstraints($this->info),
+            $this->getClassLevelConstraints(),
             $this->resolverArgs->args->getArrayCopy()
         );
 
@@ -139,7 +143,7 @@ final class InputValidator
 
         foreach ($fields as $name => $arg) {
             $property = $arg['name'] ?? $name;
-            $config = Utils::normalizeConfig($arg['validation'] ?? []);
+            $config = self::normalizeConfig($arg['validation'] ?? []);
 
             if ($this->shouldCascade($config, $inputData, $property)) {
                 $this->handleCascade($rootObject, $property, $arg, $config, $inputData[$property]);
@@ -153,7 +157,7 @@ final class InputValidator
                 continue;
             }
 
-            $this->applyPropertyConstraints($metadata, $property, Utils::normalizeConfig($config));
+            $this->applyPropertyConstraints($metadata, $property, self::normalizeConfig($config));
         }
 
         return $rootObject;
@@ -170,11 +174,11 @@ final class InputValidator
      */
     private function handleCascade(ValidationNode $rootObject, string|int $property, array $arg, array $config, mixed $value): void
     {
-        $argType = Utils::unclosure($arg['type']);
+        $argType = self::unclosure($arg['type']);
         /** @var ObjectType|InputObjectType $type */
         $type = Type::getNamedType($argType);
 
-        if (Utils::isListOfType($argType)) {
+        if (self::isListOfType($argType)) {
             $rootObject->$property = $this->createCollectionNode($value, $type, $rootObject);
         } else {
             $rootObject->$property = $this->createObjectNode($value, $type, $rootObject);
@@ -264,11 +268,11 @@ final class InputValidator
     private function createObjectNode(array $value, ObjectType|InputObjectType $type, ValidationNode $parent): ValidationNode
     {
         /** @phpstan-ignore-next-line */
-        $classValidation = Utils::normalizeConfig($type->config['validation'] ?? []);
+        $classValidation = self::normalizeConfig($type->config['validation'] ?? []);
 
         return $this->buildValidationTree(
             new ValidationNode($type, null, $parent, $this->resolverArgs),
-            Utils::unclosure($type->config['fields']),
+            self::unclosure($type->config['fields']),
             $classValidation,
             $value
         );
@@ -276,7 +280,7 @@ final class InputValidator
 
     private function applyClassValidation(ObjectMetadata $metadata, array $rules): void
     {
-        $rules = Utils::normalizeConfig($rules);
+        $rules = self::normalizeConfig($rules);
 
         foreach ($rules as $key => $value) {
             switch ($key) {
@@ -285,7 +289,7 @@ final class InputValidator
                     $metadata->addConstraints($linkedMetadata->getConstraints());
                     break;
                 case 'constraints':
-                    foreach (Utils::unclosure($value) as $constraint) {
+                    foreach (self::unclosure($value) as $constraint) {
                         if ($constraint instanceof Constraint) {
                             $metadata->addConstraint($constraint);
                         } elseif ($constraint instanceof GroupSequence) {
@@ -295,6 +299,78 @@ final class InputValidator
                     break;
             }
         }
+    }
+
+    /**
+     * Since all GraphQL arguments and fields are represented by ValidationNode
+     * objects, it is possible to define constraints at the class level.
+     *
+     * Class level constraints can be defined in three different ways:
+     * - linked from an existing class/entity
+     * - defined per field
+     * - defined per type
+     *
+     * This method merges all of them into a single array and returns it.
+     *
+     * @link https://github.com/overblog/GraphQLBundle/blob/master/docs/validation/index.md#applying-of-validation-constraints
+     */
+    private function getClassLevelConstraints(): array
+    {
+        $typeLevel = self::normalizeConfig($this->info->parentType->config['validation'] ?? []);
+        $fieldLevel = self::normalizeConfig($this->info->fieldDefinition->config['validation'] ?? []);
+
+        return array_filter([
+            'link' => $fieldLevel['link'] ?? $typeLevel['link'] ?? null,
+            'constraints' => [
+                ...($typeLevel['constraints'] ?? []),
+                ...($fieldLevel['constraints'] ?? []),
+            ],
+        ]);
+    }
+
+    /**
+     * Restructures short forms into the full form array and
+     * unwraps constraints in closures.
+     *
+     * @param Closure $config
+     */
+    private static function normalizeConfig(mixed $config): array
+    {
+        if ($config instanceof Closure) {
+            return ['constraints' => $config()];
+        }
+
+        if (InputValidator::CASCADE === $config) {
+            return ['cascade' => []];
+        }
+
+        if (isset($config['constraints']) && $config['constraints'] instanceof Closure) {
+            $config['constraints'] = $config['constraints']();
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    private static function unclosure($value)
+    {
+        if ($value instanceof Closure) {
+            return $value();
+        }
+
+        return $value;
+    }
+
+    private static function isListOfType(GeneratedTypeInterface|ListOfType|NonNull $type): bool
+    {
+        if ($type instanceof ListOfType || ($type instanceof NonNull && $type->getWrappedType() instanceof ListOfType)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
