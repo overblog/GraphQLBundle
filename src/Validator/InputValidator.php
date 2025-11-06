@@ -112,8 +112,8 @@ final class InputValidator
     }
 
     /**
-     * Either returns an existing metadata object related to
-     * the ValidationNode object or creates a new one.
+     * Either returns an existing metadata object related to the ValidationNode
+     * object or creates a new one.
      */
     private function getMetadata(ValidationNode $rootObject): ObjectMetadata
     {
@@ -130,15 +130,15 @@ final class InputValidator
     }
 
     /**
-     * Creates a map of ValidationNode objects from args and
-     * simultaneously applies validation constraints to them.
+     * Creates a map of ValidationNode objects from args and simultaneously
+     * applies validation constraints to them.
      */
     private function buildValidationTree(ValidationNode $rootObject, iterable $fields, array $classValidation, array $inputData): ValidationNode
     {
         $metadata = $this->getMetadata($rootObject);
 
         if (!empty($classValidation)) {
-            $this->applyClassValidation($metadata, $classValidation);
+            $this->applyClassConstraints($metadata, $classValidation);
         }
 
         foreach ($fields as $name => $arg) {
@@ -169,12 +169,13 @@ final class InputValidator
     }
 
     /**
-     * Creates a new nested ValidationNode object or a collection of them
-     * based on the type of the argument and applies the cascade validation.
+     * Creates a new nested ValidationNode object or a collection of them based
+     * on the type of the argument and applies the cascade validation.
      */
     private function handleCascade(ValidationNode $rootObject, string|int $property, array $arg, array $config, mixed $value): void
     {
         $argType = self::unclosure($arg['type']);
+
         /** @var ObjectType|InputObjectType $type */
         $type = Type::getNamedType($argType);
 
@@ -278,7 +279,7 @@ final class InputValidator
         );
     }
 
-    private function applyClassValidation(ObjectMetadata $metadata, array $rules): void
+    private function applyClassConstraints(ObjectMetadata $metadata, array $rules): void
     {
         $rules = self::normalizeConfig($rules);
 
@@ -306,7 +307,7 @@ final class InputValidator
      * objects, it is possible to define constraints at the class level.
      *
      * Class level constraints can be defined in three different ways:
-     * - linked from an existing class/entity
+     * - linked to an existing class/entity
      * - defined per field
      * - defined per type
      *
@@ -329,8 +330,8 @@ final class InputValidator
     }
 
     /**
-     * Restructures short forms into the full form array and
-     * unwraps constraints in closures.
+     * Restructures short forms into the full form array and unwraps
+     * constraints in closures.
      *
      * @param Closure $config
      */
@@ -355,7 +356,7 @@ final class InputValidator
      * @param mixed $value
      * @return mixed
      */
-    private static function unclosure($value)
+    private static function unclosure($value): mixed
     {
         if ($value instanceof Closure) {
             return $value();
