@@ -34,7 +34,7 @@ final class InputValidator
 {
     private const TYPE_PROPERTY = 'property';
     private const TYPE_GETTER = 'getter';
-    private const CASCADE = 'cascade';
+    public const CASCADE = 'cascade';
 
     private ResolverArgs $resolverArgs;
     private ValidatorInterface $defaultValidator;
