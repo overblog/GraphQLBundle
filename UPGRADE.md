@@ -355,7 +355,7 @@ Upgrading:
 
 ### Relay Paginator, Connections & Edges
 
--   Following the [paginator update](docs/helpers/relay-paginator.md) and the use of interfaces for Relay Connection & Edge, getters & setters must be use to manipulate Connection, Edge and PageInfo Properties
+-   Following the [paginator update](old-docs/helpers/relay-paginator.md) and the use of interfaces for Relay Connection & Edge, getters & setters must be use to manipulate Connection, Edge and PageInfo Properties
 
 Before :
 
