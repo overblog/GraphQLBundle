@@ -3,48 +3,62 @@ title: Installation
 sidebar_position: 2
 ---
 
-Symfony Flex installation
-------------
+This guide shows how to install and enable Overblog GraphQLBundle on a modern Symfony 6/7 application. It covers both the recommended Symfony Flex path and a manual setup.
 
-**a)** Download the bundle
+## Prerequisites
 
-In the project directory:
+- PHP version compatible with your Symfony version (Symfony 7 requires PHP 8.2+).
+- Composer
+- A working Symfony application (Flex recommended)
 
-```bash
-composer require overblog/graphql-bundle
-```
+## Install via Symfony Flex (recommended)
 
-**b)** Accept the contrib recipes installation from Symfony Flex
-
-```bash
--  WARNING  overblog/graphql-bundle (0.9): From github.com/symfony/recipes-contrib
-    The recipe for this package comes from the "contrib" repository, which is open to community contributions.
-    Do you want to execute this recipe?
-    [y] Yes
-    [n] No
-    [a] Yes for all packages, only for the current installation session
-    [p] Yes permanently, never ask again for this project
-    (defaults to n):
-```
-
-**c)** If you want to run GraphiQL interface we have a bundle:
-
- ```bash
- composer require --dev overblog/graphiql-bundle
- ```
-
-Manual installation
-------------
-
-**a)** Download the bundle
-
-In the project directory:
+### 1) Require the bundle
 
 ```bash
 composer require overblog/graphql-bundle
 ```
 
-**b)** Enable the bundle
+When using Flex, a community recipe will be proposed automatically.
+
+### 2) Accept the contrib recipe
+
+```text
+-  WARNING  overblog/graphql-bundle (x.y): From github.com/symfony/recipes-contrib
+   The recipe for this package comes from the "contrib" repository, which is open to community contributions.
+   Do you want to execute this recipe?
+   [y] Yes
+   [n] No
+   [a] Yes for all packages, only for the current installation session
+   [p] Yes permanently, never ask again for this project
+   (defaults to n):
+```
+
+- Choosing “Yes” will:
+  - Enable the bundle automatically (no manual change to `config/bundles.php` needed).
+  - Register a default GraphQL HTTP endpoint (commonly under `/graphql`).
+
+### 3) Optional: GraphiQL developer UI
+
+If you want an in‑browser IDE for development:
+
+```bash
+composer require --dev overblog/graphiql-bundle
+```
+
+The GraphiQL bundle exposes a convenient UI to explore your schema and run queries locally. Do not enable it in production.
+
+## Manual installation (without Flex)
+
+If you are not using Symfony Flex or declined the recipe, perform these steps.
+
+### 1) Require the bundle
+
+```bash
+composer require overblog/graphql-bundle
+```
+
+### 2) Enable the bundle
 
 ```php title="config/bundles.php"
 return [
@@ -53,71 +67,74 @@ return [
 ];
 ```
 
-**c)** Enable GraphQL endpoint
+### 3) Register the GraphQL endpoint route
 
-```yaml
-# in app/config/routing.yml
+Single schema (default):
+
+```yaml title="config/routes.yaml"
 overblog_graphql_single_endpoint:
     resource: "@OverblogGraphQLBundle/Resources/config/routing/single.yaml"
-    prefix: /
+    prefix: "/"
 ```
 
-To use multiple schemas:
+Multiple schemas (switch schema by path):
 
-```yaml
-# in app/config/routing.yml
+```yaml title="config/routes.yaml"
 overblog_graphql_multiple_endpoint:
     resource: "@OverblogGraphQLBundle/Resources/config/routing/multiple.yaml"
-    prefix: /graphql
+    prefix: "/graphql"
 ```
 
+Adjust `prefix` to fit your application (e.g., `"/graphql"`).
 
-Optional features dependencies
-------------
+## Optional features and suggested packages
 
-- To use the Validator features, you must also install `symfony/validator` and `doctrine/annotations`
-- To use the annotations, you must also install `doctrine/annotations`
-- To use the annotations doctrine type guesser, you must also install `doctrine/orm`
+- Validation support: install `symfony/validator` to enable automatic input validation features of the bundle.
+- Annotations (legacy schemas): if you use annotation-based type definitions, install `doctrine/annotations`.
+- Doctrine type guesser for annotations: install `doctrine/orm`.
 
+Note: Symfony 7 favors PHP attributes over legacy annotations. The bundle’s automatic validation currently targets YAML-defined schemas. See `docs/validation/index.md` for details and limitations.
 
-Composer autoloader configuration (optional)
-------------
+## Using Composer’s ClassLoader for generated classes (optional but recommended)
 
-Use composer `ClassLoader` to load generated class (optional but recommended)
+The bundle can generate PHP classes for types. For optimal autoloading and performance in prod, you can let Composer load these generated classes.
 
-Using composer ClassLoader will help keeping hand on loader optimization
-in production environment...
+### 1) Configure the bundle
 
-First start by some configuration:
-
-```yaml
+```yaml title="config/packages/overblog_graphql.yaml"
 overblog_graphql:
     definitions:
-        # disable listener the bundle out of box classLoader
+        # Disable the built‑in listener that registers a runtime class loader
         use_classloader_listener: false
-        # change to "false" to disable auto compilation.
-        # To generate types manually, see "graphql:compile" command.
+
+        # Set to false to disable auto compilation (you can compile types manually)
+        # See the `graphql:compile` command.
         auto_compile: true
-        # change classes cache dir (recommends using a directory that will be committed)
+
+        # Directory where generated classes will be written
+        # Consider using a path committed to VCS for build reproducibility
         cache_dir: "/my/path/to/my/generated/classes"
-        # Can also change the namespace
-        #class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
+
+        # Optionally change the namespace of generated classes
+        # class_namespace: "Overblog\\GraphQLBundle\\__DEFINITIONS__"
 ```
 
-then enable composer autoloader in project `composer.json`:
+### 2) Point Composer to the generated namespace
 
-```json
+```json title="composer.json (excerpt)"
 {
-    "autoload": {
-        "psr-4": {
-            "Overblog\\GraphQLBundle\\__DEFINITIONS__\\": "my/path/to/my/generated/classes/"
-        }
+  "autoload": {
+    "psr-4": {
+      "Overblog\\GraphQLBundle\\__DEFINITIONS__\\": "my/path/to/my/generated/classes/"
     }
+  }
 }
 ```
 
-Finish by dumping the new autoloader.
+### 3) Regenerate Composer’s autoloader
 
 ```bash
 composer dump-autoload
 ```
+
+You’re all set. Proceed to define your schema (YAML, attributes/annotations, or SDL) and create queries/mutations. For validation guidelines and caveats, read `docs/validation/index.md`.

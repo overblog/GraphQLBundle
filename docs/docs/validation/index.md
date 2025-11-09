@@ -2,7 +2,9 @@
 title: Validation
 ---
 
-> > _The validation feature was introduced in version **0.13**_
+:::info
+_The validation feature was introduced in version **0.13**_
+:::
 
 # Validation
 
@@ -97,10 +99,14 @@ objects. For this reason, when this bundle starts a validation, all input data i
 automatically by the bundle just **before** calling corresponding resolvers (each resolver gets its own `InputValidator` 
 instance). If validation fails, the corresponding resolver will not be called (except when you perform
 [validation inside your resolvers](#validating-inside-resolvers)).
- 
-> Note that the created objects are only used for validation purposes. Your resolvers will receive raw unaltered 
-> arguments as usual.
 
+:::note
+
+The created objects are only used for validation purposes. Your resolvers will receive raw unaltered
+arguments as usual.
+
+:::
+ 
 Validation objects are created differently depending on the GraphQL type. Take a look at the following scheme:
 
 ![enter_description](./img/schema_1.png)
