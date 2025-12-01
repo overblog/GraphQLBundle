@@ -26,7 +26,7 @@ final class ExecutorTest extends TestCase
     public function testGetSchemaNoSchemaFound(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('At least one schema should be declare.');
+        $this->expectExceptionMessage('At least one schema should be declared.');
 
         $this->getMockedExecutor()->getSchema('fake');
     }
