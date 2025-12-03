@@ -29,6 +29,10 @@ final class FieldsNode implements NodeInterface
                     $fieldConfig['deprecationReason'] = $directiveConfig['deprecationReason'];
                 }
 
+                if (isset($directiveConfig['resolve'])) {
+                    $fieldConfig['resolve'] = $directiveConfig['resolve'];
+                }
+
                 $config[$definition->name->value] = $fieldConfig;
             }
         }
