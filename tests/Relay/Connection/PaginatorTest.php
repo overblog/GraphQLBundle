@@ -9,6 +9,7 @@ use Overblog\GraphQLBundle\Definition\Argument;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Paginator;
+use Overblog\GraphQLBundle\Relay\Connection\TotalCountCache;
 use PHPUnit\Framework\TestCase;
 
 use function array_slice;
@@ -265,6 +266,30 @@ final class PaginatorTest extends TestCase
         $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
         $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
         $this->assertFalse($result->getPageInfo()->getHasNextPage());
+    }
+
+    public function testAutoBackwardWithCachedCallable(): void
+    {
+        $paginator = new Paginator(function ($offset, $limit) {
+            $this->assertSame(1, $offset);
+            $this->assertSame(4, $limit);
+
+            return $this->getData($offset);
+        });
+
+        $countCalled = false;
+
+        /** @var Connection $result */
+        $result = $paginator->auto(new Argument(['last' => 4]), new TotalCountCache(function () use (&$countCalled) {
+            $countCalled = true;
+
+            return 5;
+        }));
+
+        $this->assertTrue($countCalled);
+        $this->assertCount(4, $result->getEdges());
+        $this->assertSameEdgeNodeValue(['B', 'C', 'D', 'E'], $result);
+        $this->assertTrue($result->getPageInfo()->getHasPreviousPage());
     }
 
     public function testTotalCallableWithArguments(): void
