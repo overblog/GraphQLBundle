@@ -53,7 +53,7 @@
         "symfony/translation": "If you want validation error messages to be translated."
     },
     "require-dev": {
-        "doctrine/annotations": "^1.13",
+        "doctrine/annotations": "^2.0",
         "doctrine/orm": "^2.5",
         "monolog/monolog": "^2.8.0 || ^3.0",
         "phpstan/extension-installer": "^1.0",
