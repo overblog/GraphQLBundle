@@ -56,6 +56,12 @@ jobs:
             symfony-version: '7.2.*'
           - php-version: '8.1'
             symfony-version: '7.3.*'
+          - php-version: '8.2'
+            symfony-version: '7.2.*'
+            dependencies: 'lowest'
+          - php-version: '8.3'
+            symfony-version: '7.2.*'
+            dependencies: 'lowest'
           - php-version: '8.4'
             dependencies: 'lowest'
         include:

@@ -26,6 +26,9 @@
         "allow-plugins": {
             "phpstan/extension-installer": true,
             "composer/package-versions-deprecated": true
+        },
+        "audit": {
+            "block-insecure": false
         }
     },
     "require": {
