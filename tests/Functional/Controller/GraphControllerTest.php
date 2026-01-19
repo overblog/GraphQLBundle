@@ -164,6 +164,16 @@ final class GraphControllerTest extends TestCase
         $client->request('GET', '/', ['query' => $query, 'variables' => '"firstFriends": 2}']);
     }
 
+    public function testEndpointActionPreservesFloats(): void
+    {
+        $client = static::createClient(['test_case' => 'preserveFloats']);
+        $this->disableCatchExceptions($client);
+
+        $client->request('GET', '/', ['query' => 'query { float }'], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
+        $result = $client->getResponse()->getContent();
+        $this->assertSame(['data' => ['float' => 1.0]], json_decode($result, true), $result);
+    }
+
     public function testMultipleEndpointActionWithUnknownSchemaName(): void
     {
         $this->expectException(NotFoundHttpException::class);
