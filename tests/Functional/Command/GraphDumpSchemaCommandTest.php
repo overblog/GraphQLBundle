@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Composer\InstalledVersions;
 
 use function file_get_contents;
 use function json_decode;
@@ -35,6 +36,8 @@ final class GraphDumpSchemaCommandTest extends TestCase
      */
     public function testDump(string $format, bool $withFormatOption = true): void
     {
+        $expectedFileName = $this->modifyExpectedFileNameForWebonyxPast1530(__DIR__.'/fixtures/schema.'.$format);
+
         $file = $this->cacheDir.'/schema.'.$format;
 
         $input = [
@@ -46,7 +49,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
         }
         $this->assertCommandExecution(
             $input,
-            __DIR__.'/fixtures/schema.'.$format,
+            $expectedFileName,
             $file,
             $format
         );
@@ -54,13 +57,15 @@ final class GraphDumpSchemaCommandTest extends TestCase
 
     public function testDumpWithDescriptions(): void
     {
+        $expectedFileName = $this->modifyExpectedFileNameForWebonyxPast1530(__DIR__.'/fixtures/schema.descriptions.json');
+
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
             [
                 '--file' => $file,
                 '--with-descriptions' => true,
             ],
-            __DIR__.'/fixtures/schema.descriptions.json',
+            $expectedFileName,
             $file,
             'json'
         );
@@ -68,6 +73,8 @@ final class GraphDumpSchemaCommandTest extends TestCase
 
     public function testClassicJsonFormat(): void
     {
+        $expectedFileName = $this->modifyExpectedFileNameForWebonyxPast1530(__DIR__.'/fixtures/schema.json');
+
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
             [
@@ -75,7 +82,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
                 '--classic' => true,
                 '--format' => 'json',
             ],
-            __DIR__.'/fixtures/schema.json',
+            $expectedFileName,
             $file,
             'json'
         );
@@ -83,6 +90,8 @@ final class GraphDumpSchemaCommandTest extends TestCase
 
     public function testModernJsonFormat(): void
     {
+        $expectedFileName = $this->modifyExpectedFileNameForWebonyxPast1530(__DIR__.'/fixtures/schema.modern.json');
+
         $file = $this->cacheDir.'/schema.json';
         $this->assertCommandExecution(
             [
@@ -90,7 +99,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
                 '--modern' => true,
                 '--format' => 'json',
             ],
-            __DIR__.'/fixtures/schema.modern.json',
+            $expectedFileName,
             $file,
             'json'
         );
@@ -138,7 +147,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
         }
-        $this->assertSame($expected, $actual);
+        $this->assertEqualsCanonicalizing($expected, $actual);
     }
 
     private function sortSchemaEntry(array &$entries, string $entryKey, string $sortBy): void
@@ -150,5 +159,18 @@ final class GraphDumpSchemaCommandTest extends TestCase
         }
 
         usort($data, fn ($data1, $data2) => strcmp($data1[$sortBy], $data2[$sortBy]));
+    }
+
+    private function modifyExpectedFileNameForWebonyxPast1530(string $expectedFileName): string
+    {
+        $webOnyxVersion = InstalledVersions::getVersion('webonyx/graphql-php');
+        $this->assertNotNull($webOnyxVersion, 'webonyx/graphql-php is not installed.');
+        if (version_compare($webOnyxVersion, 'v15.30.0', '>=')) {
+            $extension = pathinfo($expectedFileName, PATHINFO_EXTENSION);
+            $pathWithoutExtension = substr($expectedFileName, 0, -1 * (strlen($extension) + 1));
+            $expectedFileName = $pathWithoutExtension.'.pastv15.30.0.'.$extension;
+        }
+
+        return $expectedFileName;
     }
 }
