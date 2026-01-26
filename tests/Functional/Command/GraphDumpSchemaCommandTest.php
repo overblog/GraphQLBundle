@@ -165,10 +165,11 @@ final class GraphDumpSchemaCommandTest extends TestCase
     {
         $webOnyxVersion = InstalledVersions::getVersion('webonyx/graphql-php');
         $this->assertNotNull($webOnyxVersion, 'webonyx/graphql-php is not installed.');
-        if (version_compare($webOnyxVersion, 'v15.30.0', '>=')) {
+        if (version_compare($webOnyxVersion, '15.30.0', '>=')) {
             $extension = pathinfo($expectedFileName, PATHINFO_EXTENSION);
             $pathWithoutExtension = substr($expectedFileName, 0, -1 * (strlen($extension) + 1));
             $expectedFileName = $pathWithoutExtension.'.pastv15.30.0.'.$extension;
+            echo 'webonyx/graphql-php version is '.$webOnyxVersion.', using standard expected file '.$expectedFileName.PHP_EOL;
         }
 
         return $expectedFileName;
