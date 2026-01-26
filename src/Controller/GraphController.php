@@ -64,7 +64,7 @@ final class GraphController
             }
             $payload = $this->processQuery($request, $schemaName, $batched);
             $response = new JsonResponse('', 200);
-            $response->setEncodingOptions(JsonResponse::DEFAULT_ENCODING_OPTIONS|JSON_PRESERVE_ZERO_FRACTION);
+            $response->setEncodingOptions(JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRESERVE_ZERO_FRACTION);
             $response->setData($payload);
         }
         $this->addCORSHeadersIfNeeded($response, $request);
