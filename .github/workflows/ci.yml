@@ -23,7 +23,12 @@ jobs:
         symfony-version:
           - '5.4.*'
           - '6.4.*'
+          - '7.0.*'
+          - '7.1.*'
+          - '7.2.*'
+          - '7.3.*'
           - '7.4.*'
+          - '8.0.*'
         dependencies:
           - 'lowest'
           - 'highest'
