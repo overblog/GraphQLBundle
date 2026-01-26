@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 
+use Composer\InstalledVersions;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use Composer\InstalledVersions;
 
 use function file_get_contents;
 use function json_decode;
