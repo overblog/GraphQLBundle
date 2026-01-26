@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -71,8 +72,8 @@ final class GraphControllerTest extends TestCase
         $this->disableCatchExceptions($client);
 
         $client->request('GET', $uri, ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
-        $result = $client->getResponse()->getContent();
-        $this->assertSame(['data' => $this->expectedData], json_decode($result, true), $result);
+        $result = self::decodeResponse($client->getResponse());
+        $this->assertSame(['data' => $this->expectedData], $result);
         $this->assertCORSHeadersExists($client);
     }
 
@@ -108,8 +109,9 @@ final class GraphControllerTest extends TestCase
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/json']);
-        $result = $client->getResponse()->getContent();
-        $this->assertSame(['data' => $this->expectedData], json_decode($result, true), $result);
+        $result = self::decodeResponse($client->getResponse());
+
+        $this->assertSame(['data' => $this->expectedData], $result);
     }
 
     public function testEndpointWithInvalidBodyQuery(): void
@@ -164,6 +166,17 @@ final class GraphControllerTest extends TestCase
         $client->request('GET', '/', ['query' => $query, 'variables' => '"firstFriends": 2}']);
     }
 
+    public function testEndpointActionPreservesFloats(): void
+    {
+        $client = static::createClient(['test_case' => 'preserveFloats']);
+        $this->disableCatchExceptions($client);
+
+        $client->request('GET', '/', ['query' => 'query { float }'], [], ['CONTENT_TYPE' => 'application/graphql;charset=utf8', 'HTTP_Origin' => 'http://example.com']);
+        $result = self::decodeResponse($client->getResponse());
+
+        $this->assertSame(['data' => ['float' => 1.0]], $result);
+    }
+
     public function testMultipleEndpointActionWithUnknownSchemaName(): void
     {
         $this->expectException(NotFoundHttpException::class);
@@ -188,8 +201,9 @@ final class GraphControllerTest extends TestCase
         $query = $this->friendsQuery."\n".$this->friendsTotalCountQuery;
 
         $client->request('POST', '/', ['query' => $query, 'operationName' => 'FriendsQuery'], [], ['CONTENT_TYPE' => 'application/x-www-form-urlencoded']);
-        $result = $client->getResponse()->getContent();
-        $this->assertSame(['data' => $this->expectedData], json_decode($result, true), $result);
+        $result = self::decodeResponse($client->getResponse());
+
+        $this->assertSame(['data' => $this->expectedData], $result);
     }
 
     /**
@@ -213,13 +227,13 @@ final class GraphControllerTest extends TestCase
 
         $content = json_encode($data) ?: null;
         $client->request('POST', $uri, [], [], ['CONTENT_TYPE' => 'application/json'], $content);
-        $result = $client->getResponse()->getContent();
+        $result = self::decodeResponse($client->getResponse());
 
         $expected = [
             ['id' => 'friends', 'payload' => ['data' => $this->expectedData]],
             ['id' => 'friendsTotalCount', 'payload' => ['data' => ['user' => ['friends' => ['totalCount' => 4]]]]],
         ];
-        $this->assertSame($expected, json_decode($result, true), $result);
+        $this->assertSame($expected, $result);
     }
 
     public function graphQLBatchEndpointUriProvider(): array
@@ -301,8 +315,8 @@ final class GraphControllerTest extends TestCase
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
         $this->disableCatchExceptions($client);
         $client->request('GET', '/', ['query' => $this->friendsQuery], [], ['CONTENT_TYPE' => 'application/graphql']);
-        $result = $client->getResponse()->getContent();
-        $this->assertSame(['data' => $this->expectedData], json_decode($result, true), $result);
+        $result = self::decodeResponse($client->getResponse());
+        $this->assertSame(['data' => $this->expectedData], $result);
         $this->assertCORSHeadersNotExists($client);
     }
 
@@ -331,5 +345,15 @@ final class GraphControllerTest extends TestCase
         $this->assertSame('true', $response->headers->get('Access-Control-Allow-Credentials'));
         $this->assertSame('Content-Type, Authorization', $response->headers->get('Access-Control-Allow-Headers'));
         $this->assertSame('3600', $response->headers->get('Access-Control-Max-Age'));
+    }
+
+    private static function decodeResponse(Response $response): array
+    {
+        $result = $response->getContent();
+        self::assertIsString($result);
+        $result = json_decode($result, true);
+        self::assertNotNull($result);
+
+        return $result;
     }
 }

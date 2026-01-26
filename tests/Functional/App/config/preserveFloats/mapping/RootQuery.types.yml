@@ -1,0 +1,7 @@
+RootQuery:
+    type: object
+    config:
+        fields:
+            float:
+                type: Float
+                resolve: '1.0'
