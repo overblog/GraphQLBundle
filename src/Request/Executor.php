@@ -76,7 +76,7 @@ class Executor
     public function getSchema(?string $name = null): Schema
     {
         if (empty($this->schemas)) {
-            throw new RuntimeException('At least one schema should be declare.');
+            throw new RuntimeException('At least one schema should be declared.');
         }
 
         if (null === $name) {
