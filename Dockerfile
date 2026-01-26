@@ -4,51 +4,46 @@ COPY composer.json /
 
 FROM scratch AS test_source
 
+COPY benchmarks/ benchmarks/
 COPY src/ /src/
 COPY tests/ /tests/
-COPY phpunit.xml.* phpstan*.neon .php_cs.* /
+COPY phpunit.xml.* phpstan*.neon .php_cs.* phpbench.json /
 
-FROM alpine:3.23
+FROM alpine:3.9
+
+ADD https://dl.bintray.com/php-alpine/key/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
+
+RUN apk --update add ca-certificates && \
+    echo "https://dl.bintray.com/php-alpine/v3.9/php-7.4" >> /etc/apk/repositories
 
 # alpine php package does not include default extensions, be explicit
 RUN set -eu; \
     apk add --no-cache \
-        php84 \
-        php84-iconv \
-        php84-json \
-        php84-mbstring \
-        php84-openssl \
-        php84-phar \
-        php84-xml \
-        php84-dom \
-        php84-pdo \
-        php84-curl \
-        php84-tokenizer \
-        php84-simplexml \
-        php84-xmlwriter \
-        php84-xdebug
-
-# Configure Xdebug
-RUN echo "zend_extension=xdebug.so" > /etc/php84/conf.d/50_xdebug.ini; \
-    echo "xdebug.mode=debug" >> /etc/php84/conf.d/50_xdebug.ini; \
-    echo "xdebug.start_with_request=yes" >> /etc/php84/conf.d/50_xdebug.ini; \
-    echo "xdebug.client_host=host.docker.internal" >> /etc/php84/conf.d/50_xdebug.ini; \
-    echo "xdebug.client_port=9000" >> /etc/php84/conf.d/50_xdebug.ini; \
-    echo "xdebug.log=/tmp/xdebug.log" >> /etc/php84/conf.d/50_xdebug.ini
+        php \
+        php-iconv \
+        php-json \
+        php-mbstring \
+        php-openssl \
+        php-phar \
+        php-xml \
+        php-dom \
+        php-pdo \
+        php-curl \
+    ; ln -s /usr/bin/php7 /usr/bin/php
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # install Symfony Flex globally to speed up download of Composer packages (parallelized prefetching)
 RUN set -eux; \
-    composer global config --no-plugins allow-plugins.symfony/flex true; \
-	composer global require "symfony/flex:^1.0" --prefer-dist --no-progress --classmap-authoritative;
+	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative;
 
 WORKDIR /opt/test
 
 COPY --from=composer_install_requirements / .
 
-RUN php /usr/bin/composer install
+RUN php7 /usr/bin/composer install
 
 COPY --from=test_source / .
 
-RUN echo "memory_limit=1G" > /etc/php84/conf.d/99-custom.ini
+RUN echo "memory_limit=1G" > /etc/php7/conf.d/99-custom.ini
+
 ENTRYPOINT ["composer"]
