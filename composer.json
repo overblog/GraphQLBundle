@@ -57,7 +57,7 @@
     },
     "require-dev": {
         "doctrine/annotations": "^1.13",
-        "doctrine/orm": "^2.5",
+        "doctrine/orm": "^2.5 || ^3.6",
         "monolog/monolog": "^2.8.0 || ^3.0",
         "php-cs-fixer/shim": "^3.93",
         "phpstan/extension-installer": "^1.0",
