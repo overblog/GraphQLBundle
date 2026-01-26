@@ -169,7 +169,6 @@ final class GraphDumpSchemaCommandTest extends TestCase
             $extension = pathinfo($expectedFileName, PATHINFO_EXTENSION);
             $pathWithoutExtension = substr($expectedFileName, 0, -1 * (strlen($extension) + 1));
             $expectedFileName = $pathWithoutExtension.'.pastv15.30.0.'.$extension;
-            echo 'webonyx/graphql-php version is '.$webOnyxVersion.', using standard expected file '.$expectedFileName.PHP_EOL;
         }
 
         return $expectedFileName;
