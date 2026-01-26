@@ -35,7 +35,8 @@ final class DoctrineTypeGuesser extends TypeGuesser
 
     public function supports(Reflector $reflector): bool
     {
-        return $reflector instanceof ReflectionProperty;
+        // If we are on doctrine/orm v2
+        return class_exists(\Doctrine\ORM\Version::class) && $reflector instanceof ReflectionProperty;
     }
 
     /**
