@@ -54,7 +54,7 @@ final class Parser implements ParserInterface
 
                 $parsedBody = json_decode($body, true);
 
-                if (JSON_ERROR_NONE !== json_last_error()) {
+                if (JSON_ERROR_NONE !== json_last_error() || is_string($parsedBody)) {
                     throw new BadRequestHttpException('POST body sent invalid JSON');
                 }
                 break;
