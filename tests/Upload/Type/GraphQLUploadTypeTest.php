@@ -8,6 +8,7 @@ use Generator;
 use GraphQL\Error\Error;
 use GraphQL\Error\InvariantViolation;
 use Overblog\GraphQLBundle\Upload\Type\GraphQLUploadType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -17,9 +18,9 @@ final class GraphQLUploadTypeTest extends TestCase
 {
     /**
      * @param mixed $invalidValue
-     *
-     * @dataProvider invalidValueProvider
-     *
+     *     */
+    #[DataProvider('invalidValueProvider')]
+    /**
      * @throws Error
      */
     public function testInvalidParseValue($invalidValue, string $type): void

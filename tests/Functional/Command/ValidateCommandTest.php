@@ -41,11 +41,11 @@ final class ValidateCommandTest extends TestCase
     {
         $schema = $this->getMockBuilder(ExtensibleSchema::class)
             ->disableOriginalConstructor()
-            ->setMethods(['assertValid'])
+            ->onlyMethods(['assertValid'])
             ->getMock();
         $executor = $this->getMockBuilder(Executor::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSchema'])
+            ->onlyMethods(['getSchema'])
             ->getMock();
 
         $executor->expects($this->once())->method('getSchema')

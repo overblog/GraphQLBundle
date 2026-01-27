@@ -12,6 +12,7 @@ use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Type\Definition\ScalarType;
 use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\Tests\Functional\App\Type\YearScalarType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -29,7 +30,8 @@ final class CustomScalarTypeTest extends TestCase
     public function testWithoutScalarTypeConfig(): void
     {
         $genericFunc = fn ($value) => $value;
-        /** @phpstan-ignore-next-line */
+        /**
+         * @phpstan-ignore-next-line */
         $type = new CustomScalarType([
             'serialize' => $genericFunc,
             'parseValue' => $genericFunc,
@@ -45,9 +47,8 @@ final class CustomScalarTypeTest extends TestCase
     /**
      * @param mixed  $scalarType
      * @param string $got
-     *
-     * @dataProvider invalidScalarTypeProvider
-     */
+     *     */
+    #[DataProvider('invalidScalarTypeProvider')]
     public function testAssertValidWithInvalidScalarType($scalarType, $got): void
     {
         $this->expectException(InvariantViolation::class);

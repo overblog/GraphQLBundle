@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
 use Overblog\GraphQLBundle\Resolver\ResolverMaps;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -23,9 +24,8 @@ final class ResolverMapsTest extends TestCase
         $resolverMaps->resolve('Foo', 'bar');
     }
 
+    #[DataProvider('invalidResolverMapDataProvider')]
     /**
-     * @dataProvider invalidResolverMapDataProvider
-     *
      * @param string $type
      */
     public function testInvalidResolverMap(array $resolverMaps, $type): void

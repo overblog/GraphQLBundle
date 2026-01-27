@@ -6,15 +6,15 @@ namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 final class BuilderProcessorTest extends TestCase
 {
+    #[DataProvider('apiAbuseProvider')]
     /**
-     * @dataProvider apiAbuseProvider
-     *
      * @param string $name
      * @param string $type
      * @param string $builderClass
@@ -28,9 +28,8 @@ final class BuilderProcessorTest extends TestCase
         BuilderProcessor::addBuilderClass($name, $type, $builderClass);
     }
 
+    #[DataProvider('processApiAbuseProvider')]
     /**
-     * @dataProvider processApiAbuseProvider
-     *
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */

@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUse
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -84,9 +85,8 @@ final class GetUserTest extends TestCase
         $this->assertNull(eval($this->getCompileCode()));
     }
 
+    #[DataProvider('getUserProvider')]
     /**
-     * @dataProvider getUserProvider
-     *
      * @param mixed $user
      * @param mixed $expectedUser
      */

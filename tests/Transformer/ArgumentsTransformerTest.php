@@ -17,6 +17,7 @@ use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -47,7 +48,8 @@ final class ArgumentsTransformerTest extends TestCase
 
     public function getResolveInfo(array $types): ResolveInfo
     {
-        /** @var ResolveInfo $info */
+        /**
+         * @var ResolveInfo $info */
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
         $info->schema = new Schema(['types' => $types]);
 
@@ -336,7 +338,8 @@ final class ArgumentsTransformerTest extends TestCase
             $this->fail("When input data validation fail, it should raise an Overblog\GraphQLBundle\Error\InvalidArgumentsError exception");
         } catch (Exception $e) {
             $this->assertInstanceOf(InvalidArgumentsError::class, $e);
-            /** @var InvalidArgumentsError $e */
+            /**
+             * @var InvalidArgumentsError $e */
             $first = $e->getErrors()[0];
             $second = $e->getErrors()[1];
             $this->assertInstanceOf(InvalidArgumentError::class, $first);
@@ -380,7 +383,7 @@ final class ArgumentsTransformerTest extends TestCase
         yield [new NonNull($inputObject), false];
     }
 
-    /** @dataProvider getWrappedInputObject */
+    #[DataProvider('getWrappedInputObject')]
     public function testInputObjectWithWrappingType(Type $type): void
     {
         $transformer = $this->getTransformer(
@@ -395,7 +398,8 @@ final class ArgumentsTransformerTest extends TestCase
 
         $inputValue = $transformer->getInstanceAndValidate($type->toString(), $data, $info, 'input1');
 
-        /** @var InputType1 $inputValue */
+        /**
+         * @var InputType1 $inputValue */
         $this->assertInstanceOf(InputType1::class, $inputValue);
         $this->assertEquals($inputValue->field1, $data['field1']);
         $this->assertEquals($inputValue->field2, $data['field2']);
@@ -418,7 +422,7 @@ final class ArgumentsTransformerTest extends TestCase
         yield [new NonNull(new ListOfType(new NonNull($inputObject)))];
     }
 
-    /** @dataProvider getWrappedInputObjectList */
+    #[DataProvider('getWrappedInputObjectList')]
     public function testInputObjectWithWrappingTypeList(Type $type): void
     {
         $transformer = $this->getTransformer(
@@ -432,7 +436,8 @@ final class ArgumentsTransformerTest extends TestCase
         $inputValue = $transformer->getInstanceAndValidate($type->toString(), [$data], $info, 'input1');
         $inputValue = reset($inputValue);
 
-        /** @var InputType1 $inputValue */
+        /**
+         * @var InputType1 $inputValue */
         $this->assertInstanceOf(InputType1::class, $inputValue);
         $this->assertEquals($inputValue->field1, $data['field1']);
         $this->assertEquals($inputValue->field2, $data['field2']);

@@ -20,6 +20,7 @@ use Overblog\GraphQLBundle\Definition\Type\CustomScalarType;
 use Overblog\GraphQLBundle\EventListener\TypeDecoratorListener;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\ResolverMapInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
@@ -30,9 +31,8 @@ final class TypeDecoratorListenerTest extends TestCase
     /**
      * @param string $fieldName
      * @param bool   $strict
-     *
-     * @dataProvider specialTypeFieldProvider
-     */
+     *     */
+    #[DataProvider('specialTypeFieldProvider')]
     public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, ?callable $fieldValueRetriever = null, $strict = true): void
     {
         if (null === $fieldValueRetriever) {
@@ -109,7 +109,8 @@ final class TypeDecoratorListenerTest extends TestCase
         );
         $expected = ['foo' => 'baz'];
         $resolveFn = $objectType->getField('bar')->resolveFn;
-        /** @var Argument $args */
+        /**
+         * @var Argument $args */
         $args = $resolveFn(null, $expected, [], $this->createMock(ResolveInfo::class));
 
         $this->assertInstanceOf(Argument::class, $args);
@@ -323,7 +324,7 @@ final class TypeDecoratorListenerTest extends TestCase
      */
     private function createResolverMapMock(array $map = [])
     {
-        $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(['map'])->getMock();
+        $resolverMap = $this->getMockBuilder(ResolverMap::class)->onlyMethods(['map'])->getMock();
         $resolverMap->expects($this->any())->method('map')->willReturn($map);
 
         return $resolverMap;

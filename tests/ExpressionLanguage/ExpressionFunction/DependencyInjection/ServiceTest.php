@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Service;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 final class ServiceTest extends TestCase
@@ -19,9 +20,7 @@ final class ServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getNames
-     */
+    #[DataProvider('getNames')]
     public function testServiceCompilation(string $name): void
     {
         $object = new stdClass();
@@ -31,9 +30,7 @@ final class ServiceTest extends TestCase
         $this->assertSame($object, eval('return '.$this->expressionLanguage->compile($name.'("toto")').';'));
     }
 
-    /**
-     * @dataProvider getNames
-     */
+    #[DataProvider('getNames')]
     public function testServiceEvaluation(string $name): void
     {
         $object = new stdClass();

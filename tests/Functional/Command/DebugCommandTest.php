@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Command;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\DebugCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function file_get_contents;
@@ -41,9 +42,7 @@ final class DebugCommandTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider categoryDataProvider
-     */
+    #[DataProvider('categoryDataProvider')]
     public function testProcess(array $categories): void
     {
         if (empty($categories)) {

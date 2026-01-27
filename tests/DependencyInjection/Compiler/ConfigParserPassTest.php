@@ -16,6 +16,8 @@ use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -62,9 +64,7 @@ final class ConfigParserPassTest extends TestCase
         $this->processCompilerPass($this->getMappingConfig('annotation'));
     }
 
-    /**
-     * @dataProvider internalConfigKeys
-     */
+    #[DataProvider('internalConfigKeys')]
     public function testInternalConfigKeysShouldNotBeUsed(string $internalConfigKey): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -76,11 +76,8 @@ final class ConfigParserPassTest extends TestCase
         $this->compilerPass->processConfiguration($configs);
     }
 
-    /**
-     * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
-     *
-     * @runInSeparateProcess
-     */
+    #[DataProvider('fieldBuilderTypeOverrideNotAllowedProvider')]
+    #[RunInSeparateProcess]
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -97,9 +94,7 @@ final class ConfigParserPassTest extends TestCase
         $this->compilerPass->processConfiguration([$configs]);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCustomExceptions(): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -131,9 +126,7 @@ final class ConfigParserPassTest extends TestCase
         $this->assertSame($expectedExceptionMap, $definition->getArgument(0));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();

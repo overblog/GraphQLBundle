@@ -20,7 +20,7 @@ trait DIContainerMockTrait
     protected function getDIContainerMock(array $services = [], array $parameters = [])
     {
         $container = $this->getMockBuilder(Container::class)
-            ->setMethods(['get', 'getParameter', 'has'])
+            ->onlyMethods(['get', 'getParameter', 'has'])
             ->getMock();
 
         $getMethod = $container->expects($this->any())->method('get');

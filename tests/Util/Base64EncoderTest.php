@@ -7,21 +7,18 @@ namespace Overblog\GraphQLBundle\Tests\Util;
 use Generator;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Util\Base64Encoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class Base64EncoderTest extends TestCase
 {
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testEncode(string $value, string $encodedValue): void
     {
         $this->assertSame($encodedValue, Base64Encoder::encode($value));
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testDecode(string $value, string $encodedValue): void
     {
         $this->assertSame($value, Base64Encoder::decode($encodedValue));

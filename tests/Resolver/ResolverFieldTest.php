@@ -6,13 +6,13 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ResolverFieldTest extends TestCase
 {
+    #[DataProvider('resolverProvider')]
     /**
-     * @dataProvider resolverProvider
-     *
      * @param mixed            $source
      * @param bool|string|null $expected
      */

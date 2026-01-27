@@ -18,7 +18,7 @@ abstract class TestCase extends WebTestCase
 
     public function setUp(): void
     {
-        $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->setMethods(['addResource'])->getMock();
+        $this->containerBuilder = $this->getMockBuilder(ContainerBuilder::class)->onlyMethods(['addResource'])->getMock();
     }
 
     protected function assertContainerAddFileToResources(string $fileName): void

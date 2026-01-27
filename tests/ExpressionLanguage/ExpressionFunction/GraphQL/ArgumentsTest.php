@@ -14,6 +14,7 @@ use Overblog\GraphQLBundle\Tests\Transformer\Enum1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType1;
 use Overblog\GraphQLBundle\Tests\Transformer\InputType2;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\RecursiveValidator;
@@ -52,9 +53,7 @@ final class ArgumentsTest extends TestCase
         return new ArgumentsTransformer($validator, $classesMap);
     }
 
-    /**
-     * @group legacy
-     */
+    #[Group('legacy')]
     public function testEvaluator(): void
     {
         $info = $this->getResolveInfo(ArgumentsTransformerTest::getTypes());

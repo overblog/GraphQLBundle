@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 final class ExpressionLanguageTest extends TestCase
 {
+    #[DataProvider('expressionContainsVarProvider')]
     /**
-     * @dataProvider expressionContainsVarProvider
-     *
      * @param Expression|string $expression
      */
     public function testExpressionContainsVar($expression, bool $expectedResult): void
@@ -22,9 +22,8 @@ final class ExpressionLanguageTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
+    #[DataProvider('extractExpressionVarNamesProvider')]
     /**
-     * @dataProvider extractExpressionVarNamesProvider
-     *
      * @param Expression|string $expression
      */
     public function testExtractExpressionVarNames($expression, array $expectedResult): void

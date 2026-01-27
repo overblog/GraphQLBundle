@@ -11,6 +11,7 @@ use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
 use Overblog\GraphQLBundle\EventListener\ErrorLoggerListener;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
@@ -34,9 +35,7 @@ final class ErrorLoggerListenerTest extends TestCase
         $this->listener = new ErrorLoggerListener($this->logger);
     }
 
-    /**
-     * @dataProvider onErrorFormattingDataProvider
-     */
+    #[DataProvider('onErrorFormattingDataProvider')]
     public function testOnErrorFormatting(Error $error, InvokedCount $expectedLoggerCalls, array $expectedLoggerMethodArguments): void
     {
         $this->logger->expects($expectedLoggerCalls)

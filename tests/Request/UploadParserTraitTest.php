@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Request;
 
 use Generator;
 use Overblog\GraphQLBundle\Request\UploadParserTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -16,9 +17,7 @@ final class UploadParserTraitTest extends TestCase
 {
     use UploadParserTrait;
 
-    /**
-     * @dataProvider locationsProvider
-     */
+    #[DataProvider('locationsProvider')]
     public function testLocationToPropertyAccessPath(string $location, string $expected): void
     {
         $actual = $this->locationToPropertyAccessPath($location);
@@ -27,9 +26,8 @@ final class UploadParserTraitTest extends TestCase
 
     /**
      * @param string $message
-     *
-     * @dataProvider payloadProvider
-     */
+     *     */
+    #[DataProvider('payloadProvider')]
     public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message): void
     {
         $actual = $this->handleUploadedFiles(['operations' => json_encode($operations), 'map' => json_encode($map)], $files);

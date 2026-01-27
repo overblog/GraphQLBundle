@@ -7,21 +7,18 @@ namespace Overblog\GraphQLBundle\Tests\Util;
 use Generator;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Util\Base64Encoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class Base64UrlSafeEncoderTest extends TestCase
 {
-    /**
-     * @dataProvider urlSafeValuesDataProvider
-     */
+    #[DataProvider('urlSafeValuesDataProvider')]
     public function testEncodeUrlSafe(string $value, string $encodedValue, bool $usePadding): void
     {
         $this->assertSame($encodedValue, Base64Encoder::encodeUrlSafe($value, $usePadding));
     }
 
-    /**
-     * @dataProvider urlSafeValuesDataProvider
-     */
+    #[DataProvider('urlSafeValuesDataProvider')]
     public function testDecodeUrlSafe(string $value, string $encodedValue): void
     {
         $this->assertSame($value, Base64Encoder::decodeUrlSafe($encodedValue));

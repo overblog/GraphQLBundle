@@ -8,6 +8,7 @@ use Exception;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use React\Promise\ExtendedPromiseInterface;
 use React\Promise\FulfilledPromise;
 use React\Promise\Promise;
@@ -36,9 +37,8 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *
-     * @dataProvider invalidPromiseDataProvider
-     */
+     *     */
+    #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromise($invalidPromise): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -74,9 +74,8 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *
-     * @dataProvider invalidPromiseDataProvider
-     */
+     *     */
+    #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
         $this->expectException(InvalidArgumentException::class);

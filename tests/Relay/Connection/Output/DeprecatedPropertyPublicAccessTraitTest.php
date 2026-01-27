@@ -7,13 +7,13 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Output;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Connection;
 use Overblog\GraphQLBundle\Relay\Connection\Output\Edge;
 use Overblog\GraphQLBundle\Relay\Connection\Output\PageInfo;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 final class DeprecatedPropertyPublicAccessTraitTest extends TestCase
 {
+    #[Group('legacy')]
     /**
-     * @group legacy
-     *
      * @expectedDeprecation Getting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Connection::$edges value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Connection::getEdges.
      * @expectedDeprecation Getting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Connection::$pageInfo value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Connection::getPageInfo.
      * @expectedDeprecation Getting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Edge::$cursor value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Edge::getCursor.
@@ -40,9 +40,8 @@ final class DeprecatedPropertyPublicAccessTraitTest extends TestCase
         $this->assertSame($connection->getPageInfo()->getHasNextPage(), $connection->getPageInfo()->hasNextPage);
     }
 
+    #[Group('legacy')]
     /**
-     * @group legacy
-     *
      * @expectedDeprecation Setting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Connection::$edges value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Connection::setEdges.
      * @expectedDeprecation Setting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Connection::$pageInfo value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Connection::setPageInfo.
      * @expectedDeprecation Setting directly property Overblog\GraphQLBundle\Relay\Connection\Output\Edge::$cursor value is deprecated as of 0.12 and will be removed in 0.13. You should now use method Overblog\GraphQLBundle\Relay\Connection\Output\Edge::setCursor.

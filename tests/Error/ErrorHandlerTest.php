@@ -16,6 +16,7 @@ use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -27,7 +28,8 @@ final class ErrorHandlerTest extends TestCase
 {
     private ErrorHandler $errorHandler;
 
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface */
     private $dispatcher;
 
     public function setUp(): void
@@ -224,9 +226,8 @@ final class ErrorHandlerTest extends TestCase
     /**
      * @param bool         $mapExceptionsToParent
      * @param array|string $expectedUserError
-     *
-     * @dataProvider parentExceptionMappingDataProvider
-     */
+     *     */
+    #[DataProvider('parentExceptionMappingDataProvider')]
     public function testConvertExceptionUsingParentExceptionMatchesAlwaysFirstExactExceptionOtherwiseMatchesParent(array $exceptionMap, $mapExceptionsToParent, $expectedUserError): void
     {
         $exceptionConverter = new ExceptionConverter($exceptionMap, $mapExceptionsToParent);

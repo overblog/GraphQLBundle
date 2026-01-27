@@ -9,6 +9,7 @@ use ArrayObject;
 use Closure;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -25,9 +26,8 @@ final class ResolverMapTest extends TestCase
      * @param string            $typeName
      * @param string            $fieldName
      * @param Closure|null      $expectedResolver
-     *
-     * @dataProvider validMapDataProvider
-     */
+     *     */
+    #[DataProvider('validMapDataProvider')]
     public function testResolve($map, $typeName, $fieldName, $expectedResolver): void
     {
         $resolverMap = $this->createResolverMapMock($map);
@@ -43,9 +43,8 @@ final class ResolverMapTest extends TestCase
         $this->assertSame(array_keys($map), $covered);
     }
 
+    #[DataProvider('invalidMapDataProvider')]
     /**
-     * @dataProvider invalidMapDataProvider
-     *
      * @param mixed  $invalidMap
      * @param string $invalidType
      */
@@ -112,8 +111,9 @@ final class ResolverMapTest extends TestCase
      */
     private function createResolverMapMock($map)
     {
-        /** @var ResolverMap|MockObject $resolverMap */
-        $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(['map'])->getMock();
+        /**
+         * @var ResolverMap|MockObject $resolverMap */
+        $resolverMap = $this->getMockBuilder(ResolverMap::class)->onlyMethods(['map'])->getMock();
         $resolverMap->method('map')->willReturn($map);
 
         return $resolverMap;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Controller;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -63,9 +64,7 @@ final class GraphControllerTest extends TestCase
         ],
     ];
 
-    /**
-     * @dataProvider graphQLEndpointUriProvider
-     */
+    #[DataProvider('graphQLEndpointUriProvider')]
     public function testEndpointAction(string $uri): void
     {
         $client = static::createClient(['test_case' => 'connectionWithCORS']);
@@ -206,9 +205,7 @@ final class GraphControllerTest extends TestCase
         $this->assertSame(['data' => $this->expectedData], $result);
     }
 
-    /**
-     * @dataProvider graphQLBatchEndpointUriProvider
-     */
+    #[DataProvider('graphQLBatchEndpointUriProvider')]
     public function testBatchEndpointAction(string $uri): void
     {
         $client = static::createClient(['test_case' => 'connection']);

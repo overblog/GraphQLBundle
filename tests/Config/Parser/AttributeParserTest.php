@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\AttributeParser;
+use PHPUnit\Framework\Attributes\Group;
 
+#[Group('legacy')]
 /**
- * @group legacy
- *
  * @requires PHP 8.
  */
 final class AttributeParserTest extends MetadataParserTest
