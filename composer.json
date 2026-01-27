@@ -32,7 +32,7 @@
         }
     },
     "require": {
-        "php": "^8.0",
+        "php": ">=8.1",
         "ext-json": "*",
         "murtukov/php-code-generator": "^0.1.5",
         "phpdocumentor/reflection-docblock": "^5.2",
