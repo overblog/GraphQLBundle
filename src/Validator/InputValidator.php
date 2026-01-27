@@ -29,6 +29,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function in_array;
+use Symfony\Component\Validator\Context\ExecutionContextFactoryInterface;
 
 final class InputValidator
 {
@@ -42,6 +43,7 @@ final class InputValidator
     private ResolveInfo $info;
     private ConstraintValidatorFactoryInterface $constraintValidatorFactory;
     private ?TranslatorInterface $defaultTranslator;
+    private ExecutionContextFactoryInterface $contextFactory;
 
     /** @var ClassMetadataInterface[] */
     private array $cachedMetadata = [];
@@ -50,7 +52,8 @@ final class InputValidator
         ResolverArgs $resolverArgs,
         ValidatorInterface $validator,
         ConstraintValidatorFactoryInterface $constraintValidatorFactory,
-        ?TranslatorInterface $translator
+        ?TranslatorInterface $translator,
+        ExecutionContextFactoryInterface $contextFactory
     ) {
         $this->resolverArgs = $resolverArgs;
         $this->info = $this->resolverArgs->info;
@@ -58,6 +61,7 @@ final class InputValidator
         $this->constraintValidatorFactory = $constraintValidatorFactory;
         $this->defaultTranslator = $translator;
         $this->metadataFactory = new MetadataFactory();
+        $this->contextFactory = $contextFactory;
     }
 
     /**
@@ -82,6 +86,16 @@ final class InputValidator
         );
 
         $validator = $this->createValidator($this->metadataFactory);
+        $context = $this->contextFactory->createContext(
+            $validator,
+            $rootNode
+        );
+        $recursiveContextualValidator = $validator->inContext($context);
+        $recursiveContextualValidator->validate(
+            $rootNode,
+            null,
+            $groups
+        );
 
         $errors = $validator->validate($rootNode, null, $groups);
 
