@@ -38,7 +38,7 @@ final class AnnotationParserTest extends TestMetadataParser
     public function testNoDoctrineAnnotations(): void
     {
         if (self::isDoctrineAnnotationInstalled()) {
-            $this->markTestSkipped('doctrine/annotations are installed');
+            $this->markTestSkipped('doctrine/annotations is installed');
         }
 
         try {

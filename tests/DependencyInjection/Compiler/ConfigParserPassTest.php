@@ -77,7 +77,6 @@ final class ConfigParserPassTest extends TestCase
     }
 
     #[DataProvider('fieldBuilderTypeOverrideNotAllowedProvider')]
-    #[RunInSeparateProcess]
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -94,7 +93,6 @@ final class ConfigParserPassTest extends TestCase
         $this->compilerPass->processConfiguration([$configs]);
     }
 
-    #[RunInSeparateProcess]
     public function testCustomExceptions(): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -126,7 +124,6 @@ final class ConfigParserPassTest extends TestCase
         $this->assertSame($expectedExceptionMap, $definition->getArgument(0));
     }
 
-    #[RunInSeparateProcess]
     public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();
