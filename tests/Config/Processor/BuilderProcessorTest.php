@@ -13,7 +13,6 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 final class BuilderProcessorTest extends TestCase
 {
-    #[DataProvider('apiAbuseProvider')]
     /**
      * @param string $name
      * @param string $type
@@ -21,6 +20,7 @@ final class BuilderProcessorTest extends TestCase
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
+    #[DataProvider('apiAbuseProvider')]
     public function testApiAbuse($name, $type, $builderClass, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass); // @phpstan-ignore-line
@@ -28,11 +28,11 @@ final class BuilderProcessorTest extends TestCase
         BuilderProcessor::addBuilderClass($name, $type, $builderClass);
     }
 
-    #[DataProvider('processApiAbuseProvider')]
     /**
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
+    #[DataProvider('processApiAbuseProvider')]
     public function testProcessApiAbuse(array $config, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass); // @phpstan-ignore-line

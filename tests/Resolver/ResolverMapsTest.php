@@ -24,10 +24,10 @@ final class ResolverMapsTest extends TestCase
         $resolverMaps->resolve('Foo', 'bar');
     }
 
-    #[DataProvider('invalidResolverMapDataProvider')]
     /**
      * @param string $type
      */
+    #[DataProvider('invalidResolverMapDataProvider')]
     public function testInvalidResolverMap(array $resolverMaps, $type): void
     {
         $this->expectException(InvalidArgumentException::class);

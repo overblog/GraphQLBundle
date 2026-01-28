@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests;
 
-use PHPUnit_Framework_MockObject_MockBuilder;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * Class DIContainerMockTrait.
- *
- * @method PHPUnit_Framework_MockObject_MockBuilder getMockBuilder (string $className)
- */
 trait DIContainerMockTrait
 {
     /**

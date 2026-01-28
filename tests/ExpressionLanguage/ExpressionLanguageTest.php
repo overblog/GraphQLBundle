@@ -11,10 +11,10 @@ use Symfony\Component\ExpressionLanguage\Expression;
 
 final class ExpressionLanguageTest extends TestCase
 {
-    #[DataProvider('expressionContainsVarProvider')]
     /**
      * @param Expression|string $expression
      */
+    #[DataProvider('expressionContainsVarProvider')]
     public function testExpressionContainsVar($expression, bool $expectedResult): void
     {
         $result = ExpressionLanguage::expressionContainsVar('validator', $expression);

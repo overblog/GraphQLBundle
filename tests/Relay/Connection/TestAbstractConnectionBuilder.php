@@ -59,9 +59,12 @@ abstract class TestAbstractConnectionBuilder extends TestCase
         }
 
         // assert edges
+        /** @phpstan-ignore-next-line  */
         $this->assertCount(count($expectedConnection->getEdges()), $actualConnection->getEdges());
         foreach ($expectedConnection->getEdges() as $i => $expectedEdge) {
+            /** @phpstan-ignore-next-line  */
             $this->assertSame($expectedEdge->getNode(), $actualConnection->getEdges()[$i]->getNode());
+            /** @phpstan-ignore-next-line  */
             $this->assertSame($expectedEdge->getCursor(), $actualConnection->getEdges()[$i]->getCursor());
         }
     }

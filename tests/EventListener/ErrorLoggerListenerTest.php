@@ -34,6 +34,9 @@ final class ErrorLoggerListenerTest extends TestCase
         $this->listener = new ErrorLoggerListener($this->logger);
     }
 
+    /**
+     * @param mixed $expectedLoggerCalls
+     */
     #[DataProvider('onErrorFormattingDataProvider')]
     public function testOnErrorFormatting(Error $error, $expectedLoggerCalls, array $expectedLoggerMethodArguments): void
     {

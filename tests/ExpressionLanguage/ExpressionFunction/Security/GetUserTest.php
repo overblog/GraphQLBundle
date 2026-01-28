@@ -85,11 +85,11 @@ final class GetUserTest extends TestCase
         $this->assertNull(eval($this->getCompileCode()));
     }
 
-    #[DataProvider('getUserProvider')]
     /**
      * @param mixed $user
      * @param mixed $expectedUser
      */
+    #[DataProvider('getUserProvider')]
     public function testGetUser($user, $expectedUser): void
     {
         if (is_callable($user)) {

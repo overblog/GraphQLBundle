@@ -43,11 +43,11 @@ final class ResolverMapTest extends TestCase
         $this->assertSame(array_keys($map), $covered);
     }
 
-    #[DataProvider('invalidMapDataProvider')]
     /**
      * @param mixed  $invalidMap
      * @param string $invalidType
      */
+    #[DataProvider('invalidMapDataProvider')]
     public function testInvalidMap($invalidMap, $invalidType): void
     {
         $resolverMap = $this->createResolverMapMock($invalidMap);

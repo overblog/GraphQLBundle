@@ -11,11 +11,11 @@ use PHPUnit\Framework\TestCase;
 
 final class ResolverFieldTest extends TestCase
 {
-    #[DataProvider('resolverProvider')]
     /**
      * @param mixed            $source
      * @param bool|string|null $expected
      */
+    #[DataProvider('resolverProvider')]
     public function testDefaultFieldResolveFn(string $fieldName, $source, $expected): void
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
