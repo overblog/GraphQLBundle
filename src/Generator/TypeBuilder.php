@@ -640,7 +640,7 @@ final class TypeBuilder
             }
 
             if (is_array($args)) {
-                if ($this->isSymfony74Plus && false !== isset($args[0]) && Choice::class === $fqcn) {
+                if ($this->isSymfony74Plus && isset($args[0]) && Choice::class === $fqcn) {
                     // Handle Choice constraint in Symfony 7.4+
                     $args = ['choices' => $args];
                 }
