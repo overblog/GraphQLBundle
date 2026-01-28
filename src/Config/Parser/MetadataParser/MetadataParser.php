@@ -283,9 +283,9 @@ abstract class MetadataParser implements PreParserInterface
     }
 
     /**
-     * @throws ReflectionException
-     *
      * @phpstan-param class-string $className
+     *
+     * @throws ReflectionException
      */
     private static function getClassReflection(string $className): ReflectionClass
     {
@@ -741,9 +741,9 @@ abstract class MetadataParser implements PreParserInterface
     /**
      * Create GraphQL type fields configuration based on metadatas.
      *
-     * @phpstan-param class-string<Metadata\Field> $fieldMetadataName
-     *
      * @param ReflectionProperty[]|ReflectionMethod[] $reflectors
+     *
+     * @phpstan-param class-string<Metadata\Field> $fieldMetadataName
      *
      * @throws AnnotationException
      */
@@ -897,9 +897,9 @@ abstract class MetadataParser implements PreParserInterface
      *
      * @phpstan-param class-string<T>|class-string<T>[] $metadataClasses
      *
-     * @phpstan-return T|null
-     *
      * @return object|null
+     *
+     * @phpstan-return T|null
      */
     private static function getFirstMetadataMatching(array $metadatas, $metadataClasses)
     {

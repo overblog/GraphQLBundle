@@ -24,9 +24,9 @@ trait UploadParserTrait
         $payload = $this->normalized($parameters);
         if ($this->isUploadPayload($payload)) {
             return $this->bindUploadedFiles($payload['operations'], $payload['map'], $files);
-        } else {
-            return $parameters;
         }
+
+        return $parameters;
     }
 
     private function bindUploadedFiles(array $operations, array $map, array $files): array

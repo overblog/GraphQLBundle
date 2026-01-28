@@ -57,8 +57,8 @@ final class NodeResolver
     {
         if (isset($value['name'])) {
             return 'User';
-        } else {
-            return 'Photo';
         }
+
+        return 'Photo';
     }
 }

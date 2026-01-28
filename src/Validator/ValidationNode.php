@@ -114,9 +114,8 @@ final class ValidationNode
         while (null !== $current) {
             if ($current->getName() === $name) {
                 return $current;
-            } else {
-                $current = $current->getParent();
             }
+            $current = $current->getParent();
         }
 
         return null;

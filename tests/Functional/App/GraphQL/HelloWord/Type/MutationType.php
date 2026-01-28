@@ -22,12 +22,10 @@ final class MutationType extends ObjectType implements AliasedInterface
                         'x' => ['type' => Type::int()],
                         'y' => ['type' => Type::int()],
                     ],
-                    'resolve' => function ($root, $args) use ($mutator) {
-                        return $mutator->resolve([
-                            'sum',
-                            [$args['x'], $args['y']],
-                        ]);
-                    },
+                    'resolve' => fn ($root, $args) => $mutator->resolve([
+                        'sum',
+                        [$args['x'], $args['y']],
+                    ]),
                 ],
             ],
         ]);

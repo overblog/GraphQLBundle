@@ -94,9 +94,8 @@ final class ExpressionLanguage extends BaseExpressionLanguage
                         $varNames[] = $name;
                     }
                     continue;
-                } else {
-                    $isProperty = false;
                 }
+                $isProperty = false;
             }
 
             $stream->next();

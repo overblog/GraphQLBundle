@@ -83,14 +83,13 @@ abstract class AbstractResolver implements FluentResolverInterface
 
         if ($this->fullyLoadedSolutions[$id]) {
             return $this->solutions[$id];
-        } else {
-            $loader = $this->solutions[$id];
-            $this->solutions[$id] = $solution = $loader();
-            $this->onLoadSolution($solution);
-            $this->fullyLoadedSolutions[$id] = true;
-
-            return $solution;
         }
+        $loader = $this->solutions[$id];
+        $this->solutions[$id] = $solution = $loader();
+        $this->onLoadSolution($solution);
+        $this->fullyLoadedSolutions[$id] = true;
+
+        return $solution;
     }
 
     private function addAliases(string $id, array $aliases): void

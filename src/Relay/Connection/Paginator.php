@@ -48,12 +48,10 @@ final class Paginator
 
         $entities = call_user_func($this->fetcher, $offset, $limit);
 
-        return $this->handleEntities($entities, function ($entities) use ($args, $offset, $total) {
-            return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
-                'sliceStart' => $offset,
-                'arrayLength' => $total,
-            ]);
-        });
+        return $this->handleEntities($entities, fn ($entities) => $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
+            'sliceStart' => $offset,
+            'arrayLength' => $total,
+        ]));
     }
 
     /**
@@ -70,16 +68,13 @@ final class Paginator
             $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 1 : $limit);
 
             return $this->handleEntities($entities, fn ($entities) => $this->connectionBuilder->connectionFromArray($entities, $args));
-        } else {
-            $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
-
-            return $this->handleEntities($entities, function ($entities) use ($args, $offset) {
-                return $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
-                    'sliceStart' => $offset,
-                    'arrayLength' => $offset + count($entities),
-                ]);
-            });
         }
+        $entities = call_user_func($this->fetcher, $offset, $limit ? $limit + 2 : $limit);
+
+        return $this->handleEntities($entities, fn ($entities) => $this->connectionBuilder->connectionFromArraySlice($entities, $args, [
+            'sliceStart' => $offset,
+            'arrayLength' => $offset + count($entities),
+        ]));
     }
 
     /**

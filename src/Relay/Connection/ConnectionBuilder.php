@@ -292,7 +292,7 @@ final class ConnectionBuilder
             $cursor = $this->offsetToCursor($startOffset + $index);
             $edge = ($this->edgeCallback)($cursor, $value, $index);
 
-            if (!($edge instanceof EdgeInterface)) {
+            if (!$edge instanceof EdgeInterface) {
                 throw new InvalidArgumentException('The $edgeCallback of the ConnectionBuilder must return an instance of EdgeInterface');
             }
 
@@ -311,7 +311,7 @@ final class ConnectionBuilder
     {
         $connection = ($this->connectionCallback)($edges, $pageInfo);
 
-        if (!($connection instanceof ConnectionInterface)) {
+        if (!$connection instanceof ConnectionInterface) {
             throw new InvalidArgumentException('The $connectionCallback of the ConnectionBuilder must return an instance of ConnectionInterface');
         }
 

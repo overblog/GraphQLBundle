@@ -92,9 +92,9 @@ final class ArgumentsTransformer
                 $this->accessor->setValue($instance, 'value', $data);
 
                 return $instance;
-            } else {
-                return $data;
             }
+
+            return $data;
         } elseif ($type instanceof InputObjectType) {
             $instance = $this->getTypeClassInstance($type->name);
             if (!$instance) {
@@ -124,9 +124,9 @@ final class ArgumentsTransformer
             }
 
             return $instance;
-        } else {
-            return $data;
         }
+
+        return $data;
     }
 
     /**
