@@ -17,4 +17,5 @@ Period:
                     - Expression: "this.getParent().getName() === 'Address'"
                     - Date: ~
                     - GreaterThan:
+                          value: null
                           propertyPath: 'startDate'

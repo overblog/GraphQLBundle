@@ -6,8 +6,12 @@ Country:
                 type: String
                 validation:
                     - NotBlank:
+                        options: null
+                        message: null
                         allowNull: true
             officialLanguage:
                 type: String
                 validation:
-                    - Choice: ['en', 'de', 'fr']
+                    - Choice:
+                        options: null
+                        choices: ['en', 'de', 'fr']

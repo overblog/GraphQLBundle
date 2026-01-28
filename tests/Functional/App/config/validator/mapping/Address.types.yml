@@ -7,13 +7,23 @@ Address:
             street:
                 type: String!
                 validation:
-                    - Length: {min: 10}
+                    - Length: { exactly: null, min: 10}
             city:
                 type: String!
                 validation:
                     - Choice:
-                        groups: ['group1']
+                        options: null
                         choices: ['New York', 'Berlin', 'Tokyo']
+                        callback: null
+                        multiple: null
+                        strict: null
+                        min: null
+                        max: null
+                        message: null
+                        multipleMessage: null
+                        minMessage: null
+                        maxMessage: null
+                        groups: ['group1']
             country:
                 type: Country
                 validation: cascade

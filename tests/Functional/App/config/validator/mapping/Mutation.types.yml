@@ -3,9 +3,7 @@ Mutation:
     config:
         validation: # Applied to all fields
             - Callback: [Overblog\GraphQLBundle\Tests\Functional\Validator\StaticValidator, alwaysTrue]
-            - Expression:
-                expression: this.getFieldName() == this.getFieldName()
-                message: "parent"
+            - Expression: this.getFieldName() == this.getFieldName()
         fields:
             noValidation:
                 complexity: 1
@@ -20,16 +18,14 @@ Mutation:
 
             simpleValidation:
                 validation: # Applied to all fields
-                    - Expression:
-                        expression: this.getFieldName() == this.getFieldName()
-                        message: "child"
+                    - Expression: this.getFieldName() == this.getFieldName()
                 type: Boolean
                 resolve: "@=m('mutation_mock', args, validator)"
                 args:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5 }
+                            - Length: { exactly: null, min: 5 }
                             - Regex:
                                 pattern: '/^[a-z]+$/i'
                                 htmlPattern: true
@@ -63,9 +59,12 @@ Mutation:
                         type: '[String]!'
                         validation:
                             - Unique: ~
-                            - Count: { min: 3 }
+                            - Count:
+                                exactly: null
+                                min: 3
                             - All:
                                 - Email:
+                                    options: null
                                     message: 'The email "{{ value }}" is not a valid email.'
 
             cascadeValidationWithGroups:
@@ -108,7 +107,7 @@ Mutation:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5 }
+                            - Length: { exactly: null, min: 5 }
                             - Regex:
                                   pattern: '/^[a-z]+$/i'
                                   htmlPattern: true
@@ -120,7 +119,7 @@ Mutation:
                     username:
                         type: String!
                         validation:
-                            - Length: { min: 5 }
+                            - Length: { exactly: null, min: 5 }
                             - Regex:
                                   pattern: '/^[a-z]+$/i'
                                   htmlPattern: true
