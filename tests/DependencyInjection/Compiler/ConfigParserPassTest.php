@@ -10,7 +10,7 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserWarning;
-use Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParserTest;
+use Overblog\GraphQLBundle\Tests\Config\Parser\TestMetadataParser;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
@@ -56,7 +56,7 @@ final class ConfigParserPassTest extends TestCase
 
     public function testPreparseOnPrepend(): void
     {
-        if (!MetadataParserTest::isDoctrineAnnotationInstalled()) {
+        if (!TestMetadataParser::isDoctrineAnnotationInstalled()) {
             $this->markTestSkipped('doctrine/annotations not installed. Skipping test.');
         }
         $this->expectException(InvalidConfigurationException::class);

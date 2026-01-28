@@ -7,7 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 use Overblog\GraphQLBundle\Resolver\AbstractResolver;
 use PHPUnit\Framework\TestCase;
 
-abstract class AbstractResolverTest extends TestCase
+abstract class TestAbstractResolver extends TestCase
 {
     protected AbstractResolver $resolver;
 

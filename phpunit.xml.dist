@@ -14,7 +14,7 @@
       <directory>./src</directory>
     </include>
   </source>
-  <listeners>
-    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-  </listeners>
+    <extensions>
+      <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension"/>
+    </extensions>
 </phpunit>

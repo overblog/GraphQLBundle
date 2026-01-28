@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 #[Group('legacy')]
-final class AnnotationParserTest extends MetadataParserTest
+final class AnnotationParserTest extends TestMetadataParser
 {
     public function setUp(): void
     {

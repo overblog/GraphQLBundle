@@ -16,7 +16,7 @@ use function array_values;
 use function count;
 use function end;
 
-abstract class AbstractConnectionBuilderTest extends TestCase
+abstract class TestAbstractConnectionBuilder extends TestCase
 {
     protected array $letters = ['A', 'B', 'C', 'D', 'E'];
 

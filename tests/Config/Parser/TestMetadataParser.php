@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use function sprintf;
 use function substr;
 
-abstract class MetadataParserTest extends TestCase
+abstract class TestMetadataParser extends TestCase
 {
     protected array $config = [];
     protected array $ignoredPaths = ['Invalid', 'Deprecated'];

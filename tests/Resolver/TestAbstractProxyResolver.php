@@ -8,7 +8,7 @@ use Generator;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-abstract class AbstractProxyResolverTest extends AbstractResolverTest
+abstract class TestAbstractProxyResolver extends TestAbstractResolver
 {
     protected function getResolverSolutionsMapping(): array
     {
