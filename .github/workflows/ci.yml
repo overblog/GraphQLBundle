@@ -43,7 +43,7 @@ jobs:
             coverage: 'pcov'
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -61,7 +61,7 @@ jobs:
         run: composer remove --no-update ${{ matrix.remove-dependencies }}
 
       - name: "Install dependencies"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: ${{ matrix.dependencies }}
         env:
@@ -88,7 +88,7 @@ jobs:
     name: Coding Standard
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -98,7 +98,7 @@ jobs:
           coverage: "none"
 
       - name: "Install dependencies"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
 
       - name: "Check coding standard"
         run: composer run check-cs
@@ -108,7 +108,7 @@ jobs:
     name: "Static analysis"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -117,7 +117,7 @@ jobs:
           coverage: "none"
 
       - name: "Install dependencies"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
 
       - name: "Run static-analysis"
         run: composer run static-analysis
