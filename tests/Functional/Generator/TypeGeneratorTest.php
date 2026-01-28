@@ -132,8 +132,7 @@ final class TypeGeneratorTest extends TestCase
         // end part
 
         // Validate definition file
-        /**
-         * @var string $definitionFile */
+        /** @var string $definitionFile */
         $definitionFile = file_get_contents($kernel->getCacheDir().'/overblog/graphql-bundle/__definitions__/MutationType.php');
 
         $this->assertStringContainsString(

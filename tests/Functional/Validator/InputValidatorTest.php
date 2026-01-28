@@ -224,8 +224,7 @@ final class InputValidatorTest extends TestCase
             }
         ';
 
-        /**
-         * @var string $jsonString */
+        /** @var string $jsonString */
         $jsonString = $this->query($query, 'Ryan', 'validator')->getResponse()->getContent();
 
         $response = json_decode($jsonString, true);

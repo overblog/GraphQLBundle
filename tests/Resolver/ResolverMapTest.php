@@ -111,8 +111,7 @@ final class ResolverMapTest extends TestCase
      */
     private function createResolverMapMock($map)
     {
-        /**
-         * @var ResolverMap|MockObject $resolverMap */
+        /** @var ResolverMap|MockObject $resolverMap */
         $resolverMap = $this->getMockBuilder(ResolverMap::class)->onlyMethods(['map'])->getMock();
         $resolverMap->method('map')->willReturn($map);
 

@@ -8,12 +8,9 @@ use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class NodeTest.
- *     */
-#[Group('legacy')]
-/**
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/node.js
  */
+#[Group('legacy')]
 final class NodeTest extends TestCase
 {
     protected function setUp(): void

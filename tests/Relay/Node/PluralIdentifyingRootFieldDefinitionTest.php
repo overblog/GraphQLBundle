@@ -11,8 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
 {
-    /**
-     * @var PluralIdentifyingRootFieldDefinition */
+    /** @var PluralIdentifyingRootFieldDefinition */
     private $definition;
 
     public function setUp(): void

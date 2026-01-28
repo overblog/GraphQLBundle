@@ -18,11 +18,10 @@ final class GraphQLUploadTypeTest extends TestCase
 {
     /**
      * @param mixed $invalidValue
-     */
-    #[DataProvider('invalidValueProvider')]
-    /**
+     *
      * @throws Error
      */
+    #[DataProvider('invalidValueProvider')]
     public function testInvalidParseValue($invalidValue, string $type): void
     {
         $this->expectException(InvariantViolation::class);
