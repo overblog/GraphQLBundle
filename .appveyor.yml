@@ -11,10 +11,10 @@ init:
 
 install:
     - ps: Set-Service wuauserv -StartupType Manual
-    - cinst -y php --version=8.0
+    - cinst -y php --version=8.3
     - cinst -y composer
     - refreshenv
-    - cd c:\tools\php80
+    - cd c:\tools\php83
     - copy php.ini-production php.ini /Y
     - echo date.timezone="UTC" >> php.ini
     - echo extension_dir=ext >> php.ini
