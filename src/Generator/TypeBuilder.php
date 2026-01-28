@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
-use Composer\InstalledVersions;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
 use GraphQL\Type\Definition\InputObjectType;
@@ -95,7 +94,6 @@ final class TypeBuilder
         // Register additional converter in the php code generator
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
         $this->isSymfony74Plus = class_exists(Video::class);
-
     }
 
     /**
@@ -642,19 +640,20 @@ final class TypeBuilder
             }
 
             if (is_array($args)) {
-                $reflectionClass = new ReflectionClass($fqcn);
-                $constructor = $reflectionClass->getConstructor();
-
-                if ($this->isSymfony74Plus && isset($args[0]) !== false && $fqcn === Choice::class) {
+                if ($this->isSymfony74Plus && false !== isset($args[0]) && Choice::class === $fqcn) {
                     // Handle Choice constraint in Symfony 7.4+
-                    $args = ['choices'=>$args];
+                    $args = ['choices' => $args];
                 }
 
                 /*
                  * In Symfony 7.4+, we should not pass an array, but split up parameters in different arguments.
                  */
-                $inlineParameters = $this->isSymfony74Plus && isset($args[0]) === false;
-                if (null !== $constructor && $inlineParameters === true) {
+                if ($this->isSymfony74Plus && false === isset($args[0]) && [] !== $args) {
+                    $reflectionClass = new ReflectionClass($fqcn);
+                    $constructor = $reflectionClass->getConstructor();
+                    if (null === $constructor) {
+                        throw new GeneratorException("Constraint '$fqcn' doesn't have a constructor.");
+                    }
                     $parameters = $constructor->getParameters();
                     foreach ($parameters as $parameter) {
                         $name = $parameter->getName();
@@ -666,12 +665,10 @@ final class TypeBuilder
                             throw new GeneratorException("Constraint '$fqcn' requires argument '$name'.");
                         }
                     }
-                }
-
-                if (isset($args[0]) && is_array($args[0]) && false === $inlineParameters) {
+                } elseif (isset($args[0]) && is_array($args[0])) {
                     // Nested instance
                     $instance->addArgument($this->buildConstraints($args, false));
-                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0]) && false === $inlineParameters) {
+                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0])) {
                     // Nested instance with "constraints" key (full syntax)
                     $options = [
                         'constraints' => $this->buildConstraints($args['constraints'], false),
@@ -686,7 +683,7 @@ final class TypeBuilder
                     }
 
                     $instance->addArgument($options);
-                } elseif (false === $inlineParameters) {
+                } else {
                     // Numeric or Assoc array?
                     $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
                 }
