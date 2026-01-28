@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\Functional\Generator;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Tests\Functional\App\Validator;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Symfony\Component\Validator\Validation;
 
@@ -105,6 +106,7 @@ final class TypeGeneratorTest extends TestCase
      *  2. Default Symfony validators should be used with aliased namespace to ensure that no
      *     namespace conflicts occur with Graphql bundle classes (Type for example).
      */
+    #[Group('separateProcess')]
     #[RunInSeparateProcess]
     public function testConflictingValidatorNamespaces(): void
     {
