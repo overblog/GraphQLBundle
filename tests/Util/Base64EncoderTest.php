@@ -24,7 +24,7 @@ final class Base64EncoderTest extends TestCase
         $this->assertSame($value, Base64Encoder::decode($encodedValue));
     }
 
-    public function valuesDataProvider(): Generator
+    public static function valuesDataProvider(): Generator
     {
         yield [
             '000000',

@@ -50,7 +50,7 @@ abstract class TestAbstractProxyResolver extends TestAbstractResolver
         $this->resolver->resolve('Fake');
     }
 
-    public function aliasProvider(): Generator
+    public static function aliasProvider(): Generator
     {
         yield ['foo'];
         yield ['bar'];

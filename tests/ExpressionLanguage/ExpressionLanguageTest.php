@@ -33,7 +33,7 @@ final class ExpressionLanguageTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    public function expressionContainsVarProvider(): iterable
+    public static function expressionContainsVarProvider(): iterable
     {
         yield ["@=test('default', 15.6, validator)", true];
         yield ["@=validator('default', 15.6)", false];
@@ -46,7 +46,7 @@ final class ExpressionLanguageTest extends TestCase
         yield ['toto . test && validator', true];
     }
 
-    public function extractExpressionVarNamesProvider(): iterable
+    public static function extractExpressionVarNamesProvider(): iterable
     {
         yield ['@=a + b - c', ['a', 'b', 'c']];
         yield ['f()', []];

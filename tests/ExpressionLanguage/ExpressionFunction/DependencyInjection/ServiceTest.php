@@ -42,7 +42,7 @@ final class ServiceTest extends TestCase
         );
     }
 
-    public function getNames(): array
+    public static function getNames(): array
     {
         return [
             ['service'],

@@ -367,7 +367,7 @@ final class ArgumentsTransformerTest extends TestCase
         }
     }
 
-    public function getWrappedInputObject(): Generator
+    public static function getWrappedInputObject(): Generator
     {
         $inputObject = new InputObjectType([
             'name' => 'InputType1',
@@ -403,7 +403,7 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($inputValue->field3, $data['field3']);
     }
 
-    public function getWrappedInputObjectList(): Generator
+    public static function getWrappedInputObjectList(): Generator
     {
         $inputObject = new InputObjectType([
             'name' => 'InputType1',

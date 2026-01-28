@@ -45,7 +45,7 @@ final class ParameterTest extends TestCase
         );
     }
 
-    public function getNames(): array
+    public static function getNames(): array
     {
         return [
             ['param'],

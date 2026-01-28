@@ -50,7 +50,7 @@ final class MutationFieldDefinitionTest extends TestCase
         $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
     }
 
-    public function validConfigurationProvider(): array
+    public static function validConfigurationProvider(): array
     {
         return [
             'types not string return null' => [[
@@ -82,7 +82,7 @@ final class MutationFieldDefinitionTest extends TestCase
         ];
     }
 
-    public function undefinedMutateAndGetPayloadProvider(): array
+    public static function undefinedMutateAndGetPayloadProvider(): array
     {
         return [
             [[]],

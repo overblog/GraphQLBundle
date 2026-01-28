@@ -39,7 +39,7 @@ final class ResolverMapsTest extends TestCase
         new ResolverMaps($resolverMaps);
     }
 
-    public function invalidResolverMapDataProvider(): array
+    public static function invalidResolverMapDataProvider(): array
     {
         return [
             [[null], 'NULL'],

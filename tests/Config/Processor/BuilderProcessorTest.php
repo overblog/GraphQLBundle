@@ -40,7 +40,7 @@ final class BuilderProcessorTest extends TestCase
         BuilderProcessor::process($config);
     }
 
-    public function apiAbuseProvider(): array
+    public static function apiAbuseProvider(): array
     {
         return [
             ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, 'Fake\Foo', InvalidArgumentException::class, 'Field builder class "Fake\Foo" not found.'],
@@ -51,7 +51,7 @@ final class BuilderProcessorTest extends TestCase
         ];
     }
 
-    public function processApiAbuseProvider(): array
+    public static function processApiAbuseProvider(): array
     {
         return [
             [

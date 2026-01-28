@@ -29,7 +29,7 @@ final class GraphQLUploadTypeTest extends TestCase
         (new GraphQLUploadType('Upload'))->parseValue($invalidValue);
     }
 
-    public function invalidValueProvider(): Generator
+    public static function invalidValueProvider(): Generator
     {
         yield ['str', 'string'];
         yield [1, 'integer'];

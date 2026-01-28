@@ -69,7 +69,7 @@ final class DebugCommandTest extends TestCase
         ]);
     }
 
-    public function categoryDataProvider(): array
+    public static function categoryDataProvider(): array
     {
         return [
             [[]],

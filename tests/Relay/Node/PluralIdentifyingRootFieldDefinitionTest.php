@@ -90,7 +90,7 @@ final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
         $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
-    public function validConfigProvider(): array
+    public static function validConfigProvider(): array
     {
         return [
             ['@=user.username', 'user.username'],

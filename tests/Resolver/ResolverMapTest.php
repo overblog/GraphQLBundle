@@ -37,7 +37,7 @@ final class ResolverMapTest extends TestCase
 
     public function testCoveredWithTypeNameNull(): void
     {
-        $map = $this->map();
+        $map = self::getMap();
         $resolverMap = $this->createResolverMapMock($map);
         $covered = $resolverMap->covered();
         $this->assertSame(array_keys($map), $covered);
@@ -73,7 +73,7 @@ final class ResolverMapTest extends TestCase
         $resolverMap->resolve('Foo', 'bar');
     }
 
-    public function invalidMapDataProvider(): array
+    public static function invalidMapDataProvider(): array
     {
         return [
             [null, 'NULL'],
@@ -84,9 +84,9 @@ final class ResolverMapTest extends TestCase
         ];
     }
 
-    public function validMapDataProvider(): array
+    public static function validMapDataProvider(): array
     {
-        $arrayMap = $this->map();
+        $arrayMap = self::getMap();
         $objectMap = new ArrayObject($arrayMap);
 
         $validMap = [];
@@ -118,7 +118,7 @@ final class ResolverMapTest extends TestCase
         return $resolverMap;
     }
 
-    private function map(): array
+    private static function getMap(): array
     {
         return [
             'Query' => [

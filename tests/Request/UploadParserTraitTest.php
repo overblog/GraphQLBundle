@@ -66,7 +66,7 @@ final class UploadParserTraitTest extends TestCase
         $this->assertTrue($this->isUploadPayload(['operations' => [], 'map' => []]));
     }
 
-    public function payloadProvider(): Generator
+    public static function payloadProvider(): Generator
     {
         $files = ['0' => new stdClass()];
         yield [
@@ -100,7 +100,7 @@ final class UploadParserTraitTest extends TestCase
         ];
     }
 
-    public function locationsProvider(): Generator
+    public static function locationsProvider(): Generator
     {
         yield ['variables.file', '[variables][file]'];
         yield ['variables.files.0', '[variables][files][0]'];

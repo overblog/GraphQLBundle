@@ -92,6 +92,11 @@ final class GetUserTest extends TestCase
      */
     public function testGetUser($user, $expectedUser): void
     {
+        if (is_callable($user)) {
+            $user = $user($this);
+            $expectedUser = $user;
+        }
+
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
 
@@ -114,12 +119,10 @@ final class GetUserTest extends TestCase
         $this->assertSame($expectedUser, eval($this->getCompileCode()));
     }
 
-    public function getUserProvider(): array
+    public static function getUserProvider(): array
     {
-        $user = $this->getMockBuilder(UserInterface::class)->getMock();
-
         return [
-            [$user, $user],
+            [fn(TestCase $test) => $test->getMockBuilder(UserInterface::class)->getMock(), null],
             [null, null],
         ];
     }

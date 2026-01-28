@@ -423,7 +423,7 @@ final class ConfigParserPassTest extends TestCase
         );
     }
 
-    public function internalConfigKeys(): array
+    public static function internalConfigKeys(): array
     {
         return [
             ['_object_config'],
@@ -451,7 +451,7 @@ final class ConfigParserPassTest extends TestCase
         ];
     }
 
-    public function fieldBuilderTypeOverrideNotAllowedProvider(): array
+    public static function fieldBuilderTypeOverrideNotAllowedProvider(): array
     {
         $expectedMessage = 'Type "%s" emitted by builder "%s" already exists. Type was provided by "%s". Builder may only emit new types. Overriding is not allowed.';
 

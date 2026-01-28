@@ -24,7 +24,7 @@ final class Base64UrlSafeEncoderTest extends TestCase
         $this->assertSame($value, Base64Encoder::decodeUrlSafe($encodedValue));
     }
 
-    public function urlSafeValuesDataProvider(): Generator
+    public static function urlSafeValuesDataProvider(): Generator
     {
         yield [
             '000000',

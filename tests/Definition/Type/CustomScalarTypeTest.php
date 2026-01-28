@@ -62,7 +62,7 @@ final class CustomScalarTypeTest extends TestCase
         $type->assertValid();
     }
 
-    public function invalidScalarTypeProvider(): Generator
+    public static function invalidScalarTypeProvider(): Generator
     {
         yield [false, 'false'];
         yield [new stdClass(), 'instance of stdClass'];

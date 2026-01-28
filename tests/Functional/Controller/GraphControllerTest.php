@@ -76,7 +76,7 @@ final class GraphControllerTest extends TestCase
         $this->assertCORSHeadersExists($client);
     }
 
-    public function graphQLEndpointUriProvider(): array
+    public static function graphQLEndpointUriProvider(): array
     {
         return [
             ['/'],
@@ -233,7 +233,7 @@ final class GraphControllerTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function graphQLBatchEndpointUriProvider(): array
+    public static function graphQLBatchEndpointUriProvider(): array
     {
         return [
             ['/batch'],

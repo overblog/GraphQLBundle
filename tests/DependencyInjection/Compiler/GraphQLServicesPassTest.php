@@ -39,7 +39,7 @@ final class GraphQLServicesPassTest extends TestCase
         (new GraphQLServicesPass())->process($container);
     }
 
-    public function invalidAliasProvider(): array
+    public static function invalidAliasProvider(): array
     {
         return [
             [null],

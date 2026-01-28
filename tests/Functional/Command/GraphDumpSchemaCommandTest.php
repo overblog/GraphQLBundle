@@ -124,7 +124,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
         ]);
     }
 
-    public function formatDataProvider(): array
+    public static function formatDataProvider(): array
     {
         return [
             ['json', false],

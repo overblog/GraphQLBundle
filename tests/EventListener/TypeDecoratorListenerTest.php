@@ -271,7 +271,7 @@ final class TypeDecoratorListenerTest extends TestCase
         );
     }
 
-    public function specialTypeFieldProvider(): array
+    public static function specialTypeFieldProvider(): array
     {
         $objectWithResolveField = new ObjectType(['name' => 'Bar', 'fields' => [], 'resolveField' => fn () => '']);
 

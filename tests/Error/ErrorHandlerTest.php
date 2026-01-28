@@ -258,7 +258,7 @@ final class ErrorHandlerTest extends TestCase
     /**
      * @return array
      */
-    public function parentExceptionMappingDataProvider()
+    public static function parentExceptionMappingDataProvider()
     {
         return [
             'without $mapExceptionsToParent and only the exact class, maps to exact class' => [

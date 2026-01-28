@@ -50,7 +50,7 @@ final class TypeGeneratorTest extends TestCase
         (new TypeGenerator([], $typeBuilder, $eventDispatcher, $options))->compile(TypeGenerator::MODE_DRY_RUN);
     }
 
-    public function getPermissionsProvider(): Generator
+    public static function getPermissionsProvider(): Generator
     {
         // default permission when using default cache dir
         yield [0777, null, null];

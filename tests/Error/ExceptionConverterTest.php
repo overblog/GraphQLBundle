@@ -34,7 +34,7 @@ final class ExceptionConverterTest extends TestCase
         );
     }
 
-    public function convertExceptionDataProvider(): Generator
+    public static function convertExceptionDataProvider(): Generator
     {
         yield [
             [],

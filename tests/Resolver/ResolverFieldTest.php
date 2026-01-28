@@ -24,7 +24,7 @@ final class ResolverFieldTest extends TestCase
         $this->assertSame($expected, (new FieldResolver())($source, [], [], $info));
     }
 
-    public function resolverProvider(): array
+    public static function resolverProvider(): array
     {
         $object = new Toto();
 

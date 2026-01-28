@@ -33,7 +33,7 @@ final class Base64UrlSafeCursorEncoderTest extends TestCase
         $this->assertSame($decodedValue, $this->encoder->decode($value));
     }
 
-    public function valuesDataProvider(): Generator
+    public static function valuesDataProvider(): Generator
     {
         yield [
             '000000',

@@ -46,7 +46,7 @@ final class ConnectionBuilderFromPromisedTest extends TestAbstractConnectionBuil
         call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
     }
 
-    public function invalidPromiseDataProvider(): array
+    public static function invalidPromiseDataProvider(): array
     {
         return [
             [new stdClass()],
