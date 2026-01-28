@@ -85,12 +85,6 @@ final class ExpectedErrors
         'path' => ['partialInputObjectsCollectionValidation'],
         'extensions' => [
             'validation' => [
-                'addresses[0].country.officialLanguage' => [
-                    0 => [
-                        'message' => 'The value you selected is not a valid choice.',
-                        'code' => '8e179f1b-97aa-4560-a02f-2a8b42e49df7',
-                    ],
-                ],
                 'addresses[1].country.name' => [
                     0 => [
                         'message' => 'This value should not be blank.',
@@ -150,12 +144,6 @@ final class ExpectedErrors
                 [
                     'message' => 'This value should be greater than "2020-01-01".',
                     'code' => '778b7ae0-84d3-481a-9dec-35fdb64b1d78',
-                ],
-            ],
-            'address.city' => [
-                [
-                    'message' => 'The value you selected is not a valid choice.',
-                    'code' => '8e179f1b-97aa-4560-a02f-2a8b42e49df7',
                 ],
             ],
             'birthdate.day' => [

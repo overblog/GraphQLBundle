@@ -33,6 +33,7 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use ReflectionClass;
+use Composer\InstalledVersions;
 
 use function array_map;
 use function class_exists;
@@ -639,7 +640,10 @@ final class TypeBuilder
                 $reflectionClass = new ReflectionClass($fqcn);
                 $constructor = $reflectionClass->getConstructor();
 
+                $validatorVersion = InstalledVersions::getVersion('symfony/validator');
+
                 $inlineParameters = false;
+                // if (null !== $constructor && version_compare($validatorVersion, '7.4', '>=')) {
                 if (null !== $constructor) {
                     $parameterNames = [];
                     $parameters = $constructor->getParameters();

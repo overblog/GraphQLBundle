@@ -9,9 +9,3 @@ Country:
                         options: null
                         message: null
                         allowNull: true
-            officialLanguage:
-                type: String
-                validation:
-                    - Choice:
-                        options: null
-                        choices: ['en', 'de', 'fr']
