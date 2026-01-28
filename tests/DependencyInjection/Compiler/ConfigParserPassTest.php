@@ -17,6 +17,7 @@ use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -78,6 +79,7 @@ final class ConfigParserPassTest extends TestCase
 
     #[DataProvider('fieldBuilderTypeOverrideNotAllowedProvider')]
     #[RunInSeparateProcess]
+    #[Group('separateProcess')]
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -95,6 +97,7 @@ final class ConfigParserPassTest extends TestCase
     }
 
     #[RunInSeparateProcess]
+    #[Group('separateProcess')]
     public function testCustomExceptions(): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -127,6 +130,7 @@ final class ConfigParserPassTest extends TestCase
     }
 
     #[RunInSeparateProcess]
+    #[Group('separateProcess')]
     public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();
