@@ -590,3 +590,22 @@ parameters:
 			count: 1
 			path: tests/Relay/Connection/Output/DeprecatedPropertyPublicAccessTraitTest.php
 
+		-
+			message: "#^Call to function method_exists\\(\\) with '.*AnnotationRegistry' and 'registerLoader' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Config/Parser/AnnotationParser.php
+
+		-
+			message: "#^Call to an undefined static method Doctrine\\\\Common\\\\Annotations\\\\AnnotationRegistry\\:\\:registerLoader\\(\\)\\.$#"
+			count: 1
+			path: src/Config/Parser/AnnotationParser.php
+
+		-
+			message: "#^Method Overblog\\\\GraphQLBundle\\\\Config\\\\Parser\\\\MetadataParser\\\\TypeGuesser\\\\DoctrineTypeGuesser\\:\\:getAnnotation\\(\\) has invalid return type Doctrine\\\\ORM\\\\Mapping\\\\Annotation\\.$#"
+			count: 1
+			path: src/Config/Parser/MetadataParser/TypeGuesser/DoctrineTypeGuesser.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$annotation contains unknown class Doctrine\\\\ORM\\\\Mapping\\\\Annotation\\.$#"
+			count: 1
+			path: src/Config/Parser/MetadataParser/TypeGuesser/DoctrineTypeGuesser.php

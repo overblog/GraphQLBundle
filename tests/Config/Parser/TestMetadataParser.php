@@ -90,7 +90,7 @@ abstract class TestMetadataParser extends TestCase
 
     public static function isDoctrineOrmInstalled(): bool
     {
-        return class_exists(Column::class);
+        return class_exists(Column::class) && class_exists(\Doctrine\ORM\Version::class);
     }
 
     protected function expect(string $name, string $type, array $config = []): void
