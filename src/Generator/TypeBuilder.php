@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Generator;
 
+use Composer\InstalledVersions;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Language\Parser;
 use GraphQL\Type\Definition\InputObjectType;
@@ -33,7 +34,6 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use ReflectionClass;
-use Composer\InstalledVersions;
 
 use function array_map;
 use function class_exists;
