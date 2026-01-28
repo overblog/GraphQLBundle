@@ -17,7 +17,6 @@ use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
