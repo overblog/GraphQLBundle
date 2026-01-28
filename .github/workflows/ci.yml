@@ -36,6 +36,14 @@ jobs:
         coverage: [ 'none' ]
         exclude:
           - php-version: '8.1'
+            symfony-version: '7.0.*'
+          - php-version: '8.1'
+            symfony-version: '7.1.*'
+          - php-version: '8.1'
+            symfony-version: '7.2.*'
+          - php-version: '8.1'
+            symfony-version: '7.3.*'
+          - php-version: '8.1'
             symfony-version: '7.4.*'
           - php-version: '8.1'
             symfony-version: '8.0.*'
