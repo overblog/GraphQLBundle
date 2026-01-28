@@ -39,6 +39,7 @@ jobs:
           - php-version: '8.4'
             symfony-version: '8.0.*'
             dependencies: 'highest'
+            coverage: 'pcov'
           - php-version: '8.2'
             symfony-version: '5.4.*'
             dependencies: 'lowest'
