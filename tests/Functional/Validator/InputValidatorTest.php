@@ -62,7 +62,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::simpleValidation('simpleValidation'), $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::simpleValidation('simpleValidation'), $result['errors'][0]);
         $this->assertNull($result['data']['simpleValidation']);
     }
 
@@ -98,7 +98,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::LINKED_CONSTRAINTS, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::LINKED_CONSTRAINTS, $result['errors'][0]);
         $this->assertNull($result['data']['linkedConstraintsValidation']);
     }
 
@@ -109,6 +109,7 @@ final class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
+                        city: "Berlin",
                         street: "Brettnacher-Str. 14a",
                         zipCode: 10546,
                         period: {
@@ -134,6 +135,7 @@ final class InputValidatorTest extends TestCase
             mutation {
                 collectionValidation(
                     addresses: [{
+                        city: "Moscow",
                         street: "ul. Lazo",
                         zipCode: -15,
                         period: {
@@ -148,7 +150,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::COLLECTION, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::COLLECTION, $result['errors'][0]);
         $this->assertNull($result['data']['collectionValidation']);
     }
 
@@ -166,6 +168,7 @@ final class InputValidatorTest extends TestCase
                     }
                     address: {
                         street: "Washington Street"
+                        city: "New York"
                         zipCode: 10006
                         period: {
                             startDate: "2016-01-01"
@@ -196,6 +199,7 @@ final class InputValidatorTest extends TestCase
                     }
                     address: {
                         street: "ul. Lazo"
+                        city: "Moscow"
                         zipCode: -215
                         period: {
                             startDate: "2020-01-01"
@@ -208,7 +212,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::cascadeWithGroups('cascadeValidationWithGroups'), $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::cascadeWithGroups('cascadeValidationWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
 
@@ -265,7 +269,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::simpleValidation('autoValidationAutoThrow'), $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::simpleValidation('autoValidationAutoThrow'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrow']);
     }
 
@@ -308,6 +312,7 @@ final class InputValidatorTest extends TestCase
                     }
                     address: {
                         street: "Washington Street"
+                        city: "New York"
                         zipCode: 10006
                         period: {
                             startDate: "2016-01-01"
@@ -337,6 +342,7 @@ final class InputValidatorTest extends TestCase
                     }
                     address: {
                         street: "ul. Lazo"
+                        city: "Moscow"
                         zipCode: -215
                         period: {
                             startDate: "2020-01-01"
@@ -349,7 +355,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertEqualsCanonicalizing(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrowWithGroups']);
     }
 
@@ -361,19 +367,23 @@ final class InputValidatorTest extends TestCase
                     addresses: [
                         {
                             street: "Washington Street"
+                            city: "Berlin"
                             zipCode: 10000
                             # Country is present, but the language is invalid
                             country: {
                                 name: "Germany"
+                                officialLanguage: "ru"
                             }
                             # Period is completely missing, skip validation
                         },
                         {
                             street: "Washington Street"
+                            city: "New York"
                             zipCode: 10000
                             # Country is partially present
                             country: {
                                 name: "" # Name should not be blank
+                                         # language is missing
                             }
                             period: {
                                 startDate: "2000-01-01"
@@ -382,6 +392,7 @@ final class InputValidatorTest extends TestCase
                         },
                         {
                             street: "Washington Street"
+                            city: "New York"
                             zipCode: 10000
                             country: {} # Empty input object, skip validation
                             period:  {} # Empty input object, skip validation
@@ -392,7 +403,7 @@ final class InputValidatorTest extends TestCase
         ';
 
         $result = $this->executeGraphQLRequest($query);
-        $this->assertEqualsCanonicalizing(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
+        $this->assertSame(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
         $this->assertNull($result['data']['partialInputObjectsCollectionValidation']);
     }
 }

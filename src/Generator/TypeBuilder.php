@@ -34,6 +34,8 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
 use ReflectionClass;
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Video;
 
 use function array_map;
 use function class_exists;
@@ -83,6 +85,7 @@ final class TypeBuilder
     private string $type;
     private string $currentField;
     private string $gqlServices = '$'.TypeGenerator::GRAPHQL_SERVICES;
+    private bool $isSymfony74Plus;
 
     public function __construct(ExpressionConverter $expressionConverter, string $namespace)
     {
@@ -91,6 +94,8 @@ final class TypeBuilder
 
         // Register additional converter in the php code generator
         Config::registerConverter($expressionConverter, ConverterInterface::TYPE_STRING);
+        $this->isSymfony74Plus = class_exists(Video::class);
+
     }
 
     /**
@@ -640,26 +645,25 @@ final class TypeBuilder
                 $reflectionClass = new ReflectionClass($fqcn);
                 $constructor = $reflectionClass->getConstructor();
 
-                $validatorVersion = InstalledVersions::getVersion('symfony/validator');
+                if ($this->isSymfony74Plus && isset($args[0]) !== false && $fqcn === Choice::class) {
+                    // Handle Choice constraint in Symfony 7.4+
+                    $args = ['choices'=>$args];
+                }
 
-                $inlineParameters = false;
-                // if (null !== $constructor && version_compare($validatorVersion, '7.4', '>=')) {
-                if (null !== $constructor) {
-                    $parameterNames = [];
+                /*
+                 * In Symfony 7.4+, we should not pass an array, but split up parameters in different arguments.
+                 */
+                $inlineParameters = $this->isSymfony74Plus && isset($args[0]) === false;
+                if (null !== $constructor && $inlineParameters === true) {
                     $parameters = $constructor->getParameters();
                     foreach ($parameters as $parameter) {
                         $name = $parameter->getName();
-                        $parameterNames[] = $name;
-                    }
-
-                    $checkedPosition = 0;
-                    foreach ($args as $key => $value) {
-                        if (
-                            true === isset($parameterNames[$checkedPosition])
-                            && $parameterNames[$checkedPosition++] === $key
-                        ) {
-                            $instance->addArgument($value);
-                            $inlineParameters = true;
+                        if (isset($args[$name])) {
+                            $instance->addArgument($args[$name]);
+                        } elseif ($parameter->isDefaultValueAvailable()) {
+                            $instance->addArgument($parameter->getDefaultValue());
+                        } else {
+                            throw new GeneratorException("Constraint '$fqcn' requires argument '$name'.");
                         }
                     }
                 }
