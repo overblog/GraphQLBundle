@@ -10,12 +10,14 @@ use Overblog\GraphQLBundle\DependencyInjection\Compiler\ConfigParserPass;
 use Overblog\GraphQLBundle\DependencyInjection\OverblogGraphQLExtension;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserWarning;
-use Overblog\GraphQLBundle\Tests\Config\Parser\MetadataParserTest;
+use Overblog\GraphQLBundle\Tests\Config\Parser\TestMetadataParser;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\BoxFields;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\MutationField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\PagerArgs;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\RawIdField;
 use Overblog\GraphQLBundle\Tests\DependencyInjection\Builder\TimestampFields;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -54,7 +56,7 @@ final class ConfigParserPassTest extends TestCase
 
     public function testPreparseOnPrepend(): void
     {
-        if (!MetadataParserTest::isDoctrineAnnotationInstalled()) {
+        if (!TestMetadataParser::isDoctrineAnnotationInstalled()) {
             $this->markTestSkipped('doctrine/annotations not installed. Skipping test.');
         }
         $this->expectException(InvalidConfigurationException::class);
@@ -62,9 +64,7 @@ final class ConfigParserPassTest extends TestCase
         $this->processCompilerPass($this->getMappingConfig('annotation'));
     }
 
-    /**
-     * @dataProvider internalConfigKeys
-     */
+    #[DataProvider('internalConfigKeys')]
     public function testInternalConfigKeysShouldNotBeUsed(string $internalConfigKey): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -76,11 +76,8 @@ final class ConfigParserPassTest extends TestCase
         $this->compilerPass->processConfiguration($configs);
     }
 
-    /**
-     * @dataProvider fieldBuilderTypeOverrideNotAllowedProvider
-     *
-     * @runInSeparateProcess
-     */
+    #[DataProvider('fieldBuilderTypeOverrideNotAllowedProvider')]
+    #[RunInSeparateProcess]
     public function testFieldBuilderTypeOverrideNotAllowed(array $builders, array $configs, string $exceptionClass, string $exceptionMessage): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -97,9 +94,7 @@ final class ConfigParserPassTest extends TestCase
         $this->compilerPass->processConfiguration([$configs]);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCustomExceptions(): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -131,9 +126,7 @@ final class ConfigParserPassTest extends TestCase
         $this->assertSame($expectedExceptionMap, $definition->getArgument(0));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCustomBuilders(): void
     {
         $ext = new OverblogGraphQLExtension();
@@ -430,7 +423,7 @@ final class ConfigParserPassTest extends TestCase
         );
     }
 
-    public function internalConfigKeys(): array
+    public static function internalConfigKeys(): array
     {
         return [
             ['_object_config'],
@@ -458,7 +451,7 @@ final class ConfigParserPassTest extends TestCase
         ];
     }
 
-    public function fieldBuilderTypeOverrideNotAllowedProvider(): array
+    public static function fieldBuilderTypeOverrideNotAllowedProvider(): array
     {
         $expectedMessage = 'Type "%s" emitted by builder "%s" already exists. Type was provided by "%s". Builder may only emit new types. Overriding is not allowed.';
 

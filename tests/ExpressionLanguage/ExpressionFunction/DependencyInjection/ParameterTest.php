@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage\ExpressionFunction\Dep
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\DependencyInjection\Parameter;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ParameterTest extends TestCase
 {
@@ -20,9 +21,8 @@ final class ParameterTest extends TestCase
 
     /**
      * @param string $name
-     *
-     * @dataProvider getNames
      */
+    #[DataProvider('getNames')]
     public function testParameterCompilation($name): void
     {
         ${TypeGenerator::GRAPHQL_SERVICES} = $this->createGraphQLServices(
@@ -34,9 +34,8 @@ final class ParameterTest extends TestCase
 
     /**
      * @param string $name
-     *
-     * @dataProvider getNames
      */
+    #[DataProvider('getNames')]
     public function testParameterEvaluation($name): void
     {
         $services = $this->createGraphQLServices(['container' => $this->getDIContainerMock([], ['test' => 5])]);
@@ -46,7 +45,7 @@ final class ParameterTest extends TestCase
         );
     }
 
-    public function getNames(): array
+    public static function getNames(): array
     {
         return [
             ['param'],

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\ExpressionLanguage;
 
 use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 final class ExpressionLanguageTest extends TestCase
 {
     /**
-     * @dataProvider expressionContainsVarProvider
-     *
      * @param Expression|string $expression
      */
+    #[DataProvider('expressionContainsVarProvider')]
     public function testExpressionContainsVar($expression, bool $expectedResult): void
     {
         $result = ExpressionLanguage::expressionContainsVar('validator', $expression);
@@ -23,10 +23,9 @@ final class ExpressionLanguageTest extends TestCase
     }
 
     /**
-     * @dataProvider extractExpressionVarNamesProvider
-     *
      * @param Expression|string $expression
      */
+    #[DataProvider('extractExpressionVarNamesProvider')]
     public function testExtractExpressionVarNames($expression, array $expectedResult): void
     {
         $result = ExpressionLanguage::extractExpressionVarNames($expression);
@@ -34,7 +33,7 @@ final class ExpressionLanguageTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    public function expressionContainsVarProvider(): iterable
+    public static function expressionContainsVarProvider(): iterable
     {
         yield ["@=test('default', 15.6, validator)", true];
         yield ["@=validator('default', 15.6)", false];
@@ -47,7 +46,7 @@ final class ExpressionLanguageTest extends TestCase
         yield ['toto . test && validator', true];
     }
 
-    public function extractExpressionVarNamesProvider(): iterable
+    public static function extractExpressionVarNamesProvider(): iterable
     {
         yield ['@=a + b - c', ['a', 'b', 'c']];
         yield ['f()', []];

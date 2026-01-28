@@ -14,9 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 use function sprintf;
 
-/**
- * @requires PHP 8.1
- */
 final class PhpEnumTypeTest extends TestCase
 {
     public function testInvalidEnumClass(): void

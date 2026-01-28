@@ -16,7 +16,7 @@ use function array_values;
 use function count;
 use function end;
 
-abstract class AbstractConnectionBuilderTest extends TestCase
+abstract class TestAbstractConnectionBuilder extends TestCase
 {
     protected array $letters = ['A', 'B', 'C', 'D', 'E'];
 
@@ -59,9 +59,12 @@ abstract class AbstractConnectionBuilderTest extends TestCase
         }
 
         // assert edges
+        /** @phpstan-ignore-next-line  */
         $this->assertCount(count($expectedConnection->getEdges()), $actualConnection->getEdges());
         foreach ($expectedConnection->getEdges() as $i => $expectedEdge) {
+            /** @phpstan-ignore-next-line  */
             $this->assertSame($expectedEdge->getNode(), $actualConnection->getEdges()[$i]->getNode());
+            /** @phpstan-ignore-next-line  */
             $this->assertSame($expectedEdge->getCursor(), $actualConnection->getEdges()[$i]->getCursor());
         }
     }

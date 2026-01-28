@@ -109,12 +109,12 @@ abstract class TestCase extends BaseTestCase
         if (Kernel::VERSION_ID >= 60200) {
             return $this->getMockBuilder(BundleSecurity::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['isGranted'])
+                ->onlyMethods(['isGranted'])
                 ->getMock();
         } else {
             return $this->getMockBuilder(CoreSecurity::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['isGranted'])
+                ->onlyMethods(['isGranted'])
                 ->getMock();
         }
     }

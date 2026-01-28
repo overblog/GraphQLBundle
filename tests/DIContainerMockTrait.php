@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace Overblog\GraphQLBundle\Tests;
 
-use PHPUnit_Framework_MockObject_MockBuilder;
 use Symfony\Component\DependencyInjection\Container;
 
-/**
- * Class DIContainerMockTrait.
- *
- * @method PHPUnit_Framework_MockObject_MockBuilder getMockBuilder (string $className)
- */
 trait DIContainerMockTrait
 {
     /**
@@ -20,7 +14,7 @@ trait DIContainerMockTrait
     protected function getDIContainerMock(array $services = [], array $parameters = [])
     {
         $container = $this->getMockBuilder(Container::class)
-            ->setMethods(['get', 'getParameter', 'has'])
+            ->onlyMethods(['get', 'getParameter', 'has'])
             ->getMock();
 
         $getMethod = $container->expects($this->any())->method('get');

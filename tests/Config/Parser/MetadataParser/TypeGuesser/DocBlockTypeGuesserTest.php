@@ -8,6 +8,7 @@ use Exception;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\ClassesTypesMap;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\DocBlockTypeGuesser;
 use Overblog\GraphQLBundle\Config\Parser\MetadataParser\TypeGuesser\TypeGuessingException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -16,14 +17,12 @@ use function sprintf;
 
 final class DocBlockTypeGuesserTest extends TestCase
 {
-    protected array $reflectors = [
+    private static array $reflectors_static = [
         ReflectionProperty::class => 'var',
         ReflectionMethod::class => 'return',
     ];
 
-    /**
-     * @dataProvider guessSuccessDataProvider
-     */
+    #[DataProvider('guessSuccessDataProvider')]
     public function testGuessSuccess(string $docType, string $gqlType, ?ClassesTypesMap $map, ?string $reflectorClass): void
     {
         $docBlockGuesser = new DocBlockTypeGuesser($map ?: new ClassesTypesMap());
@@ -36,9 +35,9 @@ final class DocBlockTypeGuesserTest extends TestCase
         );
     }
 
-    public function guessSuccessDataProvider(): iterable
+    public static function guessSuccessDataProvider(): iterable
     {
-        foreach ($this->reflectors as $reflectorClass => $tag) {
+        foreach (self::$reflectors_static as $reflectorClass => $tag) {
             yield ['string', 'String!', null, $reflectorClass];
             yield ['?string', 'String', null, $reflectorClass];
             yield ['string|null', 'String', null, $reflectorClass];
@@ -64,9 +63,7 @@ final class DocBlockTypeGuesserTest extends TestCase
         yield ['ClassesTypesMap|null', 'Foo', $map, null];
     }
 
-    /**
-     * @dataProvider guessErrorDataProvider
-     */
+    #[DataProvider('guessErrorDataProvider')]
     public function testGuessError(string $docType, string $reflectorClass, string $match, bool $canParsingFailed = false): void
     {
         $docBlockGuesser = new DocBlockTypeGuesser(new ClassesTypesMap());
@@ -86,9 +83,9 @@ final class DocBlockTypeGuesserTest extends TestCase
         }
     }
 
-    public function guessErrorDataProvider(): iterable
+    public static function guessErrorDataProvider(): iterable
     {
-        foreach ($this->reflectors as $reflectorClass => $tag) {
+        foreach (self::$reflectors_static as $reflectorClass => $tag) {
             yield ['int|float', $reflectorClass, 'Tag @'.$tag.' found, but composite types are only allowed with null'];
             yield ['array<int|float>', $reflectorClass, 'Tag @'.$tag.' found, but composite types in array or iterable are only allowed with null'];
             yield ['UnknownClass', $reflectorClass, 'Tag @'.$tag.' found, but target object "Overblog\GraphQLBundle\Tests\Config\Parser\UnknownClass" is not a GraphQL Type class'];
@@ -122,7 +119,7 @@ final class DocBlockTypeGuesserTest extends TestCase
         // @phpstan-ignore-next-line
         $mock = $this->createMock($className);
         $mock->method('getDocComment')
-             ->willReturn(sprintf('/** @%s %s **/', $this->reflectors[$className], $type));
+             ->willReturn(sprintf('/** @%s %s **/', self::$reflectors_static[$className], $type));
 
         /** @var ReflectionProperty|ReflectionMethod $mock */
         return $mock;

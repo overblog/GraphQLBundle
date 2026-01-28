@@ -8,6 +8,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionFunction\Security\GetUse
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Security\Security;
 use Overblog\GraphQLBundle\Tests\ExpressionLanguage\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\SecurityBundle\Security as BundleSecurity;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -85,13 +86,17 @@ final class GetUserTest extends TestCase
     }
 
     /**
-     * @dataProvider getUserProvider
-     *
      * @param mixed $user
      * @param mixed $expectedUser
      */
+    #[DataProvider('getUserProvider')]
     public function testGetUser($user, $expectedUser): void
     {
+        if (is_callable($user)) {
+            $user = $user($this);
+            $expectedUser = $user;
+        }
+
         $tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
         $token = $this->getMockBuilder(TokenInterface::class)->getMock();
 
@@ -114,12 +119,10 @@ final class GetUserTest extends TestCase
         $this->assertSame($expectedUser, eval($this->getCompileCode()));
     }
 
-    public function getUserProvider(): array
+    public static function getUserProvider(): array
     {
-        $user = $this->getMockBuilder(UserInterface::class)->getMock();
-
         return [
-            [$user, $user],
+            [fn (TestCase $test) => $test->getMockBuilder(UserInterface::class)->getMock(), null],
             [null, null],
         ];
     }

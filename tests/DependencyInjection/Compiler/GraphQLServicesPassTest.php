@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\DependencyInjection\Compiler;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\DependencyInjection\Compiler\GraphQLServicesPass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -15,9 +16,8 @@ final class GraphQLServicesPassTest extends TestCase
 {
     /**
      * @param mixed $invalidAlias
-     *
-     * @dataProvider invalidAliasProvider
      */
+    #[DataProvider('invalidAliasProvider')]
     public function testInvalidAlias($invalidAlias): void
     {
         /** @var ContainerBuilder|MockObject $container */
@@ -39,7 +39,7 @@ final class GraphQLServicesPassTest extends TestCase
         (new GraphQLServicesPass())->process($container);
     }
 
-    public function invalidAliasProvider(): array
+    public static function invalidAliasProvider(): array
     {
         return [
             [null],

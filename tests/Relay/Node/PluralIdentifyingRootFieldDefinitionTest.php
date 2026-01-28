@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Node\PluralIdentifyingRootFieldDefinition;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
@@ -69,9 +70,8 @@ final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
 
     /**
      * @param mixed $resolveSingleInput
-     *
-     * @dataProvider validConfigProvider
      */
+    #[DataProvider('validConfigProvider')]
     public function testValidConfig($resolveSingleInput, string $expectedResolveSingleInputCallbackArg): void
     {
         $config = [
@@ -90,7 +90,7 @@ final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
         $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
-    public function validConfigProvider(): array
+    public static function validConfigProvider(): array
     {
         return [
             ['@=user.username', 'user.username'],

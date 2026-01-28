@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Mutation;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Mutation\MutationFieldDefinition;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class MutationFieldDefinitionTest extends TestCase
@@ -18,9 +19,7 @@ final class MutationFieldDefinitionTest extends TestCase
         $this->definition = new MutationFieldDefinition();
     }
 
-    /**
-     * @dataProvider validConfigurationProvider
-     */
+    #[DataProvider('validConfigurationProvider')]
     public function testToMappingDefinition(array $config, array $expectedMapping): void
     {
         self::assertEquals(
@@ -29,9 +28,7 @@ final class MutationFieldDefinitionTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider undefinedMutateAndGetPayloadProvider
-     */
+    #[DataProvider('undefinedMutateAndGetPayloadProvider')]
     public function testUndefinedMutateAndGetPayloadConfig(array $config): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -53,7 +50,7 @@ final class MutationFieldDefinitionTest extends TestCase
         $this->definition->toMappingDefinition(['mutateAndGetPayload' => 123]);
     }
 
-    public function validConfigurationProvider(): array
+    public static function validConfigurationProvider(): array
     {
         return [
             'types not string return null' => [[
@@ -85,7 +82,7 @@ final class MutationFieldDefinitionTest extends TestCase
         ];
     }
 
-    public function undefinedMutateAndGetPayloadProvider(): array
+    public static function undefinedMutateAndGetPayloadProvider(): array
     {
         return [
             [[]],

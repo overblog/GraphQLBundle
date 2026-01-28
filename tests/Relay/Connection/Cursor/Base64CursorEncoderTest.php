@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Connection\Cursor;
 
 use Generator;
 use Overblog\GraphQLBundle\Relay\Connection\Cursor\Base64CursorEncoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class Base64CursorEncoderTest extends TestCase
@@ -20,23 +21,19 @@ final class Base64CursorEncoderTest extends TestCase
         $this->encoder = new Base64CursorEncoder();
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testEncode(string $decodedValue, string $value): void
     {
         $this->assertSame($value, $this->encoder->encode($decodedValue));
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testDecode(string $decodedValue, string $value): void
     {
         $this->assertSame($decodedValue, $this->encoder->decode($value));
     }
 
-    public function valuesDataProvider(): Generator
+    public static function valuesDataProvider(): Generator
     {
         yield [
             '000000',

@@ -303,7 +303,7 @@ final class PaginatorTest extends TestCase
     {
         $promise = $this->getMockBuilder(Promise::class)
             ->disableOriginalConstructor()
-            ->setMethods(['then'])
+            ->onlyMethods(['then'])
             ->getMock();
 
         $promise

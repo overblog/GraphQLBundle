@@ -19,7 +19,7 @@ use function func_get_args;
  *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/connection/__tests__/arrayconnection.js
  */
-final class ConnectionBuilderTest extends AbstractConnectionBuilderTest
+final class ConnectionBuilderTest extends TestAbstractConnectionBuilder
 {
     public function testBasicSlicing(): void
     {

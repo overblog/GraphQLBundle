@@ -8,6 +8,7 @@ use Exception;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionBuilder;
 use Overblog\GraphQLBundle\Relay\Connection\ConnectionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use React\Promise\ExtendedPromiseInterface;
 use React\Promise\FulfilledPromise;
 use React\Promise\Promise;
@@ -18,7 +19,7 @@ use function call_user_func;
 use function func_get_args;
 use function React\Promise\resolve;
 
-final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderTest
+final class ConnectionBuilderFromPromisedTest extends TestAbstractConnectionBuilder
 {
     public function testReturnsAllElementsWithoutFilters(): void
     {
@@ -36,9 +37,8 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *
-     * @dataProvider invalidPromiseDataProvider
      */
+    #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromise($invalidPromise): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -46,7 +46,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
         call_user_func([static::getBuilder(), 'connectionFromPromisedArray'], $invalidPromise, []);
     }
 
-    public function invalidPromiseDataProvider(): array
+    public static function invalidPromiseDataProvider(): array
     {
         return [
             [new stdClass()],
@@ -74,9 +74,8 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *
-     * @dataProvider invalidPromiseDataProvider
      */
+    #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {
         $this->expectException(InvalidArgumentException::class);

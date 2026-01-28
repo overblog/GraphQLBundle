@@ -17,6 +17,7 @@ use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
 use Overblog\GraphQLBundle\Transformer\ArgumentsTransformer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -366,7 +367,7 @@ final class ArgumentsTransformerTest extends TestCase
         }
     }
 
-    public function getWrappedInputObject(): Generator
+    public static function getWrappedInputObject(): Generator
     {
         $inputObject = new InputObjectType([
             'name' => 'InputType1',
@@ -380,7 +381,7 @@ final class ArgumentsTransformerTest extends TestCase
         yield [new NonNull($inputObject), false];
     }
 
-    /** @dataProvider getWrappedInputObject */
+    #[DataProvider('getWrappedInputObject')]
     public function testInputObjectWithWrappingType(Type $type): void
     {
         $transformer = $this->getTransformer(
@@ -402,7 +403,7 @@ final class ArgumentsTransformerTest extends TestCase
         $this->assertEquals($inputValue->field3, $data['field3']);
     }
 
-    public function getWrappedInputObjectList(): Generator
+    public static function getWrappedInputObjectList(): Generator
     {
         $inputObject = new InputObjectType([
             'name' => 'InputType1',
@@ -418,7 +419,7 @@ final class ArgumentsTransformerTest extends TestCase
         yield [new NonNull(new ListOfType(new NonNull($inputObject)))];
     }
 
-    /** @dataProvider getWrappedInputObjectList */
+    #[DataProvider('getWrappedInputObjectList')]
     public function testInputObjectWithWrappingTypeList(Type $type): void
     {
         $transformer = $this->getTransformer(

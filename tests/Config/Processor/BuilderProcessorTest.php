@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Config\Processor;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Config\Processor\BuilderProcessor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -13,14 +14,13 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 final class BuilderProcessorTest extends TestCase
 {
     /**
-     * @dataProvider apiAbuseProvider
-     *
      * @param string $name
      * @param string $type
      * @param string $builderClass
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
+    #[DataProvider('apiAbuseProvider')]
     public function testApiAbuse($name, $type, $builderClass, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass); // @phpstan-ignore-line
@@ -29,11 +29,10 @@ final class BuilderProcessorTest extends TestCase
     }
 
     /**
-     * @dataProvider processApiAbuseProvider
-     *
      * @param string $exceptionClass
      * @param string $exceptionMessage
      */
+    #[DataProvider('processApiAbuseProvider')]
     public function testProcessApiAbuse(array $config, $exceptionClass, $exceptionMessage): void
     {
         $this->expectException($exceptionClass); // @phpstan-ignore-line
@@ -41,7 +40,7 @@ final class BuilderProcessorTest extends TestCase
         BuilderProcessor::process($config);
     }
 
-    public function apiAbuseProvider(): array
+    public static function apiAbuseProvider(): array
     {
         return [
             ['foo', BuilderProcessor::BUILDER_FIELD_TYPE, 'Fake\Foo', InvalidArgumentException::class, 'Field builder class "Fake\Foo" not found.'],
@@ -52,7 +51,7 @@ final class BuilderProcessorTest extends TestCase
         ];
     }
 
-    public function processApiAbuseProvider(): array
+    public static function processApiAbuseProvider(): array
     {
         return [
             [

@@ -18,7 +18,7 @@ final class ExecutorTest extends TestCase
     protected function getMockedExecutor(): RequestExecutor
     {
         /** @var EventDispatcher&MockObject $dispatcher */
-        $dispatcher = $this->getMockBuilder(EventDispatcher::class)->setMethods(['dispatch'])->getMock();
+        $dispatcher = $this->getMockBuilder(EventDispatcher::class)->onlyMethods(['dispatch'])->getMock();
 
         return new RequestExecutor(new Executor(), new ReactPromiseAdapter(), $dispatcher);
     }

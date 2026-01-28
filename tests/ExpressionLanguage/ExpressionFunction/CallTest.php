@@ -31,7 +31,7 @@ final class CallTest extends TestCase
     {
         // Compile
         $this->assertEquals('AA', eval('
-            $class = new '.self::class.'();
+            $class = new '.self::class.'("name");
             return '.$this->expressionLanguage->compile('call(class.method, ["A"])', ['class']).';
          '));
 

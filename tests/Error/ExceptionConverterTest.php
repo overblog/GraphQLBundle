@@ -8,6 +8,7 @@ use Exception;
 use Generator;
 use Overblog\GraphQLBundle\Error\ExceptionConverter;
 use Overblog\GraphQLBundle\Error\UserError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -15,9 +16,8 @@ final class ExceptionConverterTest extends TestCase
 {
     /**
      * @param array<string, string[]> $exceptionMap
-     *
-     * @dataProvider convertExceptionDataProvider
      */
+    #[DataProvider('convertExceptionDataProvider')]
     public function testConvertException(array $exceptionMap, bool $mapExceptionsToParent, Throwable $exception, Throwable $expectedException): void
     {
         $exceptionConverter = new ExceptionConverter($exceptionMap, $mapExceptionsToParent);
@@ -34,7 +34,7 @@ final class ExceptionConverterTest extends TestCase
         );
     }
 
-    public function convertExceptionDataProvider(): Generator
+    public static function convertExceptionDataProvider(): Generator
     {
         yield [
             [],

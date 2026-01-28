@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Config\Parser;
 
 use Overblog\GraphQLBundle\Config\Parser\AnnotationParser;
+use PHPUnit\Framework\Attributes\Group;
 use SplFileInfo;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
-/**
- * @group legacy
- */
-final class AnnotationParserTest extends MetadataParserTest
+#[Group('legacy')]
+final class AnnotationParserTest extends TestMetadataParser
 {
     public function setUp(): void
     {
         parent::setup();
-        if ('testNoDoctrineAnnotations' !== $this->getName()) {
+        if ('testNoDoctrineAnnotations' !== $this->name()) {
             if (!self::isDoctrineAnnotationInstalled()) {
                 $this->markTestSkipped('doctrine/annotations are not installed. Skipping annotation parser tests.');
             }

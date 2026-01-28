@@ -8,6 +8,7 @@ use Composer\InstalledVersions;
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Command\GraphQLDumpSchemaCommand;
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Console\Tester\CommandTester;
 
 use function file_get_contents;
@@ -31,9 +32,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
         $this->cacheDir = static::$kernel->getCacheDir();
     }
 
-    /**
-     * @dataProvider formatDataProvider
-     */
+    #[DataProvider('formatDataProvider')]
     public function testDump(string $format, bool $withFormatOption = true): void
     {
         $expectedFileName = $this->modifyExpectedFileNameForWebonyxPast1530(__DIR__.'/fixtures/schema.'.$format);
@@ -125,7 +124,7 @@ final class GraphDumpSchemaCommandTest extends TestCase
         ]);
     }
 
-    public function formatDataProvider(): array
+    public static function formatDataProvider(): array
     {
         return [
             ['json', false],

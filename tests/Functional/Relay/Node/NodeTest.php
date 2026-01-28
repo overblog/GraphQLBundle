@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Tests\Functional\Relay\Node;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Class NodeTest.
- *
- * @group legacy
- *
  * @see https://github.com/graphql/graphql-relay-js/blob/master/src/node/__tests__/node.js
  */
+#[Group('legacy')]
 final class NodeTest extends TestCase
 {
     protected function setUp(): void

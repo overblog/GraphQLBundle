@@ -6,16 +6,16 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Overblog\GraphQLBundle\Resolver\FieldResolver;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ResolverFieldTest extends TestCase
 {
     /**
-     * @dataProvider resolverProvider
-     *
      * @param mixed            $source
      * @param bool|string|null $expected
      */
+    #[DataProvider('resolverProvider')]
     public function testDefaultFieldResolveFn(string $fieldName, $source, $expected): void
     {
         $info = $this->getMockBuilder(ResolveInfo::class)->disableOriginalConstructor()->getMock();
@@ -24,7 +24,7 @@ final class ResolverFieldTest extends TestCase
         $this->assertSame($expected, (new FieldResolver())($source, [], [], $info));
     }
 
-    public function resolverProvider(): array
+    public static function resolverProvider(): array
     {
         $object = new Toto();
 

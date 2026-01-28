@@ -11,14 +11,13 @@ use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\TypeBuilder;
 use Overblog\GraphQLBundle\Generator\TypeGenerator;
 use Overblog\GraphQLBundle\Generator\TypeGeneratorOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class TypeGeneratorTest extends TestCase
 {
-    /**
-     * @dataProvider getPermissionsProvider
-     */
+    #[DataProvider('getPermissionsProvider')]
     public function testCacheDirPermissions(int $expectedMask, ?string $cacheDir, ?int $cacheDirMask): void
     {
         $typeBuilder = new TypeBuilder(
@@ -51,7 +50,7 @@ final class TypeGeneratorTest extends TestCase
         (new TypeGenerator([], $typeBuilder, $eventDispatcher, $options))->compile(TypeGenerator::MODE_DRY_RUN);
     }
 
-    public function getPermissionsProvider(): Generator
+    public static function getPermissionsProvider(): Generator
     {
         // default permission when using default cache dir
         yield [0777, null, null];

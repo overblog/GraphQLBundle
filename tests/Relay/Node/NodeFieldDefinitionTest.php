@@ -6,6 +6,7 @@ namespace Overblog\GraphQLBundle\Tests\Relay\Node;
 
 use InvalidArgumentException;
 use Overblog\GraphQLBundle\Relay\Node\NodeFieldDefinition;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class NodeFieldDefinitionTest extends TestCase
@@ -31,9 +32,7 @@ final class NodeFieldDefinitionTest extends TestCase
         $this->definition->toMappingDefinition(['idFetcher' => 45]);
     }
 
-    /**
-     * @dataProvider validConfigProvider
-     */
+    #[DataProvider('validConfigProvider')]
     public function testValidConfig(string $idFetcher, string $idFetcherCallbackArg, string $nodeInterfaceType = 'node'): void
     {
         $config = [
@@ -52,7 +51,7 @@ final class NodeFieldDefinitionTest extends TestCase
         $this->assertSame($expected, $this->definition->toMappingDefinition($config));
     }
 
-    public function validConfigProvider(): array
+    public static function validConfigProvider(): array
     {
         return [
             ['@=user.username', 'user.username'],

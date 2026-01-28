@@ -6,8 +6,9 @@ namespace Overblog\GraphQLBundle\Tests\Resolver;
 
 use Generator;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-abstract class AbstractProxyResolverTest extends AbstractResolverTest
+abstract class TestAbstractProxyResolver extends TestAbstractResolver
 {
     protected function getResolverSolutionsMapping(): array
     {
@@ -30,9 +31,8 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
 
     /**
      * @param string $alias
-     *
-     * @dataProvider aliasProvider
      */
+    #[DataProvider('aliasProvider')]
     public function testResolveAliasesMutation($alias): void
     {
         $result = $this->resolver->resolve([$alias, ['my', 'resolve', 'test']]);
@@ -50,7 +50,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
         $this->resolver->resolve('Fake');
     }
 
-    public function aliasProvider(): Generator
+    public static function aliasProvider(): Generator
     {
         yield ['foo'];
         yield ['bar'];

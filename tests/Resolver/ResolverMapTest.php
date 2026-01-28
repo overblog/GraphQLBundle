@@ -9,6 +9,7 @@ use ArrayObject;
 use Closure;
 use Overblog\GraphQLBundle\Resolver\ResolverMap;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -25,9 +26,8 @@ final class ResolverMapTest extends TestCase
      * @param string            $typeName
      * @param string            $fieldName
      * @param Closure|null      $expectedResolver
-     *
-     * @dataProvider validMapDataProvider
      */
+    #[DataProvider('validMapDataProvider')]
     public function testResolve($map, $typeName, $fieldName, $expectedResolver): void
     {
         $resolverMap = $this->createResolverMapMock($map);
@@ -37,18 +37,17 @@ final class ResolverMapTest extends TestCase
 
     public function testCoveredWithTypeNameNull(): void
     {
-        $map = $this->map();
+        $map = self::getMap();
         $resolverMap = $this->createResolverMapMock($map);
         $covered = $resolverMap->covered();
         $this->assertSame(array_keys($map), $covered);
     }
 
     /**
-     * @dataProvider invalidMapDataProvider
-     *
      * @param mixed  $invalidMap
      * @param string $invalidType
      */
+    #[DataProvider('invalidMapDataProvider')]
     public function testInvalidMap($invalidMap, $invalidType): void
     {
         $resolverMap = $this->createResolverMapMock($invalidMap);
@@ -74,7 +73,7 @@ final class ResolverMapTest extends TestCase
         $resolverMap->resolve('Foo', 'bar');
     }
 
-    public function invalidMapDataProvider(): array
+    public static function invalidMapDataProvider(): array
     {
         return [
             [null, 'NULL'],
@@ -85,9 +84,9 @@ final class ResolverMapTest extends TestCase
         ];
     }
 
-    public function validMapDataProvider(): array
+    public static function validMapDataProvider(): array
     {
-        $arrayMap = $this->map();
+        $arrayMap = self::getMap();
         $objectMap = new ArrayObject($arrayMap);
 
         $validMap = [];
@@ -113,13 +112,13 @@ final class ResolverMapTest extends TestCase
     private function createResolverMapMock($map)
     {
         /** @var ResolverMap|MockObject $resolverMap */
-        $resolverMap = $this->getMockBuilder(ResolverMap::class)->setMethods(['map'])->getMock();
+        $resolverMap = $this->getMockBuilder(ResolverMap::class)->onlyMethods(['map'])->getMock();
         $resolverMap->method('map')->willReturn($map);
 
         return $resolverMap;
     }
 
-    private function map(): array
+    private static function getMap(): array
     {
         return [
             'Query' => [

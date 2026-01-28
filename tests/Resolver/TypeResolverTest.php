@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\ObjectType;
 use Overblog\GraphQLBundle\Resolver\TypeResolver;
 use Overblog\GraphQLBundle\Resolver\UnresolvableException;
 
-final class TypeResolverTest extends AbstractResolverTest
+final class TypeResolverTest extends TestAbstractResolver
 {
     protected function createResolver(): TypeResolver
     {
