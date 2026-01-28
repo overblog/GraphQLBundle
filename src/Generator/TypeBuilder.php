@@ -651,7 +651,7 @@ final class TypeBuilder
                     $checkedPosition = 0;
                     foreach ($args as $key => $value) {
                         if (
-                            isset($parameterNames[$checkedPosition]) === true
+                            true === isset($parameterNames[$checkedPosition])
                             && $parameterNames[$checkedPosition++] === $key
                         ) {
                             $instance->addArgument($value);
