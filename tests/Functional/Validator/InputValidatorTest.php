@@ -62,7 +62,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::simpleValidation('simpleValidation'), $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::simpleValidation('simpleValidation'), $result['errors'][0]);
         $this->assertNull($result['data']['simpleValidation']);
     }
 
@@ -98,7 +98,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::LINKED_CONSTRAINTS, $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::LINKED_CONSTRAINTS, $result['errors'][0]);
         $this->assertNull($result['data']['linkedConstraintsValidation']);
     }
 
@@ -148,7 +148,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::COLLECTION, $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::COLLECTION, $result['errors'][0]);
         $this->assertNull($result['data']['collectionValidation']);
     }
 
@@ -208,7 +208,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::cascadeWithGroups('cascadeValidationWithGroups'), $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::cascadeWithGroups('cascadeValidationWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['cascadeValidationWithGroups']);
     }
 
@@ -265,7 +265,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::simpleValidation('autoValidationAutoThrow'), $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::simpleValidation('autoValidationAutoThrow'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrow']);
     }
 
@@ -349,7 +349,7 @@ final class InputValidatorTest extends TestCase
 
         $result = $this->executeGraphQLRequest($query);
 
-        $this->assertSame(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::cascadeWithGroups('autoValidationAutoThrowWithGroups'), $result['errors'][0]);
         $this->assertNull($result['data']['autoValidationAutoThrowWithGroups']);
     }
 
@@ -392,7 +392,7 @@ final class InputValidatorTest extends TestCase
         ';
 
         $result = $this->executeGraphQLRequest($query);
-        $this->assertSame(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
+        $this->assertEqualsCanonicalizing(ExpectedErrors::PARTIAL_INPUT_OBJECTS_COLLECTION, $result['errors'][0]);
         $this->assertNull($result['data']['partialInputObjectsCollectionValidation']);
     }
 }
