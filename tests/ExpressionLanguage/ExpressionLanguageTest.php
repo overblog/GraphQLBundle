@@ -22,10 +22,10 @@ final class ExpressionLanguageTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    #[DataProvider('extractExpressionVarNamesProvider')]
     /**
      * @param Expression|string $expression
      */
+    #[DataProvider('extractExpressionVarNamesProvider')]
     public function testExtractExpressionVarNames($expression, array $expectedResult): void
     {
         $result = ExpressionLanguage::extractExpressionVarNames($expression);
