@@ -51,6 +51,8 @@ jobs:
             symfony-version: '8.0.*'
           - php-version: '8.3'
             symfony-version: '8.0.*'
+          - symfony-version: '7.2.*'
+            dependencies: 'lowest'
         include:
           - php-version: '8.2'
             symfony-version: '5.4.*'
