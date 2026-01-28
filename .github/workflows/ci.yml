@@ -68,7 +68,12 @@ jobs:
           SYMFONY_REQUIRE: "${{ matrix.symfony-version }}"
 
       - name: "Run tests"
+        if: "matrix.coverage != 'pcov'"
         run: composer run test
+
+      - name: "Run tests with coverage"
+        if: "matrix.coverage == 'pcov'"
+        run: bin/phpunit --color=always --coverage-clover=build/logs/clover.xml
 
       - name: "Upload coverage results to Coveralls"
         if: "matrix.coverage == 'pcov'"

@@ -122,7 +122,7 @@ final class GetUserTest extends TestCase
     public static function getUserProvider(): array
     {
         return [
-            [fn(TestCase $test) => $test->getMockBuilder(UserInterface::class)->getMock(), null],
+            [fn (TestCase $test) => $test->getMockBuilder(UserInterface::class)->getMock(), null],
             [null, null],
         ];
     }
