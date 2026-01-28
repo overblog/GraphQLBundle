@@ -71,7 +71,7 @@ final class PluralIdentifyingRootFieldDefinitionTest extends TestCase
 
     /**
      * @param mixed $resolveSingleInput
-     *     */
+     */
     #[DataProvider('validConfigProvider')]
     public function testValidConfig($resolveSingleInput, string $expectedResolveSingleInputCallbackArg): void
     {

@@ -31,7 +31,7 @@ final class TypeDecoratorListenerTest extends TestCase
     /**
      * @param string $fieldName
      * @param bool   $strict
-     *     */
+     */
     #[DataProvider('specialTypeFieldProvider')]
     public function testSpecialField($fieldName, ObjectType|UnionType|InterfaceType|CustomScalarType $typeWithSpecialField, ?callable $fieldValueRetriever = null, $strict = true): void
     {
@@ -109,8 +109,7 @@ final class TypeDecoratorListenerTest extends TestCase
         );
         $expected = ['foo' => 'baz'];
         $resolveFn = $objectType->getField('bar')->resolveFn;
-        /**
-         * @var Argument $args */
+        /** @var Argument $args */
         $args = $resolveFn(null, $expected, [], $this->createMock(ResolveInfo::class));
 
         $this->assertInstanceOf(Argument::class, $args);

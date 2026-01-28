@@ -104,7 +104,7 @@ final class TypeGeneratorTest extends TestCase
      *  1. Custom constraints should be used by FQCN, to ensure no namespace conflicts occur
      *  2. Default Symfony validators should be used with aliased namespace to ensure that no
      *     namespace conflicts occur with Graphql bundle classes (Type for example).
-     *     */
+     */
     #[RunInSeparateProcess]
     public function testConflictingValidatorNamespaces(): void
     {

@@ -16,7 +16,7 @@ final class ExceptionConverterTest extends TestCase
 {
     /**
      * @param array<string, string[]> $exceptionMap
-     *     */
+     */
     #[DataProvider('convertExceptionDataProvider')]
     public function testConvertException(array $exceptionMap, bool $mapExceptionsToParent, Throwable $exception, Throwable $expectedException): void
     {

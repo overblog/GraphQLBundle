@@ -18,7 +18,7 @@ final class GraphQLUploadTypeTest extends TestCase
 {
     /**
      * @param mixed $invalidValue
-     *     */
+     */
     #[DataProvider('invalidValueProvider')]
     /**
      * @throws Error

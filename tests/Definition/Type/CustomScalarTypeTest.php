@@ -30,8 +30,7 @@ final class CustomScalarTypeTest extends TestCase
     public function testWithoutScalarTypeConfig(): void
     {
         $genericFunc = fn ($value) => $value;
-        /**
-         * @phpstan-ignore-next-line */
+        /** @phpstan-ignore-next-line */
         $type = new CustomScalarType([
             'serialize' => $genericFunc,
             'parseValue' => $genericFunc,
@@ -47,7 +46,7 @@ final class CustomScalarTypeTest extends TestCase
     /**
      * @param mixed  $scalarType
      * @param string $got
-     *     */
+     */
     #[DataProvider('invalidScalarTypeProvider')]
     public function testAssertValidWithInvalidScalarType($scalarType, $got): void
     {

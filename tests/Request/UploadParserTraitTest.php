@@ -26,7 +26,7 @@ final class UploadParserTraitTest extends TestCase
 
     /**
      * @param string $message
-     *     */
+     */
     #[DataProvider('payloadProvider')]
     public function testHandleUploadedFiles(array $operations, array $map, array $files, array $expected, $message): void
     {

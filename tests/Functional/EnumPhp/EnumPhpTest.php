@@ -6,9 +6,6 @@ namespace Overblog\GraphQLBundle\Tests\Functional\EnumPhp;
 
 use Overblog\GraphQLBundle\Tests\Functional\TestCase;
 
-/**
- * @requires PHP 8.1
- */
 final class EnumPhpTest extends TestCase
 {
     protected function setUp(): void

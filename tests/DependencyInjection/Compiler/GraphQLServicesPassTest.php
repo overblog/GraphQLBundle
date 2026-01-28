@@ -16,12 +16,11 @@ final class GraphQLServicesPassTest extends TestCase
 {
     /**
      * @param mixed $invalidAlias
-     *     */
+     */
     #[DataProvider('invalidAliasProvider')]
     public function testInvalidAlias($invalidAlias): void
     {
-        /**
-         * @var ContainerBuilder|MockObject $container */
+        /** @var ContainerBuilder|MockObject $container */
         $container = $this->getMockBuilder(ContainerBuilder::class)
             ->onlyMethods(['findTaggedServiceIds', 'findDefinition'])
             ->getMock();

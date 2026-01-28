@@ -37,7 +37,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *     */
+     */
     #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromise($invalidPromise): void
     {
@@ -74,7 +74,7 @@ final class ConnectionBuilderFromPromisedTest extends AbstractConnectionBuilderT
 
     /**
      * @param mixed $invalidPromise
-     *     */
+     */
     #[DataProvider('invalidPromiseDataProvider')]
     public function testInvalidPromiseWhenSlicing($invalidPromise): void
     {

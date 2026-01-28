@@ -21,7 +21,7 @@ final class ParameterTest extends TestCase
 
     /**
      * @param string $name
-     *     */
+     */
     #[DataProvider('getNames')]
     public function testParameterCompilation($name): void
     {
@@ -34,7 +34,7 @@ final class ParameterTest extends TestCase
 
     /**
      * @param string $name
-     *     */
+     */
     #[DataProvider('getNames')]
     public function testParameterEvaluation($name): void
     {

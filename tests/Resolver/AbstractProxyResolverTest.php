@@ -31,7 +31,7 @@ abstract class AbstractProxyResolverTest extends AbstractResolverTest
 
     /**
      * @param string $alias
-     *     */
+     */
     #[DataProvider('aliasProvider')]
     public function testResolveAliasesMutation($alias): void
     {

@@ -119,11 +119,9 @@ final class DocBlockTypeGuesserTest extends TestCase
         // @phpstan-ignore-next-line
         $mock = $this->createMock($className);
         $mock->method('getDocComment')
-             ->willReturn(sprintf('/**
-     * @%s %s **/', $this->reflectors[$className], $type));
+             ->willReturn(sprintf('/** @%s %s **/', $this->reflectors[$className], $type));
 
-        /**
-         * @var ReflectionProperty|ReflectionMethod $mock */
+        /** @var ReflectionProperty|ReflectionMethod $mock */
         return $mock;
     }
 }

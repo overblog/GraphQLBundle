@@ -26,7 +26,7 @@ final class ResolverMapTest extends TestCase
      * @param string            $typeName
      * @param string            $fieldName
      * @param Closure|null      $expectedResolver
-     *     */
+     */
     #[DataProvider('validMapDataProvider')]
     public function testResolve($map, $typeName, $fieldName, $expectedResolver): void
     {
