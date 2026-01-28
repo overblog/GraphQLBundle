@@ -32,6 +32,7 @@ use Overblog\GraphQLBundle\ExpressionLanguage\ExpressionLanguage as EL;
 use Overblog\GraphQLBundle\Generator\Converter\ExpressionConverter;
 use Overblog\GraphQLBundle\Generator\Exception\GeneratorException;
 use Overblog\GraphQLBundle\Validator\InputValidator;
+use ReflectionClass;
 
 use function array_map;
 use function class_exists;
@@ -635,11 +636,11 @@ final class TypeBuilder
             }
 
             if (is_array($args)) {
-                $reflectionClass = new \ReflectionClass($fqcn);
+                $reflectionClass = new ReflectionClass($fqcn);
                 $constructor = $reflectionClass->getConstructor();
 
                 $inlineParameters = false;
-                if ($constructor !== null) {
+                if (null !== $constructor) {
                     $parameterNames = [];
                     $parameters = $constructor->getParameters();
                     foreach ($parameters as $parameter) {
@@ -659,10 +660,10 @@ final class TypeBuilder
                     }
                 }
 
-                if (isset($args[0]) && is_array($args[0]) && $inlineParameters === false) {
+                if (isset($args[0]) && is_array($args[0]) && false === $inlineParameters) {
                     // Nested instance
                     $instance->addArgument($this->buildConstraints($args, false));
-                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0]) && $inlineParameters === false) {
+                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0]) && false === $inlineParameters) {
                     // Nested instance with "constraints" key (full syntax)
                     $options = [
                         'constraints' => $this->buildConstraints($args['constraints'], false),
@@ -677,7 +678,7 @@ final class TypeBuilder
                     }
 
                     $instance->addArgument($options);
-                } elseif ($inlineParameters === false) {
+                } elseif (false === $inlineParameters) {
                     // Numeric or Assoc array?
                     $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
                 }
