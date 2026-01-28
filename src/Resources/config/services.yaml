@@ -126,6 +126,5 @@ services:
             - "@?validator.validator_factory"
             - "@?validator"
             - "@?translator.default"
-            -
         tags:
             - { name: overblog_graphql.service, alias: input_validator_factory, public: false }
