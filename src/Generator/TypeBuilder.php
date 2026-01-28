@@ -635,34 +635,10 @@ final class TypeBuilder
             }
 
             if (is_array($args)) {
-                $reflectionClass = new \ReflectionClass($fqcn);
-                $constructor = $reflectionClass->getConstructor();
-
-                $inlineParameters = false;
-                if ($constructor !== null) {
-                    $parameterNames = [];
-                    $parameters = $constructor->getParameters();
-                    foreach ($parameters as $parameter) {
-                        $name = $parameter->getName();
-                        $parameterNames[] = $name;
-                    }
-
-                    $checkedPosition = 0;
-                    foreach ($args as $key => $value) {
-                        if (
-                            isset($parameterNames[$checkedPosition]) === true
-                            && $parameterNames[$checkedPosition++] === $key
-                        ) {
-                            $instance->addArgument($value);
-                            $inlineParameters = true;
-                        }
-                    }
-                }
-
-                if (isset($args[0]) && is_array($args[0]) && $inlineParameters === false) {
+                if (isset($args[0]) && is_array($args[0])) {
                     // Nested instance
                     $instance->addArgument($this->buildConstraints($args, false));
-                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0]) && $inlineParameters === false) {
+                } elseif (isset($args['constraints'][0]) && is_array($args['constraints'][0])) {
                     // Nested instance with "constraints" key (full syntax)
                     $options = [
                         'constraints' => $this->buildConstraints($args['constraints'], false),
@@ -677,7 +653,7 @@ final class TypeBuilder
                     }
 
                     $instance->addArgument($options);
-                } elseif ($inlineParameters === false) {
+                } else {
                     // Numeric or Assoc array?
                     $instance->addArgument(isset($args[0]) ? $args : Collection::assoc($args));
                 }
