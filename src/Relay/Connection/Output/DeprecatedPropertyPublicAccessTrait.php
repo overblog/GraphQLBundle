@@ -66,8 +66,8 @@ trait DeprecatedPropertyPublicAccessTrait
             $this->$name = $value;
 
             return null;
-        } else {
-            return $this->$name;
         }
+
+        return $this->$name;
     }
 }

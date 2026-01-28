@@ -95,9 +95,9 @@ abstract class TypeDefinition
                         ->ifTrue(function ($link) use ($level) {
                             if (self::VALIDATION_LEVEL_PROPERTY === $level) {
                                 return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]+::(?:[$]?[A-Za-z][A-Za-z_\d]+|[A-Za-z_\d]+\(\))$/m', $link);
-                            } else {
-                                return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]$/m', $link);
                             }
+
+                            return !preg_match('/^(?:\\\\?[A-Za-z][A-Za-z\d]+)*[A-Za-z\d]$/m', $link);
                         })
                         ->thenInvalid('Invalid link provided: "%s".')
                     ->end()

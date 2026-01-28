@@ -59,9 +59,8 @@ final class DoctrineTypeGuesser extends TypeGuesser
             $nullable = $columnAnnotation->nullable;
             if ($type) {
                 return $nullable ? $type : sprintf('%s!', $type);
-            } else {
-                throw new TypeGuessingException(sprintf('Unable to auto-guess GraphQL type from Doctrine type "%s"', $columnAnnotation->type));
             }
+            throw new TypeGuessingException(sprintf('Unable to auto-guess GraphQL type from Doctrine type "%s"', $columnAnnotation->type));
         }
 
         $associationAnnotations = [
@@ -82,19 +81,17 @@ final class DoctrineTypeGuesser extends TypeGuesser
                     $isMultiple = $associationAnnotations[$associationAnnotation::class];
                     if ($isMultiple) {
                         return sprintf('[%s]!', $type);
-                    } else {
-                        $isNullable = false;
-                        /** @var JoinColumn|null $joinColumn */
-                        $joinColumn = $this->getAnnotation($reflector, JoinColumn::class);
-                        if (null !== $joinColumn) {
-                            $isNullable = $joinColumn->nullable;
-                        }
-
-                        return sprintf('%s%s', $type, $isNullable ? '' : '!');
                     }
-                } else {
-                    throw new TypeGuessingException(sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @Metadata\Type metadata).', $target));
+                    $isNullable = false;
+                    /** @var JoinColumn|null $joinColumn */
+                    $joinColumn = $this->getAnnotation($reflector, JoinColumn::class);
+                    if (null !== $joinColumn) {
+                        $isNullable = $joinColumn->nullable;
+                    }
+
+                    return sprintf('%s%s', $type, $isNullable ? '' : '!');
                 }
+                throw new TypeGuessingException(sprintf('Unable to auto-guess GraphQL type from Doctrine target class "%s" (check if the target class is a GraphQL type itself (with a @Metadata\Type metadata).', $target));
             }
         }
         throw new TypeGuessingException(sprintf('No Doctrine ORM annotation found.'));

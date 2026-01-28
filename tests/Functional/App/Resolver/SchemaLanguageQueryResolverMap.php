@@ -36,9 +36,9 @@ final class SchemaLanguageQueryResolverMap extends ResolverMap
                     $direwolves = Characters::getDirewolves();
                     if (isset($direwolves[$value['direwolf']])) {
                         return $direwolves[$value['direwolf']];
-                    } else {
-                        return null;
                     }
+
+                    return null;
                 },
             ],
             // enum internal values

@@ -293,7 +293,7 @@ final class ConfigParserPassTest extends TestCase
                                         'type' => 'Int!',
                                         'defaultValue' => 0,
                                     ],
-                                 ],
+                                ],
                             ],
                         ],
                         'name' => 'foo',

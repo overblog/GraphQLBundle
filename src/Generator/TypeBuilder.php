@@ -987,8 +987,8 @@ final class TypeBuilder
             return [$fqcn, ltrim($classMember, '$'), 'property'];
         } elseif (')' === substr($classMember, -1)) {
             return [$fqcn, rtrim($classMember, '()'), 'getter'];
-        } else {
-            return [$fqcn, $classMember, 'member'];
         }
+
+        return [$fqcn, $classMember, 'member'];
     }
 }

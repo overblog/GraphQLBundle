@@ -87,9 +87,9 @@ final class InputValidator
 
         if ($throw && $errors->count() > 0) {
             throw new ArgumentsValidationException($errors);
-        } else {
-            return $errors;
         }
+
+        return $errors;
     }
 
     private function mergeClassValidation(): array
@@ -179,9 +179,8 @@ final class InputValidator
 
                 // Skip the rest as the validation was delegated to the nested object.
                 continue;
-            } else {
-                $rootObject->$property = $inputData[$property] ?? null;
             }
+            $rootObject->$property = $inputData[$property] ?? null;
 
             if ($metadata->hasPropertyMetadata($property)) {
                 continue;

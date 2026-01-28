@@ -83,10 +83,10 @@ final class Parser implements ParserInterface
     {
         // Add default request parameters
         $data = array_filter($data) + [
-                static::PARAM_QUERY => null,
-                static::PARAM_VARIABLES => null,
-                static::PARAM_OPERATION_NAME => null,
-            ];
+            static::PARAM_QUERY => null,
+            static::PARAM_VARIABLES => null,
+            static::PARAM_OPERATION_NAME => null,
+        ];
 
         // Use all query parameters, since starting from Symfony 6 there will be an exception accessing array parameters
         // via request->query->get(key), and another exception accessing non-array parameter via request->query->all(key)

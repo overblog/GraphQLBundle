@@ -68,9 +68,9 @@ final class AccessResolver
 
         if ($this->isThenable($promiseOrHasAccess)) {
             return $this->createPromise($promiseOrHasAccess, $callback);
-        } else {
-            return $callback($promiseOrHasAccess);
         }
+
+        return $callback($promiseOrHasAccess);
     }
 
     /**

@@ -92,11 +92,9 @@ final class TypeDecoratorListenerTest extends TestCase
     {
         $objectType = new ObjectType([
             'name' => 'Foo',
-            'fields' => function () {
-                return [
-                    'bar' => ['type' => Type::string()],
-                ];
-            },
+            'fields' => fn () => [
+                'bar' => ['type' => Type::string()],
+            ],
         ]);
 
         $this->decorate(

@@ -62,9 +62,9 @@ final class GlobalResolver
             return $this->userData[$id];
         } elseif ('Photo' === $type) {
             return $this->photoData[$id];
-        } else {
-            return $this->postData[$id];
         }
+
+        return $this->postData[$id];
     }
 
     public function typeResolver(array $value): ?Type
@@ -73,9 +73,9 @@ final class GlobalResolver
             return $this->typeResolver->resolve('User');
         } elseif (isset($value['photoId'])) {
             return $this->typeResolver->resolve('Photo');
-        } else {
-            return $this->typeResolver->resolve('Post');
         }
+
+        return $this->typeResolver->resolve('Post');
     }
 
     public function resolveAllObjects(): array

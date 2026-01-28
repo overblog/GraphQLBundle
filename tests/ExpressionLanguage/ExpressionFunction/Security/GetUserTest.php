@@ -30,9 +30,9 @@ final class GetUserTest extends TestCase
     {
         if (Kernel::VERSION_ID >= 60200) {
             return $this->createMock(BundleSecurity::class);
-        } else {
-            return $this->createMock(CoreSecurity::class);
         }
+
+        return $this->createMock(CoreSecurity::class);
     }
 
     /**
@@ -42,9 +42,9 @@ final class GetUserTest extends TestCase
     {
         if (Kernel::VERSION_ID >= 60200) {
             return new BundleSecurity($this->getDIContainerMock(['security.token_storage' => $storage]));
-        } else {
-            return new CoreSecurity($this->getDIContainerMock(['security.token_storage' => $storage]));
         }
+
+        return new CoreSecurity($this->getDIContainerMock(['security.token_storage' => $storage]));
     }
 
     public function testEvaluator(): void

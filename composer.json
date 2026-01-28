@@ -59,6 +59,7 @@
         "doctrine/annotations": "^1.13",
         "doctrine/orm": "^2.5",
         "monolog/monolog": "^2.8.0 || ^3.0",
+        "php-cs-fixer/shim": "^3.93",
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan": "1.8.4",
         "phpstan/phpstan-phpunit": "^1.0",
@@ -94,14 +95,11 @@
         "static-analysis": [
             "phpstan analyse --ansi --memory-limit=1G"
         ],
-        "install-cs": "test -f php-cs-fixer.phar || wget https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/download/v3.48.0/php-cs-fixer.phar -O php-cs-fixer.phar",
         "fix-cs": [
-            "@install-cs",
-            "@php php-cs-fixer.phar fix --diff -v --allow-risky=yes --ansi"
+            "php-cs-fixer fix --diff -v --allow-risky=yes --ansi"
         ],
         "check-cs": [
-            "@install-cs",
-            "@php php-cs-fixer.phar fix --dry-run --diff -v --allow-risky=yes --ansi"
+            "php-cs-fixer fix --dry-run --diff -v --allow-risky=yes --ansi"
         ],
         "code-quality": [
             "rm composer.lock",

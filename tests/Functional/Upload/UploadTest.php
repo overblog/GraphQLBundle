@@ -68,7 +68,7 @@ final class UploadTest extends TestCase
                     'payload' => ['data' => ['singleUpload' => 'a.txt']],
                 ],
                 [
-                   'id' => 'multipleUpload',
+                    'id' => 'multipleUpload',
                     'payload' => ['data' => ['multipleUpload' => ['b.txt', 'c.txt']]],
                 ],
             ],
