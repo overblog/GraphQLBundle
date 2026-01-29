@@ -14,7 +14,6 @@ use Doctrine\Common\Annotations\Annotation\NamedArgumentConstructor;
  * @NamedArgumentConstructor
  * @Target({"PROPERTY", "METHOD"})
  */
-#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 abstract class Builder extends Annotation
 {
     /**
