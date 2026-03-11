@@ -104,7 +104,9 @@ abstract class BaseSecurity
 
     public function isAnonymous(): bool
     {
-        return $this->isGranted('IS_AUTHENTICATED_ANONYMOUSLY');
+        // IS_AUTHENTICATED_ANONYMOUSLY was removed from AuthenticatedVoter in Symfony 6.x.
+        // PUBLIC_ACCESS (added in Symfony 5.4) is the correct replacement and always grants access.
+        return $this->isGranted(Kernel::VERSION_ID >= 60000 ? 'PUBLIC_ACCESS' : 'IS_AUTHENTICATED_ANONYMOUSLY');
     }
 
     public function isAuthenticated(): bool
