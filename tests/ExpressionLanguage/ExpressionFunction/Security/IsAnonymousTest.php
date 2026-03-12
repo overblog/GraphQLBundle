@@ -17,10 +17,7 @@ final class IsAnonymousTest extends TestCase
 
     public function testEvaluator(): void
     {
-        $security = $this->getSecurityIsGrantedWithExpectation(
-            'IS_AUTHENTICATED_ANONYMOUSLY',
-            $this->any()
-        );
+        $security = $this->getSecurityIsGrantedWithExpectation('PUBLIC_ACCESS', $this->any());
         $services = $this->createGraphQLServices(['security' => $security]);
 
         $isAnonymous = $this->expressionLanguage->evaluate('isAnonymous()', [TypeGenerator::GRAPHQL_SERVICES => $services]);
@@ -29,6 +26,6 @@ final class IsAnonymousTest extends TestCase
 
     public function testIsAnonymous(): void
     {
-        $this->assertExpressionCompile('isAnonymous()', 'IS_AUTHENTICATED_ANONYMOUSLY');
+        $this->assertExpressionCompile('isAnonymous()', 'PUBLIC_ACCESS');
     }
 }

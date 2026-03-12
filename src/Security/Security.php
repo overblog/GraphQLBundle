@@ -104,7 +104,7 @@ abstract class BaseSecurity
 
     public function isAnonymous(): bool
     {
-        return $this->isGranted('IS_AUTHENTICATED_ANONYMOUSLY');
+        return $this->isGranted('PUBLIC_ACCESS');
     }
 
     public function isAuthenticated(): bool
