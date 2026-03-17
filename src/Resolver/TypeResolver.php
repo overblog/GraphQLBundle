@@ -83,6 +83,8 @@ class TypeResolver extends AbstractResolver
 
     public function reset(): void
     {
+        parent::reset();
+
         $this->cache = [];
     }
 

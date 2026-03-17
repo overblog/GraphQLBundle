@@ -245,6 +245,7 @@ final class OverblogGraphQLExtension extends Extension
                 $schemaConfig['mutation'],
                 $schemaConfig['subscription'],
                 $schemaConfig['types'],
+                $schemaConfig['resettable'],
             ]);
             // schema
             $schemaID = sprintf('%s.schema_%s', $this->getAlias(), $schemaName);
