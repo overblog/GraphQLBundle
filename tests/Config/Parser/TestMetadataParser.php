@@ -663,6 +663,31 @@ abstract class TestMetadataParser extends TestCase
         }
     }
 
+    public function testInputWithIsPublic(): void
+    {
+        $this->expect('PublicFieldInput', 'input-object', [
+            'fields' => [
+                'restrictedField' => [
+                    'type' => 'String!',
+                    'public' => '@=isAuthenticated()',
+                ],
+                'publicField' => ['type' => 'Int'],
+            ],
+        ]);
+    }
+
+    public function testInvalidIsPublicWithoutFieldOnInput(): void
+    {
+        try {
+            $file = __DIR__.'/fixtures/annotations/Invalid/InvalidIsPublicOnInput.php';
+            $this->parser('parse', new SplFileInfo($file), $this->containerBuilder, $this->parserConfig);
+            $this->fail('#[IsPublic] on an Input field without #[Field] should raise an exception');
+        } catch (Exception $e) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $e);
+            $this->assertMatchesRegularExpression('/The metadatas '.$this->formatMetadata('Visible').' defined on "field"/', $e->getPrevious()->getMessage());
+        }
+    }
+
     public function testInvalidPhpFiles(): void
     {
         $files = [
