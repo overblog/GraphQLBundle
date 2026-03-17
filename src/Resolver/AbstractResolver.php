@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Overblog\GraphQLBundle\Resolver;
 
 use Symfony\Contracts\Service\ResetInterface;
+
 use function array_keys;
 
 abstract class AbstractResolver implements FluentResolverInterface, ResetInterface
