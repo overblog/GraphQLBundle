@@ -692,9 +692,14 @@ abstract class MetadataParser implements PreParserInterface
 
             /** @var Metadata\Field|null $fieldMetadata */
             $fieldMetadata = self::getFirstMetadataMatching($metadatas, Metadata\Field::class);
+            $publicMetadata = self::getFirstMetadataMatching($metadatas, Metadata\IsPublic::class);
 
             // No field metadata found
             if (null === $fieldMetadata) {
+                if (null !== $publicMetadata) {
+                    throw new InvalidArgumentException(sprintf('The metadatas %s defined on "%s" are only usable in addition of metadata %s', self::formatMetadata('Visible'), $reflector->getName(), self::formatMetadata('Field')));
+                }
+
                 continue;
             }
 
@@ -729,6 +734,10 @@ abstract class MetadataParser implements PreParserInterface
                 $fieldConfiguration['defaultValue'] = $fieldMetadata->defaultValue;
             } elseif ($reflector->hasDefaultValue() && null !== $reflector->getDefaultValue()) {
                 $fieldConfiguration['defaultValue'] = $reflector->getDefaultValue();
+            }
+
+            if ($publicMetadata) {
+                $fieldConfiguration['public'] = self::formatExpression($publicMetadata->value);
             }
 
             $fieldConfiguration = array_merge(self::getDescriptionConfiguration($metadatas, true), $fieldConfiguration);
