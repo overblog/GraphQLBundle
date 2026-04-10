@@ -38,10 +38,10 @@ final class OverblogGraphQLExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $this->loadConfigFiles($container);
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->loadConfigFiles($config, $container);
         $this->setBatchingMethod($config, $container);
         $this->setServicesAliases($config, $container);
         $this->setSchemaBuilderArguments($config, $container);
@@ -75,7 +75,7 @@ final class OverblogGraphQLExtension extends Extension
         );
     }
 
-    private function loadConfigFiles(ContainerBuilder $container): void
+    private function loadConfigFiles(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
@@ -86,7 +86,10 @@ final class OverblogGraphQLExtension extends Extension
         $loader->load('expression_language_functions.yaml');
         $loader->load('definition_config_processors.yaml');
         $loader->load('aliases.yaml');
-        $loader->load('profiler.yaml');
+
+        if ($config['profiler']['enabled']) {
+            $loader->load('profiler.yaml');
+        }
     }
 
     private function registerForAutoconfiguration(ContainerBuilder $container): void
@@ -143,6 +146,10 @@ final class OverblogGraphQLExtension extends Extension
 
     private function setProfilerParameters(array $config, ContainerBuilder $container): void
     {
+        if (!$config['profiler']['enabled']) {
+            return;
+        }
+
         $container->setParameter($this->getAlias().'.profiler.query_match', $config['profiler']['query_match']);
     }
 
