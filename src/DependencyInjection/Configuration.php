@@ -312,6 +312,7 @@ final class Configuration implements ConfigurationInterface
 
         // @phpstan-ignore-next-line
         $node
+            ->{$this->debug ? 'canBeDisabled' : 'canBeEnabled'}()
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('query_match')->defaultNull()->end()
