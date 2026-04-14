@@ -21,7 +21,6 @@ final class Paginator
     public const MODE_PROMISE = true;
 
     private bool $promise;
-    private int $totalCount;
     private ConnectionBuilder $connectionBuilder;
 
     /** @var callable */
@@ -123,16 +122,10 @@ final class Paginator
     /**
      * @param int|callable $total
      *
-     * @return int|mixed
+     * @return int
      */
-    private function computeTotalCount($total, array $callableArgs = [])
+    private function computeTotalCount($total, array $callableArgs = []): int
     {
-        if (isset($this->totalCount)) {
-            return $this->totalCount;
-        }
-
-        $this->totalCount = is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
-
-        return $this->totalCount;
+        return is_callable($total) ? call_user_func_array($total, $callableArgs) : $total;
     }
 }
