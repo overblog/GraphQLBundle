@@ -66,3 +66,40 @@ AnObject:
 Have you noticed `typeName` and `fieldName` here? These variables are always set to the current
 type name and current field name, meaning you can apply a per field `public` setting on all the
 fields with one line of yaml.
+
+## Input object fields
+
+`public` is also supported on `input-object` fields. When the expression resolves to `false`,
+the field is removed from the input type — it is hidden from introspection and rejected if a
+client tries to submit it.
+
+```yaml
+HeroInput:
+    type: input-object
+    config:
+        fields:
+            name:
+                type: "String!"
+            internalNote:
+                type: "String"
+                public: "@=isGranted('ROLE_ADMIN')"
+```
+
+With attributes, combine `#[GQL\Field]` with `#[GQL\IsPublic]` on the property:
+
+```php
+<?php
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+
+#[GQL\Input]
+class HeroInput
+{
+    #[GQL\Field(type: "String!")]
+    public string $name;
+
+    #[GQL\Field(type: "String")]
+    #[GQL\IsPublic("isGranted('ROLE_ADMIN')")]
+    public ?string $internalNote = null;
+}
+```
