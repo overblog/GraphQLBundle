@@ -69,6 +69,8 @@ final class GraphQLParser implements ParserInterface
                 } else {
                     self::throwUnsupportedDefinitionNode($typeDef);
                 }
+            } else if (isset($typeDef->kind) && $typeDef->kind == NodeKind::DIRECTIVE_DEFINITION && isset($typeDef->name) && $typeDef->name->value == 'resolve') {
+                // Allow a directive named resolve
             } else {
                 self::throwUnsupportedDefinitionNode($typeDef);
             }
