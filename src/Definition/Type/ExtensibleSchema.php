@@ -10,6 +10,11 @@ use Overblog\GraphQLBundle\Definition\Type\SchemaExtension\SchemaExtensionInterf
 
 class ExtensibleSchema extends Schema
 {
+    /**
+     * Need to reset when container reset called
+     */
+    private bool $isResettable = false;
+
     public function __construct($config)
     {
         parent::__construct(
@@ -50,5 +55,15 @@ class ExtensibleSchema extends Schema
         }
 
         return $this;
+    }
+
+    public function isResettable(): bool
+    {
+        return $this->isResettable;
+    }
+
+    public function setIsResettable(bool $isResettable): void
+    {
+        $this->isResettable = $isResettable;
     }
 }

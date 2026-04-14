@@ -74,7 +74,29 @@ overblog_graphql:
             # by graphql-php during static schema analysis.
             # These types names should be explicitly declare here
             types: []
+            # when true, the built schema is discarded whenever the
+            # container is reset (e.g. between requests in long-running
+            # workers like Symfony Runtime, RoadRunner or FrankenPHP
+            # worker mode). Useful when the schema depends on request
+            # scoped state. Defaults to false.
+            resettable: false
 ```
+
+## Resettable schemas
+
+By default, schemas are built once per worker and reused across requests. When running Symfony in a long-running process (Symfony Runtime, RoadRunner, FrankenPHP worker mode, Swoole, etc.) and the schema depends on request scoped state, set `resettable: true` so the schema is rebuilt after each `kernel.reset`:
+
+```yaml
+overblog_graphql:
+    definitions:
+        schema:
+            default:
+                query: Query
+                mutation: Mutation
+                resettable: true
+```
+
+Non-resettable schemas (the default) are kept across resets, which preserves the build cost between requests.
 
 ## Batching
 
@@ -93,6 +115,7 @@ overblog_graphql:
             bar:
                 query: barQuery
                 mutation: barMutation
+                resettable: true
 ```
 
 **foo** schema endpoint can be access:

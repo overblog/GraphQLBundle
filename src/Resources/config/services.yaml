@@ -28,6 +28,8 @@ services:
         arguments:
             - '@Overblog\GraphQLBundle\Resolver\TypeResolver'
             - false
+        tags:
+            - { name: 'kernel.reset', 'method': "reset" }
 
     Overblog\GraphQLBundle\Definition\Builder\TypeFactory:
         arguments:

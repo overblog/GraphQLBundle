@@ -28,6 +28,11 @@ class TypeResolver extends AbstractResolver
         $this->currentSchemaName = $currentSchemaName;
     }
 
+    public function getCurrentSchemaName(): ?string
+    {
+        return $this->currentSchemaName;
+    }
+
     public function setIgnoreUnresolvableException(bool $ignoreUnresolvableException): void
     {
         $this->ignoreUnresolvableException = $ignoreUnresolvableException;
@@ -78,6 +83,8 @@ class TypeResolver extends AbstractResolver
 
     public function reset(): void
     {
+        parent::reset();
+
         $this->cache = [];
     }
 
