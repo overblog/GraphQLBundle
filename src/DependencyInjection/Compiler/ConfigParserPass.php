@@ -257,7 +257,7 @@ final class ConfigParserPass implements CompilerPassInterface
         foreach ($types as $type) {
             $finder = Finder::create();
             try {
-                $finder->files()->in($path)->name(sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]));
+                $finder->files()->in($path)->name(sprintf('*%s.%s', $suffix, self::SUPPORTED_TYPES_EXTENSIONS[$type]))->sortByName();
             } catch (InvalidArgumentException $e) {
                 continue;
             }
