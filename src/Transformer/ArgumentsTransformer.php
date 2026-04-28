@@ -10,16 +10,21 @@ use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Overblog\GraphQLBundle\Definition\Omittable;
 use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
+use ReflectionClass;
+use ReflectionNamedType;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use function array_key_exists;
 use function array_map;
 use function count;
+use function is_a;
 use function is_array;
 use function is_object;
 use function sprintf;
@@ -51,6 +56,20 @@ final class ArgumentsTransformer
         $classname = isset($this->classesMap[$type]) ? $this->classesMap[$type]['class'] : false;
 
         return $classname ? new $classname() : false;
+    }
+
+    private function isOmittableProperty(object $instance, string $property): bool
+    {
+        $reflectionClass = new ReflectionClass($instance);
+
+        if (!$reflectionClass->hasProperty($property)) {
+            return false;
+        }
+
+        $reflectionType = $reflectionClass->getProperty($property)->getType();
+
+        return $reflectionType instanceof ReflectionNamedType
+            && is_a($reflectionType->getName(), Omittable::class, true);
     }
 
     /**
@@ -104,10 +123,13 @@ final class ArgumentsTransformer
             $fields = $type->getFields();
 
             foreach ($fields as $name => $field) {
-                if ($field->defaultValueExists() && !array_key_exists($name, $data)) {
+                $isFieldProvided = array_key_exists($name, $data);
+                $isOmittableProperty = $this->isOmittableProperty($instance, $name);
+
+                if ($field->defaultValueExists() && !$isFieldProvided && !$isOmittableProperty) {
                     continue;
                 }
-                $fieldData = $this->accessor->getValue($data, sprintf('[%s]', $name));
+                $fieldData = $isFieldProvided ? $this->accessor->getValue($data, sprintf('[%s]', $name)) : null;
                 $fieldType = $field->getType();
 
                 if ($fieldType instanceof NonNull) {
@@ -118,6 +140,10 @@ final class ArgumentsTransformer
                     $fieldValue = $this->populateObject($fieldType->getWrappedType(), $fieldData, true, $info);
                 } else {
                     $fieldValue = $this->populateObject($fieldType, $fieldData, false, $info);
+                }
+
+                if ($isOmittableProperty) {
+                    $fieldValue = $isFieldProvided ? Omittable::set($fieldValue) : Omittable::omitted();
                 }
 
                 $this->accessor->setValue($instance, $name, $fieldValue);
