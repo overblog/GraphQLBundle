@@ -73,3 +73,49 @@ class RootMutation {
 ```
 
 So, the resolver (the `createUser` method) will receive an instance of the class `UserRegisterInput` instead of an array of data. 
+
+## Preserving omitted input fields
+
+For partial update mutations, nullable input fields often need to distinguish between a field that was omitted and a field that was explicitly set to `null`.
+
+By default, hydrated DTO properties keep the historical behavior: omitted nullable fields and explicit `null` values are both represented as `null`. To opt in to preserving this distinction for one field, type the DTO property as `Omittable`.
+
+```php
+namespace App\GraphQL\Input;
+
+use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Definition\Omittable;
+
+#[GQL\Input]
+class UpdateUserInput {
+    /**
+     * @var Omittable<string|null>
+     */
+    #[GQL\Field(type: "String")]
+    public Omittable $phone;
+}
+```
+
+The GraphQL schema field is still a regular nullable `String`. Only the hydrated PHP property changes:
+
+```php
+if ($input->phone->isSet()) {
+    // The client provided phone, either as null or as a string.
+    $user->setPhone($input->phone->value());
+}
+```
+
+The possible states are:
+
+```php
+// phone was omitted
+$input->phone->isSet() === false;
+
+// phone was explicitly set to null
+$input->phone->isSet() === true;
+$input->phone->value() === null;
+
+// phone was provided with a value
+$input->phone->isSet() === true;
+$input->phone->value() === '+123';
+```

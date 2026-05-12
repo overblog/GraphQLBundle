@@ -13,6 +13,8 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Schema;
+use LogicException;
+use Overblog\GraphQLBundle\Definition\Omittable;
 use Overblog\GraphQLBundle\Definition\Type\PhpEnumType;
 use Overblog\GraphQLBundle\Error\InvalidArgumentError;
 use Overblog\GraphQLBundle\Error\InvalidArgumentsError;
@@ -110,7 +112,17 @@ final class ArgumentsTransformerTest extends TestCase
             ],
         ]);
 
-        $types = [$t1, $t2, $t3, $t4, $t5, $t6];
+        $t7 = new InputObjectType([
+            'name' => 'InputTypeWithOmittable',
+            'fields' => [
+                'nullableString' => Type::string(),
+                'nestedInput' => $t1,
+                'stringList' => Type::listOf(Type::string()),
+                'regularNullable' => Type::string(),
+            ],
+        ]);
+
+        $types = [$t1, $t2, $t3, $t4, $t5, $t6, $t7];
 
         if (PHP_VERSION_ID >= 80100) {
             $types[] = new PhpEnumType([
@@ -251,6 +263,58 @@ final class ArgumentsTransformerTest extends TestCase
         $res = $transformer->getInstanceAndValidate('InputType2', ['field3' => 'enum1'], $info, 'input2');
         $this->assertInstanceOf(Enum1::class, $res->field3);
         $this->assertEquals('enum1', $res->field3->value);
+    }
+
+    public function testPopulatingOmittableInputFields(): void
+    {
+        $transformer = $this->getTransformer([
+            'InputType1' => ['type' => 'input', 'class' => InputType1::class],
+            'InputTypeWithOmittable' => ['type' => 'input', 'class' => InputTypeWithOmittable::class],
+        ]);
+
+        $info = $this->getResolveInfo(self::getTypes());
+
+        /** @var InputTypeWithOmittable $res */
+        $res = $transformer->getInstanceAndValidate(
+            'InputTypeWithOmittable',
+            [
+                'nullableString' => null,
+                'nestedInput' => ['field1' => 'nested value'],
+                'stringList' => ['first', 'second'],
+            ],
+            $info,
+            'input'
+        );
+
+        $this->assertInstanceOf(InputTypeWithOmittable::class, $res);
+        $this->assertInstanceOf(Omittable::class, $res->nullableString);
+        $this->assertTrue($res->nullableString->isSet());
+        $this->assertNull($res->nullableString->value());
+
+        $this->assertTrue($res->nestedInput->isSet());
+        $this->assertInstanceOf(InputType1::class, $res->nestedInput->value());
+        $this->assertSame('nested value', $res->nestedInput->value()->field1);
+
+        $this->assertTrue($res->stringList->isSet());
+        $this->assertSame(['first', 'second'], $res->stringList->value());
+
+        $this->assertNull($res->regularNullable);
+
+        /** @var InputTypeWithOmittable $res */
+        $res = $transformer->getInstanceAndValidate('InputTypeWithOmittable', [], $info, 'input');
+
+        $this->assertFalse($res->nullableString->isSet());
+        $this->assertFalse($res->nestedInput->isSet());
+        $this->assertFalse($res->stringList->isSet());
+        $this->assertNull($res->regularNullable);
+    }
+
+    public function testOmittableValueCannotBeReadWhenOmitted(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Cannot read the value of an omitted input field.');
+
+        Omittable::omitted()->value();
     }
 
     public function testRaisedErrors(): void
