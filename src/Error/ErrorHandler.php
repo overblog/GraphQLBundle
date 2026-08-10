@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\Error;
 use Closure;
 use Error;
 use Exception;
+use GraphQL\Error\ClientAware;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Error\Error as GraphQLError;
 use GraphQL\Error\FormattedError;
@@ -116,6 +117,15 @@ class ErrorHandler
             // user warning
             if ($rawException instanceof UserWarning) {
                 $treatedExceptions['extensions']['warnings'][] = $errorWithConvertedException;
+
+                continue;
+            }
+
+            // client-safe exception (e.g. a validation error): it is not an
+            // internal exception, so it must be formatted like a user error
+            // instead of being rethrown when rethrow_internal_exceptions is on.
+            if ($rawException instanceof ClientAware && $rawException->isClientSafe()) {
+                $treatedExceptions['errors'][] = $errorWithConvertedException;
 
                 continue;
             }
