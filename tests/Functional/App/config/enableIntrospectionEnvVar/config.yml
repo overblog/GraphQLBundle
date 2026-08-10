@@ -1,0 +1,17 @@
+imports:
+    - { resource: ../config.yml }
+    - { resource: ../connection/services.yml }
+
+overblog_graphql:
+    security:
+        enable_introspection: '%env(bool:GRAPHQL_ENABLE_INTROSPECTION)%'
+    definitions:
+        class_namespace: "Overblog\\GraphQLBundle\\IntrospectionEnvVar\\__DEFINITIONS__"
+        schema:
+            query: Query
+            mutation: ~
+        mappings:
+            types:
+                -
+                    type: yaml
+                    dir: "%kernel.project_dir%/config/queryComplexity/mapping"
