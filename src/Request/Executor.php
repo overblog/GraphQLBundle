@@ -117,12 +117,22 @@ class Executor
 
     public function enableIntrospectionQuery(): void
     {
-        DocumentValidator::addRule(new DisableIntrospection(DisableIntrospection::DISABLED));
+        $this->setIntrospectionQueryEnabled(true);
     }
 
     public function disableIntrospectionQuery(): void
     {
-        DocumentValidator::addRule(new DisableIntrospection(DisableIntrospection::ENABLED));
+        $this->setIntrospectionQueryEnabled(false);
+    }
+
+    /**
+     * Toggles the introspection query at runtime so the value can be provided by
+     * an environment variable (resolved when the service is instantiated) rather
+     * than being evaluated at container-compile time.
+     */
+    public function setIntrospectionQueryEnabled(bool $enabled): void
+    {
+        DocumentValidator::addRule(new DisableIntrospection($enabled ? DisableIntrospection::DISABLED : DisableIntrospection::ENABLED));
     }
 
     /**
