@@ -7,6 +7,7 @@ namespace Overblog\GraphQLBundle\EventListener;
 use GraphQL\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserWarning;
 use Overblog\GraphQLBundle\Event\ErrorFormattingEvent;
+use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
@@ -45,6 +46,15 @@ final class ErrorLoggerListener
         if ($exception instanceof UserWarning) {
             if ($exception->getPrevious()) {
                 $this->log($exception->getPrevious(), LogLevel::WARNING);
+            }
+
+            return;
+        }
+
+        // Validation failures are client faults, so handle them like UserError.
+        if ($exception instanceof ArgumentsValidationException) {
+            if ($exception->getPrevious()) {
+                $this->log($exception->getPrevious());
             }
 
             return;
