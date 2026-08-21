@@ -66,4 +66,38 @@ final class GraphQLCollectorTest extends TestCase
             ],
         ]);
     }
+
+    public function testResetClearsBatches(): void
+    {
+        $collector = new GraphQLCollector();
+
+        $request = new Request();
+
+        $collector->onPostExecutor(new ExecutorResultEvent(
+            new ExecutionResult(['res' => 'ok']),
+            ExecutorArgumentsEvent::create('test_schema', new ExtensibleSchema([]), 'query{ test{field1} }', new ArrayObject())
+        ));
+
+        $collector->collect($request, new Response());
+        $this->assertCount(1, $collector->getBatches());
+
+        $collector->reset();
+        $collector->collect($request, new Response());
+
+        $this->assertSame([], $collector->getBatches());
+        $this->assertEquals(0, $collector->getCount());
+        $this->assertFalse($collector->getError());
+
+        $collector->onPostExecutor(new ExecutorResultEvent(
+            new ExecutionResult(['res' => 'ok']),
+            ExecutorArgumentsEvent::create('test_schema', new ExtensibleSchema([]), 'query{ other{field1, field2} }', new ArrayObject())
+        ));
+
+        $collector->collect($request, new Response());
+
+        $batches = $collector->getBatches();
+        $this->assertCount(1, $batches);
+        $this->assertEquals('query{ other{field1, field2} }', $batches[0]['queryString']);
+        $this->assertEquals(1, $collector->getCount());
+    }
 }

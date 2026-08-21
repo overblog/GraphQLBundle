@@ -86,6 +86,7 @@ final class GraphQLCollector extends DataCollector
     public function reset(): void
     {
         $this->data = [];
+        $this->batches = [];
     }
 
     /**
