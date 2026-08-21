@@ -16,3 +16,4 @@ services:
               template: "@OverblogGraphQL/profiler/panel.html.twig"
               id: graphql
             - { name: kernel.event_listener, event: graphql.post_executor, method: onPostExecutor }
+            - { name: kernel.reset, method: reset }
