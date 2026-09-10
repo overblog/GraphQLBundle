@@ -18,6 +18,9 @@ use function putenv;
  */
 final class EnableIntrospectionEnvVarTest extends TestCase
 {
+    private const CONFIG_NAME = 'enableIntrospectionEnvVar';
+    private const ENV_DISABLED = 'false';
+    private const ENV_ENABLED = 'true';
     private const ENV_VAR = 'GRAPHQL_ENABLE_INTROSPECTION';
 
     private string $introspectionQuery = <<<'EOF'
@@ -34,9 +37,7 @@ final class EnableIntrospectionEnvVarTest extends TestCase
     public function testIntrospectionDisabledViaEnvVar(): void
     {
         $previous = getenv(self::ENV_VAR);
-        putenv(self::ENV_VAR.'=false');
-        $_ENV[self::ENV_VAR] = 'false';
-        $_SERVER[self::ENV_VAR] = 'false';
+        $this->setEnv(self::ENV_DISABLED);
 
         try {
             $expected = [
@@ -53,7 +54,7 @@ final class EnableIntrospectionEnvVarTest extends TestCase
                 ],
             ];
 
-            $this->assertResponse($this->introspectionQuery, $expected, self::ANONYMOUS_USER, 'enableIntrospectionEnvVar');
+            $this->assertResponse($this->introspectionQuery, $expected, self::ANONYMOUS_USER, self::CONFIG_NAME);
         } finally {
             $this->restoreEnv($previous);
         }
@@ -62,12 +63,10 @@ final class EnableIntrospectionEnvVarTest extends TestCase
     public function testIntrospectionEnabledViaEnvVar(): void
     {
         $previous = getenv(self::ENV_VAR);
-        putenv(self::ENV_VAR.'=true');
-        $_ENV[self::ENV_VAR] = 'true';
-        $_SERVER[self::ENV_VAR] = 'true';
+        $this->setEnv(self::ENV_ENABLED);
 
         try {
-            $client = self::createClientAuthenticated(self::ANONYMOUS_USER, 'enableIntrospectionEnvVar');
+            $client = self::createClientAuthenticated(self::ANONYMOUS_USER, self::CONFIG_NAME);
             $result = self::sendRequest($client, $this->introspectionQuery, true);
 
             static::assertArrayHasKey('data', $result);
@@ -83,12 +82,19 @@ final class EnableIntrospectionEnvVarTest extends TestCase
     private function restoreEnv($previous): void
     {
         if (false === $previous) {
-            putenv(self::ENV_VAR);
+            static::assertTrue(putenv(self::ENV_VAR));
             unset($_ENV[self::ENV_VAR], $_SERVER[self::ENV_VAR]);
         } else {
-            putenv(self::ENV_VAR.'='.$previous);
+            static::assertTrue(putenv(self::ENV_VAR.'='.$previous));
             $_ENV[self::ENV_VAR] = $previous;
             $_SERVER[self::ENV_VAR] = $previous;
         }
+    }
+
+    private function setEnv(string $value): void
+    {
+        static::assertTrue(putenv(self::ENV_VAR.'='.$value));
+        $_ENV[self::ENV_VAR] = $value;
+        $_SERVER[self::ENV_VAR] = $value;
     }
 }
