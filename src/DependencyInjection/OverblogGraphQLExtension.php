@@ -182,15 +182,17 @@ final class OverblogGraphQLExtension extends Extension
     private function setSecurity(array $config, ContainerBuilder $container): void
     {
         $executorDefinition = $container->getDefinition(Executor::class);
-        if ($config['security']['enable_introspection']) {
-            $executorDefinition->addMethodCall('enableIntrospectionQuery');
-        } else {
-            $executorDefinition->addMethodCall('disableIntrospectionQuery');
-        }
 
         foreach ($config['security'] as $key => $value) {
             $container->setParameter(sprintf('%s.%s', $this->getAlias(), $key), $value);
         }
+
+        // Pass the parameter reference (not the compile-time value) so that an
+        // "enable_introspection" backed by an env variable is resolved at
+        // runtime instead of always evaluating truthy as a placeholder string.
+        $executorDefinition->addMethodCall('setIntrospectionQueryEnabled', [
+            sprintf('%%%s.enable_introspection%%', $this->getAlias()),
+        ]);
     }
 
     private function setErrorHandler(array $config, ContainerBuilder $container): void
