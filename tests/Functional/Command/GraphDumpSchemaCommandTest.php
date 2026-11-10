@@ -143,10 +143,39 @@ final class GraphDumpSchemaCommandTest extends TestCase
         if ('json' === $format) {
             $expected = json_decode($expected, true);
             $actual = json_decode($actual, true);
+            $this->removeVersionDependentSchemaEntries($expected);
+            $this->removeVersionDependentSchemaEntries($actual);
             $this->sortSchemaEntry($expected, 'types', 'name');
             $this->sortSchemaEntry($actual, 'types', 'name');
         }
         $this->assertEqualsCanonicalizing($expected, $actual);
+    }
+
+    /**
+     * Newer versions of webonyx/graphql-php introduce the "@specifiedBy" directive
+     * and the "__Type.specifiedByURL" field. Strip them so that the fixtures
+     * stay valid regardless of the installed version.
+     */
+    private function removeVersionDependentSchemaEntries(array &$entries): void
+    {
+        $schema = &$entries['data']['__schema'];
+        if (!isset($schema)) {
+            $schema = &$entries['__schema'];
+        }
+
+        $schema['directives'] = array_values(array_filter(
+            $schema['directives'],
+            fn (array $directive) => 'specifiedBy' !== $directive['name']
+        ));
+
+        foreach ($schema['types'] as &$type) {
+            if ('__Type' === $type['name']) {
+                $type['fields'] = array_values(array_filter(
+                    $type['fields'],
+                    fn (array $field) => 'specifiedByURL' !== $field['name']
+                ));
+            }
+        }
     }
 
     private function sortSchemaEntry(array &$entries, string $entryKey, string $sortBy): void
