@@ -32,6 +32,7 @@ use function uniqid;
 class CustomScalarType extends BaseCustomScalarType
 {
     /** @phpstan-var CustomScalarConfig */
+    // @phpstan-ignore-next-line specialize type
     public array $config;
 
     /**
