@@ -16,10 +16,14 @@ use Overblog\GraphQLBundle\Error\ExceptionConverterInterface;
 use Overblog\GraphQLBundle\Error\UserError;
 use Overblog\GraphQLBundle\Error\UserErrors;
 use Overblog\GraphQLBundle\Error\UserWarning;
+use Overblog\GraphQLBundle\Validator\Exception\ArgumentsValidationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
 
+use function class_exists;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -139,6 +143,34 @@ final class ErrorHandlerTest extends TestCase
             'errors' => [
                 [
                     'message' => 'Error with wrapped user error',
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $executionResult->toArray());
+    }
+
+    public function testMaskErrorWithWrappedClientSafeExceptionAndThrowExceptionSetToTrue(): void
+    {
+        if (!class_exists(Validation::class)) {
+            $this->markTestSkipped('Symfony validator component is not installed');
+        }
+
+        // A client-safe exception (e.g. a validation error) is not internal, so it
+        // must be formatted like a user error, not rethrown. See #1194.
+        $executionResult = new ExecutionResult(
+            null,
+            [
+                new GraphQLError('Error with wrapped validation error', null, null, [], null, new ArgumentsValidationException(new ConstraintViolationList())),
+            ]
+        );
+
+        $this->errorHandler->handleErrors($executionResult, true);
+
+        $expected = [
+            'errors' => [
+                [
+                    'message' => 'Error with wrapped validation error',
                 ],
             ],
         ];
